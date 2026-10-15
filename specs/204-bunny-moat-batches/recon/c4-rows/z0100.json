@@ -1,0 +1,125 @@
+{
+  "idx": 100,
+  "results": [
+    {
+      "member": "Dot",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Angle_of_Hole_Not_Normal_to_a_Face_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定。示例两端均为 MathVector（swCylAxis/swFlatNorm），对象对得上。"
+    },
+    {
+      "member": "DoubleSided",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "3 份候选示例调的是 swRenderMaterial.DoubleSided，对象为 SldWorks.RenderMaterial，属 IRenderMaterial.DoubleSided；本成员是 IAppearanceSetting.DoubleSided。同名不同接口，三份全部排除。"
+    },
+    {
+      "member": "DraftAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Core_Feature_Example_VB.md",
+        "Get_Core_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「读取」也关在 If useDr Then 内，并整体夹在 AccessSelections 与 ReleaseSelectionAccess 之间；成员页只写了「设置」的前置。",
+          "example_quote": "If useDr Then\n    ang = swCoreFeat.DraftAngle\n    Debug.Print \"Angle of draft = \" & ang",
+          "example_file": "Get_Core_Feature_Example_VB.md"
+        }
+      ],
+      "note": "另 2 份 Create_Sheet_Metal_Gusset 示例里 swFeatData 是 SMGussetFeatureData，调的是 ISMGussetFeatureData.DraftAngle，同名不同接口，已排除。示例只读不写，与 Remarks 不冲突。"
+    },
+    {
+      "member": "DraftOutward",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Core_Feature_Example_VB.md",
+        "Get_Core_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 If useDr Then 内读取，且必须先调 AccessSelections；成员页完全没提这两个前置动作。",
+          "example_quote": "Drout = swCoreFeat.DraftOutward\nDebug.Print \"Drafted outward? = \" & Drout",
+          "example_file": "Get_Core_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Get_Rib 两份示例里 swRibFeat 是 RibFeatureData2，调 IRibFeatureData2.DraftOutward，同名不同接口，已排除。示例只读不写，与 Remarks 不冲突。"
+    },
+    {
+      "member": "DraftSideFaces",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_CSharp.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "After setting this property to true, set [[ISMGussetFeatureData::DraftAngle]].",
+          "example_quote": "swFeatData.DraftAngle = 3 * 0.0175;\nswFeatData.DraftSideFaces = true;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+          "why": "成员页要求先置 DraftSideFaces=true 再设 DraftAngle；示例把两行倒过来，先设 DraftAngle 才置 true。VB.NET 版同样倒序，故两侧的赋值先后不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出改属性路径：GetDefinition 后必须 AccessSelections，才把 DraftSideFaces 置 false；成员页只字未提 AccessSelections。",
+          "example_quote": "swFeatData.AccessSelections(Part, null);\nswFeatData.DraftSideFaces = false;",
+          "example_file": "Insert_Sheet_Metal_Gusset_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例的 swFeatData 均为 SMGussetFeatureData（钣金族），与本成员同族，对象对得上。"
+    },
+    {
+      "member": "Drag",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Rotate_Assembly_Component_on_Axis_Example_CSharp.md",
+        "Rotate_Assembly_Component_on_Axis_Example_VB.md",
+        "Rotate_Assembly_Component_on_Axis_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "为拿到 Remarks 说的 default state 性能增益，示例显式把碰撞检测与间隙都关掉，三种语言版本一致。",
+          "example_quote": "swDragOp.CollisionDetectionEnabled = False\nswDragOp.DynamicClearanceEnabled = False",
+          "example_file": "Rotate_Assembly_Component_on_Axis_Example_VBNET.md"
+        },
+        {
+          "what": "Remarks 让人用 UseAbsoluteTransforms 切绝对/相对却不说默认是什么；示例靠默认的相对（增量）模式反复喂同一矩阵。",
+          "example_quote": "' This is an incremental rotation,\n' so angle is always the same",
+          "example_file": "Rotate_Assembly_Component_on_Axis_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 引用的 [[IDragOperator::UseAbsoluteTransforms]]（复数）在 IDragOperator 下不存在，目录里只有 UseAbsoluteTransform.md；属成员页内部名字对不上，非与示例的矛盾，故不记为冲突。"
+    },
+    {
+      "member": "DragAsUI",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Rotate_Assembly_Component_on_Axis_Example2_CSharp.md",
+        "Rotate_Assembly_Component_on_Axis_Example2_VB.md",
+        "Rotate_Assembly_Component_on_Axis_Example2_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出完整调用序：AddComponent→关间隙→TransformType/DragMode→BeginDrag→循环 501 次→EndDrag；成员页完全没有调用序，也没提循环。",
+          "example_quote": "bRet = swDragOp.BeginDrag\nDebug.Assert bRet\nFor i = 0 To 500\n    bRet = swDragOp.DragAsUI(swXform)\nNext i",
+          "example_file": "Rotate_Assembly_Component_on_Axis_Example2_VB.md"
+        }
+      ],
+      "note": "示例与 Remarks 的三点（可能回 false、不设 DragCorrected、精度不如 Drag）都能同时成立，未找到冲突，故留空数组。"
+    }
+  ]
+}

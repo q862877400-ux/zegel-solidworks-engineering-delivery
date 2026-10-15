@@ -1,0 +1,157 @@
+{"idx": 41, "results": [
+  {
+    "member": "CheckAgainstExistingFile",
+    "remarks_empty": false,
+    "examples_actually_used": ["Check_Against_Existing_File_Example_CSharp.md", "Check_Against_Existing_File_Example_VB.md", "Check_Against_Existing_File_Example_VBNET.md"],
+    "conflicts": [],
+    "example_more_specific": [
+      {
+        "what": "示例给出加载项 ProgID 取法，并建议用带版本号的 ProgID；成员页无此句。",
+        "example_quote": "Recommended to use the version-specific ProgID for your version of Design Checker",
+        "example_file": "Check_Against_Existing_File_Example_VB.md"
+      },
+      {
+        "what": "示例把弹窗可选文件限定为工程图后缀；成员页只说 choose a file。",
+        "example_quote": "Select Drawing (*.drw;*.slddrw) and",
+        "example_file": "Check_Against_Existing_File_Example_VB.md"
+      },
+      {
+        "what": "示例前置：必须先加载 Design Checker 加载项并引用其类型库。",
+        "example_quote": "Load the SOLIDWORKS Design Checker add-in",
+        "example_file": "Check_Against_Existing_File_Example_VB.md"
+      }
+    ],
+    "note": "三份示例都真调用该成员；弹窗流程与成员页一致，未见冲突。"
+  },
+  {
+    "member": "CheckFeatureUse",
+    "remarks_empty": false,
+    "examples_actually_used": ["Determine_If_Sketch_Suitable_for_Feature_Example_VB.md"],
+    "conflicts": [],
+    "example_more_specific": [
+      {
+        "what": "示例完整列出 swSketchCheckFeatureStatus_e 取值表，成员页只给枚举名链接。",
+        "example_quote": "swSketchCheckFeatureStatus_OneOpenContourExpected = 18",
+        "example_file": "Determine_If_Sketch_Suitable_for_Feature_Example_VB.md"
+      },
+      {
+        "what": "示例完整列出 0..22 的 FeatureType 取值表，成员页只给枚举名链接。",
+        "example_quote": "swSketchCheckFeature_SHEETMETAL_BASEFLANGE = 22",
+        "example_file": "Determine_If_Sketch_Suitable_for_Feature_Example_VB.md"
+      }
+    ],
+    "note": "示例把 0..22 逐个扫一遍；与成员页的状态返回说法不冲突。"
+  },
+  {
+    "member": "CheckInterference",
+    "remarks_empty": false,
+    "examples_actually_used": ["Check_Interference_using_Modeler_CheckInterference_Example_VB.md"],
+    "conflicts": [
+      {
+        "kind": "other_conflict",
+        "remarks_quote": "To align the two bodies, apply the transformation from [[IComponent2::Transform2]] using [[IBody2::ApplyTransform]].",
+        "example_quote": "Set swTransform1 = swComponent1.Transform",
+        "example_file": "Check_Interference_using_Modeler_CheckInterference_Example_VB.md",
+        "why": "Remarks 指名 Transform2；示例取的是 Component2.Transform，而官方页标该属性 Obsolete、被 Transform2 取代。"
+      }
+    ],
+    "example_more_specific": [
+      {
+        "what": "示例先 Body2.Copy 再对副本施加变换，不改动装配体里的原体。",
+        "example_quote": "Set swBodyCopy1 = swBody1.Copy",
+        "example_file": "Check_Interference_using_Modeler_CheckInterference_Example_VB.md"
+      }
+    ],
+    "note": "另：示例只遍历 vFaces1 画边，未用 vFaces2；不属五类冲突。"
+  },
+  {
+    "member": "CheckInterference3",
+    "remarks_empty": true,
+    "examples_actually_used": ["Check_Interference_Among_Bodies_Example_VB.md"],
+    "conflicts": [],
+    "example_more_specific": [
+      {
+        "what": "示例给出 Options 的具体位组合（成员页只指向枚举）。",
+        "example_quote": "(swBodyInterference_ReturnInterferingObject + swBodyInterference_IncludeCoincidentFaces)",
+        "example_file": "Check_Interference_Among_Bodies_Example_VB.md"
+      },
+      {
+        "what": "示例给出另一档 Options 取值 OptionDefault 并重跑一次作对照。",
+        "example_quote": "swBodyInterference_OptionDefault",
+        "example_file": "Check_Interference_Among_Bodies_Example_VB.md"
+      },
+      {
+        "what": "出参是 Variant 数组，元素个数用 UBound 加一取得。",
+        "example_quote": "sizeOfOut1 = UBound(vFaces1)",
+        "example_file": "Check_Interference_Among_Bodies_Example_VB.md"
+      },
+      {
+        "what": "TargetBodies/ToolBodies 取自两个实体文件夹（文件夹加其第一个子特征）。",
+        "example_quote": "If (Name = \"SolidBodyFolder\") Then",
+        "example_file": "Check_Interference_Among_Bodies_Example_VB.md"
+      }
+    ],
+    "note": "成员页没有 Remarks 段，按规则跳过冲突判定。"
+  },
+  {
+    "member": "CheckInterferenceBetweenTwoBodies",
+    "remarks_empty": false,
+    "examples_actually_used": ["Check_Interference_Between_Two_Bodies_Example_VB.md"],
+    "conflicts": [
+      {
+        "kind": "other_conflict",
+        "remarks_quote": "Use [[IComponent2::Transform2]] to get the transform of each component.",
+        "example_quote": "Set swTransform1 = swComponent1.Transform",
+        "example_file": "Check_Interference_Between_Two_Bodies_Example_VB.md",
+        "why": "Remarks 第 2 步点名 Transform2；示例取的是被官方标 Obsolete 的 Component2.Transform。"
+      },
+      {
+        "kind": "other_conflict",
+        "remarks_quote": "5. Specify Body1 and Body1 with the bodies that have been transformed to their correct positions in the assembly.",
+        "example_quote": "bValue = swModeler.CheckInterferenceBetweenTwoBodies(swBodyCopy1, swBodyCopy2, False, vFaces1, vFaces2, vBodies)",
+        "example_file": "Check_Interference_Between_Two_Bodies_Example_VB.md",
+        "why": "Remarks 第 5 步把 Body1 连写两遍，等于传同一个体两次；示例传的是两个不同体，二者不能同时成立。"
+      }
+    ],
+    "example_more_specific": [
+      {
+        "what": "示例对两个体的干涉面分别画边（vFaces1 与 vFaces2 各一轮）。",
+        "example_quote": "Display edges of faces interfering in second body",
+        "example_file": "Check_Interference_Between_Two_Bodies_Example_VB.md"
+      }
+    ],
+    "note": "两条冲突都逐字可查；Remarks 第 5 步疑为官方笔误，仍按两侧不一致记。"
+  },
+  {
+    "member": "Checked",
+    "remarks_empty": false,
+    "examples_actually_used": [],
+    "conflicts": [],
+    "example_more_specific": [],
+    "note": "所列示例声明 pm_Checkbox As PropertyManagerPageCheckbox，命中的是 Checkbox.Checked，非本成员，按规则不采用。"
+  },
+  {
+    "member": "ChildComponentDisplayInBOM",
+    "remarks_empty": true,
+    "examples_actually_used": ["Add_Configuration_and_Promote_Child_Components_in_BOM_Example_CSharp.md", "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_VB.md", "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_VBNET.md"],
+    "conflicts": [],
+    "example_more_specific": [
+      {
+        "what": "示例给出实际写入的枚举值 swChildComponent_Promote（成员页只给枚举名）。",
+        "example_quote": "(int)swChildComponentInBOMOption_e.swChildComponent_Promote",
+        "example_file": "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_CSharp.md"
+      },
+      {
+        "what": "示例前置：配置必须先用这两个选项由 AddConfiguration3 建出。",
+        "example_quote": "(int)swConfigurationOptions2_e.swConfigOption_DoDisolveInBOM + (int)swConfigurationOptions2_e.swConfigOption_DontShowPartsInBOM",
+        "example_file": "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_CSharp.md"
+      },
+      {
+        "what": "示例写后立即回读该属性打印到 Immediate 窗口作验证。",
+        "example_quote": "Debug.Print(\"Child component display option in BOM: \" + swConfig.ChildComponentDisplayInBOM);",
+        "example_file": "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_CSharp.md"
+      }
+    ],
+    "note": "成员页没有 Remarks 段，按规则跳过冲突判定。"
+  }
+]}

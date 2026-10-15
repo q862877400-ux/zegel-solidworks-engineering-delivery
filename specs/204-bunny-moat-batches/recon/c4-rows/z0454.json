@@ -1,0 +1,147 @@
+{
+  "idx": 454,
+  "results": [
+    {
+      "member": "SetReferences",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Library_Feature_With_References_Example_CSharp.md",
+        "Create_Library_Feature_With_References_Example_VB.md",
+        "Create_Library_Feature_With_References_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Some SolidWorks properties and methods, such as this method, have an input object that must be marshaled to an IDispatch object array because System.Object has replaced VARIANT in the .NET framework. When marshaling System.Object to an IDispatch object array, you must explicitly control the marshaling behavior by using the **System.Runtime.InteropServices.DispatchWrapper** class.",
+          "example_quote": "    ' Set the references for positioning the library feature on the part\n    Dim vLibRefs As Variant\n    vLibRefs = obj\n    swLibFeat.SetReferences (vLibRefs)",
+          "example_file": "Create_Library_Feature_With_References_Example_VB.md",
+          "why": "Remarks 说入参必须是 IDispatch 对象数组并'必须'用 DispatchWrapper；同一页 Examples 列出的 VBA 示例直接传普通 Object 数组，无 DispatchWrapper，两种说法不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出把 Object 数组转成 DispatchWrapper[] 的完整 helper，成员页只点名该类名",
+          "example_quote": "LibRefs = (DispatchWrapper[])ObjectArrayToDispatchWrapperArray((selectedObjects));",
+          "example_file": "Create_Library_Feature_With_References_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示调用前须 GetDefinition() 再 AccessSelections；成员页只给了 Selections that Define Features 链接",
+          "example_quote": "status = swLibFeat.AccessSelections(swModel, null);",
+          "example_file": "Create_Library_Feature_With_References_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 把强制范围写在'.NET framework'一句里，VBA 示例因此未必违规；但'必须用 DispatchWrapper'那句本身未限语言，故记为文本冲突。"
+    },
+    {
+      "member": "SetRegionParameterAtIndex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_VB.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Must specify a value greater than the previous region's revolution value and less than the next region's revolution value",
+          "example_quote": "//Revolution must be smaller than previous region's\n//revolution and less than next region's revolution",
+          "example_file": "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md",
+          "why": "对同一参数（Revolution）两侧给出相反的比较方向：成员页要求大于前一区域，示例注释写小于前一区域，二者不能同时为真。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出返回值含义 0 = success；成员页只指向 swSetHelixRegionParameterStatus_e 枚举",
+          "example_quote": "Debug.Print(\"      Diameter modified (0 = success): \" + helixStatus);",
+          "example_file": "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出被改的具体值：区域2 直径 0.052、高 0.025、圈数 0.45；成员页只有规则无数值",
+          "example_quote": "helixStatus = swHelixFeatData.SetRegionParameterAtIndex(2, (int)swVariablePitchHelixRegionParameter_e.swVariablePitchHelixRegionParameter_Revolution, 0.45);",
+          "example_file": "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例（C#/VB.NET/VBA）注释逐字相同，都写 smaller；冲突在成员页与示例之间，不在示例之间。"
+    },
+    {
+      "member": "SetReversedCutDirection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VB.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call [[IModelDoc2::EditRebuild3]] after calling this method.",
+          "example_quote": "        Debug.Print(\" Hide cut surface bodies? \" + swSectionView.CutSurfaceBodies);",
+          "example_file": "Create_Section_View_and_Get_Some_Data_Example_VBNET.md",
+          "why": "Remarks 规定调用后必须 EditRebuild3；VB.NET 示例的 Main 到该行为止、全文没有 EditRebuild3，而同页 C#/VBA 示例结尾都有。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序：先 CreateSectionViewAt5 再 GetSection 取 DrSection，成员页未写前置",
+          "example_quote": "swSectionView = (DrSection)swView.GetSection();",
+          "example_file": "Create_Section_View_and_Get_Some_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 EditRebuild3 放在整批 setter 之后统一调一次，而非紧跟本方法之后",
+          "example_quote": "swModel.EditRebuild3();",
+          "example_file": "Create_Section_View_and_Get_Some_Data_Example_VB.md"
+        }
+      ],
+      "note": "三份示例仅 VB.NET 缺 EditRebuild3；C#/VBA 两份与 Remarks 一致，差异只在 VB.NET。"
+    },
+    {
+      "member": "SetRevisionComments",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Parameters/Returns/See Also，无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "SetSaveFlag",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Remove_Textures_from_Assembly_Components_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在装配体遍历中对每个子零件文档调用，且紧跟 RemoveTexture2 之后；成员页只说'the part'",
+          "example_quote": "        RemoveTexture = swDocExt.RemoveTexture2(configName)\n        swDoc.SetSaveFlag",
+          "example_file": "Remove_Textures_from_Assembly_Components_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 说程序化改过模型时本方法'not necessary'（不是禁止），示例仍在改模型后调用；两说可并存，故不记冲突。"
+    },
+    {
+      "member": "SetSaveToName",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页首只有 Obsolete. Superseded by 一行，无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "SetSaveToName2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md",
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序与实参形态：SetDocumentSaveToNames 之后、SavePackAndGo 之前覆盖，传带尾斜杠的文件夹路径",
+          "example_quote": "myPath = \"c:\\\\PackAndGo\\\\\";\n            status = swPackAndGo.SetSaveToName2(true, myPath);\n            // Pack and Go both SOLIDWORKS and non-SOLIDWORKS files\n            statuses = swModelDocExt.SavePackAndGo(swPackAndGo);",
+          "example_file": "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 强调本方法支持 minimal folders、服从 FolderStructureOption；已读的两份示例都没设 FolderStructureOption，该差异无从对照。"
+    }
+  ]
+}

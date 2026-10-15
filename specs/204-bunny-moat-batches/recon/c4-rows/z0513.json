@@ -1,0 +1,162 @@
+{
+  "idx": 513,
+  "results": [
+    {
+      "member": "UseBeltThickness",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Belt_Chain_Feature_Example_CSharp.md",
+        "Create_Belt_Chain_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出写入次序：先置 UseBeltThickness=true，紧接着才写 BeltThickness",
+          "example_quote": "beltChainFeatData.UseBeltThickness = true;",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "修改阶段只重写 BeltThickness，未再设 UseBeltThickness（沿用创建时的 true）",
+          "example_quote": "swFeatData.BeltThickness = 0.002d;",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "两侧一致，无冲突；示例只补充了写入次序与继承语义。"
+    },
+    {
+      "member": "UseCentroid",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Table_Pattern_Example_CSharp.md",
+        "Get_Properties_of_Sketch-Pattern_Feature_Example_CSharp.md",
+        "Get_Properties_of_Sketch-Pattern_Feature_Example_VB.md",
+        "Get_Properties_of_Sketch-Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "UseChamferCorners",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weldment_End_Cap_Example_CSharp.md",
+        "Insert_Weldment_End_Cap_Example_VB.md",
+        "Insert_Weldment_End_Cap_Example_VBNET.md",
+        "List_End-Cap_Feature_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 InsertEndCapFeature3 第7参 BIsCornerTreatment=True 来满足该前置",
+          "example_quote": "Set myFeature = Part.FeatureManager.InsertEndCapFeature3(0.005, False, False, 0.003, 0.6, 0.003, True, 0.002, False, 2)",
+          "example_file": "Insert_Weldment_End_Cap_Example_VB.md"
+        },
+        {
+          "what": "属性不是直接写，而是插入后由 GetDefinition() 读回",
+          "example_quote": "Set swEndCap = myFeature.GetDefinition",
+          "example_file": "Insert_Weldment_End_Cap_Example_VB.md"
+        }
+      ],
+      "note": "四份示例均未与前置冲突；三份传入的 BIsCornerTreatment 为 true。"
+    },
+    {
+      "member": "UseCornerTreatment",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Weldment_End_Cap_Example_CSharp.md",
+        "Insert_Weldment_End_Cap_Example_VB.md",
+        "Insert_Weldment_End_Cap_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "UseDefaultBendAllowance",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Bend_Radius_of_Sketched_Bend_Example_VB.md",
+        "Create_Base_Flange_Feature_Example_VBNET.md",
+        "Create_Edge_Flange_Example_CSharp.md",
+        "Create_Edge_Flange_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Whether to use the default bend allowance is set during the initialization of this base flange and cannot be changed.",
+          "example_quote": "'UseDefaultBendAllowance=False,",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md",
+          "why": "示例把 Initialize 第2参标成 UseDefaultBendAllowance，官方签名却是 OverrideDefaultBendAllowance（true=覆盖默认）。同一 False 按两种命名得到相反结论，不能同时成立。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "If this property is false, then use [[IBaseFlangeFeatureData::GetCustomBendAllowance]] to get the custom bend allowance used to [[initialize]] this base flange.",
+          "example_quote": "Call swBaseFlangeFeat.Initialize(False, False, cba, False, swSheetMetalReliefTypes_e.swSheetMetalReliefRectangular, True, 0.8, 0#, 0#)",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md",
+          "why": "官方 Initialize 的 Parameters 逐字写 CustomBendAllowance「valid only if OverrideDefaultBendAllowance is true」；示例该位传 False 仍传入已配置的 cba。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例在 Initialize 之前先取 GetCustomBendAllowance 配置它，Initialize 后再 GetDefinition() 读回",
+          "example_quote": "baseFlangeFeatData = SHFeat.GetDefinition()",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "两份 Edge Flange、Sketched Bend 示例里同名的属别的接口，非本成员。"
+    },
+    {
+      "member": "UseDefaultBendRadius",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Bend_Radius_of_Sketched_Bend_Example_VB.md",
+        "Create_Edge_Flange_Example_CSharp.md",
+        "Create_Edge_Flange_Example_VBNET.md",
+        "Get_All_Sheet_Metal_Feature_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 与 Examples，无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "UseDefaultBendRelief",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Base_Flange_Feature_Example_VBNET.md",
+        "Create_Edge_Flange_Example_CSharp.md",
+        "Create_Edge_Flange_Example_VBNET.md",
+        "Create_Swept_Flange_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Whether to use the default bend relief was set during the [[initialization]] of this base flange and cannot be changed.",
+          "example_quote": "'UseDefaultBendRelief=False,",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md",
+          "why": "示例把 Initialize 第4参标成 UseDefaultBendRelief，官方签名却是 OverrideDefaultBendRelief（true=覆盖默认）。语义相反，同一 False 两种读法结论不同。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "If this property is false, then you can get the type of bend relief and whether a relief ratiois used. Both were set during [[initialization]] of this base flange:",
+          "example_quote": "Call swBaseFlangeFeat.Initialize(False, False, cba, False, swSheetMetalReliefTypes_e.swSheetMetalReliefRectangular, True, 0.8, 0#, 0#)",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md",
+          "why": "官方 Initialize 逐字写 ReliefType/UseReliefRatio/ReliefRatio/ReliefWidth/ReliefDepth「valid only if OverrideDefaultBendRelief is true」；示例该位传 False 仍全部传入。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "UseReliefRatio 为 True 时示例仍同时读回 ReliefWidth 与 ReliefDepth",
+          "example_quote": "Debug.Print(\"Relief width: \" & baseFlangeFeatData.ReliefWidth)",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        },
+        {
+          "what": "示例给出改法：改父级 SheetMetal 的 ReliefRatio 再 ModifyDefinition",
+          "example_quote": "smFeatData.ReliefRatio = 0.7",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "Swept Flange 与 Edge Flange 示例里同名成员属别的接口，非本成员。"
+    }
+  ]
+}

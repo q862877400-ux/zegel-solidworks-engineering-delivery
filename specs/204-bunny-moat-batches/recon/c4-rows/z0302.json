@@ -1,0 +1,101 @@
+{
+  "idx": 302,
+  "results": [
+    {
+      "member": "IncludeFileLocations",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Rename_Component_and_Update_References_Example_VB.md",
+        "Rename_Component_and_Update_References_Example_CSharp.md",
+        "Rename_Component_and_Update_References_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都先置 UpdateWhereUsedReferences=True 再置本属性，把「仅当其为 true」的前置落成具体顺序",
+          "example_quote": "swRenamedDocumentReferences.IncludeFileLocations = True",
+          "example_file": "Rename_Component_and_Update_References_Example_VB.md"
+        },
+        {
+          "what": "本对象由 RenamedDocumentNotify 事件回调的 swObj 参数转型得到，成员页未说从哪里取",
+          "example_quote": "swRenamedDocumentReferences = swObj",
+          "example_file": "Rename_Component_and_Update_References_Example_VB.md"
+        }
+      ],
+      "note": "三份示例与 Remarks 一致，无冲突"
+    },
+    {
+      "member": "IncludeHiddenBodies",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 无 ## Remarks，按纪律跳过，未读示例"
+    },
+    {
+      "member": "IncludeInLibraryFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Attribute_to_Feature_and_Include_In_Library_Feature_Example_VB.md",
+        "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_CSharp.md",
+        "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把本属性设在 CreateInstance5 造出的 Attribute 实例上（挂在特征的一个面上）并立即读回，成员页未指明承载对象",
+          "example_quote": "swAttribute.IncludeInLibraryFeature = True",
+          "example_file": "Add_Attribute_to_Feature_and_Include_In_Library_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的共享实体例外在示例里无法判定，不臆测为冲突"
+    },
+    {
+      "member": "IncludeMassPropertiesOfHiddenBodies",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 无 ## Remarks，按纪律跳过，未读示例"
+    },
+    {
+      "member": "IncludeMultibodyPartInterferences",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Run_Interference_Detection_Example_VB.md",
+        "Run_Interference_Detection_Example_CSharp.md",
+        "Run_Interference_Detection_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 ToolsCheckInterference 打开面板后取 InterferenceDetectionManager 再设本属性，把「对象在作用域内」具体化",
+          "example_quote": "pIntMgr = swAssemblyDoc.InterferenceDetectionManager",
+          "example_file": "Run_Interference_Detection_Example_VB.md"
+        },
+        {
+          "what": "设完本属性紧接着调 GetInterferences，示例未在末尾调用 Done，说明临时性如何体现",
+          "example_quote": "pIntMgr.IncludeMultibodyPartInterferences = True",
+          "example_file": "Run_Interference_Detection_Example_VB.md"
+        }
+      ],
+      "note": "三份示例一致，与「临时、不持久」相容，无冲突"
+    },
+    {
+      "member": "IncludeSimulationResults",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 无 ## Remarks，按纪律跳过，未读示例"
+    },
+    {
+      "member": "IncludeSurfaces",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks 故跳过；所列两份 IGES 示例与本成员无关"
+    }
+  ]
+}

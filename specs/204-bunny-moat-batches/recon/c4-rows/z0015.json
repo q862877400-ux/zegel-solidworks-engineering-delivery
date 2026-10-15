@@ -1,0 +1,146 @@
+{
+  "idx": 15,
+  "results": [
+    {
+      "member": "AddSlicingPlanesAndSketchesToFolder",
+      "remarks_empty": false,
+      "examples_actually_used": ["Slice_a_Model_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先读该属性打印默认值、再置 true，靠随后的 InsertSlicing 才生成 Slice1 文件夹。",
+          "example_quote": "           Debug.Print(\"Add slicing planes and sketches to folder? \" + sliceData.AddSlicingPlanesAndSketchesToFolder);",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 Slice1 说法与示例 Postconditions 逐字一致，无冲突。"
+    },
+    {
+      "member": "AddSnapShot",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Open_Assembly_in_Large_Design_Review_Mode_Example_CSharp.md",
+        "Open_Assembly_in_Large_Design_Review_Mode_Example_VB.md",
+        "Open_Assembly_in_Large_Design_Review_Mode_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把三种参数形态各用一次：具名、\"?\" 弹框、空串取默认名。",
+          "example_quote": "    Set snap1 = mvmgr.AddSnapShot(\"ASnap\")\n    ' Open dialog box to name the next snapshot\n    Set snap2 = mvmgr.AddSnapShot(\"?\")\n    ' Add a snapshot with the next default name\n    Set snap3 = mvmgr.AddSnapShot(\"\")",
+          "example_file": "Open_Assembly_in_Large_Design_Review_Mode_Example_VB.md"
+        },
+        {
+          "what": "示例 Postconditions 列出实际得到的名字，坐实空串按 Snap*n* 递增。",
+          "example_quote": "' 4. Creates four snapshots in the DisplayManager:\n' * Home\n' * ASnap\n' * Snap2\n' * Snap3",
+          "example_file": "Open_Assembly_in_Large_Design_Review_Mode_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的\"仅装配体有效\"与示例 OpenDoc6 打开 sldasm 相符，无冲突。"
+    },
+    {
+      "member": "AddSpecificDimension",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Specific_Dimension_Example_CSharp.md",
+        "Create_Specific_Dimension_Example_VB.md",
+        "Create_Specific_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在草图里用 SelectByID2 选两条 SKETCHSEGMENT（append 先 false 后 true）再调用；Remarks 的调用序只给图纸场景的 SelectByRay。",
+          "example_quote": "            boolstatus = Part.Extension.SelectByID2(\"Line3\", \"SKETCHSEGMENT\", -0.0509671483361161, -0.0109842011554073, 0.0296211826739789, false, 0, null, 0);",
+          "example_file": "Create_Specific_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的\"必须先选中实体\"与示例一致；SelectByRay 与 SelectByID2 是场景不同，非矛盾。"
+    },
+    {
+      "member": "AddSpeedPak2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_SpeedPak_Example_VB.md",
+        "Create_SpeedPak_Example_VBNET.md",
+        "Create_Speedpak_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只给具体取值 Type=1、PartThreshold=0.5，且返回值未被接收；成员页未给推荐取值。",
+          "example_quote": "    ConfigMgr.AddSpeedPak2 1, 0.5",
+          "example_file": "Create_SpeedPak_Example_VB.md"
+        },
+        {
+          "what": "示例 Postconditions 点名新建配置名为 Default_speedpak，成员页没写这个名字。",
+          "example_quote": "' 1. Adds active_configuration (Default_speedpak) to the\n'    ConfigurationManager.",
+          "example_file": "Create_SpeedPak_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 讲 Bodies to Include 滑块对应关系，示例只给数值，无冲突。"
+    },
+    {
+      "member": "AddStandardButton",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Buttons_to_Task_Pane_Example_CSharp.md",
+        "Add_Buttons_to_Task_Pane_Example_VB.md",
+        "Add_Buttons_to_Task_Pane_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 CreateTaskpaneView2 建视图、再 AddControl 加载控件，按钮才出现在面板顶部；成员页无任何前置。",
+          "example_quote": "            swTaskPane = (TaskpaneView)swApp.CreateTaskpaneView2(bitmap, toolTip);",
+          "example_file": "Add_Buttons_to_Task_Pane_Example_CSharp.md"
+        },
+        {
+          "what": "示例点击处理用 ButtonIndex+1，说明按钮序号 0 基且含先前 AddCustomButton 那一枚。",
+          "example_quote": "            switch ((ButtonIndex + 1))",
+          "example_file": "Add_Buttons_to_Task_Pane_Example_CSharp.md"
+        }
+      ],
+      "note": "该成员页无 ## Remarks 段，按规则跳过冲突判定。"
+    },
+    {
+      "member": "AddSuffix",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Pack_and_Go_an_Assembly_Example_CSharp.md",
+        "Pack_and_Go_an_Assembly_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出赋值时序：SetSaveToName 与 FlattenToSingleFolder 之后、SavePackAndGo 之前。",
+          "example_quote": "            // Add a prefix and suffix to the filenames\n            swPackAndGo.AddPrefix = \"SW_\";\n            swPackAndGo.AddSuffix = \"_PackAndGo\";",
+          "example_file": "Pack_and_Go_an_Assembly_Example_CSharp.md"
+        }
+      ],
+      "note": "该成员页无 ## Remarks 段，按规则跳过冲突判定；所列两例均真用到该属性。"
+    },
+    {
+      "member": "AddSymmetricDimension",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Full_Symmetrical_Angular_Dimension_Example_CSharp.md",
+        "Create_Full_Symmetrical_Angular_Dimension_Example_VB.md",
+        "Create_Full_Symmetrical_Angular_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例除抑制弹框外，建完还把 swInputDimValOnCreate 复位为 true；Remarks 只说抑制、不提恢复。",
+          "example_quote": "            swApp.SetUserPreferenceToggle((int)swUserPreferenceToggle_e.swInputDimValOnCreate, true);",
+          "example_file": "Create_Full_Symmetrical_Angular_Dimension_Example_CSharp.md"
+        },
+        {
+          "what": "示例在 ClearSelection2 之后重选中心线与一条线，说明调用时须恰有这两个实体被选中；Remarks 未写此前置。",
+          "example_quote": "            swModel.ClearSelection2(true);",
+          "example_file": "Create_Full_Symmetrical_Angular_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的弹框抑制说法与示例逐步一致；选中前置只写在页面摘要里，不构成 Remarks 冲突。"
+    }
+  ]
+}

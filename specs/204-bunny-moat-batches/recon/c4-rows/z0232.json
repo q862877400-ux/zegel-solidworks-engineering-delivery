@@ -1,0 +1,110 @@
+{
+  "idx": 232,
+  "results": [
+    {
+      "member": "GetPartingLinesType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Parting_Surface_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Parting_Surface_Feature_Data_Example_VB.md",
+        "Get_and_Set_Parting_Surface_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Summary/Signature/Returns/Examples，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "GetPartingSurfacesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Tooling_Split_Feature_Data_Example_CSharp.md",
+        "Get_Tooling_Split_Feature_Data_Example_VB.md",
+        "Get_Tooling_Split_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没有的前置：先 AccessSelections(model, null)，再取计数取数组；且用 PartingSurfaces 属性而非 IGetPartingSurfaces。",
+          "example_quote": "bRet = swToolingSplitFeatData.AccessSelections(swModel, null);\nDebug.Print(\"    Count: \" + swToolingSplitFeatData.GetPartingSurfacesCount());\npartSurf = (object[])swToolingSplitFeatData.PartingSurfaces;",
+          "example_file": "Get_Tooling_Split_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只说为 IGetPartingSurfaces 取数组长度，未提 AccessSelections；二者不矛盾。"
+    },
+    {
+      "member": "GetPartner",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Determine_Type_of_Face_Example_VB.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_CSharp.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_VB.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 段；4 份示例经 grep 确认均真调 swThisCoEdge.GetPartner。"
+    },
+    {
+      "member": "GetPatchBoundary",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Fill-surface_Feature_Example_CSharp.md",
+        "Insert_Fill-surface_Feature_Example_VB.md",
+        "Insert_Fill-surface_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没有的调用序：先 AccessSelections、再判 GetPatchBoundaryCount>0，才调本方法取数组。",
+          "example_quote": "status = swFillSurfaceFeatureData.AccessSelections(swModel, null);\nnbrPatchEntities = swFillSurfaceFeatureData.GetPatchBoundaryCount();\nif (nbrPatchEntities > 0)\npatchEntities = (object[])swFillSurfaceFeatureData.GetPatchBoundary(out entTypes);",
+          "example_file": "Insert_Fill-surface_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只约束 GetCurvatureControl 的先后；三份示例都不调 GetCurvatureControl。"
+    },
+    {
+      "member": "GetPatchBoundaryCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Fill-surface_Feature_Example_CSharp.md",
+        "Insert_Fill-surface_Feature_Example_VB.md",
+        "Insert_Fill-surface_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它当作 entTypes 数组的遍历上界，并以 >0 作为是否读取补丁边界的判据。",
+          "example_quote": "nbrPatchEntities = swFillSurfaceFeatureData.GetPatchBoundaryCount();\nif (nbrPatchEntities > 0)\nfor (i = 0; i <= nbrPatchEntities - 1; i++)",
+          "example_file": "Insert_Fill-surface_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只说在 IGetPatchBoundary 之前调用；示例经由 GetPatchBoundary 属性入口，不矛盾。"
+    },
+    {
+      "member": "GetPathName",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "候选 4 份示例调的全是 swModel.GetPathName（IModelDoc2），无一用 IComponent2 版本 ⇒ 无法交叉验证。"
+    },
+    {
+      "member": "GetPathType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Properties_of_Sweep_Feature_Example_VB.md",
+        "Insert_Sweep_Cut_Feature_Example_CSharp.md",
+        "Insert_Sweep_Cut_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都把它放在 AccessSelections(model, null) 之后调用，并注明返回值即 swSelectType_e。",
+          "example_quote": "bRet = swSweep.AccessSelections(swModel, Nothing);\nSet swPathFeat = swSweep.Path;\nDebug.Print \" Sweep path type = \" & swSweep.GetPathType",
+          "example_file": "Get_Properties_of_Sweep_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只指向 Selections that Define Features 文档；三份示例的具体次序与之相容。"
+    }
+  ]
+}

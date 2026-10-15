@@ -1,0 +1,136 @@
+{
+  "idx": 245,
+  "results": [
+    {
+      "member": "GetReversedCutDirection",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段；两份示例确真调用（C#:72 / VB:65），按纪律跳过比对。"
+    },
+    {
+      "member": "GetRootComponent",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Names_of_Bodies_in_MultiBody_Part_Example_VB.md",
+        "Get_Transforms_of_Assembly_Components_Example_VB.md",
+        "Lock_All_External_References_Example_VB.md",
+        "Make_All_Assembly_Components_Visible_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "2. IConfiguration::GetRootComponent (called only once)",
+          "example_quote": "    Set swRootComp = swConf.GetRootComponent\n...\n        Set swRootComp = swConf.GetRootComponent",
+          "example_file": "Lock_All_External_References_Example_VB.md",
+          "why": "Remarks 明写该步只调一次；同一 Sub main 里先调一次，ResolveAllLightWeightComponents 之后又调一次。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "It is useful only for calling [[IComponent2::GetChildren]]. Most other IComponent2 object functions do not work with this root component object and return null or Nothing or an error condition.",
+          "example_quote": "    ProcessComponent swApp, swModel, swRootComp, 1\n...\n    Debug.Print sPadStr & swComp.Name2 & \" <\" & swComp.ReferencedConfiguration & \">\"\n    vBody = swComp.GetBodies2(swSolidBody)",
+          "example_file": "Get_Names_of_Bodies_in_MultiBody_Part_Example_VB.md",
+          "why": "Remarks 说根组件除 GetChildren 外不可用；示例把根组件当普通组件遍历，直接读 Name2 与 GetBodies2。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例点名根组件具体失效成员：无名字、Transform2 为 NULL（无旋转/平移/缩放）。",
+          "example_quote": "'       (1)\n' Root component does not have a name\n'       (2)\n' Root component has a NULL transform, that is, no rotation,",
+          "example_file": "Get_Transforms_of_Assembly_Components_Example_VB.md"
+        },
+        {
+          "what": "示例前置允许 part 或 assembly，且在 GetType 分支前先调一次，part 分支不使用返回值。",
+          "example_quote": "' Preconditions:\n' 1. Open a part or assembly.\n...\n    Set swConf = swConfigMgr.ActiveConfiguration\n    Set swRootComp = swConf.GetRootComponent",
+          "example_file": "Lock_All_External_References_Example_VB.md"
+        }
+      ],
+      "note": "四份示例均真调用（Names:106 / Transforms:143 / Lock:53,61 / Make_All:56）。"
+    },
+    {
+      "member": "GetRootComponent3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Fire_Notifications_When_Renaming_Components_Example_CSharp.md",
+        "Fire_Notifications_When_Renaming_Components_Example_VB.md",
+        "Fire_Notifications_When_Renaming_Components_Example_VBNET.md",
+        "Get_Assembly_Bounding_Box_Using_Components_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "1. [[IModelDoc2::GetConfigurationByName]] (called only once)",
+          "example_quote": "    Set swConfig = swConfigMgr.ActiveConfiguration\n    Set swRootComp = swConfig.GetRootComponent3(True)",
+          "example_file": "Fire_Notifications_When_Renaming_Components_Example_VB.md",
+          "why": "Remarks 规定第 1 步用 GetConfigurationByName 取配置；四份示例一律取 ActiveConfiguration。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "四例全传 Resolve=true，故 Returns 里「配置非活动时返回 Null」那条分支示例从未走到。",
+          "example_quote": "            swRootComp = (Component2)swConfig.GetRootComponent3(true);",
+          "example_file": "Get_Assembly_Bounding_Box_Using_Components_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例均真调用（Fire C#:66 / VB:62 / VBNET:62 / BoundingBox:96），全部 Resolve=true。"
+    },
+    {
+      "member": "GetRotationDir",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_All_Elements_of_Sketch_Example_VB.md",
+        "Get_Sketch_Arc_Data_Example_CSharp.md",
+        "Get_Sketch_Arc_Data_Example_VB.md",
+        "Get_Sketch_Arc_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出可执行判读序：先 GetNormalVector 取草图面法向，再读旋转方向，成员页只给结论表。",
+          "example_quote": "    vNormalVector = skArcSegment.GetNormalVector\n    Debug.Print \"Normal vector: \" & vNormalVector(0) & \", \" & vNormalVector(1) & \", \" & vNormalVector(2)\n...\n    Debug.Print \"Rotation direction (1 = counterclockwise, -1 = clockwise): \" & skArcSegment.GetRotationDir",
+          "example_file": "Get_Sketch_Arc_Data_Example_VB.md"
+        }
+      ],
+      "note": "四份示例均真调用（AllElements:101 / ArcData C#:61 / VB:50 / VBNET:53）；语义与 Returns 一致。"
+    },
+    {
+      "member": "GetRouteManager",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Auto_Route_Example_CSharp.md",
+        "Create_Auto_Route_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段；两份示例确真调用（C#:49 / VBNET:44），按纪律跳过比对。"
+    },
+    {
+      "member": "GetRoutingSettings",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Save_Routing_Settings_Example_CSharp.md",
+        "Get_and_Save_Routing_Settings_Example_VB.md",
+        "Get_and_Save_Routing_Settings_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段；三份示例确真调用（C#:67 / VB:43 / VBNET:48），按纪律跳过比对。"
+    },
+    {
+      "member": "GetRoutingUserPreferenceDoubleValue",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Save_Routing_Settings_Example_CSharp.md",
+        "Get_and_Save_Routing_Settings_Example_VB.md",
+        "Get_and_Save_Routing_Settings_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Parameters/Returns）；三份示例确真调用（C#:85,86 / VB:60,61 / VBNET:65,66）。"
+    }
+  ]
+}

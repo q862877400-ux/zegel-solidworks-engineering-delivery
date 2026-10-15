@@ -1,0 +1,115 @@
+{
+  "idx": 192,
+  "results": [
+    {
+      "member": "GetFeatureManagerTreeTabIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Active_Tab_in_Manager_Pane_Example_CSharp.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VB.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给了前置：须先打开装配并点中 Manager Pane 里的 FeatureManager 设计树页签，成员页无此前置",
+          "example_quote": "' 1. Open an assembly and click the FeatureManager design tree tab",
+          "example_file": "Change_Active_Tab_in_Manager_Pane_Example_VB.md"
+        },
+        {
+          "what": "示例先调 HideFeatureManager(False) 保证 Manager Pane 可见，再取页签索引",
+          "example_quote": "swModelDocExtension.HideFeatureManager (False)",
+          "example_file": "Change_Active_Tab_in_Manager_Pane_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetFeatureManagerWidth",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Width_of_FeatureManager_Design_Tree_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出单位为 pixels，成员页 Returns 只写 Width 未给单位",
+          "example_quote": "\" Old width = \" & nWidth & \" pixels\"",
+          "example_file": "Change_Width_of_FeatureManager_Design_Tree_Example_VB.md"
+        },
+        {
+          "what": "示例给出前置：须先打开一个模型文档，成员页无前置",
+          "example_quote": "' 1. Open a model document.",
+          "example_file": "Change_Width_of_FeatureManager_Design_Tree_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，跳过冲突判定"
+    },
+    {
+      "member": "GetFeatureOwner",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Component_Via_Display_Dimension_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：须在打开的工程图里选中一个尺寸，成员页无前置",
+          "example_quote": "A dimension is selected",
+          "example_file": "Get_Component_Via_Display_Dimension_Example_VB.md"
+        },
+        {
+          "what": "示例说明返回的 IFeature 可当实体用，再取 GetComponent 拿到组件，成员页只说返回 IFeature",
+          "example_quote": "Set swComp = swEnt.GetComponent",
+          "example_file": "Get_Component_Via_Display_Dimension_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，跳过冲突判定"
+    },
+    {
+      "member": "GetFeatureScopeBodiesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例调的是 SurfCutFeatureData / SweepFeatureData 上的同名成员，不是 IExtrudeFeatureData2"
+    },
+    {
+      "member": "GetFeatureTreeRootItem",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Objects_in_Selection_Set_Example_CSharp.md",
+        "Get_Objects_in_Selection_Set_Example_VB.md",
+        "Get_Objects_in_Selection_Set_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面正文写 Obsolete 且被 GetFeatureTreeRootItem2 取代，但无 ## Remarks 段，不判冲突"
+    },
+    {
+      "member": "GetFeatureTreeRootItem2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_CSharp.md",
+        "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 WhichPane 的具体枚举值 swFeatMgrPaneBottom，成员页只给枚举名",
+          "example_quote": "rootNode = featureMgr.GetFeatureTreeRootItem2(swFeatMgrPane_e.swFeatMgrPaneBottom)",
+          "example_file": "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_VBNET.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，跳过冲突判定"
+    },
+    {
+      "member": "GetFeatures",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "示例调的是 DimXpertPart.GetFeatures 与 FeatureManager.GetFeatures(false)，都不是 IBody2.GetFeatures"
+    }
+  ]
+}

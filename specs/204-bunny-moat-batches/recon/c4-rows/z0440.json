@@ -1,0 +1,148 @@
+{
+  "idx": 440,
+  "results": [
+    {
+      "member": "SetCustomCheckResult",
+      "remarks_empty": false,
+      "examples_actually_used": ["Custom_Check_Document_Example_VB.md"],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Upper dimension contains the size (number) of failed items ,and the lower dimension has a size of 2.",
+          "example_quote": "ReDim Preserve FailedItemsArr(1 To 2, 1 To nFailedItemCount) As String",
+          "example_file": "Custom_Check_Document_Example_VB.md",
+          "why": "Remarks 说第1维=失败项个数、第2维=2；示例把第1维=2（名称/类型）、第2维=个数，维度序正好转置，按 Remarks 建的数组与示例互斥。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出取 Design Checker 插件的具体 ProgID 字符串，Remarks 只让查帮助文档。",
+          "example_quote": "Set dcApp = swApp.GetAddInObject(\"SWDesignChecker.SWDesignCheck\")",
+          "example_file": "Custom_Check_Document_Example_VB.md"
+        },
+        {
+          "what": "示例演示 ByRef 动态字符串数组要以「数组名加括号」整包传入第二形参。",
+          "example_quote": "errorCode = dcApp.SetCustomCheckResult(bCheckStatus, (FailedItemsArr))",
+          "example_file": "Custom_Check_Document_Example_VB.md"
+        }
+      ],
+      "note": "返回形状（int/枚举）与示例的 errorCode As Long 一致，无其它冲突。"
+    },
+    {
+      "member": "SetD1IncrementDimensions",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Vary_Linear_Pattern_Instances_Example_CSharp.md",
+        "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Parameters/Returns），按纪律 3 跳过比对。"
+    },
+    {
+      "member": "SetD2TwistAngle",
+      "remarks_empty": false,
+      "examples_actually_used": ["Insert_Bidirectional_Swept-cut_Feature_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的枚举名前置钉成字面量：TwistControlType=8（=ConstantTwistAlongPath）、Direction=1。",
+          "example_quote": "swSweep.TwistControlType = 8",
+          "example_file": "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例显示 D1/D2 扭转角是同一 SweepFeatureData 上的两个独立成员，各自配 ReverseTwistDir。",
+          "example_quote": "swSweep.SetTwistAngle 31.12217 'Radians",
+          "example_file": "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md"
+        }
+      ],
+      "note": "已核 swTwistControlType_e=8、swSweepDirection_e=1 与 Remarks 前置一致；Angle 两侧都写弧度。"
+    },
+    {
+      "member": "SetDatumReferenceLabel",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_and_Modify_Datum_Target_Symbol_Example_CSharp.md",
+        "Insert_and_Modify_Datum_Target_Symbol_Example_VB.md",
+        "Insert_and_Modify_Datum_Target_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：先用 SelectByID2 按面选中(mark=0)，才能拿到 IDatumTargetSym 来调本成员。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", -7.23565448987529E-03, -2.59480787517532E-02, 0, False, 0, Nothing, 0)",
+          "example_file": "Insert_and_Modify_Datum_Target_Symbol_Example_VB.md"
+        }
+      ],
+      "note": "三份示例等价，WhichOne=0 与「0-based index」一致；Remarks 的 GraphicsRedraw2 限定在图纸，本例是零件，不构成冲突。"
+    },
+    {
+      "member": "SetDirectionReference",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "指定的那份示例调用的是 IMoveFaceFeatureData::SetDirectionReference(单参、回 bool)，不是本页双参 void 版本，故不算用到本成员。"
+    },
+    {
+      "member": "SetDisplayMode3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Display_Mode_to_Draft_Quality_Example_VB.md",
+        "Get_Number_of_Polylines_in_Shaded_Mode_Drawing_View_Example_VB.md",
+        "Set_View_Display_Mode_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Once the drawing view has precision quality, whether you created it that way or changed it to that after its creation, you cannot change it to draft quality.",
+          "example_quote": "1. Changes the display modes of all drawing views to draft quality.",
+          "example_file": "Change_Display_Mode_to_Draft_Quality_Example_VB.md",
+          "why": "示例的既定目标就是把全部视图改成 draft quality（Facetted 传 True），与 Remarks「无法改成 draft quality」直接对立。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "swFACETED_WIREFRAME, swFACETED_HIDDEN_GREY, and swFACETEDHIDDEN",
+          "example_quote": "case swFACETED_HIDDEN_GREYED:",
+          "example_file": "Set_View_Display_Mode_Example_CPlusPlus_COM.md",
+          "why": "Remarks 另把目标值写成 sw_HIDDEN_GREY；示例用 swFACETED_HIDDEN_GREYED/swHIDDEN_GREYED，swapi 枚举表也只有后者，标识符拼写两侧不成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例直接列出 swDisplayMode_e 各模式的数值对照，Remarks 只给名字。",
+          "example_quote": "swDisplayMode_e: swWIREFRAME = 0, swHIDDEN_GREYED = 1, swHIDDEN = 2, swSHADED = 3",
+          "example_file": "Get_Number_of_Polylines_in_Shaded_Mode_Drawing_View_Example_VB.md"
+        },
+        {
+          "what": "示例指出 GetFirstView 返回的图纸页伪视图不能调本方法，须按图纸名跳过。",
+          "example_quote": "Does not work on drawing sheet, which IDrawingDoc::GetFirstView returns",
+          "example_file": "Change_Display_Mode_to_Draft_Quality_Example_VB.md"
+        }
+      ],
+      "note": "C++ 示例的第 5 个实参 &retval 是 System.bool 返回值的 C++ 写法，与页面签名不冲突。"
+    },
+    {
+      "member": "SetDisplayMode4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Display_Mode_of_View_Example_CSharp.md",
+        "Set_Display_Mode_of_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 5 个位置参数逐位注解成含义（3=shaded、true=draft、false=无边、true=精密螺纹）。",
+          "example_quote": "// Reset display mode: Do not use parent view's display mode, shaded mode, draft quality, no edges displayed, precision cosmetic threads",
+          "example_file": "Set_Display_Mode_of_View_Example_CSharp.md"
+        },
+        {
+          "what": "示例前置：必须先在图形区选中一个视图，才能用 GetSelectedObject6 取到 IView 来调用。",
+          "example_quote": "1. Open a drawing and select a drawing view.",
+          "example_file": "Set_Display_Mode_of_View_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例都传 UseParent=False，与 Remarks「有父视图时其参数被忽略」的前置不冲突；Mode=3 即 swSHADED。"
+    }
+  ]
+}

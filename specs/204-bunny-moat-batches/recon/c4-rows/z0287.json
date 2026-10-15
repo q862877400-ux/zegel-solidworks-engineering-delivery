@@ -1,0 +1,107 @@
+{
+  "idx": 287,
+  "results": [
+    {
+      "member": "HeadClearanceType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks（按纪律跳过）；签名写 {get; set;}，NOTE 却称 get-only，三例都只读"
+    },
+    {
+      "member": "Height",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Height_of_Dome_Feature_Example_VB.md",
+        "Create_and_Modify_Dome_Feature_Example_CSharp.md",
+        "Create_and_Modify_Dome_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Height 乘 1000 后当 mm 打印，隐含该属性按米返回；成员页 Returns 未写单位",
+          "example_quote": "\" & swDome.Height * 1000#",
+          "example_file": "Change_Height_of_Dome_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只讲须 ModifyDefinition 才生效；三例都遵守，未见矛盾"
+    },
+    {
+      "member": "HiddenEdges",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Hide_and_Show_All_Edges_in_Drawing_View_Example_VB.md",
+        "Hide_and_Show_All_Ediges_in_Drawing_View_Example_CSharp.md",
+        "Hide_and_Show_All_Ediges_in_Drawing_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks（跳过）；三例都当 setter 用，把刚隐藏的边数组赋回去以显示"
+    },
+    {
+      "member": "Hide",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Move_Annotations_to_First_Annotation_View_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例对每个视图（含已激活的）都调 Hide，返回值随是否激活而变，未报错",
+          "example_quote": "//status dependent on whether the annotation view is activated\n//Only Unassigned Items is activated",
+          "example_file": "Move_Annotations_to_First_Annotation_View_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说已激活视图回 false，示例正是这么用的；三份 Non-manifold 例并未调用它"
+    },
+    {
+      "member": "HideBodies",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VB.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VBNET.md",
+        "Replace_Face_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks（跳过）；四例均零参数调用、无返回值，示例未再加任何前置"
+    },
+    {
+      "member": "HideBody",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Original_Body_from_Pattern_Body_Example_CSharp.md",
+        "Get_Original_Body_from_Pattern_Body_Example_VB.md",
+        "Get_Original_Body_from_Pattern_Body_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks（跳过）；三例都先 GetOriginalPatternedBody 再 HideBody(true)/(false)"
+    },
+    {
+      "member": "HideComponent2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_of_Visible_and_Hidden_Components_Example_CSharp.md",
+        "Get_Mass_Properties_of_Visible_and_Hidden_Components_Example_VB.md",
+        "Get_Mass_Properties_of_Visible_and_Hidden_Components_Example_VBNET.md",
+        "Undo_Hidden_Component_and_Fire_Undo_Post-Notify_Event_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出「先 SelectByID2 选中组件再调」的调用序，Remarks 只讲文档类型限制",
+          "example_quote": "boolstatus = swModelDocExt.SelectByID2(\"slip on weld flange-1@ball valve with flanges\", \"COMPONENT\", 0, 0, 0, false, 0, null, 0);\nswModel.HideComponent2();",
+          "example_file": "Get_Mass_Properties_of_Visible_and_Hidden_Components_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 限定装配/工程图；四例都在 .sldasm 上调用，与 Remarks 相容"
+    }
+  ]
+}

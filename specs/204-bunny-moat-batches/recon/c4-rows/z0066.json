@@ -1,0 +1,178 @@
+{
+  "idx": 66,
+  "results": [
+    {
+      "member": "CreateMate",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Cam_Follower_Mate_Example_CSharp.md",
+        "Create_Gear_Mate_Example_CSharp.md",
+        "Create_Hinge_Mate_Example_CSharp.md",
+        "Create_Limit_Angle_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "[[IMateFeatureData]] is the base interface for the following mate-specific interfaces (an asterisk indicates that pre-selection of mate entities during mate creation is supported):\n\n- [[IAngleMateFeatureData]]\n\n- [[ICamFollowerMateFeatureData]] *",
+          "example_quote": "            boolstatus = swModel.Extension.SelectByRay(0.00868857956595548, 0.0414144214960288, 0.0633435410960033, -0.520148774728431, -0.59141018013918, -0.616181183562315, 0.000468381592786756, 2, true, 1, 0);\n            boolstatus = swModel.Extension.SelectByRay(0.0313565896258297, 0.0296508617577445, 0.0442099188854286, 0.340524666870961, -0.380278973953885, -0.859901653226112, 0.000431713609895031, 2, true, 1, 0);",
+          "example_file": "Create_Limit_Angle_Mate_Example_CSharp.md",
+          "why": "Remarks 只给带星号接口标注可预选实体，IAngleMateFeatureData 无星号；该示例却对角度配合先 SelectByRay 预选两面再赋给 EntitiesToMate。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 CreateMateData 的返回值直接强转成具体配合接口，成员页描述的是先当基接口用、再强转的两步。",
+          "example_quote": "            CamFollowerMateFeatureData MateData = (CamFollowerMateFeatureData)assy.CreateMateData(9);",
+          "example_file": "Create_Cam_Follower_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出 EntitiesToMate 的整数组赋值写法，成员页只说去读各 mate-specific 接口的 Remarks。",
+          "example_quote": "            MateData.EntitiesToMate = (EntitiesToMateVar);",
+          "example_file": "Create_Gear_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "4 份示例都真调了 assy.CreateMate 且都转成 Feature，与 Returns 一致；分歧只在角度配合可否预选。"
+    },
+    {
+      "member": "CreateMateData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Cam_Follower_Mate_Example_CSharp.md",
+        "Create_Gear_Mate_Example_CSharp.md",
+        "Create_Hinge_Mate_Example_CSharp.md",
+        "Create_Limit_Angle_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 Type 的实际整数值与配合类型的对应（6=Angle、9=CamFollower、10=Gear、22=Hinge），成员页只列 swMateType_e 的名字。",
+          "example_quote": "            swMateData = (MateFeatureData)swAssy.CreateMateData(6); //Angle mate",
+          "example_file": "Create_Limit_Angle_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示返回值可直接强转为具体配合接口再设专属属性，无需先经基接口。",
+          "example_quote": "            GearMateFeatureData MateData = (GearMateFeatureData)swAssembly.CreateMateData(10);",
+          "example_file": "Create_Gear_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "示例传入的 6/9/10/22 对照 swMateType_e 均落在 Remarks 列出的 19 种之内，故未找到冲突。"
+    },
+    {
+      "member": "CreateMeasure",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ArcOption 的三个取值含义，成员页正文只有一句 Creates a measure tool.。",
+          "example_quote": "            //Can set this to 0\n            // 0 = center to center\n            // 1 = minimum distance\n            // 2 = maximum distance\n            swMeasure.ArcOption = 0;",
+          "example_file": "Measure_Selected_Entities_Example_CSharp.md"
+        },
+        {
+          "what": "示例说明各测量量用 == -1 判断「对当前选择不适用」，且 Calculate 返回 false 时提示所选实体组合无效。",
+          "example_quote": "                Debug.Print(\"Invalid combination of selected entities.\");",
+          "example_file": "Measure_Selected_Entities_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页没有 Remarks 段，按纪律跳过冲突判定，只登记示例比成员页更具体的部分。"
+    },
+    {
+      "member": "CreateMotionStudy",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Create_Motion_Studies_Example_VB.md",
+        "swmotionstudyapi__Create_Motion_Studies_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出一条成员页没有的前置：必须先引用 SOLIDWORKS MotionStudy 类型库。",
+          "example_quote": "' 3. Add a reference to the SOLIDWORKS MotionStudy type library.",
+          "example_file": "sldworksapi__Create_Motion_Studies_Example_VB.md"
+        },
+        {
+          "what": "示例说明管理器取自 ModelDocExtension.GetMotionStudyManager 且可能为 Nothing，新建算例自动命名为 Motion Study N。",
+          "example_quote": "    If (swMotionMgr Is Nothing) Then",
+          "example_file": "sldworksapi__Create_Motion_Studies_Example_VB.md"
+        }
+      ],
+      "note": "两份示例都真调 swMotionMgr.CreateMotionStudy()，对象同为 MotionStudyManager，非同名异对象。"
+    },
+    {
+      "member": "CreateNewBody",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Body_From_Selected_Faces_Example_CSharp.md",
+        "Create_Body_From_Selected_Faces_Example_VB.md",
+        "Create_Body_From_Selected_Faces_Example_VBNET.md",
+        "Create_Body_using_Trimmed_Surfaces_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 CreateBodyFromFaces(nSelCount, 面数组) 作构造方法；Remarks 只举 CreateTrimmedSurface。",
+          "example_quote": "            swNewBody = (Body2)swBody.CreateBodyFromFaces(nSelCount, (vFaceList));",
+          "example_file": "Create_Body_From_Selected_Faces_Example_CSharp.md"
+        },
+        {
+          "what": "示例把返回的 Body2 判空并给出失败提示，Remarks 未提该调用可能返回空。",
+          "example_quote": "                   MessageBox.Show(\"Could not create the new body.\");",
+          "example_file": "Create_Body_using_Trimmed_Surfaces_Example_CSharp.md"
+        }
+      ],
+      "note": "4 份示例都把 System.object 返回值强转 Body2，与 Returns 写法一致，未找到不能同时成立的说法。"
+    },
+    {
+      "member": "CreateNewWindow",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Arrange_Windows_Example_VB.md",
+        "Switch_Documents_Example_CSharp.md",
+        "Switch_Documents_Example_VB.md",
+        "Switch_Documents_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用时机：紧跟 OpenDoc6 之后为活动文档开客户端窗口，结果再经 swApp.Frame() 的 ModelWindows 枚举。",
+          "example_quote": "            //Open client model window containing the active document\n            swApp.CreateNewWindow();",
+          "example_file": "Switch_Documents_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；4 份示例调的都是 ISldWorks.CreateNewWindow 而非 IFrame 上的同名成员。"
+    },
+    {
+      "member": "CreatePCurve",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Space_Parameter_Curve_on_Surface_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "numKnots = NumCtrlPoints + Order",
+          "example_quote": "    Dim nKnot(9) As Double",
+          "example_file": "Create_Space_Parameter_Curve_on_Surface_Example_VB.md",
+          "why": "示例 Order=3、NumCtrlPoints=3，按 Remarks 应为 6 个节点；实际 Dim nKnot(9) 是 10 个，两侧不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 4 个整数塞进 2 个 double 的做法（Int2Rec/DoubleRec 加 LSet）；Remarks 只写「打包进 2 个 double」。",
+          "example_quote": "    LSet nDummy1 = i2rDim_Order\n    LSet nDummy2 = i2rNumCtrlPt_Period\n    nProp(0) = nDummy1.dValue\n    nProp(1) = nDummy2.dValue",
+          "example_file": "Create_Space_Parameter_Curve_on_Surface_Example_VB.md"
+        },
+        {
+          "what": "示例给出 Order 与 DimensionControlPoints 的取值含义（order=degree+1、有理 dim=3 无理 dim=2），Remarks 只列名字。",
+          "example_quote": "    ' Order of the curve 'order':\n    ' * The order of the curve = degree + 1",
+          "example_file": "Create_Space_Parameter_Curve_on_Surface_Example_VB.md"
+        }
+      ],
+      "note": "Props 四个整数的次序两侧一致，CtrlPtCoords 也吻合 3*3=9 个；只有 Knots 长度与 Remarks 的等式对不上。"
+    }
+  ]
+}

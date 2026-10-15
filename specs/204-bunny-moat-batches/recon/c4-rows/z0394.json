@@ -1,0 +1,113 @@
+{
+  "idx": 394,
+  "results": [
+    {
+      "member": "PrintFile",
+      "remarks_empty": false,
+      "examples_actually_used": ["Print_Drawing_as_High_Quality_Example_VB.md"],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IPrintSpecification::PrintToFile]] is set to true.",
+          "example_quote": "    printSpec.PrintToFile = False\n    Debug.Print \"    File: \" & printSpec.PrintFile",
+          "example_file": "Print_Drawing_as_High_Quality_Example_VB.md",
+          "why": "示例把 PrintToFile 设为 False 后紧接着读 PrintFile，与「仅当 PrintToFile 为 true 才有效」的前置不能同时成立。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "C#/VB.NET 版示例无 Debug.Print File 那行，故只有 VBA 例真正用到本属性。"
+    },
+    {
+      "member": "PrintOut2",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 Remarks 段，按硬纪律跳过；两份示例调的是 Extension 上的 PrintOut2（swDocExt.PrintOut2 / Model.Extension.PrintOut2），非本成员。"
+    },
+    {
+      "member": "PrintOut4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例两个字符串参数都传空串且 PrintSpecification 非空，仍打到默认打印机；Remarks 兜底句要求三者都未指定。",
+          "example_quote": "    ' Print the drawing to your default printer\n    swModelDocExt.PrintOut4 \"\", \"\", printSpec",
+          "example_file": "Print_Drawing_as_High_Quality_Example_VB.md"
+        },
+        {
+          "what": "示例在 PrintToFile=False 的同时还把 printSpec.PrinterQueue 置空串；Remarks 第 3 步只说「设置其它属性」，未点名。",
+          "example_quote": "            printSpec.PrinterQueue = \"\";\n            printSpec.PrintToFile = false;",
+          "example_file": "Print_Drawing_as_High_Quality_Example_CSharp.md"
+        },
+        {
+          "what": "示例在打印后调用 RestoreDefaults 与 ResetPrintRange 收尾；Remarks 只讲调用前序，没给调用后清理。",
+          "example_quote": "            printSpec.RestoreDefaults();\n            printSpec.ResetPrintRange();",
+          "example_file": "Print_Drawing_as_High_Quality_Example_CSharp.md"
+        }
+      ],
+      "note": "三例形态一致：GetPrintSpecification → 设属性 → PrintOut4(\"\",\"\",printSpec)，与 Remarks 前置无矛盾。"
+    },
+    {
+      "member": "PrintToFile",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面只有 Returns、无 Remarks 段，按硬纪律跳过；三例均把 PrintToFile 设为 False。"
+    },
+    {
+      "member": "PrintWhiteItemsBlack",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 Remarks 段，按硬纪律跳过；三例仅把该属性读回打印，从不写。"
+    },
+    {
+      "member": "Printable",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Layers_Example_CSharp.md",
+        "Get_Layers_Example_VB.md",
+        "Get_Layers_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三例只读不写：每轮先读 Visible 再读 Printable，从未赋过值，故未走官方那套三步写入序。",
+          "example_quote": "        Debug.Print \"    Visible        = \" & swLayer.Visible\n        Debug.Print \"    Printable      = \" & swLayer.Printable",
+          "example_file": "Get_Layers_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 讲的是写入序；示例展示的是读取序，两者不冲突。"
+    },
+    {
+      "member": "Printer",
+      "remarks_empty": false,
+      "examples_actually_used": ["Print_Drawing_and_Save_as_PDF_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先读 Model.Printer 取默认打印机名（Remarks 只讲被消费、没讲读），再给 PrintOut2 的打印机名与文件名两参都传空串。",
+          "example_quote": "    Debug.Print Model.Printer\n    Model.Extension.PrintOut2 vPageArray, copies, collate, \"\", \"\"",
+          "example_file": "Print_Drawing_and_Save_as_PDF_Example_VB.md"
+        }
+      ],
+      "note": "示例用 IModelDocExtension::PrintOut2 传空串，正落在 Remarks 列出的消费者里，无矛盾。"
+    }
+  ]
+}

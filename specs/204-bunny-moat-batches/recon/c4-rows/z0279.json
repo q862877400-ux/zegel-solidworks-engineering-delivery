@@ -1,0 +1,114 @@
+{
+  "idx": 279,
+  "results": [
+    {
+      "member": "GetVertices",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Maximum_Edge_and_Vertex_Gaps_Example_CSharp.md",
+        "Get_Maximum_Edge_and_Vertex_Gaps_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；Get_Sketch_Regions 调的是 ILoop2::GetVertices"
+    },
+    {
+      "member": "GetView",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份 Get_Arrow 示例调的是 IProjectionArrow::GetView，非 IBreakLine::GetView"
+    },
+    {
+      "member": "GetViewCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Break_Line_Data_Example_CSharp.md",
+        "Get_Break_Line_Data_Example_VB.md",
+        "Get_Break_Line_Data_Example_VBNET.md",
+        "Get_Centers_of_Mass_in_Drawing_Views_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Gets all of the number of all of views, including the number of sheets, in this drawing document.",
+          "example_quote": "Debug.Print(\"There are \" + count + \" views in this drawing including the sheet view.\");",
+          "example_file": "Get_Break_Line_Data_Example_CSharp.md",
+          "why": "Remarks 算例是 2 张图纸+8 视图=10，计入全部图纸；示例只按『含一张图纸』反推视图数（循环 count-2，共 count-1 次），多图纸时对不上。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "Get_Break_Line_Data 三语言版本写法一致；GetViewCount 未出现在 GetViews 示例"
+    },
+    {
+      "member": "GetViewDIBx64",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Names_of_Components_and_Window_Handle,_and_DIBSECTION_Example_CSharp.md",
+        "Get_Names_of_Components_and_Window_Handle,_and_DIBSECTION_Example_VB.md",
+        "Get_Names_of_Components_and_Window_Handle,_and_DIBSECTION_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没写的前置条件：模型视图只对可见文档存在",
+          "example_quote": "//NOTE: Model views exist only for visible model documents.",
+          "example_file": "Get_Names_of_Components_and_Window_Handle,_and_DIBSECTION_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 要求调用方释放 DIB 内存，三份示例只打印指针；VBA 版为有类型声明的早期绑定"
+    },
+    {
+      "member": "GetViewHWndx64",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Names_of_Components_and_Window_Handle,_and_DIBSECTION_Example_CSharp.md",
+        "Get_Names_of_Components_and_Window_Handle,_and_DIBSECTION_Example_VB.md",
+        "Get_Names_of_Components_and_Window_Handle,_and_DIBSECTION_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没写的前置条件：模型视图只对可见文档存在",
+          "example_quote": "//NOTE: Model views exist only for visible model documents.",
+          "example_file": "Get_Names_of_Components_and_Window_Handle,_and_DIBSECTION_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的早期绑定要求与示例一致：VBA 版声明 Dim swModView As SldWorks.ModelView"
+    },
+    {
+      "member": "GetViews",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Broken_Out_Section_Feature_Data_Example_CSharp.md",
+        "Get_Broken_Out_Section_Feature_Data_Example_VBNET.md",
+        "Get_Centers_of_Mass_in_Drawing_Views_Example_CSharp.md",
+        "Get_Centers_of_Mass_in_Drawing_Views_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "示例内层从下标 1 起、注释 skip the sheet view，与 Remarks『首元素即图纸』一致"
+    },
+    {
+      "member": "GetVirtualEdges",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Modify_Fillet_Weld_Bead_Example_CSharp.md",
+        "Modify_Fillet_Weld_Bead_Example_VB.md",
+        "Modify_Fillet_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Do not perform any operations on the returned edges as they are only temporary to help you decide which edges to keep for this weld bead.",
+          "example_quote": "    For i = LBound(ve) To UBound(ve)\n        boolstatus = ve(i).Select4(True, swSelData)\n        Set v1 = ve(i).GetStartVertex",
+          "example_file": "Modify_Fillet_Weld_Bead_Example_VB.md",
+          "why": "Remarks 明令不得对返回边做任何操作；示例却逐条 Select4 选中并读取起止顶点，三语言版本相同。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "示例传 FromFeature=False 取全部虚拟边，却未调 SetFaces/SetVirtualEdges"
+    }
+  ]
+}

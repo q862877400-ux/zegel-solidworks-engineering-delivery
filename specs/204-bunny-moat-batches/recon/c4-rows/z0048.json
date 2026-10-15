@@ -1,0 +1,136 @@
+{
+  "idx": 48,
+  "results": [
+    {
+      "member": "CompoundHoleType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Feature2_Example_VB.md",
+        "Get_DimXpert_Feature2_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取对象路径：按特征名 GetFeature 后转型为 IDimXpertCompoundHoleFeature",
+          "example_quote": "holeFeature = swDXPart.GetFeature(\"Simple Hole2\")",
+          "example_file": "Get_DimXpert_Feature2_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，只有 Returns；VB 与 VBNET 两例都读该属性，无可判冲突。"
+    },
+    {
+      "member": "CompressLossyTessellation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md",
+        "Attach_Files_to_MBD_3D_PDF_Example_VB.md",
+        "Attach_Files_to_MBD_3D_PDF_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出对象获取路径：须先由 ModelDocExtension.GetMBD3DPdfData 取到该对象",
+          "example_quote": "Set swMBDPdfData = swModelDocExt.GetMBD3DPdfData",
+          "example_file": "Attach_Files_to_MBD_3D_PDF_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；三例均为同一段代码的 C#/VB/VB.NET 翻译，口径一致。"
+    },
+    {
+      "member": "ConeParams",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Locate_Apex_of_Conical_Face_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "unit_diff",
+          "remarks_quote": "The half angle, origin, and radius parameters are in meters.",
+          "example_quote": "\" & vCone(7) * 57.3 & \" deg\"",
+          
+          "example_file": "Locate_Apex_of_Conical_Face_Example_VB.md",
+          "why": "Remarks 说 half angle 以米计；示例把 vCone(7) 当弧度，乘 57.3（度/弧度）后打印 deg，紧邻上一行还注明 1 radian = 57.3º。同一个元素不能既是米又是弧度。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：调用前必须先选中锥面",
+          "example_quote": "' 2. Select the conical face.",
+          "example_file": "Locate_Apex_of_Conical_Face_Example_VB.md"
+        },
+        {
+          "what": "示例独有的限制提示：锥面可能是被截断的",
+          "example_quote": "' NOTE: Conical face can be truncated.",
+          "example_file": "Locate_Apex_of_Conical_Face_Example_VB.md"
+        }
+      ],
+      "note": "同族 ConeParams2 页写 half angle 为 radians，与本页的 meters 自相矛盾；本页自身与示例冲突。"
+    },
+    {
+      "member": "ConeParams2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Parameters_of_Conical_Surface_Example_CSharp.md",
+        "Get_Parameters_of_Conical_Surface_Example_VB.md",
+        "Get_Parameters_of_Conical_Surface_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用前置：须先 IsCone 判定再取参数",
+          "example_quote": "If swSurf.IsCone Then",
+          "example_file": "Get_Parameters_of_Conical_Surface_Example_VB.md"
+        },
+        {
+          "what": "示例给出换算常数 57.3（弧度→度），成员页只写单位不写常数",
+          "example_quote": "' 1 radian = 180º/p = 57.295779513º or approximately 57.3º",
+          "example_file": "Get_Parameters_of_Conical_Surface_Example_VB.md"
+        }
+      ],
+      "note": "11 个元素、半角为弧度、其余为米，成员页与三份示例完全一致，无冲突。"
+    },
+    {
+      "member": "Configuration",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Routing_Component_Grouping_Options_for_BOM_Table_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取得 IBomFeature 的前置：须先 SelectByID2 选中 BOMFEATURE 再取对象",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Bill of Materials1\", \"BOMFEATURE\", 0, 0, 0, false, 0, null, 0);",
+          "example_file": "Get_and_Set_Routing_Component_Grouping_Options_for_BOM_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 Get_Weldment_Cut-list_* 调的是 WeldmentCutListFeature.Configuration，同名不同接口，已排除。"
+    },
+    {
+      "member": "ConfigurationManager",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Derived_Configurations_Example_VB.md",
+        "Add_Explode_Step_Example_VB.md",
+        "Are_the_Assembly_Configurations_Loaded_Example_CSharp.md",
+        "Are_the_Assembly_Configurations_Loaded_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：必须是已打开的零件或装配文档",
+          "example_quote": "' Preconditions: Open a part or assembly.",
+          "example_file": "Add_Derived_Configurations_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段。Add_Explode_Step 里 swModel 声明为 AssemblyDoc，但 ConfigurationManager 只在 IModelDoc2 上，仍算命中。"
+    },
+    {
+      "member": "ConfigurationName",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "Capture_3DView_* 调的是 IView3D::ConfigurationName，Create_Library_Feature_* 调的是 ILibraryFeatureData::ConfigurationName，四例全排除。"
+    }
+  ]
+}

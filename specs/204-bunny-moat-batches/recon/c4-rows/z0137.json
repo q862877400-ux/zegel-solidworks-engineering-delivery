@@ -1,0 +1,137 @@
+{
+  "idx": 137,
+  "results": [
+    {
+      "member": "FrameNumber",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 GetFrameAtIndex 的返回值再向下转型为具体类 PMIFrameData 才取属性；成员页只给接口 IPMIFrameData",
+          "example_quote": "swPMIFrameData = (PMIFrameData)swPMIDataGtol.GetFrameAtIndex(j);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks；页面自述只读，示例也只读，无矛盾。"
+    },
+    {
+      "member": "FramePerSecond",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Create_Motion_Studies_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只在 CreateAVIParameter 得到对象后赋值，并给出具体帧率 7.5；成员页未给取值示例",
+          "example_quote": "swSaveAVIData.FramePerSecond = 7.5",
+          "example_file": "sldworksapi__Create_Motion_Studies_Example_VB.md"
+        }
+      ],
+      "note": "四份示例全部命中且值同为 7.5；成员页无 Remarks。"
+    },
+    {
+      "member": "FrameState",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Mate_Controller_Example_VBNET.md",
+        "Create_Multiple_Undo_Command_Example_CSharp.md",
+        "Create_Multiple_Undo_Command_Example_VB.md",
+        "Insert_Grid_System_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "四份示例一律赋 swWindowMaximized 一档；成员页只笼统写 minimum, maximum, or normal",
+          "example_quote": "myModelView.FrameState = swWindowState_e.swWindowMaximized",
+          "example_file": "Create_Multiple_Undo_Command_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks；示例未演示最小化与普通态。"
+    },
+    {
+      "member": "FrameTop",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Grid_System_Feature_Example_CSharp.md",
+        "Insert_Grid_System_Feature_Example_VB.md",
+        "Insert_Grid_System_Feature_Example_VBNET.md",
+        "Insert_Sweep_Cut_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "四份示例都赋 0 后紧接最大化窗口；成员页只说像素值，未说与 FrameState 的赋值先后",
+          "example_quote": "myModelView.FrameTop = 0;",
+          "example_file": "Insert_Sweep_Cut_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks；四份示例值均为 0（像素）。"
+    },
+    {
+      "member": "FrameWidth",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Position_a_Document_Window_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "唯一示例先设 FrameLeft/FrameWidth/FrameTop/FrameHeight，最后才设 FrameState 为普通态",
+          "example_quote": "ModelView.FrameState\n= swWindowNormal",
+          "example_file": "Position_a_Document_Window_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks；该示例赋值被换行拆开。"
+    },
+    {
+      "member": "FreeLength",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Add_Spring_to_Motion_Study_Example_CSharp.md",
+        "sldworksapi__Add_Spring_to_Motion_Study_Example_VB.md",
+        "sldworksapi__Add_Spring_to_Motion_Study_Example_VBNET.md",
+        "swmotionstudyapi__Add_Spring_to_Motion_Study_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 SetEndPoints 后把 FreeLength 显式改写为 0.02；同段 CoilDiameter 0.0102、WireDiameter 0.00152 同为米制量级，成员页与 Remarks 均未给单位",
+          "example_quote": "swSpringFeat.FreeLength = 0.02;",
+          "example_file": "sldworksapi__Add_Spring_to_Motion_Study_Example_CSharp.md"
+        },
+        {
+          "what": "示例走 CreateDefinition→CreateFeature 的纯 API 路径，既不开属性管理器页，也不调 Remarks 提到的 UpdateToModelChanges",
+          "example_quote": "swFeat = swMotionStudy1.CreateFeature(swSpringFeat) as Feature;",
+          "example_file": "sldworksapi__Add_Spring_to_Motion_Study_Example_CSharp.md"
+        }
+      ],
+      "note": "本批唯一有 Remarks 的成员；两侧可并存，未找到不能同时成立的说法。"
+    },
+    {
+      "member": "FrictionOption",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_3DContact_Feature_Example_VB.md",
+        "Create_3D_Contact_Feature_Example_CSharp.md",
+        "Create_3D_Contact_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例只赋 swMotionContactFrictionFull，并按同一值分支决定读静态还是动态摩擦系数",
+          "example_quote": "If swContFeat.FrictionOption = swMotionContactFrictionType_e.swMotionContactFrictionFull Then",
+          "example_file": "Create_3DContact_Feature_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks；示例未演示 Off 与 Dynamic 两档。"
+    }
+  ]
+}

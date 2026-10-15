@@ -1,0 +1,123 @@
+{
+  "idx": 247,
+  "results": [
+    {
+      "member": "GetSFSymbols",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先调 GetSFSymbolCount 并要求 count>0 才调本方法；成员页未给该前置",
+          "example_quote": "count = swView.GetSFSymbolCount",
+          "example_file": "Get_Annotations_Array_Example_VB.md"
+        },
+        {
+          "what": "示例把返回值当 SAFEARRAY 用下标遍历（0..GetUpperBound(0)），成员页只写 Array of symbols",
+          "example_quote": "Object[] Annotations = (Object[])swView.GetSFSymbols();",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只说替代 GetFirstSFSymbol+GetNext，与示例的计数守卫、数组下标法均可同时成立。"
+    },
+    {
+      "member": "GetSMBoundaryBoxDisplayData2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Number_of_Lines_Flat-pattern_Drawing_View_Boundary-box_Sketch_Example_CSharp.md",
+        "Get_Number_of_Lines_Flat-pattern_Drawing_View_Boundary-box_Sketch_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过对比；两份示例均真实调用该成员。"
+    },
+    {
+      "member": "GetSafeArrayUtility",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Object_s_Persistent_Reference_ID_Example_CPlusPlus_COM.md",
+        "Get_Scale_of_Each_Model_View_Example_CPlusPlus_COM.md",
+        "Get_Spline_Points_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过对比；三份 C++ COM 示例均以 out 参数取该对象。"
+    },
+    {
+      "member": "GetSafeEntity",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Faces_Affected_by_Scale_Feature_Example_VB.md",
+        "Use_Safe_Entity_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「不跨会话有效」归到安全实体本身；成员页只说 IsSafe 属性不跨会话",
+          "example_quote": "is not valid across sessions of SOLIDWORKS Design.",
+          "example_file": "Use_Safe_Entity_Example_VB.md"
+        },
+        {
+          "what": "示例的前置：先在图形区选中顶点/边/面/特征，再取安全实体；成员页未列前置",
+          "example_quote": "2. Select one of these entities in the graphics area:",
+          "example_file": "Use_Safe_Entity_Example_VB.md"
+        },
+        {
+          "what": "示例说明面引用只在回滚状态有效，须先 AccessSelections；成员页未提",
+          "example_quote": "bRet = swScaleFeat.AccessSelections(swModel, Nothing)",
+          "example_file": "Get_Faces_Affected_by_Scale_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 与两份示例在「跨重建有效」上一致；示例额外给出前置与跨会话口径。"
+    },
+    {
+      "member": "GetSaveBodiesCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Number_of_Bodies_in_Save_Bodies_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过对比；该份示例真实调用 GetSaveBodiesCount。"
+    },
+    {
+      "member": "GetSaveFlag",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Determine_if_Document_is_Dirty_Example_VB.md",
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出把标志置脏的具体操作：ConvertFormat 成功后文档应为 dirty 并回 True",
+          "example_quote": "if successful, converted Gtol document",
+          "example_file": "Get_Gtol_Frame_Information_Example_VBNET.md"
+        },
+        {
+          "what": "示例示范遍历所有打开文档逐个读该标志（GetFirstDocument/GetNext）；成员页未提遍历",
+          "example_quote": "Set swModel = swModel.GetNext",
+          "example_file": "Determine_if_Document_is_Dirty_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的只读/旧版本/子装配三条与三份示例均不冲突；示例只补了具体置脏场景与遍历法。"
+    },
+    {
+      "member": "GetSaveTo3DExperienceOptions",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Open_And_Save_3DEXPERIENCE_Document_Example_CSharp.md",
+        "Open_And_Save_3DEXPERIENCE_Document_Example_VB.md",
+        "Open_And_Save_3DEXPERIENCE_Document_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过对比；三份示例均真实调用该成员。"
+    }
+  ]
+}

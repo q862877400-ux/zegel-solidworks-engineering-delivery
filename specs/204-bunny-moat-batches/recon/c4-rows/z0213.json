@@ -1,0 +1,126 @@
+{
+  "idx": 213,
+  "results": [
+    {
+      "member": "GetLinkedDisplayStates",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IRenderMaterial.GetLinkedDisplayStates 页无 ## Remarks 段 ⇒ 按规则跳过；示例第 116 行确实调用它。"
+    },
+    {
+      "member": "GetLinkedMate",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "This mate and its linked mate are siblings in a Hole Set, which is defined as two concentric mates between the same two components.",
+          "example_quote": "swMate = (Mate2)swAssembly.AddConcentricMateWithTolerance((int)swMateAlign_e.swMateAlignALIGNED, (int)swConcentricAlignmentType_e.swConcentricAlignSymmetric, false, 0, out errors);",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md",
+          "why": "Remarks 把 linked mate 的存在语境定成 Hole Set；示例里这一对配合是 AddConcentricMateWithTolerance 建的 misaligned symmetric 同心配合，全文无 Hole Set。两侧对「linked mate 属于哪种配合」的说法不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例补出取 Mate2 的前置调用序：先按 MATE 选中配合特征、取 Feature、再 GetSpecificFeature2；成员页只说返回 [[Mate]]，未写怎么拿到它。",
+          "example_quote": "swMate = (Mate2)swFeature.GetSpecificFeature2();",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "VBNET 版与 C# 版同型，均只在 misaligned symmetric 配合上取 linked mate；未另核第三方写法。"
+    },
+    {
+      "member": "GetLinkedText",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Linked_Dimensions_Example_VB.md",
+        "Unlink_Dimensions_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IDisplayDimension.GetLinkedText 页无 ## Remarks 段 ⇒ 按规则跳过；两份示例分别第 104/106、54 行调用它。"
+    },
+    {
+      "member": "GetLocalizedMenuName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Language_and_Localized_Menu_Names_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回串带助记符（&File、Ven&tana、&?），比 Remarks 的「String containing the localized menu name」更具体。",
+          "example_quote": "'File Menu = &File'",
+          "example_file": "Get_Language_and_Localized_Menu_Names_Example_VB.md"
+        },
+        {
+          "what": "示例只读取并打印，从不调用 Remarks 点名的 AddMenu/AddMenuItem3 ⇒ 那条调用次序在示例里未被演示，也未被违反。",
+          "example_quote": "Debug.Print \" File Menu = \" + swApp.GetLocalizedMenuName(swFileMenu)",
+          "example_file": "Get_Language_and_Localized_Menu_Names_Example_VB.md"
+        }
+      ],
+      "note": "入参用裸符号常量（swFileMenu 等），与 Remarks 的 swMenuIdentifiers_e 口径一致，不构成冲突。"
+    },
+    {
+      "member": "GetLockRowHeight",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Components_in_Each_BOM_Table_Row_Example_CSharp.md",
+        "Get_Components_in_Each_BOM_Table_Row_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Index 的可用范围定死为 0..RowCount-1，并与 GetRowHeight 配对逐行打印；Remarks 只说先取 RowCount 或 TotalRowCount。",
+          "example_quote": "RowLocked = swTableAnn.GetLockRowHeight(J);",
+          "example_file": "Get_Components_in_Each_BOM_Table_Row_Example_CSharp.md"
+        }
+      ],
+      "note": "示例取的是 RowCount（可见行），正是 Remarks 给的两个选项之一 ⇒ 两侧一致。"
+    },
+    {
+      "member": "GetLoop",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Determine_Type_of_Face_Example_VB.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_CSharp.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_VB.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "ICoEdge.GetLoop 页无 ## Remarks 段 ⇒ 按规则跳过；四份示例均按 CoEdge 对象调用它。"
+    },
+    {
+      "member": "GetLoopCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Find_Outside_Edges_of_Face_Example_VB.md",
+        "Get_Loops_Example_CSharp.md",
+        "Get_Loops_Example_VB.md",
+        "Get_Loops_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 GetLoopCount 当纯计数打印，遍历另走 GetFirstLoop + Loop2::GetNext；这层用法比 Remarks 只讲「为 IGetLoops 定量数组尺寸」更宽。",
+          "example_quote": "Debug.Print \" LoopCount = \" & swFace.GetLoopCount",
+          "example_file": "Find_Outside_Edges_of_Face_Example_VB.md"
+        },
+        {
+          "what": "示例证明只靠 GetFirstLoop/GetNext 就能走完全部 loop，IGetLoops 一次都没出现 ⇒ Remarks 的调用次序未被演示，也未被违反。",
+          "example_quote": "Set swLoop = swFace.GetFirstLoop",
+          "example_file": "Get_Loops_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都调 GetLoopCount，但都不调 IGetLoops ⇒ 无矛盾，冲突留空。"
+    }
+  ]
+}

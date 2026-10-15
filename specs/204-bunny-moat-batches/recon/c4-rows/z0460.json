@@ -1,0 +1,172 @@
+{
+  "idx": 460,
+  "results": [
+    {
+      "member": "SetTransformAndSolve2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VB.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VBNET.md",
+        "Create_Belt_Chain_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 XformIn 的造法：先填 16 元 TransformData，再经 swMathUtil.CreateTransform 传入；Remarks 只说收 IMathTransform，没说怎么造。",
+          "example_quote": "Set swMathUtil = swApp.GetMathUtility()\n    Set swTransform = swMathUtil.CreateTransform((TransformDataVariant))",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VB.md"
+        },
+        {
+          "what": "被搬动的 IComponent2 靠 SelectByID2(\"COMPONENT\") 选中后用 GetSelectedObjectsComponent4(1, -1) 取出，Remarks 未给这条取法。",
+          "example_quote": "Set swComp = swSelectionManager.GetSelectedObjectsComponent4(1, -1)\n    status = swComp.SetTransformAndSolve2(swTransform)",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VB.md"
+        }
+      ],
+      "note": "成员页首行标 Obsolete；四份示例仍全部调用被取代的 SetTransformAndSolve2。"
+    },
+    {
+      "member": "SetTrimToolMember",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；示例实参取自 complexCrnr.GetBodyTrimMembers 的第 0 个元素。"
+    },
+    {
+      "member": "SetTwistAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md",
+        "Insert_Swept-boss_Feature_Example_VB.md",
+        "Insert_Swept-cut_Feature_Using_Tool_Body_Example_VB.md",
+        "Insert_Swept-cut_Thin-walled_Feature_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method is valid only if [[ISweepFeatureData::TwistControlType]] is set to [[swTwistControlType_e]].swTwistControlConstantTwistAlongPath.",
+          "example_quote": "swSweep.TwistControlType = 0\n    swSweep.SetTwistAngle 0#",
+          "example_file": "Insert_Swept-boss_Feature_Example_VB.md",
+          "why": "示例先设 TwistControlType=0（枚举表里 0 是 swTwistControlFollowPath），再调 SetTwistAngle；而 Remarks 规定的唯一有效值是 8。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method is valid only if [[ISweepFeatureData::TwistControlType]] is set to [[swTwistControlType_e]].swTwistControlConstantTwistAlongPath.",
+          "example_quote": "swSweep.TwistControlType = 0\n    swSweep.SetTwistAngle 0#",
+          "example_file": "Insert_Swept-cut_Thin-walled_Feature_Example_VB.md",
+          "why": "同一形态：TwistControlType=0 即 swTwistControlFollowPath，不等于 Remarks 点名的 swTwistControlConstantTwistAlongPath(8)。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method is valid only if [[ISweepFeatureData::TwistControlType]] is set to [[swTwistControlType_e]].swTwistControlConstantTwistAlongPath.",
+          "example_quote": "swSweep.TwistControlType = 0\n    swSweep.SetTwistAngle 0#",
+          "example_file": "Insert_Swept-cut_Feature_Using_Tool_Body_Example_VB.md",
+          "why": "同样先设 0 再调用；按 Remarks 该状态下 SetTwistAngle 不成立。四份示例里只有双向扭转那份设了 8。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "双向扭转示例给出本方法的实参形态：31.12217（弧度，约 4.95 转），并配 D1ReverseTwistDir=False。",
+          "example_quote": "swSweep.SetTwistAngle 31.12217 'Radians",
+          "example_file": "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例表明 Direction=1（双向）时本方法管方向 1，方向 2 另用 SetD2TwistAngle，两值不同。",
+          "example_quote": "swSweep.Direction = 1 ' Bidirectional sweep\n    swSweep.PathAlignmentType = 0\n    swSweep.TwistControlType = 8\n    swSweep.SetTwistAngle 31.12217 'Radians\n    swSweep.D1ReverseTwistDir = False\n    swSweep.SetD2TwistAngle 12.139 'Radians",
+          "example_file": "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都真调 SetTwistAngle。单位无冲突：Angle 弧度与 Remarks 及示例注释一致。"
+    },
+    {
+      "member": "SetUIState",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Display_of_Item_in_Feature_Manager_Example_CPlusPlus_COM.md",
+        "Hide_Feature_in_FeatureManager_Design_Tree_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C++ 示例改完状态后调的是各文档类型自己的 EditRebuild，按 part/assembly/drawing 分三支，不是成员页点名的 IModelDoc2::EditRebuild3。",
+          "example_quote": "hres = pPartDoc->EditRebuild();",
+          "example_file": "Display_of_Item_in_Feature_Manager_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "VBA 示例的 Postconditions 点明隐藏只作用于设计树，特征在图形区仍可见；Remarks 没提图形区。",
+          "example_quote": " 1. Hides the selected feature in the FeatureManager\n' design tree, but it is still visible in the\n' graphics area.",
+          "example_file": "Hide_Feature_in_FeatureManager_Design_Tree_Example_VB.md"
+        }
+      ],
+      "note": "两份示例都真调 SetUIState；VBA 例与 Remarks 完全一致，未找到不能同时成立的说法。"
+    },
+    {
+      "member": "SetUnits",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Units_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "If the UseDoc argument is true, then the display dimension unit information follows the document settings, and SOLIDWORKS ignores the remaining arguments.",
+          "example_quote": "hres = pModelDoc->SetUnits(swINCHES, swFRACTION, denom, unitArray[3], FALSE);",
+          "example_file": "Get_and_Set_Units_Example_CPlusPlus_COM.md",
+          "why": "示例在 LPMODELDOC2 上调 SetUnits、首参是枚举且无 UseDoc；本成员首参是 UseDoc 布尔共 5 参，是两个不同成员。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "该示例官方只挂在 IModelDoc2::SetUnits 页下；IModelDoc2 版签名是 void SetUnits(short,short,short,short,bool)。"
+    },
+    {
+      "member": "SetUnits2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Rounding_of_Decimal_Units_in_Display_Dimensions_Example_CSharp.md",
+        "Set_Rounding_of_Decimal_Units_in_Display_Dimensions_Example_VB.md",
+        "Set_Rounding_of_Decimal_Units_in_Display_Dimensions_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 UseDoc=False、UType=swFEETINCHES、FractBase=swDECIMAL 下把 FractDenom 传 0，说明十进制模式下分母实参被忽略。",
+          "example_quote": "longstatus = swDispDim.SetUnits2(False, swLengthUnit_e.swFEETINCHES, swFractionDisplay_e.swDECIMAL, 0, False, swUnitsDecimalRounding_e.swUnitsDecimalRounding_Truncate);",
+          "example_file": "Set_Rounding_of_Decimal_Units_in_Display_Dimensions_Example_VB.md"
+        },
+        {
+          "what": "示例改完单位后调 SetDual2(False, True) 触发刷新，没有按成员页去调 IModelDoc2::GraphicsRedraw2。",
+          "example_quote": "Call swDispDim.SetDual2(False, True)",
+          "example_file": "Set_Rounding_of_Decimal_Units_in_Display_Dimensions_Example_VBNET.md"
+        }
+      ],
+      "note": "三份示例调用一致，且满足 Remarks 全部 valid only if 条件（UseDoc=false、UType=swFEETINCHES、FractBase=swDECIMAL）。"
+    },
+    {
+      "member": "SetUseMisalignedDeviationDocumentProperty",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VB.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例顺序更具体：先读 swLinkedMate 的当前偏差，再把文档属性开关置 False，最后才设本地最大值 0.102。",
+          "example_quote": "'Do not use document property value for misalignment deviation\n        swMate.SetUseMisalignedDeviationDocumentProperty False",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VB.md"
+        },
+        {
+          "what": "示例把本方法调在 swMate 上，而读偏差与设对齐类型在 swLinkedMate 上，即两个配对配合各司其职。",
+          "example_quote": "swLinkedMate.SetConcentricAlignmentType (swConcentricAlignmentType_e.swConcentricAlignSymmetric)",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例调用一致，未找到与 Remarks 矛盾之处；Remarks 的失败判据在示例里未被触发。"
+    }
+  ]
+}

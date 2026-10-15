@@ -1,0 +1,132 @@
+{
+  "idx": 485,
+  "results": [
+    {
+      "member": "SunLightInformation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Sunlight_Source_Property_Values_Example_VB.md",
+        "Get_and_Set_Sunlight_Source_Property_Values_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页全文仅 10 行，无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "Supplement",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks；且 job 列的 4 份示例都调的是同名的 IDimXpertAngleBetweenDimTol.Supplement，不是本接口。"
+    },
+    {
+      "member": "SupplementaryAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Angle_to_Supplementary_Angle_Example_CSharp.md",
+        "Change_Angle_to_Supplementary_Angle_Example_VB.md",
+        "Change_Angle_to_Supplementary_Angle_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说「选中的角度标注」；示例给出取得该对象的完整调用序：按名字 SelectByID2 选中 DIMENSION 后取 GetSelectedObject6(1,-1)。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"RD1@Drawing View1\", \"DIMENSION\", 0.115166498498499, 0.167429477477477, 0, false, 0, null, 0);",
+          "example_file": "Change_Angle_to_Supplementary_Angle_Example_CSharp.md"
+        },
+        {
+          "what": "示例把对象限定为图纸视图中的引用标注（RD1@Drawing View1），比 Remarks 的泛指「angular dimension」更窄。",
+          "example_quote": "swDisplayDimension = (DisplayDimension)swSelectionMgr.GetSelectedObject6(1, -1);",
+          "example_file": "Change_Angle_to_Supplementary_Angle_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 >180/<180 映射表在示例里无对应断言，不构成冲突。"
+    },
+    {
+      "member": "SupportingFaces",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Sheet_Metal_Gusset_Feature_Example_CSharp.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_VB.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页 Remarks 只是指向接口的交叉引用；示例给出可写的具体形态：长度 1 的 Face2 强类型数组。",
+          "example_quote": "Face2[] bendfaces = new Face2[1];",
+          "example_file": "Insert_Sheet_Metal_Gusset_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例明示腿可由两个平面换成单个弯曲面 —— 比 Returns 的「one or two faces」更具体。",
+          "example_quote": "//c. Modify legs of gusset #2: select one bend face instead of two flat faces",
+          "example_file": "Insert_Sheet_Metal_Gusset_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "VB 版声明 bendfaces(0 To 1) 只选中 1 个面，末位为空；与 C# 的 Face2[1] 不同形。"
+    },
+    {
+      "member": "SuppressNewComponentModels",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Configuration_Properties_Example_VB.md",
+        "Traverse_Hierarchy_of_Configurations_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property applies only to assembly configurations. SOLIDWORKS always returns false when you get this property on a part configuration. Setting this property on a part configuration has no effect.",
+          "example_quote": "1. Open a part that contains one or more configurations.",
+          "example_file": "Change_Configuration_Properties_Example_VB.md",
+          "why": "示例前置写明打开 part，且在第 63 行读取该属性；Remarks 明写零件配置上恒为 false、设置无效 —— 示例演示的正是被排除的一类。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "另一份示例前置写「part or assembly」，不构成冲突，故只取 Change_Configuration_Properties 这一份。"
+    },
+    {
+      "member": "SuppressNewFeatures",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Configuration_Properties_Example_VB.md",
+        "Traverse_Hierarchy_of_Configurations_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property applies only to inactive configurations. This property applies to new mates and features for assembly configurations.",
+          "example_quote": "1. Open a part that contains one or more configurations.",
+          "example_file": "Change_Configuration_Properties_Example_VB.md",
+          "why": "Remarks 把适用范围限定为装配配置的新配合/新特征，示例的前置与 Dim Part As SldWorks.PartDoc 却是零件，两边给的文档类型前提不一致。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "Remarks 未说零件配置上读取会返回什么，故只报适用范围口径不一致，不报恒假。"
+    },
+    {
+      "member": "SuppressView",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Auto_Insert_Center_Marks_Example_CSharp.md",
+        "Auto_Insert_Center_Marks_Example_VB.md",
+        "Auto_Insert_Center_Marks_Example_VBNET.md",
+        "Display_Hidden_Lines_in_Drawing_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只讲依赖视图不抑制；示例给出调用序：须先 SelectByID2 选中 DRAWINGVIEW，并需再选一次才能 UnsuppressView 还原。",
+          "example_quote": "boolstatus = ModelDocExt.SelectByID2(\"Drawing View9\", \"DRAWINGVIEW\", 0, 0, 0, False, 0, Nothing, 0)",
+          "example_file": "Auto_Insert_Center_Marks_Example_VB.md"
+        },
+        {
+          "what": "示例说明被抑制的视图仍可 ActivateView 并接收 AutoInsertCenterMarks2，且配 HideShowDrawingViews 显示抑制处的 X。",
+          "example_quote": "swDraw.HideShowDrawingViews();",
+          "example_file": "Display_Hidden_Lines_in_Drawing_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例均直接调用 SuppressView；两处调用的视图都是独立视图，未与「依赖视图不抑制」相抵。"
+    }
+  ]
+}

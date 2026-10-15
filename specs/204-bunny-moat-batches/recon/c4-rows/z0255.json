@@ -1,0 +1,126 @@
+{
+  "idx": 255,
+  "results": [
+    {
+      "member": "GetSense",
+      "remarks_empty": true,
+      "examples_actually_used": ["Select_Tangent_Edges_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过；页内另列的 Get_Sense_for_Each_Coedge 示例本任务未给。"
+    },
+    {
+      "member": "GetSensorFeatureData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Sensor_Example_VB.md",
+        "Get_and_Set_Sensor_Example_CSharp.md",
+        "Get_and_Set_Sensor_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "调用前须在 ISensor 对象自身上判定类型：三份示例一致用 TypeOf/is 守卫；成员页只说「只支持测量传感器」，未说怎么守",
+          "example_quote": "If TypeOf swSensor Is SldWorks.DimensionSensorData Then",
+          "example_file": "Get_and_Set_Sensor_Example_VB.md"
+        },
+        {
+          "what": "返回值的具体类型是 DimensionSensorData（转型后直接取 SensorValue）；成员页 Returns 只写「sensor feature data」",
+          "example_quote": "swDimSensor = (DimensionSensorData)swSensor.GetSensorFeatureData();",
+          "example_file": "Get_and_Set_Sensor_Example_CSharp.md"
+        },
+        {
+          "what": "前置更具体：先在特征树 Sensors 文件夹选中该传感器，再由 GetSpecificFeature2 得到 ISensor；成员页无前置",
+          "example_quote": "' 4. Select the Measurement (dimension) sensor\n' of 2.5 inches in the Sensors folder in the\n' FeatureManager design tree.",
+          "example_file": "Get_and_Set_Sensor_Example_VB.md"
+        }
+      ],
+      "note": "三份示例与 Remarks 同侧：都只对测量（尺寸）传感器调用；无冲突。"
+    },
+    {
+      "member": "GetSheetCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Custom_Check_Document_Example_VB.md",
+        "Print_Drawing_Document_to_File_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "计数可直接当 0 基循环上界用（0..count-1），页号另需 +1 转 1 基；成员页只说它用来给 IGetSheetNames 定尺寸",
+          "example_quote": "For i = 0 To swDraw.GetSheetCount - 1",
+          "example_file": "Print_Drawing_Document_to_File_Example_VB.md"
+        },
+        {
+          "what": "示例用该计数自建页名数组 ReDim，全程未调 IGetSheetNames/GetSheetNames（改用 SheetNext 逐页取名）",
+          "example_quote": "' Set size of the array\n    ReDim Preserve SheetNames(nSheetCount) As String",
+          "example_file": "Custom_Check_Document_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的调用序要求只约束「调 IGetSheetNames 之前」，两份示例不违反；无冲突。"
+    },
+    {
+      "member": "GetSheetMetalCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Sheet_Metal_Folder_Feature_Example_VB.md",
+        "Get_Sheet_Metal_Folder_Feature_Example_CSharp.md",
+        "Get_Sheet_Metal_Folder_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过。三份示例均与 GetSheetMetalFolder/GetSheetMetals 连用。"
+    },
+    {
+      "member": "GetSheetMetalFolder",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Sheet_Metal_Folder_Feature_Example_VB.md",
+        "Get_Sheet_Metal_Folder_Feature_Example_CSharp.md",
+        "Get_Sheet_Metal_Folder_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过。三份示例前置同为「打开有多实体钣金文件夹的零件」。"
+    },
+    {
+      "member": "GetSheetMetalObjectsByPersistReference",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_and_Get_Sheet_Metal_Part's_Persistent_Reference_IDs_Example_CSharp.md",
+        "Set_and_Get_Sheet_Metal_Part's_Persistent_Reference_IDs_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "PersistId 实为 byte[]（由 GetFlattenSheetMetalPersistReference 转出）；成员页 Parameters 未给形参类型",
+          "example_quote": "pid = (byte[])swModelDocExt.GetFlattenSheetMetalPersistReference(swFace);",
+          "example_file": "Set_and_Get_Sheet_Metal_Part's_Persistent_Reference_IDs_Example_CSharp.md"
+        },
+        {
+          "what": "返回值必须判空后再遍历（C# 判 null、VBA 判 IsEmpty）；成员页 Returns 未给失败时的形态",
+          "example_quote": "If Not (IsEmpty(swObjList)) Then",
+          "example_file": "Set_and_Get_Sheet_Metal_Part's_Persistent_Reference_IDs_Example_VB.md"
+        },
+        {
+          "what": "返回数组的元素可能为 null，表示该实体 PID 换算失败；成员页未提逐元素失败",
+          "example_quote": "if (selObj == null)\n                    {\n                        Debug.Print(\"Persistent reference ID conversion error.\");",
+          "example_file": "Set_and_Get_Sheet_Metal_Part's_Persistent_Reference_IDs_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只是转引文档链接，无可冲突断言；示例的 PID 来源与页一致。"
+    },
+    {
+      "member": "GetSheetMetals",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Sheet_Metal_Folder_Feature_Example_VB.md",
+        "Get_Sheet_Metal_Folder_Feature_Example_CSharp.md",
+        "Get_Sheet_Metal_Folder_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过。示例把返回当 Variant/object[] 用 LBound/UBound 遍历。"
+    }
+  ]
+}

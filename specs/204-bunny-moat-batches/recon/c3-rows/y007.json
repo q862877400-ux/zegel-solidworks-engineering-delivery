@@ -1,0 +1,89 @@
+{
+  "idx": 7,
+  "results": [
+    {
+      "name": "geometry_and_delivery_review",
+      "level": "verified",
+      "members_found": [
+        "GetTitle",
+        "GetPathName",
+        "GetType",
+        "FirstFeature",
+        "GetNextFeature",
+        "GetTypeName2",
+        "Name",
+        "ActiveDoc",
+        "ActivateDoc3",
+        "ActivateDoc2",
+        "SelectionManager",
+        "ClearSelection2",
+        "GetSelectedObjectCount2",
+        "ActiveView",
+        "GraphicsRedraw",
+        "ViewZoomtofit2",
+        "ShowNamedView2",
+        "SaveBMP",
+        "ForceRebuild3",
+        "GetPartBox",
+        "GetBodies2",
+        "GetFaces",
+        "GetSurface",
+        "IsCylinder",
+        "CylinderParams",
+        "FaceInSurfaceSense",
+        "GetArea",
+        "GetLoopCount",
+        "GetEdgeCount",
+        "GetModeler"
+      ],
+      "examples_used": [
+        "Save_Model_as_Bitmap_Example_CSharp.md",
+        "Get_Part_Bounding_Box_Example_VB.md",
+        "Select_Plane_Example_VBNET.md"
+      ],
+      "preconditions": [
+        {
+          "text": "SaveBMP 前置：模型文档须已打开（示例打开 cstick.sldprt，并从 swApp.ActiveDoc 取模型）",
+          "from": "Save_Model_as_Bitmap_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetPartBox 前置逐字：' Preconditions: Part is open.'（零件须处于打开状态）",
+          "from": "Get_Part_Bounding_Box_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetPartBox 官方注明返回近似包围盒，cannot be relied upon to be used in calculations",
+          "from": "Get_Part_Bounding_Box_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "示例分两轮调 GetBodies2(swSolidBody, False) 与 GetBodies2(swSheetBody, False) 遍历体",
+          "from": "Get_Part_Bounding_Box_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "遍历 FirstFeature/GetNextFeature 前置逐字：' Preconditions: Open a new part document.'",
+          "from": "Select_Plane_Example_VBNET.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "唯一 evidence 是一句 pytest 调用，不含任何官方示例前置字样，5 条前置全未覆盖。BMP 与包围盒两例都要求文档已打开。"
+    },
+    {
+      "name": "dfm_checks",
+      "level": "verified",
+      "members_found": [],
+      "examples_used": [],
+      "preconditions": [],
+      "verdict": "cannot_tell",
+      "note": "cadstudio_check_dfm 走 scripts/dfm_review.write_dfm_report，load_automation=False，零 COM 成员，故无官方示例可查，前置无从判定。"
+    }
+  ]
+}

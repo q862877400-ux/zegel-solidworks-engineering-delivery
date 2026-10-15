@@ -1,0 +1,122 @@
+{
+  "idx": 284,
+  "results": [
+    {
+      "member": "GridBubble",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过示例比对（examples 未读）。"
+    },
+    {
+      "member": "GridLineWeight",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过示例比对（examples 未读）。"
+    },
+    {
+      "member": "GroupComponentInstances",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过示例比对（examples 未读）。"
+    },
+    {
+      "member": "GroupCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Center_Marks_Set_Example_CSharp.md",
+        "Get_and_Set_Center_Marks_Set_Example_VBA.md",
+        "Get_and_Set_Center_Marks_Set_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "use this property to get a range of valid values for [[ICenterMark::GetExtendedLength]]'s and [[ICenterMark::SetExtendedLength]]'s GroupID parameter. You can use a value from 0 to the number of center marks in a center mark set for the GroupID parameter.",
+          "example_quote": "Debug.Print(\" Number in set: \" + (nbrInGroup - 1));",
+          "example_file": "Get_and_Set_Center_Marks_Set_Example_CSharp.md",
+          "why": "Remarks：GroupCount 即 set 内个数、GroupID 可到 GroupCount；示例把 GroupCount-1 当 Number in set。差 1。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说用 IsGrouped 判定是否在 set 内；示例给出具体步骤与选取写法（删一个后按视图限定名选 CENTERMARKSYM）",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"DetailItem217@Drawing View1\", \"CENTERMARKSYM\", 0.650520142546246, 0.417728685527748, 0, false, 0, null, 0);",
+          "example_file": "Get_and_Set_Center_Marks_Set_Example_CSharp.md"
+        }
+      ],
+      "note": "C#/VBA/VB.NET 三份示例写法完全一致；姊妹页 GetExtendedLength 也写 GroupID 可到 GroupCount。"
+    },
+    {
+      "member": "Groups",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Structural_Member_Group_Example_CSharp.md",
+        "Create_Structural_Member_Group_Example_VB.md",
+        "Create_Structural_Member_Group_Example_VBNET.md",
+        "Insert_Structural_Weldment_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "读 Groups 前须选中 BODYFEATURE 构件、GetDefinition，包在 AccessSelections / ReleaseSelectionAccess 之间",
+          "example_quote": "swWeldFeatData.AccessSelections(Part, null);",
+          "example_file": "Create_Structural_Member_Group_Example_CSharp.md"
+        },
+        {
+          "what": "示例只读 Groups，从不写；组数组在 InsertStructuralWeldment3/4 时由 StructuralMemberGroup[] 传入",
+          "example_quote": "vGroups = (Object[])swWeldFeatData.Groups;",
+          "example_file": "Create_Structural_Member_Group_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 GetGroupsCount()>0 判据与示例先读 GetGroupsCount 再读 Groups 一致，未见冲突。"
+    },
+    {
+      "member": "GuideCurves",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页未提的选择标记：两个轮廓草图按 mark=1、引导曲线草图按 mark=4098 选中后才调 InsertProtrusionBlend2",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Sketch3\", \"SKETCH\", 0, 0, 0, true, 4098, null, 0);",
+          "example_file": "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例把读 GuideCurves 夹在 AccessSelections / ReleaseSelectionAccess 之间，并强转 object[] 与 int[] 配对",
+          "example_quote": "status = swLoftFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "job 给的 Sweep 版示例用的是 SweepFeatureData，非本接口，已排除。"
+    },
+    {
+      "member": "GussetThickness",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出的取值 0.003 与同批 0.01 / 0.002 同量级；成员页 Returns 只写 Indent thickness，未给单位",
+          "example_quote": "swFeatData.GussetThickness = 0.003;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+        },
+        {
+          "what": "示例先置 ProfileDimensionScheme 为 IndentDepth 枚举（枚举页中值为 0）再写本属性，印证 Remarks 的 0 值前置",
+          "example_quote": "swFeatData.ProfileDimensionScheme = (int)swSheetMetalGussetProfileDimType_e.swSheetMetalGussetProfileDimType_IndentDepth;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+        }
+      ],
+      "note": "核对枚举页确认 IndentDepth=0，示例前置与 Remarks 一致，未发现冲突。"
+    }
+  ]
+}

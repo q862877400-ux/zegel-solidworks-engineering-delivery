@@ -1,0 +1,147 @@
+{
+ "idx": 101,
+ "results": [
+  {
+   "member": "DragMode",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Rotate_Assembly_Component_on_Axis_Example2_CSharp.md",
+    "Rotate_Assembly_Component_on_Axis_Example2_VB.md",
+    "Rotate_Assembly_Component_on_Axis_Example2_VBNET.md",
+    "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出设置时机：AddComponent 之后、紧接 BeginDrag 之前；页面只有取值表，未说时机。",
+     "example_quote": "swDragOp.DragMode = 2;",
+     "example_file": "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+    }
+   ],
+   "note": "页面无 Remarks；4 份示例均设 2，与 Returns 的 2=Relaxation 一致。"
+  },
+  {
+   "member": "DrawingViewRotate",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Rotate_Drawing_View_45_Degrees_Example_CSharp.md",
+    "Rotate_Drawing_View_45_Degrees_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例明确 NewAngle 用弧度（API 默认系统单位）；页面 Parameters 只写 New angle value，未给单位。",
+     "example_quote": "//Convert degrees to radians, the default system unit",
+     "example_file": "Rotate_Drawing_View_45_Degrees_Example_CSharp.md"
+    },
+    {
+     "what": "示例的实际实参是 45/57.3，确认入参为弧度而非度。",
+     "example_quote": "status = swDrawing.DrawingViewRotate(45 / 57.3);",
+     "example_file": "Rotate_Drawing_View_45_Degrees_Example_CSharp.md"
+    }
+   ],
+   "note": "页面无 Remarks；返回 System.bool，与示例的 status 变量一致。"
+  },
+  {
+   "member": "DrillAngle",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+    "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+    "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出单位：读出后乘 57.3 才得度，说明存的是弧度；页面 Returns 只写 Drill angle，未给单位。",
+     "example_quote": "Debug.Print(\"  DrillAngle                   = \" + swWizHole.DrillAngle * 57.3 + \" deg\");",
+     "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+    },
+    {
+     "what": "示例 GetDefinition 后直接读 DrillAngle，未调 AccessSelections；其注释只对 Face/Vertex/GetEndConditionReference 要求回退。",
+     "example_quote": "swWizHole = (WizardHoleFeatureData2)swFeat.GetDefinition();",
+     "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+    }
+   ],
+   "note": "Remarks 适用孔型含 swCounterBoreDrilled，示例建的正是 swWzdCounterBore；两侧不矛盾。"
+  },
+  {
+   "member": "DrivenState",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_Block_Information_Example_VB.md",
+    "Get_Dimension_Values_in_All_Configurations_Example_VB.md",
+    "Get_Dimension_Values_in_Drawing_Example_CSharp.md",
+    "Get_Dimension_Values_in_Drawing_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "4 份示例全部只读取、从不赋值；页面摘要写的是 Gets or sets。",
+     "example_quote": "Debug.Print(\"      DrivenState                  = \" + swDim.DrivenState);",
+     "example_file": "Get_Dimension_Values_in_Drawing_Example_CSharp.md"
+    }
+   ],
+   "note": "页面无 Remarks；返回 System.int，与 swDimensionDrivenState_e 相容。"
+  },
+  {
+   "member": "DrivingFeatureSkippedItemArray",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_Number_of_Instances_Skipped_in_Driving_Feature_Example_CSharp.md",
+    "Get_Number_of_Instances_Skipped_in_Driving_Feature_Example_VB.md",
+    "Get_Number_of_Instances_Skipped_in_Driving_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例要求先 AccessSelections、读完整棵树后 ReleaseSelectionAccess；页面没写这两个前置与收尾。",
+     "example_quote": "status = swDerivedPatternFeatureData.AccessSelections(swModel, null);",
+     "example_file": "Get_Number_of_Instances_Skipped_in_Driving_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "页面无 Remarks；C# 强转 (int[])，与 Returns 的 longs or integers 相容。"
+  },
+  {
+   "member": "DrivingLength",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Belt_Chain_Feature_Example_CSharp.md",
+    "Create_Belt_Chain_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "VB.NET 版实际调用 UnfixComponent 造出自由度，Remarks 的滑轮位置随动条件在此成立。",
+     "example_quote": "swModel.UnfixComponent",
+     "example_file": "Create_Belt_Chain_Feature_Example_VBNET.md"
+    },
+    {
+     "what": "C# 版把 UnfixComponent 两行注释掉（组件保持固定），仍设 DrivingLength=True 后改 BeltLength。",
+     "example_quote": "//swModel.UnfixComponent();",
+     "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "两示例都是先 DrivingLength=True 再设 BeltLength，与 Remarks 的条件句一致，未见矛盾。"
+  },
+  {
+   "member": "DropDrawingViewFromPalette2",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Relative_Drawing_View_Example_CSharp.md",
+    "Create_Relative_Drawing_View_Example_VB.md",
+    "Create_Relative_Drawing_View_Example_VBNET.md",
+    "Drop_Drawing_Views_from_View_Palette_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例用 swSheet.GetSize 取图纸幅面并按其分数落位，全程不乘图纸比例，兑现 Remarks 的比例无关。",
+     "example_quote": "Set swView = swDrawing.DropDrawingViewFromPalette2(strViewName, dWidth / 5#, dHeight / 5#, 0#)",
+     "example_file": "Drop_Drawing_Views_from_View_Palette_Example_VB.md"
+    }
+   ],
+   "note": "三份 Create_Relative 传 0,0,0；四处 Z 皆为 0，与 Parameters 的恒 0 一致。"
+  }
+ ]
+}

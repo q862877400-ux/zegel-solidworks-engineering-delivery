@@ -1,0 +1,15 @@
+{"idx":36,"pages_read":13,"rows":[
+{"iface":"IView","file":"GetBodiesCount.md","signature":"System.int GetBodiesCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetDimensionInfo.md","signature":"System.object GetDimensionInfo()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetFirstSFSymbol.md","signature":"System.object GetFirstSFSymbol()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetSketchPictureCount.md","signature":"System.int GetSketchPictureCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetDesignTableExtent.md","signature":"System.double IGetDesignTableExtent()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetLines3.md","signature":"System.double IGetLines3()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"InsertHoleTable2.md","signature":"HoleTableAnnotation InsertHoleTable2( System.bool UseAnchorPoint, System.double X, System.double Y, System.int AnchorType, System.string StartValue, System.string TableTemplate )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"SuppressState.md","signature":"System.int SuppressState {get; set;}","obsolete":false,"pointer":false,"zero":"是（无括号）"},
+{"iface":"IDrawingDoc","file":"CreateDiamDim3.md","signature":"System.object CreateDiamDim3( System.double DimVal, System.object VP0, System.object VP1, System.object VP2, System.object VP3, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot, System.object VTextPoint )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"GetEditBlock.md","signature":"System.bool GetEditBlock()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"IInsertDowelSymbol.md","signature":"DowelSymbol IInsertDowelSymbol()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"NewSheet4.md","signature":"System.bool NewSheet4( System.string Name, System.int PaperSize, System.int TemplateIn, System.double Scale1, System.double Scale2, System.bool FirstAngle, System.string TemplateName, System.double Width, System.double Height, System.string PropertyViewName, System.double ZoneLeftMargin, System.double ZoneRightMargin, System.double ZoneTopMargin, System.double ZoneBottomMargin, System.int ZoneRow, System.int ZoneCol )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"ISheet","file":"GetZoneSizeDistribution.md","signature":"System.int GetZoneSizeDistribution( out System.int Rows, out System.int Columns )","obsolete":false,"pointer":false,"zero":"否（有形参）"}
+]}

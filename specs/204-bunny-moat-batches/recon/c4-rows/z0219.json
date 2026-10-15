@@ -1,0 +1,148 @@
+{
+  "idx": 219,
+  "results": [
+    {
+      "member": "GetModelDoc",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Material_Properties_Example_VB.md",
+        "Check_Interference_using_Modeler_CheckInterference_Example_VB.md",
+        "Create_TaskPaneView_Add-in_Example_CSharp.md",
+        "Get_BOM_Balloon_Properties_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Nothing 的成因具体判为 lightweight 并直接 Exit Sub，成员页只列了三种可能",
+          "example_quote": "        Set swCompModel = swComp.GetModelDoc\n        If swCompModel Is Nothing Then\n            ' Component is lightweight\n            Debug.Print \"Selected component is lightweight; exiting macro.\"\n            Exit Sub\n        End If",
+          "example_file": "Change_Material_Properties_Example_VB.md"
+        },
+        {
+          "what": "示例在组件显示状态/视觉属性变更的事件回调里调用，成员页未提任何调用场合",
+          "example_quote": "int ComponentVisualPropertiesChangeNotify ( object swObject )\n{\nComponent2 component = (Component2)swObject;\nModelDoc2 modDoc = (ModelDoc2)component.GetModelDoc();\nreturn ComponentStateChange(modDoc);",
+          "example_file": "Create_TaskPaneView_Add-in_Example_CSharp.md"
+        },
+        {
+          "what": "示例指名具体零件 block20-1@assem20 与 cylinder20-1@assem20，均非根组件",
+          "example_quote": "    Set swPart1 = swComponent1.GetModelDoc\n    Set swPart2 = swComponent2.GetModelDoc",
+          "example_file": "Check_Interference_using_Modeler_CheckInterference_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 提到的根组件返 NULL 在本组示例里无对应调用点；四份示例与 Remarks 不冲突。"
+    },
+    {
+      "member": "GetModelDoc2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_CSharp.md",
+        "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_VBNET.md",
+        "Get_Components_in_Drawing_View_Example_CSharp.md",
+        "Get_Components_in_Drawing_View_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例注释把 NULL 成因具体化为「drawing is lightweight」，并用 If Not Nothing Is 守卫",
+          "example_quote": "            ' Returns NULL if drawing is lightweight\n            Set swCompModel = swComp.GetModelDoc2",
+          "example_file": "Get_Components_in_Drawing_View_Example_VB.md"
+        },
+        {
+          "what": "示例把返回值映射成 Loaded/NotLoaded 字符串，用点是特征树的 Component 节点",
+          "example_quote": "\t                        componentDoc = componentNode.GetModelDoc2();\n\t                        if (componentDoc == null)\n\t                        {\n\t                            docString = \"NotLoaded\";\n\t                        }\n\t                        else\n\t                        {\n\t                            docString = \"Loaded\";\n\t                        }",
+          "example_file": "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 独有的「可处理根组件」在本组示例中无对应调用点；示例的 NULL 守卫与 Remarks 一致。"
+    },
+    {
+      "member": "GetModelFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Auto_Dimension_Scheme_Example_CSharp.md",
+        "Auto_Dimension_Scheme_Example_VB.md",
+        "Auto_Dimension_Scheme_Example_VBNET.md",
+        "Get_DimXpert_Chamfer_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页没有 ## Remarks 段（只到 ## Returns），按纪律跳过，不做对比。"
+    },
+    {
+      "member": "GetModelMaterialPropertyValues",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Model_Material_Property_Values_Example_CSharp.md",
+        "Get_Model_Material_Property_Values_Example_VB.md",
+        "Get_Model_Material_Property_Values_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置写死具体文件并要求以 lightweight 模式打开，成员页只说「lightweight component」",
+          "example_quote": "' 1. Open public_documents\\samples\\tutorial\\api\\TopAssembly1.SLDASM in lightweight\n' mode.",
+          "example_file": "Get_Model_Material_Property_Values_Example_VB.md"
+        },
+        {
+          "what": "示例给出 ConfigName 的具体取法：直接传 swComp.ReferencedConfiguration",
+          "example_quote": "    varMatProp = swComp.GetModelMaterialPropertyValues(swComp.ReferencedConfiguration)\n    If Not (IsEmpty(varMatProp)) Then",
+          "example_file": "Get_Model_Material_Property_Values_Example_VB.md"
+        }
+      ],
+      "note": "数组次序与 ×255 / ×100 换算三份示例与 Remarks 完全一致；Remarks 的「全 -1 表示未赋值」哨兵示例未实现，是示例更弱不是矛盾。"
+    },
+    {
+      "member": "GetModelPathNames",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Model_Path_Names_in_BOM_Table_Example_CSharp.md",
+        "Get_Model_Path_Names_in_BOM_Table_Example_VB.md",
+        "Get_Model_Path_Names_in_BOM_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页没有 ## Remarks 段，按纪律跳过，不做对比。"
+    },
+    {
+      "member": "GetModelPathNamesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Model_Path_Names_in_BOM_Table_Example_CSharp.md",
+        "Get_Model_Path_Names_in_BOM_Table_Example_VB.md",
+        "Get_Model_Path_Names_in_BOM_Table_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call this method before calling [[IBomTableAnnotation::IGetModelPathNames]] to determine the size of the array for that method.",
+          "example_quote": "                vModelPathNames = swTableAnnotation.GetModelPathNames(lRow, strItemNumber, strPartNumber)\n                Debug.Print \"    item number = \" & strItemNumber\n                Debug.Print \"    part number = \" & strPartNumber\n                If (Not IsEmpty(vModelPathNames)) Then\n                    Debug.Print \"    # models contributing to row = \" & swTableAnnotation.GetModelPathNamesCount(lRow)",
+          "example_file": "Get_Model_Path_Names_in_BOM_Table_Example_VB.md",
+          "why": "Remarks 规定先调本方法为取值调用定数组长度；C#/VBNET/VBA 三份示例都先取值、后调本方法，返回值只用于打印，从未定长度。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 RowIndex 的实际起点：TitleVisible 时从 2 起、否则从 1 起，到 RowCount-1 止",
+          "example_quote": "                vModelPathNames = swTableAnnotation.GetModelPathNames(lRow, strItemNumber, strPartNumber)",
+          "example_file": "Get_Model_Path_Names_in_BOM_Table_Example_VB.md"
+        },
+        {
+          "what": "示例在路径数组为空时直接打印 0 并 Debug.Assert False，不调用本方法",
+          "example_quote": "                    Debug.Print \"    # models contributing to row = 0\"",
+          "example_file": "Get_Model_Path_Names_in_BOM_Table_Example_VB.md"
+        }
+      ],
+      "note": "三份示例调用顺序完全相同；Remarks 点名的是 IGetModelPathNames，示例只调托管版 GetModelPathNames。"
+    },
+    {
+      "member": "GetModelTexture",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Model_Texture_Example_CSharp.md",
+        "Get_Model_Texture_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页没有 ## Remarks 段，按纪律跳过，不做对比。"
+    }
+  ]
+}

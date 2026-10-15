@@ -1,0 +1,425 @@
+{
+ "n": 60,
+ "rows": [
+  {
+   "i": 0,
+   "task": "草图 · 新建/退出草图",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_start",
+   "why": "solidworks_sketch_start 进草图、solidworks_sketch_end 退出，两工具完整覆盖"
+  },
+  {
+   "i": 1,
+   "task": "草图 · 直线",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_add_line",
+   "why": "直接画直线；配合 sketch_start/end 与 count_* 可回读"
+  },
+  {
+   "i": 10,
+   "task": "草图 · 中心线",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_add_centerline",
+   "why": "画中心线有专用工具，且可当旋转轴前置"
+  },
+  {
+   "i": 11,
+   "task": "草图 · 草图圆角/倒角",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_fillet + solidworks_sketch_create_chamfer",
+   "why": "solidworks_sketch_fillet + solidworks_sketch_create_chamfer"
+  },
+  {
+   "i": 12,
+   "task": "草图 · 剪裁/延伸",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_trim / solidworks_sketch_extend",
+   "why": "trim 按 closest/corner 剪裁，extend 延伸到最近实体，另有 stretch 伸展到点"
+  },
+  {
+   "i": 13,
+   "task": "草图 · 等距偏移",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_offset",
+   "why": "该工具对选中草图实体做等距偏移，支持偏移距离/双侧/端点/构造线。"
+  },
+  {
+   "i": 14,
+   "task": "草图 · 转换实体引用",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_convert_entities",
+   "why": "逐字对应：把选中模型边转入活动草图，判据为草图段数变化"
+  },
+  {
+   "i": 15,
+   "task": "草图 · 草图镜像/阵列",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_mirror, solidworks_sketch_linear_pattern, solidworks_sketch_circular_pattern",
+   "why": "镜像走 sketch_mirror；直线/圆周阵列各有专用工具，判据为图元数变化"
+  },
+  {
+   "i": 16,
+   "task": "草图 · 移动/旋转/缩放/伸展",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_move_entities, solidworks_sketch_rotate_entities, solidworks_sketch_scale_entities, solidworks_sketch_stretch_entities",
+   "why": "四个子操作各有专工具：Translate/Rotate/Scale/Stretch，均真机验证过。"
+  },
+  {
+   "i": 17,
+   "task": "草图 · 几何关系",
+   "verdict": "yes",
+   "tool": "solidworks_add_sketch_relation",
+   "why": "solidworks_add_sketch_relation 直接给当前选区加草图几何关系。"
+  },
+  {
+   "i": 18,
+   "task": "草图 · 智能尺寸/自动标注",
+   "verdict": "yes",
+   "tool": "solidworks_auto_dimension_sketch",
+   "why": "走官方 ISketch.AutoDimension2 给当前草图建真实 DisplayDimension"
+  },
+  {
+   "i": 19,
+   "task": "草图 · 完全定义检查",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_fully_defined_status",
+   "why": "读 ISketch.GetConstrainedStatus()，前置须有正在编辑的草图，无则抛"
+  },
+  {
+   "i": 2,
+   "task": "草图 · 矩形",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_add_rectangle",
+   "why": "逐字能力：在活动草图里按两个对角点画矩形，配合 sketch_start/end。"
+  },
+  {
+   "i": 20,
+   "task": "草图 · 3D 草图",
+   "verdict": "partial",
+   "tool": "solidworks_sketch_is_3d",
+   "why": "只有 solidworks_sketch_is_3d 读状态；sketch_start 只收基准面，无新建 3D 草图入口，需人工建"
+  },
+  {
+   "i": 21,
+   "task": "特征 · 拉伸凸台",
+   "verdict": "yes",
+   "tool": "solidworks_extrude_boss",
+   "why": "solidworks_extrude_boss 把草图拉伸成凸台实体；depth/params 可回读校验"
+  },
+  {
+   "i": 22,
+   "task": "特征 · 拉伸切除",
+   "verdict": "yes",
+   "tool": "solidworks_extrude_cut",
+   "why": "走官方 FeatureCut4 切除，depth 0=贯穿"
+  },
+  {
+   "i": 23,
+   "task": "特征 · 旋转",
+   "verdict": "yes",
+   "tool": "solidworks_revolve_boss",
+   "why": "revolve_boss 把轮廓草图旋转成凸台；旋转切除为 solidworks_revolve_cut。"
+  },
+  {
+   "i": 24,
+   "task": "特征 · 扫描",
+   "verdict": "yes",
+   "tool": "solidworks_part_sweep",
+   "why": "逐字工具 solidworks_part_sweep：经 CreateDefinition(swFmSweep) 走轮廓+路径建扫描凸台/切除，另有 solidworks_sweep_params 读参。"
+  },
+  {
+   "i": 25,
+   "task": "特征 · 放样",
+   "verdict": "yes",
+   "tool": "solidworks_part_loft",
+   "why": "走 InsertProtrusionBlend2，真机同平面/两平面均建成放样1；solidworks_loft_params 可回读"
+  },
+  {
+   "i": 26,
+   "task": "特征 · 边界凸台",
+   "verdict": "no",
+   "tool": "",
+   "why": "无边界凸台工具；solidworks_extrude_boss 仅支持草图轮廓，缺按面/边/顶点定义边界的凸台"
+  },
+  {
+   "i": 27,
+   "task": "特征 · 圆角",
+   "verdict": "yes",
+   "tool": "solidworks_fillet",
+   "why": "solidworks_fillet 按半径对选中边倒圆，selection 为声明式选择器；solidworks_fillet_params 可回读半径与边数"
+  },
+  {
+   "i": 28,
+   "task": "特征 · 倒角",
+   "verdict": "yes",
+   "tool": "solidworks_chamfer",
+   "why": "该工具按声明式 selection 对选中边(EDGE)建倒角，正对应特征倒角。"
+  },
+  {
+   "i": 29,
+   "task": "特征 · 筋",
+   "verdict": "yes",
+   "tool": "solidworks_part_rib",
+   "why": "solidworks_part_rib 由已有草图建筋，回读特征树+重建+What's Wrong"
+  },
+  {
+   "i": 3,
+   "task": "草图 · 圆",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_add_circle",
+   "why": "有同名工具直接在当前草图画整圆（圆心+半径，毫米），另有三点圆工具"
+  },
+  {
+   "i": 30,
+   "task": "特征 · 抽壳",
+   "verdict": "yes",
+   "tool": "solidworks_part_shell",
+   "why": "按壁厚抽壳并回读特征树/重建/What's Wrong，工具面完全覆盖"
+  },
+  {
+   "i": 31,
+   "task": "特征 · 拔模",
+   "verdict": "no",
+   "tool": "",
+   "why": "仅 solidworks_sheet_metal_create_draft 沾边，但其描述自陈真机 CreateDefinition(3) 返回 None、不可用；mold_draft_analysis 只做分析不建特征。"
+  },
+  {
+   "i": 32,
+   "task": "特征 · 圆顶",
+   "verdict": "yes",
+   "tool": "solidworks_part_insert_dome",
+   "why": "solidworks_part_insert_dome 在选中面上加圆顶并回读；前置选面由 solidworks_select_face_selector 提供。"
+  },
+  {
+   "i": 33,
+   "task": "特征 · 圆顶",
+   "verdict": "yes",
+   "tool": "solidworks_part_insert_dome",
+   "why": "逐字：Add a dome on the selected face，含高度/椭圆/反向与回读报告，正是圆顶特征"
+  },
+  {
+   "i": 34,
+   "task": "特征 · 孔向导",
+   "verdict": "yes",
+   "tool": "solidworks_hole_wizard",
+   "why": "该工具直连 IFeatureManager.HoleWizard5，规格串与面选点前置已配好，判据为特征树增量"
+  },
+  {
+   "i": 35,
+   "task": "特征 · 孔向导",
+   "verdict": "yes",
+   "tool": "solidworks_hole_wizard",
+   "why": "该工具直连官方 IFeatureManager.HoleWizard5（24+参），已备前置并以特征树新增「异型孔向导」判成功；另有 solidworks_hole_standards/fastener_types 供选标准。"
+  },
+  {
+   "i": 36,
+   "task": "特征 · 螺纹",
+   "verdict": "yes",
+   "tool": "solidworks_feature_cosmetic_thread",
+   "why": "直接建螺纹特征（装饰螺纹线）；孔向导也可出螺纹孔"
+  },
+  {
+   "i": 37,
+   "task": "特征 · 线性阵列",
+   "verdict": "partial",
+   "tool": "solidworks_sketch_linear_pattern",
+   "why": "缺特征级线性阵列工具；只有草图级 solidworks_sketch_linear_pattern"
+  },
+  {
+   "i": 38,
+   "task": "特征 · 圆周阵列",
+   "verdict": "yes",
+   "tool": "solidworks_circular_pattern",
+   "why": "有 solidworks_circular_pattern：绕指定轴建圆周阵列，判据为特征树变化"
+  },
+  {
+   "i": 39,
+   "task": "特征 · 特征镜像",
+   "verdict": "yes",
+   "tool": "solidworks_mirror_feature",
+   "why": "solidworks_mirror_feature 按特征名+镜像面做特征镜像，正对题"
+  },
+  {
+   "i": 4,
+   "task": "草图 · 圆弧",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_add_arc",
+   "why": "直接画弧：圆心+起点+终点；另有 add_3point_arc / add_tangent_arc 两族可选。"
+  },
+  {
+   "i": 40,
+   "task": "特征 · 曲线驱动阵列",
+   "verdict": "no",
+   "tool": "",
+   "why": "仅有圆形阵列与草图级线性/圆周阵列；缺特征级曲线驱动阵列入口。"
+  },
+  {
+   "i": 41,
+   "task": "特征 · 基准面/轴/坐标系/点",
+   "verdict": "yes",
+   "tool": "solidworks_insert_ref_plane, solidworks_part_axis, solidworks_insert_coordinate_system, solidworks_insert_reference_point",
+   "why": "基准面/轴/坐标系/点四类各有专用工具，且有csys_params等参数回读"
+  },
+  {
+   "i": 42,
+   "task": "特征 · 分割线/投影曲线/组合曲线",
+   "verdict": "partial",
+   "tool": "solidworks_part_insert_composite_curve",
+   "why": "仅组合曲线有工具 solidworks_part_insert_composite_curve；分割线、投影曲线无对应工具。"
+  },
+  {
+   "i": 43,
+   "task": "特征 · 删除面/替换面",
+   "verdict": "yes",
+   "tool": "solidworks_insert_delete_face / solidworks_insert_replace_face",
+   "why": "删面由 solidworks_insert_delete_face 建，替面由 solidworks_insert_replace_face 建（选面 mark1/mark2），两者真机均建成特征。"
+  },
+  {
+   "i": 44,
+   "task": "特征 · 线性阵列",
+   "verdict": "partial",
+   "tool": "solidworks_sketch_linear_pattern",
+   "why": "仅草图级线性阵列与阵列参数读回(pattern_params)；特征级线性阵列无创建工具，需人工"
+  },
+  {
+   "i": 45,
+   "task": "特征 · 边界凸台",
+   "verdict": "no",
+   "tool": "",
+   "why": "无边界凸台创建工具（CreateBossByBoundary 未覆盖）；拉伸凸台只吃草图+深度"
+  },
+  {
+   "i": 46,
+   "task": "特征 · 缩放/变形",
+   "verdict": "no",
+   "tool": "",
+   "why": "414 个工具里没有任何 Scale 特征（InsertScaleFeature2）或 Deform/弯曲特征工具；只有草图级 solidworks_sketch_scale_entities 与镜像、阵列。"
+  },
+  {
+   "i": 47,
+   "task": "特征 · 拔模分析",
+   "verdict": "yes",
+   "tool": "solidworks_mold_draft_analysis",
+   "why": "工具 solidworks_mold_draft_analysis 即拔模分析；只回官方返回码，需自行复核"
+  },
+  {
+   "i": 48,
+   "task": "特征 · 特征识别/Instant3D",
+   "verdict": "no",
+   "tool": "",
+   "why": "414个工具无任何识别/Instant3D条目，只有显式建模工具（拉伸/旋转等），缺「几何自动识别成特征」入口。"
+  },
+  {
+   "i": 49,
+   "task": "曲面 · 拉伸曲面",
+   "verdict": "yes",
+   "tool": "solidworks_surface_create_extruded",
+   "why": "走 FeatureExtruRefSurface3 用草图建曲面-拉伸特征，真机已建成"
+  },
+  {
+   "i": 5,
+   "task": "草图 · 样条曲线",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_spline",
+   "why": "专用工具：走 ISketchManager.CreateSpline2，收控制点列表，证据显示真机建成（草图段 0→1）。"
+  },
+  {
+   "i": 50,
+   "task": "曲面 · 旋转曲面",
+   "verdict": "yes",
+   "tool": "solidworks_create_revolved_surface",
+   "why": "直出：InsertRevolvedRefSurface 建旋转参考曲面，真机已建成 曲面-旋转1"
+  },
+  {
+   "i": 51,
+   "task": "曲面 · 扫描曲面",
+   "verdict": "partial",
+   "tool": "solidworks_part_sweep / cadstudio_create_ocp_surface",
+   "why": "无 SolidWorks 扫描曲面入口；part_sweep 只出实体扫描，cadstudio OCP 那条不走 SolidWorks"
+  },
+  {
+   "i": 52,
+   "task": "特征 · 组合/相交",
+   "verdict": "no",
+   "tool": "",
+   "why": "414 个工具里没有对已有实体做布尔组合/相交的入口；缝合曲面、组合曲线、模具分型都不是实体布尔运算"
+  },
+  {
+   "i": 53,
+   "task": "曲面 · 边界曲面",
+   "verdict": "no",
+   "tool": "",
+   "why": "曲面族工具齐全（拉伸/旋转/放样/缝合/延伸/直纹…），唯独没有边界曲面的 CreateBoundFeature 封装"
+  },
+  {
+   "i": 54,
+   "task": "曲面 · 填充曲面",
+   "verdict": "yes",
+   "tool": "solidworks_surface_fill",
+   "why": "直接对应：走 InsertFillSurface2 建填充曲面，两条路真机已 PASS"
+  },
+  {
+   "i": 55,
+   "task": "曲面 · 等距曲面",
+   "verdict": "yes",
+   "tool": "solidworks_insert_offset_surface",
+   "why": "直建等距曲面(InsertOffsetSurface)，真机树7→8新增曲面-等距1"
+  },
+  {
+   "i": 56,
+   "task": "曲面 · 缝合曲面",
+   "verdict": "yes",
+   "tool": "solidworks_surface_knit",
+   "why": "走 InsertSewRefSurface 把曲面缝成一张，真机建成「曲面-缝合1」体数 2→1"
+  },
+  {
+   "i": 57,
+   "task": "曲面 · 延伸曲面",
+   "verdict": "yes",
+   "tool": "solidworks_surface_extend",
+   "why": "直接对应：InsertExtendSurface 建延伸曲面特征，真机已建成"
+  },
+  {
+   "i": 58,
+   "task": "曲面 · 剪裁曲面",
+   "verdict": "no",
+   "tool": "",
+   "why": "缺 InsertTrimSurface/TrimRefSurface 入口；曲面族只有拉伸/旋转/放样/直纹/等距/填充/缝合/延伸/切除，sketch_trim 只剪草图线段"
+  },
+  {
+   "i": 59,
+   "task": "曲面 · 边界曲面",
+   "verdict": "no",
+   "tool": "",
+   "why": "414 工具里无边界曲面：缺 InsertBoundarySurface(2)/IBoundaryFeatureData 的双向边界(放样/方向)拉伸入口；surface_fill 是填充曲面、insert_lofted_ref_surface 是放样曲面，皆非边界曲面。"
+  },
+  {
+   "i": 6,
+   "task": "草图 · 椭圆",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_add_ellipse",
+   "why": "该工具走官方 ISketchManager.CreateEllipse 直接画整椭圆，配 sketch_start/end 即可"
+  },
+  {
+   "i": 7,
+   "task": "草图 · 抛物线/圆锥曲线",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_add_parabola + solidworks_sketch_add_conic",
+   "why": "两个工具分别画抛物线与圆锥曲线，均需先 sketch_start、画完 sketch_end。"
+  },
+  {
+   "i": 8,
+   "task": "草图 · 多边形",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_add_polygon",
+   "why": "工具逐字「在当前草图里画正多边形（内切圆方式，官方 CreatePolygon）」，正是该功能。"
+  },
+  {
+   "i": 9,
+   "task": "草图 · 槽口",
+   "verdict": "yes",
+   "tool": "solidworks_sketch_add_slot",
+   "why": "该工具直接在当前草图画槽口（直槽/腰形孔，两点+半径），配合 sketch_start/end 即可。"
+  }
+ ]
+}

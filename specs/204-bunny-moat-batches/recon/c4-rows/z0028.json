@@ -1,0 +1,135 @@
+{
+  "idx": 28,
+  "results": [
+    {
+      "member": "Axis",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例的 Axis 属 SimulationGravityFeatureData，非环形阵列接口，不采用。"
+    },
+    {
+      "member": "BOMPartNoSource",
+      "remarks_empty": false,
+      "examples_actually_used": ["Change_Configuration_Properties_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 4 个枚举值各自对应的件号来源逐一展开，并含 ParentName 的递归取父配置；成员页只写「见 swBOMPartNumberSource_e」。",
+          "example_quote": "    Select Case config.BOMPartNoSource",
+          "example_file": "Change_Configuration_Properties_Example_VB.md"
+        },
+        {
+          "what": "示例给出赋值顺序：先设 UserSpecified 再赋 AlternateName，并另需 UseAlternateNameInBOM=True 才在 BOM 显示。",
+          "example_quote": "        thisConfig.UseAlternateNameInBOM = True",
+          "example_file": "Change_Configuration_Properties_Example_VB.md"
+        }
+      ],
+      "note": "示例设的正是 UserSpecified，与 Remarks 的清空规则不冲突。"
+    },
+    {
+      "member": "BackWards",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VB.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md",
+        "Get_All_Elements_of_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页无 Remarks；示例给出取得 ITextFormat 的路径之一：Callout.TextFormat。",
+          "example_quote": "        swTextFormat = myCallout.TextFormat",
+          "example_file": "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md"
+        },
+        {
+          "what": "成员页无 Remarks；示例给出另一条路径：草图文字段的 SketchText.GetTextFormat。",
+          "example_quote": "    ProcessTextFormat swApp, swModel, swSkText.GetTextFormat",
+          "example_file": "Get_All_Elements_of_Sketch_Example_VB.md"
+        }
+      ],
+      "note": "无 Remarks 段，按纪律跳过冲突判定；4 份示例都只读不写。"
+    },
+    {
+      "member": "BackgroundBottomGradientColor",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例全程未把 BackgroundType 设为 Graduated，只在改动 BackgroundType 之前读取该属性。",
+          "example_quote": "    Debug.Print \"Scene background bottom gradient color: \" & Scene.BackgroundBottomGradientColor",
+          "example_file": "Get_and_Set_Scene_Properties_Example_VB.md"
+        }
+      ],
+      "note": "示例未建立 Remarks 要求的前置，但也没否认它，故不判冲突。"
+    },
+    {
+      "member": "BackgroundEnvImage",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出必须先写的那句赋值；Remarks 只说要满足 UseEnvironment，没给写法。",
+          "example_quote": "    Scene.BackgroundType = swSceneBackgroundType_e.swBackgroundType_UseEnvironment",
+          "example_file": "Get_and_Set_Scene_Properties_Example_VB.md"
+        }
+      ],
+      "note": "示例先设 UseEnvironment 再读，与 Remarks 完全一致。"
+    },
+    {
+      "member": "BackgroundImage",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[ISwScene::BackgroundType]] is [[swSceneBackgroundType_e]].swBackgroundType_Image.",
+          "example_quote": "    Scene.BackgroundType = swSceneBackgroundType_e.swBackgroundType_UseEnvironment",
+          "example_file": "Get_and_Set_Scene_Properties_Example_VB.md",
+          "why": "示例把 BackgroundType 设成 UseEnvironment，紧接着就读 Scene.BackgroundImage；Remarks 要求其为 Image 才有效。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "C# 与 VB.NET 两份是同一写法，故同一冲突成立三次。"
+    },
+    {
+      "member": "BackgroundProcessingOption",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Fire_Notification_for_Background_Processing_Events_Example_CSharp.md",
+        "Fire_Notification_for_Background_Processing_Events_Example_VB.md",
+        "Fire_Notification_for_Background_Processing_Events_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例比 Remarks 多一步：先用 GetOpenDocSpec 取 DocumentSpecification 并置 Silent=True 再 OpenDoc7。",
+          "example_quote": "    docSpecification.Silent = True",
+          "example_file": "Fire_Notification_for_Background_Processing_Events_Example_VB.md"
+        },
+        {
+          "what": "VBA 版直接写枚举字面量 2，C#/VB.NET 写枚举名；Remarks 只给枚举名这一种写法。",
+          "example_quote": "     swDrawingDoc.BackgroundProcessingOption = 2",
+          "example_file": "Fire_Notification_for_Background_Processing_Events_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 第 5 步要轮询 IsBackgroundProcessingCompleted，示例改用 EndNotify 事件；两法可并存，故不判冲突。"
+    }
+  ]
+}

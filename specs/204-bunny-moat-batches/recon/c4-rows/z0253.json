@@ -1,0 +1,111 @@
+{
+  "idx": 253,
+  "results": [
+    {
+      "member": "GetSelectionFilter",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Inspect_Facets_Example_CSharp.md",
+        "Inspect_Facets_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有签名/Parameters/Returns），按纪律跳过示例比对。"
+    },
+    {
+      "member": "GetSelectionFilters",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Clear,_Set,_and_Toggle_Selection_Filters_Example_VB.md",
+        "Inspect_Facets_Example_CSharp.md",
+        "Inspect_Facets_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Array of long values representing the [[swSelectType_e]] enumeration",
+          "example_quote": "vFilters = (int[])swApp.GetSelectionFilters();",
+          "example_file": "Inspect_Facets_Example_CSharp.md",
+          "why": "冲突出自 Returns 行：页称元素为 long，C# 例把它强转成 int[]；若真为 long[] 该强转会抛异常，两说不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值原样回传给 SetSelectionFilters 以清空全部筛选器；成员页只说返回 long 数组，未说它可作入参。",
+          "example_quote": "params = swApp.GetSelectionFilters\nswApp.SetSelectionFilters\nparams, False",
+          "example_file": "Clear,_Set,_and_Toggle_Selection_Filters_Example_VB.md"
+        },
+        {
+          "what": "示例给出 swSelectType_e 的具体数值 1/2/3 = Edge/Face/Vertex；成员页只说该数组代表这一枚举。",
+          "example_quote": "selfils(0) = 1 'Edge\nselfils(1) = 2 'Face\nselfils(2) = 3 'Vertex",
+          "example_file": "Clear,_Set,_and_Toggle_Selection_Filters_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 那句指向 GetApplySelectionFilter，三份示例都照做，无冲突。"
+    },
+    {
+      "member": "GetSelectionId",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Returns 与 Examples 列表），按纪律跳过，示例未读。"
+    },
+    {
+      "member": "GetSelectionPoint",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无 ## Remarks 段（正文只有一行 Obsolete），按纪律跳过，示例未读。"
+    },
+    {
+      "member": "GetSelectionPoint2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Drag_Arrow_Manipulator_Example_CSharp.md",
+        "Create_Drag_Arrow_Manipulator_Example_VB.md",
+        "Create_Drag_Arrow_Manipulator_Example_VBNET.md",
+        "Create_Forming_Tool_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "四例一致用 (Index=1, Mark=-1) 取单个选中面的拾取点，并立刻用 IMathUtility::CreatePoint 把 3 元数组包成 MathPoint；成员页只说返回 3 个 double。",
+          "example_quote": "vPickPt = swSelMgr.GetSelectionPoint2(1, -1);\nswPickPt = swMathUtil.CreatePoint((vPickPt));",
+          "example_file": "Create_Drag_Arrow_Manipulator_Example_CSharp.md"
+        },
+        {
+          "what": "示例展示未落点在实体上的原始拾取点的实际用法：不走 Remarks 推荐的 GetClosestPointOn，直接当 MathPoint 交给 SetPlacementFace 作面内定位点。",
+          "example_quote": "swLibFormFeatData1.SetPlacementFace(face2, mathPt);",
+          "example_file": "Create_Forming_Tool_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 四段与四例的 (1, -1) 调用一致，未找到不能同时成立的说法。"
+    },
+    {
+      "member": "GetSelectionPointInSketchSpace",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无 ## Remarks 段（正文只有一行 Obsolete），按纪律跳过，示例未读。"
+    },
+    {
+      "member": "GetSelectionPointInSketchSpace2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Line_From_User_Selection_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例演示无活动草图时的回退路径：返回值只取 (0)(1) 当模型空间 x/y，z 由调用方自己写死 0# 交给 CreateLineVB。",
+          "example_quote": "swModel.CreateLineVB x1, y1, 0#, x2, y2, 0#",
+          "example_file": "Create_Line_From_User_Selection_Example_VB.md"
+        }
+      ],
+      "note": "示例注释称 model space、成员页称 sketch space；Remarks 第二段的无草图回退可调和，故不判冲突。"
+    }
+  ]
+}

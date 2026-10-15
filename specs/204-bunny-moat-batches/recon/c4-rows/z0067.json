@@ -1,0 +1,179 @@
+{
+  "idx": 67,
+  "results": [
+    {
+      "member": "CreateParabola",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Parabola_Example_CSharp.md",
+        "Create_Parabola_Example_VB.md",
+        "Create_Parabola_Example_VBNET.md",
+        "Translate_Sketch_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页参数只写「X coordinate for the focus」无单位；示例坐标是米，打印时才 ×1000 标 mm",
+          "example_quote": "\"      Apex  Point   = (\" & pApex.X * 1000 & \", \" & pApex.Y * 1000 & \", \" & pApex.Z * 1000 & \") mm\"",
+          "example_file": "Create_Parabola_Example_VB.md"
+        },
+        {
+          "what": "示例要求草图必须是 2D（四点 Z 全为 0 否则退出），成员页无任何前置",
+          "example_quote": "MsgBox \"Need a 2D sketch.\"",
+          "example_file": "Create_Parabola_Example_VB.md"
+        },
+        {
+          "what": "成员页 Returns 写「Sketch segment for the parabola」；示例收成 SketchParabola 再取四个点",
+          "example_quote": "Set SkParabola = swModel.SketchManager.CreateParabola(pFocal.X, pFocal.Y, 0, pApex.X, pApex.Y, 0, pStart.X, pStart.Y, 0, pEnd.X, pEnd.Y, 0)",
+          "example_file": "Create_Parabola_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定；四份示例均真调用该成员。"
+    },
+    {
+      "member": "CreatePlanarSurface",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Body_using_Trimmed_Surfaces_Example_CSharp.md",
+        "Create_Body_using_Trimmed_Surfaces_Example_VB.md",
+        "Create_Body_using_Trimmed_Surfaces_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页参数写「Array of 3 doubles (x,y,z)」无单位；示例注释点明是米（1 m 边长立方体）",
+          "example_quote": "'Create the trimmed surfaces for a cube with one meter length sides",
+          "example_file": "Create_Body_using_Trimmed_Surfaces_Example_VB.md"
+        },
+        {
+          "what": "Remarks 说「再次调用即销毁旧对象」；示例靠每次建面后立刻 CreateTrimmedSurface 用掉，才敢连调 7 次",
+          "example_quote": "isGood = SurfaceBody.CreateTrimmedSurface",
+          "example_file": "Create_Body_using_Trimmed_Surfaces_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 与示例不冲突：示例每个曲面在下次调用前已被消耗。"
+    },
+    {
+      "member": "CreatePlanarSurface2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Infinite_Plane_Example_VB.md",
+        "Create_Temporary_Elliptical_Extrusion_Example_VB.md",
+        "Create_Temporary_Extruded_Body_Example_CSharp.md",
+        "Create_Temporary_Extruded_Body_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页三个参数都没写单位；示例把 PlaneParams 原点 ×1000 后标 mm，确认是米",
+          "example_quote": "Debug.Print \" root = (\" & vPlane(3) * 1000# & \", \" & vPlane(4) * 1000# & \", \" & vPlane(5) * 1000# & \") mm\"",
+          "example_file": "Create_Infinite_Plane_Example_VB.md"
+        },
+        {
+          "what": "Remarks 要求 VNormal 与 VRef 互相垂直；示例用 (0,0,1) 与 (1,0,0) 单位正交向量并断言结果",
+          "example_quote": "Debug.Assert swSurf.IsPlane",
+          "example_file": "Create_Infinite_Plane_Example_VB.md"
+        },
+        {
+          "what": "成员页 Returns 只写「surface」；C# 示例必须显式强转成 Surface 才能用",
+          "example_quote": "planeSurf = (Surface)swModeler.CreatePlanarSurface2((ptArr), (dirArr), (startArr));",
+          "example_file": "Create_Temporary_Extruded_Body_Example_CSharp.md"
+        }
+      ],
+      "note": "两条 Remarks bullet 内容重复但不矛盾；四份示例都真调用该成员。"
+    },
+    {
+      "member": "CreatePlanarTrimSurfaceDLL",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Imported_Solid_Body_Example_CSharp.md",
+        "Create_Imported_Solid_Body_Example_VB.md",
+        "Create_Imported_Solid_Body_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页把 Normal 写成「法向数组」；三份示例共 15 次调用一律把该参数置空",
+          "example_quote": "bRet = swBody.CreatePlanarTrimSurfaceDLL((vPt), Empty)",
+          "example_file": "Create_Imported_Solid_Body_Example_VB.md"
+        },
+        {
+          "what": "成员页未给 Points 的个数；示例用 9 元（3 顶点）与 12 元（4 顶点）两种，即 3N 个 double",
+          "example_quote": "ReDim nPt(11)",
+          "example_file": "Create_Imported_Solid_Body_Example_VB.md"
+        }
+      ],
+      "note": "示例只用本方法、确与 Remarks 的「可代替 CreateTrimmedSurface+AddTrimmingLoop2」相符。"
+    },
+    {
+      "member": "CreatePlaneAtOffset",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Name_Plane_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页两个参数都写 No description 且无前置；示例必须先选中要偏移的基准面",
+          "example_quote": "Model.SelectByID newPlaneName, \"PLANE\", 0, 0, 0",
+          "example_file": "Create_and_Name_Plane_Example_VB.md"
+        },
+        {
+          "what": "Val 是以米为单位的偏移距离（0.1 → 100 mm）、FlipDir 传 0；成员页无任何描述",
+          "example_quote": "Model.CreatePlaneAtOffset 0.1, 0",
+          "example_file": "Create_and_Name_Plane_Example_VB.md"
+        }
+      ],
+      "note": "成员页只有 Obsolete 行、无 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "CreatePlaneFixed2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Hole_Wizard_Hole_Example_CSharp.md",
+        "Create_Hole_Wizard_Hole_Example_VB.md",
+        "Create_Hole_Wizard_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 给了 UseGlobal 的 True/false 两栏；三份示例一律走 False 分支（x 轴取 P1→P2）",
+          "example_quote": "swModel.CreatePlaneFixed2 P1, P2, P3, False",
+          "example_file": "Create_Hole_Wizard_Hole_Example_VB.md"
+        },
+        {
+          "what": "Remarks 未说是否自动选中；示例须再按名字 SelectByID2 选中 Plane1 才能开孔",
+          "example_quote": "boolstatus = swModelDocExt.SelectByID2(\"Plane1\", \"PLANE\", -1.56784487003801E-02, -9.16715285390111E-03, 5.58270998665543E-02, False, 0, Nothing, 0)",
+          "example_file": "Create_Hole_Wizard_Hole_Example_VB.md"
+        }
+      ],
+      "note": "三份示例点值与分支完全一致（单位米也与 Parameters 的 in meters 相符）。"
+    },
+    {
+      "member": "CreatePlanePerCurveAndPassPoint3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Plane_using_Curve_and_Point_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "签名只有两个 bool、无任何选择参数；示例前置写明要先选中一条边和一个点",
+          "example_quote": "2. Select an edge and a point.",
+          "example_file": "Create_Plane_using_Curve_and_Point_Example_VB.md"
+        },
+        {
+          "what": "Remarks 只谈显示与选中行为；示例补充 GetRefPlaneParams 的原点读数单位是米",
+          "example_quote": "Debug.Print \" Origin = (\" & vPlaneParam(0) * 1000# & \", \" & vPlaneParam(1) * 1000# & \", \" & vPlaneParam(2) * 1000# & \") mm\"",
+          "example_file": "Create_Plane_using_Curve_and_Point_Example_VB.md"
+        },
+        {
+          "what": "Remarks 说返回的 IRefPlane「是一个 feature」；示例直接赋给 Feature 变量取 .Name 佐证",
+          "example_quote": "Set swFeat = swRefPlane",
+          "example_file": "Create_Plane_using_Curve_and_Point_Example_VB.md"
+        }
+      ],
+      "note": "示例只此一份，且与 Remarks 的「不自动选中新基准面」完全一致。"
+    }
+  ]
+}

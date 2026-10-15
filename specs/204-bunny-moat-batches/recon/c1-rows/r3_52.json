@@ -1,0 +1,15 @@
+{"idx": 52, "pages_read": 13, "rows": [
+{"iface": "IView", "file": "GetCorresponding.md", "signature": "`System.object GetCorresponding( System.object InputObject )`", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IView", "file": "GetDisplayDimensions.md", "signature": "`System.object GetDisplayDimensions()`", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetMirrorViewOrientation.md", "signature": "`System.bool GetMirrorViewOrientation( out System.bool BIsMirrorView, out System.int LMirrorViewOrientation )`", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IView", "file": "GetUserPoints.md", "signature": "`System.object GetUserPoints()`", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetDimensionIds2.md", "signature": "`System.string IGetDimensionIds2()`", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetProjectionArrow.md", "signature": "`ProjectionArrow IGetProjectionArrow()`", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IsModelBreakState.md", "signature": "`System.bool IsModelBreakState()`", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "AlignHorz.md", "signature": "`void AlignHorz()`", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "CreateOrdinateDim3.md", "signature": "`System.object CreateOrdinateDim3( System.object P0, System.object P1, System.object P2, System.object P3, System.object P4, System.double Angle, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot, System.object P5 )`", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "GetViewCount.md", "signature": "`System.int GetViewCount()`", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "InsertChainDim.md", "signature": "`void InsertChainDim()`", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "SetupSheet2.md", "signature": "`void SetupSheet2( System.string Name, System.short PaperSize, System.short TemplateIn, System.double Scale1, System.double Scale2, System.int SkPointsFlag )`", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "ISheet", "file": "ReloadTemplate.md", "signature": "`System.int ReloadTemplate( System.bool KeepNoteChanges )`", "obsolete": false, "pointer": false, "zero": "否（有形参）"}
+]}

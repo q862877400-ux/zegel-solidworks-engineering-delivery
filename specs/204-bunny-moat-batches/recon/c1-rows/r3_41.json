@@ -1,0 +1,110 @@
+{
+ "idx": 41,
+ "pages_read": 13,
+ "rows": [
+  {
+   "iface": "IView",
+   "file": "GetBreakLineInfo2.md",
+   "signature": "System.object GetBreakLineInfo2()",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "IView",
+   "file": "GetDimensionInfo6.md",
+   "signature": "System.object GetDimensionInfo6()",
+   "obsolete": true,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "IView",
+   "file": "GetGTolCount.md",
+   "signature": "System.int GetGTolCount()",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "IView",
+   "file": "GetSolidHatchInfo.md",
+   "signature": "System.object GetSolidHatchInfo()",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "IView",
+   "file": "IGetDetailCircleStrings.md",
+   "signature": "System.string IGetDetailCircleStrings()",
+   "obsolete": false,
+   "pointer": true,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "IView",
+   "file": "IGetOutline.md",
+   "signature": "System.double IGetOutline()",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "IView",
+   "file": "InsertWeldTable.md",
+   "signature": "System.bool InsertWeldTable( System.bool UseAnchorPoint, System.bool IncludeAnnotations, System.bool CombineSameType, System.double X, System.double Y, System.int AnchorType, System.string Configuration, System.string TableTemplate )",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "否（有形参）"
+  },
+  {
+   "iface": "IView",
+   "file": "UseSheetScale.md",
+   "signature": "System.int UseSheetScale {get; set;}",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（无括号）"
+  },
+  {
+   "iface": "IDrawingDoc",
+   "file": "CreateFlatPatternViewFromModelView.md",
+   "signature": "System.bool CreateFlatPatternViewFromModelView( System.string ModelName, System.string ConfigName, System.double LocX, System.double LocY, System.double LocZ )",
+   "obsolete": true,
+   "pointer": false,
+   "zero": "否（有形参）"
+  },
+  {
+   "iface": "IDrawingDoc",
+   "file": "GetLineFontCount2.md",
+   "signature": "System.int GetLineFontCount2()",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "IDrawingDoc",
+   "file": "INewGtol.md",
+   "signature": "Gtol INewGtol()",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "IDrawingDoc",
+   "file": "ResolveOutOfDateLightWeightComponents.md",
+   "signature": "System.bool ResolveOutOfDateLightWeightComponents()",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "ISheet",
+   "file": "IGetOLEObjectData.md",
+   "signature": "System.bool IGetOLEObjectData( System.int Index, out System.byte Buffer )",
+   "obsolete": true,
+   "pointer": false,
+   "zero": "否（有形参）"
+  }
+ ]
+}

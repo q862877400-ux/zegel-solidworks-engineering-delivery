@@ -1,0 +1,92 @@
+{
+  "idx": 491,
+  "results": [
+    {
+      "member": "Text2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Export_BOMs_to_XML_Example_VB.md",
+        "Export_BOMs_to_XML_Example_VBNET.md",
+        "Get_Revision_Table_Example_VB.md",
+        "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页仅 10 行空壳，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "TextBox",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页只说「显示前或隐藏时可设」，未给调用序；示例把赋值钉死在 Display 调用之前的那一条语句。",
+          "example_quote": "myCallout.TextBox = false;\nmyCallout.Display(true);",
+          "example_file": "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md"
+        }
+      ],
+      "note": "两示例均在 Display 之前赋值，与 Remarks 一致，无冲突。"
+    },
+    {
+      "member": "TextColor",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Create_Multi-row_Callouts_Example_VB.md",
+        "swpublishedapi__Create_Multi-row_Callouts_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页仅 10 行空壳，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "TextDisplay",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Block_Information_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面有 Returns 与 Examples，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "TextFormat",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面有 Signature/Returns/Examples，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "TextPosition",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Basic_Dimension_Example_CSharp.md",
+        "Get_and_Set_Basic_Dimension_Example_VB.md",
+        "Get_and_Set_Basic_Dimension_Example_VBNET.md",
+        "Get_and_Set_Size_Dimension_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面有 Signature/Returns，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "TextureAngle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面有 Signature/Returns，无 Remarks 段，按纪律跳过。"
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "idx": 299,
+  "results": [
+    {
+      "member": "Id",
+      "remarks_empty": true,
+      "examples_actually_used": ["Turn_Cameras_On_and_Off_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律 3 跳过；示例确在 Debug.Print 里读 swCamera.Id。"
+    },
+    {
+      "member": "Identifier",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律 3 跳过；四份示例都在 DatumData/DatumsStr 里读它。"
+    },
+    {
+      "member": "Identity",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Length_of_Edge_Example_VB.md",
+        "Create_Temporary_Elliptical_Extrusion_Example_VB.md",
+        "Get_Curves_that_Form_Outline_of_Bodies_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例硬编码 8 个类型常量（3001/3002/3003/3004/3005/3006/3008/3009，无 3007），与 swCurveTypes_e 的 8 个成员逐值相同。",
+          "example_quote": "Public Const ELLIPSE_TYPE As Integer = 3003\nPublic Const TRIMMED_TYPE As Integer = 3009",
+          "example_file": "Get_Length_of_Edge_Example_VB.md"
+        },
+        {
+          "what": "示例前置是先选中一条边；成员页未写任何调用前置。",
+          "example_quote": "' 2. Select an edge.",
+          "example_file": "Get_Length_of_Edge_Example_VB.md"
+        },
+        {
+          "what": "示例把返回值直接与枚举成员相等比较，展示返回形状是裸 int，而非对象或字符串。",
+          "example_quote": "Debug.Print \"  is ellipse  = \" & (swCurve(0).Identity = swCurveTypes_e.ELLIPSE_TYPE)",
+          "example_file": "Create_Temporary_Elliptical_Extrusion_Example_VB.md"
+        }
+      ],
+      "note": "Create_Ruled_Surface_Example_VB 里 swSurf 是 SldWorks.Surface，用的是 ISurface::Identity，非本成员。"
+    },
+    {
+      "member": "IgnoreCornerTreatment",
+      "remarks_empty": true,
+      "examples_actually_used": ["Access_Structure_System_Corner_Treatments_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律 3 跳过；示例经 GetDefinition 取到数据对象后读它。"
+    },
+    {
+      "member": "IgnoreHiddenBodies",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Run_Interference_Detection_Example_VB.md",
+        "Run_Interference_Detection_Example_CSharp.md",
+        "Run_Interference_Detection_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "调用序：ToolsCheckInterference → 取 InterferenceDetectionManager → 设本属性 → GetInterferences。",
+          "example_quote": "swAssemblyDoc.ToolsCheckInterference\nSet pIntMgr = swAssemblyDoc.InterferenceDetectionManager",
+          "example_file": "Run_Interference_Detection_Example_VB.md"
+        },
+        {
+          "what": "三份示例都把它设成 False（不忽略隐藏体），设完立即跑检测；示例从不回读本属性。",
+          "example_quote": "pIntMgr.IgnoreHiddenBodies = False",
+          "example_file": "Run_Interference_Detection_Example_VB.md"
+        },
+        {
+          "what": "示例把停止检测的调用注释掉，只留说明文字，未验证 Remarks 的「不持久化到界面下一次」。",
+          "example_quote": "'Stop interference detection and close Interference Detection pane",
+          "example_file": "Run_Interference_Detection_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 三条只讲作用域与不持久化；示例均不与之矛盾，也未回读该属性。"
+    },
+    {
+      "member": "IgnoreHiddenComponents",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Whether_Components_Are_Loaded_Example_CSharp.md",
+        "Get_Whether_Components_Are_Loaded_Example_VBNET.md",
+        "Open_Assembly_Document_Example_CSharp.md",
+        "Open_Assembly_Document_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律 3 跳过；四份示例都在 OpenDocSpec6 返回对象上赋 True。"
+    },
+    {
+      "member": "IgnoreMultiple",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Autoballoon_to_Face_Example_VB.md",
+        "Add_Autoballoon_to_Face_Example_CSharp.md",
+        "Add_Autoballoon_to_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都在 ActivateView + SelectByID2 选中视图后设 True，再调 AutoBalloon5。",
+          "example_quote": "autoballoonParams.IgnoreMultiple = true",
+          "example_file": "Add_Autoballoon_to_Face_Example_CSharp.md"
+        },
+        {
+          "what": "前置更具体：图纸里必须已有 BOM 表；成员页未写任何前置。",
+          "example_quote": "// Preconditions: Open a drawing with a bill of materials (BOM) table.",
+          "example_file": "Add_Autoballoon_to_Face_Example_CSharp.md"
+        },
+        {
+          "what": "C# 在 DrawingDoc 上取 CreateAutoBalloonOptions，VBA 在声明为 ModelDoc2 的 Part 上取。",
+          "example_quote": "autoballoonParams = Draw.CreateAutoBalloonOptions();",
+          "example_file": "Add_Autoballoon_to_Face_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只指向 Help，无冲突；摘要句未写极性，Returns 才写 True=只出一个气泡。"
+    }
+  ]
+}

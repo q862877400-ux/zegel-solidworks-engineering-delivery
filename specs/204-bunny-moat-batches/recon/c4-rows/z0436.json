@@ -1,0 +1,163 @@
+{
+  "idx": 436,
+  "results": [
+    {
+      "member": "SetBlockingState",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Blocking_State_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "**IMPORTANT:** There must be a corresponding call to IModelDoc2::ResetBlockingState for every call to IModelDoc2::SetBlockingState. It is not enough to call IModelDoc2::ResetBlockingState once at the end of a sequence of operations that have called IModelDoc2::SetBlockingState several times.",
+          "example_quote": "    Else\n    ' If use responds no, then set blocking state to\n    ' disallow changes to document\n        swModel.SetBlockingState swPartialModifyBlock\n    End If",
+          "example_file": "Set_Blocking_State_Example_VB.md",
+          "why": "示例把 SetBlockingState 放在 Else 分支末尾且本轮不再 Reset，收尾后文档仍封锁（后置条件 4/5 明写不能改文档），与「每次 Set 必配一次 Reset」不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例用 swPartialModifyBlock 枚举常量，并先读 GetBlockingState 打印当前状态。",
+          "example_quote": "swModel.SetBlockingState swPartialModifyBlock",
+          "example_file": "Set_Blocking_State_Example_VB.md"
+        },
+        {
+          "what": "示例让 Set 与 Reset 成为同一分支二选一，跨多次运行交替，而非一次运行内配对。",
+          "example_quote": "    If nResponse = vbYes Then\n        swModel.ResetBlockingState",
+          "example_file": "Set_Blocking_State_Example_VB.md"
+        }
+      ],
+      "note": "唯一冲突是 Set/Reset 配对纪律；示例按设计把封锁态跨运行保留。"
+    },
+    {
+      "member": "SetBodiesToKeep",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Cut_Body_and_Keep_All_Bodies_Example_CSharp.md",
+        "Cut_Body_and_Keep_All_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对；两份示例均在事件回调里调用该成员。"
+    },
+    {
+      "member": "SetBody2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Imported_File_Associated_with_an_Imported_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 Body2.Copy 取得替换体，来源是 LoadFile2 打开的 Parasolid 文件的实体体。",
+          "example_quote": "    Set swBody = vBodyArr(0)\n    Set swTempBody = swBody.Copy\n    bRet = swFeat.SetBody2(swTempBody, False)",
+          "example_file": "Change_Imported_File_Associated_with_an_Imported_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例要求先在特征树选中导入特征、用 GetSelectedObject6 取对象，并在调用后立刻 QuitDoc 关闭导入文件。",
+          "example_quote": "    Set swFeat = swSelMgr.GetSelectedObject6(1, -1)",
+          "example_file": "Change_Imported_File_Associated_with_an_Imported_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 列出的构造途径与示例的 Copy 途径可自洽（落在「translation ... and so on」），未判冲突。"
+    },
+    {
+      "member": "SetBodyScope",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_SM_Corner_Relief_Feature_Example_CSharp.md",
+        "Create_SM_Corner_Relief_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（仅有 Returns 与 See Also），按纪律跳过比对。"
+    },
+    {
+      "member": "SetBomBalloonText",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_BOM_Balloon_Properties_Example_CSharp.md",
+        "Get_BOM_Balloon_Properties_Example_VB.md",
+        "Get_BOM_Balloon_Properties_Example_VBNET.md",
+        "Set_BOM_Balloon_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份属性示例都显式传 swDetailingNoteTextCustom，正好避开 Remarks 的忽略条件。",
+          "example_quote": "swNote.SetBomBalloonText swDetailingNoteTextContent_e.swDetailingNoteTextCustom, \"ABC\", swDetailingNoteTextContent_e.swDetailingNoteTextCustom, \"EFG\"",
+          "example_file": "Get_BOM_Balloon_Properties_Example_VB.md"
+        },
+        {
+          "what": "设置示例的前置条件写明必须是上下都有自定义文字的分裂圆形 BOM 气泡。",
+          "example_quote": " 1. Open a drawing document with a split-circle BOM balloon\n' with custom text in the upper and lower portions of\n' of the balloon.",
+          "example_file": "Set_BOM_Balloon_Example_VB.md"
+        },
+        {
+          "what": "示例把刚读回的样式与文字回传以追加文字，隐含样式已是 Custom。",
+          "example_quote": "bRet = swNote.SetBomBalloonText(swNote.GetBomBalloonTextStyle(True), swNote.GetBomBalloonText(True) & \" Upper\", swNote.GetBomBalloonTextStyle(False), swNote.GetBomBalloonText(False) & \" Lower\")",
+          "example_file": "Set_BOM_Balloon_Example_VB.md"
+        }
+      ],
+      "note": "示例的前置条件正好实现 Remarks 的忽略条件，属更具体而非矛盾。"
+    },
+    {
+      "member": "SetBomTable",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VB.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 InsertBomTable3 造出 BOM 注解，再由它取 BomFeature.Name 作为入参。",
+          "example_quote": "    Set swBOMFeature = swBOMAnnotation.BomFeature\n    BOMTableName = swBOMFeature.Name",
+          "example_file": "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VB.md"
+        },
+        {
+          "what": "示例用 GetBomAreaCount>0 作守卫再传 0 基索引 0，对上 Remarks 的 0-based Index。",
+          "example_quote": "    nbrBOMTableAreas = swMBDPdfData.GetBomAreaCount\n    If nbrBOMTableAreas > 0 Then\n        swMBDPdfData.SetBomTable 0, BOMTableName, columns\n    End If",
+          "example_file": "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VB.md"
+        },
+        {
+          "what": "示例未调 ColumnCount，直接用 GetColumnTitle(1) 取第二列标题作为 Columns 数组。",
+          "example_quote": "    columnNames(0) = swTableAnnotation.GetColumnTitle(1)",
+          "example_file": "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VB.md"
+        }
+      ],
+      "note": "三语言示例调用形状一致，与 Remarks 的 To get/Call 表逐条对应，无冲突。"
+    },
+    {
+      "member": "SetBoundingBoxDirection1",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Slice_a_Model_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- The bounding box cannot be created because [[ISlicingData::PlaneReferences]] has not been set.",
+          "example_quote": "boolstatus = sliceData.SetBoundingBoxDirection1(0.1397);",
+          "example_file": "Slice_a_Model_Example_CSharp.md",
+          "why": "示例只 SelectByID2 选基准面、从未给 PlaneReferences 赋值；按 Remarks 第二条失败条件，四次 Set 应返回 false，示例却当作生效并继续 InsertSlicing。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例前置要求把文档单位改成 MKS，才用 0.1397 / -0.1397 这类米制值；成员页区间未写单位。",
+          "example_quote": "// 2. Change units to MKS.",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        },
+        {
+          "what": "示例把四个方向成对设为一正一负，并先后用 GetBoundingBoxDirection1 回读验证。",
+          "example_quote": "sliceData.SetBoundingBoxDirection1(0.1397);\nboolstatus = sliceData.SetBoundingBoxDirection2(0.1397);\nboolstatus = sliceData.SetBoundingBoxDirection3(-0.1397);\nboolstatus = sliceData.SetBoundingBoxDirection4(-0.1397);",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "冲突集中在 PlaneReferences 前置；返回值 boolstatus 在示例中从不检查。"
+    }
+  ]
+}

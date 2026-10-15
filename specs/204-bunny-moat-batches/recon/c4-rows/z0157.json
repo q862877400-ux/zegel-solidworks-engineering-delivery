@@ -1,0 +1,159 @@
+{
+ "idx": 157,
+ "results": [
+  {
+   "member": "GetCenterPointHandle",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_Sketch_Slot_Data_Example_vb.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出返回 SketchPoint 的实际取用：读 .X/.Y/.Z 后再取 GetID；成员页 Returns 只写「Sketch point」",
+     "example_quote": "Debug.Print \"CenterPointHandle ISketchPoint(x,y,z): \" & swSketchPoint.X & \",\" & swSketchPoint.Y & \",\" & swSketchPoint.Z & vbCrLf",
+     "example_file": "Get_Sketch_Slot_Data_Example_vb.md"
+    },
+    {
+     "what": "示例补出前置：模型文档活动且含带槽口的 Sketch3 特征；成员页未写任何前置",
+     "example_quote": "Preconditions: Model document is active and contains",
+     "example_file": "Get_Sketch_Slot_Data_Example_vb.md"
+    }
+   ],
+   "note": "该成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+  },
+  {
+   "member": "GetCentermarks",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "List_Center_Marks_in_Drawing_Example_VB.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "return_shape_diff",
+     "remarks_quote": "This method returns an empty array for center marks that are annotations; thus, this method is only valid for center marks that are features.",
+     "example_quote": "Debug.Assert\nNot IsEmpty(vCenterMarkArr)",
+     "example_file": "List_Center_Marks_in_Drawing_Example_VB.md",
+     "why": "Remarks 称中心标记现已是注解且对注解返回空数组；示例前置只要求「有中心标记的工程图」，却断言返回数组非空，两说不能同时成立。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例遍历用 GetFirstCenterMark2 再 GetNext；成员页 See Also 只列 GetFirstCenterMark（无 2）",
+     "example_quote": "Set\nswCenterMark = swView.GetFirstCenterMark2",
+     "example_file": "List_Center_Marks_in_Drawing_Example_VB.md"
+    },
+    {
+     "what": "示例自定义 swCenterMarkStyle_e，首成员 swCenterMark_NonAnnotation（下一行 =1）对应 Remarks 所说的 feature 型",
+     "example_quote": "swCenterMark_NonAnnotation",
+     "example_file": "List_Center_Marks_in_Drawing_Example_VB.md"
+    }
+   ],
+   "note": "示例确作用在 SldWorks.View 上，用到本成员。"
+  },
+  {
+   "member": "GetChamferUnits",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Chamfer_Display_Dimension_Example_CSharp.md",
+    "Get_Chamfer_Display_Dimension_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例前置明确勾选 Other 页的 Override Units，与 Remarks 的生效条件一致",
+     "example_quote": "6. On the Other tab, select Override Units.",
+     "example_file": "Get_Chamfer_Display_Dimension_Example_CSharp.md"
+    },
+    {
+     "what": "示例把分支写成显式代码形态；Remarks 只用文字描述该条件",
+     "example_quote": "if (swDispDim.GetUseDocUnits() == false)",
+     "example_file": "Get_Chamfer_Display_Dimension_Example_CSharp.md"
+    },
+    {
+     "what": "示例给出 LenUnit 的具体枚举值；成员页只说按 swLengthUnit_e 定义",
+     "example_quote": "//0=swMM",
+     "example_file": "Get_Chamfer_Display_Dimension_Example_CSharp.md"
+    },
+    {
+     "what": "示例给出 AngUnit 的具体枚举值；成员页只说按 swAngleUnit_e 定义",
+     "example_quote": "//0=swDegrees, 3=swRadians",
+     "example_file": "Get_Chamfer_Display_Dimension_Example_CSharp.md"
+    }
+   ],
+   "note": "两示例均先判 GetUseDocUnits 才调用，与 Remarks 分支无矛盾，未找到冲突。"
+  },
+  {
+   "member": "GetChildren",
+   "remarks_empty": false,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "4 份示例全撞名：IFeature::GetChildren、IConfiguration::GetChildren（VB/C# 各一）、IDrawingComponent::GetChildren；后者须经 .Component 才回 IComponent2。"
+  },
+  {
+   "member": "GetChildrenCount",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Work_with_Configurations_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例先取计数、再取 late-bound 的 GetChildren 数组；Remarks 只点名 IGetChildren",
+     "example_quote": "VChildren = C1a.GetChildren",
+     "example_file": "Work_with_Configurations_Example_VB.md"
+    },
+    {
+     "what": "示例明确 children 即派生配置：先建 Config1，再建其派生 Config1 Derived",
+     "example_quote": "Create a derived configuration called \"Config1 Derived\" whose parent configuration is \"Config1\"",
+     "example_file": "Work_with_Configurations_Example_VB.md"
+    }
+   ],
+   "note": "Section View 那份的 GetChildrenCount 属 IDrawingComponent，非本成员。"
+  },
+  {
+   "member": "GetClosestPointOn",
+   "remarks_empty": false,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "3 份示例分别调 IFace2::GetClosestPointOn 两处与 ISurface::GetClosestPointOn 一处；本成员页自身也无 Examples 段。"
+  },
+  {
+   "member": "GetCoEdges",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Select_Loop_of_Edges_Example_VB_.md",
+    "Select_Tangent_Edges_Example_VB.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "Call this method for body-related edges, not reference curve or sketch edges.",
+     "example_quote": "1. Open a part, assembly, or drawing document.",
+     "example_file": "Select_Tangent_Edges_Example_VB.md",
+     "why": "Remarks 把草图边/参考曲线边排除在外；该示例前置却把 drawing 文档列为可用场景，其所选边可能正是草图边，两说范围不能同时成立。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例给出按体类型的期望数量：曲面体 1 或 2、实体体 2；成员页无任何数量说明",
+     "example_quote": "1 or 2: Coedges for an edge on a surface body",
+     "example_file": "Select_Loop_of_Edges_Example_VB_.md"
+    },
+    {
+     "what": "示例把「恰好两个 coedge」当硬前提，不满足即退出；成员页未提数量约束",
+     "example_quote": "If this edge does not have exactly two coedges, then quit",
+     "example_file": "Select_Tangent_Edges_Example_VB.md"
+    },
+    {
+     "what": "示例给出只有一个 coedge 即无歧义、可直接取环的消歧判据",
+     "example_quote": "No ambiguity, so select",
+     "example_file": "Select_Loop_of_Edges_Example_VB_.md"
+    }
+   ],
+   "note": "两份示例都作用在 SldWorks.Edge 上，确系本成员。"
+  }
+ ]
+}

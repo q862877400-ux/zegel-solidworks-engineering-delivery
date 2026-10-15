@@ -1,0 +1,67 @@
+{
+  "idx": 42,
+  "results": [
+    {
+      "name": "sketch_slot_types",
+      "level": "verified",
+      "members_found": ["CreateSketchSlot", "SketchManager", "InsertSketch", "SelectByID2", "ClearSelection2", "GetActiveSketch2", "GetSketchSegments"],
+      "examples_used": ["Insert_and_Resize_Sketch_Slot_Example_VB.md", "Insert_and_Resize_Sketch_Slot_Example_CSharp.md", "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_VB.md"],
+      "preconditions": [
+        {
+          "text": "先打开一个新零件文档（Preconditions: 1. Open a new part document.）",
+          "from": "Insert_and_Resize_Sketch_Slot_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调用前必须先 SelectByID2 选中基准面（\"Front Plane\",\"PLANE\"）再 InsertSketch 进草图",
+          "from": "Insert_and_Resize_Sketch_Slot_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "SlotCreationType / SlotLengthType 必须传官方枚举成员（line · CenterCenter），非任意整数",
+          "from": "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "证据只给参数表与段数 0→5；官方示例三条前置（新建零件、选面进草图、传官方枚举）evidence 全未提。"
+    },
+    {
+      "name": "surface_flatten",
+      "level": "verified",
+      "members_found": ["InsertFlattenSurface2", "SelectByID2", "Select4", "ClearSelection2", "GetBodies2", "GetFaces", "GetEdges", "GetStartVertex", "GetEndVertex", "GetTypeName2"],
+      "examples_used": ["Get_Data_for_Surface_Flatten_Feature_Example_VB.md", "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md"],
+      "preconditions": [
+        {
+          "text": "先打开要展平的零件（Preconditions: 1. Verify that the part to open exists.）",
+          "from": "Get_Data_for_Surface_Flatten_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "注释「Select face, point, and curves」：面 mark=1 + 锚点顶点 mark=16 必选",
+          "from": "Get_Data_for_Surface_Flatten_Feature_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "一张直线拉出的曲面 **+ 选它的面（mark=1）+ 它的一个顶点（mark=16）**"
+        },
+        {
+          "text": "示例传 ShouldUseTears=True，先连选 9 条 EDGE mark=8 撕裂边",
+          "from": "Get_Data_for_Surface_Flatten_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "示例用 Hemisphere.SLDPRT（半球实体），未明说几何必须为曲面体或可展",
+          "from": "Get_Data_for_Surface_Flatten_Feature_Example_VB.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "面(1)+锚点(16) 有逐字证据；打开零件、撕裂边 mark=8 未提，几何类型那条示例说不清。"
+    }
+  ]
+}

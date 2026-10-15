@@ -1,0 +1,246 @@
+{
+  "representative": [
+    {
+      "class": "① 草图长度/角度输入",
+      "tool": "solidworks_sketch_add_line",
+      "module": "sw_part",
+      "function": "sketch_line",
+      "inject": "model",
+      "params": [
+        {
+          "name": "start_x_mm",
+          "kind": "float",
+          "required": true,
+          "unit": "length:mm"
+        },
+        {
+          "name": "start_y_mm",
+          "kind": "float",
+          "required": true,
+          "unit": "length:mm"
+        },
+        {
+          "name": "end_x_mm",
+          "kind": "float",
+          "required": true,
+          "unit": "length:mm"
+        },
+        {
+          "name": "end_y_mm",
+          "kind": "float",
+          "required": true,
+          "unit": "length:mm"
+        }
+      ],
+      "writes": null,
+      "writes_source": "unknown",
+      "requires": [],
+      "idempotent": null,
+      "destructive": null,
+      "effect_declared": {
+        "destructive": false,
+        "doc_type": null,
+        "inject": "model",
+        "members": 2,
+        "needs": [],
+        "requires": "part",
+        "source": "static",
+        "writes": [
+          "document"
+        ]
+      },
+      "capability_level": "not-mapped",
+      "tests": [],
+      "has_pre_call": false,
+      "has_derived_args": false,
+      "calls_com_directly": true,
+      "unknowns": [
+        "writes",
+        "idempotent",
+        "destructive"
+      ]
+    },
+    {
+      "class": "② 草图关系",
+      "tool": "solidworks_add_sketch_relation",
+      "module": "sw_part",
+      "function": "add_sketch_relation",
+      "inject": "model",
+      "params": [
+        {
+          "name": "relation_type",
+          "kind": "str",
+          "required": true,
+          "unit": "unknown"
+        }
+      ],
+      "writes": null,
+      "writes_source": "unknown",
+      "requires": [],
+      "idempotent": null,
+      "destructive": null,
+      "effect_declared": {
+        "destructive": false,
+        "doc_type": null,
+        "inject": "model",
+        "members": 0,
+        "needs": [
+          "edit:sketch"
+        ],
+        "requires": "part",
+        "source": "unknown",
+        "writes": null
+      },
+      "capability_level": "not-mapped",
+      "tests": [
+        "test_relation_enum_alignment.py"
+      ],
+      "has_pre_call": false,
+      "has_derived_args": false,
+      "calls_com_directly": true,
+      "unknowns": [
+        "writes",
+        "idempotent",
+        "destructive"
+      ]
+    },
+    {
+      "class": "③ 几何/体数回读",
+      "tool": "solidworks_entities_on_body",
+      "module": "sw_selection_spec",
+      "function": "entities_report",
+      "inject": "model",
+      "params": [
+        {
+          "name": "kind",
+          "kind": "str",
+          "required": true,
+          "unit": "unknown"
+        },
+        {
+          "name": "body_index",
+          "kind": "int",
+          "required": false,
+          "unit": "unknown"
+        }
+      ],
+      "writes": null,
+      "writes_source": "unknown",
+      "requires": [],
+      "idempotent": null,
+      "destructive": null,
+      "effect_declared": {
+        "destructive": false,
+        "doc_type": null,
+        "inject": "model",
+        "members": 4,
+        "needs": [
+          "body"
+        ],
+        "requires": "part",
+        "source": "static",
+        "writes": []
+      },
+      "capability_level": "not-mapped",
+      "tests": [
+        "test_tool_specs_batch14.py"
+      ],
+      "has_pre_call": false,
+      "has_derived_args": false,
+      "calls_com_directly": false,
+      "unknowns": [
+        "writes",
+        "idempotent",
+        "destructive"
+      ]
+    },
+    {
+      "class": "④ 文档/配置/版本上下文",
+      "tool": "solidworks_config_inspect",
+      "module": "sw_document_data",
+      "function": "inspect_configurations",
+      "inject": "model",
+      "params": [],
+      "writes": null,
+      "writes_source": "unknown",
+      "requires": [],
+      "idempotent": null,
+      "destructive": null,
+      "effect_declared": {
+        "destructive": false,
+        "doc_type": null,
+        "inject": "model",
+        "members": 4,
+        "needs": [],
+        "requires": "part",
+        "source": "static",
+        "writes": []
+      },
+      "capability_level": "not-mapped",
+      "tests": [],
+      "has_pre_call": false,
+      "has_derived_args": false,
+      "calls_com_directly": false,
+      "unknowns": [
+        "writes",
+        "idempotent",
+        "destructive"
+      ]
+    },
+    {
+      "class": "⑤ 旧入口与后继对照",
+      "tool": "solidworks_api_deprecated_successor",
+      "module": "sw_com_traps",
+      "function": "deprecated_successor",
+      "inject": "",
+      "params": [
+        {
+          "name": "member",
+          "kind": "str",
+          "required": true,
+          "unit": "unknown"
+        },
+        {
+          "name": "interface",
+          "kind": "str",
+          "required": false,
+          "unit": "unknown"
+        }
+      ],
+      "writes": null,
+      "writes_source": "unknown",
+      "requires": [],
+      "idempotent": null,
+      "destructive": null,
+      "effect_declared": {
+        "destructive": false,
+        "doc_type": null,
+        "inject": "",
+        "members": 0,
+        "needs": [],
+        "requires": "none",
+        "source": "unknown",
+        "writes": null
+      },
+      "capability_level": "not-mapped",
+      "tests": [
+        "test_tool_specs_batch80.py"
+      ],
+      "has_pre_call": false,
+      "has_derived_args": false,
+      "calls_com_directly": false,
+      "unknowns": [
+        "writes",
+        "idempotent",
+        "destructive"
+      ]
+    }
+  ],
+  "total_specs": 479,
+  "capability_level_distribution": {
+    "verified": 117,
+    "stitched": 20,
+    "not_implemented": 3
+  },
+  "capability_domains": 140
+}

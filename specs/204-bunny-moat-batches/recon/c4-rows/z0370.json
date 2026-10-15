@@ -1,0 +1,164 @@
+{
+  "idx": 370,
+  "results": [
+    {
+      "member": "ModifyDefinition",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md",
+        "Change_Bend_Radius_of_Sheet_Metal_Part_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例规定必须先由用户在图形区选中该特征，再经 SelectionMgr 取到 IFeature；成员页只讲 Data/TopDoc/Component 三参，未提选择前置",
+          "example_quote": "Set swFeat = swSelMgr.GetSelectedObject5(1)",
+          "example_file": "Change_Bend_Radius_of_Sheet_Metal_Part_Example_VB.md"
+        },
+        {
+          "what": "示例在返回 False 时仍手动调用 ReleaseSelectionAccess；成员页对失败后的选择访问释放只字未提",
+          "example_quote": "status = feat.ModifyDefinition(crnrFeat2, modDoc, Nothing)\nIf status = False Then\n    crnrFeat2.ReleaseSelectionAccess\nEnd If",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md"
+        }
+      ],
+      "note": "三份示例对零件均传 TopDoc=零件 ModelDoc2、Component=Nothing，与 Remarks 表格一致。分配里的 Access_Selections_Example_VB.md 只在描述里点名该成员、无任何代码调用，故未计入 actually_used。"
+    },
+    {
+      "member": "ModifyDimensions",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Vary_Linear_Pattern_Instances_Example_CSharp.md",
+        "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Dimensions/Values 落成等长平行数组并给出尺寸名的完整写法（含 @草图名）；成员页只写 Array of dimensions / Array of values",
+          "example_quote": "vDims[0] = \"Near C'Sink Dia.@Sketch2\";\n            vDimValues[0] = 0.02;\n            boolstatus = swInstOpts.ModifyDimensions(3, vDims, vDimValues);",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出一个可核对的实算：n2=2、[i,j]=(2,2) ⇒ Instance=3，正对 I=n2*(i-1)+(j-1)；并先置 D2PatternSeedOnly=false",
+          "example_quote": "// Get current D1 and D2 modified spacing value for patten instance #3 (2,2)",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例互相一致且与 Remarks 公式、前置都吻合。Values 数组在示例里按 0.02 传（米量级），成员页未声明单位。"
+    },
+    {
+      "member": "ModifyKnot",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Spline_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例说明 ISplineParamData 是从 SketchSegment 取到的 Curve 上用 GetBCurveParams5 取得；成员页只点名成员、未说来源",
+          "example_quote": "Set swSplineParamData = swCurve.GetBCurveParams5(False, False, False, False)",
+          "example_file": "Edit_Spline_Example_VB.md"
+        },
+        {
+          "what": "示例给出完整先后序：CreateSpline → InsertSketch True → GetKnotPoints → ModifyKnot → ForceRebuild3；成员页未说明是否需草图处于编辑态",
+          "example_quote": "boolstatus = swSkSpl.ModifyKnot(6, 0.41)",
+          "example_file": "Edit_Spline_Example_VB.md"
+        }
+      ],
+      "note": "示例索引 6 是 1 基、且在 ModifyKnot 之后紧跟 ForceRebuild3，与 Remarks 的 1-based 和重建要求都对得上。"
+    },
+    {
+      "member": "MotionBlur",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md",
+        "swmotionstudyapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "A ray-trace rendering engine must be active to enable motion blur when saving an animation rendered using the engine.",
+          "example_quote": "swSaveAVIData.RendererType = (int)swRendererType_e.swRendererType_Solidworks_Screen;\n            swSaveAVIData.MotionBlur = true;",
+          "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+          "why": "Remarks 说必须激活光线追踪引擎才可开动态模糊；示例却把 RendererType 显式设成 Solidworks_Screen（枚举值 0，屏幕渲染器，枚举里根本没有光追项）后才开 MotionBlur。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例显示 MotionBlur 必须在 CreateAVIParameter 得到的 AVIParameter 上设置，并随该对象一起交给 SaveToAVI 才生效",
+          "example_quote": "swSaveAVIData = (AVIParameter)swMotionMgr.CreateAVIParameter();",
+          "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出开动态模糊时同时要设的两个伴生量 BlurLength=10、BlurOffset=-100；成员页只谈 MotionBlur 一个属性",
+          "example_quote": "swSaveAVIData.MotionBlur = true;\n            swSaveAVIData.BlurLength = 10;\n            swSaveAVIData.BlurOffset = -100;",
+          "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+        }
+      ],
+      "note": "反证：示例自己的前置注释第 2 条就写着 ray-trace 引擎须激活，却与它下面 RendererType 的取值互相打架。"
+    },
+    {
+      "member": "MotorType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Linear_Motor_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 CreateFeature 之前就从刚建的 feature data 对象读 MotorType；成员页措辞像是在读已建成的马达特征",
+          "example_quote": "Debug.Print swMotorFeat.MotorType",
+          "example_file": "Create_Linear_Motor_Feature_Example_VB.md"
+        }
+      ],
+      "note": "成员页没有 ## Remarks 段，按纪律跳过冲突查找；示例仅一处 Debug.Print 读取。"
+    },
+    {
+      "member": "MovableStyle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取得 IPMIDatumTarget 的具体路径：先判 swPMIDatumType_e_DatumTarget 再 GetDatumTarget；成员页未写获取途径",
+          "example_quote": "Set swPMIDatumTarget = swPMIDatumData.GetDatumTarget",
+          "example_file": "Get_PMI_Data_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过。页内 NOTE 称 get-only 而签名写 {get; set;}，属页内自相矛盾、非与示例对撞，未计入冲突。"
+    },
+    {
+      "member": "Move",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Run_SOLIDWORKS_Commands_and_Synthesize_Mouse_Events_Example_VB.md",
+        "Run_SolidWorks_Commands_and_Synthesize_Mouse_Events_Example_CSharp.md",
+        "Run_SolidWorks_Commands_and_Synthesize_Mouse_Events_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把多个 swMouse_e 成员相加成一个 Flags（256+1+2）再传入；成员页只说 Flags 是 as defined in swMouse_e 的单个鼠标命令",
+          "example_quote": "status = TheMouse.Move(50, 150, (int)swMouse_e.swMouse_Absolute + (int)swMouse_e.swMouse_MouseMove + (int)swMouse_e.swMouse_LeftDown);",
+          "example_file": "Run_SolidWorks_Commands_and_Synthesize_Mouse_Events_Example_CSharp.md"
+        },
+        {
+          "what": "示例紧邻着调同对象的 MoveXYZ 并传入 0.037 这类米量级小数，反证 Move 的 X/Y 走的是像素而非模型坐标",
+          "example_quote": "status = TheMouse.MoveXYZ(0.03720615681732, 0.0316583060694, 0.04991700841805, (int)swMouse_e.swMouse_LeftDown);",
+          "example_file": "Run_SolidWorks_Commands_and_Synthesize_Mouse_Events_Example_CSharp.md"
+        },
+        {
+          "what": "示例要求先经 ModelView.GetMouse() 才能拿到 IMouse 实例；成员页未给获取途径",
+          "example_quote": "TheMouse = (Mouse)swModelView.GetMouse();",
+          "example_file": "Run_SolidWorks_Commands_and_Synthesize_Mouse_Events_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例的 swcommands 引用写法（VB 加类型库、C#/VB.NET 加 dll）与 Remarks 许可的两种方式逐一对应，无冲突。"
+    }
+  ]
+}

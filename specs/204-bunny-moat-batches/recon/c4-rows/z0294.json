@@ -1,0 +1,93 @@
+{
+  "idx": 294,
+  "results": [
+    {
+      "member": "IGetEdges",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "所列示例全文无 IBody2/IBody/LPBODY；它调的是 ILoop2::IGetEdges（pLoop->IGetEdges），无法与本成员比对"
+    },
+    {
+      "member": "IGetEndPoint2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/See Also，无 Remarks；示例确用 swSkArc.IGetEndPoint2()，按纪律跳过"
+    },
+    {
+      "member": "IGetEntityByName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Edge_Data_By_Name_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求文档为零件并先 QueryInterface 到 IPartDoc；Remarks 只说方法挂在 IPartDoc 上",
+          "example_quote": "if\n(doctype != swDocPART )return;",
+          "example_file": "Get_Edge_Data_By_Name_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例用的名字 \"FredsEdge\" 须事先已命名，Remarks 只列 EntityType 合法值、未提这一先决",
+          "example_quote": "Get an entity by its name \"FredsEdge\"",
+          "example_file": "Get_Edge_Data_By_Name_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "Remarks 的 swSelEDGES 与示例实参一致；两侧无不能同时成立的说法"
+    },
+    {
+      "member": "IGetEntityName",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks；两份示例调的是 m_PartDoc->IGetEntityName / pPart->IGetEntityName，即 IPartDoc::IGetEntityName（另有成员页），非本成员"
+    },
+    {
+      "member": "IGetFirstFace",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Traverse_Bodies_Example_CPlusPlusCLI.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples/See Also，无 Remarks；示例确用 swBody->IGetFirstFace()"
+    },
+    {
+      "member": "IGetFirstLoop",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Circular_Holes_In_Face_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段；示例确用 SelectedFace->IGetFirstLoop(&pLoop) 且随后用 IsOuter 区分内外环"
+    },
+    {
+      "member": "IGetFirstSubFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Sketches_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出子特征的类型名判据：草图子特征 GetTypeName 逐字为 \"ProfileFeature\"，成员页只说 sub-feature",
+          "example_quote": "if (featureTypeName\n== \"ProfileFeature\")",
+          "example_file": "Get_Sketches_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例显示首个子特征之后须用 IGetNextSubFeature 迭代并在每次迭代后 Release，成员页未提遍历与释放",
+          "example_quote": "hres = pSubFeat->IGetNextSubFeature( & pNextSubFeature);",
+          "example_file": "Get_Sketches_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "Remarks「returns NULL」与示例 if (pSubFeat != NULL) 一致；两侧无冲突"
+    }
+  ]
+}

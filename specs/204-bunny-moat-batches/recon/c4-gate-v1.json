@@ -1,0 +1,122 @@
+{
+ "role": "V1",
+ "sampled": 12,
+ "findings": [
+  {
+   "member": "DeleteFaces3",
+   "kind": "other_conflict",
+   "really_a_conflict": false,
+   "who": "C4 判据",
+   "why": "页只是建议用 Check3 复核，示例改调其前身 Check2；两条各自都为真，属「示例没照建议做」，不是矛盾。",
+   "evidence": "成员页: Call [[IBody2::Check3]] to verify that the body is a valid solid after using this method. ／ 示例 Delete_Faces_Example_VB.md: nRetval = swCopyBody.Check2（Check2 官方页: Obsolete. Superseded by [[IBody2::Check3]].）"
+  },
+  {
+   "member": "CreatePropertyManagerPage",
+   "kind": "other_conflict",
+   "really_a_conflict": false,
+   "who": "C4 判据",
+   "why": "页是「建议传 LockedPage」，示例没传；建议被忽略可两存。且页自己列的示例同样没传，该例页未列入。",
+   "evidence": "成员页: Specify swPropertyManagerPageOptions_e.swPropertyManagerOptions_LockedPage in the Options parameter when you create your PropertyManager page. ／ 示例 Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md: Dim options As Integer = swPropertyManagerPageOptions_e.swPropertyManagerOptions_OkayButton Or swPropertyManagerPageOptions_e.swPropertyManagerOptions_CancelButton"
+  },
+  {
+   "member": "InsertVariablePitchHelix",
+   "kind": "other_conflict",
+   "really_a_conflict": false,
+   "who": "成员页（笔误/死链）",
+   "why": "「Diamenter」是成员页 wiki 链接的拼写错误，全库仅 3 处、反射无此成员；示例调的是正确名。属页内死链。",
+   "evidence": "成员页: 2. [[IFeatureManager::AddVariablePitchHelixFirstPitchAndDiamenter]] to add the first segment. ／ 示例 Create_Variable_Pitch_Helix_Example_CSharp.md: status = swFeatureManager.AddVariablePitchHelixFirstPitchAndDiameter(0.053, 0.05382625271268); ／ 反射 iface_sldworks.txt:6772 Boolean AddVariablePitchHelixFirstPitchAndDiameter(Double, Double)（无 Diamenter）"
+  },
+  {
+   "member": "Orientation",
+   "kind": "precondition_diff",
+   "really_a_conflict": true,
+   "who": "成员页 Remarks",
+   "why": "页明说 ElementType 为 swAdvWzdStraight 时本属性无效；示例恰在此类型上写入并回读，两侧只能对一个。",
+   "evidence": "成员页: This property is not valid if [[IAdvancedHoleElementData::ElementType]] is set to [[swAdvWzdGeneralHoleTypes_e]]: - swAdvWzdStraight ／ 示例 Create_Advanced_Hole_Example_VB.md: Set swAdvHole_Far_2 = swModel.Extension.CreateAdvancedHoleElementData(swAdvWzdGeneralHoleTypes_e.swAdvWzdStraight) 紧接 swAdvHole_Far_2.Orientation = swHoleElementOrientation_e.swHoleElementOrientation_Farside"
+  },
+  {
+   "member": "KeepReplacedCompOption",
+   "kind": "precondition_diff",
+   "really_a_conflict": false,
+   "who": "C4 判据",
+   "why": "页给前置「KeepMissingItems 须为 true」；示例仅无条件读本属性、未展示该状态 ⇒ 属示例漏写前置（详略不同）。",
+   "evidence": "成员页: This property is valid only if [[IBomFeature::KeepMissingItems]] is set to true. ／ 示例 Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md: Debug.Print(\"Replace missing components as defined in swKeepReplacedCompOption_e: \" + swBOMFeature.KeepReplacedCompOption);（前一行只读 KeepMissingItems，未做判定）"
+  },
+  {
+   "member": "CounterDrillAngle",
+   "kind": "precondition_diff",
+   "really_a_conflict": true,
+   "who": "成员页 Remarks",
+   "why": "页把适用孔型限定为两种 counterdrilled；示例建的 swWzdCounterBore 不在其内，仍把该值换算成 deg 打印。",
+   "evidence": "成员页: This property is relevant only for swCounterDrilled and swCounterDrilledDrilled holes. ／ 示例 Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md: swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore, … ／ 同文件: Debug.Print(\"  CounterDrillAngle            = \" + swWizHole.CounterDrillAngle * 57.3 + \" deg\");"
+  },
+  {
+   "member": "Refresh3DViews",
+   "kind": "precondition_diff",
+   "really_a_conflict": false,
+   "who": "C4 判据",
+   "why": "「需加载项已加载」≠「示例必须调 LoadAddIn」：加载是环境前提，示例可依赖已装好的 MBD，两者能同时成立。",
+   "evidence": "成员页: This method requires that the SOLDWORKS MBD add-in be loaded. ([[ISldWorks::LoadAddIn]]) ／ 示例 Capture_3DView_Example_CSharp.md: swModelExt.Refresh3DViews(); ／ 同例 Preconditions 只写 1. Open a part or assembly. 2. Open an Immediate window.（三份语言版 grep MBD/AddIn 均 0 命中 —— 但那只证明它没调，不证明前置缺席）"
+  },
+  {
+   "member": "GetDependencies2",
+   "kind": "return_shape_diff",
+   "really_a_conflict": true,
+   "who": "示例（索引口径错）",
+   "why": "页写 AddReadOnlyInfo=True 时每文档 3 串；示例正是传 True，却按每文档 2 串配对 —— 二者只能对一个。",
+   "evidence": "成员页: If AddReadOnlyInfo is set to True, then a string of True or false is added to the list of strings. If Part1 is read-only, then the resulting set of strings would be: [ \"Part1\", \"C:\\temp\\Part1.SLDPRT\", \"True\", \"SubAssem1\", \"c:\\temp\\SubAssem1.SLDASM\", \"\" ] ／ 示例 Get_Active_Document_Dependents_Example_VB.md: vDepend = swModel.GetDependencies2(True, True, True) ／ For i = 0 To (UBound(vDepend) - 1) / 2"
+  },
+  {
+   "member": "ReferencedDocument",
+   "kind": "return_shape_diff",
+   "really_a_conflict": false,
+   "who": "成员页（页内自相抵触）",
+   "why": "页那句只对剖视图成立，示例用的是普通选中视图，作用域不重叠；真抵触在页内 Returns 与 Remarks 之间。",
+   "evidence": "成员页 Returns: ModelDoc2 ReferencedDocument {get;} / [[Model document]] ／ 同页 Remarks: Because section views do not have referenced documents, this method returns an empty string for this type of view. ／ 示例 Get_Document_Referenced_by_Drawing_View_Example_VB.md: Set swDrawModel = swView.ReferencedDocument … swDrawModel.GetPathName"
+  },
+  {
+   "member": "SetupSheet6",
+   "kind": "unit_diff",
+   "really_a_conflict": false,
+   "who": "C4 判据（记错冲突）",
+   "why": "被引 Remarks 句根本没写单位，与示例的 0.5 不构成冲突；单位不一致在示例自身内部，真缺陷是页内死链。",
+   "evidence": "成员页: Multiplying ZoneRow by ZoneCol equals the total number of zones in the zone area of this drawing sheet. ／ 示例 Create_Drawing_Sheet_Zones_Example_VB.md: 0.2794, 0.2159, \"Default\", False, 0.5, 0.5, 0.5, 0.5, 3, 3) ／ 同页 Remarks: call [[IDrawingDoc::SetSelectedSheets]] before calling IDrawingDoc::SetupSheet6 —— 该成员在 C:\\swapi 与反射里均不存在（全库仅此 1 处提及）"
+  },
+  {
+   "member": "FeatureLinearPattern4",
+   "kind": "unit_diff",
+   "really_a_conflict": false,
+   "who": "C4 判据（把换算当冲突）",
+   "why": "页写 Offset1 以米计，示例传 0.19 并注释为 190 mm —— 0.19 m 正是 190 mm，两侧数值一致。",
+   "evidence": "成员页 Parameters: - **Offset1**: Offset in meters from a selected reference in Direction 1 (see **Remarks**); valid only if HasOffset1 is true ／ 示例 Create_Linear_Pattern_Example_VB.md: * 0.l9 (Offset1; furthest instance in Direction 1 is offset by 190 mm … 而实参写 _ 0.19, _（0.19 m = 190 mm，同一量）"
+  },
+  {
+   "member": "AutoDimension2",
+   "kind": "mark_diff",
+   "really_a_conflict": true,
+   "who": "成员页 Remarks",
+   "why": "页要求基准用 swAutodimMark* 打标；示例用无 mark 形参的 Select4 选基准（结构上打不了标）。偏弱：示例只打印状态。",
+   "evidence": "成员页: Select and mark a unique vertical edge, vertex, sketch point, or vertical sketch line as the datum for the horizontal dimensioning scheme, using swAutodimMarkHorizontalDatum as the mark value. ／ 示例 Autodimension_All_Sketches_Example_VB.md: ' Vertical line is for horizontal datum ／ bRet = swSketchSegVert.Select4(True, Nothing)"
+  }
+ ],
+ "criterion_defects": [
+  "判据把「不能同时成立」放宽成「示例没照文档做」：抽检 12 条里 8 条属漏写前置、建议未遵守、作用域不同；真正互斥的只 4 条。",
+  "precondition_diff 一类混了两件事：①示例违反前置（真冲突）②示例没写明前置（详略不同）。抽检 4 条里 2 条属②，286 条的主要风险在此。",
+  "「示例必须满足前置」这条推理不成立：Refresh3DViews 把「需 MBD 已加载」读成「示例必须调 LoadAddIn」，grep 不到就判前置缺席。",
+  "unit_diff 会把同一量的单位换算当冲突（FeatureLinearPattern4：0.19 m 与 190 mm 本是一致）；但该类 14 条里 12 条是真缺陷，非系统误报。",
+  "成员页自身的缺陷被塞进「示例冲突」框：Diamenter 拼错、SetSelectedSheets 不存在、Returns 与 Remarks 互斥，示例侧证据是硬凑的。",
+  "mark_diff 按字符串配对 mark 表：InsertCutSwept5 示例选边用 mark 4，正合该页「4 = Sweep path」，却被拿去对「1 = Sketch profile」。",
+  "EditMate3 那条的示例注释逐字复述页里的 mark 规则、并照做，仍被记为冲突（自证型假阳性，无人工复核环节）。",
+  "未区分「页 ## Examples 列出的示例」与「其它调用到该成员的示例」：CreatePropertyManagerPage 那条比的是页未列入的示例。",
+  "引文闸号称「逐字」，实现却是「删掉全部空白后包含」：会把不逐字的引文放行（渲染脚本 nrm 与合并脚本口径不同）。"
+ ],
+ "more_specific_hole": "漏洞真实且不对称：3709 只过示例侧闸、从未回查成员页。客观下界 129 条（3.5%）的 what 自称「与 Remarks 一致/印证」；179 条（4.9%）的 quote 显著记号已全在页上；手核 4 条「页未写」断言有 1 条不成立。估 10–25%（约 400–900 条）需复核。",
+ "counts_i_dispute": [
+  "544 条冲突：抽检 12 条只有 4 条真互斥（33%）；按类加权估真冲突约 220–270 条，「16%」宜改为约 8%。",
+  "机读件 c4_merged.json 的 results 仍含全部 598 条冲突（54 条未过闸在内），下游照机读件计数会多算 54 条。",
+  "more_specific 过闸 3709 复算不出来：同一件按报告自述的口径重跑得 3705；3709 来自更松的「删空白再比」，非逐字。",
+  "3806（more_specific 机械数）没进报告的表：只给 3709，读者看不到它的分母与被剔的 97 条。",
+  "3709 与 544 不是同级判据：前者单侧过闸、后者双侧过闸，「多近一个数量级」的比较口径不对等。",
+  "渲染件把 544 与 3705/3709 写在同一个「引文闸」名下，实为两种不同实现，报告未标注该口径差异。"
+ ]
+}

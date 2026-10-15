@@ -1,0 +1,140 @@
+{
+  "idx": 32,
+  "results": [
+    {
+      "member": "Bends",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_and_Access_Fold_Feature_Example_CSharp.md",
+        "Insert_and_Access_Fold_Feature_Example_VB.md",
+        "Insert_and_Access_Fold_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "读 Bends 前必须先 AccessSelections、读完必须 ReleaseSelectionAccess；Remarks 只指向一篇外部文档，未给调用序。",
+          "example_quote": "status = swFoldsFeatureData.AccessSelections(swModel, Nothing)",
+          "example_file": "Insert_and_Access_Fold_Feature_Example_VB.md"
+        },
+        {
+          "what": "C# 版显示返回值必须转成 object[] 才能按下标取元素，比 Returns 的“Array of bend features”更具体。",
+          "example_quote": "bendsArray = (object[])swFoldsFeatureData.Bends;",
+          "example_file": "Insert_and_Access_Fold_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只是指向 Selections that Define Features，无可证伪的说法，故无冲突。"
+    },
+    {
+      "member": "BentLeaderLength",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_GTol_Example_CSharp.md",
+        "Insert_GTol_Example_VB.md",
+        "Insert_GTol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只列出会返回 -1 的三种情形；示例给出使之为有效的那个调用：先用 swBENT 设置引线。",
+          "example_quote": "errors = swAnno.SetLeader3(swLeaderStyle_e.swBENT, swLeaderSide_e.swLS_LEFT, True, False, False, False)",
+          "example_file": "Insert_GTol_Example_VB.md"
+        },
+        {
+          "what": "示例给出赋值 0.05 并立刻回读的全过程；同文件其余坐标均为米制量级，成员页未标注单位。",
+          "example_quote": "swAnno.BentLeaderLength = 0.05",
+          "example_file": "Insert_GTol_Example_VB.md"
+        }
+      ],
+      "note": "三份语言版本行为一致；示例未断言回读值，故不构成与“返回 -1”的矛盾。"
+    },
+    {
+      "member": "Bidirectional",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Projected_Curve_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页连 Examples 段都没有；示例给出取得承载该属性的对象的入口与常量 swFmRefCurve。",
+          "example_quote": "Set swFeatData = swFeatMgr.CreateDefinition(swFmRefCurve)",
+          "example_file": "Get_Projected_Curve_Example_VB.md"
+        }
+      ],
+      "note": "remarks_empty=true，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "BlankRefGeom",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Replace_Face_Example_CSharp.md",
+        "Replace_Face_Example_VB.md",
+        "Replace_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说“select a reference plane”；示例给出确切选择调用形态：按名字 Plane1、PLANE、append=False、mark=0。",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"Plane1\", \"PLANE\", -6.93294107213475E-02, 8.72697709380442E-02, -3.00713252946179E-02, False, 0, Nothing, 0)",
+          "example_file": "Replace_Face_Example_VB.md"
+        }
+      ],
+      "note": "三份示例一致（均为先选 PLANE 再零参调用），与 Remarks 描述吻合。"
+    },
+    {
+      "member": "BlankSketch",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Hide_and_Show_Sketches_Example_CSharp.md",
+        "Hide_and_Show_Sketches_Example_VB.md",
+        "Hide_and_Show_Sketches_Example_VBNET.md",
+        "Reset_Visibility_of_Sketches_in_Drawing_View_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "恢复显示前必须在 FeatureManager 树里重新选中同一批草图，示例用 Stop 强制中断来保证这一点。",
+          "example_quote": "Stop",
+          "example_file": "Hide_and_Show_Sketches_Example_VB.md"
+        },
+        {
+          "what": "该 ModelDoc2 成员在工程图里也可用：示例先激活视图，再对视图内带 @Drawing View1 后缀的草图调用。",
+          "example_quote": "boolstatus = swModelDocExt.SelectByID2(\"Sketch1@resetsketchvisibility-7@Drawing View1\", \"SKETCH\", 0, 0, 0, false, 0, null, 0);",
+          "example_file": "Reset_Visibility_of_Sketches_in_Drawing_View_Example_CSharp.md"
+        }
+      ],
+      "note": "remarks_empty=true，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "BlendColor",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Material_Visual_Properties_Example_CSharp.md",
+        "Get_and_Set_Material_Visual_Properties_Example_VB.md",
+        "Get_and_Set_Material_Visual_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "对象须由 IPartDoc 取回；成员页只说 get/set，没说从哪拿。",
+          "example_quote": "Set myMatVisProps = myPart.GetMaterialVisualProperties()",
+          "example_file": "Get_and_Set_Material_Visual_Properties_Example_VB.md"
+        },
+        {
+          "what": "赋值后必须再调 SetMaterialVisualProperties 才生效；成员页完全没提这一步。",
+          "example_quote": "longstatus = myPart.SetMaterialVisualProperties(myMatVisProps, swThisConfiguration, Nothing)",
+          "example_file": "Get_and_Set_Material_Visual_Properties_Example_VB.md"
+        }
+      ],
+      "note": "C# 版用 == false 印证 System.bool；VBA 的 = 0 是语言强转，不判为返回形状冲突。"
+    },
+    {
+      "member": "Blind",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "示例的 Blind 属别的接口（IDimXpertExtrudeFeature / IDimXpertCompoundHoleFeature），不是本成员。"
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "idx": 525,
+  "results": [
+    {
+      "member": "WireframeGraphics",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "swmotionstudyapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取该属性的具体路径：先按名取算例，再用索引 4 取属性对象并 Set 转成该属性对象",
+          "example_quote": "swMotionStudy1.GetProperties(4)",
+          "example_file": "swmotionstudyapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md"
+        },
+        {
+          "what": "示例前置更严：算例须先激活，且文档须至少有一个 COSMOSMotion 结果绘图",
+          "example_quote": "at least one COSMOSMotion motion study plot.",
+          "example_file": "swmotionstudyapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md"
+        }
+      ],
+      "note": "示例拼作 WireframeGraphics（小写 f），成员页为 WireFrameGraphics；VBA 不分大小写，未按冲突记。"
+    },
+    {
+      "member": "WitnessVisibility",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Display_Dimension_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置更具体：须打开 foodprocessor.slddrw，且遍历 DrawingView1 的显示尺寸",
+          "example_quote": "Open public_documents\\samples\\tutorial\\advdrawings\\foodprocessor.slddrw.",
+          "example_file": "Get_Display_Dimension_Properties_Example_VB.md"
+        },
+        {
+          "what": "示例声明全程只读不改，因此不触发 Remarks 要求的写后 GraphicsRedraw2",
+          "example_quote": "Because the drawing is used elsewhere, do not make changes.",
+          "example_file": "Get_Display_Dimension_Properties_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的重绘要求只针对写；示例只读，未构成矛盾。"
+    },
+    {
+      "member": "Worksheet",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Excel_Design_Table_Worksheet_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整次序 Attach → 读 Worksheet → Detach，并要求加 Excel 对象库引用",
+          "example_quote": "Add a reference to Microsoft Excel release Object Library.",
+          "example_file": "Get_Excel_Design_Table_Worksheet_Example_VB.md"
+        },
+        {
+          "what": "返回值须转成 Excel.Worksheet 并判空后才可用",
+          "example_quote": "Set myWorksheet = myDesignTable.Worksheet",
+          "example_file": "Get_Excel_Design_Table_Worksheet_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 要求先 Attach，示例正是这样做的；两侧一致。"
+    },
+    {
+      "member": "X",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；所列 4 份示例均未出现 IMeasure/Measure。"
+    },
+    {
+      "member": "XAngle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Insert_and_Use_Plane_with_Manipulator_Example_CSharp.md",
+        "swpublishedapi__Insert_and_Use_Plane_with_Manipulator_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。示例赋值写作 2 * PiVal() / 180（弧度），页未给单位。"
+    },
+    {
+      "member": "XAxisEntities",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Coordinate_System_Feature_Example_VB.md",
+        "Insert_Coordinate_System_Feature_at_Center_of_Mass_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先 AccessSelections(model, component) 才能读本属性，成员页未提该前置",
+          "example_quote": "cSysData.AccessSelections(swModel, component)",
+          "example_file": "Create_Coordinate_System_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例说明 x 非活动轴时该实体数组可能为空，且先读 GetXAxisEntitiesCount",
+          "example_quote": "Get the x-axis entities; there shouldn't be any, because x is not active",
+          "example_file": "Create_Coordinate_System_Feature_Example_VB.md"
+        }
+      ],
+      "note": "两示例均 AccessSelections 起、ReleaseSelectionAccess 收；属示例更具体，非矛盾。"
+    },
+    {
+      "member": "XFlipped",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Coordinate_System_Feature_Example_VB.md",
+        "Insert_Coordinate_System_Feature_at_Center_of_Mass_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；两示例都是先 AccessSelections 再读/写 XFlipped。"
+    }
+  ]
+}

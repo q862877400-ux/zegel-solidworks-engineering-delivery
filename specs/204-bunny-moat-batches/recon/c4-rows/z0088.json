@@ -1,0 +1,176 @@
+{
+  "idx": 88,
+  "results": [
+    {
+      "member": "DeleteAllDecals",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Delete_All_Decals_Example_CSharp.md",
+        "Delete_All_Decals_Example_VB.md",
+        "Delete_All_Decals_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置（须先打开带贴花的零件）；成员页没写任何前置",
+          "example_quote": "// Preconditions: Open a part with one or more decals.",
+          "example_file": "Delete_All_Decals_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "DeleteAllTolerances",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Auto_Dimension_Scheme_Example_CSharp.md",
+        "Auto_Dimension_Scheme_Example_VB.md",
+        "Auto_Dimension_Scheme_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置与用法：开 DimXpert 零件、断点停在调用处，F5 后公差标注被移除",
+          "example_quote": "// 10. Press F5 and observe that all tolerance annotations have been removed from the part.",
+          "example_file": "Auto_Dimension_Scheme_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；调用出现在 DimXpert 自动标注流程末段。"
+    },
+    {
+      "member": "DeleteBelowFrameTextAt",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Text_in_Datum_Tags_and_GTols_Example_CSharp.md",
+        "Set_Text_in_Datum_Tags_and_GTols_Example_VB.md",
+        "Set_Text_in_Datum_Tags_and_GTols_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出语境：先插入 3 行再按 1 删首行；删的是工程图视图里的 GTol",
+          "example_quote": "bRet = swDispGtol.DeleteBelowFrameTextAt(1)   'Deletes the first line in the below frame",
+          "example_file": "Set_Text_in_Datum_Tags_and_GTols_Example_VB.md"
+        },
+        {
+          "what": "-1 全删写法在示例里以注释形式保留（与 Parameters 一致，非矛盾）",
+          "example_quote": "'bRet = swDispGtol.DeleteBelowFrameTextAt(-1)  'Deletes all below frame text",
+          "example_file": "Set_Text_in_Datum_Tags_and_GTols_Example_VB.md"
+        }
+      ],
+      "note": "成员页既无 Remarks 也无 Examples 段，仅 Parameters。"
+    },
+    {
+      "member": "DeleteBlends3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Delete_Blended_Faces_Example_CSharp.md",
+        "Delete_Blended_Faces_Example_VB.md",
+        "Delete_Blended_Faces_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Typically when deleting blends, an entire chain of blends is deleted.",
+          "example_quote": "// 1. Creates a new part, which has the same body as\n//    the original part, but the selected blended\n//    face is removed.",
+          "example_file": "Delete_Blended_Faces_Example_CSharp.md",
+          "why": "Remarks 说删的是整条 blend 链；示例后置只承认「选中的那个面」被删，二者不能同时成立（Remarks 有 Typically 缓和词）。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例对只删部分链的场景把 UsePlanarCap 传 true，正对 Remarks 的失效警告",
+          "example_quote": "bRet = swCopyBody.DeleteBlends3(aFaceArr, true, true);",
+          "example_file": "Delete_Blended_Faces_Example_CSharp.md"
+        },
+        {
+          "what": "示例用断言把「只能删临时体」这条前置钉死，成员页只在摘要里提过",
+          "example_quote": "// Can only delete blends from a temporary body",
+          "example_file": "Delete_Blended_Faces_Example_CSharp.md"
+        }
+      ],
+      "note": "唯一有实质冲突的成员；冲突点落在删除范围，不在返回值或单位。"
+    },
+    {
+      "member": "DeleteDecal",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Delete_Decal_Example_CSharp.md",
+        "Delete_Decal_Example_VB.md",
+        "Delete_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "However, if you set BReassignIdsAndInvalidate to true, then decal ID 2 is invalidated and decal ID 3 becomes decal ID 2.",
+          "example_quote": "// 1. Deletes all of the decals.",
+          "example_file": "Delete_Decal_Example_CSharp.md",
+          "why": "示例传 true 却按 GetDecals() 旧快照循环删；Remarks 说传 true 会重排 ID，故第二轮起删错对象，该后置不成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例用 GetDecals() 快照逐个删来达成「全删」，成员页未给这种调用形态",
+          "example_quote": "arrDecals = (Object[])swModelDocExt.GetDecals();",
+          "example_file": "Delete_Decal_Example_CSharp.md"
+        },
+        {
+          "what": "示例固定把 BReassignIdsAndInvalidate 传 true（非常省路径）",
+          "example_quote": "boolstatus = swModelDocExt.DeleteDecal(iDecalID, true);",
+          "example_file": "Delete_Decal_Example_CSharp.md"
+        }
+      ],
+      "note": "冲突源于 ID 重排语义与快照遍历不能共存，非返回值或单位差异。"
+    },
+    {
+      "member": "DeleteDesignTable",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Delete_Design_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先用 HasDesignTable 判存在再删；成员页只说「if one exists」",
+          "example_quote": "status = swModelDocExt.HasDesignTable",
+          "example_file": "Delete_Design_Table_Example_VB.md"
+        },
+        {
+          "what": "示例给出文档类型前置：零件或装配体且含设计表",
+          "example_quote": "' 1. Part or assembly document is open that contains a\n' design table.",
+          "example_file": "Delete_Design_Table_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；签名回 void，示例也不取返回值。"
+    },
+    {
+      "member": "DeleteDimension",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_VB.md",
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_VBNET.md",
+        "Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_CSharp.md",
+        "Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出的列名多一段文档名：Remarks 只说「尺寸名@特征名」，实参是三段式",
+          "example_quote": "D2@Sketch2@bottle.SLDPRT",
+          "example_file": "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_VB.md"
+        },
+        {
+          "what": "另一份示例用 GetNameForSelection 直接当列名传入，来源是显示尺寸",
+          "example_quote": "status = swDimensionDrivenTablePatternFeat.DeleteDimension(swDisplayDimension.GetNameForSelection)",
+          "example_file": "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_VB.md"
+        },
+        {
+          "what": "同名另一示例用的正是 Remarks 的两段式原样，两种形态并存",
+          "example_quote": "DimensionName = \"D3@Fillet1\"",
+          "example_file": "Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 用 e.g.，两段/三段列名可并存，不构成矛盾。"
+    }
+  ]
+}

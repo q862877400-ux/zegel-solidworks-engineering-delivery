@@ -1,0 +1,126 @@
+{
+  "idx": 259,
+  "results": [
+    {
+      "member": "GetSkippedItemCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Local_Curve-driven_Pattern_Example_CSharp.md",
+        "Create_Local_Curve-driven_Pattern_Example_VB.md",
+        "Create_Local_Curve-driven_Pattern_Example_VBNET.md",
+        "Create_Local_Sketch-driven_Pattern_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "调用序更具体：CreateFeature→GetDefinition 后即可调用，全程未调 AccessSelections；且是在派生接口上调用",
+          "example_quote": "swFeat = (Feature)swFeatMgr.CreateFeature(swLocalCurvePatternFeat);\n//Get local curve-driven pattern feature data\nswLocalCurvePatternFeat = (LocalCurvePatternFeatureData)swFeat.GetDefinition();",
+          "example_file": "Create_Local_Curve-driven_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只是指向 Selections that Define Features 的交叉引用，未声明任何前置；不能据此判冲突。"
+    },
+    {
+      "member": "GetSlicingData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Slice_a_Model_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例多出一条成员页没写的前置：把文档单位改成 MKS，后续填 0.1397 / 0.01 这类米制值",
+          "example_quote": "// 1. Open Public_Documents\\SOLIDWORKS\\SOLIDWORKS 2020\\samples\\tutorial\\api\\cube.sldprt.\n// 2. Change units to MKS.\n// 3. Open the Immediate window.",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "前置一致：示例先 SelectByID2(\"Front Plane\",\"PLANE\",...,mark=0) 再调 GetSlicingData，无 mark 冲突。"
+    },
+    {
+      "member": "GetSmartComponentData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Activate_Smart_Features_in_an_Assembly_Example_CSharp.md",
+        "Activate_Smart_Features_in_an_Assembly_Example_VB.md",
+        "Activate_Smart_Features_in_an_Assembly_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "References 出参实为长度 1 的数组：调用方把它改写成选中的 Face2，包成 DispatchWrapper[] 再回传给 SetSmartComponentData",
+          "example_quote": "referenceArray = (Object[])references;\nreferenceArray[0] = face;\nDispatchWrapper[] arrRefsIn = new DispatchWrapper[1];\narrRefsIn[0] = new DispatchWrapper(referenceArray[0]);\nboolstatus = comp.SetSmartComponentData(featuresSelected, componentsSelected, (arrRefsIn));",
+          "example_file": "Activate_Smart_Features_in_an_Assembly_Example_CSharp.md"
+        }
+      ],
+      "note": "示例的 Preconditions 未写「Smart Features 未激活」，但也没说已激活，不构成互斥，故不记冲突。"
+    },
+    {
+      "member": "GetSnapShots",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Open_Assembly_in_Large_Design_Review_Mode_Example_CSharp.md",
+        "Open_Assembly_in_Large_Design_Review_Mode_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "Remarks 只说「valid only for assemblies」，示例确实是装配体（只读打开），两侧一致。"
+    },
+    {
+      "member": "GetSolidHatchCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Solid-fill_Hatch_Information_Example_CSharp.md",
+        "Get_Solid-fill_Hatch_Information_Example_VB6.md",
+        "Get_Solid-fill_Hatch_Information_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "- **ArraySize**: Number of solid-fill hatches\n\n## Returns\nSize of the array for the solid-fill hatches boundary data",
+          "example_quote": "nbrSolidFillHatches = swView.GetSolidHatchCount(out ArraySize);\n                file.WriteLine(\" Number of solid-fill hatches in this view: \" + nbrSolidFillHatches);\n                file.WriteLine(\" Size of array for the boundary data for the solid-fill hatch(es): \" + ArraySize);",
+          "example_file": "Get_Solid-fill_Hatch_Information_Example_CSharp.md",
+          "why": "成员页说返回值是数组长度、ArraySize 是孔数；三份示例都把返回值当孔数、ArraySize 当数组长度，二者对调。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例对图纸页上所有视图逐个调用（GetFirstView→GetNextView，跳过图纸本身），不限于成员页所写的 detail/break/crop 视图",
+          "example_quote": "// First view is the current drawing sheet\nswView = (View)swDrawing.GetFirstView();\nfile.WriteLine(\" First drawing view is the current drawing sheet, so...\");\n// Get first drawing view on drawing sheet\nswView = (View)swView.GetNextView();",
+          "example_file": "Get_Solid-fill_Hatch_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "VB6 与 VB.NET 两份示例与 C# 完全同形，故同一条冲突只记一次。"
+    },
+    {
+      "member": "GetSolidHatchInfo",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Solid-fill_Hatch_Information_Example_CSharp.md",
+        "Get_Solid-fill_Hatch_Information_Example_VB6.md",
+        "Get_Solid-fill_Hatch_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出读法：先用 GetSolidHatchCount 的 ArraySize>0 把门，再读 [0][1][2][3]，其余 4..ArraySize-1",
+          "example_quote": "if (ArraySize > 0)\n{\n    boundaryData = (Double[])swView.GetSolidHatchInfo();\n    file.WriteLine(\" Is the loop an outer loop (first)? \" + boundaryData[0]);\n    file.WriteLine(\" Number of polylines in loop: \" + boundaryData[1]);\n    file.WriteLine(\" Type ( 0 = polyline; 1 = arc or circle): \" + boundaryData[2]);\n    file.WriteLine(\" Size of geometric data array (will be 0 if Type = 0): \" + boundaryData[3]);",
+          "example_file": "Get_Solid-fill_Hatch_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 [0] 外环标志 / [1] 多段线数 与示例索引一致，本成员无冲突。"
+    },
+    {
+      "member": "GetSpecificAnnotation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md",
+        "sldworksapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VB.md",
+        "sldworksapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VBNET.md",
+        "swdimxpertapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "Remarks 说先 GetType 再取具体对象，四份示例都照此（Select Case / swDisplayDimension 比较），两侧一致。"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "idx": 346,
+  "results": [
+    {
+      "member": "KeepCurrentItemNumbers",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Weldment_Cut-list_Feature_and_Annotations_Example_CSharp.md",
+        "Get_Weldment_Cut-list_Feature_and_Annotations_Example_VB.md",
+        "Get_Weldment_Cut-list_Feature_and_Annotations_Example_VBNET.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Rows in a BOM table can be reordered in several different ways. For example, you can interactively reorder the rows manually in the **Bill of Materials Properties** dialog box and you can programmatically reorder rows using [[IBomFeature::FollowAssemblyOrder2]].",
+          "example_quote": "Debug.Print(\"   Keep missing items:       \" + swWeldmentCutListFeat.KeepCurrentItemNumbers);",
+          "example_file": "Get_Weldment_Cut-list_Feature_and_Annotations_Example_CSharp.md",
+          "why": "成员页说本成员管「重排行时保留件号」，焊件示例却给它打上 Keep missing items 标签；IWeldmentCutListFeature 另有独立的 KeepMissingItems，两说不能同时成立。VB/VBNET 同一行同样如此。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "Insert_and_Show_BOM_CSharp 把同一成员标为 Keep current item numbers when reordering rows，与成员页一致。"
+    },
+    {
+      "member": "KeepFeatures",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Chamfer_Distances_Example_CSharp.md",
+        "Get_Chamfer_Distances_Example_VB.md",
+        "Get_Chamfer_Distances_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；Get_Data_for_Simple_Fillet_CSharp 用的是 SimpleFilletFeatureData2，非本接口，故不计入。"
+    },
+    {
+      "member": "KeepInternalControlCurves",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md",
+        "Get_Data_for_Surface_Flatten_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过。"
+    },
+    {
+      "member": "KeepInvisible",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Keep_SOLIDWORKS_Invisible_While_Activating_Documents_Example_CSharp.md",
+        "Keep_SOLIDWORKS_Invisible_While_Activating_Documents_Example_VB.md",
+        "Keep_SOLIDWORKS_Invisible_While_Activating_Documents_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整调用序：先 UserControl=False 且 Visible=False，再 KeepInvisible=True；成员页只说「SOLIDWORKS 不可见时用」。",
+          "example_quote": "// Allow SOLIDWORKS Design to run in the background\n// and be invisible\nswApp.UserControl = false;\n// If the following property is true, then the\n// SOLIDWORKS Design frame will be visible on a call to\n// ISldWorks::ActivateDoc2; so, set it to false\nswApp.Visible = false;\n// Keep SOLIDWORKS Design frame invisible when\n// ISldWorks::ActivateDoc2 is called\npFrame = (Frame)swApp.Frame();\npFrame.KeepInvisible = true;",
+          "example_file": "Keep_SOLIDWORKS_Invisible_While_Activating_Documents_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例一致：置 true 在 ActivateDoc2 之前、置 false 在 CloseAllDocuments 之后，与 Remarks 无矛盾。"
+    },
+    {
+      "member": "KeepMissingItems",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VB.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份示例只以同名标签打印该成员，未加任何与 Remarks 不合的说法。"
+    },
+    {
+      "member": "KeepReplacedCompOption",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VB.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IBomFeature::KeepMissingItems]] is set to true.",
+          "example_quote": "Debug.Print(\"  Strikeout missing items? \" + swBOMFeature.StrikeoutMissingItems);\nDebug.Print(\"  Replace missing components as defined in swKeepReplacedCompOption_e: \" + swBOMFeature.KeepReplacedCompOption);",
+          "example_file": "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md",
+          "why": "成员页声明前置为 KeepMissingItems 必须为 true；示例上一行读了 KeepMissingItems 却仍无条件读本成员，未做该判定。VB/VBNET 同。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "示例只用枚举名标注返回值，未给 swKeepReplacedCompOption_e 的具体取值，故无可补的具体项。"
+    },
+    {
+      "member": "Knit",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Parting_Surface_Feature_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；Get_Shut-Off_Surface_Data 三份用 ShutOffSurfaceFeatureData.Knit，非本接口，不计入。"
+    }
+  ]
+}

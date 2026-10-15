@@ -1,0 +1,163 @@
+{
+  "idx": 211,
+  "results": [
+    {
+      "member": "GetLength3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Temporary_Elliptical_Extrusion_Example_VB.md",
+        "Get_Body_Outline_Example_VB.md",
+        "Get_Body_Outline_Example_CSharp.md",
+        "Get_Body_Outline_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method returns the length of the holding (e.g., trimmed) curve and not the base curve.",
+          "example_quote": "Debug.Print \"  length      = \" & swCurve(0).GetLength3(dStartParam, dEndParam)",
+          "example_file": "Create_Temporary_Elliptical_Extrusion_Example_VB.md",
+          "why": "页面把返回限定为 holding(已裁剪)曲线、明确排除 base 曲线；示例却对 CreateEllipse 新建、尚未 CreateTrimmedSheet4 的 base 椭圆取长度并打印。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "两个参数须取自同一条曲线 GetEndParams 的返回值，不是任意曲线参数。",
+          "example_quote": "bStatus = swCurve(0).GetEndParams(dStartParam, dEndParam, bIsClosed, bIsPeriodic)",
+          "example_file": "Create_Temporary_Elliptical_Extrusion_Example_VB.md"
+        },
+        {
+          "what": "示例先读 IsTrimmedCurve 打印该曲线是否已裁剪，紧接着才取长度。",
+          "example_quote": "Debug.Print \"  trimmed     = \" & IIf(swCurve(0).IsTrimmedCurve = False, \"False\", \"True\")",
+          "example_file": "Create_Temporary_Elliptical_Extrusion_Example_VB.md"
+        },
+        {
+          "what": "结果被直接与 0.00001 的轮廓容差比较，用来剔掉过短的碎线。",
+          "example_quote": "If crvOut(i).GetLength3(s, e) > 0.00001 Then",
+          "example_file": "Get_Body_Outline_Example_VB.md"
+        }
+      ],
+      "note": "成员页未写单位，示例也未标单位，故不判 unit_diff。"
+    },
+    {
+      "member": "GetLicenseType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_License_Types_of_SOLIDWORKS_Example_CSharp.md",
+        "Get_License_Types_of_SOLIDWORKS_Example_VB.md",
+        "Get_License_Types_of_SOLIDWORKS_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "前置写死成「先从磁盘打开一个已存盘零件」，再经 ModelDocExtension 读值。",
+          "example_quote": "fileName = \"C:\\Users\\Public\\Documents\\SOLIDWORKS\\SOLIDWORKS 2018\\samples\\tutorial\\api\\box.sldprt\"",
+          "example_file": "Get_License_Types_of_SOLIDWORKS_Example_VB.md"
+        },
+        {
+          "what": "示例只把返回值原样打印，从不与 swLicenseType_e 常量比对，也没调 GetCurrentLicenseType。",
+          "example_quote": "Debug.Print \"Type of license used when the model was created as defined by swLicenseType_e: \" & licenseType",
+          "example_file": "Get_License_Types_of_SOLIDWORKS_Example_VB.md"
+        }
+      ],
+      "note": "三份示例与 Remarks 的「恒返回 0」「查安装许可用 ISldWorks」一致，无冲突。"
+    },
+    {
+      "member": "GetLightSourceCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Advanced_Properties_of_Spot_Light_Example_VB.md",
+        "Turn_Lights_On_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "GetLightSourceName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Advanced_Properties_of_Spot_Light_Example_VB.md",
+        "Turn_Lights_On_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "同一 0 基索引同时作本成员与 LightSourcePropertyValues/LightSourceUserName 的下标。",
+          "example_quote": "Debug.Print \" SOLIDWORKS Design name for light = \" & swModel.GetLightSourceName(i)",
+          "example_file": "Turn_Lights_On_Example_VB.md"
+        },
+        {
+          "what": "返回的是内部名（形如 SW#3）而非用户名，且要把该字符串再喂给别的成员。",
+          "example_quote": "If sLightName = \"SW#3\" Then",
+          "example_file": "Get_Advanced_Properties_of_Spot_Light_Example_VB.md"
+        }
+      ],
+      "note": "两示例均 For i = 0 To 光源数-1，与 Remarks 的 0..n 完全吻合。"
+    },
+    {
+      "member": "GetLightWeightComponentCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Make_Assembly_Components_Lightweight_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "GetLineAtIndex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Multi-jog_Leader_Data_Example_CSharp.md",
+        "Get_Multi-jog_Leader_Data_Example_VB.md",
+        "Get_Multi-jog_Leader_Data_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "- **Index**: Index of the line; index begins at 0",
+          "example_quote": "lineData = swMultiJogLeader.GetLineAtIndex(1)",
+          "example_file": "Get_Multi-jog_Leader_Data_Example_VB.md",
+          "why": "页面说 0 基，1 即第二条线；示例却传 1 并把 i=0 那圈打印成 \" Line \" & i+1（Line 1），按 0 基则拿到的是第二条。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的数组逐位摊开：lineData(0) 线型、(1..3) 起点 xyz、(4..6) 终点 xyz。",
+          "example_quote": "Debug.Print \" Line x, y, and z end points: \" & lineData(4) & \", \" & lineData(5) & \", and \" & lineData(6)",
+          "example_file": "Get_Multi-jog_Leader_Data_Example_VB.md"
+        }
+      ],
+      "note": "该页无 ## Examples；所列示例调的是 IMultiJogLeader 同名成员（其页把这三份列为自己的示例），非 IDatumTag。"
+    },
+    {
+      "member": "GetLineAtIndex3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Centerline_Annotation_Information_Example_VB.md",
+        "Get_Weld_Bead_End_Treatment_Symbol_Data_Example_CSharp.md",
+        "Get_Weld_Bead_End_Treatment_Symbol_Data_Example_VB.md",
+        "Get_Weld_Bead_End_Treatment_Symbol_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Weld Bead 示例按 arrayIndex=4 起、步长 3 读两点，坐实 startPt=4..6、endPt=7..9。",
+          "example_quote": "arrayIndex = 4",
+          "example_file": "Get_Weld_Bead_End_Treatment_Symbol_Data_Example_VB.md"
+        },
+        {
+          "what": "Centerline 示例按 0..9 遍历，确认返回数组长度恰为 10。",
+          "example_quote": "For i = 0 To 9",
+          "example_file": "Get_Centerline_Annotation_Information_Example_VB.md"
+        },
+        {
+          "what": "取本成员前须先选中标注，再经 GetSelectedObject6→GetAnnotation→GetDisplayData 拿到宿主对象。",
+          "example_quote": "Set swDisplayData = swSelAnn.GetDisplayData",
+          "example_file": "Get_Centerline_Annotation_Information_Example_VB.md"
+        }
+      ],
+      "note": "下标 0..3 与 color/lineType/lineStyle/lineWeight 逐位对上，无冲突。"
+    }
+  ]
+}

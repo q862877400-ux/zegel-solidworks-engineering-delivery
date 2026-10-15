@@ -1,0 +1,108 @@
+{
+  "idx": 229,
+  "results": [
+    {
+      "member": "GetOriginFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；页内示例列的是 Tolerance2，与本任务示例集不同。"
+    },
+    {
+      "member": "GetOriginalPatternedBody",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Original_Body_from_Pattern_Body_Example_CSharp.md",
+        "Get_Original_Body_from_Pattern_Body_Example_VB.md",
+        "Get_Original_Body_from_Pattern_Body_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，跳过；三份示例各出现一次，与签名 out 变换量一致。"
+    },
+    {
+      "member": "GetOutline",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Dimension_Edge_in_Drawing_Example_VB.md",
+        "Get_View_Bounding_Box_and_Position_Example_CSharp.md",
+        "Get_View_Bounding_Box_and_Position_Example_VB.md",
+        "Get_View_Bounding_Box_and_Position_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 System.object 返回值显式转成 double 数组再乘 1000 显示 mm，成员页只写 in meters 未给转换形态。",
+          "example_quote": "outline = (double[])swView.GetOutline();",
+          "example_file": "Get_View_Bounding_Box_and_Position_Example_CSharp.md"
+        },
+        {
+          "what": "示例把索引 0 当 X min（尺寸放视图左侧）、索引 3 当 Y max（放视图上方），让 min/max 口径可操作。",
+          "example_quote": "nYpos = vOutline(3) + nYoffset",
+          "example_file": "Dimension_Edge_in_Drawing_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 米制与示例 ×1000 转 mm 一致；索引 0/1=min、2/3=max 亦一致，无冲突。"
+    },
+    {
+      "member": "GetOverrideDefaultParameter2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Override_Option_for_Auto_Relief_Default_Parameters_Example_CSharp.md",
+        "Set_Override_Option_for_Auto_Relief_Default_Parameters_Example_VB.md",
+        "Set_Override_Option_for_Auto_Relief_Default_Parameters_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体枚举取值顺序，且读取之后、写之前才调 AccessSelections，成员页只写适用版本未给次序。",
+          "example_quote": "swSheetMetalFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Set_Override_Option_for_Auto_Relief_Default_Parameters_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 限多体钣金 2013+，示例即多体钣金 Sheet-Metal3，一致，无冲突。"
+    },
+    {
+      "member": "GetOverrideOptions",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+        "Get_Mass_Properties_Using_IMassProperty_Example_VBNET.md",
+        "Get_Mass_Properties_using_MassProperty_Object_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，跳过；三份示例各出现一次。"
+    },
+    {
+      "member": "GetP2SFileName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（也无 ## Returns），跳过。"
+    },
+    {
+      "member": "GetPCurveParams2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_P-Spline_Parameterization_Data_Example_CSharp.md",
+        "Get_P-Spline_Parameterization_Data_Example_VB.md",
+        "Get_P-Spline_Parameterization_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，跳过；三份示例各出现一次。"
+    }
+  ]
+}

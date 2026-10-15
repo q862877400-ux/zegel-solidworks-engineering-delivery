@@ -1,0 +1,108 @@
+{
+  "idx": 474,
+  "results": [
+    {
+      "member": "SketchModifyRotate",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rotate_Scale_Copy_Sketch_Example_CSharp.md",
+        "Rotate_Scale_Copy_Sketch_Example_VB.md",
+        "Rotate_Scale_Copy_Sketch_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；示例仅 1 处调用 SketchModifyRotate(1, 1, 1)。"
+    },
+    {
+      "member": "SketchModifyScale",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rotate_Scale_Copy_Sketch_Example_CSharp.md",
+        "Rotate_Scale_Copy_Sketch_Example_VB.md",
+        "Rotate_Scale_Copy_Sketch_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；示例先按名选 Sketch1 再调 SketchModifyScale(3)。"
+    },
+    {
+      "member": "SketchModifyTranslate",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Translate_Sketch_Example_CSharp.md",
+        "Translate_Sketch_Example_VB.md",
+        "Translate_Sketch_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（仅有 Returns），按纪律跳过。"
+    },
+    {
+      "member": "SketchOffset2",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份 Sketch_Offset_Example 调的是 swSketchManager.SketchOffset2（6 参），非本成员（3 参），故不算用到。"
+    },
+    {
+      "member": "SketchOffsetOnSurface",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_CSharp.md",
+        "Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md",
+        "Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先按 Mark=0 选一遍四条边、ClearSelection2 清空、再按 Mark=1 重选；Remarks 只写了 Mark=1 一句",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"EDGE\", 0.06, 0.12, 0.03, true, 0, null, 0); … swModel.ClearSelection2(true); … status = swModelDocExt.SelectByID2(\"\", \"EDGE\", 0.06, 0.12, 0.03, true, 1, null, 0);",
+          "example_file": "Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出「调用后先 ClearSelection2，再 swSketchManager.InsertSketch(true) 收尾」的完整次序",
+          "example_quote": "swModel.ClearSelection2(true);\n            //Close the sketch\n            swSketchManager = (SketchManager)swModel.SketchManager;\n            swSketchManager.InsertSketch(true);",
+          "example_file": "Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "Mark=1、Append=true、InsertSketch 与 UseFront=true 均三份示例一致，无冲突。"
+    },
+    {
+      "member": "SketchRectangle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md",
+        "Create_Revolve_Features_Example_CSharp.md",
+        "Create_Revolve_Features_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（且已 Obsolete），按纪律跳过。"
+    },
+    {
+      "member": "SketchReplace2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Replace_Sketch_Example_CSharp.md",
+        "Replace_Sketch_Example_VB.md",
+        "Replace_Sketch_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例两次 SelectByID2 的 Mark 都是 0；Remarks 只规定 Append=true，未提 Mark",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"Line1\", \"SKETCHSEGMENT\", 0.00202904300411839, 0.0119654152286464, -0.00709549576220667, true, 0, null, 0);\n\t            boolstatus = Part.Extension.SelectByID2(\"Arc1\", \"SKETCHSEGMENT\", 0.00588878331207997, 0.0171023327681304, -0.0126221740799126, true, 0, null, 0);",
+          "example_file": "Replace_Sketch_Example_CSharp.md"
+        },
+        {
+          "what": "示例注释点明 false/true 两参的实际效果，页面 Parameters 只写 to delete / a contour",
+          "example_quote": "// Replace Line1 with Arc1, delete Line1, and make Arc1 a contour",
+          "example_file": "Replace_Sketch_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 Append=true、选择次序、事后 InsertSketch 三份示例全对上；Mark 值两侧都没规定，无冲突。"
+    }
+  ]
+}

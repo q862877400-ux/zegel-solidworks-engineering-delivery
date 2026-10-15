@@ -1,0 +1,127 @@
+{
+  "idx": 288,
+  "results": [
+    {
+      "member": "HideEdge",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Hide_All_Edges_in_Drawing_View_Example_VB.md",
+        "Hide_and_Show_All_Edges_in_Drawing_View_Example_VB.md",
+        "Hide_and_Show_All_Ediges_in_Drawing_View_Example_CSharp.md",
+        "Hide_and_Show_All_Ediges_in_Drawing_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按规则跳过；4 份示例均逐条 Select4 后调用 HideEdge。"
+    },
+    {
+      "member": "HideFeatureManager",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Active_Tab_in_Manager_Pane_Example_CSharp.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VB.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VBNET.md",
+        "Hide_the_FeatureManager_Example_CSharp.md",
+        "Hide_the_FeatureManager_Example_VB.md",
+        "Hide_the_FeatureManager_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 false 当「确保 Manager Pane 可见」，且必须先于 GetFeatureManagerTabs 调用",
+          "example_quote": "//Ensure that Manager Pane is visible\nswModelDocExtension.HideFeatureManager(false);\n//Get the tabs in the Manager Pane\ntabs = (object[])swModelViewManager.GetFeatureManagerTabs();",
+          "example_file": "Change_Active_Tab_in_Manager_Pane_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 列举的标签页与示例枚举到的完全一致；Hide 示例前置仅「Open a model document」。"
+    },
+    {
+      "member": "HideNewComponentModels",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Configuration_Properties_Example_VB.md",
+        "Traverse_Hierarchy_of_Configurations_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property applies only to assembly configurations. SOLIDWORKS always returns false when you get this property on a part configuration. This property has no effect on part configurations.",
+          "example_quote": "' 1. Open a part that contains one or more configurations.",
+          "example_file": "Change_Configuration_Properties_Example_VB.md",
+          "why": "示例前置写明是零件文档，随后 Debug.Print 读该属性；Remarks 说零件配置上恒返回 false 且无效。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This setting is only valid when the configuration is not the active configuration.",
+          "example_quote": "For Each vConfigName In vConfigNameArr\nSet swConfig = swModel.GetConfigurationByName(vConfigName)\n...\nDebug.Print \" Hide new component models? \" & swConfig.HideNewComponentModels",
+          "example_file": "Traverse_Hierarchy_of_Configurations_Example_VB.md",
+          "why": "循环遍历 GetConfigurationNames 返回的全部配置（含激活配置）并读该属性，与「仅非激活配置有效」相抵。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "两份示例只 Debug.Print 读它，从不赋值，尽管签名是 {get; set;}",
+          "example_quote": "Debug.Print \"HideNewComponentModels \", thisConfig.HideNewComponentModels",
+          "example_file": "Change_Configuration_Properties_Example_VB.md"
+        }
+      ],
+      "note": "另注：第二份示例前置写「Open a part or assembly」，零件一侧同样与 Remarks 冲突。"
+    },
+    {
+      "member": "HideShowDrawingViews",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Display_Hidden_Lines_in_Drawing_Example_CSharp.md",
+        "Display_Hidden_Lines_in_Drawing_Example_VB.md",
+        "Display_Hidden_Lines_in_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它当无参切换：SuppressView 之后调用以显 X，再 UnsuppressView 还原",
+          "example_quote": "// Suppress view\nswDraw.SuppressView();\n// Display an X where the view was suppressed\nswDraw.HideShowDrawingViews();\n// Unsuppress view\nswDraw.UnsuppressView();",
+          "example_file": "Display_Hidden_Lines_in_Drawing_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例前置均为「Open a drawing document」并「Select a view」；Remarks 只说开关效果，未给调用序。"
+    },
+    {
+      "member": "HighQuality",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Whether_Draft_Edges_Scaled_in_Printed_Drawing_Example_CSharp.md",
+        "Get_Whether_Draft_Edges_Scaled_in_Printed_Drawing_Example_VB.md",
+        "Get_Whether_Draft_Edges_Scaled_in_Printed_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例经 swModelDocExt.AppPageSetup 取该属性，且仅在为真时才读 ScaleDraftEdges",
+          "example_quote": "swPageSetup = (PageSetup)swModelDocExt.AppPageSetup;\nif (swPageSetup.HighQuality)\n{\nDebug.Print(\"Drawing set to print in high quality. Are draft edges scaled? \" + swPageSetup.ScaleDraftEdges);\n}",
+          "example_file": "Get_Whether_Draft_Edges_Scaled_in_Printed_Drawing_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的「set to true 才可缩放草图边」与示例的 if/else 分支逐字对应，未见冲突。"
+    },
+    {
+      "member": "Highlight",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，且无 Examples 段。所列 4 份示例调的全是 IFace2.Highlight（swFace.Highlight），非 IEdge。"
+    },
+    {
+      "member": "HlrQuality",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Model_View_HLR_Quality_Example_CSharp.md",
+        "Get_and_Set_Model_View_HLR_Quality_Example_VB.md",
+        "Get_and_Set_Model_View_HLR_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按规则跳过；三份示例都经 swModel.ActiveView 取 ModelView 后读写该属性。"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "idx": 82,
+  "results": [
+    {
+      "member": "D1TotalInstances",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Bidir_Linear_Pattern_Example_CSharp.md",
+        "Create_Derived_Pattern_Feature_Example_CSharp.md",
+        "Create_Derived_Pattern_Feature_Example_VB.md",
+        "Create_Derived_Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说可设于 SpacingAndInstances，示例把该条件钉成字面量 0（按 swPatternEndCondition_e 即 SpacingAndInstances），且排在 D1TotalInstances 之前",
+          "example_quote": "swLinearPatternFeatureData.D1EndCondition = 0;",
+          "example_file": "Create_Bidir_Linear_Pattern_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 的条件只约束 setter；派生阵列三份示例把 D1TotalInstances 当 getter 读，与 D2 相乘得总实例数再当 SeedPosition 索引，全程未设任何 end condition",
+          "example_quote": "nbrPatternInstances = (swLinearPatternFeatureData.D1TotalInstances* swLinearPatternFeatureData.D2TotalInstances);",
+          "example_file": "Create_Derived_Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 两个允许分支未矛盾；示例用的 0 正是 swPatternEndCondition_SpacingAndInstances。"
+    },
+    {
+      "member": "D2CapEnd",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Extruded_Reference_Surface_Example_CSharp.md",
+        "Insert_Extruded_Reference_Surface_Example_VB.md",
+        "Insert_Extruded_Reference_Surface_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只给 BothDirections=true 一个前置；三份示例把 D2CapEnd 放在“方向2端”块中与 D2DraftOn 并列无条件读出，不受拔模开关影响",
+          "example_quote": "Debug.Print(\"    Capped? \" + swSurfExtrudeFeature.D2CapEnd);",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "建特征时 Sd=false（双端），满足 BothDirections 前置，无矛盾。"
+    },
+    {
+      "member": "D2DraftAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Extruded_Reference_Surface_Example_CSharp.md",
+        "Insert_Extruded_Reference_Surface_Example_VB.md",
+        "Insert_Extruded_Reference_Surface_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 写“需 BothDirections 且 D2DraftOn 为真”，示例给出可执行写法：把角度读取包在 if(D2DraftOn) 内，与前置一一对应",
+          "example_quote": "Debug.Print(\"      Angle: \" + swSurfExtrudeFeature.D2DraftAngle);",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "示例的守卫与 Remarks 第二条前置完全同向；本页未写单位，示例也未给，不判单位差。"
+    },
+    {
+      "member": "D2DraftOn",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Extruded_Reference_Surface_Example_CSharp.md",
+        "Insert_Extruded_Reference_Surface_Example_VB.md",
+        "Insert_Extruded_Reference_Surface_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说前置是 BothDirections；示例进一步显示它是同族 D2DraftAngle/D2DraftOutward 的读取开关（直接当 if 条件用）",
+          "example_quote": "if (swSurfExtrudeFeature.D2DraftOn)",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例一致，均无条件读出该开关再据此守卫后续两项。"
+    },
+    {
+      "member": "D2DraftOutward",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Extruded_Reference_Surface_Example_CSharp.md",
+        "Insert_Extruded_Reference_Surface_Example_VB.md",
+        "Insert_Extruded_Reference_Surface_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只给两个前置；示例把 true/false 含义直接印成标签文字“外向(真)/内向(假)”，与 Returns 的布尔语义一致且更直观",
+          "example_quote": "Debug.Print(\"      Inward (false) or outward (true)? \" + swSurfExtrudeFeature.D2DraftOutward);",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "与 Returns 的 outward/inward 布尔口径一致，未见矛盾。"
+    },
+    {
+      "member": "D2EndCondition",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Bidir_Linear_Pattern_Example_CSharp.md",
+        "Vary_Linear_Pattern_Instances_Example_CSharp.md",
+        "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 未给任何前置；三份示例一致地把它设成字面量 0，并紧接 D2Spacing/D2TotalInstances 一起写，呈现配套写法",
+          "example_quote": "swLinearPatternFeatureData.D2EndCondition = 0;",
+          "example_file": "Create_Bidir_Linear_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "本页无前置约束，示例设 0 与 Returns 的枚举口径一致，无冲突可判。"
+    },
+    {
+      "member": "D2EndConditionDistance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base_Flange_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "本页无 Remarks；示例显示该值紧跟在 D2EndConditionType=1 之后写入，页未提这一配套关系",
+          "example_quote": "swBaseFlangeFeat.D2EndConditionDistance = 0.05",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "成员页只有 Returns「Distance」无 Remarks，按硬纪律跳过冲突判定。"
+    }
+  ]
+}

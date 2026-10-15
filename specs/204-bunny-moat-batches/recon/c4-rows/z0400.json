@@ -1,0 +1,139 @@
+{
+  "idx": 400,
+  "results": [
+    {
+      "member": "RatioToThickness",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_SM_Corner_Relief_Feature_Example_CSharp.md",
+        "Create_SM_Corner_Relief_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「valid only if」落成赋值顺序：先赋 ReliefType，再在同一分支里二选一设 SlotLength 或本属性。",
+          "example_quote": "cornerItr.ReliefType = (int)swCornerReliefType_e.swCornerRectangularRelief;",
+          "example_file": "Create_SM_Corner_Relief_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例第三轮把 ReliefType 设为 ConstantWidth（不在 Remarks 三种有效类型内），仍调 PrintReliefData 回读该属性。",
+          "example_quote": "cornerItr.ReliefType = (int)swCornerReliefType_e.swCornerConstantWidthRelief;",
+          "example_file": "Create_SM_Corner_Relief_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "两侧无冲突：示例只对 Rectangular/Circular 设它，与 Remarks 列表一致。"
+    },
+    {
+      "member": "RayTraceRendererOptions",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Include_Note_in_Render_File_Example_CSharp.md",
+        "Include_Note_in_Render_File_Example_VB.md",
+        "Include_Note_in_Render_File_Example_VBNET.md",
+        "Render_Annotations_to_Separate_Image_File_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；四份示例均取到该属性。"
+    },
+    {
+      "member": "ReJogRunningDimension",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Properties_of_Angular_Running_Dimension_Example_CSharp.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VB.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；三份示例均经 Part.Extension 调用。"
+    },
+    {
+      "member": "ReadOnly",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Block_Information_Example_VB.md",
+        "Get_Dimension_Values_in_All_Configurations_Example_VB.md",
+        "Get_Dimension_Values_in_Drawing_Example_CSharp.md",
+        "Get_Dimension_Values_in_Drawing_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；四份示例均读取 swDim.ReadOnly。"
+    },
+    {
+      "member": "RealView",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Material_Visual_Properties_Example_CSharp.md",
+        "Get_and_Set_Material_Visual_Properties_Example_VB.md",
+        "Get_and_Set_Material_Visual_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "[[IMaterialVisualPropertiesData::AdvancedGraphics]] must be True to set this property.",
+          "example_quote": "// Set the material visual properties to be just color, no advanced graphics\n            myMatVisProps = myPart.GetMaterialVisualProperties();\n            if ((myMatVisProps != null))\n            {\n                longstatus = myPart.SetMaterialVisualProperties(myMatVisProps, (int)swInConfigurationOpts_e.swThisConfiguration, null);\n                dump_material_visual_properties(myMatVisProps, myPart);\n                // Set the material visual properties to be RealView\n                myMatVisProps.RealView = true;",
+          "example_file": "Get_and_Set_Material_Visual_Properties_Example_CSharp.md",
+          "why": "Remarks 要求先让 AdvancedGraphics 为 True 才能写 RealView；示例紧接「no advanced graphics」之后写 RealView=true，全文未出现 AdvancedGraphics。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "[[IMaterialVisualPropertiesData::AdvancedGraphics]] must be True to set this property.",
+          "example_quote": "if (bRealView == false)\n{\n    Debug.Print(\"Advanced graphics - SOLIDWORKS standard textures.\");\n}\nelse\n{\n    Debug.Print(\"Advanced graphics - RealView textures.\");\n}",
+          "example_file": "Get_and_Set_Material_Visual_Properties_Example_CSharp.md",
+          "why": "示例仅凭 RealView 就打印「Advanced graphics - …」，把它当作高级图形开关本身；Remarks 则视 AdvancedGraphics 为另一个必须先为真的独立布尔量。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "写入路径：赋 RealView 后必须再调 PartDoc.SetMaterialVisualProperties 才生效，单赋属性不落盘。",
+          "example_quote": "myMatVisProps.RealView = false;\n                longstatus = myPart.SetMaterialVisualProperties(myMatVisProps, (int)swInConfigurationOpts_e.swThisConfiguration, null);",
+          "example_file": "Get_and_Set_Material_Visual_Properties_Example_CSharp.md"
+        },
+        {
+          "what": "改材料名后须重新 GetMaterialVisualProperties 取新对象，示例在两段编辑之间显式重取。",
+          "example_quote": "myPart.SetMaterialPropertyName2(configName, databaseName, newPropName);\n                dump_material_visual_properties(myMatVisProps, myPart);\n            }\n            // Set the material visual properties to be just color, no advanced graphics\n            myMatVisProps = myPart.GetMaterialVisualProperties();",
+          "example_file": "Get_and_Set_Material_Visual_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "VB 与 VB.NET 两份同型，同样在 no advanced graphics 之后写 RealView 且从不设 AdvancedGraphics。"
+    },
+    {
+      "member": "Rebuild",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Object_s_Persistent_Reference_ID_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Use [[IModelDoc2::GetType]] to check the type of document.",
+          "example_quote": "'After rebuilding the part\n    Set obj = Nothing\n    Call Part.Rebuild(swForceRebuildAll)",
+          "example_file": "Get_Object_s_Persistent_Reference_ID_Example_VB.md",
+          "why": "Remarks 要求先用 GetType 判定文档类型；示例对 Part（声明为 ModelDoc2）直接传 swForceRebuildAll（枚举注为 Assembly or drawing），全程未调 GetType。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "另三份 Add_Decal 调的是后继成员 swModelDocExt.Rebuild，非本成员，故不计入。"
+    },
+    {
+      "member": "Recalculate",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+        "Get_Mass_Properties_Using_IMassProperty_Example_VBNET.md",
+        "Get_Mass_Properties_using_MassProperty_Object_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例证实 Remarks 的先后关系：SetOverrideOptions 之后紧接 Recalculate，中间无其它读取。",
+          "example_quote": "MyMassProp.SetOverrideOptions(OvProp, (int)swInConfigurationOpts_e.swThisConfiguration, null);\n                MyMassProp.Recalculate();",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例的 override→Recalculate 序列与 Remarks 一致；另提的 IncludeHiddenBodiesOrComponents 三份均未触及。"
+    }
+  ]
+}

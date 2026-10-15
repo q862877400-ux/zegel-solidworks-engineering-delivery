@@ -1,0 +1,169 @@
+{
+  "idx": 325,
+  "results": [
+    {
+      "member": "InsertStructuralWeldment5",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md",
+        "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_VB.md",
+        "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_VBNET.md",
+        "Merge_Arc_Segment_Bodies_With_Adjacent_Bodies_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面的 Groups 只写「IStructuralMemberGroup 数组」;示例把每个元素包成 DispatchWrapper 再传数组",
+          "example_quote": "groups1[0] = new DispatchWrapper(groupArray1[0]);",
+          "example_file": "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 表格的「自带轮廓→空串」这一支由 Merge_Arc 示例给出",
+          "example_quote": "swConnectedSegmentsOption_e.swConnectedSegments_SimpleCut, false, (groups), \"\");",
+          "example_file": "Merge_Arc_Segment_Bodies_With_Adjacent_Bodies_Example_CSharp.md"
+        },
+        {
+          "what": "「自定义轮廓→配置名」那一支由本示例给出（配置名 nxn）",
+          "example_quote": "Set swFeature = swFeatureMgr.InsertStructuralWeldment5(weldmentProfile, swConnectedSegmentsOption_e.swConnectedSegments_SimpleCut, False, (groups1), weldmentConfigurationName)",
+          "example_file": "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_VB.md"
+        }
+      ],
+      "note": "三份示例与两份轮廓分支均与 Remarks 一致，无冲突"
+    },
+    {
+      "member": "InsertSubWeldFolder2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Weldment_Features_Example_CSharp.md",
+        "Insert_Weldment_Features_Example_VB.md",
+        "Insert_Weldment_Features_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对"
+    },
+    {
+      "member": "InsertSurfaceFinishSymbol3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 LocX/LocY/LocZ 都传 0.01；页面三个 Loc 参数只写「x/y/z location for symbol」，未给单位",
+          "example_quote": "swModel.Extension.InsertSurfaceFinishSymbol3 swSFBasic, swSTRAIGHT, 0.01, 0.01, 0.01, swSFCircular, swDOT_ARROWHEAD, \"\", \"\", \"\", \"\", \"\", \"\", \"\"",
+          "example_file": "Get_Annotations_Array_Example_VB.md"
+        },
+        {
+          "what": "示例把 MachAllowance…RoughnessSpacing 七个字符串参数全传空串；页面未给任何取值样例",
+          "example_quote": "(int)swSFLaySym_e.swSFCircular, (int)swArrowStyle_e.swDOT_ARROWHEAD, \"\", \"\", \"\",",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        },
+        {
+          "what": "三份示例 LeaderType 都传 swSTRAIGHT（即 != swNO_LEADER），正好落在 Remarks 说的「用坐标」那一支",
+          "example_quote": "swModel.Extension.InsertSurfaceFinishSymbol3(swSFSymType_e.swSFBasic, swLeaderStyle_e.swSTRAIGHT, 0.01, 0.01, 0.01, swSFLaySym_e.swSFCircular, swArrowStyle_e.swDOT_ARROWHEAD, \"\", \"\", \"\", \"\", \"\", \"\", \"\")",
+          "example_file": "Get_Annotations_Arrays_Example_VBNET.md"
+        }
+      ],
+      "note": "唯一一句 Remarks 与三份示例方向一致，无冲突"
+    },
+    {
+      "member": "InsertSweepSurface3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Surface-sweep_Feature_Example_CSharp.md",
+        "Create_Surface-sweep_Feature_Example_VB.md",
+        "Create_Surface-sweep_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 的 mark 表在示例里被具体化：Sketch2 标 mark=1（轮廓）",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Sketch2\", \"SKETCH\", 0, 0, 0, false, 1, null, 0);",
+          "example_file": "Create_Surface-sweep_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "同一对选择里 Sketch1 标 mark=4（路径）；VB.NET 版字面量写作 True/4/Nothing",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Sketch1\", \"SKETCH\", 0, 0, 0, True, 4, Nothing, 0)",
+          "example_file": "Create_Surface-sweep_Feature_Example_VBNET.md"
+        },
+        {
+          "what": "示例 UseAutoSelect 传 true，故 Remarks「false 时须自选体」那条分支未被任何示例触及",
+          "example_quote": "swFeature = (Feature)swFeatureManager.InsertSweepSurface3(false, 0, false, false, 0, 0, 0, true, true, 0,",
+          "example_file": "Create_Surface-sweep_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "14 个实参与签名逐位对齐，mark 也照 Remarks 的 1/4 走，无冲突"
+    },
+    {
+      "member": "InsertTableAnnotation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（参数全写 No description），按纪律跳过"
+    },
+    {
+      "member": "InsertTableAnnotation2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_General_Table_Feature_Example_CSharp.md",
+        "Get_General_Table_Feature_Example_VB.md",
+        "Get_General_Table_Feature_Example_VBNET.md",
+        "Insert_General_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C#/VB.NET 走 UseAnchorPoint=false 分支，配真实坐标（米制量级）；Remarks 未提该参数",
+          "example_quote": "swTableAnnotation = (TableAnnotation)swDrawing.InsertTableAnnotation2(false, 0.0275123456559767, 0.132124518483965, 1, \"\", 2, 2);",
+          "example_file": "Get_General_Table_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 走 UseAnchorPoint=true 分支，X/Y 传 0 并被忽略（Remarks 完全没提这一条）",
+          "example_quote": "Set swTable = swDrawing.InsertTableAnnotation2(True, 0, 0, swBOMConfigurationAnchor_TopLeft, \"\", 4, 2)",
+          "example_file": "Insert_General_Table_Example_VB.md"
+        },
+        {
+          "what": "四份示例 TableTemplate 全传空串，即只触及 Remarks 的 Empty 分支；有效路径分支无示例",
+          "example_quote": "Set swTableAnnotation = swDrawing.InsertTableAnnotation2(False, 2.75123456559767E-02, 0.132124518483965, 1, \"\", 2, 2)",
+          "example_file": "Get_General_Table_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的两条分支都没被示例违反，无冲突"
+    },
+    {
+      "member": "InsertTitleBlock",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Notes_from_New_or_Existing_Title_Block_Example_CSharp.md",
+        "Get_Notes_from_New_or_Existing_Title_Block_Example_VB.md",
+        "Get_Notes_from_New_or_Existing_Title_Block_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks「一张图纸只能有一个标题栏」在示例里落成先判 TitleBlock 是否为 null 再决定是否插入",
+          "example_quote": "if (swTitleBlock == null)",
+          "example_file": "Get_Notes_from_New_or_Existing_Title_Block_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 说的 Dispatch 指针，在 C#/VB.NET 里是把 Notes 逐个包成 DispatchWrapper[]",
+          "example_quote": "DispatchWrapper[] notesArray = new DispatchWrapper[2];",
+          "example_file": "Get_Notes_from_New_or_Existing_Title_Block_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 版不走 DispatchWrapper，直接传 Object() 数组；成员页未给语言差异",
+          "example_quote": "Set swTitleBlock = swSheet.InsertTitleBlock(notesArray)",
+          "example_file": "Get_Notes_from_New_or_Existing_Title_Block_Example_VB.md"
+        }
+      ],
+      "note": "三条 Remarks 与三份示例同向，无冲突"
+    }
+  ]
+}

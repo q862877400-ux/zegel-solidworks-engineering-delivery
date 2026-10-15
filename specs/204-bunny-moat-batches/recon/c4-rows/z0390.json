@@ -1,0 +1,99 @@
+{
+  "idx": 390,
+  "results": [
+    {
+      "member": "PolarPatternHoleCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Auto_Dimension_Scheme_Example_CSharp.md",
+        "Auto_Dimension_Scheme_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。job 列的 2 例确均使用（schemeOption.PolarPatternHoleCount）"
+    },
+    {
+      "member": "PortID",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Connection_Point_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Connection_Point_Feature_Data_Example_VB.md",
+        "Get_and_Set_Connection_Point_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。三例均读写 cPointData.PortID"
+    },
+    {
+      "member": "Position",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，跳过。Create_Reference_Curve 三例的 swEdgePoint.Position 属 EdgePoint，非 ICallout，已排除"
+    },
+    {
+      "member": "PositionLocked",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_View_Bounding_Box_and_Position_Example_CSharp.md",
+        "Get_View_Bounding_Box_and_Position_Example_VB.md",
+        "Get_View_Bounding_Box_and_Position_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。三例均只 Debug.Print 读 swView.PositionLocked"
+    },
+    {
+      "member": "PositionOffsetDistance",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Edge_Flange_Example_CSharp.md",
+        "Create_Edge_Flange_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出满足两个前置的可执行顺序，并写出 (int) 显式枚举转换",
+          "example_quote": "FeatData.UsePositionOffset = true;\nFeatData.PositionOffsetType = (int)swFlangeOffsetTypes_e.swFlangeOffsetBlind;\nFeatData.PositionOffsetDistance = 0.01;",
+          "example_file": "Create_Edge_Flange_Example_CSharp.md"
+        },
+        {
+          "what": "示例写 0.01，恰等于 Returns 声明的默认值 0.01 m（同例角度用弧度）",
+          "example_quote": "FeatData.PositionOffsetDistance = 0.01;",
+          "example_file": "Create_Edge_Flange_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 两条前置（UsePositionOffset=true；Type∈{FromSurface,Blind}）与 0.01 m 默认值，示例逐条满足，无冲突"
+    },
+    {
+      "member": "PositionOffsetType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Edge_Flange_Example_CSharp.md",
+        "Create_Edge_Flange_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 版把枚举强制转 (int) 赋给 System.int 属性，页内无此写法",
+          "example_quote": "FeatData.PositionOffsetType = (int)swFlangeOffsetTypes_e.swFlangeOffsetBlind;",
+          "example_file": "Create_Edge_Flange_Example_CSharp.md"
+        }
+      ],
+      "note": "前置 UsePositionOffset=true 与默认值 swFlangeOffsetBlind 均被示例满足，无冲突"
+    },
+    {
+      "member": "PositionType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Turn_Cameras_On_and_Off_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，跳过。job 列 4 例中仅 Turn_Cameras(C#) 真用 swCamera.PositionType"
+    }
+  ]
+}

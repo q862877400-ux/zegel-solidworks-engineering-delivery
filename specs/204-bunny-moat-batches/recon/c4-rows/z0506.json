@@ -1,0 +1,127 @@
+{
+  "idx": 506,
+  "results": [
+    {
+      "member": "TwistControlType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Properties_of_Sweep_Feature_Example_VB.md",
+        "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md",
+        "Insert_Sweep_Cut_Feature_Example_CSharp.md",
+        "Insert_Sweep_Cut_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 UI 选项落到具体数值：8=swTwistControlConstantTwistAlongPath，并在同一段把 PathAlignmentType 置 0(swTangencyNone)、AlignWithEndFaces 置 False，落实 Remarks 的强制配对。",
+          "example_quote": "swSweep.PathAlignmentType = 0\nswSweep.TwistControlType = 8\nswSweep.SetTwistAngle 31.12217 'Radians\nswSweep.D1ReverseTwistDir = False\nswSweep.SetD2TwistAngle 12.139 'Radians\nswSweep.D2ReverseTwistDir = True\nswSweep.TangentPropagation = False\nswSweep.AlignWithEndFaces = False",
+          "example_file": "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md"
+        }
+      ],
+      "note": "四份示例均只用该属性读写一个 short；UI 对照表无示例对应物，也无互斥说法。"
+    },
+    {
+      "member": "Type",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Bodies_in_Body_Folders_Example_VB.md",
+        "Get_Bodies_in_Body_Folders_Example_VBNET.md",
+        "Get_Bodies_in_Body_Folders_Example_CSharp.md",
+        "Get_Solid_Bodies_from_Cut-list_Folders_and_Get_Custom_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例硬编码了 Type 的 5 个取值到名称的对照表（与 swBodyFolderFeatureType_e 完全一致），并说明识别 body folder 靠 GetTypeName 字符串而非 Type。",
+          "example_quote": "BodyFolderType(0) = \"dummy\"\nBodyFolderType(1) = \"swSolidBodyFolder\"\nBodyFolderType(2) = \"swSurfaceBodyFolder\"\nBodyFolderType(3) = \"swBodySubFolder\"\nBodyFolderType(4) = \"swWeldmentSubFolder\"\nBodyFolderType(5) = \"swWeldmentCutListFolder\"",
+          "example_file": "Get_Bodies_in_Body_Folders_Example_VB.md"
+        }
+      ],
+      "note": "任务给的 4 份示例无一调用 IBodyFolder.Type：.Type 分别属 IView、角部组、Damper。真正用它的是成员页 ## Examples 点名的 Get Bodies 系列。"
+    },
+    {
+      "member": "Type2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Chamfer_Display_Dimension_Example_CSharp.md",
+        "Get_Chamfer_Display_Dimension_Example_VBNET.md",
+        "Get_Pattern_Display_Dimension_Example_CSharp.md",
+        "Get_Pattern_Display_Dimension_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "After using this property, use [[IModelDoc2::GraphicsRedraw2]] to redraw the graphics window to see your changes.",
+          "example_quote": "Debug.Print(\"Dimension type as defined in swDimensionType_e: \" & swDispDim.Type2) '10=swChamferDimension",
+          "example_file": "Get_Chamfer_Display_Dimension_Example_VBNET.md",
+          "why": "签名是 {get;} 只读，四份示例都只取值不赋值、全文零处 GraphicsRedraw2；Remarks 却按\"会改动\"要求重绘。两者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出取得 DisplayDimension 的完整前置链（按名选中 DIMENSION → GetSelectedObject6 → ClearSelection2），成员页只字未提。",
+          "example_quote": "bRet = swModel.Extension.SelectByID2(\"RD1@Drawing View1\", \"DIMENSION\", 0.4935677398765, 0.3280800260301, 0, false, 0, null, 0);",
+          "example_file": "Get_Chamfer_Display_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例对 GraphicsRedraw 的命中数均为 0（已逐文件核）。"
+    },
+    {
+      "member": "TypeFaceName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Text_Format_Example_VB.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VB.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突比对；四份示例均确证调用该成员。"
+    },
+    {
+      "member": "TypeName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Limit_Angle_Mate_Example_CSharp.md",
+        "Create_Limit_Distance_Mate_Example_CSharp.md",
+        "Create_Limit_Distance_Mate_Example_VB.md",
+        "Create_Linear_Coupler_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；四份示例均确证调用 swMateData.TypeName。"
+    },
+    {
+      "member": "UKnots",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取值前置链：先 Surface.Parameterization2()，再 GetBSurfParams3(False,False,surfParam,0.01,out sense) 得到 BSurfParamData，UKnots 才有值；并在读 knots 前先读 UOrder / ControlPointColumnCount / UPeriodicity。",
+          "example_quote": "swBSurfParam = (BSurfParamData)swSurf.GetBSurfParams3(false, false, swSurfParam, 0.01, out sense);",
+          "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例均不断言数组长度，Remarks 的「列数+阶数」公式既无佐证也无反证。"
+    },
+    {
+      "member": "UMax",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md",
+        "Return_Untrimmed_Curve_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；Return_Untrimmed_Curve_Example_VB 确证用 surfParam.UMax。"
+    }
+  ]
+}

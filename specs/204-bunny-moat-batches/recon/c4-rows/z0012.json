@@ -1,0 +1,151 @@
+{
+  "idx": 12,
+  "results": [
+    {
+      "member": "AddMenu",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "两份示例调的是 ISldWorks::AddMenu(DocType,Menu,Position) 三参版（SwApp 为 ISldWorks），与 IFrame::AddMenu(Menu,Position) 不是同一成员，故不采用。"
+    },
+    {
+      "member": "AddMenuItem5",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Menu_and_Menu_Item_Example_CSharp.md",
+        "Add_Menu_and_Menu_Item_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Text to show in the SOLIDWORKS Design status bar when the user moves the pointer over this menu item; if you specify HintString, then it must be preceded by a comma",
+          "example_quote": "menuId = iSwApp.AddMenuItem5((int)swDocumentTypes_e.swDocPART, addinID, \"MyMenuItem@MyMenu\", 0, \"MyMenuCallback\", \"MyMenuEnableMethod\", \"My menu item\", images);",
+          "example_file": "Add_Menu_and_Menu_Item_Example_CSharp.md",
+          "why": "备注要求 HintString 必须以逗号开头；示例第 7 个实参 \"My menu item\" 无前导逗号。VB.NET 版同样。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Text to show in the SOLIDWORKS Design status bar when the user moves the pointer over this menu item; if you specify HintString, then it must be preceded by a comma",
+          "example_quote": "menuId = iSwApp.AddMenuItem5(swDocumentTypes_e.swDocPART, addinID, \"MyMenuItem@MyMenu\", 0, \"MyMenuCallback\", \"MyMenuEnableMethod\", \"My menu item\", images)",
+          "example_file": "Add_Menu_and_Menu_Item_Example_VBNET.md",
+          "why": "同上：官方示例自身未遵守备注的逗号要求。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出验证「支持高分辨率缩放」的实操：改系统文字大小后重跑再比对按钮尺寸",
+          "example_quote": "// 5. Change the size of the text and other items on your computer.",
+          "example_file": "Add_Menu_and_Menu_Item_Example_CSharp.md"
+        },
+        {
+          "what": "ImageList 实测只填 3 个路径（nxn / nnxnn / nnnxnnn 三档），而备注列的是 6 档像素",
+          "example_quote": "images(0) = \"Pathname_to_menu_item_nxn_image\"",
+          "example_file": "Add_Menu_and_Menu_Item_Example_VBNET.md"
+        }
+      ],
+      "note": "示例另引用了并不存在的 MyMenuEnableMethod（代码里只有 MyMenuCallback），属示例自身缺陷，非备注冲突。"
+    },
+    {
+      "member": "AddMenuPopupIcon3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Button_to_Context-sensitive_Menu_Example_CSharp.md",
+        "Add_Button_to_Context-sensitive_Menu_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 SwApp.Frame() 取到 IFrame 接收者再调用，成员页未写接收者从哪来",
+          "example_quote": "frame = SwApp.Frame()",
+          "example_file": "Add_Button_to_Context-sensitive_Menu_Example_CSharp.md"
+        },
+        {
+          "what": "ImageList 只放 3 张（nxn/nnxnn/nnnxnnn），备注列的是 6 档像素",
+          "example_quote": "imageList[0] = \"Pathname_to_button_nxn_image\";",
+          "example_file": "Add_Button_to_Context-sensitive_Menu_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出高分辨率缩放的验证动作：改显示缩放后重跑，比对右键菜单按钮尺寸",
+          "example_quote": "// 3. Note the size of the button added by this add-in to the\n//    context-sensitive menu.",
+          "example_file": "Add_Button_to_Context-sensitive_Menu_Example_CSharp.md"
+        }
+      ],
+      "note": "两示例 frame 均声明为 IFrame；CSEnable 只返回 0/1，与备注回调返回表一致，无冲突。"
+    },
+    {
+      "member": "AddNewPosition",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Mate_Controller_Example_CSharp.md",
+        "Create_Mate_Controller_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没有的前置：装配体须含带槽配合、且该配合受距离/百分比约束",
+          "example_quote": "// Preconditions: Open an assembly document that contains\n a mechanical slot feature\n// with a slot mate that has one of these constraints:\n// - Distance Along Slot\n// - Percent Along Slot",
+          "example_file": "Create_Mate_Controller_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出调用序：Initialize 之后逐个 AddNewPosition，最后 CreateFeature",
+          "example_quote": "mateControllerObj.Initialize(dArray);\nmateControllerObj.AddNewPosition(\"Position1\");\nmateControllerObj.AddNewPosition(\"Position2\");",
+          "example_file": "Create_Mate_Controller_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "AddNote",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Magnetic_Line_Example_CSharp.md",
+        "Insert_Magnetic_Line_Example_VB.md",
+        "Insert_Magnetic_Line_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先用 SelectByID2 选中 NOTE 再取 INote 传入，成员页只说「要附加的注释」",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"DetailItem350@Drawing View1\", \"NOTE\", 0.1999417828571, 0.1868875085714, 0, false, 0, null, 0);",
+          "example_file": "Insert_Magnetic_Line_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出「同一视图」规则的可观测后果：跨视图注释的 AddNote 失败",
+          "example_quote": "// This fails because note belongs to a different view",
+          "example_file": "Insert_Magnetic_Line_Example_CSharp.md"
+        }
+      ],
+      "note": "示例 EqualSpacing=true 仍传 1E-06 并注 Position 被忽略，与成员页「valid only if false」不矛盾。"
+    },
+    {
+      "member": "AddOrUpdateSearchData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Third-party_Application_Keywords_to_SOLIDWORKS_Search_and_Model_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没写的必做项：须在 选项>搜索 勾选 Always index 才会建索引",
+          "example_quote": "' 2. Click Tools > Options > Search > Always index (may slow\n' SOLIDWORKS Design), if this check box is not selected.",
+          "example_file": "Add_Third-party_Application_Keywords_to_SOLIDWORKS_Search_and_Model_Example_VB.md"
+        },
+        {
+          "what": "示例要求保存文档后才可被检索；成员页只说「索引之后」",
+          "example_quote": "boolstatus = swModel.Save3(swSaveAsOptions_Silent, longstatus, longwarnings)",
+          "example_file": "Add_Third-party_Application_Keywords_to_SOLIDWORKS_Search_and_Model_Example_VB.md"
+        }
+      ],
+      "note": "示例连调三次换 AppKeyword，AppName 固定为 COSMOSWorks；与成员页语义一致。"
+    },
+    {
+      "member": "AddOrdinateDimension",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例均在 ModelDocExtension（swModelDocExt）上调用，即本成员所指向的后继成员；IDrawingDoc 版无任何示例，且本页无 ## Remarks。"
+    }
+  ]
+}

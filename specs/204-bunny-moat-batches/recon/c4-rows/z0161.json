@@ -1,0 +1,116 @@
+{
+  "idx": 161,
+  "results": [
+    {
+      "member": "GetComments",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Comments_in_Comments_Folder_Example_CSharp.md",
+        "Get_Comments_in_Comments_Folder_Example_VB.md",
+        "Get_Comments_in_Comments_Folder_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回值可强转 object[] 逐项访问；成员页 Returns 只写 Array of all of the comments，未说数组形态",
+          "example_quote": "vComments = (object[])swCommentFolder.GetComments();",
+          "example_file": "Get_Comments_in_Comments_Folder_Example_CSharp.md"
+        },
+        {
+          "what": "遍历上界取自先前的 GetCommentCount，成员页未说数组长度从哪来",
+          "example_quote": "for (i = 0; i <= (nbrComments - 1); i++)",
+          "example_file": "Get_Comments_in_Comments_Folder_Example_CSharp.md"
+        }
+      ],
+      "note": "页面无 Remarks 段（只有摘要/Signature/Returns/See Also），按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetComponent",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例全调 IEntity.GetComponent（swEntity 声明为 Entity，或由 Face 赋值），同名不同接口，非 IAttribute.GetComponent。"
+    },
+    {
+      "member": "GetComponentByID",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Top-level_Component_Using_Component_IDs_Example_CSharp.md",
+        "Get_Top-level_Component_Using_Component_IDs_Example_VB.md",
+        "Get_Top-level_Component_Using_Component_IDs_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "ID 取自根组件的子件：GetRootComponent3(True) 取根、GetChildren 取子件后逐个 GetID；成员页未指明 ID 从哪些组件取",
+          "example_quote": "vChildComp = (object[])swRootComp.GetChildren();",
+          "example_file": "Get_Top-level_Component_Using_Component_IDs_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只要求先调 IComponent2::GetID，示例正是如此；未见矛盾。"
+    },
+    {
+      "member": "GetComponentByName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Component_by_Name_Example_CSharp.md",
+        "Get_Component_by_Name_Example_VB.md",
+        "Get_Component_by_Name_Example_VBNET.md",
+        "Mirror_Components_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "名字是带实例号后缀的形式，Parameters 只写 Component name，未给名字形态",
+          "example_quote": "compsToMirror[3] = swAssem.GetComponentByName(\"middle-gear plate-1\");",
+          "example_file": "Mirror_Components_Example_CSharp.md"
+        }
+      ],
+      "note": "页面无 Remarks 段，按纪律跳过冲突判定；四份示例均在 AssemblyDoc 上调用，可用。"
+    },
+    {
+      "member": "GetComponentCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例调的是 Interference.GetComponentCount（interference/swInterference 声明为 IInterference/Interference），非 IAssemblyDoc 同名成员。"
+    },
+    {
+      "member": "GetComponentSuppressionState",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Whether_Components_Are_Loaded_Example_CSharp.md",
+        "Get_Whether_Components_Are_Loaded_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出调用链：GetComponents(true) 取组件、用 Component2.Name（非 Name2）、配置对象取自 ActiveConfiguration",
+          "example_quote": "Debug.Print (\"  Suppressed: \" + swConfig.GetComponentSuppressionState(swComponent.Name));",
+          "example_file": "Get_Whether_Components_Are_Loaded_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 段仅一句版本号「SOLIDWORKS 2001Plus SP1, Revision Number 10.1」，无实质主张，与示例不冲突。"
+    },
+    {
+      "member": "GetComponents",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Activate_Smart_Features_in_an_Assembly_Example_CSharp.md",
+        "Activate_Smart_Features_in_an_Assembly_Example_VB.md",
+        "Activate_Smart_Features_in_an_Assembly_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回值强转 Object[] 后按 GetUpperBound(0) 从 0 遍历，是 0 基安全数组；Returns 未说数组形态",
+          "example_quote": "compsArray = (Object[])comps;",
+          "example_file": "Activate_Smart_Features_in_an_Assembly_Example_CSharp.md"
+        }
+      ],
+      "note": "Add_Explode_Step 调的是 IExplodeStep.GetComponents（explStep 声明为 SldWorks.ExplodeStep），同名不同接口，不计入。"
+    }
+  ]
+}

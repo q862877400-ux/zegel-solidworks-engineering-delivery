@@ -1,0 +1,131 @@
+{
+  "idx": 249,
+  "results": [
+    {
+      "member": "GetSecondaryDatumModifiers",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按同一下标配对两个数组：循环边界取自基准数组 dats，修改符数组只被同下标访问（两数组须同界同长）。",
+          "example_quote": "    For I = LBound(dats) To UBound(dats)\n        mcm = mods(I)",
+          "example_file": "Get_DimXpert_Datum_Example_VB.md"
+        },
+        {
+          "what": "示例在取修改符前先判 dats 是否 Empty，无次级基准时直接早退、不索引 mods。",
+          "example_quote": "    If IsEmpty(dats) Then\n        strs.Add (datumOrder + \": none\")\n        Exit Sub\n    End If",
+          "example_file": "Get_DimXpert_Tolerance1_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 称两数组 map，示例正是同下标配对 ⇒ 一致，无矛盾。"
+    },
+    {
+      "member": "GetSecondaryDatums",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回可能为 Empty（无次级基准时），调用方须先判空、再用 LBound/UBound 取边界。",
+          "example_quote": "    If IsEmpty(dats) Then\n        strs.Add (datumOrder + \": none\")\n        Exit Sub\n    End If",
+          "example_file": "Get_DimXpert_Datum_Example_VB.md"
+        },
+        {
+          "what": "数组元素是对象，示例按 .Identifier 取基准字母，与同下标的 modifier 配对打印。",
+          "example_quote": "        str = str + \"  \" + dats(I).Identifier + \" @ \" + mcmStr(mcm)",
+          "example_file": "Get_DimXpert_Datum_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 与 GetSecondaryDatumModifiers 页互为镜像，示例照此实现 ⇒ 无矛盾。"
+    },
+    {
+      "member": "GetSection",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Signature/Returns/Examples/ See Also，无 ## Remarks ⇒ 按纪律跳过。"
+    },
+    {
+      "member": "GetSectionProperties",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks 段；正文仅 Obsolete 句 Superseded by ...GetSectionProperties2 ⇒ 跳过。"
+    },
+    {
+      "member": "GetSectionViewData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Section_View_Data_Example_CSharp.md",
+        "Get_Section_View_Data_Example_VB.md",
+        "Get_Section_View_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "空串取「活动剖面视图」的前提是先经 UI 菜单把某剖面设为当前，否则无活动剖面。",
+          "example_quote": "3. Click View > Display > Section View twice.",
+          "example_file": "Get_Section_View_Data_Example_VB.md"
+        },
+        {
+          "what": "示例在零件文档上运行（三个剖面的 aw_rubber_duct.sldprt），非仅工程图。",
+          "example_quote": "1. Open public_documents\\samples\\tutorial\\cosmosxpress\\aw_rubber_duct.sldprt.",
+          "example_file": "Get_Section_View_Data_Example_VB.md"
+        },
+        {
+          "what": "实参就是空串，返回对象直接取 FirstPlane/FirstOffset 等，无判空。",
+          "example_quote": "    Set swSectionViewData = swModelViewMgr.GetSectionViewData(\"\")",
+          "example_file": "Get_Section_View_Data_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只警告可能返回 Nothing/null；示例假定前置已满足、未判空，不构成矛盾。"
+    },
+    {
+      "member": "GetSectionedBodies",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Sectioned_Bodies_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说用 GetDisplayState 判断，示例给出确切枚举值 swIsViewSectioned。",
+          "example_quote": "    status = swModelView.GetDisplayState(swViewDisplayType_e.swIsViewSectioned)",
+          "example_file": "Get_Sectioned_Bodies_Example_VB.md"
+        },
+        {
+          "what": "组件由选区经 GetSelectedObjectsComponent4 取得；ViewIn 实参为 ActiveView 的 ModelView。",
+          "example_quote": "    Set swComp = swSelMgr.GetSelectedObjectsComponent4(1, -1)\n    Set swModelView = swModel.ActiveView",
+          "example_file": "Get_Sectioned_Bodies_Example_VB.md"
+        },
+        {
+          "what": "返回按 Variant 数组 For Each 遍历，每项是 Body2，供 CreateFeatureFromBody3 使用。",
+          "example_quote": "vBodyArr = swComp.GetSectionedBodies(swModelView)",
+          "example_file": "Get_Sectioned_Bodies_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 提 COM 实现见 EnumSectionedBodies，但官方 VBA(COM) 示例本身调本成员 ⇒ 只当交叉引用。"
+    },
+    {
+      "member": "GetSegments",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Signature/Returns/See Also，无 ## Remarks ⇒ 按纪律跳过。"
+    }
+  ]
+}

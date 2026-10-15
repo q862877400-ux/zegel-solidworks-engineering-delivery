@@ -1,0 +1,16 @@
+{"idx": 2, "pages_read": 14, "rows": [
+{"iface": "IView", "file": "AlignWithView.md", "signature": "System.bool AlignWithView( System.int AlignType, View BaseView )", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IView", "file": "GetDatumTagCount.md", "signature": "System.int GetDatumTagCount()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetEllipses2.md", "signature": "System.object GetEllipses2()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetParabolas.md", "signature": "System.object GetParabolas()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetVisibleEntityCount.md", "signature": "System.int GetVisibleEntityCount( Component2 LpViewComponent, System.int EntityType )", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IView", "file": "IGetDimensionString2.md", "signature": "System.string IGetDimensionString2()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetSketch.md", "signature": "Sketch IGetSketch()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "PositionLocked.md", "signature": "System.bool PositionLocked {get; set;}", "obsolete": false, "pointer": false, "zero": "是（无括号）"},
+{"iface": "IDrawingDoc", "file": "AutoDimension.md", "signature": "System.int AutoDimension( System.int EntitiesToDimension, System.int HorizontalScheme, System.int HorizontalPlacement, System.int VerticalScheme, System.int VerticalPlacement )", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "CreateText2.md", "signature": "System.object CreateText2( System.string TextString, System.double TextX, System.double TextY, System.double TextZ, System.double TextHeight, System.double TextAngle )", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "ICreateAngDim2.md", "signature": "void ICreateAngDim2( ref System.double P0, ref System.double P1, ref System.double P2, ref System.double P3, ref System.double P4, ref System.double P5, ref System.double P6, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot, ref System.double TextPoint )", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "InsertModelAnnotations2.md", "signature": "System.bool InsertModelAnnotations2( System.int Option, System.bool AllTypes, System.int Types, System.bool AllViews, System.bool DuplicateDims, System.bool HiddenFeatureDims )", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "StartDrawing.md", "signature": "void StartDrawing()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "ISheet", "file": "SetTemplateName.md", "signature": "void SetTemplateName( System.string NameIn )", "obsolete": false, "pointer": false, "zero": "否（有形参）"}
+]}

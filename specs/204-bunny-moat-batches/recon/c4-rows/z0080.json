@@ -1,0 +1,121 @@
+{
+  "idx": 80,
+  "results": [
+    {
+      "member": "D1DraftOutward",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Extruded_Reference_Surface_Example_CSharp.md",
+        "Insert_Extruded_Reference_Surface_Example_VB.md",
+        "Insert_Extruded_Reference_Surface_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的静态前置写成运行时 if 守卫，且同一守卫同时管住 D1DraftAngle 与 D1DraftOutward",
+          "example_quote": "            if (swSurfExtrudeFeature.D1DraftOn)\n            {\n                Debug.Print(\"      Angle: \" + swSurfExtrudeFeature.D1DraftAngle);\n                Debug.Print(\"      Inward (false) or outward (true)? \" + swSurfExtrudeFeature.D1DraftOutward);\n            }",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "Returns 的 true=outward / false=inward 与示例打印标签逐字一致，三份示例均守前置，无冲突。"
+    },
+    {
+      "member": "D1EndCondition",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Bidir_Linear_Pattern_Example_CSharp.md",
+        "Vary_Linear_Pattern_Instances_Example_CSharp.md",
+        "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把裸整数 0 落到 SpacingAndInstances 分支，并显示它与 D1Spacing/D1TotalInstances 成对设置",
+          "example_quote": "            swLinearPatternFeatureData.D1EndCondition = 0;\n            swLinearPatternFeatureData.D1ReverseDirection = false;\n            swLinearPatternFeatureData.D1Spacing = 0.01;\n            swLinearPatternFeatureData.D1TotalInstances = 4;",
+          "example_file": "Create_Bidir_Linear_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只指向 UI 帮助主题、未给任何前置；示例用 0，与 swPatternEndCondition_e 首成员一致。"
+    },
+    {
+      "member": "D1EndConditionDistance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base_Flange_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体取值 0.02，并与 D1EndConditionType=1 成对设置；成员页 Returns 只写「Distance」",
+          "example_quote": "        swBaseFlangeFeat.D1EndConditionType = 1\n        swBaseFlangeFeat.D1EndConditionDistance = 0.02",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按规则跳过冲突判定。"
+    },
+    {
+      "member": "D1EndConditionType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base_Flange_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 D1 与 D2 同设为 1（枚举值 1 = swFlangeOffsetBlind）；成员页仅指向枚举名",
+          "example_quote": "        swBaseFlangeFeat.D1EndConditionType = 1\n        swBaseFlangeFeat.D1EndConditionDistance = 0.02\n        swBaseFlangeFeat.ReverseDirection = True\n        swBaseFlangeFeat.OffsetDirections = 2\n        swBaseFlangeFeat.D2EndConditionType = 1",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "无 ## Remarks，跳过冲突判定。"
+    },
+    {
+      "member": "D1InstanceCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Access_Curve-driven_Pattern_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它与 D1Spacing=0.0254、D1IsEqualSpaced=true 同时设定，并在 AccessSelections 后回读打印",
+          "example_quote": "            swCurveDrivenPatternFeatureData.D1InstanceCount = 3;\n            swCurveDrivenPatternFeatureData.D1IsEqualSpaced = true;\n            swCurveDrivenPatternFeatureData.D1ReverseDirection = false;\n            swCurveDrivenPatternFeatureData.D1Spacing = 0.0254;",
+          "example_file": "Create_and_Access_Curve-driven_Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 Create_Local_Curve-driven_Pattern 示例调的是 ILocalCurvePatternFeatureData 同名成员，已排除。"
+    },
+    {
+      "member": "D1IsEqualSpaced",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Access_Curve-driven_Pattern_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先写 true 再在 AccessSelections 后回读，打印标签逐字为 spaced equally in Direction 1",
+          "example_quote": "            Debug.Print(\"Pattern instances spaced equally in Direction 1? \" + swCurveDrivenPatternFeatureData.D1IsEqualSpaced);",
+          "example_file": "Create_and_Access_Curve-driven_Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "同名成员另属 ILocalCurvePatternFeatureData，Local 版示例按纪律排除。"
+    },
+    {
+      "member": "D1OffsetDistance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "官方 VBA 示例仍写这个已废弃成员，且与同代的 D1OffsetType=1 配对，而非新名 D1EndConditionType",
+          "example_quote": "    featDef.BendRadius = 0.02\n    featDef.D1OffsetDistance = 0.04\n    featDef.D1OffsetType = 1\n    featDef.D1ReverseOffset = True",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        }
+      ],
+      "note": "正文声明 Obsolete 且由 D1EndConditionDistance 取代，示例仍在写旧名；无 Remarks 故不判冲突。"
+    }
+  ]
+}

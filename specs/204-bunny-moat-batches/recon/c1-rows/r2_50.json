@@ -1,0 +1,15 @@
+{"idx": 50, "pages_read": 13, "rows": [
+{"iface": "IView", "file": "GetCenterMarkInfo.md", "signature": "System.object GetCenterMarkInfo()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetDisplayData4.md", "signature": "System.object GetDisplayData4()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetLines3.md", "signature": "System.object GetLines3()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetUniqueName.md", "signature": "System.string GetUniqueName()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetDimensionDisplayString4.md", "signature": "System.string IGetDimensionDisplayString4()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetPolylines7.md", "signature": "System.object IGetPolylines7( System.short CrossHatchOption, System.int ArraySize, out System.double Polylines, System.int EdgeArraySize )", "obsolete": false, "pointer": true, "zero": "否（有形参）"},
+{"iface": "IView", "file": "IsFlatPatternView.md", "signature": "System.bool IsFlatPatternView()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "AddOrdinateDimension.md", "signature": "System.bool AddOrdinateDimension( System.int DimType, System.double LocX, System.double LocY, System.double LocZ )", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "CreateOrdinateDim.md", "signature": "System.bool CreateOrdinateDim( System.object P0, System.object P1, System.object P2, System.object P3, System.object P4, System.double Angle, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot )", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "GetSheetCount.md", "signature": "System.int GetSheetCount()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "InsertCenterMark2.md", "signature": "CenterMark InsertCenterMark2( System.int Style, System.bool Propagate )", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "SetSheetsSelected.md", "signature": "void SetSheetsSelected( System.object NewSheetList )", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "ISheet", "file": "IsLoaded.md", "signature": "System.bool IsLoaded()", "obsolete": false, "pointer": false, "zero": "是（空括号）"}
+]}

@@ -1,0 +1,110 @@
+{
+  "idx": 17,
+  "pages_read": 13,
+  "rows": [
+    {
+      "iface": "IView",
+      "file": "EnumHiddenComponents2.md",
+      "signature": "EnumComponents2 EnumHiddenComponents2()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetDimensionCount2.md",
+      "signature": "System.int GetDimensionCount2()",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetFirstCThread.md",
+      "signature": "System.object GetFirstCThread()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetPolyLinesAndCurvesCount.md",
+      "signature": "System.int GetPolyLinesAndCurvesCount( System.short CrossHatchOption, out System.int PointCount )",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetArcs4.md",
+      "signature": "System.double IGetArcs4()",
+      "obsolete": false,
+      "pointer": true,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetFirstAnnotation2.md",
+      "signature": "Annotation IGetFirstAnnotation2()",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetWeldBeads.md",
+      "signature": "WeldBead IGetWeldBeads( System.int NumWeldBead )",
+      "obsolete": false,
+      "pointer": true,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IView",
+      "file": "SetBendNoteTextFormat.md",
+      "signature": "System.bool SetBendNoteTextFormat( System.string Format )",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "CreateAngDim.md",
+      "signature": "System.bool CreateAngDim( System.object VP0, System.object VP1, System.object VP2, System.object VP3, System.object VP4, System.object VP5, System.object VP6, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot )",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "EditOrdinate.md",
+      "signature": "void EditOrdinate()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "ICreateLinearDim4.md",
+      "signature": "DisplayDimension ICreateLinearDim4( ref System.double P0, ref System.double P1, ref System.double P2, ref System.double P3, ref System.double P4, ref System.double TextPoint, System.double Val, System.double Angle, System.double TextHeight )",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "InsertTableAnnotation.md",
+      "signature": "TableAnnotation InsertTableAnnotation( System.double X, System.double Y, System.int AnchorType, System.int Rows, System.int Columns )",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "ISheet",
+      "file": "CustomPropertyView.md",
+      "signature": "System.string CustomPropertyView {get; set;}",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（无括号）"
+    }
+  ]
+}

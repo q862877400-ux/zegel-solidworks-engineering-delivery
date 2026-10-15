@@ -1,0 +1,157 @@
+{
+  "idx": 180,
+  "results": [
+    {
+      "member": "GetDocumentNamesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md",
+        "Pack_and_Go_an_Assembly_Example_CSharp.md",
+        "Pack_and_Go_an_Assembly_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Call this method before calling [[IPackAndGo::IGetDocumentNames]] and [[IPackAndGo::IGetDocumentSaveToNames]] to determine the size of the array for each method.",
+          "example_quote": "object[] pgFileNames = new object[namesCount - 1];",
+          "example_file": "Pack_and_Go_an_Assembly_Example_CSharp.md",
+          "why": "Remarks 说数组长度由该计数决定（长度=计数），示例却按计数-1 分配，两条对同一量的说法不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "VB.NET 把 namesCount-1 当作上界（ReDim 得长度=namesCount），与 C# 的 new object[namesCount-1] 不是同一长度。",
+          "example_quote": "ReDim pgGetFileNames(namesCount - 1)",
+          "example_file": "Pack_and_Go_an_Assembly_Example_VBNET.md"
+        }
+      ],
+      "note": "两侧对『计数→数组长度』给出不同值；C# 与 VB.NET 官方示例彼此也不一致。"
+    },
+    {
+      "member": "GetDocumentSaveToNames",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Pack_and_Go_an_Assembly_Example_CSharp.md",
+        "Pack_and_Go_an_Assembly_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "两个 out 数组须由调用方预先 ReDim 到 namesCount-1 上界，成员页只把它们写成 out，没说要预分配。",
+          "example_quote": "ReDim pgDocumentStatus(namesCount - 1)",
+          "example_file": "Pack_and_Go_an_Assembly_Example_VBNET.md"
+        },
+        {
+          "what": "同一方法在 SetSaveToName/AddPrefix/AddSuffix 前后各调一次，返回的保存名随设置而变。",
+          "example_quote": "status = swPackAndGo.GetDocumentSaveToNames(out getFileNames, out getDocumentStatus);",
+          "example_file": "Pack_and_Go_an_Assembly_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的顺序/前缀后缀说法与示例一致，未找到硬冲突。"
+    },
+    {
+      "member": "GetDocumentTemplate",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Locations_and_Names_of_Document_Templates_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例枚举图纸的具体 PaperSize 取值集合（含竖版变体），页面只说『用来决定哪张图纸模板』。",
+          "example_quote": "swApp.GetDocumentTemplate(swDocDRAWING, \"\", swDwgPaperA4sizeVertical, 0#, 0#)",
+          "example_file": "Get_Locations_and_Names_of_Document_Templates_Example_VB.md"
+        },
+        {
+          "what": "PART 分支印证 Remarks『其余参数不用』：未用参数一律填 0 而不是有效枚举值。",
+          "example_quote": "swApp.GetDocumentTemplate(swDocPART, \"\", 0, 0#, 0#)",
+          "example_file": "Get_Locations_and_Names_of_Document_Templates_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 表与示例一致，无矛盾。"
+    },
+    {
+      "member": "GetDocuments",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Paths_of_Open_Documents_Example_CSharp.md",
+        "Get_Paths_of_Open_Documents_Example_VB.md",
+        "Get_Paths_of_Open_Documents_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例须另调 GetDocumentCount 取数组长度，并把元素强转 ModelDoc2 才能取路径；页面只说返回文档数组。",
+          "example_quote": "swModel = models[index] as ModelDoc2;",
+          "example_file": "Get_Paths_of_Open_Documents_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段（remarks_empty=true），按规则跳过冲突判定。"
+    },
+    {
+      "member": "GetDouble",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Spline_Points_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例说明 SafeArray 第 0 个元素是点数、其后才是 xyz 坐标，故坐标索引并非从 0 起；页面未说数组布局。",
+          "example_quote": "//First value in vSplines array is the number of\nsketch (or spline) points, followed by the x, y, z",
+          "example_file": "Get_Spline_Points_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段（remarks_empty=true），按规则跳过冲突判定。"
+    },
+    {
+      "member": "GetDoubleValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Find_Attribute_Example_CSharp.md",
+        "Find_Attribute_Example_VB.md",
+        "Find_Attribute_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "写入用带配置作用域的三参 SetDoubleValue2（swAllConfiguration），读侧零参无配置选择，页面未交代这一不对称。",
+          "example_quote": "bRet = swParamValue.SetDoubleValue2(i * 10, (int)swInConfigurationOpts_e.swAllConfiguration, \"\");",
+          "example_file": "Find_Attribute_Example_CSharp.md"
+        },
+        {
+          "what": "示例读回的就是刚写入的 i*10 原始数，全程无换算步骤，未展示 Remarks 所称的 system units。",
+          "example_quote": "Debug.Print(\"  Value = \" + swParamValue.GetDoubleValue());",
+          "example_file": "Find_Attribute_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的『system units』在示例里既未被印证也未被反证，故不记 unit_diff。"
+    },
+    {
+      "member": "GetDraftAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Boundary_Feature_Example_CSharp.md",
+        "Insert_Boundary_Feature_Example_VB.md",
+        "Insert_Boundary_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call [[IBoundaryBossFeatureData::GetCurvesCount]] to get a valid range of values for GuideIndex.",
+          "example_quote": "if (nbrCurves >= 0)",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md",
+          "why": "Remarks 要求先取得 GuideIndex 的有效范围；示例用 nbrCurves>=0 当有效性判据（0 条曲线也通过），随后仍以 GuideIndex=0 调用，二者不等价。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例显示必须先在 feature data 上 AccessSelections(model,null) 才读得到拔模角，改完再 ModifyDefinition；页面未提这一步。",
+          "example_quote": "status = swBoundaryBossFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 Insert_Boundary_Feature 示例结构一致，冲突与 more_specific 在 C#/VBA/VB.NET 三版均出现。"
+    }
+  ]
+}

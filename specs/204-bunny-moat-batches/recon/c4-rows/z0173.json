@@ -1,0 +1,133 @@
+{
+  "idx": 173,
+  "results": [
+    {
+      "member": "GetDatumTargetSyms",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都先调 GetDatumTargetSymCount 并以 count>0 才取数组；成员页完全没提 count 这一步。",
+          "example_quote": "count = swView.GetDatumTargetSymCount();",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        },
+        {
+          "what": "C# 侧把返回直接强转 object[] 并用 GetUpperBound(0) 取上界遍历；成员页只写 Array。",
+          "example_quote": "Object[] Annotations = (Object[])swView.GetDatumTargetSyms();",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        },
+        {
+          "what": "示例声明式地把 \"GetDatumTargetSyms\" 与 \"GetFirstDatumTargetSym/GetNext\" 二选一的取舍落到 count 守卫上，成员页无此取舍。",
+          "example_quote": "Set swView = swView.GetNextView",
+          "example_file": "Get_Annotations_Array_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只与 GetFirstDatumTargetSym/GetNext 做对比，未与示例冲突。"
+    },
+    {
+      "member": "GetDatumType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先以 GetPMIType()==2 把关，再把返回值与两个具名枚举常量比较；成员页无前置。",
+          "example_quote": "if (swPMIDatumData.GetDatumType() == (int)swPMIDatumType_e.swPMIDatumType_DatumFeature)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        },
+        {
+          "what": "同一返回值被复用为分支判据，分别路由到 GetDatumFeature 与 GetDatumTarget。",
+          "example_quote": "if (swPMIDatumData.GetDatumType() == (int)swPMIDatumType_e.swPMIDatumType_DatumTarget)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetDecal",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mask_Types_of_Each_Decal_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 ID 区间钉死为 1..GetDecalsCount（从 1 起）；成员页只说 ID 是 index number，未给基数。",
+          "example_quote": "For i = 1 To lNbrDecals",
+          "example_file": "Get_Mask_Types_of_Each_Decal_Example_VB.md"
+        },
+        {
+          "what": "示例把 Configuration 形参硬写成字面量 \"Default\"；成员页只说配置名。",
+          "example_quote": "Set swDecal = swModelDocExt.GetDecal(i, \"Default\")",
+          "example_file": "Get_Mask_Types_of_Each_Decal_Example_VB.md"
+        },
+        {
+          "what": "示例前置要求模型在 Default 配置里至少已有一个贴花；成员页无任何前置。",
+          "example_quote": "Open a model that has at least one decal applied",
+          "example_file": "Get_Mask_Types_of_Each_Decal_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 与示例一致；ID 基数之差属未声明，非硬冲突，故只记 more_specific。"
+    },
+    {
+      "member": "GetDecals",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例调的都是 ModelDocExtension.GetDecals，非 IComponent2；成员页无 Remarks。"
+    },
+    {
+      "member": "GetDecalsCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "Add_Decal 调 Face2.GetDecalsCount、Delete_Decal 调 ModelDocExtension.GetDecalsCount，均非 IComponent2；无示例可比。"
+    },
+    {
+      "member": "GetDefinition",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例调的都是 IFeature.GetDefinition（接收者是 Feature/RipFeature/CornerTreatment），非 IAttribute。"
+    },
+    {
+      "member": "GetDefinitionEntities2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Sketch_Relations_Example_CSharp.md",
+        "Get_Sketch_Relations_Example_VB.md",
+        "Get_Sketch_Relations_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置要求先在图形区选中草图，再用 GetSelectedObject6(1,-1) 取到它；成员页无前置。",
+          "example_quote": "swFeat = (Feature)swSelMgr.GetSelectedObject6(1, -1);",
+          "example_file": "Get_Sketch_Relations_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出到达该成员的调用序：RelationManager.GetRelations(swAll) 后逐个调；成员页无调用序。",
+          "example_quote": "vSkRelArr = (object[])swSkRelMgr.GetRelations((int)swSketchRelationFilterType_e.swAll);",
+          "example_file": "Get_Sketch_Relations_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 版把空判定写成 IsEmpty(vDefEntArr)，比 Remarks 的逐元素 null 检查粗一层。",
+          "example_quote": "If IsEmpty(vDefEntArr) Then",
+          "example_file": "Get_Sketch_Relations_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 与三份示例不矛盾；示例只在数组层判空，未验证 Remarks 的逐元素 null。"
+    }
+  ]
+}

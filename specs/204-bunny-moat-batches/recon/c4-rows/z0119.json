@@ -1,0 +1,124 @@
+{
+  "idx": 119,
+  "results": [
+    {
+      "member": "Face",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过判定。清单给的 4 份全是同名撞车：Change_Wrap_* 调 WrapSketchFeatureData.Face，Change_Height_of_Dome 调 DomeFeatureData2.Face。真用本成员的是 Get_Cross_Break_Feature_Data_*（不在清单内）。"
+    },
+    {
+      "member": "FaceInSurfaceSense",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Determine_Type_of_Face_Example_VB.md",
+        "Get_Normal_of_Planar_Surface_Example_VB.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_CSharp.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "You might need this method because the underlying surface geometry can have an orientation where its normal vector points toward or away from the body material.",
+          "example_quote": "' cannot be in the same direction as the normal",
+          "example_file": "Get_Normal_of_Planar_Surface_Example_VB.md",
+          "why": "Remarks 说底层曲面法向可指向体内或体外，故 False 分支可达；示例 NOTE 却断言两者不可能同向。若真不可能，Remarks 的 False 分支与该方法本身都无意义。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体用法：返回 True 时把曲面法向取反当作面法向使用（三份示例同构）",
+          "example_quote": "' Negate the surface normal as it is opposite from the face normal",
+          "example_file": "Select_Edges_of_All_Holes_on_Face_Example_VB.md"
+        }
+      ],
+      "note": "另三份示例用法与 Remarks 一致。Get_Normal 那份的 NOTE 还与它自己末尾第 45 行的打印说明自相矛盾。"
+    },
+    {
+      "member": "Faces",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "Remarks 只是一句指向 Selections that Define Features 的链接，无可核对断言。清单 4 份全是同名撞车：MoveFaceFeatureData.Faces、DomeFeatureData2.Faces、ClosedCornerFeatureData.Faces。本页真正的示例是 Get_Chamfer_Distances_*（不在清单内）。"
+    },
+    {
+      "member": "FacesForReplacement",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Replace_Face_Example_CSharp.md",
+        "Replace_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整三段式：先取选择访问权",
+          "example_quote": "featData.AccessSelections(Part, null);",
+          "example_file": "Replace_Face_Example_CSharp.md"
+        },
+        {
+          "what": "读完数组与计数后成对释放选择访问权",
+          "example_quote": "featData.ReleaseSelectionAccess();",
+          "example_file": "Replace_Face_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只指向 Selections that Define Features，本身没有具体断言，故无可判定的冲突。"
+    },
+    {
+      "member": "FacesRemoved",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Shell_Feature_Example_CSharp.md",
+        "Create_Shell_Feature_Example_VBNET.md",
+        "Get_Shell_Feature_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出演示序列：取选择访问权后读数组，逐面 Select4(true, selData)，读完再释放",
+          "example_quote": "vFaceRemArr = swShell.FacesRemoved",
+          "example_file": "Get_Shell_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "三份示例调用序完全一致，无矛盾。差别只在 C# 版用 (object[]) 强转并按 GetLength(0) 遍历，VB/VBNET 版用 Variant 加 For Each。"
+    },
+    {
+      "member": "FacesRemovedCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Shell_Feature_Example_CSharp.md",
+        "Create_Shell_Feature_Example_VBNET.md",
+        "Get_Shell_Feature_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它打在 AccessSelections 之前，随后却用 For Each 或 GetLength(0) 遍历，不拿它当数组长度",
+          "example_quote": "Debug.Print \"    Count of faces removed: \" & swShell.FacesRemovedCount",
+          "example_file": "Get_Shell_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 说的是为 IGetFacesRemoved 取数组长度；示例改读 FacesRemoved 属性且未用该计数作界，故只算示例更具体，不算矛盾。"
+    },
+    {
+      "member": "FacetValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Lofted_Bend_Feature_Example_CSharp.md",
+        "Insert_Lofted_Bend_Feature_Example_VB.md",
+        "Insert_Lofted_Bend_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先读 FacetingOption 再读 FacetValue，FormedMethod 只在其后打印、从不用于门控",
+          "example_quote": "Debug.Print(\"Formed? \" + lbfd.FormedMethod);",
+          "example_file": "Insert_Lofted_Bend_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 限定 FormedMethod 为 false 时才有效；三份示例都不检查该条件就读取，但示例也从未断言 FormedMethod 为真，故不构成矛盾。"
+    }
+  ]
+}

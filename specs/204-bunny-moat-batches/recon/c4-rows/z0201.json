@@ -1,0 +1,144 @@
+{
+  "idx": 201,
+  "results": [
+    {
+      "member": "GetFromToListHeaderDefinitions",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Save_Routing_Settings_Example_CSharp.md",
+        "Get_and_Save_Routing_Settings_Example_VB.md",
+        "Get_and_Save_Routing_Settings_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页完全没有的前置：SOLIDWORKS Routing 加载项须先在工具>加载项里选中并确定，且项目须引用 SWRoutingLib.dll",
+          "example_quote": "In SOLIDWORKS, click Tools > Add-Ins, select SOLIDWORKS Routing, and",
+          "example_file": "Get_and_Save_Routing_Settings_Example_CSharp.md"
+        },
+        {
+          "what": "示例说明调用对象是由 swApp.GetRoutingSettings() 取得的 RoutingSettings，而非直接取 IRoutingSettings 接口",
+          "example_quote": "routingSettings = swApp.GetRoutingSettings();",
+          "example_file": "Get_and_Save_Routing_Settings_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；三份示例签名与页面一致（bool + 12 个 out string）"
+    },
+    {
+      "member": "GetFromToText",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Before calling this method, use [[IGtol::GetFromTo]] to determine whether the From-To symbol is present.",
+          "example_quote": "boolstatus = swGtol.GetFromTo();\nboolstatus = swGtol.GetFromToText(out swFromText, out\nswToText);",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md",
+          "why": "Remarks 要求先用 GetFromTo 判定 From-To 是否存在再决定是否调用；示例调完 GetFromTo 立刻用同一变量覆盖其返回值，第一次调用更发生在 SetFromToText 建立 From-To 之前，判存在这一步实际没做。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例第二次调用前先把两个 out 形参显式置为空字符串再传入（C#/VBNET 同）",
+          "example_quote": "swFromText1 = \"\";\nswToText1 = \"\";",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "示例自带注 'should be \"FromMe\" and \"ToMe\"' 与其写入的 ToYou 不符"
+    },
+    {
+      "member": "GetFullUnitName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_User_Units_Example_CSharp.md",
+        "Get_and_Set_User_Units_Example_VB.md",
+        "Get_and_Set_User_Units_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它用在角度单位（swAngleUnit）上、传 Plural=true，输出标签写作 Full units name",
+          "example_quote": "Debug.Print(\"  Full units name: \" + docUserUnit.GetFullUnitName(true));",
+          "example_file": "Get_and_Set_User_Units_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；Plural 语义只在 Parameters 一行给出"
+    },
+    {
+      "member": "GetGTolCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call this method before calling [[IView::IGetGTols]] to determine the size of the array for that method.",
+          "example_quote": "Object[] Annotations = (Object[])swView.GetGTols();",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md",
+          "why": "Remarks 把该计数定位为 IGetGTols 的数组尺寸来源；三份示例却全部改与 GetGTols 配对当 count>0 门禁，全库示例无一处调用 IGetGTols。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "三份示例形态一致：C# 显式转 int，VB/VBNET 直接赋给 Long"
+    },
+    {
+      "member": "GetGTols",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 System.object 返回值的实际用法：先转成 Object[] 再按下标遍历，且先判 count > 0",
+          "example_quote": "Object[] Annotations = (Object[])swView.GetGTols();",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        }
+      ],
+      "note": "示例未出现 GetFirstGTOL/GetNextGTOL，与 Remarks 的替代说法不冲突"
+    },
+    {
+      "member": "GetGapsCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Fill_Gaps_in_Body_Example_CSharp.md",
+        "Get_and_Fill_Gaps_in_Body_Example_VB.md",
+        "Get_and_Fill_Gaps_in_Body_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补上成员页未说的下标基准：计数当 1..N 循环上界，而 GetCoEdgesAtGap 收的是 0 基下标 i-1",
+          "example_quote": "vCoEdgeArr = (object[])swDiagnose.GetCoEdgesAtGap(i - 1);",
+          "example_file": "Get_and_Fill_Gaps_in_Body_Example_CSharp.md"
+        }
+      ],
+      "note": "DiagnoseResult 由 swBody.Diagnose() 取得；Remarks 所列两方法示例只用到 GetCoEdgesAtGap"
+    },
+    {
+      "member": "GetGaugeNumberCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md",
+        "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例说明该计数是 GetAvailableGaugeNumbers 数组的遍历上界（0..count-1），且须先设好 gauge table 路径",
+          "example_quote": "for (i = 0; i <= gaugeCount - 1; i++)",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；示例中该计数在 CreateFeature 前后各读一次"
+    }
+  ]
+}

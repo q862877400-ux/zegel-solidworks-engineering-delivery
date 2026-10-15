@@ -1,0 +1,117 @@
+{
+  "idx": 364,
+  "results": [
+    {
+      "member": "MaximumAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Limit_Angle_Mate_Example_CSharp.md",
+        "Create_Limit_Angle_Mate_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IAngleMateFeatureData::IsAdvancedMate]] is set to true.",
+          "example_quote": "swAngleMateData.MaximumAngle = 0.523599;",
+          "example_file": "Create_Limit_Angle_Mate_Example_CSharp.md",
+          "why": "示例建limit angle mate时全程只设MateAlignment/FlipDimension/Angle，从未写IsAdvancedMate=true，照页面该写入无效"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "VBA 版同样缺 IsAdvancedMate；MateAlignment 页未提 advanced，两侧不能同时成立"
+    },
+    {
+      "member": "MaximumDistance",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Limit_Distance_Mate_Example_CSharp.md",
+        "Create_Limit_Distance_Mate_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IDistanceMateFeatureData::IsAdvancedMate]] is set to true.",
+          "example_quote": "swDistMateData.MaximumDistance = 0.0254",
+          "example_file": "Create_Limit_Distance_Mate_Example_VB.md",
+          "why": "官方示例全程未写 IsAdvancedMate=true 就设 MaximumDistance，与页面硬前置直接冲突"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出字面量 0.0254，按米读即 25.4 mm；页面 Returns 只写 Maximum distance 未给单位",
+          "example_quote": "swDistMateData.MaximumDistance = 0.0254",
+          "example_file": "Create_Limit_Distance_Mate_Example_VB.md"
+        }
+      ],
+      "note": "C# 版调用序与 VB 完全一致，同一处缺前置；单位页面未声明，不计 unit_diff"
+    },
+    {
+      "member": "MaximumVariation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Mate_Example_CSharp.md",
+        "Edit_Mate_Example_VB.md",
+        "Get_Mate_Definition_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出换算因子：角度 57.3(rad→deg)、距离 1000(m→mm)，并用 Type 做守卫",
+          "example_quote": "Debug.Print \"    MaxVar         = \" & swMate.MaximumVariation * nVarFactor & sVarType",
+          "example_file": "Edit_Mate_Example_VB.md"
+        },
+        {
+          "what": "守卫条件与页面一致：只有 ANGLE/DISTANCE 才读 MaximumVariation",
+          "example_quote": "If swMateANGLE = swMate.Type Or swMateDISTANCE = swMate.Type Then",
+          "example_file": "Get_Mate_Definition_Example_VB.md"
+        }
+      ],
+      "note": "页面公式 maximum_value - dimension_value 示例未演示，无矛盾"
+    },
+    {
+      "member": "MemberPointParametersType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Secondary_SSMembers_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 setter 放在 CreateStructureSystem 之前，并先调 SetFromPoint/SetFromPointMembers",
+          "example_quote": "UpToMemDef.MemberPointParametersType = (int)",
+          "example_file": "Create_Secondary_SSMembers_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出具体枚举值_FromPoint，页面只写按枚举定义",
+          "example_quote": "swSecondaryMemberUpToMembersMemberPointParameters_e.swSecondaryMemberUpToMembersMemberPointParameters_FromPoint;",
+          "example_file": "Create_Secondary_SSMembers_Example_CSharp.md"
+        }
+      ],
+      "note": "示例写入发生在创建前，与页面 creation-only 前置一致，无冲突"
+    },
+    {
+      "member": "MemberProfile",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过，未读其 examples"
+    },
+    {
+      "member": "MemberType",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过，未读其 examples"
+    },
+    {
+      "member": "Merge",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例都不用本成员：Intersect/Thicken 例用的是 IIntersectFeatureData.Merge 与 IThickenFeatureData.Merge"
+    }
+  ]
+}

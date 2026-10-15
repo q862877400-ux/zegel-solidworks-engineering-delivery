@@ -1,0 +1,147 @@
+{
+  "idx": 357,
+  "results": [
+    {
+      "member": "LowerText",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_and_Show_BOM_Table_in_Assembly_Example_CSharp.md",
+        "Insert_and_Show_BOM_Table_in_Assembly_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "You can only get or set the lower text in a BOM balloon using [[INote::GetBomBalloonText]] or [[INote::SetBomBalloonText]] after [[inserting a BOM balloon]].",
+          "example_quote": "StackedBalloonParams.LowerText = \"Lower Text\";",
+          "example_file": "Insert_and_Show_BOM_Table_in_Assembly_Example_CSharp.md",
+          "why": "Remarks 说只能在插入气泡后经 INote::SetBomBalloonText 写；示例在 InsertStackedBalloon2 之前直接写选项对象。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先置 Style=swBS_SplitCirc 再置 LowerText，示范了属性赋值顺序。",
+          "example_quote": "StackedBalloonParams.Style = (int)swBalloonStyle_e.swBS_SplitCirc;",
+          "example_file": "Insert_and_Show_BOM_Table_in_Assembly_Example_CSharp.md"
+        }
+      ],
+      "note": "VB 版仅把文本写成 \"Lower text\"，其余与 C# 同构，两版都违反 Remarks 的写入途径。"
+    },
+    {
+      "member": "LowerTextContent",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_and_Show_BOM_Table_in_Assembly_Example_CSharp.md",
+        "Insert_and_Show_BOM_Table_in_Assembly_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体取值 swBalloonTextCustom；Remarks 只写了「-1 用文档默认」。",
+          "example_quote": "StackedBalloonParams.LowerTextContent = (int)swBalloonTextContent_e.swBalloonTextCustom;",
+          "example_file": "Insert_and_Show_BOM_Table_in_Assembly_Example_CSharp.md"
+        }
+      ],
+      "note": "示例满足 Style=swBS_SplitCirc 前置；Remarks 的文档默认途径（UserPreference）未被示例覆盖。"
+    },
+    {
+      "member": "MainIconList",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Flyouts_in_the_CommandManager_Example_CSharp.md",
+        "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给 3 个占位图标 nxn/nnxnn/nnnxnnn，并与 IconList 同序赋值。",
+          "example_quote": "mainIcons[0] = \"Pathname_to_nxn_image\";",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        }
+      ],
+      "note": "C# 的 updateBtns 里 Large button 误用 mainIcons[1]；VB.NET 用 (2)。与 Remarks 无冲突。"
+    },
+    {
+      "member": "MaintainTangency",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks；4 份示例里的 MaintainTangency 属 ISweepFeatureData，非本成员。"
+    },
+    {
+      "member": "MaintainThreadLength",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_a_Thread_Feature_Example_CSharp.md",
+        "Create_a_Thread_Feature_Example_VB.md",
+        "Create_a_Thread_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if:\n\n- [[IThreadFeatureData::Offset]] is set to true.",
+          "example_quote": "Debug.Print(\"Offset the starting location of the helix? \" + swThreadFeatData.Offset);",
+          "example_file": "Create_a_Thread_Feature_Example_CSharp.md",
+          "why": "Remarks 要求 Offset 为 true 才有效；示例只读 Offset，全文从未把它置 true。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- [[IThreadFeatureData::EndCondition]] is set to [[swThreadEndCondition_e]]:\n\n- swThreadEndCondition_Blind\n\n    - or -\n\n- swThreadEndCondition_Revolutions",
+          "example_quote": "swThreadFeatData.EndCondition = (int)swThreadEndCondition_e.swThreadEndCondition_UpToSelection;",
+          "example_file": "Create_a_Thread_Feature_Example_CSharp.md",
+          "why": "Remarks 只在 Blind/Revolutions 下有效；示例置 UpToSelection 后仍读该属性。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例示范读回路径：先 GetDefinition 再 AccessSelections，然后才读属性。",
+          "example_quote": "swThreadFeatData.AccessSelections((ModelDoc)swModel, null);",
+          "example_file": "Create_a_Thread_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例（C#/VB/VB.NET）同构，两条前置均未满足，故记两条 precondition_diff。"
+    },
+    {
+      "member": "MajorDiameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for swTapered and swTaperedDrilled holes.",
+          "example_quote": "swFeat = swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore, (int)swWzdHoleStandards_e.swStandardISO,",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "Remarks 说只对 swTapered/swTaperedDrilled 相关；示例建的是沉头孔却照读该属性。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例按 ×1000 换算成 mm，即 API 返回米；成员页 Returns 未给单位。",
+          "example_quote": "Debug.Print(\"  MajorDiameter                = \" + swWizHole.MajorDiameter * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "example_quote 为该长行的前缀片段；VB/VB.NET 同用 swWzdCounterBore 与 ×1000 换算。"
+    },
+    {
+      "member": "MakeAllMatesFlexible",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "swmotionstudyapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用字面量 4 调 GetProperties/GetResults 才取到 CosmosMotionStudyProperties，成员页未给该值。",
+          "example_quote": "swMotionStudyProps = swMotionStudy1.GetProperties(4)",
+          "example_file": "swmotionstudyapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md"
+        }
+      ],
+      "note": "示例只读不写；Remarks 的「置 true 变衬套、增计算时间」未被示例涉及。"
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "idx": 395,
+  "results": [
+    {
+      "member": "PrinterQueue",
+      "remarks_empty": false,
+      "examples": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都先赋 PrinterQueue、下一行才把 PrintToFile 置 false，且用空串代表默认打印机；成员页未给赋值顺序要求。",
+          "example_quote": "printSpec.PrinterQueue = \"\";",
+          "example_file": "Print_Drawing_as_High_Quality_Example_CSharp.md"
+        }
+      ],
+      "note": "IPrintSpecification::PrintToFile 页无 Remarks 也未给默认值，无法据赋值先后判定前置不成立，故不记冲突。"
+    },
+    {
+      "member": "Process",
+      "remarks_empty": true,
+      "examples": [
+        "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md",
+        "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md",
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md"
+      ],
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按规则跳过。Gauge_Table 两份里的 .Process 属量具表参数对象，非本成员。"
+    },
+    {
+      "member": "ProcessByLevel",
+      "remarks_empty": true,
+      "examples": [
+        "Specify_IGES_Levels_and_Values,_Then_Import_IGES_File_Example_VB.md",
+        "Specify_IGES_Levels_and_Values_Then_Import_IGES_File_Example_CSharp.md",
+        "Specify_IGES_Levels_and_Values_Then_Import_IGES_File_Example_VBNET.md"
+      ],
+      "examples_actually_used": [
+        "Specify_IGES_Levels_and_Values,_Then_Import_IGES_File_Example_VB.md",
+        "Specify_IGES_Levels_and_Values_Then_Import_IGES_File_Example_CSharp.md",
+        "Specify_IGES_Levels_and_Values_Then_Import_IGES_File_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 与 Examples 段、无 Remarks，按规则跳过。"
+    },
+    {
+      "member": "Profile",
+      "remarks_empty": false,
+      "examples": [
+        "Create_Cut-sweep_Feature_Using_Tool_Body_Example_VB.md",
+        "Create_Cut-sweep_Feature_Using_Tool_Body_Example_VBNET.md",
+        "Create_Swept_Flange_Example_CSharp.md",
+        "Create_Swept_Flange_Example_VBNET.md"
+      ],
+      "examples_actually_used": [
+        "Create_Cut-sweep_Feature_Using_Tool_Body_Example_VB.md",
+        "Create_Cut-sweep_Feature_Using_Tool_Body_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例走 Tool body 分支：先 AccessSelections 回滚，再读 Profile，返回对象可直接赋给 Body2 并取 Name。",
+          "example_quote": "Set swProfileObj = swSweepFeatureData.Profile",
+          "example_file": "Create_Cut-sweep_Feature_Using_Tool_Body_Example_VB.md"
+        },
+        {
+          "what": "示例给出 Tool body 分支的选法：回转体按 mark=1、路径草图按 mark=4；成员页只说返回类型，未给标记。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Revolve1\", \"SOLIDBODY\", 0, 0, 0, False, 1, Nothing, 0)",
+          "example_file": "Create_Cut-sweep_Feature_Using_Tool_Body_Example_VB.md"
+        }
+      ],
+      "note": "Create_Swept_Flange 两份里的 swFeatData 是 SweptFlangeFeatureData，用的是 ISweptFlangeFeatureData::Profile（另一成员），已排除。"
+    },
+    {
+      "member": "ProfileAngleDim",
+      "remarks_empty": false,
+      "examples": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[ISMGussetFeatureData::UseAngleDimForProfile]] is true and [[ISMGussetFeatureData::ProfileDimensionScheme]] is set to 1.",
+          "example_quote": "swFeatData.ProfileAngleDim = 0.0;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+          "why": "示例第55行 ProfileDimensionScheme=IndentDepth（swSheetMetalGussetProfileDimType_e 枚举值 0）、第58行 UseAngleDimForProfile=false，仍在第60行赋值，两项前置均不成立。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "VB.NET 版第50行同构。接口页也把本属性归在 ProfileDimensions(=1) 分支下，可互相印证。"
+    },
+    {
+      "member": "ProfileDimensionScheme",
+      "remarks_empty": false,
+      "examples": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具名枚举常量并走 IndentDepth 分支：配套写 IndentDepth/IndentWidth，另三个 Profile 尺寸全置 0。",
+          "example_quote": "swFeatData.ProfileDimensionScheme = (int)swSheetMetalGussetProfileDimType_e.swSheetMetalGussetProfileDimType_IndentDepth;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只让转看接口页，本身未给取值，示例与枚举页一致，无矛盾。"
+    },
+    {
+      "member": "ProfileHeightDim",
+      "remarks_empty": false,
+      "examples": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[ISMGussetFeatureData::ProfileDimensionScheme]] is set to 1.",
+          "example_quote": "swFeatData.ProfileHeightDim = 0.0;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+          "why": "示例第55行 ProfileDimensionScheme=IndentDepth，官方枚举值为 0（=1 才是 ProfileDimensions），第59行仍赋 ProfileHeightDim。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "VB.NET 版第49行同构；接口页也只把本属性列在 ProfileDimensions 分支下。"
+    }
+  ]
+}

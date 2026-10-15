@@ -1,0 +1,165 @@
+{
+  "idx": 231,
+  "results": [
+    {
+      "member": "GetParameter",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Attribute_to_Feature_and_Include_In_Library_Feature_Example_VB.md",
+        "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_VBNET.md",
+        "Create_Attribute_Example_VB.md",
+        "Delete_Attribute_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks 段，按纪律跳过；4 份示例均在 Attribute 对象上调用。"
+    },
+    {
+      "member": "GetParent",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Parent_Component_Example_VB.md",
+        "Only_Show_Selected_Components_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "If the component is the root component or a top-level component, then this method returns NULL.",
+          "example_quote": "Set swParentConfig = swConfig.GetParent",
+          "example_file": "Display_Configuration_Description_in_Bill_of_Materials_Example_VB.md",
+          "why": "示例对 Configuration 调用，IConfiguration::GetParent 回 Configuration 且另有 Remarks；本页讲父组件，NULL 语义不适用。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例注明顶层组件返回 Nothing，并改用 GetRootComponent3(True) 兜底。",
+          "example_quote": "' Returns Nothing if selected component is a top-level assembly component",
+          "example_file": "Get_Parent_Component_Example_VB.md"
+        },
+        {
+          "what": "示例靠递归逐层上溯，说明每次只回一层父组件。",
+          "example_quote": "' Show grandparent; that is, recurse up assembly tree",
+          "example_file": "Only_Show_Selected_Components_Example_VB.md"
+        }
+      ],
+      "note": "job 列的 4 份示例实为 IConfiguration::GetParent；上列两份才是本成员。"
+    },
+    {
+      "member": "GetParents",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Base_Flange_Feature_Example_CSharp.md",
+        "Create_Base_Flange_Feature_Example_VBNET.md",
+        "Find_Parent_Feature_using_Collections_Example_VB.md",
+        "Get_Parent-Child_Relationship_for_Component_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 Collection 队列反复调用才取到祖父，印证只回直接父级。",
+          "example_quote": "Using collections lets you visit all of the\nparent features without using a recursive operation.",
+          "example_file": "Find_Parent_Feature_using_Collections_Example_VB.md"
+        },
+        {
+          "what": "C# 需把 System.object 强转 object[]，并取 var[1] 作父钣金特征。",
+          "example_quote": "var = (object[])SHFeat.GetParents();",
+          "example_file": "Create_Base_Flange_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例用 IsEmpty 判空：无父级时是空数组而非 Nothing。",
+          "example_quote": "If Not IsEmpty(vParentArr) Then",
+          "example_file": "Get_Parent-Child_Relationship_for_Component_Example_VB.md"
+        }
+      ],
+      "note": "示例与「只回直接父级」一致，未见冲突。"
+    },
+    {
+      "member": "GetPartBox",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Part_Bounding_Box_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "The values returned are approximate and should not be used for comparison or calculation purposes.",
+          "example_quote": "' best use for IPartDoc::GetPartbox is as a first\n' approximation\n' to determine whether two parts are intersecting.",
+          "example_file": "Get_Part_Bounding_Box_Example_VB.md",
+          "why": "成员页禁其用于比较与计算，示例却把「判断两零件是否相交」列为最佳用途。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例说 NoConversion=True 须 ×1000 才是毫米，即系统单位是米。",
+          "example_quote": "vBoundBox = swPart.GetPartBox(True)",
+          "example_file": "Get_Part_Bounding_Box_Example_VB.md"
+        },
+        {
+          "what": "示例说返回值通常偏大、不是最小包围盒。",
+          "example_quote": "' Typically, the bounding box\n' returned\n' is larger and not a minimal bounding box.",
+          "example_file": "Get_Part_Bounding_Box_Example_VB.md"
+        }
+      ],
+      "note": "「近似、勿用于计算」两侧一致；分歧只在「比较」的边界。"
+    },
+    {
+      "member": "GetPartialEdgeFilletData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Partial_Chamfer_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出顺序：先置 EnablePartialEdgeParameters=true 再取数据。",
+          "example_quote": "swFilletData.EnablePartialEdgeParameters = true;",
+          "example_file": "Create_Partial_Chamfer_Example_CSharp.md"
+        },
+        {
+          "what": "入参取自 GetSelectedObject6 的 Edge 对象，返回需强转。",
+          "example_quote": "PartialEdgeAFilletData = (PartialEdgeFilletData)swFilletData.GetPartialEdgeFilletData(filletItemA);",
+          "example_file": "Create_Partial_Chamfer_Example_CSharp.md"
+        }
+      ],
+      "note": "示例满足 Remarks 前置；本页连 Examples 段都没有。"
+    },
+    {
+      "member": "GetPartialSection",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "GetPartingLinesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Call this method before calling [[IDraftFeatureData2::IGetPartingLines]] to determine the size of the array for that method.",
+          "example_quote": "Debug.Print(\"    Number of parting lines: \" + swPartingSurfaceFeatureData.GetPartingLinesCount());",
+          "example_file": "Get_and_Set_Parting_Surface_Feature_Data_Example_CSharp.md",
+          "why": "示例对象是 PartingSurfaceFeatureData，其同名页签 System.int，本页签 System.short。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把条数当独立读数打印，全程不调用 IGetPartingLines。",
+          "example_quote": "Debug.Print(\"    Number of parting lines: \" + swPartingSurfaceFeatureData.GetPartingLinesCount());",
+          "example_file": "Get_and_Set_Parting_Surface_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例须先 AccessSelections(swModel, null)，Remarks 未提此前置。",
+          "example_quote": "state = swPartingSurfaceFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Get_and_Set_Parting_Surface_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "job 的 3 份示例调的是 IPartingSurfaceFeatureData 同名成员，非本页。"
+    }
+  ]
+}

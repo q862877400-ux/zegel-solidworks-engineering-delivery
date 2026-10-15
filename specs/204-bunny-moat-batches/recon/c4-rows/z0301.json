@@ -1,0 +1,110 @@
+{
+  "idx": 301,
+  "results": [
+    {
+      "member": "ImportHatch",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Import_DXF_File_into_Part_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页是存根（仅头+标题），既无 Returns 也无 Remarks；示例用带索引的 ImportHatch(\"\") 读写。"
+    },
+    {
+      "member": "ImportMethod",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Import_DXF_File_into_Part_Sketch_Example_VB.md",
+        "Insert_DXF_File_and_Add_Dimension_Example_VB.md",
+        "Insert_DXF_File_and_Add_Dimensions_Example_VBNET.md",
+        "Insert_and_Position_DXF_File_in_Drawing_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页同为存根，无 Returns 与 Remarks；四示例分别赋 ImportToPartSketch / ExistingPart / ExistingDrawing。"
+    },
+    {
+      "member": "ImportPlane",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Modify_Derived_Part_Example_CSharp.md",
+        "Modify_Derived_Part_Example_VB.md",
+        "Modify_Derived_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面有 Returns 与 Examples 但无 Remarks 段，按纪律跳过；三示例均读旧值→置 true→回读。"
+    },
+    {
+      "member": "ImportUnAbsorbedSketches",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Modify_Derived_Part_Example_CSharp.md",
+        "Modify_Derived_Part_Example_VB.md",
+        "Modify_Derived_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面有 Returns 与 Examples 但无 Remarks 段，按纪律跳过；示例同样先取 GetDefinition 再写。"
+    },
+    {
+      "member": "IncludeAnnotationsInRendering",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Include_Note_in_Render_File_Example_CSharp.md",
+        "Include_Note_in_Render_File_Example_VB.md",
+        "Include_Note_in_Render_File_Example_VBNET.md",
+        "Render_Annotations_to_Separate_Image_File_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补了成员页未列的前置：必须已加载 ray-trace 渲染引擎、且输出目录已存在。",
+          "example_quote": "* a ray-trace rendering engine is loaded.",
+          "example_file": "Include_Note_in_Render_File_Example_CSharp.md"
+        },
+        {
+          "what": "要单独出图时示例把本属性与 RenderAnnotationsToSeparateImage 同时置 true，成员页只点名后者。",
+          "example_quote": "swRayTraceRenderOptions.RenderAnnotationsToSeparateImage = true;",
+          "example_file": "Render_Annotations_to_Separate_Image_File_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只限定可用场景；三份 Include Note 示例均先赋值再调 RenderToFile，与之相容。"
+    },
+    {
+      "member": "IncludeCurves",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Specify_IGES_Levels_and_Values_Then_Import_IGES_File_Example_CSharp.md",
+        "Specify_IGES_Levels_and_Values_Then_Import_IGES_File_Example_VBNET.md",
+        "Specify_IGES_Levels_and_Values,_Then_Import_IGES_File_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给 CurvesAsSketches 配了含义注释（false 即按曲线导入），成员页只说可指定草图或参考曲线。",
+          "example_quote": "// False = Curves as Curves",
+          "example_file": "Specify_IGES_Levels_and_Values_Then_Import_IGES_File_Example_CSharp.md"
+        },
+        {
+          "what": "示例规定该标志要写进 GetImportFileData 取得的 importData、再随该对象交给 LoadFile4。",
+          "example_quote": "importData = (ImportIgesData)swApp.GetImportFileData(fileName);",
+          "example_file": "Specify_IGES_Levels_and_Values_Then_Import_IGES_File_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的两条依赖在示例里都兑现（IncludeCurves→CurvesAsSketches、IncludeSurfaces），无矛盾。"
+    },
+    {
+      "member": "IncludeDrawings",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Pack_and_Go_an_Assembly_Example_CSharp.md",
+        "Pack_and_Go_an_Assembly_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面有 Returns 与 Examples 但无 Remarks 段，按纪律跳过；两示例均为赋值后回读。"
+    }
+  ]
+}

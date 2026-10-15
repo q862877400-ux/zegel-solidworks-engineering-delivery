@@ -1,0 +1,131 @@
+{
+  "idx": 469,
+  "results": [
+    {
+      "member": "ShowMinimumRadius",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_and_Set_Spline_Properties_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先用 SelectByID2 选中草图段 Spline1 取得 ISketchSpline，再把该属性当布尔开关读真取反；页面只说「Gets or sets」未提必须先选中样条",
+          "example_quote": "If (swSpline.ShowMinimumRadius) Then",
+          "example_file": "Get_and_Set_Spline_Properties_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "ShowModelBreakState",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Model_Break_View_Display_Example_CSharp.md",
+        "Get_and_Set_Model_Break_View_Display_Example_VB.md",
+        "Get_and_Set_Model_Break_View_Display_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三例都先 ActivateView + SelectByID2(\"DRAWINGVIEW\") 选中图纸视图再取 View 对象调用，随后用 IsModelBreakState 回读并 ForceRebuild3(true) 刷新；页面未给这串调用序",
+          "example_quote": "boolstatus = swView.ShowModelBreakState(true, \"Model Break View1\");",
+          "example_file": "Get_and_Set_Model_Break_View_Display_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "ShowModelBreakView",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Names_and_Show_Model_Break_Views_Example_CSharp.md",
+        "Get_Names_and_Show_Model_Break_Views_Example_VB.md",
+        "Get_Names_and_Show_Model_Break_Views_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 GetModelBreakViewNames 在当前配置返回的名字数组原样回传（取最后一个 names(nbr-1)），且演示对象是 part 文档而非装配",
+          "example_quote": "swModelDocExt.ShowModelBreakView True, name",
+          "example_file": "Get_Names_and_Show_Model_Break_Views_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "ShowModelWindow",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Switch_Documents_Example_CSharp.md",
+        "Switch_Documents_Example_VB.md",
+        "Switch_Documents_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 IFrame 上取 ModelWindows 属性遍历每个 ModelWindow 再逐个调用以把该窗口置前，回 void 无返回值；页面只写「Shows a client model window」",
+          "example_quote": "swFrame.ShowModelWindow(swModelWindow);",
+          "example_file": "Switch_Documents_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "ShowNamedView2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Component_and_Mate_Example_CPlusPlus_COM.md",
+        "Add_Damper_to_Motion_Study_Example_CSharp.md",
+        "Add_Damper_to_Motion_Study_Example_VB.md",
+        "Add_Damper_to_Motion_Study_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "VName 传标准视图名串 \"*Trimetric\"、ViewId 传 -1，且调用前无任何选择（随后才 ClearSelection2）；Remarks 的 Normal To 用法只给 \"Normal To\"+(-1)",
+          "example_quote": "CComBSTR sNamedView(L\"*Trimetric\");",
+          "example_file": "Add_Component_and_Mate_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "阻尼器三例都同时给非空 VName 与真实 ViewId(3)，而 swStandardViews_e 中 3 即 swLeftView、与 \"*Left\" 同一视图，故 ViewId 不触发「优先」分支",
+          "example_quote": "swModel.ShowNamedView2(\"*Left\", 3);",
+          "example_file": "Add_Damper_to_Motion_Study_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 两条与四份示例逐句比对，未见不能同时成立的说法"
+    },
+    {
+      "member": "ShowOppositeDirection",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Drag_Arrow_Manipulator_Example_CSharp.md",
+        "Create_Drag_Arrow_Manipulator_Example_VB.md",
+        "Create_Drag_Arrow_Manipulator_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三例都把它与 LengthOppositeDirection(0.01) 成对设置，页面 Returns 只说双向手柄显不显示",
+          "example_quote": "swDrag.ShowOppositeDirection = true;",
+          "example_file": "Create_Drag_Arrow_Manipulator_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks；另 C#/VB.NET 设 True 而其自身后置说明写 unidirectional，VBA 设 False"
+    },
+    {
+      "member": "ShowParenthesis",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "This property supports bilateral, symmetric, or fit-with-tolerance types only.",
+          "example_quote": "Debug.Print \" Show parenthesis: \" & swDisplayDimension.ShowParenthesis",
+          "example_file": "Get_Display_Dimension_Properties_Example_VB.md",
+          "why": "示例变量是 SldWorks.DisplayDimension，调的是 IDisplayDimension 的同名属性（普通尺寸线上方文字加括号），非本成员的孔标注线性公差括号；本成员页连 ## Examples 段都没有 ⇒ 该示例不能证明本成员"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "唯一候选示例未真正用到 ICalloutVariable.ShowParenthesis"
+    }
+  ]
+}

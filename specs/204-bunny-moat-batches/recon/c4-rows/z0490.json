@@ -1,0 +1,132 @@
+{
+  "idx": 490,
+  "results": [
+    {
+      "member": "TargetBody",
+      "remarks_empty": false,
+      "examples_actually_used": ["Insert_Indent_Feature_Example_VBNET.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没写的调用序：先 AccessSelections(swModel, Nothing)，再读该属性；改完属性用 ModifyDefinition 提交。",
+          "example_quote": "swIndentFeatureData.AccessSelections(swModel, Nothing)",
+          "example_file": "Insert_Indent_Feature_Example_VBNET.md"
+        },
+        {
+          "what": "示例对返回值直接取 .Name，说明返回体是可命名对象（与 Returns 所说的 body 一致）。",
+          "example_quote": "Debug.Print(\"  Name of target body: \" & targetBody.Name)",
+          "example_file": "Insert_Indent_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "Remarks 全文只有一句指向文档的指针，无可对照断言，故未判冲突。"
+    },
+    {
+      "member": "TearEdges",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md",
+        "Get_Data_for_Surface_Flatten_Feature_Example_VB.md",
+        "Get_Data_for_Surface_Flatten_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页完全没有的选择标记：面=1、顶点=16、撕裂边=8（连续 8 条 EDGE）。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"EDGE\", 0.011047389592717, -6.23453597697887E-06, 0.0382739927527045, true, 8, null, 0);",
+          "example_file": "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "成员页只说返回 edges；示例把返回对象加入选区后回读类型为 51=swSelREFEDGES，即参考边。",
+          "example_quote": "Debug.Print(\"            Type of object (51 = swSelREFEDGES): \" + swSelMgr.GetSelectedObjectType3(1, -1));",
+          "example_file": "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例彼此一致，且与 Remarks 的四条断言无冲突。"
+    },
+    {
+      "member": "TemporaryFixGroup",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Temporarily_Fix_and_Group_Components_Example_CSharp.md",
+        "Temporarily_Fix_and_Group_Components_Example_VB.md",
+        "Temporarily_Fix_and_Group_Components_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出组件名的实际写法 子件@装配名（成员页只说用 SelectByID2 选组件）。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"rocker-1@valve_cam\", \"COMPONENT\", 0, 0, 0, true, 0, null, 0);",
+          "example_file": "Temporarily_Fix_and_Group_Components_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出可观测判据：固定后特征树出现 (f)* 前缀、图形区变粉；group 情形只变色不出现 (f)*。",
+          "example_quote": "//(f)* and the pink component indicate that the component is fixed",
+          "example_file": "Temporarily_Fix_and_Group_Components_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 mark 0=fix / 2=group 与三份示例逐字吻合，无冲突。"
+    },
+    {
+      "member": "TemporaryFixGroupExit",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Temporarily_Fix_and_Group_Components_Example_CSharp.md",
+        "Temporarily_Fix_and_Group_Components_Example_VB.md",
+        "Temporarily_Fix_and_Group_Components_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示 Exit 无参数也无需重新选组件：紧接上一次的 TemporaryFixGroup（其间仅 Stop 观察）调用，且在再次 ClearSelection2 之前。",
+          "example_quote": "swAssembly.TemporaryFixGroupExit()",
+          "example_file": "Temporarily_Fix_and_Group_Components_Example_VBNET.md"
+        }
+      ],
+      "note": "Remarks 只给配对关系，三份示例与之相符，无冲突。"
+    },
+    {
+      "member": "TertiaryInLowerTier",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先把注解按 Type 转成 DimXpertCompositeLineProfileTolerance 才能读该属性；成员页没写这一步。",
+          "example_quote": "Private Sub CompositeLineProfileData(annotation As DimXpertCompositeLineProfileTolerance)",
+          "example_file": "Get_DimXpert_Tolerance1_Example_VB.md"
+        },
+        {
+          "what": "示例把它输出为 Repeat Tertiary，且复合位置/复合线轮廓/复合面轮廓三处用完全相同写法读取。",
+          "example_quote": "    strs.Add (\"  Repeat Tertiary: \" + IIf(annotation.TertiaryInLowerTier, \"True\", \"False\"))",
+          "example_file": "Get_DimXpert_Tolerance1_Example_VB.md"
+        }
+      ],
+      "note": "四份示例一致。另：Tolerance1 的前置只造出 Cylindricity 与 Surface Profile，该分支走不到。"
+    },
+    {
+      "member": "Tessellate",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VB.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（Returns 之后直接进 Examples），按纪律跳过；示例确实调用 tess.Tessellate()。"
+    },
+    {
+      "member": "Text",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_Comments_in_Comments_Folder_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IComment.Text 无 ## Remarks，跳过。另三个指定示例的 .Text 分属 Feature 节点与 SketchText，非本成员。"
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "idx": 363,
+  "results": [
+    {
+      "member": "MaterialUserName",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_Material_Property_Names_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置与取值判定：零件须已对多个面赋材料；读取后按 <>\"\" 判断，即按可返回空串处理。",
+          "example_quote": "        sMatUserName = swFace.MaterialUserName\n        If sMatName <> \"\" Then\n            Debug.Print \" Face material name (\" & i & \") = \" & sMatName\n        End If\n        If sMatUserName <> \"\" Then\n            Debug.Print \" Face material user name (\" & i & \") = \" & sMatUserName\n        End If",
+          "example_file": "Get_Material_Property_Names_Example_VB.md"
+        }
+      ],
+      "note": "示例取的是实体面（Body.GetFirstFace），不触 Remarks 排除的参考曲面体，两侧一致。"
+    },
+    {
+      "member": "Mates",
+      "remarks_empty": false,
+      "examples_actually_used": ["Create_Mate_Controller_Example_CSharp.md", "Create_Mate_Controller_Example_VBNET.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体前置：装配体含机械槽特征，且槽配合带 Distance Along Slot 或 Percent Along Slot 约束。",
+          "example_quote": "// Preconditions: Open an assembly document that contains\na mechanical slot feature\n// with a slot mate that has one of these constraints:\n// - Distance Along Slot\n// - Percent Along Slot",
+          "example_file": "Create_Mate_Controller_Example_CSharp.md"
+        }
+      ],
+      "note": "示例顺序为 CreateFeature → GetDefinition → Mates，与 Remarks「创建后才有效」一致，无冲突。"
+    },
+    {
+      "member": "MaxDamping",
+      "remarks_empty": false,
+      "examples_actually_used": ["Create_3DContact_Feature_Example_VB.md", "Create_3D_Contact_Feature_Example_CSharp.md", "Create_3D_Contact_Feature_Example_VBNET.md"],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Available only when [[ISimulation3DContactFeatureData::UseRestitutionCoefficient]] and [[ISimulation3DContactFeatureData::SpecifyMaterial]] are both false.",
+          "example_quote": "                if (swContFeat.UseRestitutionCoefficient)\n                {\n                    Debug.Print(\"  Use coefficient of restitution:\");\n                    Debug.Print(\"    Coefficient of restitution: \" + swContFeat.RestitutionCoefficient);\n                }\n                else\n                {\n                    Debug.Print(\"  Use impact force:\");\n                    Debug.Print(\"    Exponent of exponential force: \" + swContFeat.Exponent);\n                    Debug.Print(\"    Maximum damping coefficient: \" + swContFeat.MaxDamping);\n                    Debug.Print(\"    Penetration at which maximum damping is applied: \" + swContFeat.Penetration);\n                    Debug.Print(\"    Stiffness of material at boundary of interaction: \" + swContFeat.Stiffness);\n                }",
+          "example_file": "Create_3D_Contact_Feature_Example_CSharp.md",
+          "why": "Remarks 要求两个标志都为 false 才可用；示例只在 Else 分支判前者，SpecifyMaterial 是读完之后才单独 If 的另一个分支。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 MaxDamping 归在 \"Use impact force\" 分支下，与 Exponent / Penetration / Stiffness 同组打印；成员页未说它属于哪一组。",
+          "example_quote": "                    Debug.Print(\"    Maximum damping coefficient: \" + swContFeat.MaxDamping);",
+          "example_file": "Create_3D_Contact_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例同构，只守卫强度与 Remarks 不同；两侧都没给单位，无 unit 分歧。"
+    },
+    {
+      "member": "MaxVal",
+      "remarks_empty": false,
+      "examples_actually_used": ["Create_Hinge_Mate_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先置 AngleSelection = true 再设 MaxVal，且 Angle / MinVal / MaxVal 同设为 0.5235987755983，佐证 Returns 的弧度口径。",
+          "example_quote": "                // Set the mate angle value\n                MateData.Angle = 0.5235987755983;\n                // Set the mate angle minimum value\n                MateData.MinVal = 0.5235987755983;\n                // Set the mate angle maximum value\n                MateData.MaxVal = 0.5235987755983;",
+          "example_file": "Create_Hinge_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "示例满足 AngleSelection=true 的前置，0.5235987755983 与 Returns 的 radians 不冲突。"
+    },
+    {
+      "member": "MaxValueForGapRange",
+      "remarks_empty": false,
+      "examples_actually_used": ["Create_Surface_Knit_Feature_Example_CSharp.md", "Create_Surface_Knit_Feature_Example_VB6.md", "Create_Surface_Knit_Feature_Example_VBNET.md"],
+      "conflicts": [
+        {
+          "kind": "unit_diff",
+          "remarks_quote": "Maximum gap should be in the range of [[ISurfaceKnitFeatureData::KnitTolerance]] to 1 mm.",
+          "example_quote": "            Debug.Print(\"  Maximum value for gap range: \" + swSurfaceKnitFeature.MaxValueForGapRange * 1000 + \" mm\");",
+          "example_file": "Create_Surface_Knit_Feature_Example_CSharp.md",
+          "why": "Remarks 把该值范围直接写成 mm（Returns 另写 0.01 mm~1 mm）；示例读回后 ×1000 再拼 ' mm'，即按米读同一数值 ⇒ 单位口径不能同时成立。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "[[ISurfaceKnitFeatureData::UseGapFilters]] must be true for this property to have an effect.",
+          "example_quote": "            Debug.Print(\"  Maximum value for gap range: \" + swSurfaceKnitFeature.MaxValueForGapRange * 1000 + \" mm\");\n            Debug.Print(\"  Minimum value for gap range: \" + swSurfaceKnitFeature.MinValueForGapRange * 1000 + \" mm\");\n            Debug.Print(\"  Use gap filters? \" + swSurfaceKnitFeature.UseGapFilters);",
+          "example_file": "Create_Surface_Knit_Feature_Example_CSharp.md",
+          "why": "示例在读之前从未把 UseGapFilters 设为 true，只在读完之后才打印该标志；Remarks 要求其为 true 才生效。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出取数路径：先用 InsertSewRefSurface 建成特征，再用 swFeature.GetDefinition() 取数据来读；成员页未说从何处取对象。",
+          "example_quote": "            swFeature = (Feature)swFeatureManager.InsertSewRefSurface(true, false, false, 0.0001, 0.0001);\n            // Get some surface knit feature data\n            swSurfaceKnitFeature = (SurfaceKnitFeatureData)swFeature.GetDefinition();",
+          "example_file": "Create_Surface_Knit_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "C#/VBNET/VB6 三份示例逐字同构，×1000 换算在三者中同时成立。"
+    },
+    {
+      "member": "MaxVariation",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_PMI_Data_Example_CSharp.md", "Get_PMI_Data_Example_VB.md"],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IPMIDimensionItem::TolType]] returns [[swTolType_e]]:",
+          "example_quote": "                                        Debug.Print(\"    Tolerance type as defined in swTolType_e: \" + swPMIDataDimItem.TolType);\n                                        Debug.Print(\"    Value: \" + swPMIDataDimItem.Value);\n                                        Debug.Print(\"    Value precision: \" + swPMIDataDimItem.ValuePrecision);\n                                        Debug.Print(\"    Units: \" + swPMIDataDimItem.Unit);\n                                        Debug.Print(\"    Minimum tolerance: \" + swPMIDataDimItem.MinVariation);\n                                        Debug.Print(\"    Maximum tolerance: \" + swPMIDataDimItem.MaxVariation);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md",
+          "why": "Remarks 限定 TolType 落在 5 个 swTolType_e 值内才有效；示例只打印 TolType，不作任何判断便读 MaxVariation。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出取数路径与单位归属：注释 GetPMIData → GetDimensionItemAtIndex(k) → 读 MaxVariation，单位由 Unit 属性另给。",
+          "example_quote": "                                        Debug.Print(\"    Units: \" + swPMIDataDimItem.Unit);\n                                        Debug.Print(\"    Minimum tolerance: \" + swPMIDataDimItem.MinVariation);\n                                        Debug.Print(\"    Maximum tolerance: \" + swPMIDataDimItem.MaxVariation);\n                                        Debug.Print(\"    Tolerance precision: \" + swPMIDataDimItem.TolerancePrecision);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "页内自相矛盾：NOTE 称 get-only、签名却写 {get; set;}（非示例侧冲突，故不计入）。"
+    },
+    {
+      "member": "MaxWitnessLineLength",
+      "remarks_empty": false,
+      "examples_actually_used": ["Set_and_Get_Maximum_Extension_Line_Length_Example_VB.md"],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "After using this property, use [[IModelDoc2::GraphicsRedraw2]] to redraw the graphics window to see your changes.",
+          "example_quote": "      swDisplayDim.MaxWitnessLineLength = 130\n   End If\n   maxLineLength = swDisplayDim.MaxWitnessLineLength\n   Debug.Print \"New maximum witness extension line length: \" & maxLineLength\n   Set swModelView = swModelDoc.ActiveView\n   Set rect = Nothing\n   swModelView.GraphicsRedraw (rect)",
+          "example_file": "Set_and_Get_Maximum_Extension_Line_Length_Example_VB.md",
+          "why": "Remarks 点名的刷新成员是 IModelDoc2::GraphicsRedraw2；示例改调 ModelView.GraphicsRedraw，全程未用 Remarks 指定的成员。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置与取值：须 Show Feature Dimensions 后按名选中尺寸，再设 130 并回读；成员页只说 get/set。",
+          "example_quote": "    status = swModelDocExt.SelectByID2(\"D2@Sketch2@tutor1.SLDPRT\", \"DIMENSION\", 2.29248368227093E-03, 6.41116623573457E-02, 5.51580671328052E-02, False, 0, Nothing, 0)\n    selType = swSelMgr.GetSelectedObjectType3(1, -1)\n    If selType = swSelDIMENSIONS Then\n      Set swDisplayDim = swSelMgr.GetSelectedObject6(1, -1)\n      swDisplayDim.MaxWitnessLineLength = 130\n   End If\n   maxLineLength = swDisplayDim.MaxWitnessLineLength",
+          "example_file": "Set_and_Get_Maximum_Extension_Line_Length_Example_VB.md"
+        }
+      ],
+      "note": "Returns 只写 \"Length\" 无数值单位，示例传裸数 130 ⇒ 单位无从判定。"
+    }
+  ]
+}

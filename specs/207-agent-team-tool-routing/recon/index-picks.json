@@ -1,0 +1,786 @@
+[
+ {
+  "form": "mid",
+  "W": 103,
+  "k": 0,
+  "task": "模具 · 分型线",
+  "pick": "solidworks_mold_parting_surface",
+  "why": "池内无分型线工具；分型面同族最贴近"
+ },
+ {
+  "form": "mid",
+  "W": 103,
+  "k": 1,
+  "task": "草图 · 几何关系",
+  "pick": "NONE",
+  "why": "池内草图工具只画图元/镜像/倒圆，无添加几何关系者"
+ },
+ {
+  "form": "mid",
+  "W": 103,
+  "k": 2,
+  "task": "焊件 · 圆角焊缝",
+  "pick": "NONE",
+  "why": "池内4个焊件工具都不是建焊缝：端盖/子文件夹/轮廓中心配合/切割清单CSV"
+ },
+ {
+  "form": "mid",
+  "W": 103,
+  "k": 3,
+  "task": "模具 · 模具证据",
+  "pick": "mold_evidence",
+  "why": "清单里唯一以模具证据为用途的读回工具，名字逐字对应"
+ },
+ {
+  "form": "mid",
+  "W": 12,
+  "k": 7,
+  "task": "工程图 · 断裂视图",
+  "pick": "NONE",
+  "why": "12 条里只有修订表属工程图，无建断裂视图的工具"
+ },
+ {
+  "form": "mid",
+  "W": 207,
+  "k": 0,
+  "task": "模具 · 分型线",
+  "pick": "mold_parting_line",
+  "why": "任务即模具分型线；清单第161行 mold_parting_line 用途为插入分型线，名称与语义逐字对应，优先于分型面/拔模分析。"
+ },
+ {
+  "form": "mid",
+  "W": 207,
+  "k": 1,
+  "task": "草图 · 几何关系",
+  "pick": "add_sketch_relation",
+  "why": "名字直译即「加草图几何关系」，与任务一一对应"
+ },
+ {
+  "form": "mid",
+  "W": 207,
+  "k": 2,
+  "task": "焊件 · 圆角焊缝",
+  "pick": "NONE",
+  "why": "焊件圆角焊缝全表❌；207池内只有切割清单/顶端盖，无焊接工具"
+ },
+ {
+  "form": "mid",
+  "W": 207,
+  "k": 3,
+  "task": "模具 · 模具证据",
+  "pick": "mold_evidence",
+  "why": "模具状态回读：分型线/分型面、型芯型腔计数与分型类型，只读"
+ },
+ {
+  "form": "mid",
+  "W": 207,
+  "k": 4,
+  "task": "其他 · 传感器/单位",
+  "pick": "read_sensors",
+  "why": "池中直读文档传感器当前值，正对应「传感器」半边"
+ },
+ {
+  "form": "mid",
+  "W": 207,
+  "k": 5,
+  "task": "曲面 · 延伸曲面",
+  "pick": "surface_extend",
+  "why": "清单第83行逐字命中：用途即「延伸曲面」"
+ },
+ {
+  "form": "mid",
+  "W": 207,
+  "k": 6,
+  "task": "其他 · 方程式",
+  "pick": "equation_evaluate",
+  "why": "池内唯一求解全局方程式的工具，零参数可独立调用；equation_add 需先给方程串"
+ },
+ {
+  "form": "mid",
+  "W": 207,
+  "k": 7,
+  "task": "工程图 · 断裂视图",
+  "pick": "NONE",
+  "why": "断裂视图工具落在208-414条;前缀内12个drawing工具无一匹配"
+ },
+ {
+  "form": "mid",
+  "W": 207,
+  "k": 8,
+  "task": "草图 · 多边形",
+  "pick": "sketch_add_polygon",
+  "why": "池中唯一画正多边形的草图工具，逐字匹配"
+ },
+ {
+  "form": "mid",
+  "W": 207,
+  "k": 9,
+  "task": "曲面 · 直纹曲面",
+  "pick": "insert_ruled_surface",
+  "why": "第38行「直纹曲面：IFeatureManager」与任务逐字对应，池内唯一直纹曲面入口。"
+ },
+ {
+  "form": "mid",
+  "W": 25,
+  "k": 1,
+  "task": "草图 · 几何关系",
+  "pick": "sketch_flip_entities",
+  "why": "池中唯一对已有草图实体按轴做几何翻转/镜像的工具，最接近草图几何关系类操作；无加约束关系类工具。"
+ },
+ {
+  "form": "mid",
+  "W": 25,
+  "k": 3,
+  "task": "模具 · 模具证据",
+  "pick": "solidworks_collect_model_summary",
+  "why": "索引作collect_model_summary；只读回读特征树，模具分型/拔模特征可见，池内唯一证据类"
+ },
+ {
+  "form": "mid",
+  "W": 414,
+  "k": 0,
+  "task": "模具 · 分型线",
+  "pick": "mold_parting_line",
+  "why": "用途逐字就是「插入模具分型线」，与任务完全对应"
+ },
+ {
+  "form": "mid",
+  "W": 414,
+  "k": 1,
+  "task": "草图 · 几何关系",
+  "pick": "solidworks_add_sketch_relation",
+  "why": "索引第129条 add_sketch_relation：加草图几何关系，唯一对口"
+ },
+ {
+  "form": "mid",
+  "W": 414,
+  "k": 2,
+  "task": "焊件 · 圆角焊缝",
+  "pick": "NONE",
+  "why": "池内无创建焊缝的工具；gusset/端盖/edge_weld_connector 都不是圆角焊缝"
+ },
+ {
+  "form": "mid",
+  "W": 414,
+  "k": 3,
+  "task": "模具 · 模具证据",
+  "pick": "solidworks_mold_evidence",
+  "why": "池中唯一读回模具状态（分型线/型芯型腔计数）的证据工具，逐字对应"
+ },
+ {
+  "form": "mid",
+  "W": 414,
+  "k": 4,
+  "task": "其他 · 传感器/单位",
+  "pick": "read_sensors",
+  "why": "第61行 read_sensors「列出文档里的传感器并读它们当前的值」逐字命中传感器"
+ },
+ {
+  "form": "mid",
+  "W": 414,
+  "k": 5,
+  "task": "曲面 · 延伸曲面",
+  "pick": "surface_extend",
+  "why": "第83行 surface_extend 用途「延伸曲面」逐字命中本任务"
+ },
+ {
+  "form": "mid",
+  "W": 414,
+  "k": 6,
+  "task": "其他 · 方程式",
+  "pick": "equation_add",
+  "why": "池内4个方程式工具中唯一的新增入口，对应该功能主操作。"
+ },
+ {
+  "form": "mid",
+  "W": 414,
+  "k": 7,
+  "task": "工程图 · 断裂视图",
+  "pick": "drawing_create_broken_view",
+  "why": "池中唯一工程图断裂视图能力，走 IView 插入断裂线并断开视图，完全对应任务。"
+ },
+ {
+  "form": "mid",
+  "W": 414,
+  "k": 8,
+  "task": "草图 · 多边形",
+  "pick": "sketch_add_polygon",
+  "why": "清单第36行「在当前草图里画正多边形」，与任务逐字对应"
+ },
+ {
+  "form": "mid",
+  "W": 414,
+  "k": 9,
+  "task": "曲面 · 直纹曲面",
+  "pick": "insert_ruled_surface",
+  "why": "清单第38行，名称直译即「直纹曲面」，走 IFeatureManager 建直纹面。"
+ },
+ {
+  "form": "mid",
+  "W": 6,
+  "k": 0,
+  "task": "模具 · 分型线",
+  "pick": "NONE",
+  "why": "池内为穹顶/样条/加组件/修订表/FEA/复合曲线，无模具分型线工具"
+ },
+ {
+  "form": "min",
+  "W": 103,
+  "k": 0,
+  "task": "模具 · 分型线",
+  "pick": "mold_parting_surface",
+  "why": "池内无分型线工具；分型面同属模具分型族，最接近"
+ },
+ {
+  "pick": "sketch_fillet",
+  "W": 103,
+  "k": 1,
+  "why": "池内无AddRelation工具；sketch_fillet对两段选区施加相切几何关系，最贴近",
+  "form": "min",
+  "task": "草图 · 几何关系"
+ },
+ {
+  "form": "min",
+  "W": 103,
+  "k": 2,
+  "task": "焊件 · 圆角焊缝",
+  "pick": "NONE",
+  "why": "池内焊件类只有顶端盖/子焊件文件夹/切割清单/轮廓配合，无建焊缝工具"
+ },
+ {
+  "form": "min",
+  "W": 103,
+  "k": 3,
+  "task": "模具 · 模具证据",
+  "pick": "mold_evidence",
+  "why": "读模具状态证据：分型线/分型面计数、分型类型、型芯型腔，只读"
+ },
+ {
+  "form": "min",
+  "W": 103,
+  "k": 4,
+  "task": "其他 · 传感器/单位",
+  "pick": "read_sensors",
+  "why": "任务主关键词为传感器；read_sensors 列出并读回文档传感器值，唯一对应。"
+ },
+ {
+  "form": "min",
+  "W": 103,
+  "k": 5,
+  "task": "曲面 · 延伸曲面",
+  "pick": "surface_extend",
+  "why": "池内第83行，名称与用途「延伸曲面」逐字对应，唯一精确命中。"
+ },
+ {
+  "form": "min",
+  "W": 103,
+  "k": 6,
+  "task": "其他 · 方程式",
+  "pick": "equation_evaluate",
+  "why": "池中唯一方程式工具，Solve the global equations 正对题"
+ },
+ {
+  "form": "min",
+  "W": 103,
+  "k": 7,
+  "task": "工程图 · 断裂视图",
+  "pick": "NONE",
+  "why": "103条内8个工程图工具均为表格/中心线/模板/辅助视图/读回，无建断裂线者"
+ },
+ {
+  "form": "min",
+  "W": 103,
+  "k": 8,
+  "task": "草图 · 多边形",
+  "pick": "solidworks_sketch_add_polygon",
+  "why": "清单第36行：在当前草图里画正多边形，正是草图多边形。"
+ },
+ {
+  "form": "min",
+  "W": 103,
+  "k": 9,
+  "task": "曲面 · 直纹曲面",
+  "pick": "solidworks_insert_ruled_surface",
+  "why": "清单第38行「直纹曲面：IFeatureManager」逐字对题"
+ },
+ {
+  "form": "min",
+  "W": 12,
+  "k": 0,
+  "task": "模具 · 分型线",
+  "pick": "NONE",
+  "why": "池内无模具域工具：分型线/分型面/拔模均不在这12条中"
+ },
+ {
+  "form": "min",
+  "W": 12,
+  "k": 1,
+  "task": "草图 · 几何关系",
+  "pick": "NONE",
+  "why": "池中唯一草图工具只画样条曲线；无一工具能添加共点/相切/平行等几何关系"
+ },
+ {
+  "form": "min",
+  "W": 12,
+  "k": 2,
+  "task": "焊件 · 圆角焊缝",
+  "pick": "NONE",
+  "why": "12 条无一能建焊缝：面/草图/曲面缝合/仿真类，surface_knit 的“缝”是缝合曲面非角焊缝"
+ },
+ {
+  "form": "min",
+  "W": 12,
+  "k": 3,
+  "task": "模具 · 模具证据",
+  "pick": "NONE",
+  "why": "前12个无模具、无读回类工具；mold_evidence排72位"
+ },
+ {
+  "form": "min",
+  "W": 12,
+  "k": 4,
+  "task": "其他 · 传感器/单位",
+  "pick": "NONE",
+  "why": "12条无传感器/单位工具；正解read_sensors/read_document_units不在此切片"
+ },
+ {
+  "form": "min",
+  "W": 12,
+  "k": 5,
+  "task": "曲面 · 延伸曲面",
+  "pick": "insert_replace_face",
+  "why": "池内无延伸曲面工具；替换面同属曲面域，功能最接近"
+ },
+ {
+  "form": "min",
+  "W": 12,
+  "k": 6,
+  "task": "其他 · 方程式",
+  "pick": "equation_evaluate",
+  "why": "求解全局方程式，是池中唯一直对应「方程式」的工具"
+ },
+ {
+  "form": "min",
+  "W": 12,
+  "k": 7,
+  "task": "工程图 · 断裂视图",
+  "pick": "NONE",
+  "why": "池内唯一工程图工具是修订表，非断裂视图；12条无一可做"
+ },
+ {
+  "form": "min",
+  "W": 12,
+  "k": 8,
+  "task": "草图 · 多边形",
+  "pick": "NONE",
+  "why": "池内无多边形工具；正解 sketch_add_polygon 在第36行，不在此12条内"
+ },
+ {
+  "form": "min",
+  "W": 12,
+  "k": 9,
+  "task": "曲面 · 直纹曲面",
+  "pick": "NONE",
+  "why": "12条只有曲面缝合/平面区域/替换面，无直纹曲面工具"
+ },
+ {
+  "form": "min",
+  "W": 207,
+  "k": 0,
+  "task": "模具 · 分型线",
+  "pick": "mold_parting_line",
+  "why": "清单第161行 Insert a mold parting line，正是模具分型线"
+ },
+ {
+  "form": "min",
+  "W": 207,
+  "k": 1,
+  "task": "草图 · 几何关系",
+  "pick": "add_sketch_relation",
+  "why": "池中唯一给草图当前选择加几何关系的工具，其余草图工具都在画/改几何。"
+ },
+ {
+  "form": "min",
+  "W": 207,
+  "k": 2,
+  "task": "焊件 · 圆角焊缝",
+  "pick": "NONE",
+  "why": "池内无焊缝/焊道工具；焊件仅顶端盖与切割清单，fillet 是几何圆角非焊缝"
+ },
+ {
+  "form": "min",
+  "W": 207,
+  "k": 3,
+  "task": "模具 · 模具证据",
+  "pick": "solidworks_mold_evidence",
+  "why": "读回模具分型线/型腔计数与分型类型，只读，与「模具证据」直对"
+ },
+ {
+  "form": "min",
+  "W": 207,
+  "k": 4,
+  "task": "其他 · 传感器/单位",
+  "pick": "read_sensors",
+  "why": "任务首词即传感器；该工具专列文档传感器并读当前值"
+ },
+ {
+  "form": "min",
+  "W": 207,
+  "k": 5,
+  "task": "曲面 · 延伸曲面",
+  "pick": "surface_extend",
+  "why": "清单第83行，名称与用途逐字对应延伸曲面"
+ },
+ {
+  "form": "min",
+  "W": 207,
+  "k": 6,
+  "task": "草图 · 多边形",
+  "pick": "sketch_add_polygon",
+  "why": "池第36行：“在当前草图里画正多边形”，与任务逐字对应"
+ },
+ {
+  "form": "min",
+  "W": 207,
+  "k": 7,
+  "task": "工程图 · 断裂视图",
+  "pick": "NONE",
+  "why": "池内12个drawing工具均无断裂视图能力；正解drawing_create_broken_view在第380行，超出207池。"
+ },
+ {
+  "form": "min",
+  "W": 207,
+  "k": 8,
+  "task": "草图 · 多边形",
+  "pick": "solidworks_sketch_add_polygon",
+  "why": "池中唯一「在草图里画正多边形」的工具，正对任务"
+ },
+ {
+  "form": "min",
+  "W": 207,
+  "k": 9,
+  "task": "曲面 · 直纹曲面",
+  "pick": "insert_ruled_surface",
+  "why": "用途逐字含「直纹曲面」，池内唯一命中；其余曲面工具是缝合/延伸/中面/切除。"
+ },
+ {
+  "form": "min",
+  "W": 25,
+  "k": 0,
+  "task": "模具 · 分型线",
+  "pick": "NONE",
+  "why": "25 条里无模具工具；mold_parting_line / undercut 均不在池中"
+ },
+ {
+  "form": "min",
+  "W": 25,
+  "k": 1,
+  "task": "草图 · 几何关系",
+  "pick": "NONE",
+  "why": "池内25条无加几何关系者；真正的add_sketch_relation在414池第129条，落在25前缀外"
+ },
+ {
+  "form": "min",
+  "W": 25,
+  "k": 2,
+  "task": "焊件 · 圆角焊缝",
+  "pick": "NONE",
+  "why": "25条无任何焊接/焊缝工具；weldment族全在池外且也无圆角焊缝"
+ },
+ {
+  "form": "min",
+  "W": 25,
+  "k": 3,
+  "task": "模具 · 模具证据",
+  "pick": "solidworks_collect_model_summary",
+  "why": "池内唯一读回型工具：特征树+类型可读出分型线/分型面特征，是最接近的模具证据；但读不到分型计数"
+ },
+ {
+  "form": "min",
+  "W": 25,
+  "k": 4,
+  "task": "其他 · 传感器/单位",
+  "pick": "NONE",
+  "why": "25 条里无传感器/单位工具；正解 read_sensors、read_document_units 排在 61、89 位"
+ },
+ {
+  "form": "min",
+  "W": 25,
+  "k": 5,
+  "task": "曲面 · 延伸曲面",
+  "pick": "NONE",
+  "why": "池内曲面工具只有缝合与平面区域，无延伸；正解 surface_extend 不在池中"
+ },
+ {
+  "form": "min",
+  "W": 25,
+  "k": 6,
+  "task": "其他 · 方程式",
+  "pick": "equation_evaluate",
+  "why": "25条里唯一方程式工具：Solve the global equations"
+ },
+ {
+  "form": "min",
+  "W": 25,
+  "k": 7,
+  "task": "工程图 · 断裂视图",
+  "pick": "NONE",
+  "why": "池内工程图工具只有修订表与中心符号线，无断裂视图入口"
+ },
+ {
+  "form": "min",
+  "W": 25,
+  "k": 8,
+  "task": "草图 · 多边形",
+  "pick": "NONE",
+  "why": "池内草图图元只有样条与椭圆，无多边形入口"
+ },
+ {
+  "form": "min",
+  "W": 25,
+  "k": 9,
+  "task": "曲面 · 直纹曲面",
+  "pick": "insert_planar_surface",
+  "why": "25 条里无直纹曲面；这是唯一「由选区生成曲面特征」的建面工具，形态最接近"
+ },
+ {
+  "form": "min",
+  "W": 414,
+  "k": 0,
+  "task": "模具 · 分型线",
+  "pick": "mold_parting_line",
+  "why": "清单内唯一「插入模具分型线」工具，逐字对应分型线；第99行是分型面(分型面)非线。"
+ },
+ {
+  "form": "min",
+  "W": 414,
+  "k": 1,
+  "task": "草图 · 几何关系",
+  "pick": "add_sketch_relation",
+  "why": "清单内唯一直接建草图几何关系的工具"
+ },
+ {
+  "form": "min",
+  "W": 414,
+  "k": 2,
+  "task": "焊件 · 圆角焊缝",
+  "pick": "NONE",
+  "why": "池内焊件族仅有构件/轮廓/切割清单/角撑板/端盖，无焊缝与焊接符号工具"
+ },
+ {
+  "form": "min",
+  "W": 414,
+  "k": 3,
+  "task": "模具 · 模具证据",
+  "pick": "mold_evidence",
+  "why": "清单内唯一读取模具状态证据的工具；其余 mold_* 均为分型线/拔模/倒扣等建模或分析动作。"
+ },
+ {
+  "form": "min",
+  "W": 414,
+  "k": 4,
+  "task": "其他 · 传感器/单位",
+  "pick": "solidworks_read_sensors",
+  "why": "传感器是标签首项且为独立用户功能，单位读取更偏底层管道"
+ },
+ {
+  "form": "min",
+  "W": 414,
+  "k": 5,
+  "task": "曲面 · 延伸曲面",
+  "pick": "surface_extend",
+  "why": "清单第83行「延伸曲面 —— 走 IModelDoc2.InsertExtendSurface」，与任务逐字对应"
+ },
+ {
+  "form": "min",
+  "W": 414,
+  "k": 6,
+  "task": "其他 · 方程式",
+  "pick": "solidworks_equation_add",
+  "why": "池内唯一直接创建全局方程式的工具，与「方程式」功能本体对应"
+ },
+ {
+  "form": "min",
+  "W": 414,
+  "k": 7,
+  "task": "工程图 · 断裂视图",
+  "pick": "drawing_create_broken_view",
+  "why": "清单第380行直述「断裂视图：IView」，与任务逐字对应"
+ },
+ {
+  "form": "min",
+  "W": 414,
+  "k": 8,
+  "task": "草图 · 多边形",
+  "pick": "solidworks_sketch_add_polygon",
+  "why": "池内唯一「在当前草图里画正多边形」的草图图元工具，与任务完全对应"
+ },
+ {
+  "form": "min",
+  "W": 414,
+  "k": 9,
+  "task": "曲面 · 直纹曲面",
+  "pick": "solidworks_insert_ruled_surface",
+  "why": "第38行直纹曲面：InsertRuledSurfaceFromEdge2，逐字对题"
+ },
+ {
+  "form": "min",
+  "W": 51,
+  "k": 0,
+  "task": "模具 · 分型线",
+  "pick": "NONE",
+  "why": "池内唯一模具工具mold_undercut_detect是倒扣检测，建不了分型线"
+ },
+ {
+  "form": "min",
+  "W": 51,
+  "k": 1,
+  "task": "草图 · 几何关系",
+  "pick": "NONE",
+  "why": "池内草图工具只画几何或镜像翻转，无「加几何关系」者；真工具 add_sketch_relation 在第129位。"
+ },
+ {
+  "form": "min",
+  "W": 51,
+  "k": 2,
+  "task": "焊件 · 圆角焊缝",
+  "pick": "NONE",
+  "why": "池内唯一焊件工具是顶端盖，非圆角焊缝；全414项也无焊缝工具"
+ },
+ {
+  "form": "min",
+  "W": 51,
+  "k": 3,
+  "task": "模具 · 模具证据",
+  "pick": "mold_undercut_detect",
+  "why": "池内唯一模具域工具，倒扣检测即模具分析取证入口"
+ },
+ {
+  "form": "min",
+  "W": 51,
+  "k": 4,
+  "task": "其他 · 传感器/单位",
+  "pick": "NONE",
+  "why": "真正工具 read_sensors(#61)/read_document_units(#89) 不在这51个池里"
+ },
+ {
+  "form": "min",
+  "W": 51,
+  "k": 5,
+  "task": "曲面 · 延伸曲面",
+  "pick": "NONE",
+  "why": "池内曲面族仅 knit/平面/直纹，无延伸曲面；surface_extend 排 83 名，落在 51 窗口外"
+ },
+ {
+  "form": "min",
+  "W": 51,
+  "k": 6,
+  "task": "其他 · 方程式",
+  "pick": "solidworks_equation_evaluate",
+  "why": "清单第11行 equation_evaluate「Solve the global equations」正是全局方程式求值，与「其他·方程式」直接对应。"
+ },
+ {
+  "form": "min",
+  "W": 51,
+  "k": 7,
+  "task": "工程图 · 断裂视图",
+  "pick": "NONE",
+  "why": "池内工程图工具只三个：修订表、中心线、读比例；建断裂视图的 InsertBreak3 不在池"
+ },
+ {
+  "form": "min",
+  "W": 51,
+  "k": 8,
+  "task": "草图 · 多边形",
+  "pick": "sketch_add_polygon",
+  "why": "池内唯一画草图多边形的工具，名称与用途逐字对上"
+ },
+ {
+  "form": "min",
+  "W": 51,
+  "k": 9,
+  "task": "曲面 · 直纹曲面",
+  "pick": "insert_ruled_surface",
+  "why": "清单第38行，名称与用途「直纹曲面」逐字对应本任务。"
+ },
+ {
+  "form": "min",
+  "W": 6,
+  "k": 0,
+  "task": "模具 · 分型线",
+  "pick": "NONE",
+  "why": "池中只有圆顶/样条/组件/修订表/FEA/复合曲线，无分型线工具"
+ },
+ {
+  "form": "min",
+  "W": 6,
+  "k": 1,
+  "task": "草图 · 几何关系",
+  "pick": "NONE",
+  "why": "池内唯一草图工具 sketch_spline 只建样条曲线，不加几何关系；add_sketch_relation 不在本池。"
+ },
+ {
+  "form": "min",
+  "W": 6,
+  "k": 2,
+  "task": "焊件 · 圆角焊缝",
+  "pick": "NONE",
+  "why": "池中仅圆顶/样条/加组件/修订表/FEA/复合曲线，无焊缝特征工具"
+ },
+ {
+  "form": "min",
+  "W": 6,
+  "k": 3,
+  "task": "模具 · 模具证据",
+  "pick": "NONE",
+  "why": "6条均无模具域能力；正解 mold_evidence 不在池中。"
+ },
+ {
+  "form": "min",
+  "W": 6,
+  "k": 4,
+  "task": "其他 · 传感器/单位",
+  "pick": "NONE",
+  "why": "6 条无传感器/单位工具；prepare_fea 只校验求解器单位制，旁支"
+ },
+ {
+  "form": "min",
+  "W": 6,
+  "k": 5,
+  "task": "曲面 · 延伸曲面",
+  "pick": "NONE",
+  "why": "6 条里无曲面工具；圆顶是零件特征、复合曲线是草图实体，均不能延伸曲面。"
+ },
+ {
+  "form": "min",
+  "W": 6,
+  "k": 6,
+  "task": "其他 · 方程式",
+  "pick": "NONE",
+  "why": "6条均为穹顶/样条/组件/修订表/FEA/复合曲线，非方程能力；equation_evaluate 在第11行，窗口外"
+ },
+ {
+  "form": "min",
+  "W": 6,
+  "k": 7,
+  "task": "工程图 · 断裂视图",
+  "pick": "NONE",
+  "why": "池中仅一个工程图工具「修订表」，与断裂视图无关"
+ },
+ {
+  "form": "min",
+  "W": 6,
+  "k": 8,
+  "task": "草图 · 多边形",
+  "pick": "sketch_spline",
+  "why": "池内唯一草图域工具；样条与多边形同为草图图元，最接近"
+ },
+ {
+  "form": "min",
+  "W": 6,
+  "k": 9,
+  "task": "曲面 · 直纹曲面",
+  "pick": "NONE",
+  "why": "池内无直纹曲面入口；composite_curve只缝曲线，非缝合曲面"
+ }
+]

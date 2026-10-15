@@ -1,0 +1,492 @@
+[
+ {
+  "name": "get_LoopPatchType",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Get_Shut-Off_Surface_Data_Example_CSharp.md"
+ },
+ {
+  "name": "get_LoopEdges",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Get_Shut-Off_Surface_Data_Example_CSharp.md"
+ },
+ {
+  "name": "get_CommandID",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md"
+ },
+ {
+  "name": "SldWorks",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Activate_Each_View_on_Current_Sheet_Example_VB.md"
+ },
+ {
+  "name": "get_Entity",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Check_Edges_for_Faults_Example_CSharp.md"
+ },
+ {
+  "name": "get_ErrorCode",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Check_Edges_for_Faults_Example_CSharp.md"
+ },
+ {
+  "name": "CoInitialize",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Create_Cylinder_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "CoUninitialize",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Create_Cylinder_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "CoCreateInstance",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Access_Assembly_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "get_IActiveDoc2",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Add_Components_and_Transforms_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "get_Extension",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Access_Assembly_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "get_FeatureManager",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Create_Cylinder_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "CreateTextFile",
+  "cls": "host_language_api",
+  "example": "Export_BOMs_to_XML_Example_VB.md"
+ },
+ {
+  "name": "GetFile",
+  "cls": "host_language_api",
+  "example": "Get_DimXpert_Datum_Example_VBNET.md"
+ },
+ {
+  "name": "WriteLine",
+  "cls": "host_language_api",
+  "example": "Export_BOMs_to_XML_Example_VB.md"
+ },
+ {
+  "name": "get_CommandTabVisible",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Activate_SOLIDWORKS_CommandManager_Tab_Example_CSharp.md"
+ },
+ {
+  "name": "set_CommandTabVisible",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Activate_SOLIDWORKS_CommandManager_Tab_Example_CSharp.md"
+ },
+ {
+  "name": "get_DisplayStateSpecMaterialPropertyValues",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Change_Color_of_Component_in_Specific_Display_State_Example_CSharp.md"
+ },
+ {
+  "name": "get_ISelectionManager",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Access_Assembly_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "QueryInterface",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Access_Assembly_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "get_IActiveDoc",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Enumerate_Bodies_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "get_Name",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Access_Assembly_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "Release",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Access_Assembly_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "set_ChamferPrecision",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Get_Chamfer_Display_Dimension_Example_CSharp.md"
+ },
+ {
+  "name": "put_Style",
+  "cls": "com_infra_or_cpp_property",
+  "example": "Set_Up_PropertyManager_Page_Slider_Control_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "put_Position",
+  "cls": "cpp_cli_property_form",
+  "example": "Set_Up_PropertyManager_Page_Slider_Control_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "put_LineSize",
+  "cls": "cpp_cli_property_form",
+  "example": "Set_Up_PropertyManager_Page_Slider_Control_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "put_PageSize",
+  "cls": "cpp_cli_property_form",
+  "example": "Set_Up_PropertyManager_Page_Slider_Control_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "put_Height",
+  "cls": "cpp_cli_property_form",
+  "example": "Set_Up_PropertyManager_Page_Slider_Control_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "GetAttachedEntityTypes2",
+  "cls": "unclassified",
+  "example": "Get_Types_of_Entities_for_Selected_Dimension_Example_CSharp.md"
+ },
+ {
+  "name": "get_Text2",
+  "cls": "cpp_cli_property_form",
+  "example": "Export_BOMs_to_XML_Example_CSharp.md"
+ },
+ {
+  "name": "GetSWApp",
+  "cls": "unclassified",
+  "example": "Add_Components_and_Transforms_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "IGetSelectedObject5",
+  "cls": "unclassified",
+  "example": "Get_Parent_Features_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "get_Component",
+  "cls": "cpp_cli_property_form",
+  "example": "Insert_Mate_Load_Reference_Example_CSharp.md"
+ },
+ {
+  "name": "get_BeadLength",
+  "cls": "cpp_cli_property_form",
+  "example": "Modify_Fillet_Weld_Bead_Example_CSharp.md"
+ },
+ {
+  "name": "get_BeadPitch",
+  "cls": "cpp_cli_property_form",
+  "example": "Modify_Fillet_Weld_Bead_Example_CSharp.md"
+ },
+ {
+  "name": "get_BeadSize",
+  "cls": "cpp_cli_property_form",
+  "example": "Modify_Fillet_Weld_Bead_Example_CSharp.md"
+ },
+ {
+  "name": "get_BeadType",
+  "cls": "cpp_cli_property_form",
+  "example": "Modify_Fillet_Weld_Bead_Example_CSharp.md"
+ },
+ {
+  "name": "set_BeadLength",
+  "cls": "cpp_cli_property_form",
+  "example": "Modify_Fillet_Weld_Bead_Example_CSharp.md"
+ },
+ {
+  "name": "set_BeadPitch",
+  "cls": "cpp_cli_property_form",
+  "example": "Modify_Fillet_Weld_Bead_Example_CSharp.md"
+ },
+ {
+  "name": "set_BeadSize",
+  "cls": "cpp_cli_property_form",
+  "example": "Modify_Fillet_Weld_Bead_Example_CSharp.md"
+ },
+ {
+  "name": "set_BeadType",
+  "cls": "cpp_cli_property_form",
+  "example": "Modify_Fillet_Weld_Bead_Example_CSharp.md"
+ },
+ {
+  "name": "get_FocusLocked",
+  "cls": "cpp_cli_property_form",
+  "example": "Insert_Spline_in_Drawing_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "put_FocusLocked",
+  "cls": "cpp_cli_property_form",
+  "example": "Insert_Spline_in_Drawing_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "ToString",
+  "cls": "unclassified",
+  "example": "Create_360-degree_Revolve_Feature_Example_CSharp.md"
+ },
+ {
+  "name": "ExsupplementaryAngle",
+  "cls": "unclassified",
+  "example": "Create_Angular_Dimension_Example_VB.md"
+ },
+ {
+  "name": "set_ColumnIndex",
+  "cls": "cpp_cli_property_form",
+  "example": "Sort_Table_Example_CSharp.md"
+ },
+ {
+  "name": "set_Ascending",
+  "cls": "cpp_cli_property_form",
+  "example": "Sort_Table_Example_CSharp.md"
+ },
+ {
+  "name": "get_ColumnIndex",
+  "cls": "cpp_cli_property_form",
+  "example": "Sort_Table_Example_CSharp.md"
+ },
+ {
+  "name": "get_HoleTag",
+  "cls": "cpp_cli_property_form",
+  "example": "Change_Tags_in_Hole_Table_Example_CSharp.md"
+ },
+ {
+  "name": "set_HoleTag",
+  "cls": "cpp_cli_property_form",
+  "example": "Change_Tags_in_Hole_Table_Example_CSharp.md"
+ },
+ {
+  "name": "get_MaterialID",
+  "cls": "cpp_cli_property_form",
+  "example": "Create_3D_Contact_Feature_Example_CSharp.md"
+ },
+ {
+  "name": "GetSelectedObjec6",
+  "cls": "unclassified",
+  "example": "Get_Hatching_Data_Example_VB.md"
+ },
+ {
+  "name": "get_TableAnchor",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_and_Set_Table_Anchor_of_Hole_Table_Example_CSharp.md"
+ },
+ {
+  "name": "get_SWApp",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Sketches_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "get_DimXpertManager",
+  "cls": "cpp_cli_property_form",
+  "example": "Auto_Dimension_Scheme_Example_CSharp.md"
+ },
+ {
+  "name": "get_IActiveView",
+  "cls": "cpp_cli_property_form",
+  "example": "Access_Assembly_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "set_LengthUnit",
+  "cls": "cpp_cli_property_form",
+  "example": "Insert_DXF_File_and_Add_Dimensions_Example_CSharp.md"
+ },
+ {
+  "name": "set_ImportMethod",
+  "cls": "cpp_cli_property_form",
+  "example": "Insert_DXF_File_and_Add_Dimensions_Example_CSharp.md"
+ },
+ {
+  "name": "get_MateComponentName",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Mates_Example_CSharp.md"
+ },
+ {
+  "name": "get_MateEntityType",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Mates_Example_CSharp.md"
+ },
+ {
+  "name": "get_ConfigurationManager",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Configuration_Parameters_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "get_Scale2",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Scale_of_Each_Model_View_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "get_Type",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Hole_Series_Information_Example_CSharp.md"
+ },
+ {
+  "name": "get_Size",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Hole_Series_Information_Example_CSharp.md"
+ },
+ {
+  "name": "set_Label2",
+  "cls": "cpp_cli_property_form",
+  "example": "Create_Model_View_Callouts_Example_CSharp.md"
+ },
+ {
+  "name": "set_ValueInactive",
+  "cls": "cpp_cli_property_form",
+  "example": "Create_Model_View_Callouts_Example_CSharp.md"
+ },
+ {
+  "name": "get_Sheet",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Sheet_in_Multi-sheet_Drawing_Example_CSharp.md"
+ },
+ {
+  "name": "get_ReverseFaceNormal",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Data_for_Simple_Fillet_Example_CSharp.md"
+ },
+ {
+  "name": "get_ColumnHidden",
+  "cls": "cpp_cli_property_form",
+  "example": "Hide_or_Show_First_Column_in_Hole_Table_Example_CSharp.md"
+ },
+ {
+  "name": "set_ColumnHidden",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Total_Columns_Rows_Example_CSharp.md"
+ },
+ {
+  "name": "get_Depth",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Core_Feature_Example_CSharp.md"
+ },
+ {
+  "name": "get_Equation",
+  "cls": "cpp_cli_property_form",
+  "example": "Disable_Equation_Example_CSharp.md"
+ },
+ {
+  "name": "get_Name2",
+  "cls": "cpp_cli_property_form",
+  "example": "Add_Component_and_Mate_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "CreateFileFromResourceBitmap",
+  "cls": "unclassified",
+  "example": "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md"
+ },
+ {
+  "name": "set_Value",
+  "cls": "cpp_cli_property_form",
+  "example": "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md"
+ },
+ {
+  "name": "set_IgnoreValue",
+  "cls": "cpp_cli_property_form",
+  "example": "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md"
+ },
+ {
+  "name": "QuantityDenominationText",
+  "cls": "unclassified",
+  "example": "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md"
+ },
+ {
+  "name": "getSWApp",
+  "cls": "unclassified",
+  "example": "Enumerate_Bodies_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "set_RowHidden",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Total_Columns_Rows_Example_CSharp.md"
+ },
+ {
+  "name": "get_CustomPropertyManager",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Custom_Properties_of_Referenced_Part_Example_CSharp.md"
+ },
+ {
+  "name": "get_TangentMagnitude",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_and_Set_Spline_Handles_Example_CSharp.md"
+ },
+ {
+  "name": "set_TangentMagnitude",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_and_Set_Spline_Handles_Example_CSharp.md"
+ },
+ {
+  "name": "set_Disabled",
+  "cls": "cpp_cli_property_form",
+  "example": "Disable_Equation_Example_CSharp.md"
+ },
+ {
+  "name": "get_Disabled",
+  "cls": "cpp_cli_property_form",
+  "example": "Disable_Equation_Example_CSharp.md"
+ },
+ {
+  "name": "put_Name",
+  "cls": "cpp_cli_property_form",
+  "example": "Add_Component_and_Mate_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "get_ReferenceType",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Mate_Reference_Properties_Example_CSharp.md"
+ },
+ {
+  "name": "get_ReferenceAlignment",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Mate_Reference_Properties_Example_CSharp.md"
+ },
+ {
+  "name": "get_ReferenceEntity2",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Mate_Reference_Properties_Example_CSharp.md"
+ },
+ {
+  "name": "get_ReferenceEntityType",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Mate_Reference_Properties_Example_CSharp.md"
+ },
+ {
+  "name": "GetActiveDoc",
+  "cls": "unclassified",
+  "example": "Return_Box_Extents_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "get_EndCondition",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Core_Feature_Example_CSharp.md"
+ },
+ {
+  "name": "get_Value",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Equation_Values_Example_CSharp.md"
+ },
+ {
+  "name": "get_GlobalVariable",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Equation_Values_Example_CSharp.md"
+ },
+ {
+  "name": "get_DisplayDimension2",
+  "cls": "cpp_cli_property_form",
+  "example": "Edit_Mate_Example_CSharp.md"
+ },
+ {
+  "name": "CreateBitmapFileFromResource",
+  "cls": "unclassified",
+  "example": "Create_Toolbars_Example_CPlusPlus_COM.md"
+ },
+ {
+  "name": "get_CreatedBy",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Names_of_Creators_of_Features_Examples_CPlusCPlus_COM.md"
+ },
+ {
+  "name": "get_PrincipleAxesOfInertia",
+  "cls": "cpp_cli_property_form",
+  "example": "Get_Mass_Properties_of_Multibody_Assembly_Component_Example_CSharp.md"
+ }
+]

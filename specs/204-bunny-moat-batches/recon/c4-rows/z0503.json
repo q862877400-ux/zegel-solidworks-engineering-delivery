@@ -1,0 +1,141 @@
+{
+  "idx": 503,
+  "results": [
+    {
+      "member": "TransformX",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Copy_and_Rotate_Body_using_Edge_Example_VB.md",
+        "Move_and_Copy_Body_Using_Vertex_Example_CSharp.md",
+        "Move_and_Copy_Body_Using_Vertex_Example_VBNET.md",
+        "Move_and_Copy_Body_Using_Vertex_Example_VB.md",
+        "Move_and_Copy_Body_by_Setting_Transforms_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- a vertex if rotating the selected bodies.",
+          "example_quote": "swMoveCopyBodyFeatureData.TransformType = swMoveCopyBodyFeatureTransformType_e.swTransformType_Rotation\nswMoveCopyBodyFeatureData.TransformReferenceEntity = swEdge",
+          "example_file": "Copy_and_Rotate_Body_using_Edge_Example_VB.md",
+          "why": "Remarks 说旋转时参考实体必须是顶点；示例先设 Rotation 再把参考实体设为 Edge（变量声明 Dim swEdge As Edge）。同接口 TransformReferenceEntity 页的 Returns 又把 Edge 列为合法，两者不能同时成立。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- Nothing or null if moving the selected bodies.",
+          "example_quote": "//Change translation vertex\nswMoveCopyBodyFeatureData.TransformReferenceEntity = swVertexFrom",
+          "example_file": "Move_and_Copy_Body_Using_Vertex_Example_CSharp.md",
+          "why": "示例自述为平移（注释 Change translation vertex、并两次设 TranslateToVertex），却把参考实体设为顶点；Remarks 规定移动时参考实体必须是 Nothing/null。（VBNET 与 VB 两份同样写法）"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出页面没写的完整调用序：AccessSelections → 设 TransformType → 设 X/Y/Z → ModifyDefinition(data, part, Nothing) → ReleaseSelectionAccess。",
+          "example_quote": "boolstatus = moveCopy_featData.AccessSelections(part, component)",
+          "example_file": "Move_and_Copy_Body_by_Setting_Transforms_Example_VB.md"
+        },
+        {
+          "what": "旋转分支里 TransformX 承担的是旋转量（示例置 0.09），页面 Returns 只说米/弧度，未说旋转参考可用边。",
+          "example_quote": "swMoveCopyBodyFeatureData.TransformX = 0.09",
+          "example_file": "Copy_and_Rotate_Body_using_Edge_Example_VB.md"
+        }
+      ],
+      "note": "页面 Examples 列的 5 份全部真的调用 TransformX。旋转示例的 0.09 无任何单位标注，无法判定弧度还是度，故不报 unit_diff。"
+    },
+    {
+      "member": "TransformY",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Move_and_Copy_Body_by_Setting_Transforms_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按米给值 0.03（=30 mm），并与 X、Z 一起在同一次 ModifyDefinition 中提交。",
+          "example_quote": "moveCopy_featData.TransformY = 0.03",
+          "example_file": "Move_and_Copy_Body_by_Setting_Transforms_Example_VB.md"
+        }
+      ],
+      "note": "与 Remarks 一致：先设 TransformType=Translation、且全程不碰 TransformReferenceEntity。页面 See Also 把 X/Z 写成 IMoeCopyBodyFeatureData，拼写有误。"
+    },
+    {
+      "member": "TransformZ",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Move_and_Copy_Body_by_Setting_Transforms_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按米给值 0.04（=40 mm），与 X=0.02、Y=0.03 组成一次平移矢量。",
+          "example_quote": "moveCopy_featData.TransformZ = 0.04",
+          "example_file": "Move_and_Copy_Body_by_Setting_Transforms_Example_VB.md"
+        }
+      ],
+      "note": "与 Remarks 一致。页面首句写 Gets the z coordinate，签名却是 {get; set;}，属页面自身措辞不一致，非与示例冲突。"
+    },
+    {
+      "member": "TransitionType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Parting_Surface_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Parting_Surface_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "官方页没有 ## Remarks，按纪律跳过比对。两份示例都只 Debug.Print 读值，从未 set，与页面 Gets or sets 的说法不冲突。"
+    },
+    {
+      "member": "TranslateBy",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Viewports_Example_CSharp.md",
+        "Set_Viewports_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例证明平移只作用于当前活动视图，另一视口仅因视口链接而跟着动。",
+          "example_quote": "swModelViewManager.LinkedViews = false;",
+          "example_file": "Set_Viewports_Example_CSharp.md"
+        },
+        {
+          "what": "示例用米级小步长（0.0005535897435897 m）连续累加完成整段平移，印证单位确为米。",
+          "example_quote": "swModelView.TranslateBy(-0.0005535897435897, 0)",
+          "example_file": "Set_Viewports_Example_VBNET.md"
+        }
+      ],
+      "note": "无冲突，两侧都以米为单位。仅页面自身措辞不齐：Parameters 说 Y 相对 Windows X,Y 轴，Remarks 只说 X,Y 轴。"
+    },
+    {
+      "member": "TranslateToVertex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Move_and_Copy_Body_Using_Vertex_Example_CSharp.md",
+        "Move_and_Copy_Body_Using_Vertex_Example_VBNET.md",
+        "Move_and_Copy_Body_using_Vertex_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它与 TransformReferenceEntity 成对设置，并先后赋两个不同顶点（from 与 to）。",
+          "example_quote": "swMoveCopyBodyFeatureData.TranslateToVertex = swVertexTo;",
+          "example_file": "Move_and_Copy_Body_Using_Vertex_Example_CSharp.md"
+        },
+        {
+          "what": "取对象的方式：以 mark 8 追加顶点后用 GetSelectedObject6(1,-1) 读出，页面完全没提 mark。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"VERTEX\", -0.085, -0.09, 0.065, true, 8, null, 0);",
+          "example_file": "Move_and_Copy_Body_Using_Vertex_Example_CSharp.md"
+        }
+      ],
+      "note": "无冲突：Remarks 只要求选中坐标系/草图点/顶点之一，示例用顶点未越界；Remarks 指向的 Selections that Define Features 文档内无 MoveCopyBody 章节。"
+    },
+    {
+      "member": "Transparency",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "候选示例 Get_Display_State_Settings 用的是 ModelDocExtension.Transparency（swTransparencyState_e 枚举状态），未触及本成员；该页也无 ## Examples 段，无可比对两侧。"
+    }
+  ]
+}

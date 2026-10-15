@@ -1,0 +1,152 @@
+{
+  "idx": 280,
+  "results": [
+    {
+      "member": "GetVisibleColumnCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Design_Table_Example_CSharp.md",
+        "Get_Design_Table_Example_VB.md",
+        "Get_Design_Table_Example_VBNET.md",
+        "Get_Excel_Design_Table_Worksheet_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有签名与 Returns，无 ## Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "GetVisibleComponentCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Visible_Components_and_Entites_in_a_Drawing_View_Example_CSharp.md",
+        "Get_Visible_Components_and_Entites_in_a_Drawing_View_Example_VBNET.md",
+        "Get_Visible_Components_and_Entities_in_Drawing_View_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把计数配 GetVisibleComponents（非 I 版），且只打印不用来定数组大小",
+          "example_quote": "Debug.Print \"Number of visible components = \" & CompCount",
+          "example_file": "Get_Visible_Components_and_Entities_in_Drawing_View_Example_VB.md"
+        },
+        {
+          "what": "示例用 ActiveDrawingView 取视图对象，前置要求先选中 Drawing View2",
+          "example_quote": "' 2. Select Drawing View2.",
+          "example_file": "Get_Visible_Components_and_Entities_in_Drawing_View_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 说为 IGetVisibleComponents 定数组大小；三份示例都没拿它定大小"
+    },
+    {
+      "member": "GetVisibleComponents",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_All_Edges_in_Visible_Component_in_Drawing_View_Example_VB.md",
+        "Get_All_Visible_Components_in_Drawing_View_Example_VB.md",
+        "Get_Visible_Components_and_Entites_in_a_Drawing_View_Example_CSharp.md",
+        "Get_Visible_Components_and_Entites_in_a_Drawing_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 需显式转 object[] 并按 0 基下标遍历；Remarks 只说返回 System.object",
+          "example_quote": "vComps = (object[])drView.GetVisibleComponents();",
+          "example_file": "Get_Visible_Components_and_Entites_in_a_Drawing_View_Example_CSharp.md"
+        },
+        {
+          "what": "示例只用返回项的 Name2 并当 GetVisibleEntities2 入参，未碰 Remarks 说返回 null 的 GetBodies3",
+          "example_quote": "Debug.Print(\"Component \" & i & \" name is \" & vComps(i).Name2);",
+          "example_file": "Get_Visible_Components_and_Entites_in_a_Drawing_View_Example_VBNET.md"
+        }
+      ],
+      "note": "Get_All_Visible_Components 示例把 UBound(vComps) 当数量打印，0 基数组会少 1"
+    },
+    {
+      "member": "GetVisibleDrawingComponents",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Visible_Drawing_Components_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值当 Object 数组用 .Length 计数；Remarks 未给返回形状",
+          "example_quote": "Debug.Print(\"  \" & vComps.Length)",
+          "example_file": "Get_Visible_Drawing_Components_Example_VBNET.md"
+        },
+        {
+          "what": "示例走完 Remarks 的两步：Component 之后再调 GetBodies3 能拿到体",
+          "example_quote": "Call swComp.GetBodies3(swBodyType_e.swAllBodies, vBodies)",
+          "example_file": "Get_Visible_Drawing_Components_Example_VBNET.md"
+        }
+      ],
+      "note": "视图用 SelectByID2 + GetSelectedObject6 取，不是 ActiveDrawingView"
+    },
+    {
+      "member": "GetVisibleEntities",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_All_Edges_in_Visible_Component_in_Drawing_View_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Visible entities are only those entities not completely obscured by other entities in the view.",
+          "example_quote": "Iterate and select all edges on the first visible component",
+          "example_file": "Get_All_Edges_in_Visible_Component_in_Drawing_View_Example_VB.md",
+          "why": "成员页把可见限定为未被完全遮挡的实体；示例却宣称取到并选中该组件全部边。被完全遮挡的边按成员页应被排除，两说不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例的组件入参直接取 GetVisibleComponents 的返回项，结果按 0 基用 UBound 遍历",
+          "example_quote": "vEdges = swView.GetVisibleEntities(vComps(0), swViewEntityType_Edge)",
+          "example_file": "Get_All_Edges_in_Visible_Component_in_Drawing_View_Example_VB.md"
+        }
+      ],
+      "note": "成员页首行标 Obsolete、被 GetVisibleEntities2 取代，而该官方示例仍在用它"
+    },
+    {
+      "member": "GetVisibleEntities2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Visible_Components_and_Entites_in_a_Drawing_View_Example_CSharp.md",
+        "Get_Visible_Components_and_Entites_in_a_Drawing_View_Example_VBNET.md",
+        "Get_Visible_Components_and_Entities_in_Drawing_View_Example_VB.md",
+        "Hide_All_Edges_in_Drawing_View_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "轮廓边返回 SilhouetteEdge，用 Select 而非其它实体的 Select4",
+          "example_quote": "boolstatus = silEdge.Select(False, selData)",
+          "example_file": "Get_Visible_Components_and_Entities_in_Drawing_View_Example_VB.md"
+        },
+        {
+          "what": "C# 需显式转 object[]，数组 0 基，与Remarks 的 System.object 相比更具体",
+          "example_quote": "vEdges = (object[])drView.GetVisibleEntities2(Comp, (int)swViewEntityType_e.swViewEntityType_Edge);",
+          "example_file": "Get_Visible_Components_and_Entites_in_a_Drawing_View_Example_CSharp.md"
+        }
+      ],
+      "note": "4 份示例一致用 GetVisibleComponents 的返回项作组件入参"
+    },
+    {
+      "member": "GetVisibleEntityCount2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Hide_and_Show_All_Ediges_in_Drawing_View_Example_CSharp.md",
+        "Hide_and_Show_All_Ediges_in_Drawing_View_Example_VBNET.md",
+        "Hide_and_Show_All_Edges_in_Drawing_View_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都拿该计数配 GetVisibleEntities2 的数组按 0..eCount-1 用；Remarks 只说 IGetVisibleEntities2",
+          "example_quote": "eCount = swView.GetVisibleEntityCount2(swComponent, swViewEntityType_Edge)",
+          "example_file": "Hide_and_Show_All_Edges_in_Drawing_View_Example_VB.md"
+        }
+      ],
+      "note": "三份示例都是先计数、再取数组的同一序，彼此无相反说法"
+    }
+  ]
+}

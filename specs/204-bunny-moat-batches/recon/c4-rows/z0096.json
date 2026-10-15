@@ -1,0 +1,199 @@
+{
+  "idx": 96,
+  "results": [
+    {
+      "member": "Display3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Loft_Body_Example_VB.md",
+        "Create_Loft_Body_Example_CSharp.md",
+        "Create_Loft_Body_Example_VBNET.md",
+        "Create_Spherical_Surface_Trimmed_Sheet_and_Feature_From_Body_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "球面示例传的是 Remarks 唯一点名会改 blocking state 的那个枚举值 swTempBodySelectable",
+          "example_quote": "swPart, RGB(255, 255, 0), swTempBodySelectOptions_e.swTempBodySelectable",
+          "example_file": "Create_Spherical_Surface_Trimmed_Sheet_and_Feature_From_Body_Example_VB.md"
+        },
+        {
+          "what": "放样示例传 OptionNone，说明常规用法不是 Selectable；Remarks 未给该传哪个",
+          "example_quote": "swBody.Display3 swModel, 256, swTempBodySelectOptions_e.swTempBodySelectOptionNone",
+          "example_file": "Create_Loft_Body_Example_VB.md"
+        },
+        {
+          "what": "示例先判 IsTemporaryBody 再调 Display3，把 Remarks 的有效性前提落成调用序",
+          "example_quote": "status = swBody.IsTemporaryBody",
+          "example_file": "Create_Loft_Body_Example_VB.md"
+        },
+        {
+          "what": "Component 传的是 PartDoc 实例，坐实「Part or component」里的 Part 一支",
+          "example_quote": "Set swPart = swApp.ActiveDoc",
+          "example_file": "Create_Spherical_Surface_Trimmed_Sheet_and_Feature_From_Body_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都真调用；Option 两值同枚举无矛盾，未找到冲突"
+    },
+    {
+      "member": "DisplayAsChain",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Properties_of_Angular_Running_Dimension_Example_VB.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_CSharp.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取得 IDisplayDimension 的实际路径：按 DIMENSION 类型选中再取对象",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"D2@Sketch31@foodprocessor.SLDDRW\", \"DIMENSION\", 4.08612062995185E-02, 0.166216670731707, 0, False, 0, Nothing, 0)",
+          "example_file": "Set_Properties_of_Angular_Running_Dimension_Example_VB.md"
+        },
+        {
+          "what": "示例只读该属性且不调 GraphicsRedraw，表明重绘只在写之后才需要",
+          "example_quote": "Debug.Print \"Display chained angular dimensions? \" & dispdim.DisplayAsChain",
+          "example_file": "Set_Properties_of_Angular_Running_Dimension_Example_VB.md"
+        },
+        {
+          "what": "示例用 AddAngularRunningDim 建尺寸，与 Remarks 描述的右键菜单路径是两条路",
+          "example_quote": "Set dispdimvar = Part.Extension.AddAngularRunningDim(False, True, True, 0.154288188900673, 7.94194886913027E-02, 0, errstatus)",
+          "example_file": "Set_Properties_of_Angular_Running_Dimension_Example_VB.md"
+        }
+      ],
+      "note": "三份示例同源，只读不写；与 Remarks 的 GraphicsRedraw 要求不冲突"
+    },
+    {
+      "member": "DisplayAsOneItem",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VB.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property applies to top-level only BOM tables. Use [[IBomFeature::TableType]] to determine the BOM table type.",
+          "example_quote": "BomType = swBomType_Indented",
+          "example_file": "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VB.md",
+          "why": "Remarks 限定只适用于 top-level only 表（swBomType_TopLevelOnly=2），示例建的是 Indented（=3）BOM 却照读该属性，读数不在声明的适用域内。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先读 TableType 再读本属性，正是 Remarks 让参考 TableType 的一句的落地",
+          "example_quote": "Debug.Print \"Type of BOM table as defined in swBomType_e: \" & swBOMFeature.TableType",
+          "example_file": "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VB.md"
+        },
+        {
+          "what": "示例给出取 IBomFeature 的实际路径：InsertBOMTable6 返回注解再取 BomFeature",
+          "example_quote": "Set swBOMFeature = swBOMAnnotation.BomFeature",
+          "example_file": "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VB.md"
+        }
+      ],
+      "note": "C#/VB.NET 两份同样用 Indented；冲突对三份示例都成立"
+    },
+    {
+      "member": "DisplayControlPolygon",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Spline_Properties_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "To add a control polygon, set [[ISldWorks::SetUserPreferenceToggle]] swSketchShowSplineControlPolygon to True.",
+          "example_quote": "swSpline.DisplayControlPolygon = True",
+          "example_file": "Get_and_Set_Spline_Properties_Example_VB.md",
+          "why": "Remarks 说加控制多边形必须先开全局开关 swSketchShowSplineControlPolygon；示例全程没有 SetUserPreferenceToggle，直接把属性置 True。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出取得 ISketchSpline 的路径：按 SKETCHSEGMENT 选中后取对象",
+          "example_quote": "Set swSpline = swSelMgr.GetSelectedObject6(1, 0)",
+          "example_file": "Get_and_Set_Spline_Properties_Example_VB.md"
+        },
+        {
+          "what": "示例改完显示类属性后调 WindowRedraw 刷新；Remarks 只提 RelaxSpline，没提重绘",
+          "example_quote": "swModel.WindowRedraw",
+          "example_file": "Get_and_Set_Spline_Properties_Example_VB.md"
+        }
+      ],
+      "note": "唯一示例只设属性、不开全局开关，与 Remarks 的前置直接相左"
+    },
+    {
+      "member": "DisplayDimension",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Mate_Definition_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例指出该属性可能返回 Nothing，调用前必须判空——成员页无任何说明",
+          "example_quote": "If Nothing Is swDispDim Then",
+          "example_file": "Get_Mate_Definition_Example_VB.md"
+        },
+        {
+          "what": "示例给出取 DisplayDimension 的调用点：Mate2 上直接取，交给子过程处理",
+          "example_quote": "ProcessDisplayDimension swApp, swModel, swMate.DisplayDimension, nVarFactor, sVarType",
+          "example_file": "Get_Mate_Definition_Example_VB.md"
+        }
+      ],
+      "note": "页面只有 Obsolete 一行、无 Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "DisplayDimension2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Dimensions_of_Gear_Mate_Example_VB.md",
+        "Edit_Mate_Example_VB.md",
+        "Edit_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "齿轮配合示例的注释写明这是带索引的属性、齿轮配合有两个显示尺寸——页面整页空白",
+          "example_quote": "    ' IMate2::DisplayDimension2 is a property\n    ' that requires an index argument\n    ' For a gear mate, there are two display dimensions\n    ' Thus, IMate2::DisplayDimension2(0) and\n    ' IMate2::DisplayDimension2(1) give two display dimensions",
+          "example_file": "Change_Dimensions_of_Gear_Mate_Example_VB.md"
+        },
+        {
+          "what": "编辑配合示例只用索引 0 取一个，并对返回值判空",
+          "example_quote": "If Not swDispDim Is Nothing Then",
+          "example_file": "Edit_Mate_Example_VB.md"
+        },
+        {
+          "what": "齿轮配合示例显式取索引 0 与 1 两个显示尺寸",
+          "example_quote": "Set swDispDim_1 = swMate.DisplayDimension2(0)",
+          "example_file": "Change_Dimensions_of_Gear_Mate_Example_VB.md"
+        }
+      ],
+      "note": "页面除标题外无任何内容（无签名/Returns/Remarks），全部信息只能来自示例"
+    },
+    {
+      "member": "DisplayLeadingZero",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_User_Units_Example_CSharp.md",
+        "Get_and_Set_User_Units_Example_VB.md",
+        "Get_and_Set_User_Units_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取 IUserUnit 的路径且对象是角度单位，说明该属性挂在角度单位上",
+          "example_quote": "Set docUserUnit = Part.GetUserUnit(swAngleUnit)",
+          "example_file": "Get_and_Set_User_Units_Example_VB.md"
+        },
+        {
+          "what": "示例把本属性与 PadZero 并列读出，暗示「前导零」与「补零」是两个独立开关",
+          "example_quote": "Debug.Print \"  Pad with zeroes? \" & docUserUnit.PadZero",
+          "example_file": "Get_and_Set_User_Units_Example_VB.md"
+        }
+      ],
+      "note": "页面无 Remarks 段，按纪律跳过冲突判定；三份示例都只读不写"
+    }
+  ]
+}

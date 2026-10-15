@@ -64,10 +64,18 @@ def main() -> int:
                     break
             if not line:
                 continue                              #: ★★ 没在那一段里 ⇒ **不算废弃**（★ 不猜）
-            succ = ""
-            m = re.search(r"\[\[([^\]]+)\]\]", line)
-            if m:
-                succ = m.group(1).strip()
+            #: ★★★ spec 251：**同名链接优先** —— 多链接里「**与被废弃成员同名**」的那个才是真后继。
+            #:   ★ 官方用它表达**接口迁移**（★ 实测：`IModelDoc2::SketchTrim` → `ISketchManager::SketchTrim`
+            #:     而旧规则取的是 `ISketchManager::SketchExtend`，语义是「延伸」**不是**「剪裁」）。
+            #:   ★ **先量**（`output/_probe251_rule_impact.py`）：全 **1671** 条里只有 **6** 条会变，
+            #:     且**恰好**等于 244 登记的 `_KNOWN_WRONG` ⇒ ★ 修法安全。
+            #:   ★ 规则来源：244（`specs/244-multi-successor-rule/`）的裁决。
+            links = re.findall(r"\[\[([^\]]+)\]\]", line)
+            succ = links[0].strip() if links else ""
+            for _lk in links:
+                if _lk.split("::")[-1].strip() == page.stem:
+                    succ = _lk.strip()
+                    break
             rows.append({"interface": iface_dir.name,
                          "member": page.stem,
                          "successor": succ,

@@ -1,0 +1,106 @@
+{
+ "per_field": {
+  "signature": [
+   788,
+   788
+  ],
+  "obsolete": [
+   788,
+   788
+  ],
+  "pointer": [
+   788,
+   788
+  ],
+  "zero": [
+   780,
+   788
+  ]
+ },
+ "total": [
+  3144,
+  3152
+ ],
+ "disagreements": [
+  {
+   "key": [
+    "IDrawingDoc",
+    "Create3rdAngleViews2.md"
+   ],
+   "field": "zero",
+   "A": "否（有形参）",
+   "B": "否（有形号）",
+   "truth": "否（有形参）"
+  },
+  {
+   "key": [
+    "IDrawingDoc",
+    "EditCenterMarkProperties.md"
+   ],
+   "field": "zero",
+   "A": "否（有形参）",
+   "B": "否（有形号）",
+   "truth": "否（有形参）"
+  },
+  {
+   "key": [
+    "IDrawingDoc",
+    "ICreateLinearDim3.md"
+   ],
+   "field": "zero",
+   "A": "否（有形参）",
+   "B": "否（有形号）",
+   "truth": "否（有形参）"
+  },
+  {
+   "key": [
+    "IDrawingDoc",
+    "InsertSurfaceFinishSymbol.md"
+   ],
+   "field": "zero",
+   "A": "否（有形参）",
+   "B": "否（有形号）",
+   "truth": "否（有形参）"
+  },
+  {
+   "key": [
+    "ISheet",
+    "CreateOLEObject.md"
+   ],
+   "field": "zero",
+   "A": "否（有形参）",
+   "B": "否（有形号）",
+   "truth": "否（有形参）"
+  },
+  {
+   "key": [
+    "IView",
+    "GetPolyLinesAndCurves.md"
+   ],
+   "field": "zero",
+   "A": "否（有形参）",
+   "B": "否（有形号）",
+   "truth": "否（有形参）"
+  },
+  {
+   "key": [
+    "IView",
+    "IGetVisibleEntities2.md"
+   ],
+   "field": "zero",
+   "A": "否（有形参）",
+   "B": "否（有形号）",
+   "truth": "否（有形参）"
+  },
+  {
+   "key": [
+    "IView",
+    "SelectEntity.md"
+   ],
+   "field": "zero",
+   "A": "否（有形参）",
+   "B": "否（有形号）",
+   "truth": "否（有形参）"
+  }
+ ]
+}

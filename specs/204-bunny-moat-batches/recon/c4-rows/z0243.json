@@ -1,0 +1,200 @@
+{
+  "idx": 243,
+  "results": [
+    {
+      "member": "GetReferences3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Library_Feature_Data_Example_VB.md",
+        "Get_Library_Feature_Data_Example_VBNET.md",
+        "Get_Library_Feature_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只指向「Accessing Selections that Define Features」文档；示例给出具体三步：先 AccessSelections(文档)，末尾 ReleaseSelectionAccess",
+          "example_quote": "boolstatus = LibraryFeatureData.AccessSelections(ModelDoc2, Nothing)",
+          "example_file": "Get_Library_Feature_Data_Example_VB.md"
+        },
+        {
+          "what": "RefType/RefName 在 C# 里接回后是 int[]/string[]，比页面「Array of reference types as defined in swSelectType_e」更具体",
+          "example_quote": "Debug.Print(\" \" + refTypes[i].ToString() + \", \" + (string)refNames[i]);",
+          "example_file": "Get_Library_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "Scope 实际取值示例固定用 swLibFeatureData_PartRespect，页面只写「as defined in swLibFeatureData_e」",
+          "example_quote": "vRefs = LibraryFeatureData.GetReferences3(swLibFeatureData_e.swLibFeatureData_PartRespect, vRefType, vRefName)",
+          "example_file": "Get_Library_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 指向的选区文档要求先 AccessSelections，三份示例全部照办，无冲突。"
+    },
+    {
+      "member": "GetReferencesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Library_Feature_With_References_Example_VB.md",
+        "Create_Library_Feature_With_References_Example_CSharp.md",
+        "Get_Library_Feature_Data_Example_VB.md",
+        "Get_Library_Feature_Data_Example_VBNET.md",
+        "Get_Library_Feature_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 AccessSelections 之后才调用；Remarks 只规定与 IGetReferences 的先后，未提此前置",
+          "example_quote": "ReferencesCount = LibraryFeatureData.GetReferencesCount",
+          "example_file": "Get_Library_Feature_Data_Example_VB.md"
+        },
+        {
+          "what": "另一份官方示例却在新建对象上直接调用，全程没有 AccessSelections，返回值 RefCount 也未被使用",
+          "example_quote": "RefCount = swLibFeat.GetReferencesCount();",
+          "example_file": "Create_Library_Feature_With_References_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 的排序要求点名 IGetReferences；示例显示它同样先于非指针版 GetReferences3",
+          "example_quote": "Debug.Print \"GetReferencesCount = \" & ReferencesCount",
+          "example_file": "Get_Library_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的先后要求各示例都满足，无冲突；但两份官方示例对是否需要 AccessSelections 说法相反。"
+    },
+    {
+      "member": "GetRegionParameterAtIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Modify_Variable-pitch_Helix_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "区域索引是 1 起、上界为 PitchCount（区域数）；页面 Index 只写「Index of the region」未给基点",
+          "example_quote": "For i = 1 To swHelixFeatData.PitchCount",
+          "example_file": "Create_and_Modify_Variable-pitch_Helix_Example_VB.md"
+        },
+        {
+          "what": "示例中直径/螺距返回的是米级小数（0.053、0.0265 量级）；页面对取值未标任何单位",
+          "example_quote": "Debug.Print (\" Diameter: \" & swHelixFeatData.GetRegionParameterAtIndex(i, swVariablePitchHelixRegionParameter_e.swVariablePitchHelixRegionParameter_Diameter))",
+          "example_file": "Create_and_Modify_Variable-pitch_Helix_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定；仅登记示例更具体之处。"
+    },
+    {
+      "member": "GetRelatedTangentEdgeCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Tangent_Edges_of_Bendlines_Example_VB.md",
+        "Get_Tangent_Edges_of_Bendlines_Example_VBNET.md",
+        "Get_Tangent_Edges_of_Bendlines_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Array of visible tangent edges for the specified bendline",
+          "example_quote": "nbrRelatedTangentEdges = swView.GetRelatedTangentEdgeCount(BendlinesArr(i))",
+          "example_file": "Get_Tangent_Edges_of_Bendlines_Example_VB.md",
+          "why": "页面自身签名是 System.int、摘要也写 number，示例更把它当 Long 计数打印并与 >0 比较；Returns 却写 Array —— 计数与数组不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先判 IsFlatPatternView 才调用；Remarks 只讲隐藏切线边与索引来源，未把该判断列为前置",
+          "example_quote": "If swView.IsFlatPatternView Then",
+          "example_file": "Get_Tangent_Edges_of_Bendlines_Example_VB.md"
+        },
+        {
+          "what": "示例以计数 >0 作为能否取边数组的门槛，Remarks 未提这道守卫",
+          "example_quote": "If (nbrRelatedTangentEdges > 0) Then",
+          "example_file": "Get_Tangent_Edges_of_Bendlines_Example_VB.md"
+        },
+        {
+          "what": "Remarks 说用 GetBendLineCount 的返回值定索引；示例循环却按 BendlinesArr 的上界走",
+          "example_quote": "For i = 0 To UBound(BendlinesArr)",
+          "example_file": "Get_Tangent_Edges_of_Bendlines_Example_VB.md"
+        }
+      ],
+      "note": "唯一硬冲突在 Returns 的 Array 与 int 计数之别，三份示例一致按计数使用。"
+    },
+    {
+      "member": "GetRelatedTangentEdges",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Tangent_Edges_of_Bendlines_Example_VB.md",
+        "Get_Tangent_Edges_of_Bendlines_Example_VBNET.md",
+        "Get_Tangent_Edges_of_Bendlines_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先由 GetRelatedTangentEdgeCount 判 >0 才调本方法；Remarks 未给这道前置",
+          "example_quote": "RelatedTangentEdgesArr = swView.GetRelatedTangentEdges(BendlinesArr(i))",
+          "example_file": "Get_Tangent_Edges_of_Bendlines_Example_VB.md"
+        },
+        {
+          "what": "传入的 BendLine 实为 SketchSegment，示例先用 IsBendLine 校验该元素",
+          "example_quote": "Debug.Print \" Is bend line \" & i & \" really a bend line? \" & swSketchSegment.IsBendLine",
+          "example_file": "Get_Tangent_Edges_of_Bendlines_Example_VB.md"
+        },
+        {
+          "what": "示例把返回值收进 object 后从不遍历元素，元素类型页面与示例均未给出",
+          "example_quote": "object RelatedTangentEdgesArr = null;",
+          "example_file": "Get_Tangent_Edges_of_Bendlines_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的隐藏边与取索引指引均未被示例违反，无冲突。"
+    },
+    {
+      "member": "GetRelationType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Sketch_Path_Example_VB.md",
+        "Create_Sketch_Path_Example_VBNET.md",
+        "Create_Sketch_Path_Example_CSharp.md",
+        "Get_All_Sketch_Relations_and_Their_Types_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例以 Long 接值后直接 Debug.Print 原始数值，标题虽称 Types 却未映射成枚举名",
+          "example_quote": "relType = swSkRel.GetRelationType",
+          "example_file": "Get_All_Sketch_Relations_and_Their_Types_Example_VB.md"
+        },
+        {
+          "what": "关系对象来自 swSketchPath.GetRelations，逐个取回后再读 GetRelationType",
+          "example_quote": "Debug.Print(\"      Type: \" + swSkRel.GetRelationType());",
+          "example_file": "Create_Sketch_Path_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetRelations",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Sketch_Path_Example_VB.md",
+        "Create_Sketch_Path_Example_VBNET.md",
+        "Create_Sketch_Path_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 把返回值强转成 object[]，页面 Returns 只写「Array of sketch relations」",
+          "example_quote": "vRelation = (object[])swSketchPath.GetRelations();",
+          "example_file": "Create_Sketch_Path_Example_CSharp.md"
+        },
+        {
+          "what": "元素按 ISketchRelation 取回（Set swSkRel = vSkRel），比页面的链接更具体",
+          "example_quote": "vRelation = swSketchPath.GetRelations",
+          "example_file": "Create_Sketch_Path_Example_VB.md"
+        },
+        {
+          "what": "示例先用同一路径的 GetRelationsCount 打印关系数，再取数组",
+          "example_quote": "Debug.Print \" Number of relations: \" & swSketchPath.GetRelationsCount",
+          "example_file": "Create_Sketch_Path_Example_VB.md"
+        }
+      ],
+      "note": "作业列的 Get_All_Sketch_Relations 例中 GetRelations 属 ISketchRelationManager，非本成员，故未采用。"
+    }
+  ]
+}

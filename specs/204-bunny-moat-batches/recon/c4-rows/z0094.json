@@ -1,0 +1,121 @@
+{
+  "idx": 94,
+  "results": [
+    {
+      "member": "DimXpertPart",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Auto_Dimension_Scheme_Example_CSharp.md",
+        "Auto_Dimension_Scheme_Example_VB.md",
+        "Auto_Dimension_Scheme_Example_VBNET.md",
+        "Get_DimXpertManager_Info_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；四例均从 IDimXpertManager(DimXpertManager) 取该属性。"
+    },
+    {
+      "member": "DimXpertScheme",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md",
+        "Mirror_Components_II_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出写入次序：CreateDerivedConfigurations 先置 false，再写 DimXpertScheme，再写 BreakLinksToOriginalPart=false，最后 CreateFeature。",
+          "example_quote": "swMirroCompFeatData.DimXpertScheme = true;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        }
+      ],
+      "note": "两条前置在 CreateFeature 前均成立（后者页载默认即 false），与 Remarks 一致，无冲突。"
+    },
+    {
+      "member": "Dimension",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Fill_Pattern_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- [[IFillPatternFeatureData::FeaturesToPatternType]] = [[swFeaturesToPatternType_e]].swFeaturesToPatternCreateSeedCut",
+          "example_quote": "swFeatData.FeaturesToPatternType = 0;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+          "why": "官方枚举页 swFeaturesToPatternType_e 载 CreateSeedCut=1、SelectedFeatures=0；示例写 0，Remarks 要求的前置不成立。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- [[IFillPatternFeatureData::CreateSeedCutType]] is set to one of the following:\n\n  - [[swCreateSeedCutType_e]].swCreateSeedCutDiamond\n\n  - swCreateSeedCutType_e.swCreateSeedCutSquare",
+          "example_quote": "swFeatData.CreateSeedCutType = 0;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+          "why": "官方枚举页 swCreateSeedCutType_e 载 Diamond=3、Square=2、None=0；示例写 0 即 None，两个允许值都不是。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例按米传：Dimension 恰为同段 Diagonal(0.008) 的 1/√2；成员页 Returns 未写单位。",
+          "example_quote": "swFeatData.Dimension = 0.00565685424949238;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "两条冲突同源：两个枚举都被示例写成 0，却仍设置 Dimension。另三例命中的是 SplineParamData.Dimension，非本成员。"
+    },
+    {
+      "member": "DimensionPositionOption",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Location_Dimension_Example_CSharp.md",
+        "Get_and_Set_Location_Dimension_Example_VB.md",
+        "Get_and_Set_Location_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例注明该属性只适用于线性位置尺寸，成员页 Remarks 未写这条适用范围。",
+          "example_quote": "DimensionPositionOption works only for linear location dimensions",
+          "example_file": "Get_and_Set_Location_Dimension_Example_VBNET.md"
+        }
+      ],
+      "note": "三例均取 0 并注为 normal 轴，与 Remarks 的 0=normal 轴一致，只是多出一条适用范围。"
+    },
+    {
+      "member": "DimensionText",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段；两例都只读不写，与页内 Set is not implemented 一致。"
+    },
+    {
+      "member": "DimensionType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段；四例都在形参类型为 DimXpertDimensionTolerance 的过程里读该属性。"
+    },
+    {
+      "member": "DimensionTypeIntraFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段；四例都在形参类型为 DimXpertCompositeDistanceBetweenDimTol 的过程里读该属性。"
+    }
+  ]
+}

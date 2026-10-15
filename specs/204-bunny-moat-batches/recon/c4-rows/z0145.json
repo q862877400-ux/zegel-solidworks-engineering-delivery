@@ -1,0 +1,115 @@
+{
+  "idx": 145,
+  "results": [
+    {
+      "member": "GetAnnotation",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份候选的接收者都是 Note（myNote/aNote），即 INote.GetAnnotation，非本成员"
+    },
+    {
+      "member": "GetAnnotationCount",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_DimXpertManager_Info_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取用路径：须先由 IDimXpertManager.DimXpertPart 拿到 IDimXpertPart 才能调用",
+          "example_quote": "swDXPart = swSchema.DimXpertPart",
+          "example_file": "Get_DimXpertManager_Info_Example_VB.md"
+        },
+        {
+          "what": "调用点：接收者变量声明为 IDimXpertPart",
+          "example_quote": "swDXPart As IDimXpertPart",
+          "example_file": "Get_DimXpertManager_Info_Example_VB.md"
+        }
+      ],
+      "note": "另 3 份候选调的是 swModelDocExt（IModelDocExtension），同名不同对象"
+    },
+    {
+      "member": "GetAnnotations",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_DimXpertManager_Info_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回值当 Variant 用 0 基下标遍历，逐元素 Set 成 IDimXpertAnnotation",
+          "example_quote": "annotation = annotations(n)",
+          "example_file": "Get_DimXpertManager_Info_Example_VB.md"
+        }
+      ],
+      "note": "另 3 份候选调的是 IModelDocExtension.GetAnnotations；Returns 只写数组类型"
+    },
+    {
+      "member": "GetAnnotations2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Where_Annotations_Can_Be_Shown_Example_CSharp.md",
+        "Get_Where_Annotations_Can_Be_Shown_Example_VB.md",
+        "Get_Where_Annotations_Can_Be_Shown_Example_VBNET.md",
+        "Move_Annotations_to_First_Annotation_View_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回数组可能为空，示例用 IsEmpty 守卫后再遍历",
+          "example_quote": "If Not IsEmpty(annotations) Then",
+          "example_file": "Get_Where_Annotations_Can_Be_Shown_Example_VB.md"
+        },
+        {
+          "what": "遍历上界取 AnnotationCount 而非返回数组长度；C# 版同形",
+          "example_quote": "j <= swAnnView.AnnotationCount - 1",
+          "example_file": "Move_Annotations_to_First_Annotation_View_Example_CSharp.md"
+        },
+        {
+          "what": "C# 版用 null 守卫，示例参数固定为 false, false",
+          "example_quote": "if ((annotations != null))",
+          "example_file": "Move_Annotations_to_First_Annotation_View_Example_CSharp.md"
+        }
+      ],
+      "note": "页面 Examples 段只列 Move_Annotations_*，Get_Where_Annotations_* 未被页面引用但确实调用本成员"
+    },
+    {
+      "member": "GetApexPoint2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Parabola_Example_CSharp.md",
+        "Create_Parabola_Example_VB.md",
+        "Create_Parabola_Example_VBNET.md",
+        "Get_All_Elements_of_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回 SketchPoint 的 X/Y/Z 是米，示例乘 1000 才按 mm 打印",
+          "example_quote": "swApexPt.X * 1000#",
+          "example_file": "Get_All_Elements_of_Sketch_Example_VB.md"
+        },
+        {
+          "what": "接收者变量声明为 SldWorks.SketchParabola，即本接口",
+          "example_quote": "swSkParabola.GetApexPoint2",
+          "example_file": "Get_All_Elements_of_Sketch_Example_VB.md"
+        }
+      ],
+      "note": "4 份示例接收者均为 SketchParabola；页面 Returns 已写 or null if the operation fails，无 Remarks"
+    },
+    {
+      "member": "GetAppliedAnnotationCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份候选的接收者都是 DimXpertFeature；IDimXpertFeature 另有一份同名成员页，命中的是那一个"
+    },
+    {
+      "member": "GetAppliedAnnotations",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "Remarks 限 IDimXpertDatum；4 份候选接收者都是 DimXpertFeature，无示例侧可对照"
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+ "idx": 50,
+ "results": [
+  {
+   "name": "assembly_exploded_views",
+   "level": "verified",
+   "members_found": [
+    "CreateExplodedView",
+    "AutoExplode",
+    "ViewExplodeAssembly",
+    "ViewCollapseAssembly",
+    "ShowExploded2",
+    "GetExplodedViewNames2",
+    "GetExplodedViewCount2",
+    "GetExplodedViewConfigurationName",
+    "EditExplodeParameters"
+   ],
+   "examples_used": [
+    "Create_Exploded_Views_Example_VB.md",
+    "Create_Exploded_Views_Example_CSharp.md",
+    "Get_Exploded_Views_for_Configuration_Example_VB.md",
+    "Get_Exploded_Views_for_Configuration_Example_VBNET.md",
+    "Get_Collapsed_Transform_of_Component_in_Exploded_View_Example_VB.md",
+    "Access_Assembly_Example_CPlusPlus_COM.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方示例前置逐字「Preconditions: Open an assembly document.」——须先打开装配文档（示例把 ActiveDoc 直接 Set 成 AssemblyDoc）",
+     "from": "Create_Exploded_Views_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "打开**装配副本**（`GetType=2` · 活动配置 `默认`）"
+    },
+    {
+     "text": "官方示例前置逐字「Preconditions: 2. Open the Immediate window.」——须先打开 Immediate 调试窗口才能读结果",
+     "from": "Get_Exploded_Views_for_Configuration_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "须先经 ConfigurationManager.ActiveConfiguration.Name 取活动配置名，再把它传给 GetExplodedViewNames2 / GetExplodedViewCount2",
+     "from": "Get_Exploded_Views_for_Configuration_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "活动配置 `默认`"
+    },
+    {
+     "text": "GetExplodedViewConfigurationName 的实参示例传的是**爆炸视图名**（GetExplodedViewConfigurationName(viewName)），不是配置名",
+     "from": "Get_Exploded_Views_for_Configuration_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "ShowExploded2 第二实参须取自 GetExplodedViewNames2（示例先建 5 个视图、取名，再逐个 ShowExploded2(True/False, name)）",
+     "from": "Create_Exploded_Views_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "`get_exploded_view_names` 回 **['爆炸视图1']**"
+    },
+    {
+     "text": "官方示例以「回读计数」为建视图的判据：CreateExplodedView 后须 GetExplodedViewCount2 回读（示例建 5 个再计数）",
+     "from": "Get_Exploded_Views_for_Configuration_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "**回读计数 0 → 1**"
+    },
+    {
+     "text": "AutoExplode / ViewCollapseAssembly 须成对使用（示例 ExplodeAssembly→CollapseAssembly）",
+     "from": "Access_Assembly_Example_CPlusPlus_COM.md",
+     "state": "covered",
+     "evidence_quote": "`view_explode_assembly` / `view_collapse_assembly` 两次调用**都没抛**"
+    },
+    {
+     "text": "示例前置逐字「ujoint.sldasm exists in the specified folder and contains a component named bracket-1」——须打开含该指定组件的装配",
+     "from": "Access_Assembly_Example_CPlusPlus_COM.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "EditExplodeParameters：官方示例库无任何示例（member-to-example-index.md 无该行、b3-4-merged.json by_member 为 null）⇒ 前置无从提取",
+     "from": "(无示例文件)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "8 个成员有官方示例。未覆盖：Immediate 窗口；GetExplodedViewConfigurationName 实参应为**视图名**——示例给了答案，而本仓 limitation 记为「含义未知」。EditExplodeParameters 无示例。"
+  },
+  {
+   "name": "macro_execution",
+   "level": "verified",
+   "members_found": [
+    "RunMacro2"
+   ],
+   "examples_used": [],
+   "preconditions": [
+    {
+     "text": "RunMacro2 在官方示例库无任何示例：member-to-example-index.md 无该行、b3-4-merged.json by_member 为 null、C:\\swapi\\examples 全目录 grep 0 命中 ⇒ 前置无从提取",
+     "from": "(无示例文件)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "cannot_tell",
+   "note": "8 个工具中只有 macro_run 碰 COM（RunMacro2）；另 7 个是 sw_macro_guard 纯文本函数（该文件无 COM 导入，已核）。无官方示例可对账 ⇒ 全条 cannot_tell。"
+  }
+ ]
+}

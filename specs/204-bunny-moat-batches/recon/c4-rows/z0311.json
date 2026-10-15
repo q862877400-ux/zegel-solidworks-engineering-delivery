@@ -1,0 +1,105 @@
+{
+  "idx": 311,
+  "results": [
+    {
+      "member": "InsertDatumTargetSymbol2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页内无 ## Remarks（仅 Obsolete+签名+参数）；按纪律跳过。"
+    },
+    {
+      "member": "InsertDatumTargetSymbol3",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_and_Modify_Datum_Target_Symbol_Example_CSharp.md",
+        "Insert_and_Modify_Datum_Target_Symbol_Example_VB.md",
+        "Insert_and_Modify_Datum_Target_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页内无 ## Remarks；按纪律跳过。"
+    },
+    {
+      "member": "InsertDeleteBody2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Delete_Body_Feature_Example_CSharp.md",
+        "Insert_Delete_Body_Feature_Example_VB.md",
+        "Insert_Delete_Body_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页内无 ## Remarks；按纪律跳过。"
+    },
+    {
+      "member": "InsertDeleteFace",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_and_Change_DeleteFace_Feature_Example_CSharp.md",
+        "Insert_and_Change_DeleteFace_Feature_Example_VB.md",
+        "Insert_and_Change_DeleteFace_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页内无 ## Remarks；且所列示例实调的是后继 IModelDocExtension.InsertDeleteFace。"
+    },
+    {
+      "member": "InsertDeleteFace2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Delete_Selected_Faces_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：先选中要删的面；Remarks 只说「零件级操作」。",
+          "example_quote": "2. Select the cylindrical faces.",
+          "example_file": "Delete_Selected_Faces_Example_VB.md"
+        }
+      ],
+      "note": "示例注释与 Remarks 同为「only works for parts」，无矛盾。"
+    },
+    {
+      "member": "InsertDerivedPattern",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Number_of_Instances_Skipped_in_Driving_Feature_Example_CSharp.md",
+        "Get_Number_of_Instances_Skipped_in_Driving_Feature_Example_VB.md",
+        "Get_Number_of_Instances_Skipped_in_Driving_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出实体类型码 COMPPATTERN 与第二次调用 append=True；Remarks 只给 mark。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"LocalLPattern1\", \"COMPPATTERN\", 0, 0, 0, True, 6, Nothing, 0)",
+          "example_file": "Get_Number_of_Instances_Skipped_in_Driving_Feature_Example_VB.md"
+        }
+      ],
+      "note": "示例 mark 顺序 1→6 与 Remarks 完全一致。"
+    },
+    {
+      "member": "InsertDome",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_and_Modify_Dome_Feature_Example_CSharp.md",
+        "Create_and_Modify_Dome_Feature_Example_VB.md",
+        "Create_and_Modify_Dome_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用「空名+坐标」选面并在 mark=1 前 ClearSelection2；Remarks 只说用 mark 1 选面。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", -9.30732824141103E-02, 2.99999999999727E-02, -4.82299571224303E-02, False, 1, Nothing, 0)",
+          "example_file": "Create_and_Modify_Dome_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Height 0.01 与「in meters」一致；mark=1 与 Remarks 一致。"
+    }
+  ]
+}

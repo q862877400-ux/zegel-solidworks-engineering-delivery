@@ -1,0 +1,148 @@
+{
+  "idx": 148,
+  "results": [
+    {
+      "member": "GetAutoDimSchemeOption",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Auto_Dimension_Scheme_Example_CSharp.md",
+        "Auto_Dimension_Scheme_Example_VB.md",
+        "Auto_Dimension_Scheme_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取 IDimXpertPart 的链路（DimXpertManager(\"Default\",True) → DimXpertPart），成员页未写",
+          "example_quote": "Set swDXPart = swSchema.DimXpertPart",
+          "example_file": "Auto_Dimension_Scheme_Example_VB.md"
+        },
+        {
+          "what": "示例注释称返回值即默认选项集，且原样传给 AutoDimensionScheme；成员页只说 Gets options",
+          "example_quote": "Set schemeOption = swDXPart.GetAutoDimSchemeOption",
+          "example_file": "Auto_Dimension_Scheme_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定；C#/VBA/VB.NET 三份均真调用该成员。"
+    },
+    {
+      "member": "GetAutoHatch",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 IDrSection 的取得方式：视图对象 GetSection()，成员页未写",
+          "example_quote": "Set swSectionView = swView.GetSection",
+          "example_file": "Create_Section_View_and_Get_Some_Data_Example_VB.md"
+        },
+        {
+          "what": "示例先 SetAutoHatch(True) 再回读，确认读写成对；成员页只写 Gets",
+          "example_quote": "swSectionView.SetAutoHatch True",
+          "example_file": "Create_Section_View_and_Get_Some_Data_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，跳过冲突判定；两份示例均在同一个 swSectionView 上真调用。"
+    },
+    {
+      "member": "GetAutomaticCutList",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Features_of_Multibody_Sheet_Metal_Part_Example_CSharp.md",
+        "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VB.md",
+        "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取 IBodyFolder 的具体选择器：名字 \"Solid Bodies\" + 类型 \"BDYFOLDER\"，成员页未写",
+          "example_quote": "boolstatus = swModel.Extension.SelectByID2(\"Solid Bodies\", \"BDYFOLDER\", 0, 0, 0, False, 0, Nothing, 0)",
+          "example_file": "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VB.md"
+        },
+        {
+          "what": "示例先 SetAutomaticCutList(True) 再读，故读到的是刚设的值而非 Remarks 所说的默认",
+          "example_quote": "swBodyFolder.SetAutomaticCutList True",
+          "example_file": "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VB.md"
+        }
+      ],
+      "note": "两侧无矛盾。示例用在多体钣金零件的实体文件夹上，Remarks 只提新焊件零件，属适用范围更宽。"
+    },
+    {
+      "member": "GetAutomaticUpdate",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Features_of_Multibody_Sheet_Metal_Part_Example_CSharp.md",
+        "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VB.md",
+        "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 SetAutomaticUpdate 当开关用并显式置 False，与 Remarks 的手动/自动二选一对应",
+          "example_quote": "swBodyFolder.SetAutomaticUpdate False",
+          "example_file": "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VB.md"
+        },
+        {
+          "what": "示例先写后读的调用序：置位在前、回读 GetAutomaticUpdate 在后；Remarks 未给顺序",
+          "example_quote": "Debug.Print \" Automatically update cut list? \" & swBodyFolder.GetAutomaticUpdate",
+          "example_file": "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VB.md"
+        }
+      ],
+      "note": "两侧无矛盾。Remarks 的 Call 清单指向 Set/UpdateCutList，示例正是这两者的组合用法。"
+    },
+    {
+      "member": "GetAvailableGaugeNumbers",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md",
+        "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 System.object 返回值直接转成 string[] 使用，比成员页的 Array of strings 更具体",
+          "example_quote": "gaugeNumbers = (string[])smGaugeTableParam.GetAvailableGaugeNumbers();",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        },
+        {
+          "what": "示例用 GetGaugeNumberCount 作为遍历上界，说明数组长度由计数成员给出，成员页未提",
+          "example_quote": "gaugeCount = smGaugeTableParam.GetGaugeNumberCount();",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks，跳过冲突判定；两份示例均在 SetGaugeTablePath 之后调用。"
+    },
+    {
+      "member": "GetAvailableRadii",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md",
+        "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值转成 double[] 并逐项打印，比成员页的 bend radii strings 更具体",
+          "example_quote": "radii = (double[])smGaugeTableParam.GetAvailableRadii();",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        },
+        {
+          "what": "示例以 GetRadiiCount 作为遍历上界；成员页未说数组与计数成员的配套关系",
+          "example_quote": "radiiCount = smGaugeTableParam.GetRadiiCount();",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks。Returns 写 strings 而示例转 double[]，按纪律不判为冲突，只作观察。"
+    },
+    {
+      "member": "GetAxisType",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "唯一示例 Get_Axis_of_Revolve_Feature_Example_VB 实际调用 RevolveFeatureData2.GetAxisType，不是本接口，按纪律不采用。"
+    }
+  ]
+}

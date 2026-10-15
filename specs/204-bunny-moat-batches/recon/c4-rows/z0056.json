@@ -1,0 +1,131 @@
+{
+  "idx": 56,
+  "results": [
+    {
+      "member": "Create3DBoundingBox",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_3D_Bounding_Box_Example_CSharp.md",
+        "Create_3D_Bounding_Box_Example_VB.md",
+        "Create_3D_Bounding_Box_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "调用前须先 Update 切割清单并选中 SUBWELDFOLDER 类型的切割清单项，成员页未提",
+          "example_quote": "// 2. Right-click the Cut list folder and select Update.",
+          "example_file": "Create_3D_Bounding_Box_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出选中调用：SelectByID2 类型串为 SUBWELDFOLDER、mark=0，成员页无此信息",
+          "example_quote": "boolstatus = modDocExt.SelectByID2(\"Cut-List-Item5\", \"SUBWELDFOLDER\", 0, 0, 0, false, 0, null, 0);",
+          "example_file": "Create_3D_Bounding_Box_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只描述调用后选区的返回形状，示例只给调用前准备，两侧可同时成立。"
+    },
+    {
+      "member": "Create3PointArc",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；4 份示例调的都是 SketchManager.Create3PointArc，非 IModelDoc2 的本成员。"
+    },
+    {
+      "member": "Create3rdAngleViews",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Assembly_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C++ 原始接口写法：模型路径串加 VARIANT_BOOL* 回参共两参；成员页 ModelName 无描述",
+          "example_quote": "hres = swDrawingDoc->Create3rdAngleViews(sActiveAssembly, &retVal);",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定；示例确实调用本成员。"
+    },
+    {
+      "member": "Create3rdAngleViews2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Dimension_Edge_in_Drawing_Example_VB.md",
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先设图纸比例 1:2 再建视图，正是 Remarks 所说的文档设置",
+          "example_quote": "swSheet.SetScale(ScaleNum, ScaleDenom, True, True)",
+          "example_file": "Get_Annotations_Arrays_Example_VBNET.md"
+        },
+        {
+          "what": "ModelName 须是已存盘模型的完整路径，示例提示先走一遍另存",
+          "example_quote": "retval = swDraw.Create3rdAngleViews2(swModel.GetPathName)",
+          "example_file": "Get_Annotations_Array_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的自动缩放说法与示例先设图纸比例相符，未见矛盾。"
+    },
+    {
+      "member": "CreateAVIParameter",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Create_Motion_Studies_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出返回对象的用法与取值：FramePerSecond=7.5、整段保存、OutputType=1 即 .avi",
+          "example_quote": "swSaveAVIData.OutputType = 1 ' Save as an .avi file",
+          "example_file": "sldworksapi__Create_Motion_Studies_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定；4 份示例都真调本成员。"
+    },
+    {
+      "member": "CreateAdvancedHoleElementData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Diameter/BlindDepth 以米写入，示例用英寸转米因子；成员页未给任何单位",
+          "example_quote": "ConvFactorLength = 25.4 / 1000;",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        },
+        {
+          "what": "定义元素前须先 SelectByRay 选中近侧与远侧两个面，成员页未写此前置",
+          "example_quote": "//Select two faces for the near side and far side hole elements",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        },
+        {
+          "what": "建孔实际调 AdvancedHole2；成员页指向的 IFeatureManager::AdvancedHole 已标 Obsolete",
+          "example_quote": "feat = swFeatureMgr.AdvancedHole2(dispArray, dispArray2, false, true, false, out ResultArray);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 列的五个类型专用接口与示例逐一对应，未见冲突。"
+    },
+    {
+      "member": "CreateArc",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；示例实调 IModeler::CreateArc 与 ISketchManager::CreateArc，均非本成员。"
+    }
+  ]
+}

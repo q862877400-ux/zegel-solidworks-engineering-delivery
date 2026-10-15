@@ -1,0 +1,149 @@
+{
+  "idx": 126,
+  "results": [
+    {
+      "member": "FeatureStatistics",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_CSharp.md",
+        "Get_Part's_Feature_Statistics_Example_VB.md",
+        "Get_Part's_Feature_Statistics_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在取到 FeatureStatistics 后立即调 Refresh() 才读任何属性；成员页无此步骤（三份示例都这样写）。",
+          "example_quote": "swFeatStat.Refresh();",
+          "example_file": "Get_Part's_Feature_Statistics_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "FeatureTypes",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_CSharp.md",
+        "Get_Part's_Feature_Statistics_Example_VB.md",
+        "Get_Part's_Feature_Statistics_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页签名是 System.object；示例给出实际元素类型 (Int32[])，并标为 swSelectType_e 打印。",
+          "example_quote": "feattypes = (Int32[])swFeatStat.FeatureTypes;",
+          "example_file": "Get_Part's_Feature_Statistics_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "FeatureUpdatePercentageTimes",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_CSharp.md",
+        "Get_Part's_Feature_Statistics_Example_VB.md",
+        "Get_Part's_Feature_Statistics_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页签名是 System.object；示例把它转成 Double[] 后与 FeatureNames 同下标遍历。",
+          "example_quote": "featureUpdatePercentTimes = (Double[])swFeatStat.FeatureUpdatePercentageTimes;",
+          "example_file": "Get_Part's_Feature_Statistics_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "FeatureUpdateTimes",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页签名是 System.object；示例把它转成 Double[] 后按下标逐特征取值打印。",
+          "example_quote": "featureUpdateTimes = (Double[])swFeatStat.FeatureUpdateTimes;",
+          "example_file": "Get_Part's_Feature_Statistics_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；任务只派了 C# 示例。"
+    },
+    {
+      "member": "Features",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页签名是 System.object；示例转成 Object[] 并把元素强转 Feature 读 DateCreated。",
+          "example_quote": "= (Object[])swFeatStat.Features;",
+          "example_file": "Get_Part's_Feature_Statistics_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；任务只派了 C# 示例。"
+    },
+    {
+      "member": "FeaturesToPatternType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Fill_Pattern_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "[[IFillPatternFeatureData::CreateSeedCutType]] to get or set the type of seed cut to pattern",
+          "example_quote": "swFeatData.CreateSeedCutType = 0;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+          "why": "官方枚举页 swFeaturesToPatternType_e：0=SelectedFeatures、1=CreateSeedCut。示例第56行设 FeaturesToPatternType=0 走 SelectedFeatures 分支，却设了 CreateSeedCutType，Remarks 要求的三个 *Array 一个未设。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出赋值序列：在 CreateDefinition 返回的对象上逐项设值（含 FeaturesToPatternType），最后以 CreateFeature 收尾；成员页只讲路由、不给顺序。",
+          "example_quote": "swFeat = swFeatMgr.CreateFeature(swFeatData);",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只给分支路由表，无 mark/单位/返回形状表述可判。"
+    },
+    {
+      "member": "FieldOfViewAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Camera_Example_CSharp.md",
+        "Insert_Camera_Example_VB.md",
+        "Insert_Camera_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "unit_diff",
+          "remarks_quote": "Camera's horizontal angle of the field of view in radians",
+          "example_quote": "swCamera.FieldOfViewAngle * 1000.0 + \" mm\"",
+          "example_file": "Insert_Camera_Example_CSharp.md",
+          "why": "成员页写明该量是弧度；示例却对它做 ×1000 的米→毫米换算并标 mm。弧度不是长度、不能换算成毫米，两侧不能同时成立。"
+        },
+        {
+          "kind": "unit_diff",
+          "remarks_quote": "Camera's horizontal angle of the field of view in radians",
+          "example_quote": "swCamera.FieldOfViewAngle * 1000# & \" mm\"",
+          "example_file": "Insert_Camera_Example_VB.md",
+          "why": "同上：VBA 示例对同一量做 ×1000 并标 mm，与成员页的弧度口径冲突。"
+        },
+        {
+          "kind": "unit_diff",
+          "remarks_quote": "Camera's horizontal angle of the field of view in radians",
+          "example_quote": "swCamera.FieldOfViewAngle * 1000.0# & \" mm\"",
+          "example_file": "Insert_Camera_Example_VBNET.md",
+          "why": "同上：VB.NET 示例对同一量做 ×1000 并标 mm，与成员页的弧度口径冲突。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "单位句在 Returns 段（Remarks 只写透视相机前提）；页内另有 get-only 与 {get; set;} 自相矛盾。"
+    }
+  ]
+}

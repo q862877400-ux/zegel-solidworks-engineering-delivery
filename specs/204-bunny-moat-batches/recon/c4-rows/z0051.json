@@ -1,0 +1,156 @@
+{
+ "idx": 51,
+ "results": [
+  {
+   "member": "ControlPointColumnCount",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+    "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+    "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "成员页未给宿主对象来源；示例给出唯一取得路径 Face2.GetSurface -> Parameterization2 -> GetBSurfParams3",
+     "example_quote": "swBSurfParam = (BSurfParamData)swSurf.GetBSurfParams3(false, false, swSurfParam, 0.01, out sense);",
+     "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md"
+    },
+    {
+     "what": "列号口径只有示例给：GetControlPoints 的第二实参才是 column（成员页只说列数）",
+     "example_quote": "vCtrlPts = swBSurfParam.GetControlPoints(2, 3);",
+     "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页无 Remarks；三个属性在同一次 GetBSurfParams3 之后连续读取"
+  },
+  {
+   "member": "ControlPointDimension",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+    "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+    "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "成员页未给宿主对象来源；示例由 Surface.GetBSurfParams3 得到 BSurfParamData 再读该维度",
+     "example_quote": "swBSurfParam = (BSurfParamData)swSurf.GetBSurfParams3(false, false, swSurfParam, 0.01, out sense);",
+     "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页 Returns 只分 3/4 有理与非有理，示例原样打印、未给判据"
+  },
+  {
+   "member": "ControlPointRowCount",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+    "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+    "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "行号口径只有示例给：GetControlPoints 的第一实参是 row（成员页只说行数）",
+     "example_quote": "// Get control points in row = 2, column = 3 of the control point matrix",
+     "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md"
+    },
+    {
+     "what": "成员页未给宿主对象来源；示例用 GetBSurfParams3 取得 BSurfParamData 后才读行数",
+     "example_quote": "swBSurfParam = (BSurfParamData)swSurf.GetBSurfParams3(false, false, swSurfParam, 0.01, out sense);",
+     "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页无 Remarks；三份示例代码同构，仅语言不同"
+  },
+  {
+   "member": "ControlPointsCount",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Edit_Spline_Example_VB.md",
+    "Get_BCurve_Spline_Points_Example_CSharp.md",
+    "Get_BCurve_Spline_Points_Example_VB.md",
+    "Get_BCurve_Spline_Points_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "成员页未给宿主来源；示例先 Edge.GetCurve 得 Curve，再 GetBCurveParams5 得 SplineParamData",
+     "example_quote": "swSplineParaData = (SplineParamData)swCurveIn.GetBCurveParams5(false, false, true, true);",
+     "example_file": "Get_BCurve_Spline_Points_Example_CSharp.md"
+    },
+    {
+     "what": "另一份示例用另一组标志(false,false,false,false)同样读取该计数，成员页未提这四个标志",
+     "example_quote": "Set swSplineParamData = swCurve.GetBCurveParams5(False, False, False, False)",
+     "example_file": "Edit_Spline_Example_VB.md"
+    }
+   ],
+   "note": "Remarks 只约束写入（点数>=阶次），四份示例一律只读不写，故判不出冲突"
+  },
+  {
+   "member": "ConvertDoubleToSystemValue",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_and_Set_User_Units_Example_CSharp.md",
+    "Get_and_Set_User_Units_Example_VB.md",
+    "Get_and_Set_User_Units_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "成员页未说宿主怎么取得、也未限定单位类型；示例取的是角度单位对象",
+     "example_quote": "docUserUnit = (UserUnit)Part.GetUserUnit((int)swUserUnitsType_e.swAngleUnit);",
+     "example_file": "Get_and_Set_User_Units_Example_CSharp.md"
+    }
+   ],
+   "note": "VBA 示例传 swAngleUnit，C#/VB.NET 传 swUserUnitsType_e.swAngleUnit，两者非同一枚举"
+  },
+  {
+   "member": "ConvertFormat",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Gtol_Frame_Information_Example_CSharp.md",
+    "Get_Gtol_Frame_Information_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例在 CanConvertFormat 之外还加一道前置：只有 2021 格式才调用（成员页未提格式号）",
+     "example_quote": "if (lFormatType1 == (int)swGtolFormatType_e.GTOL_SW2021)",
+     "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+    },
+    {
+     "what": "示例给出成功后置：转换成功则文档被置脏（成员页只写成功返回 0）",
+     "example_quote": "boolstatus = swModel.GetSaveFlag(); // if successful, converted Gtol",
+     "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+    }
+   ],
+   "note": "Remarks 要求先用 CanConvertFormat，示例正是如此；无冲突"
+  },
+  {
+   "member": "ConvertToHighQuality",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Print_Drawing_as_High_Quality_Example_CSharp.md",
+    "Print_Drawing_as_High_Quality_Example_VB.md",
+    "Print_Drawing_as_High_Quality_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "成员页未给宿主来源；示例用 ModelDocExtension.GetPrintSpecification 取得打印规格",
+     "example_quote": "printSpec = (PrintSpecification)swModelDocExt.GetPrintSpecification();",
+     "example_file": "Print_Drawing_as_High_Quality_Example_CSharp.md"
+    },
+    {
+     "what": "示例给出使用时序：先置 true，再连同该 printSpec 一起传给 PrintOut4",
+     "example_quote": "swModelDocExt.PrintOut4(\"\", \"\", printSpec);",
+     "example_file": "Print_Drawing_as_High_Quality_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页无 Remarks；三份示例都是置 true 后回读打印"
+  }
+ ]
+}

@@ -1,0 +1,15 @@
+{"idx":13,"pages_read":13,"rows":[
+{"iface":"IView","file":"DisableAutoUpdate.md","signature":"System.bool DisableAutoUpdate {get; set;}","obsolete":false,"pointer":false,"zero":"是（无括号）"},
+{"iface":"IView","file":"GetDetailCircleInfo2.md","signature":"System.object GetDetailCircleInfo2()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetFirstCenterLine.md","signature":"Centerline GetFirstCenterLine()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetPolylines5.md","signature":"System.object GetPolylines5( System.short CrossHatchOption )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetAnnotations.md","signature":"Annotation IGetAnnotations( System.int NumAnnotations )","obsolete":false,"pointer":true,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetEllipses4.md","signature":"System.double IGetEllipses4()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetViewXform.md","signature":"System.double IGetViewXform()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"ScaleDecimal.md","signature":"System.double ScaleDecimal {get; set;}","obsolete":false,"pointer":false,"zero":"是（无括号）"},
+{"iface":"IDrawingDoc","file":"Create1stAngleViews.md","signature":"System.bool Create1stAngleViews( System.string ModelName )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"DrawingViewRotate.md","signature":"System.bool DrawingViewRotate( System.double NewAngle )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"ICreateDiamDim4.md","signature":"DisplayDimension ICreateDiamDim4( ref System.double P0, ref System.double P1, ref System.double P2, ref System.double P3, ref System.double TextPoint, System.double Val, System.double TextHeight )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"InsertRefDim.md","signature":"void InsertRefDim()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"ViewHlrQuality.md","signature":"void ViewHlrQuality()","obsolete":false,"pointer":false,"zero":"是（空括号）"}
+]}

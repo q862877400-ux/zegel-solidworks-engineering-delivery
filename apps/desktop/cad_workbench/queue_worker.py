@@ -568,6 +568,16 @@ def _domain_evidence_status(result: dict[str, Any]) -> tuple[str | None, str | N
     """@brief 根据工程图/BOM/DFM 领域证据决定更严格的终态。"""
     evidence_items = [result.get("drawingEvidence"), result.get("bomEvidence"), result.get("dfmEvidence")]
     statuses = {str(item.get("status")) for item in evidence_items if isinstance(item, dict) and item.get("status")}
+    #: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+    #:   业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+    #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+    #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+    #:   ★★ `dfm_review`（★ DFM 规则库）是**方法** ⇒ 已移出
+    #:     ★ `archive/inherited-methods/scripts/dfm_review.py`（★ **只搬不删**）✓
+    #:   ★★★ **⇒ 队列须**如实报 `removed`**（★ 而不是把它当"生成成功、待人工复核"）——
+    #:     ★ 否则**队列会显示一个根本没生成的报告**（★ 那正是"看起来有守卫"那一族）✗
+    if "removed" in statuses:
+        return "removed", "该方法已按业主架构指令移出继承面（★ 只继承工具）"
     if "blocked" in statuses:
         return "blocked", "工程图、BOM 或 DFM 环境/能力门禁阻止交付"
     if "failed" in statuses or "fail" in statuses:
@@ -762,7 +772,41 @@ def run_dfm_review_job(job: dict[str, Any]) -> dict[str, Any]:
     scripts_dir = Path(__file__).resolve().parents[3] / "scripts"
     if str(scripts_dir) not in sys.path:
         sys.path.insert(0, str(scripts_dir))
-    from dfm_review import write_dfm_report
+    #: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+    #:   ★ 原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+    #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+    #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+    #:   ★★ `dfm_review` 是**方法**（★ DFM 规则库）——
+    #:     ★ 判据：★「**规则错了，回读能不能查出来**」⇒ ★ **不能** ⇒ 方法 ✗
+    #:   ★ 已移出：★ `archive/inherited-methods/scripts/dfm_review.py` ✓
+    #:   ★★ **本分支改为如实报「已移出」**（★ 不抛异常 —— ★ 那会让队列任务崩）✓
+    try:
+        from dfm_review import write_dfm_report
+    except ImportError:
+        #: ★★ **必须带 `dfmEvidence`**（★ 与成功分支同形状）——
+        #:   ★ 因为 `_domain_evidence_status` 从**那个键**读状态 ⇒
+        #:   ★★ 不带它 ⇒ 队列会落回 `review_required`（★ 谎报"报告已生成"）✗
+        evidence = {
+            "schemaVersion": "1.0",
+            "status": "removed",
+            "stage": "dfm_review",
+            "checks": [],
+            "artifacts": [],
+            "manualReviewRequired": False,
+            "retryable": False,
+            "message": ("★ DFM 复核方法已按业主架构指令移出继承面（★ 只继承工具）；"
+                        "★ 原件在 archive/inherited-methods/scripts/dfm_review.py"),
+        }
+        return {
+            "mode": "local-dfm",
+            "status": "removed",
+            "message": evidence["message"],
+            "outputs": [],
+            "artifacts": [],
+            "checks": [],
+            "reviewFindings": [],
+            "dfmEvidence": evidence,
+        }
 
     evidence = write_dfm_report(source, _dfm_output_path(job, source, base_dir), process=process)
     return {

@@ -1,0 +1,146 @@
+{
+  "idx": 221,
+  "results": [
+    {
+      "member": "GetMotionFeaturesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Motion_Study_Example_VB.md",
+        "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md",
+        "swmotionstudyapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说为 IGetMotionFeatures 定量；示例实际配对的是非 I 版 GetMotionFeatures，用 UBound 定界，计数本身只被打印。",
+          "example_quote": "vMotionFeatures = swMotionStudy1.GetMotionFeatures\nFor i = 0 To UBound(vMotionFeatures)",
+          "example_file": "Get_Motion_Study_Example_VB.md"
+        }
+      ],
+      "note": "两份 COSMOSMotion 示例只打印计数、不取特征数组；成员页 Examples 只列其中一份。"
+    },
+    {
+      "member": "GetMotionStudy",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Damper_to_Motion_Study_Example_CSharp.md",
+        "Add_Damper_to_Motion_Study_Example_VB.md",
+        "Add_Damper_to_Motion_Study_Example_VBNET.md",
+        "Create_3DContact_Feature_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "This method gets the names of both SOLIDWORKS Simulation and SOLIDWORKS Motion studies.",
+          "example_quote": "Set swMotionStudy1 = swMotionMgr.GetMotionStudy(\"PhysSim\")",
+          "example_file": "Get_Motion_Study_Example_VB.md",
+          "why": "Remarks 说本方法「取名字」；示例按名字取回的是 MotionStudy 对象，从不返回名字数组（取名字的是 GetMotionStudyNames）。两句不能同时成立。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Use [[IMotionStudy::StudyType]] to ensure that a given study is a motion study before using other Motion APIs.",
+          "example_quote": "swMotionStudy1.StudyType = swMotionStudyType_e.swMotionStudyTypePhysicalSimulation",
+          "example_file": "Get_Motion_Study_Example_VB.md",
+          "why": "Remarks 要求读 StudyType 判定是不是 motion study 才可用其他 Motion API；示例写的是赋值语句，起不到判定作用，随后直接 Activate。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "MotionStudyName 是带参数的完整研究名字符串（MotionStudy1_Distance=0.5in），不只是一个短名字。",
+          "example_quote": "Set swMotionStudy1 = swMotionMgr.GetMotionStudy(\"MotionStudy1_Distance=0.5in\")",
+          "example_file": "Add_Damper_to_Motion_Study_Example_VB.md"
+        }
+      ],
+      "note": "成员页 Examples 未列 Damper 与 3DContact，但这两份都真用到本成员。"
+    },
+    {
+      "member": "GetMotionStudyCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Create_Motion_Studies_Example_VB.md",
+        "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md",
+        "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_VB.md",
+        "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Use [[IMotionStudy::StudyType]] to ensure that a given study is a motion study before using other Motion APIs.",
+          "example_quote": "numStudies = swMotionMgr.GetMotionStudyCount()\nSet swMotionStudy = swMotionMgr.GetMotionStudy(studyName)\nIf Not swMotionStudy.IsActive Then swMotionStudy.Activate",
+          "example_file": "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_VB.md",
+          "why": "Remarks 规定先读 StudyType 判定再用其他 Motion API；三份 Fire_Events 示例取到 study 后直接 Activate、Calculate，未读该属性。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "计数先调、名字后取这个顺序，示例配的是非 I 版 GetMotionStudyNames，且计数返回只被打印不参与定界。",
+          "example_quote": "vNames = swMotionMgr.GetMotionStudyNames()",
+          "example_file": "sldworksapi__Create_Motion_Studies_Example_VB.md"
+        }
+      ],
+      "note": "Fire_Events 三份把返回值赋给 numStudies 后从不使用（numStudies 未被读）。"
+    },
+    {
+      "member": "GetMotionStudyManager",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Damper_to_Motion_Study_Example_CSharp.md",
+        "Add_Damper_to_Motion_Study_Example_VB.md",
+        "Add_Damper_to_Motion_Study_Example_VBNET.md",
+        "Create_3DContact_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段 ⇒ 按纪律跳过；四份示例都用它取 MotionManager 后判 Nothing。"
+    },
+    {
+      "member": "GetMotionStudyNames",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Create_Motion_Studies_Example_VB.md",
+        "swmotionstudyapi__Create_Motion_Studies_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method gets the names of both SOLIDWORKS Simulation and SOLIDWORKS Motion studies. Use [[IMotionStudy::StudyType]] to ensure that a given study is a motion study before using other Motion APIs.",
+          "example_quote": "vNames = swMotionMgr.GetMotionStudyNames()\nFor i = 0 To UBound(vNames)\n    Debug.Print vNames(i);\n    boolstatus = swMotionMgr.ActivateMotionStudy(vNames(i))",
+          "example_file": "sldworksapi__Create_Motion_Studies_Example_VB.md",
+          "why": "Remarks 说数组含 Simulation 与 Motion 两类、须先读 StudyType 筛选；示例对数组逐个调 ActivateMotionStudy，无任何 StudyType 过滤。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "返回 0 基 Variant 数组，元素是可直接当名字用的字符串。",
+          "example_quote": "vNames\n= swMotionMgr.GetMotionStudyNames()\nFor\ni = 0 To UBound(vNames)",
+          "example_file": "swmotionstudyapi__Create_Motion_Studies_Example_VB.md"
+        }
+      ],
+      "note": "三份 Motion 方法的 Remarks 首句同文，只有本成员页的这句与本成员的实际返回相符。"
+    },
+    {
+      "member": "GetMouse",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Run_SOLIDWORKS_Commands_and_Synthesize_Mouse_Events_Example_VB.md",
+        "Run_SolidWorks_Commands_and_Synthesize_Mouse_Events_Example_CSharp.md",
+        "Run_SolidWorks_Commands_and_Synthesize_Mouse_Events_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段 ⇒ 跳过；三份示例都把返回值直接当 Mouse 对象用，与 Returns 相符。"
+    },
+    {
+      "member": "GetMultipleThicknessAtIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Shell_Feature_Example_CSharp.md",
+        "Create_Shell_Feature_Example_VBNET.md",
+        "Get_Shell_Feature_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段 ⇒ 跳过；三份示例都把返回值 ×1000 才当 mm 用，提示返回值为米。"
+    }
+  ]
+}

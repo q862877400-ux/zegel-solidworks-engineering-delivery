@@ -1,0 +1,152 @@
+{
+  "idx": 359,
+  "results": [
+    {
+      "member": "MakeOffset",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Temporary_Bodies_by_Offsetting_Surface_Body_Example_CSharp.md",
+        "Create_Temporary_Bodies_by_Offsetting_Surface_Body_Example_VB.md",
+        "Create_Temporary_Bodies_by_Offsetting_Surface_Body_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Creates a new temporary body by offsetting the selected surface body by the specified distance and in the specified direction.",
+          "example_quote": "' 3. Selects an edge on the surface body to offset.\n' 4. Creates two temporary bodies of the surface\n' body using the selected edge.",
+          "example_file": "Create_Temporary_Bodies_by_Offsetting_Surface_Body_Example_VB.md",
+          "why": "成员页说被偏移者是「选中的曲面体」，示例三份一致地说先选中一条边再 GetBody。Remarks 段本身只写 only supports surface bodies。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先 Copy() 曲面体再偏移，成员页完全未提复制这一步",
+          "example_quote": "'Using a copy of the selected surface body, create two new temporary bodies\nSet newBody1 = swBody.MakeOffset(0.01, False)",
+          "example_file": "Create_Temporary_Bodies_by_Offsetting_Surface_Body_Example_VB.md"
+        }
+      ],
+      "note": "三份示例代码一致；Distance 传 0.01，全文为米制（拉伸 0.0508）"
+    },
+    {
+      "member": "MakeSketchBlockFromSelected",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Block_Definition_and_Insert_Block_Instance_Example_CSharp.md",
+        "Create_Block_Definition_and_Insert_Block_Instance_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Creates a block definition at the specified location from the selected entities.",
+          "example_quote": "Set swSketchBlockDef = swSketchMgr.MakeSketchBlockFromSelected(Nothing)",
+          "example_file": "Create_Block_Definition_and_Insert_Block_Instance_Example_VB.md",
+          "why": "成员页称按「指定位置」建块并把 InsertionPoint 定义为 2D 点 z=0；示例直接传 Nothing。Remarks 段只有一条文档链接，无实质文字。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 60/1000 的定位点建好后传给 InsertSketchBlockInstance，而非本成员",
+          "example_quote": "Set swBlockInst = swSketchMgr.InsertSketchBlockInstance(swSketchBlockDef, swMathPoint, 1, 0)",
+          "example_file": "Create_Block_Definition_and_Insert_Block_Instance_Example_VB.md"
+        },
+        {
+          "what": "示例前置为工程图文档，且要 MultiSelect2 选中线段/点/注释",
+          "example_quote": "' Preconditions: Open a drawing document.",
+          "example_file": "Create_Block_Definition_and_Insert_Block_Instance_Example_VB.md"
+        }
+      ],
+      "note": "C# 同样传 null；VBNET 版未逐一核对，行为与 VBA 一致"
+    },
+    {
+      "member": "MakeSketchChain",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Path_Length_Dimension_Example_CSharp.md",
+        "Create_Path_Length_Dimension_Example_VB.md",
+        "Create_Path_Length_Dimension_Example_VBNET.md",
+        "Create_Sketch_Path_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显式 EditSketch() 进编辑态，且逐段按对象 Select4 才建链",
+          "example_quote": "// Put the sketch in edit mode\nswModel.EditSketch();",
+          "example_file": "Create_Sketch_Path_Example_CSharp.md"
+        },
+        {
+          "what": "示例不用 bool 返回值判定，改读 GetSketchPaths() 回读路径",
+          "example_quote": "vSketchPath = (object[])swSketch.GetSketchPaths();",
+          "example_file": "Create_Sketch_Path_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例均在 2D 草图（前视基准面）编辑态调用，与 Remarks 两条限制一致"
+    },
+    {
+      "member": "MakeSubFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Macro_Feature_Subfeature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "子特征来自调用前选区，父特征是刚 InsertMacroFeature3 返回的对象",
+          "example_quote": "Set feat = swFeatMgr.InsertMacroFeature3(\"EmptyFeature\", \"\", (Methods), Names, Types, Values, dimTypes, dimValue, vEditBodies, (icons), options)\nboolstatus = feat.MakeSubFeature(selFeat)",
+          "example_file": "Create_Macro_Feature_Subfeature_Example_VB.md"
+        },
+        {
+          "what": "示例还要求 FeatureIcon.bmp 存在，Remarks 未提",
+          "example_quote": "' NOTE: A bitmap named FeatureIcon.bmp for the macro feature must exist.",
+          "example_file": "Create_Macro_Feature_Subfeature_Example_VB.md"
+        }
+      ],
+      "note": "示例为模型文档、草图已选，与三条 Remarks 均不冲突"
+    },
+    {
+      "member": "MakeVirtual2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Component_and_Mate_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例佐证了 Remarks 的重命名：改名作配合后置条件第 5 条触发重命名事件",
+          "example_quote": "' 4. Makes the specified component virtual by saving it to the\n'    assembly with a new name.\n' 5. Fires the RenameItemNotify event.",
+          "example_file": "Add_Component_and_Mate_Example_VB.md"
+        }
+      ],
+      "note": "示例传 True 但组件是叶子零件，子件分支未被覆盖"
+    },
+    {
+      "member": "MapConfigurationData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Import_STEP_File_Example_CSharp.md",
+        "Import_STEP_File_Example_VB.md",
+        "Import_STEP_File_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序：GetImportFileData 拿对象→赋值→传给 LoadFile4",
+          "example_quote": "swImportStepData = (ImportStepData)swApp.GetImportFileData(stepFileName);\nswImportStepData.MapConfigurationData = true;\nswPart = (PartDoc)swApp.LoadFile4(stepFileName, \"r\", swImportStepData, ref errors);",
+          "example_file": "Import_STEP_File_Example_CSharp.md"
+        }
+      ],
+      "note": "示例注释逐字复述 Remarks，语义完全一致"
+    },
+    {
+      "member": "MappingType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律 3 跳过比对"
+    }
+  ]
+}

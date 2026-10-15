@@ -1,0 +1,119 @@
+{
+ "role": "V1",
+ "sampled": 12,
+ "findings": [
+  {
+   "op": "3point_arc",
+   "state_claimed": "换名已有",
+   "your_state": "换名已有",
+   "who_is_right": "我们",
+   "why": "op 由 Slacker 的 draw_3point_arc 去动词前缀而来；我们的 sketch_3point_arc 同名同义（Create3PointArc），对应成立。",
+   "evidence": "Slacker-LLC/solidworks_mcp/sw_sketch.py:331: \"draw_3point_arc\",  ||  mcp-server/tool_specs_batch65.py: name=\"solidworks_sketch_add_3point_arc\", title=\"Add a 3-Point Arc\", function=\"sketch_3point_arc\""
+  },
+  {
+   "op": "extrude",
+   "state_claimed": "换名已有",
+   "your_state": "换名已有（why 指向错）",
+   "who_is_right": "V2",
+   "why": "5 个工具词根全含 extrude，exact[0] 在集合里抽签；抽到「去料」的 cut，而 op 是加料通用拉伸。state 对、why 错。",
+   "evidence": "mcp-server/tool_specs_batch22.py: name=\"solidworks_extrude_boss\", title=\"Extrude a Boss (add material)\"  ||  V1 复算：150 条换名已有里 60 条（40%）有 >1 个同分候选"
+  },
+  {
+   "op": "part",
+   "state_claimed": "换名已有",
+   "your_state": "换名已有（why 指向错）",
+   "who_is_right": "V2",
+   "why": "来源 op = create_part/sw_create_part，指建零件文档；14 个同分候选里抽签抽到米思米商品号搜索，与 CAD 零件无关。",
+   "evidence": "复算 op2src: part <- ['create_part','sw_create_part']  ||  tool: function=\"suggest_part\", inject=\"\"（api.cn.misumi.com.cn/partNumber/suggest）"
+  },
+  {
+   "op": "model_annotations",
+   "state_claimed": "换名已有",
+   "your_state": "真缺",
+   "who_is_right": "V2",
+   "why": "来源 op 是 insert_model_annotations（导入模型注释到工程图）；我们只读 GetAnnotations，方向相反，且全仓无该 API 实现。",
+   "evidence": "scripts/sw_part.py:705: 「SolidWorks 的工程图 ``InsertModelAnnotations`` 只能导入模型中已有的」  ||  mcp-server/tool_specs_batch77.py: name=\"solidworks_drawing_view_annotations\", title=\"Read Drawing View Annotations\""
+  },
+  {
+   "op": "analyze_draft",
+   "state_claimed": "判不了",
+   "your_state": "换名已有",
+   "who_is_right": "V2",
+   "why": "分词不还原词形（analyze≠analysis）才落进判不了；来源 analyze_draft 与我们的 mold_draft_analysis 是同一件事。",
+   "evidence": "Eduardof0nt/sw_client.py:1238: def analyze_draft(self, draft_angle: float = 1.0)  ||  mcp-server/tool_specs_batch1.py: name=\"solidworks_mold_draft_analysis\", function=\"mold_draft_analysis\""
+  },
+  {
+   "op": "active_document_info",
+   "state_claimed": "判不了",
+   "your_state": "换名已有",
+   "who_is_right": "V2",
+   "why": "来源的 get_active_document_info 给标题/路径/类型；我们的 collect_model_summary 正好是标题/类型/特征树/路径，对应成立。",
+   "evidence": "Slacker-LLC/README.md:122: | `get_active_document_info` | Title, path, type, unsaved state. |  ||  tool: name=\"solidworks_collect_model_summary\", title=\"Collect Model Summary\""
+  },
+  {
+   "op": "activate_display_state",
+   "state_claimed": "判不了",
+   "your_state": "真缺",
+   "who_is_right": "V2",
+   "why": "46 万字符工具面里 display_state 只 2 命中，且都在引用 2011 年起废止的 API 名；scripts/ 无激活显示状态的调用 ⇒ 真缺。",
+   "evidence": "mcp-server/tool_specs_batch82.py:104: 「Superseded by [[IModelDocExtension::DeleteDisplayStateSpecificRenderMaterial]]」  ||  V1 扫描: name~display_state = 0 命中"
+  },
+  {
+   "op": "rename_feature",
+   "state_claimed": "判不了",
+   "your_state": "④ 能力在内部、无对外入口",
+   "who_is_right": "判不了",
+   "why": "工具名含 rename 的 0 个，但 scripts/ 真在给 feature.Name 赋值 ⇒ 能力在内部、只是没入口；V2 的「真缺」不成立，两方都没给出第 4 态。",
+   "evidence": "scripts/sw_gear.py:288: feature.Name = feature_name  ||  scripts/sw_hole_features.py:80: feature.Name = fallback  ||  V1 扫描: name~rename = 0 命中"
+  },
+  {
+   "op": "rebuild_model",
+   "state_claimed": "真缺",
+   "your_state": "④ 能力在内部、无对外入口",
+   "who_is_right": "我们",
+   "why": "ForceRebuild3 在 4 个模块真调用，3 个工具还把它做成 bool 入参 ⇒ 能力在、只缺独立入口；C5 报告已改成这一态，V2 又当「真缺」用。",
+   "evidence": "scripts/sw_gear.py:291: model.ForceRebuild3(False)  ||  scripts/sw_delivery.py:974: document.ForceRebuild3(False)  ||  tool_specs_batch33.py:78: Param(\"rebuild\", bool, default=True, description=\"Rebuild after creating.\")"
+  },
+  {
+   "op": "security",
+   "state_claimed": "真缺",
+   "your_state": "真缺",
+   "who_is_right": "我们",
+   "why": "security/license 工具面 0 命中、scripts 里 MacroSecurity 亦 0；来源的 security 是 VBA 宏安全等级 ⇒ 真缺。",
+   "evidence": "SolidworksMCP-TS/src/tools/macro-security.ts:9: level: z.enum(['low', 'medium', 'high'])  ||  V1 扫描: raw~security = 0、scripts/ MacroSecurity = 0 文件"
+  },
+  {
+   "op": "vertices",
+   "state_claimed": "真缺",
+   "your_state": "换名已有",
+   "who_is_right": "我们",
+   "why": "op 是短名单词、工具是长名，分词不复数还原 ⇒ 零交集是假象；我们按 kind 参数取顶点。C5 手核已把它翻正（27 个真缺里 24 个错）。",
+   "evidence": "tool_specs_batch14.py: name=\"solidworks_entities_on_body\", title=\"List Entities On Body\", doc=\"...kind EDGE, FACE, or VERTEX... a 20x20x10 box returns FACE=6 . EDGE=12 . VERTEX=8\""
+  },
+  {
+   "op": "gdt",
+   "state_claimed": "真缺",
+   "your_state": "换名已有",
+   "who_is_right": "我们",
+   "why": "gdt 是 SYNONYMS 造的规范标签，来源无此名工具；我们 gtol_insert / datum_tag / surface_finish 三条齐在。",
+   "evidence": "tools/build_union_sources.py:99: \"geometric_tolerance\": \"gdt\", \"datum_feature\": \"gdt\", \"surface_finish\": \"gdt\",  ||  复算 op2src: gdt <- ['sw_add_datum_feature','sw_add_geometric_tolerance','sw_add_surface_finish']"
+  }
+ ],
+ "is_v2_floor_ok": "不成立。5 个只 2 个站得住：security、model_annotations。另 3 条的 ForceRebuild3/ActivateDoc3 都在 scripts 真调用 ⇒ 是第 4 态，不是「连能力都没有」；「Rebuild 0 命中」实测 10 处。下界 >=3。",
+ "criterion_defects": [
+  "why 不确定：exact[0] 取自 set 迭代序，换 PYTHONHASHSEED 后 150 条换名已有里 40-44 条 why 变，与 C5 存盘值也差 43 条 ⇒ 约三成对应关系是抽签产物、不是证据。",
+  "真缺 判据「词根零交集」比的是 _normalize 造的规范标签（draw_3point_arc→3point_arc、geometric_tolerance→gdt），短名对长名又缺词形还原 ⇒ 27 个里 24 个是标签人造所致。",
+  "三态清单里缺第 4 态「能力在内部、无对外入口」：V2 指出、C5 报告 §2.2 自己也加了，但 c5_triage.json 的行仍写 真缺 ⇒ 缺陷在清单形状，不在发现能力。",
+  "判据只对名字、不校验语义与参数：state=换名已有 从不证明我们的工具真能替代那个操作 ⇒ 这正是 17 处假阳性与 extrude/part 类抽签错指的共同来源。",
+  "「判不了」172 条（49%）实质是未判定，却与两个已判态一起求和成 349，读起来像三态已判完；C5 在限度段承认了，门禁却没把未判定率当不通过项。",
+  "分母无唯一口径：441（双引号正则）/460（补 _spec 位置式）/478（含 45 个手写工具）三个数都能自称「我们的工具」，判据没写清用哪一个。"
+ ],
+ "counts_i_dispute": [
+  "441 实为 460：正则只认双引号 name，漏掉 19 个 _spec 位置式声明（全在 Simulation/Topology 域）。我用 460 重跑 349 条，逐条状态未变 ⇒ 真实但无害。",
+  "真缺 >=5 → 我认 2（security、model_annotations）；另 3 条 rebuild_document / rebuild_model / activate_document 应为第 4 态。",
+  "17 处假阳性我全认「why 指向不成立」；但 model_view 应指 create_projected_view、status 应指 session_busy_status，materials/draft 两处的替代亦误。",
+  "materials 那条 V2 自相矛盾：列进假阳性却把 real_tool 写成「有」，理由栏又写「全库无任何材料库枚举工具」⇒ 结论跟自己的 real_tool 栏打架。",
+  "V2 结论段写「16 处假阳性」，它自己的 false_positives 数组是 17 条；「全库 440 工具」也对不上 441/460/478。",
+  "C5 手核给 security 的依据「license 2 次、auth 1 次」：实测 security 0、license 1、auth 命中的其实是 author ⇒ 据此把它降成判不了，依据不成立。"
+ ]
+}

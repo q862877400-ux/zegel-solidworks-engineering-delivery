@@ -1,0 +1,100 @@
+{
+  "idx": 296,
+  "results": [
+    {
+      "member": "IGetNextView",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Insert_Spline_in_Drawing_Example_CPlusPlus_COM.md",
+        "C:\\swapi\\examples\\Set_View_Display_Mode_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；两例均为 C++ 指针式调用，与签名不冲突。"
+    },
+    {
+      "member": "IGetNumDependencies",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Get_Model_Dependencies_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（正文仅 Obsolete 标注），按纪律跳过，不记冲突。"
+    },
+    {
+      "member": "IGetParentCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Get_Parent_Features_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出落地三步：取数（指针出参）→断言 NumParents>0→按其 new 数组；成员页只说“先调用以定数组大小”。",
+          "example_quote": "hr = pSelFeat->IGetParentCount(&NumParents); ASSERT(NumParents > 0); pParentsOfFeature = new IFeature * [NumParents];",
+          "example_file": "C:\\swapi\\examples\\Get_Parent_Features_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "示例顺序与 Remarks“须在 IGetParents 之前调用”完全一致，未见冲突。"
+    },
+    {
+      "member": "IGetParents",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Get_Parent_Features_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例明确数组由调用方自己 new 并 ZeroMemory，用完逐元素 Release；成员页只写“返回特征指针数组”，未讲分配与释放责任。",
+          "example_quote": "hr = pSelFeat->IGetParents(pParentsOfFeature);",
+          "example_file": "C:\\swapi\\examples\\Get_Parent_Features_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "C++ COM 例属 in-process unmanaged C++，不落在 Returns 标注 Not supported 的那批语言里。"
+    },
+    {
+      "member": "IGetProperties",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Get_Sheet_Properties_and_Insert_Object_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 7 元素数组先清零再传，并把下标 6 直接赋给 y 作坐标用；成员页只列 width/height 定义，未给用法。",
+          "example_quote": "double pSheetProps[7]; ZeroMemory(pSheetProps, 7 * sizeof(double)); hr = pSheet->IGetProperties(pSheetProps); y = pSheetProps[6];",
+          "example_file": "C:\\swapi\\examples\\Get_Sheet_Properties_and_Insert_Object_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "示例 7 个 double、下标 6 取 height，与 Remarks 的数组次序逐项对得上。"
+    },
+    {
+      "member": "IGetRefAxisParams",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Get_Info_on_Plane_Axis_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把缓冲声明为扁平 double[6] 并按 0–2=StartPt、3–5=EndPt 取值；成员页写成 StartPt[3]/EndPt[3] 两组，未给扁平下标。",
+          "example_quote": "double values[6]; hres = refAxis->IGetRefAxisParams( values );",
+          "example_file": "C:\\swapi\\examples\\Get_Info_on_Plane_Axis_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "示例 6 个 double 与 StartPt[3]+EndPt[3] 数目一致，未见冲突。"
+    },
+    {
+      "member": "IGetRefPlaneParams",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Get_Info_on_Plane_Axis_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（正文仅 Obsolete 标注），按纪律跳过；示例的 double[9] 无页内对照可判。"
+    }
+  ]
+}

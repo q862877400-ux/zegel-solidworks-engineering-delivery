@@ -1,0 +1,116 @@
+{
+  "idx": 337,
+  "results": [
+    {
+      "member": "IsMetric",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Signature/Returns/See Also，无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "IsModelBreakState",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "IsModelTabActive",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "IsMultipleRadius",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Data_for_Simple_Fillet_Example_CSharp.md",
+        "Get_Data_for_Simple_Fillet_Example_VB.md",
+        "Get_Data_for_Simple_Fillet_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only for symmetric constant radius fillets and symmetric offset face chamfers.",
+          "example_quote": "// 1. Open a model document with a simple fillet feature.",
+          "example_file": "Get_Data_for_Simple_Fillet_Example_CSharp.md",
+          "why": "成员页限定「仅对称」圆角/倒角才有效；示例前置只写「a simple fillet feature」，且已读出 ConstantWidth 后仍无条件读该属性，前置不足。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only for symmetric constant radius fillets and symmetric offset face chamfers.",
+          "example_quote": "Debug.Print(\"   Multiple radii? \" + swFillet.IsMultipleRadius);",
+          "example_file": "Get_Data_for_Simple_Fillet_Example_CSharp.md",
+          "why": "成员页把有效性绑在「对称等半径圆角/对称偏置面倒角」这一几何类别上；示例把读取写成对任意 simple fillet 无条件执行，两侧适用条件不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出拿到该属性宿主对象的具体调用序：先选中特征 GetSelectedObject6，再 GetDefinition 转 SimpleFilletFeatureData2；成员页未写。",
+          "example_quote": "swFeat = (Feature)swSelMgr.GetSelectedObject6(1, -1);",
+          "example_file": "Get_Data_for_Simple_Fillet_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例代码逐字相同（C#/VB/VBNET 仅语法差异），冲突在三者中一致复现。"
+    },
+    {
+      "member": "IsOpenedReadOnly",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "IsOpenedViewOnly",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Version_History_of_Future_Version_Document_Example_CSharp.md",
+        "Get_Version_History_of_Future_Version_Document_Example_VB.md",
+        "Get_Version_History_of_Future_Version_Document_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "You application should check for view-only mode to determine how to proceed.",
+          "example_quote": "    vVersionHistory = swDocument.VersionHistory\n    If (Not IsEmpty(vVersionHistory)) Then\n        Debug.Print \"Version history from document:\"\n        PrintVersionHistory vVersionHistory\n    End If\n    Debug.Print \"view-only      = \" & swDocument.IsOpenedViewOnly",
+          "example_file": "Get_Version_History_of_Future_Version_Document_Example_VB.md",
+          "why": "成员页要求「先查 view-only 再决定如何继续」；示例先做 VersionHistory 查询，IsOpenedViewOnly 排在最后，检查晚于被它约束的查询。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "**NOTE:** When a file is in view-only mode, many API queries return NULL or empty data.",
+          "example_quote": "lOptions = lOptions Or swOpenDocOptions_e.swOpenDocOptions_Silent\n            swDocument = swApp.OpenDoc6(strFileName, swDocumentTypes_e.swDocPART, lOptions, \"\", lErrors, lWarnings)",
+          "example_file": "Get_Version_History_of_Future_Version_Document_Example_VBNET.md",
+          "why": "成员页说多线程加载期间文档处于 view-only、此时查询返回空；示例以 Silent 方式 OpenDoc6 后立即查询，且全程不重查加载是否完成。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 view-only 与 blocking state 对应起来：GetBlockingState() 的 swViewOnlyBlock 即 view only block；成员页未提。",
+          "example_quote": "case swBlockingStates_e.swViewOnlyBlock:",
+          "example_file": "Get_Version_History_of_Future_Version_Document_Example_CSharp.md"
+        },
+        {
+          "what": "示例说明 view-only 需与 read-only 一并读出对比（紧邻打印两行），成员页只在 See Also 交叉引用 IsOpenedReadOnly。",
+          "example_quote": "Debug.Print(\"view-only      = \" + swDocument.IsOpenedViewOnly());\n\t            Debug.Print(\"read-only      = \" + swDocument.IsOpenedReadOnly());",
+          "example_file": "Get_Version_History_of_Future_Version_Document_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例代码逐字相同，冲突与更具体处在三者中一致复现。"
+    },
+    {
+      "member": "IsOutOfDate",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例。"
+    }
+  ]
+}

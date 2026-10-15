@@ -1,0 +1,140 @@
+{
+  "idx": 153,
+  "results": [
+    {
+      "member": "GetBomBalloonTextStyle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_BOM_Balloon_Properties_Example_VB.md",
+        "Get_BOM_Balloon_Properties_Example_CSharp.md",
+        "Get_BOM_Balloon_Properties_Example_VBNET.md",
+        "Set_BOM_Balloon_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先选中该 note 再调用，并断言 IsBomBalloon；成员页 Remarks 无任何前置",
+          "example_quote": "Debug.Assert swNote.IsBomBalloon",
+          "example_file": "Set_BOM_Balloon_Example_VB.md"
+        },
+        {
+          "what": "示例前置写明必须先选中气球（GetSelectedObject6(1,-1)）才取到 swNote",
+          "example_quote": "' 2. Select the balloon specified in step 1.",
+          "example_file": "Set_BOM_Balloon_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 仅一行版本戳 SOLIDWORKS 2001 FCS R9.0，无语义可与示例冲突"
+    },
+    {
+      "member": "GetBomTableSortData",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Sort_Table_Example_VB.md",
+        "Sort_Table_Example_CSharp.md",
+        "Sort_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先选中表格（随后 ClearSelection2），成员页只有 Returns 一段",
+          "example_quote": "Set swTable = swSM.GetSelectedObject6(1, -1)",
+          "example_file": "Sort_Table_Example_VB.md"
+        },
+        {
+          "what": "示例限定该成员只在表类型为 BOM 分支里调用，并先判表类型",
+          "example_quote": "swTableAnnotationType_e.swTableAnnotation_BillOfMaterials",
+          "example_file": "Sort_Table_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetBottomBlends",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_DimXpert_Extrude_Feature_Example_VB.md",
+        "Get_DimXpert_Extrude_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例对返回值判空并给出『无底部混合』分支；成员页 Returns 未提可空",
+          "example_quote": "Debug.Print \"There are no bottom blends for this extrude.\"",
+          "example_file": "Get_DimXpert_Extrude_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只说底部混合『通常是圆角特征』，示例只打印名字，不矛盾"
+    },
+    {
+      "member": "GetBottomFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例都把同名成员调在 Extrude / CompoundHole 上，无一份调本接口"
+    },
+    {
+      "member": "GetBoundingBoxDirection1",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Slice_a_Model_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置的具体做法：SelectByID2 选 Front Plane 当第一切片平面",
+          "example_quote": "modDoc.Extension.SelectByID2(\"Front Plane\", \"PLANE\", 0, 0, 0, false, 0, null/* TODO Change to default(_) if this is not a reference type */, 0);",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        },
+        {
+          "what": "示例前置要求把文档单位改成 MKS，成员页区间 0~500 未标任何单位",
+          "example_quote": "// 2. Change units to MKS.",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "前置在示例中成立；示例额外钉死了单位口径（MKS 下的米）"
+    },
+    {
+      "member": "GetBoundingBoxDirection2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Slice_a_Model_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置的具体做法：SelectByID2 选 Front Plane 当第一切片平面",
+          "example_quote": "modDoc.Extension.SelectByID2(\"Front Plane\", \"PLANE\", 0, 0, 0, false, 0, null/* TODO Change to default(_) if this is not a reference type */, 0);",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        },
+        {
+          "what": "示例前置要求把文档单位改成 MKS，成员页线性/径向两段区间均未标单位",
+          "example_quote": "// 2. Change units to MKS.",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "前置在示例中成立；示例额外钉死了单位口径（MKS 下的米）"
+    },
+    {
+      "member": "GetBoundingBoxDirection3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Slice_a_Model_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置的具体做法：SelectByID2 选 Front Plane 当第一切片平面",
+          "example_quote": "modDoc.Extension.SelectByID2(\"Front Plane\", \"PLANE\", 0, 0, 0, false, 0, null/* TODO Change to default(_) if this is not a reference type */, 0);",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        },
+        {
+          "what": "示例取线性切片且单位 MKS（写入 -0.1397），成员页两段区间未标单位",
+          "example_quote": "boolstatus = sliceData.SetBoundingBoxDirection3(-0.1397);",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "前置在示例中成立；示例额外钉死了单位口径（MKS 下的米）"
+    }
+  ]
+}

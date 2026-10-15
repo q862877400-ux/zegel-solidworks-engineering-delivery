@@ -1,0 +1,110 @@
+{
+  "idx": 37,
+  "pages_read": 13,
+  "rows": [
+    {
+      "iface": "IView",
+      "file": "GetBomTable.md",
+      "signature": "System.object GetBomTable()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetDimensionInfo2.md",
+      "signature": "System.object GetDimensionInfo2()",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetFirstTableAnnotation.md",
+      "signature": "TableAnnotation GetFirstTableAnnotation()",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetSketchPictures.md",
+      "signature": "System.object GetSketchPictures()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetDetail.md",
+      "signature": "DetailCircle IGetDetail()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetLines4.md",
+      "signature": "System.double IGetLines4( System.short CrossHatchOption, System.int ArraySize )",
+      "obsolete": false,
+      "pointer": true,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IView",
+      "file": "InsertHoleTable3.md",
+      "signature": "System.object InsertHoleTable3( System.bool UseAnchorPoint, System.double X, System.double Y, System.int AnchorType, System.string StartValue, System.string Template, System.int TagOrder, System.int TagType, System.object ManualTags )",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IView",
+      "file": "Type.md",
+      "signature": "System.int Type {get;}",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（无括号）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "CreateDiamDim4.md",
+      "signature": "System.object CreateDiamDim4( System.object P0, System.object P1, System.object P2, System.object P3, System.object TextPoint, System.double Val, System.double TextHeight )",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "GetEditSheet.md",
+      "signature": "System.bool GetEditSheet()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "IInsertMultiJogLeader2.md",
+      "signature": "MultiJogLeader IInsertMultiJogLeader2( System.int PointsCount, ref MathPoint Points )",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "OnComponentProperties.md",
+      "signature": "void OnComponentProperties()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "ISheet",
+      "file": "GetZoneSizeRegion.md",
+      "signature": "System.int GetZoneSizeRegion()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    }
+  ]
+}

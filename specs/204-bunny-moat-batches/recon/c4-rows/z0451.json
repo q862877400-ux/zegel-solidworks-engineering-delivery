@@ -1,0 +1,137 @@
+{
+  "idx": 451,
+  "results": [
+    {
+      "member": "SetOverrideOptions",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有签名/参数/Returns/See Also，无 ## Remarks，按纪律跳过，未比对示例"
+    },
+    {
+      "member": "SetPTZHeight2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_GTol_Example_CSharp.md",
+        "Insert_GTol_Example_VB.md",
+        "Insert_GTol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都传 FrameNumber=1, TolNumber=1，且把同一对索引原样交给 GetPTZHeight2 读回",
+          "example_quote": "swGtol.SetPTZHeight2(1, 1, true, \"50\");",
+          "example_file": "Insert_GTol_Example_CSharp.md"
+        },
+        {
+          "what": "PtzHt 以字符串 \"50\" 写入、并以 out 字符串读回，页面未给任何示例取值",
+          "example_quote": "status = swGtol.GetPTZHeight2(frameNbr, tolNbr, out display, out height);",
+          "example_file": "Insert_GTol_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的「2022 之前创建的 Gtol 才有效」与示例不冲突：示例未声明运行版本，样本路径指向 2018"
+    },
+    {
+      "member": "SetPaperSize",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_DXF_File_and_Add_Dimension_Example_VB.md",
+        "Insert_DXF_File_and_Add_Dimensions_Example_CSharp.md",
+        "Insert_DXF_File_and_Add_Dimensions_Example_VBNET.md",
+        "Insert_and_Position_DXF_File_in_Drawing_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method only supports importing to a drawing; it does not support importing to a part sketch.",
+          "example_quote": "bRet = importData.SetPaperSize(\"\", (int)swDwgPaperSizes_e.swDwgPaperAsize, 0.0, 0.0);",
+          "example_file": "Insert_DXF_File_and_Add_Dimensions_Example_CSharp.md",
+          "why": "同文件紧接 set_ImportMethod(..., swImportDxfDwg_ImportToExistingPart)，前置为 Open a part，即在零件导入流程里用它"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 SetPaperSize 写进 importData，仅随 InsertDwgOrDxfFile2 一次性生效；Size 非用户自定义时 Height/Width 传 0",
+          "example_quote": "swFeat = swFeatMgr.InsertDwgOrDxfFile2(sDwgFileName, importData);",
+          "example_file": "Insert_DXF_File_and_Add_Dimensions_Example_CSharp.md"
+        }
+      ],
+      "note": "同一零件导入模式见 VBA 与 VB.NET 两份；Insert_and_Position…CSharp 走图纸导入，与 Remarks 相符"
+    },
+    {
+      "member": "SetParameterFaces",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把面数组先经 ObjectArrayToDispatchWrapperArray 包成 DispatchWrapper[] 再传入，而非直接 Face2[]",
+          "example_quote": "public DispatchWrapper[] ObjectArrayToDispatchWrapperArray(object[] Objects)",
+          "example_file": "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md"
+        },
+        {
+          "what": "先 SelectByRay 且 Type 位传 2（面），再 GetSelectedObject6 取对象，正面满足 Remarks 的 swSelFACES 限定",
+          "example_quote": "faces[0] = swSelMgr.GetSelectedObject6(1, -1);",
+          "example_file": "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例形态一致，且只传长度 1 的数组，与「编辑期只能设一个参数面」不冲突"
+    },
+    {
+      "member": "SetPartialFilletParameters",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Partial_Chamfer_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "调用前须先 EnablePartialEdgeParameters = true 并用 GetPartialEdgeFilletData(边) 取数据，成员页未提这一步",
+          "example_quote": "swFilletData.EnablePartialEdgeParameters = true;",
+          "example_file": "Create_Partial_Chamfer_Example_CSharp.md"
+        },
+        {
+          "what": "条件取 swPartialEdgeDistanceOffset 时，StartReference / EndReference 直接传 null（页面只说「仅 …ReferenceOffset 时有效」）",
+          "example_quote": "errorCode = PartialEdgeAFilletData.SetPartialFilletParameters(true, (int)swSimpleFilletPartialEdgeCondition_e.swPartialEdgeDistanceOffset, 0.01, null, (int)swSimpleFilletPartialEdgeCondition_e.swPartialEdgeDistanceOffset, 0.03, null);",
+          "example_file": "Create_Partial_Chamfer_Example_CSharp.md"
+        }
+      ],
+      "note": "返回值接进 int errorCode，与 Remarks 的 swFeatureError_e 一致；StartValue 单位两侧均未写，不构成 unit_diff"
+    },
+    {
+      "member": "SetPartialSection",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有签名/参数/Examples/See Also，无 ## Remarks，按纪律跳过，未比对示例"
+    },
+    {
+      "member": "SetPathPointAtIndex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Revision_Cloud_into_Drawing_Example_CSharp.md",
+        "Insert_Revision_Cloud_into_Drawing_Example_VB.md",
+        "Insert_Revision_Cloud_into_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整时序：InsertRevisionCloud(1) → 设 ArcRadius → Index=-1 加点 → Finalize，加点确实在 Finalize 之前",
+          "example_quote": "boolstatus = RevCloud.SetPathPointAtIndex(-1, 0.378419710263212, 0.511051398694144, 0);",
+          "example_file": "Insert_Revision_Cloud_into_Drawing_Example_CSharp.md"
+        },
+        {
+          "what": "X/Y/Z 与同例 Annotation.SetPosition 同量级（图纸空间米制），成员页未交代坐标系与单位",
+          "example_quote": "boolstatus = RevCloudAnno.SetPosition(0.270847371964905, 0.553263328912467, 0);",
+          "example_file": "Insert_Revision_Cloud_into_Drawing_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例逐字一致；Remarks 要求的 GetPathPointCount 取值域示例未用，但两者不冲突"
+    }
+  ]
+}

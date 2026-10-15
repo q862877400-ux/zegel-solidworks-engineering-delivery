@@ -1,0 +1,111 @@
+{
+  "idx": 225,
+  "results": [
+    {
+      "member": "GetNominalClosedSlot",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_DimXpert_Feature_Example_VB.md",
+        "Get_DimXpert_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把两组三分量的传参顺序与实参名写死，可看出哪组是方向、哪组是纵向",
+          "example_quote": "length, x, y, z, i, j, k, longitudeI, longitudeJ, longitudeK)",
+          "example_file": "Get_DimXpert_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例只打印 Width，未演示 Remarks 所说的纵向向量语义",
+          "example_quote": "= \"Width of nominal closed slot is \"",
+          "example_file": "Get_DimXpert_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的 “i, j, and k” 按字面指 I/J/K，而同页 Parameters 说 I/J/K 是 direction vector、纵向是 LongitudeI/J/K。"
+    },
+    {
+      "member": "GetNominalCompoundWidth",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Width_And_BestFitPlane_Features_Example_VB.md",
+        "Get_DimXpert_Width_And_BestFitPlane_Features_Example_VBNET.md",
+        "Get_and_Set_Size_Dimension_Example_CSharp.md",
+        "Get_and_Set_Size_Dimension_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过；四份示例均调用该成员。"
+    },
+    {
+      "member": "GetNominalCone",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Cone_Feature_Example_VB.md",
+        "Get_DimXpert_Cone_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过。"
+    },
+    {
+      "member": "GetNominalLine",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Intersect_Features_Example_VB.md",
+        "Get_DimXpert_Intersect_Features_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过；示例用 If boolstatus Then 包住并把 i/j/k 标为 pierce vector。"
+    },
+    {
+      "member": "GetNominalNotch",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_DimXpert_Feature2_Example_VB.md",
+        "Get_DimXpert_Feature2_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "The longitudinal i, j, and k component vectors indicate the direction of a notch's length with respect to its part axes.",
+          "example_quote": "= \"Longitudinal i-component of pierce unit vector is \"",
+          "example_file": "Get_DimXpert_Feature2_Example_VBNET.md",
+          "why": "Remarks 定死纵向三分量=VBNET 称它 pierce unit vector；但同族 VBA 示例把 pierce vector 给了非纵向的 i/j/k，两者互斥。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "VBA 示例把 (i,j,k) 命名为 pierce vector，成员页 Parameters 只说 direction vector",
+          "example_quote": "= \"I-component of pierce vector is \"",
+          "example_file": "Get_DimXpert_Feature2_Example_VB.md"
+        },
+        {
+          "what": "VBA 示例把 LongitudeI/J/K 命名为 longitudinal unit vector",
+          "example_quote": "= \"I-component of longitudinal unit vector is \"",
+          "example_file": "Get_DimXpert_Feature2_Example_VB.md"
+        }
+      ],
+      "note": "VBA 与 VB.NET 两份官方示例对 pierce 归属给出互斥命名；Remarks 只解释纵向向量。"
+    },
+    {
+      "member": "GetNominalPlane",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "两份列出的示例把 GetNominalPlane 调在 IDimXpertPlaneFeature 上，不是本接口；BestFitPlane 示例取到 IDimXpertBestfitPlaneFeature 却只调 GetSubFeature(s)。"
+    },
+    {
+      "member": "GetNominalPoint",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Intersect_Features_Example_VB.md",
+        "Get_DimXpert_Intersect_Features_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过；示例只传 x,y,z 三个 out。"
+    }
+  ]
+}

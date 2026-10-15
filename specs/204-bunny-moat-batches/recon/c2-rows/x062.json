@@ -1,0 +1,55 @@
+{
+  "idx": 62,
+  "project": "andrewbartels1",
+  "files_read": 6,
+  "calls": [
+    {
+      "member": "GetDocuments",
+      "file": "tests/scripts/cleanup_generated_integration_artifacts.py",
+      "argc": 0,
+      "has_out_variant": false,
+      "evidence": "_attr = getattr(sw_app, \"GetDocuments\", None)\n        docs = _attr() if callable(_attr) else _attr",
+      "official_found": true,
+      "official_signature": "System.object GetDocuments()",
+      "official_argc": 0,
+      "verdict": "match",
+      "note": "先 getattr 再条件调用 _attr()，实参 0 个，与官方签名形参个数相同"
+    },
+    {
+      "member": "GetPathName",
+      "file": "tests/scripts/cleanup_generated_integration_artifacts.py",
+      "argc": 0,
+      "has_out_variant": false,
+      "evidence": "path = _read_com_value(doc, \"GetPathName\")",
+      "official_found": true,
+      "official_signature": "System.string GetPathName()",
+      "official_argc": 0,
+      "verdict": "match",
+      "note": "经本文件辅助函数 _read_com_value 间接调用（内部 attr()），实参 0 个"
+    },
+    {
+      "member": "CloseDoc",
+      "file": "tests/scripts/cleanup_generated_integration_artifacts.py",
+      "argc": 1,
+      "has_out_variant": false,
+      "evidence": "sw_app.CloseDoc(path)",
+      "official_found": true,
+      "official_signature": "void CloseDoc( System.string Name )",
+      "official_argc": 1,
+      "verdict": "match",
+      "note": "两处调用点 CloseDoc(path) 与 CloseDoc(title)，各传 1 个实参，形参个数相同"
+    },
+    {
+      "member": "GetTitle",
+      "file": "tests/scripts/cleanup_generated_integration_artifacts.py",
+      "argc": 0,
+      "has_out_variant": false,
+      "evidence": "title = _read_com_value(doc, \"GetTitle\")",
+      "official_found": true,
+      "official_signature": "System.string GetTitle()",
+      "official_argc": 0,
+      "verdict": "match",
+      "note": "经本文件辅助函数 _read_com_value 间接调用（内部 attr()），实参 0 个"
+    }
+  ]
+}

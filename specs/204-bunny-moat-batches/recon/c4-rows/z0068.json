@@ -1,0 +1,175 @@
+{
+  "idx": 68,
+  "results": [
+    {
+      "member": "CreatePlaneThru3Points3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Plane_Thru_3_Points_In-context_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整调用序：进入上下文编辑、插 3D 草图并用 CreatePoint2 建三点、逐点 Select4 选中后再调本方法；Remarks 只说先前选中对象仍保持选中。",
+          "example_quote": "    bRet = swSketchPt1.Select4(True, swSelData): Debug.Assert bRet\n    bRet = swSketchPt2.Select4(True, swSelData): Debug.Assert bRet\n    bRet = swSketchPt3.Select4(True, swSelData): Debug.Assert bRet\n    ' Create plane in part/component\n    Set swPlane = swModel.CreatePlaneThru3Points3(True)",
+          "example_file": "Create_Plane_Thru_3_Points_In-context_Example_VB.md"
+        },
+        {
+          "what": "Remarks 建议用 IEntity::Select4 去选新建的基准面；示例里 Select4 选的是三个草图点，第二实参传 SelectData 而非空 Callout。",
+          "example_quote": "    bRet = swSketchPt1.Select4(True, swSelData): Debug.Assert bRet",
+          "example_file": "Create_Plane_Thru_3_Points_In-context_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 三段（显示开关、不自动选中、返回 IRefPlane）与唯一那份示例一致，未见冲突。"
+    },
+    {
+      "member": "CreatePlotFeatureData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Create_Plots_and_Get_Values_Example_CSharp.md",
+        "sldworksapi__Create_Plots_and_Get_Values_Example_VB.md",
+        "sldworksapi__Create_Plots_and_Get_Values_Example_VBNET.md",
+        "swmotionstudyapi__Create_Plots_and_Get_Values_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Set the entities for the x-axis and y-axis feature data objects.",
+          "example_quote": "            swSimPlotYAxisFeatureData[0].Entities = swEntityArray;\n            swSimPlotYAxisFeatureData[1].Entities = swEntityArray;",
+          "example_file": "sldworksapi__Create_Plots_and_Get_Values_Example_CSharp.md",
+          "why": "Remarks 第 8 步要求 x 轴与 y 轴都设 Entities；示例只给两个 y 轴对象赋 Entities，x 轴对象从头到尾没设，照样出图。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例建了两次 y 轴数据对象（两幅图各一个），并让两次 InsertPlotFeature 共用同一个 x 轴对象；Remarks 第 5 步未说数量与复用。",
+          "example_quote": "            swSimPlotXAxisFeatureData = (MotionPlotAxisFeatureData)MotionStudyResults.CreatePlotXAxisFeatureData();\n            swSimPlotYAxisFeatureData[0] = (MotionPlotAxisFeatureData)MotionStudyResults.CreatePlotYAxisFeatureData();\n            swSimPlotYAxisFeatureData[1] = (MotionPlotAxisFeatureData)MotionStudyResults.CreatePlotYAxisFeatureData();",
+          "example_file": "sldworksapi__Create_Plots_and_Get_Values_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例代码内容逐行一致；Remarks 步骤表只在第 8 步与示例对不上。"
+    },
+    {
+      "member": "CreatePlotXAxisFeatureData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Create_Plots_and_Get_Values_Example_CSharp.md",
+        "sldworksapi__Create_Plots_and_Get_Values_Example_VB.md",
+        "sldworksapi__Create_Plots_and_Get_Values_Example_VBNET.md",
+        "swmotionstudyapi__Create_Plots_and_Get_Values_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Set the entities for the x-axis and y-axis feature data objects.",
+          "example_quote": "            swSimPlotYAxisFeatureData[0].Entities = swEntityArray;\n            swSimPlotYAxisFeatureData[1].Entities = swEntityArray;",
+          "example_file": "sldworksapi__Create_Plots_and_Get_Values_Example_CSharp.md",
+          "why": "Remarks 要求给 x 轴对象也设 Entities；示例建好 x 轴对象后只设 y 轴，x 轴的 Entities 与 Type 全程未赋，仍能出图。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例建了两次 y 轴数据对象（两幅图各一个），并让两次 InsertPlotFeature 共用同一个 x 轴对象；Remarks 第 5 步未说数量与复用。",
+          "example_quote": "            swSimPlotXAxisFeatureData = (MotionPlotAxisFeatureData)MotionStudyResults.CreatePlotXAxisFeatureData();\n            swSimPlotYAxisFeatureData[0] = (MotionPlotAxisFeatureData)MotionStudyResults.CreatePlotYAxisFeatureData();\n            swSimPlotYAxisFeatureData[1] = (MotionPlotAxisFeatureData)MotionStudyResults.CreatePlotYAxisFeatureData();",
+          "example_file": "sldworksapi__Create_Plots_and_Get_Values_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例代码内容逐行一致；Remarks 步骤表只在第 8 步与示例对不上。"
+    },
+    {
+      "member": "CreatePlotYAxisFeatureData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Create_Plots_and_Get_Values_Example_CSharp.md",
+        "sldworksapi__Create_Plots_and_Get_Values_Example_VB.md",
+        "sldworksapi__Create_Plots_and_Get_Values_Example_VBNET.md",
+        "swmotionstudyapi__Create_Plots_and_Get_Values_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Set the entities for the x-axis and y-axis feature data objects.",
+          "example_quote": "            swSimPlotYAxisFeatureData[0].Entities = swEntityArray;\n            swSimPlotYAxisFeatureData[1].Entities = swEntityArray;",
+          "example_file": "sldworksapi__Create_Plots_and_Get_Values_Example_CSharp.md",
+          "why": "同一句 Remarks 同时管 x 轴与 y 轴；示例只落实了 y 轴那一半，x 轴对象从未设 Entities，两条不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例建了两次 y 轴数据对象（两幅图各一个），并让两次 InsertPlotFeature 共用同一个 x 轴对象；Remarks 第 5 步未说数量与复用。",
+          "example_quote": "            swSimPlotXAxisFeatureData = (MotionPlotAxisFeatureData)MotionStudyResults.CreatePlotXAxisFeatureData();\n            swSimPlotYAxisFeatureData[0] = (MotionPlotAxisFeatureData)MotionStudyResults.CreatePlotYAxisFeatureData();\n            swSimPlotYAxisFeatureData[1] = (MotionPlotAxisFeatureData)MotionStudyResults.CreatePlotYAxisFeatureData();",
+          "example_file": "sldworksapi__Create_Plots_and_Get_Values_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例代码内容逐行一致；Remarks 步骤表只在第 8 步与示例对不上。"
+    },
+    {
+      "member": "CreatePoint",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Convert_Drawing_Views_to_Sketches_Example_CSharp.md",
+        "Convert_Drawing_Views_to_Sketches_Example_VB.md",
+        "Convert_Drawing_Views_to_Sketches_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出实参形态：先 Dim nPt(2) As Double 填三个分量，再 vPt = nPt 赋成 Variant 传入；成员页只写「Array of doubles」。",
+          "example_quote": "    nPt(0) = 1.41\n    nPt(1) = 3.88\n    nPt(2) = 0\n    vPt = nPt\n    Set insertionPt = swMathUtil.CreatePoint(vPt)",
+          "example_file": "Convert_Drawing_Views_to_Sketches_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，跳过冲突判定。Create_Advanced_Hole_Example_CSharp.md 调的是 SketchManager.CreatePoint，非本成员，已剔除。"
+    },
+    {
+      "member": "CreatePoint2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Calculate_Closest_Distance_Between_Model_Components_Example_VB.md",
+        "Create_Plane_Thru_3_Points_In-context_Example_VB.md",
+        "Create_Sketch_Line_with_Visual_Properties_Example_VB.md",
+        "Get_Intersecting_Face_and_Edge_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method creates a point in the active 2D or 3D sketch. If a sketch is not active, the point is not created and NULL is returned.",
+          "example_quote": "    Set pSketchPoint1 = pDrawing.CreatePoint2(0.1, 0.14, 0)",
+          "example_file": "Create_Sketch_Line_with_Visual_Properties_Example_VB.md",
+          "why": "该示例在新建工程图里直接调用，全文未插入任何草图（前置写 None），却把返回的点当作草图实体使用；与「无活动草图则不创建并返回 NULL」不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序：SetAddToDB True → Insert3DSketch2 False → CreatePoint2 → SetAddToDB False → Insert3DSketch2 True；Remarks 只说这两个成员能提性能。",
+          "example_quote": "    swModel.SetAddToDB True\n    swModel.Insert3DSketch2 False\n    Set swSkPoint1 = swModel.CreatePoint2(vPt1(0), vPt1(1), vPt1(2))\n    Set swSkPoint2 = swModel.CreatePoint2(vPt2(0), vPt2(1), vPt2(2))",
+          "example_file": "Calculate_Closest_Distance_Between_Model_Components_Example_VB.md"
+        },
+        {
+          "what": "示例把 ClosestDistance 返回的坐标原样喂进 CreatePoint2，打印时乘 1000 才写 mm；成员页对 PointX/PointY/PointZ 完全没写单位。",
+          "example_quote": "    Debug.Print \" 1 = (\" & vPt1(0) * 1000# & \", \" & vPt1(1) * 1000# & \", \" & vPt1(2) * 1000# & \") mm\"",
+          "example_file": "Calculate_Closest_Distance_Between_Model_Components_Example_VB.md"
+        }
+      ],
+      "note": "其余三例都在活动 3D 草图内调用，与 Remarks 一致。本页顶部标 Obsolete，示例仍照用它。"
+    },
+    {
+      "member": "CreatePolygon",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Polygon_Example_CSharp.md",
+        "Create_Polygon_Example_VB.md",
+        "Create_Polygon_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序与返回形态：先 InsertSketch False 建草图，返回值直接接成 SketchSegment 数组，末尾 InsertSketch True 退出。",
+          "example_quote": "    swSketchMgr.InsertSketch False\n    polygon = swSketchMgr.CreatePolygon(-2.5, 0.88, 0#, -2.21, -2.13, 0#, 6, False)\n    swModel.ViewZoomtofit2\n    ' Set the selection mode to default\n    swModel.SetPickMode\n    swSketchMgr.InsertSketch True",
+          "example_file": "Create_Polygon_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，跳过冲突判定；三份示例的坐标、Sides 与 Inscribed 取值完全一致。"
+    }
+  ]
+}

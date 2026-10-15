@@ -1,0 +1,2940 @@
+{
+ "rows": [
+  {
+   "op": "3d_sketch",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_is_3d`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "3point_arc",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_3point_arc`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "activate_configuration",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_activate_configuration`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "activate_display_state",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_activate_configuration', 'solidworks_activate_model_for_preview', 'solidworks_config_activate']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "activate_document",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_activate_configuration`",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "activate_drawing_view",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_activate_configuration', 'solidworks_activate_model_for_preview', 'solidworks_assembly_create_exploded_view']",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "activate_sheet",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_activate_configuration', 'solidworks_activate_model_for_preview', 'solidworks_config_activate']",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "active_document_info",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_current_sheet_info', 'solidworks_export_active', 'solidworks_feature_info']",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "advanced_features",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_review_advanced_geometry', 'solidworks_inspect_hole_features', 'solidworks_weldment_iter_features']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "analyze_draft",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_mold_draft_analysis', 'solidworks_sheet_metal_create_draft']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "analyze_drawing_annotations",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence', 'solidworks_drawing_create_auxiliary_view']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "analyze_drawing_comprehensive",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence', 'solidworks_drawing_create_auxiliary_view']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "analyze_drawing_dimensions",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence', 'solidworks_drawing_create_auxiliary_view']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "analyze_drawing_views",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence', 'solidworks_drawing_create_auxiliary_view']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "analyze_geometry",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_review_advanced_geometry', 'solidworks_ref_geometry_create_3d_bounding_box', 'solidworks_review_collect_geometry_measurements']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "analyze_macro",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_macro_build_prompt', 'solidworks_macro_extract_vba_code', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "annotation",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "api_automation",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_api_deprecated_successor', 'solidworks_automation_enter_command_lock', 'solidworks_automation_exit_command_lock']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "appearance",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_collect_appearance_evidence`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "appearance_color",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_appearance_delete_render_material', 'solidworks_collect_appearance_evidence', 'solidworks_set_appearance']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "apply_drawing_template",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_apply_component_transform_x', 'solidworks_costing_default_template', 'solidworks_costing_set_default_template']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "apply_template",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_apply_component_transform_x', 'solidworks_costing_default_template', 'solidworks_costing_set_default_template']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "arc",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_3point_arc`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "assembly",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_assembly_auto_explode`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "assembly_analysis",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_add_mate_checked', 'solidworks_assembly_add_parallel_mate', 'solidworks_assembly_apply_component_transform_x']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "assembly_components",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_assembly_list_components`",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "assembly_configurations",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_add_mate_checked', 'solidworks_assembly_add_parallel_mate', 'solidworks_assembly_apply_component_transform_x']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "assembly_mates",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_assembly_list_mates`",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "assembly_tree",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_add_mate_checked', 'solidworks_assembly_add_parallel_mate', 'solidworks_assembly_apply_component_transform_x']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "auto_center_marks",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_auto_explode', 'solidworks_auto_dimension_sketch', 'solidworks_drawing_insert_center_marks']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "auto_dimension_view",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_dimension', 'solidworks_assembly_auto_explode', 'solidworks_assembly_create_exploded_view']",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "auxiliary_view",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_create_auxiliary_view`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "background",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "balloon",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "base_flange",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sheet_metal_create_base_flange`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "batch_apply_template",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_apply_component_transform_x', 'solidworks_batch_export_files', 'solidworks_costing_default_template']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "batch_execute_macros",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "batch_export",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_batch_export_files`",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "batch_file_operations",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files', 'solidworks_macro_write_file']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "batch_operations",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "batch_process_files",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "batch_run_macros",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_run_fea', 'cadstudio_run_fea_convergence', 'solidworks_batch_export_files']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "batch_vba",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files', 'solidworks_macro_extract_vba_code', 'solidworks_macro_validate_vba_code']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "bbox",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "bodies",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_costing_list_bodies`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "bom",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_export_assembly_bom`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "boundary_boss",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_extrude_boss', 'solidworks_revolve_boss']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "broken_view",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_create_broken_view`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "calculate_mass_properties",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_config_set_custom_properties', 'solidworks_gear_calculate_spur', 'solidworks_insert_center_of_mass']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "capture_screenshot",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "center_mark",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_insert_center_marks', 'solidworks_insert_center_of_mass', 'solidworks_selection_set_object_mark']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "centerline",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_centerline`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "chamfer",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_chamfer`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "check_drawing_compliance",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_check_dfm', 'cadstudio_check_routing', 'solidworks_assembly_check_interference']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "check_drawing_standards",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_check_dfm', 'cadstudio_check_routing', 'solidworks_assembly_check_interference']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "check_errors",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_check_dfm', 'cadstudio_check_routing', 'solidworks_assembly_check_interference']",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "check_geometry",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_check_dfm', 'cadstudio_check_routing', 'cadstudio_review_advanced_geometry']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "check_sketch_fully_defined",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_check_dfm', 'cadstudio_check_routing', 'solidworks_add_sketch_relation']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "circle",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_perimeter_circle`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "circular_pattern",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_circular_pattern`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "classify_feature_tree",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_create_hole_feature', 'solidworks_feature_cosmetic_thread', 'solidworks_feature_delete']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "clear_selection",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_clear_selection_for_preview`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "close_all",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_close_documents']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "close_document",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_close_documents`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "close_model",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_close_documents`",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "close_sketch",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_sketch_relation', 'solidworks_auto_dimension_sketch', 'solidworks_close_documents']",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "combine_bodies",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_costing_list_bodies']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "compare_drawing_templates",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_costing_list_templates', 'solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "compare_drawing_versions",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence', 'solidworks_drawing_create_auxiliary_view']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "compare_templates",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_costing_list_templates']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "component",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_assembly_replace_component`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "component_fixed",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_set_component_fixed`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "components",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_assembly_list_components`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "composite_curve",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_part_insert_composite_curve`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "configuration",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_create_configuration`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "configurations",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_inspect_configurations`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "configurations_batch",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files', 'solidworks_inspect_configurations']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "connect",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_connect`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "construction_geometry",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_review_advanced_geometry', 'solidworks_ref_geometry_create_3d_bounding_box', 'solidworks_review_collect_geometry_measurements']",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "convert_entities",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_convert_entities`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "convert_file_format",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_write_open_format', 'solidworks_drawing_set_sheet_format', 'solidworks_macro_write_file']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "convert_text_to_native_macro",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_macro_build_prompt', 'solidworks_macro_extract_vba_code', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "curve_driven_pattern",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_circular_pattern', 'solidworks_hole_pattern', 'solidworks_insert_curve_through_points']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "custom_prop",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_config_read_custom_property', 'solidworks_config_set_custom_properties', 'solidworks_custom_property_count']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "delete_body",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_appearance_delete_render_material', 'solidworks_costing_body_count', 'solidworks_costing_read_body']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "delete_equation",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_equation_delete`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "delete_face",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_insert_delete_face`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "delete_feature",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_feature_delete`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "design_table",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_create_hole_table', 'solidworks_drawing_create_revision_table', 'solidworks_fastener_table_types']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "design_table_create",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_create_ocp_loft', 'cadstudio_create_ocp_surface', 'solidworks_assembly_create_exploded_view']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "design_table_refresh",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_create_hole_table', 'solidworks_drawing_create_revision_table', 'solidworks_fastener_table_types']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "detail_view",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_create_detail_view`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "diagnose_macro_execution",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_macro_build_prompt', 'solidworks_macro_extract_vba_code', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "diameter_dimension",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_dimension', 'solidworks_auto_dimension_sketch', 'solidworks_config_update_dimension']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "dimension",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_auto_dimension_sketch`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "display_mode",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_view_get_display_mode`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "display_states",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_view_get_display_mode', 'solidworks_view_set_display_mode']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "dome",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_part_insert_dome`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "draft",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_mold_draft_analysis`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "drawing",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_set_sheet_scale`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "drawing_annotations",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_view_annotations`",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "drawing_dimension",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_dimension', 'solidworks_auto_dimension_sketch', 'solidworks_config_update_dimension']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "drawing_dimensions",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence', 'solidworks_drawing_create_auxiliary_view']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "drawing_from_model",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence', 'solidworks_drawing_create_auxiliary_view']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "drawing_scale",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_set_sheet_scale`",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "drawing_sheet_format",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_set_sheet_format`",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "drawing_sheet_info",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_current_sheet_info`",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "drawing_sheet_size",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_costing_set_default_lot_size', 'solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "drawing_sketch",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_sketch_relation', 'solidworks_auto_dimension_sketch', 'solidworks_current_sketch_name']",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "drawing_tables",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence', 'solidworks_drawing_create_auxiliary_view']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "drawing_vba",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence', 'solidworks_drawing_create_auxiliary_view']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "drawing_view",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_collect_view_evidence`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "drawing_views",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_create_three_standard_views`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "edge_flange",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sheet_metal_create_edge_flange`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "edges",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "edit_macro",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_edit_explode_parameters', 'solidworks_assembly_exit_edit_part_in_context', 'solidworks_macro_build_prompt']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "edit_sketch",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_sketch_relation', 'solidworks_assembly_edit_explode_parameters', 'solidworks_assembly_exit_edit_part_in_context']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "ellipse",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_partial_ellipse`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "end_cap",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_weldment_insert_end_cap`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "equation",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_equation_evaluate`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "error_handling",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "execute_macro",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_macro_build_prompt', 'solidworks_macro_extract_vba_code', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "execute_workflow",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "exit_sketch",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_sketch_relation', 'solidworks_assembly_exit_edit_part_in_context', 'solidworks_auto_dimension_sketch']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "explode_assembly",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_assembly_auto_explode`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "export_document",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_export_parasolid`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "export_drawing_dwg",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files', 'solidworks_delivery_export_bom_csv', 'solidworks_drawing_add_note']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "export_drawing_pdf",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files', 'solidworks_delivery_export_bom_csv', 'solidworks_drawing_add_note']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "export_dwg",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files', 'solidworks_delivery_export_bom_csv', 'solidworks_export_active']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "export_file",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files', 'solidworks_delivery_export_bom_csv', 'solidworks_export_active']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "export_flat_pattern",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files', 'solidworks_circular_pattern', 'solidworks_delivery_export_bom_csv']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "export_iges",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_export_iges`",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "export_image",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_export_image`",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "export_pdf",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files', 'solidworks_delivery_export_bom_csv', 'solidworks_export_active']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "export_step",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_export_step`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "export_stl",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_export_stl`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "export_vba",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files', 'solidworks_delivery_export_bom_csv', 'solidworks_export_active']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "export_with_options",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files', 'solidworks_delivery_export_bom_csv', 'solidworks_export_active']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "extend_surface",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_surface_extend`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "extract_drawing_template",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_costing_default_template', 'solidworks_costing_set_default_template', 'solidworks_drawing_add_note']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "extract_template",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_costing_default_template', 'solidworks_costing_set_default_template', 'solidworks_macro_extract_vba_code']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "extrude",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_extrude_cut`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "extrude_cut",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_extrude_cut`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "extruded_surface",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_surface_create_extruded`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "faces",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "feature_vba",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_create_hole_feature', 'solidworks_feature_cosmetic_thread', 'solidworks_feature_delete']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "features",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_inspect_hole_features`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "file_properties",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_config_set_custom_properties', 'solidworks_macro_write_file', 'solidworks_part_mass_properties']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "fill_pattern",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_circular_pattern', 'solidworks_hole_pattern', 'solidworks_pattern_params']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "filled_surface",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_create_ocp_surface', 'solidworks_create_revolved_surface', 'solidworks_drawing_insert_surface_finish_symbol']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "fillet",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_fillet_params`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "fix_component",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_component', 'solidworks_assembly_apply_component_transform_x', 'solidworks_assembly_replace_component']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "flat_pattern_info",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_circular_pattern', 'solidworks_drawing_current_sheet_info', 'solidworks_feature_info']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "flatten_sheet_metal",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_current_sheet_info', 'solidworks_drawing_current_sheet_name', 'solidworks_drawing_get_current_sheet']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "fold",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "gdt",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "generate_drawing_report",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_build_review_report', 'solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "generate_vba_assembly_insert",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_add_mate_checked', 'solidworks_assembly_add_parallel_mate', 'solidworks_assembly_apply_component_transform_x']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "generate_vba_assembly_mates",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_add_mate_checked', 'solidworks_assembly_add_parallel_mate', 'solidworks_assembly_apply_component_transform_x']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "generate_vba_batch_export",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_batch_export_files', 'solidworks_delivery_export_bom_csv', 'solidworks_export_active']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "generate_vba_code",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_generate_drawing', 'solidworks_macro_extract_vba_code', 'solidworks_macro_validate_vba_code']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "generate_vba_drawing_dimensions",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence', 'solidworks_drawing_create_auxiliary_view']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "generate_vba_drawing_views",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence', 'solidworks_drawing_create_auxiliary_view']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "generate_vba_extrusion",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_generate_drawing', 'solidworks_macro_extract_vba_code', 'solidworks_macro_validate_vba_code']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "generate_vba_file_operations",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_generate_drawing', 'solidworks_macro_extract_vba_code', 'solidworks_macro_validate_vba_code']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "generate_vba_macro_recorder",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_generate_drawing', 'solidworks_macro_build_prompt', 'solidworks_macro_extract_vba_code']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "generate_vba_part_modeling",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_exit_edit_part_in_context', 'solidworks_create_basic_part', 'solidworks_generate_drawing']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "generate_vba_revolve",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_generate_drawing', 'solidworks_macro_extract_vba_code', 'solidworks_macro_validate_vba_code']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "generate_vba_script",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_generate_drawing', 'solidworks_macro_extract_vba_code', 'solidworks_macro_validate_vba_code']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "global_var",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_insert_global_bounding_box']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "gusset",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_weldment_gusset_create`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "helix",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_helix_insert`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "hem",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "hide_all_planes",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "hide_all_sketches",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "hide_component",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_component', 'solidworks_assembly_apply_component_transform_x', 'solidworks_assembly_replace_component']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "hole",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_hole_through_by_selection`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "hole_table",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_create_hole_table`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "initialized_macro",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_macro_build_prompt', 'solidworks_macro_extract_vba_code', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "interference",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_assembly_check_interference`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "intersect",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "jog",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "knit_surfaces",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_surface_knit']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "line",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_line`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "linear_pattern",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_linear_pattern`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "link_dimension_to_equation",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_dimension', 'solidworks_auto_dimension_sketch', 'solidworks_config_update_dimension']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "load_assembly",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_add_mate_checked', 'solidworks_assembly_add_parallel_mate', 'solidworks_assembly_apply_component_transform_x']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "load_part",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_exit_edit_part_in_context', 'solidworks_create_basic_part', 'solidworks_misumi_suggest_part']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "loft",
+   "state": "换名已有",
+   "why": "词根全落在 `cadstudio_create_ocp_loft`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "macro_library",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_macro_build_prompt', 'solidworks_macro_extract_vba_code', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "macro_recording",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_macro_build_prompt', 'solidworks_macro_extract_vba_code', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "manage_design_table",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_create_hole_table', 'solidworks_drawing_create_revision_table', 'solidworks_fastener_table_types']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "manage_file_properties",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_config_set_custom_properties', 'solidworks_macro_write_file', 'solidworks_part_mass_properties']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "mass_props",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_insert_center_of_mass', 'solidworks_part_mass_properties', 'solidworks_topology_create_mass_constraint']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "mate",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_add_distance_mate`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "material",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_costing_set_default_material`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "materials",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_list_render_materials`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "mates",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_assembly_list_mates`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "measure",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_measure_selection`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "measure_distance",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_distance_mate', 'solidworks_measure_selection']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "mirror",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_mirror`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "mirror_component",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_component', 'solidworks_assembly_apply_component_transform_x', 'solidworks_assembly_replace_component']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "mirror_feature",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_mirror_feature`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "miter_flange",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sheet_metal_insert_miter_flange`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "model_annotations",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_view_annotations`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "model_info",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_feature_info`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "model_view",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_view_roll_view`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "motion_study",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_motion_study_manager`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "move_body",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_costing_body_count', 'solidworks_costing_read_body', 'solidworks_entities_on_body']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "move_component",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_component', 'solidworks_assembly_apply_component_transform_x', 'solidworks_assembly_replace_component']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "native_macro_recording",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_macro_build_prompt', 'solidworks_macro_extract_vba_code', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "new_document",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_new_document`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "offset_surface",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_insert_offset_surface`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "open_document",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_open_document`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "open_documents",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_write_open_format', 'solidworks_close_documents', 'solidworks_open_document']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "open_model",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_open_document`",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "operations",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "optimize_macro",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_macro_build_prompt', 'solidworks_macro_extract_vba_code', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "optimize_performance",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "pack_and_go_assembly",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_add_mate_checked', 'solidworks_assembly_add_parallel_mate', 'solidworks_assembly_apply_component_transform_x']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "part",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_misumi_suggest_part`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "parting_line",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_mold_parting_line`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "pattern_circular",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_circular_pattern`",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "pattern_component_circular",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_component', 'solidworks_assembly_apply_component_transform_x', 'solidworks_assembly_replace_component']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "pattern_component_linear",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_component', 'solidworks_assembly_apply_component_transform_x', 'solidworks_assembly_replace_component']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "pattern_features",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_circular_pattern', 'solidworks_hole_pattern', 'solidworks_inspect_hole_features']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "pause_resume_macro_recording",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_macro_build_prompt', 'solidworks_macro_extract_vba_code', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "pdm_configure",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_mesh_configure_import_preferences', 'solidworks_simulation_configure_buckling_solver', 'solidworks_simulation_configure_frequency_solver']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "pdm_operations",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "planar_surface",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_insert_planar_surface`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "point",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_insert_reference_point`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "polygon",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_polygon`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "projected_curve",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_create_projected_view', 'solidworks_insert_curve_through_points', 'solidworks_part_insert_composite_curve']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "projected_view",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_create_projected_view`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "rebuild_document",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "rebuild_model",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "recording",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "rectangle",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_3point_center_rectangle`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "ref_axis",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_insert_lofted_ref_surface', 'solidworks_insert_ref_plane', 'solidworks_part_axis']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "ref_plane",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_insert_ref_plane`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "reference_geometry",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_review_advanced_geometry', 'solidworks_assembly_external_reference_count', 'solidworks_insert_reference_point']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "reference_planes",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_external_reference_count', 'solidworks_insert_reference_point']",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "reference_point",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_insert_reference_point`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "referenced_documents",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_close_documents']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "relation",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_add_sketch_relation`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "rename_feature",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_create_hole_feature', 'solidworks_feature_cosmetic_thread', 'solidworks_feature_delete']",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "replace_component",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_assembly_replace_component`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "revision_table",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_create_revision_table`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "revolve",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_revolve_params`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "revolved_surface",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_create_revolved_surface`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "rib",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_part_rib`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "run_macro",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_macro_run`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "run_simulation",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_simulation_run_analysis`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "run_vba_code",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_run_fea', 'cadstudio_run_fea_convergence', 'solidworks_macro_extract_vba_code']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "run_vba_macro",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_run_fea', 'cadstudio_run_fea_convergence', 'solidworks_macro_build_prompt']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "save_active_document",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_export_active', 'solidworks_get_active_view', 'solidworks_review_active']",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "save_all",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_save_document']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "save_as",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_save_document']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "save_as_copy",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_save_document']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "save_assembly",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_add_mate_checked', 'solidworks_assembly_add_parallel_mate', 'solidworks_assembly_apply_component_transform_x']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "save_body_as_part",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_exit_edit_part_in_context', 'solidworks_costing_body_count', 'solidworks_costing_read_body']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "save_document",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_save_document`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "save_file",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_macro_write_file', 'solidworks_save_document']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "save_part",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_exit_edit_part_in_context', 'solidworks_create_basic_part', 'solidworks_misumi_suggest_part']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "save_template_to_library",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_costing_default_template', 'solidworks_costing_set_default_template', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "save_to_template_library",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_costing_default_template', 'solidworks_costing_set_default_template', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "scale_body",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_costing_body_count', 'solidworks_costing_read_body', 'solidworks_drawing_set_sheet_scale']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "section_view",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_create_section_view`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "security",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "security_info",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_current_sheet_info', 'solidworks_feature_info']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "select_entity",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_select_entity_by_index`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "sensors",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_read_sensors`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "setup_template_positions",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_costing_default_template', 'solidworks_costing_set_default_template', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sheet",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_set_sheet_scale`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "sheet_metal",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sheet_metal_create_base_flange`",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sheets",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_list_sheets`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "shell",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_shell_params`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "show_all_planes",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_show_exploded']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "show_all_sketches",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_show_exploded']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "shut_off_surface",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_mold_shut_off_surface`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "simple_extrude",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_extrude_boss', 'solidworks_extrude_cut', 'solidworks_extrude_depth']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "simulation_setup",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_list_simulation_study_options', 'solidworks_simulation_activate_plot', 'solidworks_simulation_apply_fixed_restraint']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "simulation_study",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_list_simulation_study_options`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "sketch",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_offset`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_arc",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_3point_arc`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_centerline",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_centerline`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_chamfer",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_create_chamfer`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "sketch_circle",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_perimeter_circle`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_circular_pattern",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_circular_pattern`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_constraint",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_sketch_relation', 'solidworks_auto_dimension_sketch', 'solidworks_current_sketch_name']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_construction",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_sketch_relation', 'solidworks_auto_dimension_sketch', 'solidworks_current_sketch_name']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "sketch_convert_entities",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_convert_entities`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "sketch_dimension",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_auto_dimension_sketch`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_ellipse",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_partial_ellipse`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_extend",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_extend`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "sketch_fillet",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_fillet`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "sketch_line",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_line`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_linear_pattern",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_linear_pattern`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_mirror",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_mirror`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_offset",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_offset`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_polygon",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_polygon`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_rectangle",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_add_3point_center_rectangle`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_segments",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_count_segments`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "sketch_spline",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_spline`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sketch_status",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_fully_defined_status`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "sketch_text",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_sketch_relation', 'solidworks_auto_dimension_sketch', 'solidworks_current_sketch_name']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "sketch_trim",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_trim`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "sketch_tutorial_simple_hole",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_add_sketch_relation', 'solidworks_auto_dimension_sketch', 'solidworks_create_hole_feature']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "sketched_bend",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_sheet_metal_create_one_bend']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "sketches",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "slot",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_slot_semicircular_by_selection`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "spline",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sketch_spline`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "split_body",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_costing_body_count', 'solidworks_costing_read_body', 'solidworks_entities_on_body']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "split_line",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_mold_core_cavity_split', 'solidworks_mold_parting_line', 'solidworks_sketch_add_line']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "standard_views",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_drawing_create_three_standard_views`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "status",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_addin_host_status`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "stop_macro_recording",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_macro_build_prompt', 'solidworks_macro_extract_vba_code', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "stop_native_macro_recording",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_macro_build_prompt', 'solidworks_macro_extract_vba_code', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "stop_recording",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_view_stop_dynamics']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "structural_member",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_weldment_create_structural_member`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "suppress",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_feature_suppress`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "suppress_component",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_assembly_suppress_component`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "surface_modeling",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_create_ocp_surface', 'solidworks_create_revolved_surface', 'solidworks_drawing_insert_surface_finish_symbol']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "sweep",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_sweep_params`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server",
+    "Slacker-LLC/solidworks-mcp",
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "take_photoview_screenshot",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "technical_drawing",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence', 'solidworks_drawing_create_auxiliary_view']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "template",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_costing_set_default_template`",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "template_custom_properties",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_config_read_custom_property', 'solidworks_config_set_custom_properties', 'solidworks_costing_default_template']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "template_library",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_costing_default_template', 'solidworks_costing_set_default_template', 'solidworks_macro_fallback_template']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "thicken_surface",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_create_ocp_surface', 'solidworks_create_revolved_surface', 'solidworks_drawing_insert_surface_finish_symbol']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "tooling_split",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_mold_core_cavity_split']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "trim_surface",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_create_ocp_surface', 'solidworks_create_revolved_surface', 'solidworks_drawing_insert_surface_finish_symbol']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "trim_weldment",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_sketch_trim', 'solidworks_weldment_create_cut_list', 'solidworks_weldment_create_profile_center_mate']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "tutorial_simple_hole",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_create_hole_feature', 'solidworks_drawing_create_hole_table', 'solidworks_hole_blind_by_selection']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "undo",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_undo`",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "unfold",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "units",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_read_document_units`",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "unsuppress_feature",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_feature_unsuppress`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "update_sheet_format",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['cadstudio_write_open_format', 'solidworks_config_update_dimension', 'solidworks_drawing_current_sheet_info']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python",
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "update_title_block",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_config_update_dimension', 'solidworks_update_dimension', 'solidworks_weldment_update_cut_list']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "validate_drawing_completeness",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_add_note', 'solidworks_drawing_collect_view_evidence', 'solidworks_drawing_create_auxiliary_view']",
+   "sources": [
+    "andrewbartels1/SolidworksMCP-python"
+   ]
+  },
+  {
+   "op": "vertices",
+   "state": "真缺",
+   "why": "词根与 340 个工具名零交集",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "view",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_view_roll_view`",
+   "sources": [
+    "Slacker-LLC/solidworks-mcp"
+   ]
+  },
+  {
+   "op": "view_grayscale_enhanced",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_create_exploded_view', 'solidworks_assembly_exploded_view_configuration', 'solidworks_assembly_get_exploded_view_count']",
+   "sources": [
+    "vespo92/SolidworksMCP-TS"
+   ]
+  },
+  {
+   "op": "view_orientation",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_assembly_create_exploded_view', 'solidworks_assembly_exploded_view_configuration', 'solidworks_assembly_get_exploded_view_count']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "view_rotate",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_view_rotate_about_center`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "weld_symbol",
+   "state": "判不了",
+   "why": "只有部分词根命中，候选 ['solidworks_drawing_insert_surface_finish_symbol', 'solidworks_simulation_get_edge_weld_connector', 'solidworks_weldment_create_sub_weld_folder']",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "wrap",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_part_wrap`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  },
+  {
+   "op": "zoom_to_fit",
+   "state": "换名已有",
+   "why": "词根全落在 `solidworks_view_zoom_to_fit`",
+   "sources": [
+    "Eduardof0nt/Solidworks-MCP-Server"
+   ]
+  }
+ ],
+ "counts": {
+  "换名已有": 150,
+  "判不了": 172,
+  "真缺": 27
+ },
+ "n_mine": 441,
+ "n_union": 349
+}

@@ -1,0 +1,122 @@
+{
+  "idx": 5,
+  "results": [
+    {
+      "name": "motion_study",
+      "level": "verified",
+      "members_found": [
+        "GetMotionStudyManager",
+        "CreateMotionStudy",
+        "Activate",
+        "SetDuration",
+        "GetMotionStudyCount",
+        "GetMotionStudyNames",
+        "GetMotionStudy",
+        "StudyType",
+        "GetResults",
+        "GetNumOfExternalMotors",
+        "GetNumOfExternalForces",
+        "GetMotionFeatures",
+        "GetMotionFeaturesCount",
+        "GetTypeName2",
+        "GetDuration",
+        "IsActive",
+        "IsPlaying",
+        "IsOutOfDate",
+        "Name"
+      ],
+      "examples_used": [
+        "sldworksapi__Create_Motion_Studies_Example_VB.md",
+        "Add_Damper_to_Motion_Study_Example_VB.md",
+        "Get_Motion_Study_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+        "sldworksapi__Add_Spring_to_Motion_Study_Example_VBNET.md"
+      ],
+      "preconditions": [
+        {
+          "text": "打开一个尚无用户自建运动算例的零件或装配体",
+          "from": "sldworksapi__Create_Motion_Studies_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "MotionManager 选项卡必须可见，否则点 View > MotionManager",
+          "from": "sldworksapi__Create_Motion_Studies_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "必须添加对 SOLIDWORKS MotionStudy 类型库的引用",
+          "from": "sldworksapi__Create_Motion_Studies_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "必须启用 SOLIDWORKS Motion 加载项（Tools > Add-ins > SOLIDWORKS Motion）",
+          "from": "Add_Damper_to_Motion_Study_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "打开的装配体要有名为 Motion Study 1 的算例与折叠的爆炸视图",
+          "from": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "打开的模型要有名为 PhysSim 的 Physical Simulation 运动算例",
+          "from": "Get_Motion_Study_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "读 GetResults / IsOutOfDate 前必须先 Calculate 并等算完（示例轮询 IsPlaying）",
+          "from": "Get_Motion_Study_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "实现读自 scripts/sw_motion.py（tool_specs_batch40 挂载）。evidence 只有一句 pytest 名称，未提任何示例前置。"
+    },
+    {
+      "name": "drawings_and_bom",
+      "level": "verified",
+      "members_found": [
+        "GetType",
+        "GetComponents",
+        "GetExcludeFromBOM2",
+        "GetPathName",
+        "ReferencedConfiguration",
+        "Name2",
+        "GetModelDoc2"
+      ],
+      "examples_used": [
+        "Activate_Smart_Features_in_an_Assembly_Example_VB.md",
+        "Change_Referenced_Configuration_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "GetComponents 前必须打开一个装配体文档（示例前置是打开 testSmartAssembly.sldasm）",
+          "from": "Activate_Smart_Features_in_an_Assembly_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "读 ReferencedConfiguration 要求装配体文档已打开（组件级成员）",
+          "from": "Change_Referenced_Configuration_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetExcludeFromBOM2 / ExcludeFromBOM 的前置：两个索引 by_member 均为 None，无官方示例可查",
+          "from": "member-to-example-index.md + b3-4-merged.json",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "实现读自 scripts/sw_delivery.py。collect_assembly_bom 走 GetComponents 遍历组件，非 BOM 表；BOM 表官方示例用的是 ITableAnnotation 成员，未被本条工具调用，故未计入。"
+    }
+  ]
+}

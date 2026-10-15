@@ -1,0 +1,175 @@
+{
+  "idx": 29,
+  "results": [
+    {
+      "member": "BackgroundTopGradientColor",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页未写怎么拿到 ISwScene；示例给出唯一路径：先取活动配置再 GetScene()",
+          "example_quote": "Scene = swConfig.GetScene();",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+        },
+        {
+          "what": "示例把它当可直接拼接的 int 读出，且读取发生在给 BackgroundType 赋值之前",
+          "example_quote": "Debug.Print(\"Scene background top gradient color: \" + Scene.BackgroundTopGradientColor);",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+        },
+        {
+          "what": "示例实际用的 BackgroundType 值是 UseEnvironment，不在 Remarks 那张只列 Plain/Graduated 的表里",
+          "example_quote": "Scene.BackgroundType = (int)swSceneBackgroundType_e.swBackgroundType_UseEnvironment;",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 表只覆盖枚举 6 值中的 2 个，是不全不是矛盾，故不记冲突"
+    },
+    {
+      "member": "BackgroundType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 侧把枚举赋给这个 int 属性必须显式转 int",
+          "example_quote": "Scene.BackgroundType = (int)swSceneBackgroundType_e.swBackgroundType_UseEnvironment;",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+        },
+        {
+          "what": "同一赋值在 VB 侧不转 int，说明转与不转都成立、只取决于语言",
+          "example_quote": "Scene.BackgroundType = swSceneBackgroundType_e.swBackgroundType_UseEnvironment",
+          "example_file": "Get_and_Set_Scene_Properties_Example_VBNET.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；示例只给赋值形态，Returns 只给枚举名"
+    },
+    {
+      "member": "BalloonsPerLine",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md",
+        "Add_Balloon_to_Stacked_Balloon_Example_VB.md",
+        "Add_Balloon_to_Stacked_Balloon_Example_VBNET.md",
+        "Insert_BOM_Table_and_Stacked_Balloon_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整链：CreateStackedBalloonOptions() 拿对象→设本属性→整体交给 InsertStackedBalloon2",
+          "example_quote": "swStackedBalloons.BalloonsPerLine = 10;",
+          "example_file": "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md"
+        },
+        {
+          "what": "示例的 Postconditions 要求先选中一个面，本属性是在此之后才设的",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", -0.311973500811291, 0.0329693343254007, 0.00999999999999091, false, 0, null, 0);",
+          "example_file": "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md"
+        },
+        {
+          "what": "BOM 表示例独立给出同一取值 10，且 StackDirection 排在其后设置",
+          "example_quote": "StackedBalloonParams.BalloonsPerLine = 10;",
+          "example_file": "Insert_BOM_Table_and_Stacked_Balloon_Example_CSharp.md"
+        }
+      ],
+      "note": "Returns 的 >=2 与示例的 10 一致；Remarks 只让去看 Help，无可对照说法"
+    },
+    {
+      "member": "BeadLength",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Modify_Fillet_Weld_Bead_Example_VB.md",
+        "Modify_Fillet_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页是空壳（无 Signature/Returns）；示例显示它是按箭头侧索引的带参属性，不是标量",
+          "example_quote": "bdlen = swWeldBead.BeadLength(swWeldBeadSide_e.swWeldBeadArrowSide)",
+          "example_file": "Modify_Fillet_Weld_Bead_Example_VBNET.md"
+        },
+        {
+          "what": "赋值同样带侧索引，且须先 AccessSelections 回滚、最后 ModifyDefinition 提交",
+          "example_quote": "swWeldBead.BeadLength(swWeldBeadSide_e.swWeldBeadArrowSide) = bdlen * 0.5",
+          "example_file": "Modify_Fillet_Weld_Bead_Example_VBNET.md"
+        }
+      ],
+      "note": "页面仅 10 行标题；形状只能靠示例，接口 _overview 的 Remarks 与示例一致"
+    },
+    {
+      "member": "BeadPitch",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Modify_Fillet_Weld_Bead_Example_VB.md",
+        "Modify_Fillet_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页无任何签名与说明；示例显示它是带 swWeldBeadSide_e 索引的带参属性",
+          "example_quote": "bdPitch = swWeldBead.BeadPitch(swWeldBeadSide_e.swWeldBeadArrowSide)",
+          "example_file": "Modify_Fillet_Weld_Bead_Example_VBNET.md"
+        },
+        {
+          "what": "示例写侧为乘 0.5 缩放，说明返回的是长度类数值（页未给任何单位）",
+          "example_quote": "swWeldBead.BeadPitch(swWeldBeadSide_e.swWeldBeadArrowSide) = bdPitch * 0.5",
+          "example_file": "Modify_Fillet_Weld_Bead_Example_VBNET.md"
+        }
+      ],
+      "note": "页面仅 10 行标题；VB 版把索引写成未声明的 swWeldBeadArrowSide，VBNET 版才写全枚举"
+    },
+    {
+      "member": "BeadSize",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Returns 只写「Weld bead thickness」无单位；示例乘 39.37 输出 in，说明存值单位是米",
+          "example_quote": "Debug.Print(\"   Weld bead size: \" + swCosmeticWeldBeadFeatureData.BeadSize * 39.37 + \" in\");",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Example_CSharp.md"
+        },
+        {
+          "what": "在本接口上它是无参标量属性，且读之前必须先 AccessSelections",
+          "example_quote": "swCosmeticWeldBeadFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Example_CSharp.md"
+        }
+      ],
+      "note": "Modify_Fillet_Weld_Bead 的 BeadSize 打在 WeldmentBeadFeatureData 上且带侧索引，属同名另一接口，已剔除"
+    },
+    {
+      "member": "BeadType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Weld_Bead_Faces_Example_VB.md",
+        "Modify_Fillet_Weld_Bead_Example_VB.md",
+        "Modify_Fillet_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页无签名与 Returns；示例显示它按侧索引，取值属 swWeldBeadType_e",
+          "example_quote": "bdTy = swWeldBead.BeadType(swWeldBeadSide_e.swWeldBeadArrowSide)",
+          "example_file": "Modify_Fillet_Weld_Bead_Example_VBNET.md"
+        },
+        {
+          "what": "换面示例改用另一侧索引并设成 intermittent，两个标识符在原文里都未声明",
+          "example_quote": "swWeldBead.BeadType(swWeldBeadOtherSide)",
+          "example_file": "Change_Weld_Bead_Faces_Example_VB.md"
+        }
+      ],
+      "note": "页面仅 10 行标题；接口 _overview 的 Remarks（箭头侧/另一侧）与示例一致"
+    }
+  ]
+}

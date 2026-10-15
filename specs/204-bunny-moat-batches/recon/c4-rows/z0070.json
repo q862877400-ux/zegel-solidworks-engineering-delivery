@@ -1,0 +1,182 @@
+{
+ "idx": 70,
+ "results": [
+  {
+   "member": "CreateSectionViewAt3",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Create_Section_View_at_Specified_Location_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出 X/Y/Z 实参 0.65 / 0.08908737704918 / 0（图纸十进制坐标），成员页对三参数只写 No description",
+     "example_quote": "    x = 0.65\n    y = 0.08908737704918\n    z = 0",
+     "example_file": "Create_Section_View_at_Specified_Location_Example_VB.md"
+    },
+    {
+     "what": "ExcludedComponents 实传 Drawing Root Component 的 GetChildren 数组，页面对该参数也只写 No description",
+     "example_quote": "        vChildComponents = swDrRootComponent.GetChildren",
+     "example_file": "Create_Section_View_at_Specified_Location_Example_VB.md"
+    },
+    {
+     "what": "示例把 Label 设为 \"A\"、其余六个布尔全为 False，给出成员页未写的默认实参",
+     "example_quote": "    notAligned = False\n    isOffsetSection = False\n    chgdirection = False\n    scwithmodel = False\n    partial = False\n    dispsurfcut = False\n    label = \"A\"",
+     "example_file": "Create_Section_View_at_Specified_Location_Example_VB.md"
+    }
+   ],
+   "note": "页无 ## Remarks，按纪律跳过冲突判定；仅列示例补充信息。"
+  },
+  {
+   "member": "CreateSectionViewAt5",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+    "Create_Section_View_and_Get_Some_Data_Example_VB.md",
+    "Create_Section_View_and_Get_Some_Data_Example_VBNET.md",
+    "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_CSharp.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "Before calling this method, select the section line or lines to use as a section line.",
+     "example_quote": "    swModel.ClearSelection2 True\n    ' Create section-view line\n    Set swSketchMgr = swModel.SketchManager\n    Set swSketchSegment = swSketchMgr.CreateLine(-1.383705, 2.078706, 0#, 2.747162, 0.0441, 0#)",
+     "example_file": "Create_Section_View_and_Get_Some_Data_Example_VB.md",
+     "why": "示例调用前显式 ClearSelection2，只用 SketchManager.CreateLine 生成剖切线，全程无 SelectByID2；与 Remarks 要求的“先选中剖切线”不能同时成立。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "同一行给出 Options=32（32=swCreateSectionView_DisplaySurfaceCut）与 SectionDepth=0.00835，页面只写“见枚举”",
+     "example_quote": "    Set swView = swDrawing.CreateSectionViewAt5(0.1604082711061, 0.2048687170364, 0, \"D\", 32, (excludedComponents), 0.00835)",
+     "example_file": "Create_Section_View_and_Get_Some_Data_Example_VB.md"
+    },
+    {
+     "what": "回读时才乘 1000 打 mm，说明 SectionDepth 单位是米（成员页未给单位）",
+     "example_quote": "    Debug.Print \"  Depth: \" & swSectionView.SectionDepth * 1000# & \" mm\"",
+     "example_file": "Create_Section_View_and_Get_Some_Data_Example_VB.md"
+    },
+    {
+     "what": "另一例才按 \"SKETCHSEGMENT\" 逐条选中剖切线（第二条 append=true、mark 仍为 0），Remarks 未给选择方式",
+     "example_quote": "            status = swModelDocExt.SelectByID2(\"Line1\", \"SKETCHSEGMENT\", 0.690604633175108, 0.625483883858213, 0, false, 0, null, 0);\n            status = swModelDocExt.SelectByID2(\"Line2\", \"SKETCHSEGMENT\", 0.747211061353527, 0.357889859742052, 0, true, 0, null, 0);",
+     "example_file": "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_CSharp.md"
+    }
+   ],
+   "note": "1 条 precondition_diff：三份 Get Some Data 示例均无选中剖切线，Shoulders 示例则选中了 Line1/Line2。"
+  },
+  {
+   "member": "CreateSectionViewData",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Section_View_in_Model_Example_CSharp.md",
+    "Create_Section_View_in_Model_Example_VB.md",
+    "Create_Section_View_in_Model_Example_VBNET.md",
+    "Get_Sectioned_Bodies_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例用 mark 1/2/4 取三个基准面（GetSelectedObject6(1,0)/(2,0)/(4,0)），Remarks 仅说“设置 ISectionViewData 属性”、未提 mark",
+     "example_quote": "    Set plane1 = selMgr.GetSelectedObject6(1, 0)\n    Set plane2 = selMgr.GetSelectedObject6(2, 0)\n    Set plane3 = selMgr.GetSelectedObject6(4, 0)",
+     "example_file": "Create_Section_View_in_Model_Example_VB.md"
+    },
+    {
+     "what": "装配体示例把 FirstPlane 直接赋 Nothing 也能建视图，Remarks 未说第一基准面可为空",
+     "example_quote": "    swSectionViewData.FirstPlane = Nothing",
+     "example_file": "Get_Sectioned_Bodies_Example_VB.md"
+    }
+   ],
+   "note": "四份示例都与 Remarks 一致（Redraw=True 才把返回值当剖切体状态），无冲突。"
+  },
+  {
+   "member": "CreateSeedCutPolygonSides",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Fill_Pattern_Example_CSharp.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "This property is valid only if both are true:\n\n- [[IFillPatternFeatureData::FeaturesToPatternType]] = [[swFeaturesToPatternType_e]].swFeaturesToPatternCreateSeedCut\n\n- [[IFillPatternFeatureData::CreateSeedCutType]] = [[swCreateSeedCutType_e]].swCreateSeedCutPolygon",
+     "example_quote": "\t\t            swFeatData.CreateSeedCutPolygonSides = 0;\n\t\t            swFeatData.CreateSeedCutType = 0;\n\t\t            swFeatData.Diagonal = 0.008;\n\t\t            swFeatData.Diameter = 0.008;\n\t\t            swFeatData.Dimension = 0.00565685424949238;\n\t\t            swFeatData.FeaturesToPatternType = 0;",
+     "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+     "why": "示例设 CreateSeedCutType=0（swCreateSeedCutNone）与 FeaturesToPatternType=0（swFeaturesToPatternSelectedFeatures），两个前提都不成立却仍赋该属性并 CreateFeature。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例把该属性设为 0，并把另一个“边数” PatternLayoutPolygonSides 也设为 0",
+     "example_quote": "\t\t            swFeatData.PatternLayoutPolygonSides = 0;",
+     "example_file": "Create_Fill_Pattern_Example_CSharp.md"
+    }
+   ],
+   "note": "页面要求两个前提同时为真，官方示例两个都为 0。"
+  },
+  {
+   "member": "CreateSeedCutType",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Create_Fill_Pattern_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例直接赋字面量 0；枚举页 0=swCreateSeedCutNone，而成员页只写“见 swCreateSeedCutType_e”",
+     "example_quote": "\t\t            swFeatData.CreateSeedCutType = 0;",
+     "example_file": "Create_Fill_Pattern_Example_CSharp.md"
+    }
+   ],
+   "note": "页无 ## Remarks，跳过冲突判定。"
+  },
+  {
+   "member": "CreateSelectData",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Add_Objects_to_Selection_List_Example_CSharp.md",
+    "Add_Objects_to_Selection_List_Example_VB.md",
+    "Add_Objects_to_Selection_List_Example_VBNET.md",
+    "Attach_Annotation_to_Entity_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例把返回值当 SelectData，并作为 Entity.Select4 的第二个（Callout）实参；页只写“给 Select 方法用”",
+     "example_quote": "                    swSelData = (SelectData)swSelMgr.CreateSelectData();\n                    Entity swEntity = default(Entity);\n                    swEntity = (Entity)vAttEntArr[i];\n                    swEntity.Select4(false, swSelData);",
+     "example_file": "Attach_Annotation_to_Entity_Example_CSharp.md"
+    },
+    {
+     "what": "另一路用法：作为 AddSelectionListObjects 的第二参数，该成员名不含 Select",
+     "example_quote": "           \t\tnumAdded = selMgr.AddSelectionListObjects((selObjs), selData);",
+     "example_file": "Add_Objects_to_Selection_List_Example_CSharp.md"
+    }
+   ],
+   "note": "页无 ## Remarks；四份示例都真用了该成员。"
+  },
+  {
+   "member": "CreateSheetFromFaces",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Create_Sheet_Body_From_Faces_and_Feature_from_Sheet_Body_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "Modeler 由 ISldWorks.GetModeler 取得，成员页是 IModeler 页但未说对象来源",
+     "example_quote": "swModeler = swApp.GetModeler",
+     "example_file": "Create_Sheet_Body_From_Faces_and_Feature_from_Sheet_Body_Example_VB.md"
+    },
+    {
+     "what": "面数组由实体副本的 GetFirstFace/GetNextFace 遍历得到，示例给了原因注释",
+     "example_quote": "Boolean operations consume bodies\nSet",
+     "example_file": "Create_Sheet_Body_From_Faces_and_Feature_from_Sheet_Body_Example_VB.md"
+    },
+    {
+     "what": "返回的 Body2 还需 PartDoc.CreateFeatureFromBody3 才进特征树，Returns 只说“新建的 body”",
+     "example_quote": "swFeature = swPart.CreateFeatureFromBody3(vBodies(0),",
+     "example_file": "Create_Sheet_Body_From_Faces_and_Feature_from_Sheet_Body_Example_VB.md"
+    }
+   ],
+   "note": "页无 ## Remarks，跳过冲突判定。"
+  }
+ ]
+}

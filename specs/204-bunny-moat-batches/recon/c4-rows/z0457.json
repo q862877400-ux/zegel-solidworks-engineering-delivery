@@ -1,0 +1,144 @@
+{
+  "idx": 457,
+  "results": [
+    {
+      "member": "SetStandardViews",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md",
+        "Attach_Files_to_MBD_3D_PDF_Example_VB.md",
+        "Attach_Files_to_MBD_3D_PDF_Example_VBNET.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有描述、签名、参数、Examples、See Also），按纪律跳过比对。"
+    },
+    {
+      "member": "SetStartAndEndReferences",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Ref_Plane_SSMember_Example_CSharp.md",
+        "Create_Ref_Plane_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说数组『应只有两个实体』；示例给出取法：从选区 mark 1、2 取对象再包成 DispatchWrapper[] 传入。",
+          "example_quote": "            startEndPlanes[0] = swSelMgr.GetSelectedObject6(1, 0);\n            startEndPlanes[1] = swSelMgr.GetSelectedObject6(2, 0);",
+          "example_file": "Create_Ref_Plane_SSMember_Example_CSharp.md"
+        }
+      ],
+      "note": "C# 与 VB.NET 均为 2 元素数组，与 Remarks 的两个实体一致，未见矛盾。"
+    },
+    {
+      "member": "SetStringValue2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Attribute_Example_VB.md",
+        "Delete_Attribute_Example_CSharp.md",
+        "Delete_Attribute_Example_VB.md",
+        "Delete_Attribute_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Sets the double or integer value of a named configuration option parameter.",
+          "example_quote": "    bRet = swParamName.SetStringValue2(AttName & \" - \" & AttLenDimName, swAllConfiguration, \"\")",
+          "example_file": "Create_Attribute_Example_VB.md",
+          "why": "成员页描述行（非 Remarks 段）称设置 double/integer；示例传的是字符串拼接值，且该参数定义为 swParamTypeString。同一句话不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说 ConfigurationName『不需要』；示例给出具体做法：第三参传空串 \"\"。",
+          "example_quote": "    bRet = swParamName.SetStringValue2(AttName & \" - \" & AttLenDimName, swAllConfiguration, \"\")",
+          "example_file": "Create_Attribute_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 关于 ConfigurationOption 1/2/3 的说法与示例传 swAllConfiguration + \"\" 一致；唯一矛盾在描述行的取值类型。"
+    },
+    {
+      "member": "SetSunLightSourcePropertyValues",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Sunlight_Source_Property_Values_Example_VB.md",
+        "Get_and_Set_Sunlight_Source_Property_Values_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有描述、签名、参数、Returns、Examples、See Also），按纪律跳过比对。"
+    },
+    {
+      "member": "SetSuppression2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Assembly_Example_CPlusPlus_COM.md",
+        "Get_and_Set_Component_s_Suppression_State_Example_VB.md",
+        "Set_All_Assembly_Components_Lightweight_or_Resolved_Example_VB.md",
+        "Set_Fully_Resolved_Assembly_to_Lightweight_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Status as defined in [[swSuppressionError_e]]",
+          "example_quote": "                Debug.Assert((int)swComponentResolveStatus_e.swResolveError == nRetVal);",
+          "example_file": "Set_Fully_Resolved_Assembly_to_Lightweight_Example_CSharp.md",
+          "why": "成员页 Returns 说状态取自 swSuppressionError_e；示例把同一个 int 与 swComponentResolveStatus_e 比较。两个枚举族不能同时成立。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "System.int SetSuppression2( System.int State )",
+          "example_quote": "hres = swComponent->SetSuppression2(swComponentSuppressed,",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md",
+          "why": "成员页签名只有 1 个形参、回 System.int；示例按两参调用（下一行再传 out 参数 &lSuppressError），并把返回值当 HRESULT 存入 hres。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例补充约束：子装配不能整体设为 lightweight，必须逐个零件设，返回 swResolveError。",
+          "example_quote": "                    // Cannot set a sub-assembly to lightweight; must set each part to lightweight",
+          "example_file": "Set_Fully_Resolved_Assembly_to_Lightweight_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 唯一一句（PropertyManager 打开时不可压缩）与四份示例都不冲突；矛盾都在 Returns/签名与示例调用形态上。"
+    },
+    {
+      "member": "SetSymbolXml",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method is valid only for Gtols created in or converted to the SOLIDWORKS 2022 format.",
+          "example_quote": "// 1. Open a drawing that contains a GTol created with\n// either SolidWorks 2021 or SolidWorks 2022/2022+.",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md",
+          "why": "Remarks 限定只对 2022 格式 Gtol 有效；示例前置允许 2021 创建的 Gtol，且 ConvertFormat 只在 CanConvertFormat 为真时才尝试。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例补充 XML 细节：转换后的 Gtol 公差格式是 .01 而非 0.01。",
+          "example_quote": "pos = Strings.InStr(1, sXMLString, \".01\"); // Note: converted Gtol has tolerance format of .01, not 0.01",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "VB.NET 与 C# 两份前置与条件转换逻辑相同；差异只在前置可达状态。"
+    },
+    {
+      "member": "SetSymmetric",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weld_Symbol_Example_CSharp.md",
+        "Insert_Weld_Symbol_Example_VB.md",
+        "Insert_Weld_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份示例均传 swWeldSymbolSymmetric_e.swWeldSymmetric 并紧接着调 GetSymmetric，与 Remarks 及参数说明一致。"
+    }
+  ]
+}

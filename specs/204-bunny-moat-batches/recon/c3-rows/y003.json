@@ -1,0 +1,143 @@
+{
+  "idx": 3,
+  "results": [
+    {
+      "name": "holes_and_finishing",
+      "level": "verified",
+      "members_found": [
+        "IModelDoc2.ClearSelection2",
+        "IModelDocExtension.SelectByID2",
+        "ISketchManager.InsertSketch",
+        "ISketchManager.CreateCircleByRadius",
+        "ISketchManager.CreateSketchSlot",
+        "IFeatureManager.FeatureCut4",
+        "IFeatureManager.InsertFeatureChamfer",
+        "IEntity.Select4",
+        "ISelectionMgr.GetSelectionPoint2",
+        "ISldWorks.GetHoleStandardsData",
+        "IHoleStandardsData.GetHoleStandards",
+        "IHoleStandardsData.GetFastenerTypes",
+        "IHoleStandardsData.GetFastenerTableTypes",
+        "IModelDoc2.SketchAddConstraints"
+      ],
+      "examples_used": [
+        "Get_Wizard_Hole_Standards_Data_Example_CSharp.md",
+        "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_CSharp.md",
+        "Insert_and_Resize_Sketch_Slot_Example_CSharp.md",
+        "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_CSharp.md",
+        "Get_Edge_Chamfer_Distances_Example_CSharp.md",
+        "Insert_Sketch_Text_and_Hole_Example_CSharp.md",
+        "Constrain_Sketch_Example_CSharp.md",
+        "Create_Drag_Arrow_Manipulator_Example_CSharp.md",
+        "Create_Hole_Wizard_Hole_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "示例前置：SolidWorks Design 必须已启动（官方 Preconditions 第 1 条 Open SOLIDWORKS Design.）",
+          "from": "Get_Wizard_Hole_Standards_Data_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "python tools/verify_hole_standards_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1"
+        },
+        {
+          "text": "调用序：先 GetHoleStandards 取标准名（示例 standardsArray[0]），再传给 GetFastenerTypes",
+          "from": "Get_Wizard_Hole_Standards_Data_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "`list_hole_standards` → 15 条 · `list_fastener_types('ANSI Inch')` → 14 条 · `list_fastener_table_types` → [0,1,2]，**11/11 通过**，含「**去掉热身就会失败**」的反向验证"
+        },
+        {
+          "text": "建草图槽前须已打开新零件文档并进入草图：SelectByID2 选 Front Plane → InsertSketch(true) → CreateSketchSlot",
+          "from": "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "CreateSketchSlot 首两参须用 swSketchSlotCreationType_line 与 swSketchSlotLengthType_CenterCenter",
+          "from": "Insert_and_Resize_Sketch_Slot_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调 FeatureCut4 前须先选面/基准面并画出封闭圆形轮廓（示例序：SelectByRay 选面 → CreateCircle → FeatureCut4）",
+          "from": "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调 InsertFeatureChamfer 前须先选中要倒角的边（示例两次 SelectByID2 EDGE，第二次 append=true）",
+          "from": "Get_Edge_Chamfer_Distances_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "插入角度倒角时角度以弧度给出（示例第 4 参 0.78539816339745 即 45°）",
+          "from": "Get_Edge_Chamfer_Distances_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "读孔位点前须打开模型文档并已选中一个面，示例逐字 Open a model document and select a face",
+          "from": "Insert_Sketch_Text_and_Hole_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "★ 声明式建通孔 **verdict: pass** —— 特征树 7→9（新增 草图2 + 通孔）· center_sent_m=[-0.02, 0.0]"
+        },
+        {
+          "text": "加几何关系前须存在草图、活动文档须是零件文档、目标图元须已选中（示例三处 SendMsgToUser2 检查）",
+          "from": "Constrain_Sketch_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "证据只覆盖孔标准链与读点两处；槽、倒角、切除轮廓、草图关系的前置均未被证据提及。HoleWizard5 示例不计入（本族走画圆+FeatureCut4）。"
+    },
+    {
+      "name": "parameter_updates",
+      "level": "verified",
+      "members_found": [
+        "IModelDoc2.Parameter",
+        "IDimension.GetSystemValue3",
+        "IDimension.SetSystemValue3",
+        "IModelDoc2.EditRebuild3",
+        "IModelDoc2.GetUnits"
+      ],
+      "examples_used": [
+        "Change_Dimension_Example_CSharp.md",
+        "Change_Dimensions_of_Gear_Mate_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "官方说明逐字：API 多以米计，传 2.0 而模型单位为毫米会显示成 2000.0，须按文档单位换算",
+          "from": "Change_Dimension_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "★ 那次调用的 `before_mm.current` 是 **20000.0**，★ 而该模型那个尺寸的**本意是 20 mm**（★ `extrude_boss(..., 20.0)`）⇒ ★★ **20 → 20000 正好是 ×1000 两次**"
+        },
+        {
+          "text": "必须用带特征名的精确尺寸名：示例先选中特征再 feature.Parameter(名字)，全名形如 D3@LocalCirPattern1",
+          "from": "Change_Dimension_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "改 `D1@凸台-拉伸1` 为 **35.0** ⇒ ★ `set_status: **0**` · ★ `after_mm.current = **35.0**` ⇒ ★★ **回读等于所要求的值** ✓"
+        },
+        {
+          "text": "GetSystemValue3 回的是数组/Variant，须取第 (0) 项；示例逐字 dimValue_1(0)",
+          "from": "Change_Dimensions_of_Gear_Mate_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "SetSystemValue3 第 3 参须传 Empty（VB Empty / C# null），第 2 参用 swSetValue_InThisConfiguration",
+          "from": "Change_Dimensions_of_Gear_Mate_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "SetSystemValue3 之后必须调 EditRebuild3 才生效（示例两处均在设值后重建）",
+          "from": "Change_Dimension_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "证据覆盖了单位换算疑点与精确尺寸名；GetSystemValue3 的数组形态、Empty 出参与 EditRebuild3 三项前置证据未提。"
+    }
+  ]
+}

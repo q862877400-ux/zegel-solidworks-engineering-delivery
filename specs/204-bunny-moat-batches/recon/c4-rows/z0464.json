@@ -1,0 +1,99 @@
+{
+  "idx": 464,
+  "results": [
+    {
+      "member": "Sheet",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Sheet_in_Multi-Sheet_Drawing_Example_VBNET.md",
+        "Get_and_Set_Table_Anchor_of_Hole_Table_Example_CSharp.md",
+        "Get_and_Set_Table_Anchor_of_Hole_Table_Example_VB.md",
+        "Modify_and_Reload_Sheet_Format_Template_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页是存根：无 Signature、无 ## Remarks，按纪律跳过；四份示例均按名使用。"
+    },
+    {
+      "member": "SheetCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面只有一句描述 + Returns + See Also，无 ## Remarks，跳过。"
+    },
+    {
+      "member": "SheetMetalInformation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Mirror_Sheet-metal_Part_Example_CSharp.md",
+        "Mirror_Sheet-metal_Part_Example_VB.md",
+        "Mirror_Sheet-metal_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 ## Remarks，只有描述/Returns/Examples，跳过；三例仅读取打印。"
+    },
+    {
+      "member": "SheetName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Open_Specified_Sheet_in_Drawing_Document_Example_CSharp.md",
+        "Open_Specified_Sheet_in_Drawing_Document_Example_VB.md",
+        "Open_Specified_Sheet_in_Drawing_Document_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 ## Remarks，跳过；三例先 SheetName = \"Sheet2\" 再回读。"
+    },
+    {
+      "member": "SheetNext",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Custom_Check_Document_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面只有一句描述 + Signature + See Also，无 ## Remarks，跳过。"
+    },
+    {
+      "member": "SheetPrevious",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Custom_Check_Document_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "同 SheetNext：无 ## Remarks，跳过；该例第 70 行调用。"
+    },
+    {
+      "member": "SheetThickness",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_ConvertSolid_Feature_Example_CSharp.md",
+        "Create_ConvertSolid_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "The setter of this property is valid only if [[IConvertSolidFeatureData::OverrideDefaultSheetMetalParameters]] is true.",
+          "example_quote": "swConvertSolidFeatData.Initialize(true, false, cba);\n...\nFeatData.SheetThickness = 0.014;",
+          "example_file": "Create_ConvertSolid_Feature_Example_CSharp.md",
+          "why": "示例从不给 OverrideDefaultSheetMetalParameters 赋值；Initialize 的两个 bool 官方定义是 UseMaterial/UseGauge 参数，非该开关。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例按米传厚度 0.014（=14mm），同段 BendRadius 0.0006 亦为米；成员页 Returns 只写「Sheet thickness」未给单位。",
+          "example_quote": "FeatData.SheetThickness = 0.014;",
+          "example_file": "Create_ConvertSolid_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "VBNET 示例写法逐字相同，同样未设 Override…Parameters。"
+    }
+  ]
+}

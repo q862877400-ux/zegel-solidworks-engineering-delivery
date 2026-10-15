@@ -1,0 +1,405 @@
+{
+ "n": 40,
+ "rows": [
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 0,
+   "task": "模具 · 分型线",
+   "pick": "cadstudio_review_advanced_geometry",
+   "pick_desc": "Validate advanced surface/mold plans and return pilot/blocked preflight evidence.",
+   "is_none": false,
+   "verdict": "no"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 1,
+   "task": "草图 · 几何关系",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_wrong"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 10,
+   "task": "特征 · 包覆",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 11,
+   "task": "钣金 · 闭合角/转折/褶边",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "partial"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 12,
+   "task": "钣金 · 展开/折叠",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 13,
+   "task": "仿真 · 网格",
+   "pick": "cadstudio_prepare_fea",
+   "pick_desc": "Generate a versioned CalculiX .inp file from a structured FEA 1.0 request.",
+   "is_none": false,
+   "verdict": "partial"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 14,
+   "task": "特征 · 特征镜像",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 15,
+   "task": "其他 · Pack and Go",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "no"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 16,
+   "task": "模具 · 关闭曲面/补孔",
+   "pick": "cadstudio_review_advanced_geometry",
+   "pick_desc": "Validate advanced surface/mold plans and return pilot/blocked preflight evidence.",
+   "is_none": false,
+   "verdict": "abstain_wrong"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 17,
+   "task": "特征 · 抽壳",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "yes"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 18,
+   "task": "评估 · 测量",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "yes"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 19,
+   "task": "草图 · 圆",
+   "pick": "solidworks_sketch_add_conic",
+   "pick_desc": "Draw a conic curve. ⚠ Official signature is IDENTICAL in shape to CreateParabola (focus + apex + two endpoints). ★ 草图图元按官方文档属**规则 3 的书面例外**（图元没有可选的具名实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再画，最后 `solidworks_sketch_end`。",
+   "is_none": false,
+   "verdict": "partial"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 2,
+   "task": "焊件 · 圆角焊缝",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 0,
+   "task": "模具 · 分型线",
+   "pick": "cadstudio_review_advanced_geometry",
+   "pick_desc": "Validate advanced surface/mold plans and return pilot/blocked preflight evidence.",
+   "is_none": false,
+   "verdict": "partial"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 1,
+   "task": "草图 · 几何关系",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 2,
+   "task": "焊件 · 圆角焊缝",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 3,
+   "task": "模具 · 模具证据",
+   "pick": "cadstudio_review_advanced_geometry",
+   "pick_desc": "Validate advanced surface/mold plans and return pilot/blocked preflight evidence.",
+   "is_none": false,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 4,
+   "task": "其他 · 传感器/单位",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 5,
+   "task": "曲面 · 延伸曲面",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "yes"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 6,
+   "task": "其他 · 方程式",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 7,
+   "task": "工程图 · 断裂视图",
+   "pick": "solidworks_drawing_create_broken_view",
+   "pick_desc": "★ **断裂视图**：`IView.InsertBreak3(6 参)` → `BreakLine`。★★ `InsertBreak`（4 参）与 `InsertBreak2`（5 参）**官方都标 Obsolete** ⇒ ★ 只走 3。★ 官方 `## Remarks`：Horizontal ⇒ 位置是 **Y** 值；Vertical ⇒ **X** 值；★ 都相对视图原点。★ **判据 = `GetBreakLines()` 的数组长度 + `IView.IsBroken()`**（★ 两个都要）——★ 官方把这两件事**定义成了两件**：有断裂线**不等于**断开了。⚠ 官方**没给位置参数的单位** ⇒ 本工具按米收、按毫米传、只在边界换算一次。",
+   "is_none": false,
+   "verdict": "no"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 8,
+   "task": "草图 · 多边形",
+   "pick": "solidworks_sketch_add_polygon",
+   "pick_desc": "★ **在当前草图里画正多边形**（**内切圆**方式 —— 官方 `CreatePolygon` 的口径）。⚠ Sketch geometry MUST be given as in-plane coordinates — this is the documented exception in rule 3 (a *drawing primitive* has no named entity to select). Coordinates are millimetres, relative to the SKETCH ORIGIN, in the sketch plane. ★ Start a sketch with solidworks_sketch_start first, and finish with solidworks_sketch_end; read back with the solidworks_sketch_count_* tools.",
+   "is_none": false,
+   "verdict": "no"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 9,
+   "task": "曲面 · 直纹曲面",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_wrong"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 3,
+   "task": "模具 · 模具证据",
+   "pick": "cadstudio_review_advanced_geometry",
+   "pick_desc": "Validate advanced surface/mold plans and return pilot/blocked preflight evidence.",
+   "is_none": false,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 10,
+   "task": "特征 · 包覆",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "partial"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 11,
+   "task": "钣金 · 闭合角/转折/褶边",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 12,
+   "task": "钣金 · 展开/折叠",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 13,
+   "task": "仿真 · 网格",
+   "pick": "cadstudio_prepare_fea",
+   "pick_desc": "Generate a versioned CalculiX .inp file from a structured FEA 1.0 request.",
+   "is_none": false,
+   "verdict": "no"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 14,
+   "task": "特征 · 特征镜像",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 15,
+   "task": "其他 · Pack and Go",
+   "pick": "solidworks_batch_export_files",
+   "pick_desc": "Export multiple local SolidWorks files and verify every output was produced this run.",
+   "is_none": false,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 16,
+   "task": "模具 · 关闭曲面/补孔",
+   "pick": "cadstudio_review_advanced_geometry",
+   "pick_desc": "Validate advanced surface/mold plans and return pilot/blocked preflight evidence.",
+   "is_none": false,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 17,
+   "task": "特征 · 抽壳",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "yes"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 18,
+   "task": "评估 · 测量",
+   "pick": "cadstudio_check_dfm",
+   "pick_desc": "Run whitelisted DFM checks for machining, sheet metal, laser cutting, or 3D printing.",
+   "is_none": false,
+   "verdict": "yes"
+  },
+  {
+   "src": "alpha145",
+   "W": 50,
+   "k": 19,
+   "task": "草图 · 圆",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_wrong"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 4,
+   "task": "其他 · 传感器/单位",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_wrong"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 5,
+   "task": "曲面 · 延伸曲面",
+   "pick": "cadstudio_create_ocp_surface",
+   "pick_desc": "Create smooth loft, sweep, knit, or thicken geometry through a strict structured whitelist.",
+   "is_none": false,
+   "verdict": "no"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 6,
+   "task": "其他 · 方程式",
+   "pick": "NONE",
+   "pick_desc": "",
+   "is_none": true,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 7,
+   "task": "工程图 · 断裂视图",
+   "pick": "solidworks_drawing_create_broken_view",
+   "pick_desc": "★ **断裂视图**：`IView.InsertBreak3(6 参)` → `BreakLine`。★★ `InsertBreak`（4 参）与 `InsertBreak2`（5 参）**官方都标 Obsolete** ⇒ ★ 只走 3。★ 官方 `## Remarks`：Horizontal ⇒ 位置是 **Y** 值；Vertical ⇒ **X** 值；★ 都相对视图原点。★ **判据 = `GetBreakLines()` 的数组长度 + `IView.IsBroken()`**（★ 两个都要）——★ 官方把这两件事**定义成了两件**：有断裂线**不等于**断开了。⚠ 官方**没给位置参数的单位** ⇒ 本工具按米收、按毫米传、只在边界换算一次。",
+   "is_none": false,
+   "verdict": "abstain_reasonable"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 8,
+   "task": "草图 · 多边形",
+   "pick": "solidworks_sketch_add_polygon",
+   "pick_desc": "★ **在当前草图里画正多边形**（**内切圆**方式 —— 官方 `CreatePolygon` 的口径）。⚠ Sketch geometry MUST be given as in-plane coordinates — this is the documented exception in rule 3 (a *drawing primitive* has no named entity to select). Coordinates are millimetres, relative to the SKETCH ORIGIN, in the sketch plane. ★ Start a sketch with solidworks_sketch_start first, and finish with solidworks_sketch_end; read back with the solidworks_sketch_count_* tools.",
+   "is_none": false,
+   "verdict": "no"
+  },
+  {
+   "src": "alpha145",
+   "W": 10,
+   "k": 9,
+   "task": "曲面 · 直纹曲面",
+   "pick": "cadstudio_create_ocp_surface",
+   "pick_desc": "Create smooth loft, sweep, knit, or thicken geometry through a strict structured whitelist.",
+   "is_none": false,
+   "verdict": "abstain_reasonable"
+  }
+ ]
+}

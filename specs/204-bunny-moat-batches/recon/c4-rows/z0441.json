@@ -1,0 +1,171 @@
+{
+  "idx": 441,
+  "results": [
+    {
+      "member": "SetDisplayOnlySpeedPakBodies",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VB.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对；三份示例均以 true 调用。"
+    },
+    {
+      "member": "SetDisplayOnlySurfaceCut",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VB.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对；三份示例均以 false 调用。"
+    },
+    {
+      "member": "SetDisplayWhenAdded",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Corner_Relief_Feature_Example_CSharp.md",
+        "Create_Corner_Relief_Feature_Example_VB.md",
+        "Create_Corner_Relief_Feature_Example_VBNET.md",
+        "Create_Edge_Flange_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出 Remarks 没说出的前置顺序：SetAddToDB(true) 必须先于 SetDisplayWhenAdded",
+          "example_quote": "swModel.SetAddToDB(true);",
+          "example_file": "Create_Corner_Relief_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "同一开关也套在旧式 IModelDoc2.CreateLine2 建线外层，不只 SketchManager.CreateLine 一条路",
+          "example_quote": "swModel.CreateLine2(swStartPoint.X, swStartPoint.Y, 0.0, swStartPoint.X, swStartPoint.Y + dLength, 0.0);",
+          "example_file": "Create_Edge_Flange_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例均无 GraphicsRedraw2/EditRebuild3，与 Remarks 不冲突；示例只演示 false→true 复位。"
+    },
+    {
+      "member": "SetDocumentSaveToNames",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md",
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_VB.md",
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_VBNET.md",
+        "Pack_and_Go_Part_and_Linked_Equation_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "To override the paths and filenames set by this method, use [[IPackAndGo::SetSaveToName]].",
+          "example_quote": "status = swPackAndGo.SetSaveToName2(true, myPath);",
+          "example_file": "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md",
+          "why": "Remarks 指向的 SetSaveToName 页首行标 Obsolete（Superseded by SetSaveToName2）；三份示例改调 SetSaveToName2，而 Pack_and_Go_Part_and_Linked_Equation 仍调被废弃的 SetSaveToName，同批示例自相矛盾。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例显示数组是 GetDocumentNames 的 object[] 原样回传；同文件对 AddExternalDocuments 却须转 BStrWrapper[]",
+          "example_quote": "pgFileNames = (object[])fileNames;",
+          "example_file": "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md"
+        },
+        {
+          "what": "示例证明设完名称不是最后一步：其后仍 Add/RemoveExternalDocuments，再 SavePackAndGo",
+          "example_quote": "statuses = swModelDocExt.SavePackAndGo(swPackAndGo);",
+          "example_file": "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md"
+        }
+      ],
+      "note": "C# 示例里 new object[namesCount-1] 的数组随即被 GetDocumentNames 结果覆盖，是死分配，未据此判冲突。"
+    },
+    {
+      "member": "SetDoubleValue2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Attribute_Example_VB.md",
+        "Delete_Attribute_Example_CSharp.md",
+        "Delete_Attribute_Example_VB.md",
+        "Delete_Attribute_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用的是另一族枚举 swInConfigurationOpts_e.swAllConfiguration（值同为 2），非页面所指的 swSetValue_InAllConfigurations",
+          "example_quote": "bRet = swParamValue.SetDoubleValue2(i * 10, (int)swInConfigurationOpts_e.swAllConfiguration, \"\");",
+          "example_file": "Delete_Attribute_Example_CSharp.md"
+        },
+        {
+          "what": "ConfigurationName「非必需」在示例里落成空串 \"\"；且四例都开 PART，未演示 Remarks 说的图纸那一条",
+          "example_quote": "bRet = swParamValue.SetDoubleValue2(i * 10, swAllConfiguration, \"\")",
+          "example_file": "Create_Attribute_Example_VB.md"
+        }
+      ],
+      "note": "两族枚举的 1/2/3 取值一致（swSetValueInConfiguration_e.md 与 swInConfigurationOpts_e.md 逐字核对），故不判冲突。"
+    },
+    {
+      "member": "SetDraftAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Boundary_Feature_Example_CSharp.md",
+        "Insert_Boundary_Feature_Example_VB.md",
+        "Insert_Boundary_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call [[IBoundaryBossFeatureData::GetCurvesCount]] to get a valid range of values for GuideIndex.",
+          "example_quote": "if (nbrCurves >= 0)",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md",
+          "why": "计数为 0 时合法区间为空、不含索引 0；示例用 >=0 让计数 0 也进守卫，并在守卫外无条件以 GuideIndex=0 调本成员。三份示例同此写法。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例用 AccessSelections(swModel,null) 与 ModifyDefinition 把读写夹在中间，页面 Remarks 未提这两个前置",
+          "example_quote": "status = swBoundaryBossFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "DraftAngle 实参字面量 0.015；页面只写「Draft angle」，未给单位与量程",
+          "example_quote": "swBoundaryBossFeatureData.SetDraftAngle((int)swBoundaryBossDirection_e.swBoundaryBossDirection_First, 0, 0.015);",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "示例确先调 GetCurvesCount，满足 Remarks 字面要求；争议只在守卫用 >=0 而非 >0。"
+    },
+    {
+      "member": "SetDraftAngleReverseDirection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Boundary_Feature_Example_CSharp.md",
+        "Insert_Boundary_Feature_Example_VB.md",
+        "Insert_Boundary_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call [[IBoundaryBossFeatureData::GetCurvesCount]] to get a valid range of values for GuideIndex.",
+          "example_quote": "if (nbrCurves >= 0)",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md",
+          "why": "同族同一守卫：计数 0 时合法区间为空，示例仍以 GuideIndex=0 调本成员，且在守卫之外无条件执行。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例同样用 AccessSelections / ModifyDefinition 夹住写入，页面 Remarks 未提",
+          "example_quote": "status = swFeature.ModifyDefinition(swBoundaryBossFeatureData, swModel, null);",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "IsFlipped 传 true 后立即用 GetDraftAngleReverseDirection 回读，形成写-读验闭环",
+          "example_quote": "swBoundaryBossFeatureData.SetDraftAngleReverseDirection((int)swBoundaryBossDirection_e.swBoundaryBossDirection_First, 0, true);",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "IsFlipped 的 bool 语义与 Returns 无冲突；本页与 SetDraftAngle 的 Remarks 逐字相同。"
+    }
+  ]
+}

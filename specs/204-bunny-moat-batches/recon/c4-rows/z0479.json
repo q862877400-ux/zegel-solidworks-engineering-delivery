@@ -1,0 +1,100 @@
+{
+  "idx": 479,
+  "results": [
+    {
+      "member": "SpecificUnitType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_User_Units_Example_CSharp.md",
+        "Get_and_Set_User_Units_Example_VB.md",
+        "Get_and_Set_User_Units_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/See Also，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "SpecifyMaterial",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_3DContact_Feature_Example_VB.md",
+        "Create_3D_Contact_Feature_Example_CSharp.md",
+        "Create_3D_Contact_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Set to false to modify elastic properties:",
+          "example_quote": "Debug.Print \"  Use impact force:\"\nDebug.Print \"    Exponent of exponential force: \" & swContFeat.Exponent\nDebug.Print \"    Maximum damping coefficient: \" & swContFeat.MaxDamping\nDebug.Print \"    Penetration at which maximum damping is applied: \" & swContFeat.Penetration\nDebug.Print \"    Stiffness of material at boundary of interaction: \" & swContFeat.Stiffness",
+          "example_file": "Create_3DContact_Feature_Example_VB.md",
+          "why": "Remarks 点名的 4 个弹性量判据是 SpecifyMaterial=false；示例把同样这 4 个量放进 UseRestitutionCoefficient 的 else 分支，全程未写 SpecifyMaterial。两侧给的唯一门槛不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "MaterialID 是带下标的属性：示例按 0、1 取两个材料对象（C# 写作 get_MaterialID(0/1)），成员页 See Also 只写 MaterialID Property。",
+          "example_quote": "Debug.Print(\"    First object: \" + swContFeat.get_MaterialID(0));\nDebug.Print(\"    Second object: \" + swContFeat.get_MaterialID(1));",
+          "example_file": "Create_3D_Contact_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都只读 SpecifyMaterial，从不赋值；Remarks 描述的是写操作。"
+    },
+    {
+      "member": "SpericalCenterDistance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples/See Also，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "SplinePointNumber",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Spline_Handles_Example_CSharp.md",
+        "Get_and_Set_Spline_Handles_Example_VB.md",
+        "Get_and_Set_Spline_Handles_Example_VBNET.md",
+        "Set_Spline_Tangency_and_Curvature_Controls_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 段故跳过；另注：有一份示例写成 SplinePointNumber() 带括号，形似方法。"
+    },
+    {
+      "member": "Split",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Chamfer_Display_Dimension_Example_CSharp.md",
+        "Get_Chamfer_Display_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples/See Also，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "SplitClosedSegment",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页标 Obsolete；三份示例调的是后继 swModel.SketchManager.SplitClosedSegment，本成员未被用到。"
+    },
+    {
+      "member": "SplitFaces",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Parting_Line_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Parting_Line_Feature_Data_Example_VB.md",
+        "Get_and_Set_Parting_Line_Feature_Data_Example_VBNET.md",
+        "Set_Split_Faces_Option_for_Parting_Line_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples/See Also，无 Remarks 段，按纪律跳过。"
+    }
+  ]
+}

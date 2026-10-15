@@ -1,0 +1,15 @@
+{"idx":10,"pages_read":13,"rows":[
+{"iface":"IView","file":"CropViewJaggedOutline.md","signature":"System.bool CropViewJaggedOutline {get; set;}","obsolete":false,"pointer":false,"zero":"是（无括号）"},
+{"iface":"IView","file":"GetDetailCircleCount.md","signature":"System.int GetDetailCircleCount()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetFirstAnnotation2.md","signature":"System.object GetFirstAnnotation2()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetPolylines2.md","signature":"System.object GetPolylines2()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetXform.md","signature":"System.object GetXform()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetEllipses.md","signature":"System.double IGetEllipses()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetTemporaryAxes.md","signature":"System.double IGetTemporaryAxes( System.int TempAxesCount )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"ResetSketchVisibility.md","signature":"void ResetSketchVisibility()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"ChangeComponentLayer.md","signature":"void ChangeComponentLayer( System.string Layername, System.bool AllViews )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"DeleteLineStyle.md","signature":"System.bool DeleteLineStyle( System.string StyleName, System.string ReplaceName )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"ICreateDiamDim.md","signature":"void ICreateDiamDim( System.double DimValue, ref System.double P0, ref System.double P1, ref System.double P2, ref System.double P3, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"InsertNewNote.md","signature":"void InsertNewNote( System.string Text, System.bool NoLeader, System.bool BalloonNote, System.bool BentLeader, System.short ArrowStyle, System.short LeaderSide )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"ViewDisplayShaded.md","signature":"void ViewDisplayShaded()","obsolete":false,"pointer":false,"zero":"是（空括号）"}
+]}

@@ -1,0 +1,133 @@
+{
+  "idx": 166,
+  "results": [
+    {
+      "member": "GetCoordinates",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks。指派的 4 份示例全是同名撞名：swSkText(SketchText) 与 swProjArr(ProjectionArrow) 的同名成员，非 ICenterOfMass。"
+    },
+    {
+      "member": "GetCoords",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_Sketch_Points_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例印证 GetCoords 只回 x 一个值；要拿 x/y 两坐标必须另读 .X 与 .Y 属性",
+          "example_quote": "Debug.Print \"Value returned by ISketchPoint::GetCoords: \" & swSketchPoint.GetCoords",
+          "example_file": "Get_Sketch_Points_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks。示例与页面一致，未见冲突。"
+    },
+    {
+      "member": "GetCoreSurfacesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Tooling_Split_Feature_Data_Example_CSharp.md",
+        "Get_Tooling_Split_Feature_Data_Example_VB.md",
+        "Get_Tooling_Split_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先 AccessSelections 拿到选择访问权才取计数，成员页 Remarks 未提这一前置",
+          "example_quote": "bRet = swToolingSplitFeatData.AccessSelections(swModel, null);",
+          "example_file": "Get_Tooling_Split_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 只说为 IGetCoreSurfaces 定数组大小；示例改用 CoreSurfaces 属性，计数同样在其之前调用",
+          "example_quote": "coreSurf = (object[])swToolingSplitFeatData.CoreSurfaces;",
+          "example_file": "Get_Tooling_Split_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都是「先 Count 后取数组」，与 Remarks 同向；差异只是示例多写了 AccessSelections 前置。"
+    },
+    {
+      "member": "GetCornerAtIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_SM_Corner_Relief_Feature_Example_CSharp.md",
+        "Create_SM_Corner_Relief_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在改定义路径上先调 AccessSelections 释放/取得访问权，再取角点，成员页未写此前置",
+          "example_quote": "featModData.AccessSelections(swModel, null);",
+          "example_file": "Create_SM_Corner_Relief_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 0 基循环下标 +1 当一元索引传入，与 GetCorners(-1) 数组顺序一致",
+          "example_quote": "PrintReliefData(cntr1 + 1, cornerReliefFeatData);",
+          "example_file": "Create_SM_Corner_Relief_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定。两份示例的一元索引用法一致。"
+    },
+    {
+      "member": "GetCornerGroupMembers",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Returns 段写数组元素是 IStructureSystemMemberFeatureData，示例却当 CornerMember 取 TrimOrder 等成员",
+          "example_quote": "crnrMbr = (CornerMember)crnrMbrArr[Y];",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+        },
+        {
+          "what": "示例显示取该数组前必须先 AccessSelections，成员页未写",
+          "example_quote": "crnrFeat2.AccessSelections(modDoc, null);",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks。Returns 元素类型与示例实际取用类型不一致，按纪律不判为冲突。"
+    },
+    {
+      "member": "GetCornerManagementFolders",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按 GetUpperBound(0) 取上界且用 <= 遍历，比数组实际元素多走一次",
+          "example_quote": "for (i = 0; i <= Count; i++)",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+        },
+        {
+          "what": "示例须先建好结构系统并按 F5 再枚举，成员页 Remarks 未给这条前置",
+          "example_quote": "// 4. Press F5 to inspect the corner treatments.",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+        }
+      ],
+      "note": "示例与 Remarks 完全同向（GetSpecificFeature2 取 ICornerManagementFolder），无冲突。"
+    },
+    {
+      "member": "GetCornerTreatmentCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值当 0 基循环上界，配合 GetCornerTreatments 数组从 0 数到 cnt-1",
+          "example_quote": "For x = 0 To crnrCnt - 1",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定。两份示例用法一致且与 Returns 段相符。"
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "idx": 422,
+  "results": [
+    {
+      "member": "SavePackAndGo",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md",
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_VB.md",
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_VBNET.md",
+        "Pack_and_Go_Part_and_Linked_Equation_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出「providing Pack and Go input」的具体来源：先 GetPackAndGo() 取对象再配置并调用；成员页只有一句话，没说 input 从哪来。",
+          "example_quote": "swPackAndGo = (PackAndGo)swModelDocExt.GetPackAndGo();",
+          "example_file": "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md"
+        },
+        {
+          "what": "示例把返回值显式转成 int[]，说明状态数组元素就是 int（成员页只说 System.object 数组）。",
+          "example_quote": "statuses = (int[])swModelDocExt.SavePackAndGo(swPackAndGo);",
+          "example_file": "Pack_and_Go_Part_and_Linked_Equation_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例都是 GetPackAndGo→配置→调用一次，Remarks 无反例。"
+    },
+    {
+      "member": "SavePointsToFile",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Free_Point_Curve_Feature_Example_CSharp.md",
+        "Insert_Free_Point_Curve_Feature_Example_VB.md",
+        "Insert_Free_Point_Curve_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取该特征数据对象的完整路径：SelectByID2 选 Curve1（REFERENCECURVES）→GetSelectedObject6→GetDefinition；成员页未说数据对象从何而来。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Curve1\", \"REFERENCECURVES\", 0, 0, 0, false, 0, null, 0);",
+          "example_file": "Insert_Free_Point_Curve_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例落盘用 .sldcrv、返回按 bool 取；成员页只说可指定扩展名，没给具体文件名与调用写法。",
+          "example_quote": "status = swFreePointCurveFeatureData.SavePointsToFile(\"c:\\temp\\MyFreePointCurveFeature.sldcrv\")",
+          "example_file": "Insert_Free_Point_Curve_Feature_Example_VB.md"
+        }
+      ],
+      "note": "示例新建文档即所有者文档，单位那条未被反证，也无第二种单位说法。"
+    },
+    {
+      "member": "SaveRoutingSettingsToFile",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Save_Routing_Settings_Example_CSharp.md",
+        "Get_and_Save_Routing_Settings_Example_VB.md",
+        "Get_and_Save_Routing_Settings_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "SaveSelection",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Delete_Selection_Sets_Example_CSharp.md",
+        "Create_and_Delete_Selection_Sets_Example_VB.md",
+        "Create_and_Delete_Selection_Sets_Example_VBNET.md",
+        "Get_Dispatch_Objects_for_Selection_Set_Items_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "SaveTo3DExperience",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Open_And_Save_3DEXPERIENCE_Document_Example_CSharp.md",
+        "Open_And_Save_3DEXPERIENCE_Document_Example_VB.md",
+        "Open_And_Save_3DEXPERIENCE_Document_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例加了成员页没写的前置门禁：ApplicationType 必须是 swApplicationType_3DEXPERIENCE 才调用本方法。",
+          "example_quote": "If swApp.ApplicationType = swApplicationType_e.swApplicationType_3DEXPERIENCE Then",
+          "example_file": "Open_And_Save_3DEXPERIENCE_Document_Example_VBNET.md"
+        },
+        {
+          "what": "示例给出 Options 对象的取法 swApp.GetSaveTo3DExperienceOptions()；成员页只给类型不给来源。",
+          "example_quote": "swSaveTo3DExp = (SaveTo3DExperienceOptions)swApp.GetSaveTo3DExperienceOptions();",
+          "example_file": "Open_And_Save_3DEXPERIENCE_Document_Example_CSharp.md"
+        }
+      ],
+      "note": "示例属「新文件+另设选项」档，与 Remarks 的 Save With Options 一致。"
+    },
+    {
+      "member": "SaveToAVI",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md",
+        "swmotionstudyapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "SaveToFile3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Save_Solid_Body_to_File_Example_CSharp.md",
+        "Save_Solid_Body_to_File_Example_VB.md",
+        "Save_Solid_Body_to_File_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出满足「设计树中选中」前置的具体做法：遍历特征树匹配 GetTypeName2()==\"WeldMemberFeat\" 后 Select2(false,0)。",
+          "example_quote": "boolstatus = swFeat.Select2(false, 0);",
+          "example_file": "Save_Solid_Body_to_File_Example_CSharp.md"
+        },
+        {
+          "what": "示例先在 SolidBodyFolder 上 SetAutomaticCutList/UpdateCutList，并注明保存时会自动建焊件与切割清单文件夹；成员页未提。",
+          "example_quote": "// automatically creates a weldment and cut list folder",
+          "example_file": "Save_Solid_Body_to_File_Example_CSharp.md"
+        }
+      ],
+      "note": "示例正是焊件成员场景，与 Remarks 的 CutListProps 那句一致。"
+    }
+  ]
+}

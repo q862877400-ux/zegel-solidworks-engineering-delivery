@@ -1,0 +1,119 @@
+{
+  "idx": 486,
+  "results": [
+    {
+      "member": "Suppressed",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Replace_Sketch_Relation_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 Remarks，按纪律跳过；示例确实读该布尔属性并开关它。"
+    },
+    {
+      "member": "SurfaceArea",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把单位基准钉在 UseSystemUnits=false（文档属性单位 MKS），且首次读该属性在 Recalculate 之前；页面 Returns 只写 Surface area 未给单位。",
+          "example_quote": "// Use document property units (MKS)\n                MyMassProp.UseSystemUnits = false;",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        }
+      ],
+      "note": "另 3 份 Calculate_Environmental_Impact 示例的 SurfaceArea 属 SustainabilityManufacturing，不是本成员。"
+    },
+    {
+      "member": "SurfaceBodies",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "3 份示例取的是 mirrorFeatData(MirrorPartFeatureData).SurfaceBodies，属另一接口同名成员；本页无 Remarks 故跳过。"
+    },
+    {
+      "member": "SurfaceBodiesCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_CSharp.md",
+        "Get_Part's_Feature_Statistics_Example_VB.md",
+        "Get_Part's_Feature_Statistics_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 Remarks；3 份示例都经 swFeatMgr.FeatureStatistics 读该计数。"
+    },
+    {
+      "member": "SuspendSelectionList",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Objects_to_Selection_List_Example_CSharp.md",
+        "Add_Objects_to_Selection_List_Example_VB.md",
+        "Add_Objects_to_Selection_List_Example_VBNET.md",
+        "Get_Objects_in_Selection_Set_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "0 if the suspended list is empty, 1 if not",
+          "example_quote": "ret = selMgr.SuspendSelectionList();\n                Debug.Print(\"The current selection list with \" + ret + \" object (Sketch2) is suspended.\");",
+          "example_file": "Add_Objects_to_Selection_List_Example_CSharp.md",
+          "why": "页面 Returns 定为 0/1 空标志；示例把同一 int 当作被挂起列表的对象个数打印（VB/VBNET 同句），两种读法不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Remarks 第3步点名 ResumeSelectionList；Add_Objects 示例实调 ResumeSelectionList2(True) 追加，Get_Objects 示例用 SelectionSet.Select() 后调无参版。",
+          "example_quote": "selMgr.ResumeSelectionList2(true);",
+          "example_file": "Add_Objects_to_Selection_List_Example_CSharp.md"
+        }
+      ],
+      "note": "Get_Objects 示例未使用返回值，故无冲突；返回值冲突仅 Add_Objects 三份。"
+    },
+    {
+      "member": "SwapMembers",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "两份示例都先把 CornerTreatmentTrimType 设为 1（=swCornerTreatmentTrim_BodyTrim）再调 SwapMembers，此前还读 GetCornerGroupMembers/TrimOrder。",
+          "example_quote": "twoMbrCrnr.CornerTreatmentTrimType = 1; // Body trim",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的前置被示例满足（枚举值 1 即 BodyTrim），故无冲突。"
+    },
+    {
+      "member": "SweepPlanarLoop",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Sweep_Planar_Loop_Along_Vector_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method requires simplification of the imported body.",
+          "example_quote": "' Preconditions:\n' 1. Open a model document.\n' 2. Select a planar face.\n' 3. Open the Immediate window.",
+          "example_file": "Sweep_Planar_Loop_Along_Vector_Example_VB.md",
+          "why": "Remarks 把「已导入体先简化」列为硬前置；示例前置只写打开模型并选平面面，全程无导入与 Simplify 调用，两侧前置清单不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出实参尺度 Z=0.01，并把 GetArea 结果乘 1000000 打印成 mm²；页面四个参数均未写单位。",
+          "example_quote": "vSweepOutput = swLoop.SweepPlanarLoop(0#, 0#, 0.01, 0#)",
+          "example_file": "Sweep_Planar_Loop_Along_Vector_Example_VB.md"
+        }
+      ],
+      "note": "返回数组 element 1/2/3 与示例下标 0/1/2 顺序一致，不构成冲突。"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "idx": 40,
+  "results": [
+    {
+      "member": "ChangeSketchPlane",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例调的都是 IModelDocExtension::ChangeSketchPlane(2 参)，无一份调本页 0 参版 → 无法比对"
+    },
+    {
+      "member": "CharHeight",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Text_Format_Example_VB.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VB.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出可用的具体取值 0.01，注释写明是 10mm —— 成员页只说 meters，没给换算实例",
+          "example_quote": "swTextFormat.CharHeight = 0.01",
+          "example_file": "Change_Text_Format_Example_VB.md"
+        }
+      ],
+      "note": "本页无 Remarks（跳过冲突判定）；其余三份示例只是 Debug.Print 该属性"
+    },
+    {
+      "member": "CharHeightInPts",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VB.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md",
+        "Get_All_Elements_of_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "本页无 Remarks（跳过冲突判定）；四份示例都只 Debug.Print 该属性，无额外语义"
+    },
+    {
+      "member": "CharSpacingFactor",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VB.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md",
+        "Get_All_Elements_of_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "Remarks 说常态为 1；四份示例都只 Debug.Print 该属性，既无冲突也无额外信息"
+    },
+    {
+      "member": "Check",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Check_Bodies_for_Faults_Example_VB.md",
+        "Check_Edges_for_Faults_Example_CSharp.md",
+        "Check_Edges_for_Faults_Example_VB.md",
+        "Check_Edges_for_Faults_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例输出标签给出返回值的含义 1 有效 / 0 无效；本页无 Remarks，也没在 Returns 里说明",
+          "example_quote": "Debug.Print \" IBody2::Check (1 if valid; 0 if not) = \" & nRetval1",
+          "example_file": "Check_Bodies_for_Faults_Example_VB.md"
+        }
+      ],
+      "note": "本页无 Remarks（跳过冲突判定）；四份示例都在 SldWorks.Body2 上真调 Check"
+    },
+    {
+      "member": "Check2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Check_Bodies_for_Faults_Example_VB.md",
+        "Check_Edges_for_Faults_Example_CSharp.md",
+        "Check_Edges_for_Faults_Example_VB.md",
+        "Check_Edges_for_Faults_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例输出标签给出返回值的含义是故障个数；本页无 Remarks，也没在 Returns 里说明",
+          "example_quote": "Debug.Print \" IBody2::Check2(Number of faults) = \" & nRetval2",
+          "example_file": "Check_Bodies_for_Faults_Example_VB.md"
+        }
+      ],
+      "note": "本页无 Remarks（跳过冲突判定）；四份示例都在 SldWorks.Body2 上真调 Check2"
+    },
+    {
+      "member": "Check3",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Check_Bodies_for_Faults_Example_VB.md",
+        "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_CSharp.md",
+        "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_VB.md",
+        "Get_and_Fill_Gaps_in_Body_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例一律不判空：拿到返回的 FaultEntity 直接读 .Count，0 即视为无故障",
+          "example_quote": "nRetval1 = swFaultEnt.Count;",
+          "example_file": "Get_and_Fill_Gaps_in_Body_Example_CSharp.md"
+        }
+      ],
+      "note": "本页无 Remarks（跳过冲突判定）；四份示例都把 Check3 返回的对象直接取 .Count"
+    }
+  ]
+}

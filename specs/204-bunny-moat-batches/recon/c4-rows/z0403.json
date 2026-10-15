@@ -1,0 +1,148 @@
+{
+  "idx": 403,
+  "results": [
+    {
+      "member": "ReferencePoint",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Local_Sketch-driven_Pattern_Example_CSharp.md",
+        "Create_Local_Sketch-driven_Pattern_Example_VB.md",
+        "Create_Local_Sketch-driven_Pattern_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出枚举字面含义：ReferencePoint=1 即包围盒中心，成员页只说「见枚举」。",
+          "example_quote": "swLocalSketchPatternFeat.ReferencePoint = 1; //Bounding box center",
+          "example_file": "Create_Local_Sketch-driven_Pattern_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出前置选择的 mark：组件 mark=1、草图 mark=16；成员页只泛指 Selections 文档。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Sketch1\", \"SKETCH\", 0, 0, 0, true, 16, null, 0);",
+          "example_file": "Create_Local_Sketch-driven_Pattern_Example_CSharp.md"
+        },
+        {
+          "what": "C# 版另读 GetReferencePointType 并写出其取值含义（闭合曲线/草图点/顶点/默认），VB 两版无此步。",
+          "example_quote": "Debug.Print(\"  Is reference point a closed curve, sketch point, vertex, or default value: \" + swLocalSketchPatternFeat.GetReferencePointType());",
+          "example_file": "Create_Local_Sketch-driven_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只是一条指向 Selections 文档的链接，无可对照断言。Get_Table-driven 示例用的是同名但不同接口的成员，已排除。"
+    },
+    {
+      "member": "ReferenceType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Edit_Mate_Example_VB.md",
+        "Edit_Mate_Example_CSharp.md",
+        "Edit_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过。Get_Mate_Reference_Properties 用的是 IMateReference::ReferenceType(0)，已排除。"
+    },
+    {
+      "member": "ReferencedConfiguration",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Referenced_Configuration_Example_VB.md",
+        "Change_Material_Properties_Example_VB.md",
+        "Edit_Mate_Example_VB.md",
+        "Edit_Mate_Example_CSharp.md",
+        "Edit_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "You can use this property to change the active configuration of:\n\n- a pattern seed component.",
+          "example_quote": "' 1. Open an assembly document.\n' 2. Select a component.",
+          "example_file": "Change_Referenced_Configuration_Example_VB.md",
+          "why": "Remarks 把可改配置的对象限定为阵列种子/实例；示例前置只要求任选一个组件并对其直接赋值。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把空串当作「in-use」哨兵值写入，成员页只说该属性返回配置名。",
+          "example_quote": "' Change component configuration to \"in-use\"\n    swComp.ReferencedConfiguration = \"\"",
+          "example_file": "Change_Referenced_Configuration_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 关于遍历中调用与数组失效的告诫，在 Edit_Mate 三例不适用（它们只用 GetMateEntity，未用 GetChildren），故不记为冲突。"
+    },
+    {
+      "member": "ReferencedConfigurationID",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Configurations_Referenced_in_View_Example_VB.md",
+        "Get_Configurations_Referenced_in_View_Example_CSharp.md",
+        "Get_Configurations_Referenced_in_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：第一个 view 就是图纸页伪视图，必须先 GetNextView 跳过才能读到配置 ID。",
+          "example_quote": "' First drawing view is actually the first drawing sheet,\n    ' so skip getting model name and configuration from\n    ' the drawing sheet",
+          "example_file": "Get_Configurations_Referenced_in_View_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只指向持久引用 ID 文档，本身无可对照的具体断言。"
+    },
+    {
+      "member": "ReferencedDisplayState",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Referenced_Display_State_Example_VB.md",
+        "Get_Referenced_Display_State_Example_CSharp.md",
+        "Get_Referenced_Display_State_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段（且已 Obsolete），按纪律跳过。"
+    },
+    {
+      "member": "ReferencedDisplayState2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Active_Display_State_of_Referenced_Component_Example_VB.md",
+        "Set_Active_Display_State_of_Referenced_Component_Example_CSharp.md",
+        "Set_Active_Display_State_of_Referenced_Component_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "ReferencedDocument",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Document_Referenced_by_Drawing_View_Example_VB.md",
+        "Set_Body_for_View_Example_CSharp.md",
+        "Set_Body_for_View_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Because section views do not have referenced documents, this method returns an empty string for this type of view.",
+          "example_quote": "swModel = (ModelDoc2)swView.ReferencedDocument;\n            swPart = (PartDoc)swModel;\n            arrBody = (object[])swPart.GetBodies2((int)swBodyType_e.swSolidBody, true);",
+          "example_file": "Set_Body_for_View_Example_CSharp.md",
+          "why": "Remarks 说剖视图回空串（字符串形态），示例一律强转 ModelDoc2 对象后直接调用成员，无空值分支。"
+        },
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Because section views do not have referenced documents, this method returns an empty string for this type of view.",
+          "example_quote": "Set swDrawModel = swView.ReferencedDocument\n    sModelName = swView.GetReferencedModelName",
+          "example_file": "Get_Document_Referenced_by_Drawing_View_Example_VB.md",
+          "why": "VBA 用 Set 把结果赋给 ModelDoc2 对象变量并随后调用 GetPathName，与「空串」形态无法共存。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：须先在图形区选中一个视图，用 GetSelectedObject6 取回，成员页未写。",
+          "example_quote": "' 2. Select a drawing view.",
+          "example_file": "Get_Document_Referenced_by_Drawing_View_Example_VB.md"
+        }
+      ],
+      "note": "「空串」与本成员页自身声明的 ModelDoc2 返回类型也抵触，但两侧证据需分别落到示例上才成立，故按示例侧形态差异记录。"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "idx": 184,
+  "results": [
+    {
+      "member": "GetEndConditionReference",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份示例调的是 ISimpleHoleFeatureData2（1 个 out 参），非本接口的 2 参版本，故不采用。"
+    },
+    {
+      "member": "GetEndParams",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Space_Parameter_Curve_on_Surface_Example_VB.md",
+        "Create_Temporary_Elliptical_Extrusion_Example_VB.md",
+        "Evaluate_Curves_Defined_in_Sketch_Space_Example_VB.md",
+        "Find_Minimum_Radius_of_Curve_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例指出对已裁剪曲线（trimmed curve）可直接用裁剪点当参数，不必先调本方法取参数。",
+          "example_quote": "Not really needed because curve is a trimmed curve,",
+          "example_file": "Create_Space_Parameter_Curve_on_Surface_Example_VB.md"
+        }
+      ],
+      "note": "四份示例确为 ICurve.GetEndParams；未见与 Remarks 相斥的说法。"
+    },
+    {
+      "member": "GetEndPoint2",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，跳过判定；四份示例调的是 SketchLine，不是 SketchArc。"
+    },
+    {
+      "member": "GetEndVertex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Check_Interference_Between_Two_Bodies_Example_VB.md",
+        "Check_Interference_using_Modeler_CheckInterference_Example_VB.md",
+        "Create_Asymmetric_Elliptic_Fillets_Example_CSharp.md",
+        "Create_Asymmetric_Elliptic_Fillets_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "If no vertex exists for this edge (such as the edge of a newly created cylinder), then this method returns NULL.",
+          "example_quote": "vPoint2 = swVertex2.GetPoint",
+          "example_file": "Check_Interference_Between_Two_Bodies_Example_VB.md",
+          "why": "Remarks 说可能回 NULL；示例在 swBody1.Copy 得到的体上取顶点后无判空即调 .GetPoint。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Because edges have no natural direction, you cannot necessarily predict which of the two points you will get first and which last.",
+          "example_quote": "If AsyRadius1 <> 0.008 Then ErrorMsg SwApp, \"Radius R1 at vertex V1 is wrong\"",
+          "example_file": "Create_Asymmetric_Elliptic_Fillets_Example_VB.md",
+          "why": "Remarks 说起点/终点顺序不可预测；示例却硬断言 StartVertex=0.008、EndVertex=0.009 的固定映射。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "四份示例确为 IEdge.GetEndVertex；两处冲突分别是判空缺失与起终点顺序假设。"
+    },
+    {
+      "member": "GetEntities",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，跳过判定；四份示例调 ISketchRelation.GetEntities，非本接口。"
+    },
+    {
+      "member": "GetEntitiesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "示例分别调 ISurfaceOffsetFeatureData 与 ISketchRelation 的同名成员，非本接口，无冲突。"
+    },
+    {
+      "member": "GetEntitiesToJoinCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_a_Composite_Curve_Example_CSharp.md",
+        "Insert_a_Composite_Curve_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出更简调用序：按 \"REFERENCECURVES\" 选中特征 → GetDefinition → 直接读本计数，无需 AccessSelections。",
+          "example_quote": "nbrEntities = swCompositeCurveFeatureData.GetEntitiesToJoinCount();",
+          "example_file": "Insert_a_Composite_Curve_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例确为 ICompositeCurveFeatureData；未见相斥说法，仅示例调用序更具体。"
+    }
+  ]
+}

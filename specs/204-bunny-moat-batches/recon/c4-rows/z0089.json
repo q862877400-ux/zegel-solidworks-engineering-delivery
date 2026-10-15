@@ -1,0 +1,154 @@
+{
+  "idx": 89,
+  "results": [
+    {
+      "member": "DeleteEntityName",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_Entity_By_Name_Example.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置要求先选中一个面，并把该面当 Entity 传入；成员页没提任何选择前置",
+          "example_quote": "2. Select a face.",
+          "example_file": "Get_Entity_By_Name_Example.md"
+        },
+        {
+          "what": "示例删完名字立刻用 SetEntityName 改名，且返回值只判改名那一步",
+          "example_quote": "ret = Part.DeleteEntityName(Entity)",
+          "example_file": "Get_Entity_By_Name_Example.md"
+        }
+      ],
+      "note": "示例未演示备注警告的引用失效风险；两侧无矛盾。"
+    },
+    {
+      "member": "DeleteExplodeStep",
+      "remarks_empty": false,
+      "examples_actually_used": ["Add_Explode_Step_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 AutoExplode 建爆炸视图，再取 GetExplodeStep(0).Name 作为要删的步名",
+          "example_quote": "config.DeleteExplodeStep (explStep.Name)",
+          "example_file": "Add_Explode_Step_Example_VB.md"
+        },
+        {
+          "what": "示例的配置对象取自 ConfigurationManager.ActiveConfiguration，落实「仅活动配置」",
+          "example_quote": "Set config = swModel.ConfigurationManager.ActiveConfiguration",
+          "example_file": "Add_Explode_Step_Example_VB.md"
+        }
+      ],
+      "note": "备注「仅活动配置」与示例一致，未见矛盾。"
+    },
+    {
+      "member": "DeleteFaces3",
+      "remarks_empty": false,
+      "examples_actually_used": ["Delete_Faces_Example_VB.md"],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Call [[IBody2::Check3]] to verify that the body is a valid solid after using this method.",
+          "example_quote": "nRetval = swCopyBody.Check2",
+          "example_file": "Delete_Faces_Example_VB.md",
+          "why": "备注点名用 Check3 复核，示例改调 Check2；而 Check2 官方页标 Obsolete、被 Check3 取代，两条复核路径不同。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先把体 Copy 成临时体，再按属性在副本上重新收集面才传入，不能直接用原体的面",
+          "example_quote": "vFaceArr = GetFacesWithAttribute(swApp, swCopyBody, swAttDef)",
+          "example_file": "Delete_Faces_Example_VB.md"
+        }
+      ],
+      "note": "成员页首行标 Obsolete（被 IDeleteFaces4 取代），示例仍在调本成员。"
+    },
+    {
+      "member": "DeleteFaces5",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_New_Part_from_Existing_Part_Using_Temporary_Body_Example_CSharp.md",
+        "Create_New_Part_from_Existing_Part_Using_Temporary_Body_Example_VB.md",
+        "Create_New_Part_from_Existing_Part_Using_Temporary_Body_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 版传 Shrink+Auto 且 DoLocalCheck=true，out BodyList / out LocalCheckResult 都要接",
+          "example_quote": "bRet = swCopyBody.DeleteFaces5(varFaceArr, (int)swHealActionType_e.swHealAction_Shrink, (int)swLoopProcessOption_e.swLoopProcess_Auto, true, out varBodies, out bLocChk);",
+          "example_file": "Create_New_Part_from_Existing_Part_Using_Temporary_Body_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 版同参数，并对返回值与局部检查结果都断言；BodyList 由 ByRef 回填",
+          "example_quote": "bRet = swCopyBody.DeleteFaces5(vFaceArr, swHealAction_Shrink, swLoopProcess_Auto, True, vBodies, bLocChk): Debug.Assert bRet: Debug.Assert bLocChk",
+          "example_file": "Create_New_Part_from_Existing_Part_Using_Temporary_Body_Example_VB.md"
+        }
+      ],
+      "note": "备注说检查被禁用，示例却把 DoLocalCheck 传 True 并读 LocalCheckResult。"
+    },
+    {
+      "member": "DeleteFrame",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method is valid only if this Gtol was created in SOLIDWORKS 2022 or later.",
+          "example_quote": "either SolidWorks 2021 or SolidWorks 2022/2022+.",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md",
+          "why": "备注限定只对 2022 及以后创建的 Gtol 有效，示例前置却明写允许 2021 创建的 Gtol，可用前提不同。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先 AddFrame，再把 GetFrameCount() 的返回值当 FrameNum 删掉刚加的那个",
+          "example_quote": "boolstatus = swGtol.DeleteFrame(FrameCount);",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "C# 与 VBNET 两版的 DeleteFrame/DeleteIndicator 调用一致。"
+    },
+    {
+      "member": "DeleteIndicator",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 GetIndicatorCount() 的返回值直接当 IndicatorIndex，即删最后一个指示器",
+          "example_quote": "boolstatus = swGtolFrame.DeleteIndicator(IndicatorCount);",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "备注要求先用 GetIndicatorCount 定索引，示例照做，两侧一致。"
+    },
+    {
+      "member": "DeleteInstanceAt",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_CSharp.md",
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_VB.md",
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_VBNET.md",
+        "Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 DeleteInstanceAt 夹在 AccessSelections 与 ModifyDefinition 之间，成员页未提这对前后置",
+          "example_quote": "status = swDimensionDrivenTablePatternFeat.AccessSelections(swModel, null);",
+          "example_file": "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "参数 -1 删末尾、3 删第 4 个，与「0-based」口径一致",
+          "example_quote": "status = swDimensionDrivenTablePatternFeat.DeleteInstanceAt(3)",
+          "example_file": "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 Delete_Instances 示例都未调 GetInstanceCount，只有 Delete_and_Insert 那份调了。"
+    }
+  ]
+}

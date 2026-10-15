@@ -1,0 +1,112 @@
+{
+  "idx": 48,
+  "results": [
+    {
+      "name": "select_by_ray",
+      "level": "verified",
+      "members_found": ["SelectByRay", "Extension"],
+      "examples_used": [
+        "Select_Face_Using_Intersecting_Ray_Example_VB.md",
+        "Select_Face_Using_Intersecting_Ray_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "示例前置1：先打开一个有实体的零件文档（示例取 swApp.ActiveDoc，box.sldrpt，脚本自己不建）",
+          "from": "Select_Face_Using_Intersecting_Ray_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "先造一块板，再 `SelectByRay(0, 0, +0.05, 0, 0, **-1**, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)`"
+        },
+        {
+          "text": "示例前置2：打开 Immediate 窗口（示例靠 Debug.Print 回读 SelectByRay 的返回）",
+          "from": "Select_Face_Using_Intersecting_Ray_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "示例调用约定：TypeWanted=swSelFACES、Append=False、Mark=0、末参 swSelectOptionDefault",
+          "from": "Select_Face_Using_Intersecting_Ray_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "**swSelFACES=2**, False, **Mark=0**, 0)` ⇒ **选中计数 1 → 2**（增 1）· 返回 `True`"
+        },
+        {
+          "text": "示例用单位方向向量且只命中第一个被相交的面（rayVec=-1,0,0）",
+          "from": "Select_Face_Using_Intersecting_Ray_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "再 `SelectByRay(0, 0, +0.05, 0, 0, **-1**, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)` ⇒ **选中计数 1 → 2**（增 1）"
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "唯一相关示例是 Select_Face_Using_Intersecting_Ray；mates/wrap 等只是碰巧同名成员，已排除。唯一 not_covered 是 Immediate 窗口。"
+    },
+    {
+      "name": "feature_hole_wizard5",
+      "level": "verified",
+      "members_found": [
+        "HoleWizard5",
+        "SelectByRay",
+        "ClearSelection2",
+        "Extension",
+        "SelectionManager",
+        "GetSelectedObjectCount2",
+        "FeatureManager"
+      ],
+      "examples_used": [
+        "Create_Hole_Wizard_Hole_Example_VB.md",
+        "Create_Hole_Wizard_Hole_Example_CSharp.md",
+        "Insert_Hole_Wizard_Slot_and_Hole_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "示例前置1：指定的零件模板 Part.prtdot 必须存在（示例从模板新建零件后画草图拉伸）",
+          "from": "Create_Hole_Wizard_Hole_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "示例前置1：指定要打开的零件文档 block20.sldprt 必须存在",
+          "from": "Insert_Hole_Wizard_Slot_and_Hole_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "示例前置2：打开 Immediate 窗口",
+          "from": "Insert_Hole_Wizard_Slot_and_Hole_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "孔位前置：调用前必须已有 Mark=0 的选中实体——示例按坐标点选 FACE（mark=0）或选基准面 Plane1（mark=0）",
+          "from": "Insert_Hole_Wizard_Slot_and_Hole_Example_VB.md（Create_Hole_Wizard_Hole_Example_VB.md 同）",
+          "state": "covered",
+          "evidence_quote": "`SelectByRay(0,0,+0.05, 0,0,-1, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)` 定孔位"
+        },
+        {
+          "text": "SSize 必须是该紧固件类型的合法尺寸；官方示例传 \"M2\" / \"#97\" / \"#12\"",
+          "from": "Create_Hole_Wizard_Hole_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "故 **`SSize` 要的是“**规格串**”**（★ 如 `M8`），★ **而不是空串、也不是纯数字** —— ★ 正是官方那句“**必须是该紧固件类型的合法尺寸**”。"
+        },
+        {
+          "text": "FastenerTypeIndex 必须与所选 StandardIndex 配对（示例：ANSI Metric ↔ FlatHead82）",
+          "from": "Create_Hole_Wizard_Hole_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "不用的 Value 参数要传 -1（官方示例逐字：SOLIDWORKS 会忽略设为 -1 的参数；Value8-Value12 全 -1）",
+          "from": "Insert_Hole_Wizard_Slot_and_Hole_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "末 6 个布尔参数（RevDir/FeatureScope/AutoSelect 等）两个官方示例取值互相矛盾，说不清",
+          "from": "Create_Hole_Wizard_Hole_Example_VB.md 与 Insert_Hole_Wizard_Slot_and_Hole_Example_VB.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "SSize 规格串与 Mark=0 定位已逐字覆盖；未覆盖：-1 未用参数约定、FastenerType 与 Standard 配对、模板/文档必须存在、Immediate 窗口。"
+    }
+  ]
+}

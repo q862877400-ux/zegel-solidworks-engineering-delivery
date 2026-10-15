@@ -1,0 +1,107 @@
+{
+  "idx": 411,
+  "results": [
+    {
+      "member": "ReplaceViewModel",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Replace_View_Model_Example_VB.md",
+        "C:\\swapi\\examples\\Replace_View_Model_Example_VBNET.md",
+        "C:\\swapi\\examples\\Replace_View_Model_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整调用序：先激活视图、再按名选中视图与组件实例，最后才调本成员；成员页 Remarks 只说对应 Tools > Replace Model，无任何前置。",
+          "example_quote": "status = swModel.ActivateView(\"Drawing View1\")",
+          "example_file": "C:\\swapi\\examples\\Replace_View_Model_Example_VB.md"
+        },
+        {
+          "what": "实例须按「组件名@视图名」复合名用 SelectByID2 取；成员页只说 Instances 是 IComponent2 数组，没说怎么定位。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Assem20-3@Drawing View1\", \"COMPONENT\", 0, 0, 0, False, 0, Nothing, 0)",
+          "example_file": "C:\\swapi\\examples\\Replace_View_Model_Example_VB.md"
+        },
+        {
+          "what": "C#/VB.NET 把两个数组包成 DispatchWrapper[] 才传入，VBA 直接传 Object 数组；成员页签名只写 System.object，未给包装要求。",
+          "example_quote": "DispatchWrapper[] viewsIn = new DispatchWrapper[1];",
+          "example_file": "C:\\swapi\\examples\\Replace_View_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 仅一句功能对应说明，与示例三份无相互否定之处，故 conflicts 为空。"
+    },
+    {
+      "member": "ReplaceViewWithBlock",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Parameters/Returns，无 ## Remarks ⇒ 按纪律跳过。"
+    },
+    {
+      "member": "ReplaceViewWithSketch",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns，无 ## Remarks ⇒ 按纪律跳过。"
+    },
+    {
+      "member": "Reset",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "Remarks 为 For use in in-process DLLs only.；四个候选示例里的 Reset 分属 IEnumDocuments2 与 SplineHandle，无一用到 IEnumBodies2.Reset ⇒ 无对照材料。"
+    },
+    {
+      "member": "ResetAllHandles",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（正文首行是概述、其后是 Returns/Examples）⇒ 按纪律跳过。"
+    },
+    {
+      "member": "ResetBlockingState",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Set_Blocking_State_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "**NOTE:** You must call this method every time you call IModelDoc2::SetBlockingState. It is not enough to call this method once at the end of a sequence of operations that have called IModelDoc2::SetBlockingState several times.",
+          "example_quote": "If nResponse = vbYes Then\n        swModel.ResetBlockingState\n    Else\n    ' If use responds no, then set blocking state to\n    ' disallow changes to document\n        swModel.SetBlockingState swPartialModifyBlock\n    End If",
+          "example_file": "C:\\swapi\\examples\\Set_Blocking_State_Example_VB.md",
+          "why": "Remarks 要求 Set 与 Reset 同序成对；示例每次运行只在 if/else 一支里调一个，Reset 发生在另一次运行的 Set 之后，两侧不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例用 MsgBox 在 Yes/No 两支二选一调用，并把 swPartialModifyBlock 作为 SetBlockingState 实参；成员页未给实参形态。",
+          "example_quote": "swModel.SetBlockingState swPartialModifyBlock",
+          "example_file": "C:\\swapi\\examples\\Set_Blocking_State_Example_VB.md"
+        },
+        {
+          "what": "示例用 GetBlockingState 在调用前后各读一次做验证；成员页只写 Reset 一侧，没提读取侧成员。",
+          "example_quote": "Debug.Print \"Starting blocking state = \" & swModel.GetBlockingState",
+          "example_file": "C:\\swapi\\examples\\Set_Blocking_State_Example_VB.md"
+        },
+        {
+          "what": "示例前置要求在 Immediate 窗口里运行；成员页无运行环境前置。",
+          "example_quote": "' 2. Open the Immediate window.",
+          "example_file": "C:\\swapi\\examples\\Set_Blocking_State_Example_VB.md"
+        }
+      ],
+      "note": "唯一一处真冲突：Remarks 的「每次 Set 都要配一次 Reset」与示例的跨次运行配对不能同时成立。"
+    },
+    {
+      "member": "ResetPresetDrawingParameters",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（配对说法写在正文首行，不属 Remarks）⇒ 按纪律跳过。"
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "idx": 375,
+  "results": [
+    {
+      "member": "Normal",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Normal_of_Planar_Face_Example_VB.md",
+        "Get_Normal_of_Planar_Surface_Example_VB.md",
+        "Get_Plane_or_Face_for_Sketch_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "If the face is not a planar face, then this property returns 0,0,0.",
+          "example_quote": "' 2. Select a sketch.",
+          "example_file": "Get_Plane_or_Face_for_Sketch_Example_VB.md",
+          "why": "示例前置只要选中草图，面由 ISketch::GetReferenceEntity 取得，未保证平面；代码直接 vNormal = pFace.Normal 并当法向打印，未判平面、未处理 0,0,0。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出本法向与 ISurface::PlaneParams 的方向关系，并靠 FaceInSurfaceSense 判是否反向",
+          "example_quote": "' NOTE: The normal of a surface (ISurface::PlaneParams)\n' cannot be in the same direction as the normal\n' of the face (IFace2::Normal).",
+          "example_file": "Get_Normal_of_Planar_Surface_Example_VB.md"
+        },
+        {
+          "what": "示例前置写明必须先选中一个平面面再读该属性",
+          "example_quote": "' 2. Select a planar face.",
+          "example_file": "Get_Normal_of_Planar_Face_Example_VB.md"
+        }
+      ],
+      "note": "页内自相矛盾：NOTE 称 get-only、Set 未实现，签名却写 {get; set;}（属页内，非两侧）"
+    },
+    {
+      "member": "NormalCut",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_CSharp.md",
+        "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_VB.md",
+        "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只回读该属性、从不 set；状态由 FeatureCut4 的位置布尔产生",
+          "example_quote": "Debug.Print(\"Normal cut? \" + swExtrudeFeatureData.NormalCut);",
+          "example_file": "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_CSharp.md"
+        },
+        {
+          "what": "示例后置自述已建出优化+法向切削，说明 Remarks 的效果无需 set 该属性也成立",
+          "example_quote": "// 4. Creates Cut-Extrude2, which is an optimized, normal, cut\n//    extrude.",
+          "example_file": "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_CSharp.md"
+        }
+      ],
+      "note": "无冲突：Remarks 是建议，示例走 FeatureCut4 位置布尔，两侧可同时成立"
+    },
+    {
+      "member": "NormalCutParameters",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Normal_Cut_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律跳过两侧比对"
+    },
+    {
+      "member": "NormalDistance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律跳过两侧比对"
+    },
+    {
+      "member": "Normalise",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Ellipse_Example_CSharp.md",
+        "Create_Ellipse_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律跳过两侧比对"
+    },
+    {
+      "member": "NumberOfCoils",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Add_Spring_to_Motion_Study_Example_CSharp.md",
+        "sldworksapi__Add_Spring_to_Motion_Study_Example_VB.md",
+        "sldworksapi__Add_Spring_to_Motion_Study_Example_VBNET.md",
+        "swmotionstudyapi__Add_Spring_to_Motion_Study_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律跳过两侧比对"
+    },
+    {
+      "member": "NumberOfCopies",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Move_and_Copy_Body_Using_Vertex_Example_CSharp.md",
+        "Move_and_Copy_Body_Using_Vertex_Example_VBNET.md",
+        "Move_and_Copy_Body_using_Vertex_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call this property after calling [[IMoveCopyBodyFeatureData::Copy]].",
+          "example_quote": "Debug.Print(\"  Number of copies: \" + swMoveCopyBodyFeatureData.NumberOfCopies);",
+          "example_file": "Move_and_Copy_Body_Using_Vertex_Example_CSharp.md",
+          "why": "三份示例都在 InsertMoveCopyBody2→GetDefinition→AccessSelections 之后直接读该属性，全程从未调用 Copy。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先调 AccessSelections 才读改属性，末尾用 ModifyDefinition 回写",
+          "example_quote": "status = swMoveCopyBodyFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Move_and_Copy_Body_Using_Vertex_Example_CSharp.md"
+        },
+        {
+          "what": "示例只读该属性；被写的是 TransformX 与顶点引用，从未写 NumberOfCopies",
+          "example_quote": "swMoveCopyBodyFeatureData.TransformX = 0.05;",
+          "example_file": "Move_and_Copy_Body_Using_Vertex_Example_CSharp.md"
+        }
+      ],
+      "note": "Print_Drawing 示例里的 NumberOfCopies 属 IPrintSpecification，同名不同接口，已排除"
+    }
+  ]
+}

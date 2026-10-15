@@ -5,6 +5,16 @@ import math
 import re
 from fractions import Fraction
 from pathlib import Path
+#: ★★★ 2026-10-08（spec 222）**补一个缺失的导入** —— 本文件用了 `dict[str, Any]`
+#:   （`get_table_shape` / `get_annotation_view_evidence` 的返回注解）却**从未导入 `Any`**，
+#:   且没有 `from __future__ import annotations` ⇒ ★ **模块 exec 即崩**
+#:   （`NameError: name 'Any' is not defined`）。
+#:   ⚠ 与 `scripts/sw_part.py` 的同类缺陷**完全同型** —— 两处都是「只在返回注解里用到、
+#:     而注解被即时求值」。★ 由独立核对（`output/222-verify/w2-11` / `w2-09`）抓出。
+#:   ⚠ 之所以长期没暴露：本文件平时经 `scripts/sw_drawing.py:23` 的 `exec_module` 间接加载，
+#:     而相关测试多用桩替代，**从没真正 exec 过它**。
+#:   ⇒ ★ 修法：补 `from typing import Any`（最小改动，不改任何行为）✓
+from typing import Any
 
 try:
     from scripts.sw_preflight import import_com_dependencies

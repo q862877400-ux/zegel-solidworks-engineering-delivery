@@ -1,0 +1,111 @@
+{
+  "idx": 270,
+  "results": [
+    {
+      "member": "GetTextFormatItems",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Chamfer_Display_Dimension_Example_CSharp.md",
+        "Get_Chamfer_Display_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在倒角显示尺寸上依次读四个 WhichText 份（上方标注/前缀/后缀/下方标注），Remarks 未点名具体取值",
+          "example_quote": "count = swDispDim.GetTextFormatItems((int)swDimensionTextParts_e.swDimensionTextCalloutAbove, out objTokenFormats, out objTokenValues);",
+          "example_file": "Get_Chamfer_Display_Dimension_Example_CSharp.md"
+        },
+        {
+          "what": "示例规定返回数组长度 count 为 0 时不得读下标，必须先判非零再转型；Remarks 只说返回数组大小",
+          "example_quote": "if (!(count == 0))",
+          "example_file": "Get_Chamfer_Display_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 限定 multi-value，示例用倒角尺寸；multi-value 官方未定义，不判为冲突"
+    },
+    {
+      "member": "GetTextSegmentCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Paragraph_Properties_Example_CSharp.md",
+        "Get_and_Set_Paragraph_Properties_Example_VB.md",
+        "Get_and_Set_Paragraph_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值当 0..numSegs-1 的闭区间上界，且每次取前先赋 CurrentParagraph，改格式后须 UpdateParagraph",
+          "example_quote": "for (iseg = 0; iseg <= numSegs - 1; iseg++)",
+          "example_file": "Get_and_Set_Paragraph_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 与三份示例一致：先设 CurrentParagraph、索引 0 基"
+    },
+    {
+      "member": "GetTextSegmentFormat",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Paragraph_Properties_Example_CSharp.md",
+        "Get_and_Set_Paragraph_Properties_Example_VB.md",
+        "Get_and_Set_Paragraph_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说返回 ITextFormat；示例把它转为 TextFormat，读 Bold/Italic/Strikeout 后必须回写才生效",
+          "example_quote": "textFormat = (TextFormat)paragraphs.GetTextSegmentFormat(iseg);",
+          "example_file": "Get_and_Set_Paragraph_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 与三份示例一致：先设 CurrentParagraph、索引 0 基"
+    },
+    {
+      "member": "GetTextSegmentText",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Paragraph_Properties_Example_CSharp.md",
+        "Get_and_Set_Paragraph_Properties_Example_VB.md",
+        "Get_and_Set_Paragraph_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例与 GetTextSegmentFormat 共用同一 iseg 逐段取文本，构成 0..count-1 的完整回读序列",
+          "example_quote": "Text = paragraphs.GetTextSegmentText(iseg);",
+          "example_file": "Get_and_Set_Paragraph_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 与三份示例一致：先设 CurrentParagraph、索引 0 基"
+    },
+    {
+      "member": "GetTexture",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks；四份示例调的是同名异族成员：face 为 Face2，swDocExt 为 ModelDocExtension"
+    },
+    {
+      "member": "GetThickness",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md",
+        "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段；示例确用 smGaugeTableParam.GetThickness，按纪律跳过比对"
+    },
+    {
+      "member": "GetThread",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Feature_Example_VB.md",
+        "Get_DimXpert_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段；示例确用 cylinderFeature.GetThread，按纪律跳过比对"
+    }
+  ]
+}

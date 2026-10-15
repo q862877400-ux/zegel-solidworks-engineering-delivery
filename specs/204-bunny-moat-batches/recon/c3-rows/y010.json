@@ -1,0 +1,23 @@
+{
+  "idx": 10,
+  "results": [
+    {
+      "name": "autocad_headless_preview",
+      "level": "verified",
+      "members_found": [],
+      "examples_used": [],
+      "preconditions": [],
+      "verdict": "cannot_tell",
+      "note": "不调任何 COM 成员（load_automation=False），纯 Python + 第三方 ezdxf；两份 recon 索引 grep 工具名/ezdxf/PreviewScene 均 0 命中 ⇒ 无官方示例可对照，前置集为空。"
+    },
+    {
+      "name": "dxf_preview_scene",
+      "level": "verified",
+      "members_found": [],
+      "examples_used": [],
+      "preconditions": [],
+      "verdict": "cannot_tell",
+      "note": "同一工具，同样 0 个 COM 成员；evidence 里的 tools/verify_dxf_preview_e2e.py 也只用 ezdxf+subprocess；recon 索引 0 命中 ⇒ 前置集为空。"
+    }
+  ]
+}

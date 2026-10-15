@@ -1,0 +1,155 @@
+{
+  "idx": 320,
+  "results": [
+    {
+      "member": "InsertRefPlane",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_CSharp.md",
+        "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md",
+        "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VBNET.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Before calling this method, you must have selected the reference entities using these marks with [[IModelDocExtension::SelectByID2]]:",
+          "example_quote": "            stat = modDocExt.SelectByRay(0.199999999999932d, 0.00280649656951937d, 0.000880259028576802d, -0.400036026779314d, -0.515038074910018d, -0.758094294050287d, 0.00111139990390966d, 2, false, 0, 0);\n            RefPlane myRefPlane;\n            myRefPlane = (RefPlane)modDoc.FeatureManager.InsertRefPlane(4, 0, 0, 0, 0, 0);",
+          "example_file": "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md",
+          "why": "Remarks 把 SelectByID2+mark 说成唯一必需选择途径；该示例用 SelectByRay 选面（无 mark 形参）后照样建出 Plane1。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例注释与实参表明 FirstConstraint=8 配 0.05 用于建 offset plane；成员页只写 Angle or distance，未给单位。",
+          "example_quote": "    'Create offset plane\n    boolstatus = swModelDocExt.SelectByID2(\"Front Plane\", \"PLANE\", 0, 0, 0, True, 0, Nothing, 0)\n    Set swRefPlane = swFeatureManager.InsertRefPlane(8, 0.05, 0, 0, 0, 0)",
+          "example_file": "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md"
+        }
+      ],
+      "note": "另 3 份示例用 SelectByID2 mark=0，与 Remarks 的 0=First reference entity 相符。"
+    },
+    {
+      "member": "InsertReferencePoint",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Reference_Points_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Pointer to the [[IFeature]] object",
+          "example_quote": "    vFeatArr = swFeatMgr.InsertReferencePoint(swRefPointAlongCurve, swRefPointAlongCurveEvenlyDistributed, 0#, 6)\n    For Each vFeat In vFeatArr",
+          "example_file": "Insert_Reference_Points_Example_VB.md",
+          "why": "成员页 Returns 说返回单个 IFeature 指针；示例把返回值当数组 For Each 逐个取特征。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "The NumberOfRefPoints argument must contain a value of 1 to successfully create one reference point feature.",
+          "example_quote": "    vFeatArr = swFeatMgr.InsertReferencePoint(swRefPointAlongCurve, swRefPointAlongCurveEvenlyDistributed, 0#, 6)",
+          "example_file": "Insert_Reference_Points_Example_VB.md",
+          "why": "Remarks 说该形参必须为 1；示例传 6，其 Postconditions 声明 Creates six evenly spaced reference points。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例前置要求已选一条边（成员页未写选择前置），并说明返回后逐个 GetSpecificFeature2。",
+          "example_quote": "    ' An edge must be preselected",
+          "example_file": "Insert_Reference_Points_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 里 creates one or more 与示例 6 个点不矛盾；矛盾在 Returns 单指针与 NumberOfRefPoints 必须为 1。"
+    },
+    {
+      "member": "InsertRevisionCloud",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Revision_Cloud_into_Drawing_Example_CSharp.md",
+        "Insert_Revision_Cloud_into_Drawing_Example_VB.md",
+        "Insert_Revision_Cloud_into_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "3. Call [[IRevisionCloud::ArcRadius]] to set the arc radius of the revision cloud.",
+          "example_quote": "                    RevCloud.ArcRadius = 0.00508;",
+          "example_file": "Insert_Revision_Cloud_into_Drawing_Example_CSharp.md",
+          "why": "Remarks 写成 Call；但 IRevisionCloud.ArcRadius 官方页标为 property {get;set;}，示例用赋值；调用只取值。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先激活视图再插云；成员页未提要激活 Drawing View1。",
+          "example_quote": "            boolstatus = Part.ActivateView(\"Drawing View1\");",
+          "example_file": "Insert_Revision_Cloud_into_Drawing_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例 GetAnnotation→SetPosition→ArcRadius→SetPathPointAtIndex(-1)→Finalize 顺序与 Remarks 1~5 步一致。"
+    },
+    {
+      "member": "InsertRevisionTable2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Drawing_Sheet_Zones_Example_CSharp.md",
+        "Create_Drawing_Sheet_Zones_Example_VB.md",
+        "Create_Drawing_Sheet_Zones_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 AnchorType 与 Shape 的具体枚举值，成员页只指向枚举页。",
+          "example_quote": "            revTableAnno = currentsheet.InsertRevisionTable2(true, 0.0, 0.0, (int)swBOMConfigurationAnchorType_e.swBOMConfigurationAnchor_TopLeft, \"C:\\\\Program Files\\\\SOLIDWORKS Corp\\\\SOLIDWORKS\\\\lang\\\\English\\\\standard revision block.sldrevtbt\", (int)swRevisionTableSymbolShape_e.swRevisionTable_CircleSymbol, true);",
+          "example_file": "Create_Drawing_Sheet_Zones_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 举的模板路径与示例实参一致（仅 install_dir 前缀不同）；UseAnchorPoint=true 配 X=0,Y=0 不矛盾。"
+    },
+    {
+      "member": "InsertRib",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Rib_Feature_Data_Example_CSharp.md",
+        "Get_Rib_Feature_Data_Example_VB.md",
+        "Get_Rib_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（Parameters 后直接是 Examples），按纪律 3 跳过比对。"
+    },
+    {
+      "member": "InsertRip",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_and_Release_Access_to_Edges_Example_CSharp.md",
+        "Access_and_Release_Access_to_Edges_Example_VB.md",
+        "Access_and_Release_Access_to_Edges_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按米传 Gap（0.0001）并 ×1000 打 mm；成员页只写 Size of the rip gap，无单位。",
+          "example_quote": "            Debug.Print(\"Gap: \" + swRip.Gap * 1000.0 + \" mm\");",
+          "example_file": "Access_and_Release_Access_to_Edges_Example_CSharp.md"
+        }
+      ],
+      "note": "示例 lRipDirection=64 作 mark，与 Remarks 表 64→Both→GetDirection=2 一致；无冲突。"
+    },
+    {
+      "member": "InsertRouteLine",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Exploded_Line_Sketch_and_Route_Line_Example_CSharp.md",
+        "Insert_Exploded_Line_Sketch_and_Route_Line_Example_VB.md",
+        "Insert_Exploded_Line_Sketch_and_Route_Line_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例四个布尔数组长度与 ItemsToConnect 同为 2；成员页未说三者须等长。",
+          "example_quote": "        object[] itemsToConnect = new object[2];\n        object[] itemsReverse = new object[2];\n        object[] itemsPath = new object[2];\n        object[] alongXYZ = new object[2];",
+          "example_file": "Insert_Exploded_Line_Sketch_and_Route_Line_Example_CSharp.md"
+        }
+      ],
+      "note": "页内张力（非跨源）：摘要说 explode line sketch or a 3D sketch，Remarks 只说 explode line sketch。示例只做前者。"
+    }
+  ]
+}

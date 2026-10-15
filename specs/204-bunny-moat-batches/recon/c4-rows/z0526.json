@@ -1,0 +1,99 @@
+{
+  "idx": 526,
+  "results": [
+    {
+      "member": "XLabel",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Labels_of_Datum_Origin_Example_VB.md",
+        "Get_Labels_of_Datum_Origin_Example_VBNET.md",
+        "Get_Labels_of_Datum_Origin_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；三份示例都只读它并打印。"
+    },
+    {
+      "member": "XOrigin",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；三份示例都只读它并打印。"
+    },
+    {
+      "member": "Y",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md",
+        "Measure_Selected_Entities_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 跳过。job 列的 4 份均未用 IMeasure.Y，真用户是 Measure_Selected_Entities_*。"
+    },
+    {
+      "member": "YAngle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Insert_and_Use_Plane_with_Manipulator_Example_VB.md",
+        "sldworksapi__Insert_and_Use_Plane_with_Manipulator_Example_VBNET.md",
+        "sldworksapi__Insert_and_Use_Plane_with_Manipulator_Example_CSharp.md",
+        "swpublishedapi__Insert_and_Use_Plane_with_Manipulator_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；job 里 swpublishedapi 的 CSharp 也用到。"
+    },
+    {
+      "member": "YAxisEntities",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Coordinate_System_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "有效实体种类被点名列成三类，而 Remarks 只把清单外推给 Help",
+          "example_quote": "' Assume two entities (point, line/edge, plane/face) were selected for the y axis",
+          "example_file": "Create_Coordinate_System_Feature_Example_VB.md"
+        },
+        {
+          "what": "y 轴可放两个实体、取回是数组；Remarks 只说 Entities for y axis，无个数与形状",
+          "example_quote": "    ' Get the y-axis entities\n    vCount = cSysData.GetYAxisEntitiesCount\n    gv = cSysData.YAxisEntities\n    For i = 0 To UBound(gv)",
+          "example_file": "Create_Coordinate_System_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 仅把有效实体清单外推给 Help，未与示例矛盾 ⇒ 无冲突。"
+    },
+    {
+      "member": "YLabel",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Labels_of_Datum_Origin_Example_VB.md",
+        "Get_Labels_of_Datum_Origin_Example_VBNET.md",
+        "Get_Labels_of_Datum_Origin_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；三份示例都只读它并打印。"
+    },
+    {
+      "member": "YOrigin",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；三份示例都只读它并打印。"
+    }
+  ]
+}

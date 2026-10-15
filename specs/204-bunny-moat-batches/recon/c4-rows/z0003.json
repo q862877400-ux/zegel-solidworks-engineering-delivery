@@ -1,0 +1,166 @@
+{
+  "idx": 3,
+  "results": [
+    {
+      "member": "ActivateSheet",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Activate_Each_View_on_Current_Sheet_Example_VB.md",
+        "Align_Drawing_Views_Example_CSharp.md",
+        "Align_Drawing_Views_Example_VB.md",
+        "Align_Drawing_Views_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "图纸本身就在 GetFirstView 链上，ActivateSheet 的入参直接取该链的 GetName2。",
+          "example_quote": "bRet = swDraw.ActivateSheet(swView.GetName2)",
+          "example_file": "Activate_Each_View_on_Current_Sheet_Example_VB.md"
+        }
+      ],
+      "note": "Align 三例只按字面名调用 ActivateSheet(\"Sheet2\")；Remarks 与示例未见不可同立之处。"
+    },
+    {
+      "member": "ActivateView",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Activate_Each_View_on_Current_Sheet_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 false 当常规分支：断言该视图名等于图纸名，再改调 ActivateSheet。",
+          "example_quote": "Debug.Assert swSheet.GetName = swView.GetName2",
+          "example_file": "Activate_Each_View_on_Current_Sheet_Example_VB.md"
+        }
+      ],
+      "note": "另 3 份是同名不同物：IFeatMgrView.ActivateView() 与页签对象的 ActivateView 属性，已排除。"
+    },
+    {
+      "member": "ActiveCommandTab",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Activate_SOLIDWORKS_CommandManager_Tab_Example_CSharp.md",
+        "Activate_SOLIDWORKS_CommandManager_Tab_Example_VB.md",
+        "Activate_SOLIDWORKS_CommandManager_Tab_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：须先打开一个零件文档，属性经 swModelDoc.Extension 取。",
+          "example_quote": "Preconditions: Open a part.",
+          "example_file": "Activate_SOLIDWORKS_CommandManager_Tab_Example_CSharp.md"
+        },
+        {
+          "what": "写入用的是页签名字符串；读回时当前页签预期为 \"Features\"。",
+          "example_quote": "swModelDocExt.ActiveCommandTab = \"Sketch\";",
+          "example_file": "Activate_SOLIDWORKS_CommandManager_Tab_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按规则跳过冲突判定；C#/VBA/VBNET 三例写法一致。"
+    },
+    {
+      "member": "ActiveCommandTabIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Activate_SOLIDWORKS_CommandManager_Tab_Example_CSharp.md",
+        "Activate_SOLIDWORKS_CommandManager_Tab_Example_VB.md",
+        "Activate_SOLIDWORKS_CommandManager_Tab_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "同一索引还被当作 CommandTabVisible 的入参，示例指明 Mold Tools 即索引 5。",
+          "example_quote": "//      * Mold Tools tab (tab index 5) is visible.",
+          "example_file": "Activate_SOLIDWORKS_CommandManager_Tab_Example_CSharp.md"
+        },
+        {
+          "what": "改完 ActiveCommandTab 后重读该索引，用来回读设置是否联动生效。",
+          "example_quote": "activeTabIndex = swModelDocExt.ActiveCommandTabIndex;",
+          "example_file": "Activate_SOLIDWORKS_CommandManager_Tab_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按规则跳过冲突判定；三例数值口径一致（Long/Integer 皆 int）。"
+    },
+    {
+      "member": "ActiveConfiguration",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Derived_Configurations_Example_VB.md",
+        "Add_Derived_Configurations_Example_VBNET.md",
+        "Add_Explode_Step_Example_VB.md",
+        "Are_the_Assembly_Configurations_Loaded_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "1. IConfigurationManager::ActiveConfiguration (called only once)",
+          "example_quote": "swConfiguration = (Configuration)swConfigurationMgr.ActiveConfiguration;",
+          "example_file": "Are_the_Assembly_Configurations_Loaded_Example_CSharp.md",
+          "why": "Remarks 说典型装配遍历里此调用只做一次；示例却在逐配置的遍历循环体内每轮重取活动配置。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把它当作取得爆炸步 Configuration 对象的入口，而非 Remarks 说的遍历起点。",
+          "example_quote": "Set config = swModel.ConfigurationManager.ActiveConfiguration",
+          "example_file": "Add_Explode_Step_Example_VB.md"
+        },
+        {
+          "what": "示例中它只是引导取值，随即在 For 循环里被 GetConfigurationByName 覆盖。",
+          "example_quote": "Set swConf = swConfMgr.ActiveConfiguration",
+          "example_file": "Add_Derived_Configurations_Example_VB.md"
+        }
+      ],
+      "note": "唯一冲突出自 Are_the_Assembly_Configurations_Loaded 的第二个循环；四例均真实调用该属性。"
+    },
+    {
+      "member": "ActiveDoc",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_and_Release_Access_to_Edges_Example_CSharp.md",
+        "Access_and_Release_Access_to_Edges_Example_VB.md",
+        "Access_and_Release_Access_to_Edges_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示 OpenDoc6 之后仍须先 ActivateDoc2，ActiveDoc 才返回想要的那份文档。",
+          "example_quote": "swApp.ActivateDoc2(\"box\", false, ref longstatus);",
+          "example_file": "Access_and_Release_Access_to_Edges_Example_CSharp.md"
+        },
+        {
+          "what": "示例直接强制转型、不判空，与 Remarks 所述 Nothing/null 返回路径未被示例覆盖。",
+          "example_quote": "swModel = (ModelDoc2)swApp.ActiveDoc;",
+          "example_file": "Access_and_Release_Access_to_Edges_Example_CSharp.md"
+        }
+      ],
+      "note": "四例都真实读 ISldWorks::ActiveDoc；判空缺失属示例写法，不构成与 Remarks 的矛盾。"
+    },
+    {
+      "member": "ActiveDrawingView",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Activate_Each_View_on_Current_Sheet_Example_VB.md",
+        "Align_Drawing_Views_Example_CSharp.md",
+        "Align_Drawing_Views_Example_VB.md",
+        "Align_Drawing_Views_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置要求先点选一个视图使其成为活动视图，否则取值为 NULL 不可直接取名。",
+          "example_quote": "2. Click a drawing view to activate it.",
+          "example_file": "Activate_Each_View_on_Current_Sheet_Example_VB.md"
+        },
+        {
+          "what": "示例演示读取链路：ActivateView 之后立刻回读本属性取得 View 对象。",
+          "example_quote": "swView = (View)swDrawingDoc.ActiveDrawingView;",
+          "example_file": "Align_Drawing_Views_Example_CSharp.md"
+        }
+      ],
+      "note": "四例用法与 Remarks 的只读性与 NULL 语义一致，未见不可同立之处。"
+    }
+  ]
+}

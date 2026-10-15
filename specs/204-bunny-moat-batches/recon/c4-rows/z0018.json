@@ -1,0 +1,122 @@
+{
+  "idx": 18,
+  "results": [
+    {
+      "member": "AdvancedHole2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 侧数组参数须把每个元素包成 DispatchWrapper、传 DispatchWrapper[]，不能直接传 AdvancedHoleElementData[]（成员页只说「Array of hole data objects」）",
+          "example_quote": "DispatchWrapper[] dispArray = ObjectArrayToDispatchWrapperArray(new object[] { advHoleNearArr[0], advHoleNearArr[1] });",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        },
+        {
+          "what": "元素直径/深度按米传入，示例用 25.4/1000 的英寸→米系数；成员页对该方法的数组元素未提任何单位",
+          "example_quote": "ConvFactorLength = 25.4 / 1000;",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 9 步调用序与三个示例逐条一致（SelectByRay mark 256/512、栈序、IsDepthUptoTip=false），未见矛盾。"
+    },
+    {
+      "member": "AdvancedSmoothing",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks。4 份示例的 swSweep 均为 SweepFeatureData（扫描特征），非 ILoftFeatureData，属同名不同接口，按规则不采用。"
+    },
+    {
+      "member": "AlignAxis",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Structural_Weldment_Example_CSharp.md",
+        "Insert_Structural_Weldment_Example_VB.md",
+        "Insert_Structural_Weldment_Example_VBNET.md",
+        "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出实际写入的枚举成员（Vertical）；成员页只说「as defined in swMirrorProfileOrAlignmentAxis_e」，未给取值",
+          "example_quote": "Group2.AlignAxis = (int)swMirrorProfileOrAlignmentAxis_e.swMirrorProfileOrAlignmentAxis_Vertical;",
+          "example_file": "Insert_Structural_Weldment_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks。四份示例都在 StructuralMemberGroup 上设置 AlignAxis，无可判定冲突。"
+    },
+    {
+      "member": "AlignDimensions",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份示例调的是 IModelDocExtension::AlignDimensions（2 参、回 bool），本页 IModelDoc2 版是 0 参 void —— 同名不同成员，按规则不采用。"
+    },
+    {
+      "member": "AlignDrawingView",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Align_Auxiliary_Drawing_View_Example_CSharp.md",
+        "Align_Auxiliary_Drawing_View_Example_VB.md",
+        "Align_Auxiliary_Drawing_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "必须先选中辅助视图再调用（示例用 SelectByID2 类型 DRAWINGVIEW + SelectionManager 取 View）；成员页未给任何前置",
+          "example_quote": "2. Modify this macro to select the auxiliary view.",
+          "example_file": "Align_Auxiliary_Drawing_View_Example_VB.md"
+        },
+        {
+          "what": "示例列出实际使用的四个 swAlignDrawingViewTypes_e 成员；成员页只给枚举名不给取值",
+          "example_quote": "boolstatus = DrawView.AlignDrawingView(swHorizontalToSheetClockwise)",
+          "example_file": "Align_Auxiliary_Drawing_View_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks。三份示例一致，DrawView 由 SelectByID2 取自 DRAWINGVIEW 对象。"
+    },
+    {
+      "member": "AlignMethod",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Modify_Chain_Pattern_Feature_Example_CSharp.md",
+        "Modify_Chain_Pattern_Feature_Example_VB.md",
+        "Modify_Chain_Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只读 AlignMethod（Debug.Print）从不写入，且须先 AccessSelections 取定义；成员页未说明读写方向",
+          "example_quote": "Debug.Print \" Align method: \" & swChainPatternFeatureData.AlignMethod",
+          "example_file": "Modify_Chain_Pattern_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks「仅 distance chain patterns 可用」与示例前置（Pitch Method = Distance Linkage）一致，无矛盾。"
+    },
+    {
+      "member": "AlignRunningDimension",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Properties_of_Angular_Running_Dimension_Example_CSharp.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VB.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置限定为已打开的工程图文档；成员页（无 Remarks）未说明适用文档类型",
+          "example_quote": "1. Open public_documents\\samples\\tutorial\\advdrawings\\foodprocessor.slddrw.",
+          "example_file": "Set_Properties_of_Angular_Running_Dimension_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks。三份示例一致，均在 drawing 文档 Part.Extension 上零参调用。"
+    }
+  ]
+}

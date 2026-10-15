@@ -1,0 +1,182 @@
+{
+  "idx": 409,
+  "results": [
+    {
+      "member": "RemoveTextureByDisplayState",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Apply_and_Remove_Texture_By_Body_Display_State_Example_CSharp.md",
+        "Apply_and_Remove_Texture_By_Body_Display_State_Example_VB.md",
+        "Apply_and_Remove_Texture_By_Body_Display_State_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks。列表里那份 Display_State_CSharp 调的是 IFace2 同名成员，不算 IBody2。"
+    },
+    {
+      "member": "RemoveTrackingID",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Set_And_Remove_Tracking_IDs_On_Body_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先在 Bodies 文件夹选中该体，成员页 Remarks 未提任何选择前置",
+          "example_quote": "Stop ' Select body in Bodies folder",
+          "example_file": "Get_Set_And_Remove_Tracking_IDs_On_Body_Example_VB.md"
+        },
+        {
+          "what": "示例把返回 0 直接读作成功，成员页只说返回 swTrackingIDError_e",
+          "example_quote": "\"        RemoveTrackingID Result (if 0, then call successful): \" & swBody.RemoveTrackingID(Cookies)",
+          "example_file": "Get_Set_And_Remove_Tracking_IDs_On_Body_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只有一条交叉引用，不含可与示例冲突的约束。Edge/Face/Vertex 三份调各自接口，不算本成员。"
+    },
+    {
+      "member": "RenameDocument",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Rename_Component_and_Update_References_Example_CSharp.md",
+        "Rename_Component_and_Update_References_Example_VB.md",
+        "Rename_Component_and_Update_References_Example_VBNET.md",
+        "Rename_Components_and_Save_Assembly_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 说的 IRenamedDocumentReferences 用法落在事件回调里，成员页未写这条路径",
+          "example_quote": "swRenamedDocumentReferences.UpdateWhereUsedReferences = true;",
+          "example_file": "Rename_Component_and_Update_References_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出不先保存引用就存时的实测错误码，Remarks 只说「避免一个错误」",
+          "example_quote": "Debug.Print(\"Save errors (8192 = Saving an assembly with renamed components requires saving the references): \" + errorsSave);",
+          "example_file": "Rename_Components_and_Save_Assembly_Example_CSharp.md"
+        },
+        {
+          "what": "示例指出改名会连带改掉另一个同名组件，Remarks 只描述被选中的组件",
+          "example_quote": "// 3. Renames the selected component and the other component with the",
+          "example_file": "Rename_Components_and_Save_Assembly_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例都先 SelectByID2 选组件，与 Remarks 前置一致；未找到不能同时成立的说法。"
+    },
+    {
+      "member": "RenderAnnotationsToSeparateImage",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Render_Annotations_to_Separate_Image_File_Example_CSharp.md",
+        "Render_Annotations_to_Separate_Image_File_Example_VB.md",
+        "Render_Annotations_to_Separate_Image_File_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置多一条：模型里没尺寸时要先 Show Feature Dimensions",
+          "example_quote": "//    and click Show Feature Dimensions, if dimensions",
+          "example_file": "Render_Annotations_to_Separate_Image_File_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 Remarks 的 _1 追加规则落成具体文件名",
+          "example_quote": "//    * note and dimensions to c:\\temp\\annotations_1.png",
+          "example_file": "Render_Annotations_to_Separate_Image_File_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都先置 IncludeAnnotationsInRendering=True 再置本属性再 RenderToFile，与前置一致。"
+    },
+    {
+      "member": "RenderToFile",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Include_Note_in_Render_File_Example_CSharp.md",
+        "Include_Note_in_Render_File_Example_VB.md",
+        "Include_Note_in_Render_File_Example_VBNET.md",
+        "Render_Annotations_to_Separate_Image_File_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "After calling this method, call [[IRayTraceRenderer::CloseRayTraceRender]].",
+          "example_quote": "status = swRayTraceRenderer.CloseFinalRenderWindow",
+          "example_file": "Include_Note_in_Render_File_Example_VB.md",
+          "why": "同一示例的 C# 版收尾调 CloseRayTraceRender()，VBA 与 VB.NET 版改调 CloseFinalRenderWindow。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "After calling this method, call [[IRayTraceRenderer::CloseRayTraceRender]].",
+          "example_quote": "status = swRayTraceRenderer.CloseFinalRenderWindow();",
+          "example_file": "Render_Annotations_to_Separate_Image_File_Example_CSharp.md",
+          "why": "示例在 RenderToFile 之后收尾调的是另一个成员，与 Remarks 规定的后续调用只能取一个。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例传带扩展名的文件名且不设 ImageFormat，Remarks 只说可以省略扩展名",
+          "example_quote": "status = swRayTraceRenderer.RenderToFile(\"c:\\\\temp\\\\annotations.png\", 0, 0);",
+          "example_file": "Include_Note_in_Render_File_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例 Width/Height 都传 0，与 Remarks 传 0 即用 ImageWidth/ImageHeight 一致。"
+    },
+    {
+      "member": "RenderType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Render_Model_Example_CSharp.md",
+        "Render_Model_Example_VB.md",
+        "Render_Model_Example_VBNET.md",
+        "Update_Graphics_After_Changing_Render_Options_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is only available when [[IRayTraceRendererOptions::ContourCartoonRenderingEnabled]] is true.",
+          "example_quote": "Debug.Print(\"  Render type = \" + swRayTraceRenderOptions.RenderType);",
+          "example_file": "Render_Model_Example_CSharp.md",
+          "why": "该读数在第 70 行，而 ContourCartoonRenderingEnabled=True 到第 95 行才置，此时属性不可用。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is only available when [[IRayTraceRendererOptions::ContourCartoonRenderingEnabled]] is true.",
+          "example_quote": "Debug.Print(\"  Render type (0 = cartoon; 1 = contour) = \" + swRayTraceRenderOptions.RenderType);",
+          "example_file": "Update_Graphics_After_Changing_Render_Options_Example_CSharp.md",
+          "why": "同上：第 53 行读 RenderType，第 57 行才把 ContourCartoonRenderingEnabled 置 True。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例改完渲染选项后还调 UpdateGraphics 刷新图形区，成员页未提这一步",
+          "example_quote": "swRayTraceRenderOptions.UpdateGraphics();",
+          "example_file": "Update_Graphics_After_Changing_Render_Options_Example_CSharp.md"
+        }
+      ],
+      "note": "写入路径两份示例都先置 True 再设 RenderType，符合 Remarks；冲突只出在读当前值那段。"
+    },
+    {
+      "member": "RendererType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md",
+        "swmotionstudyapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取用路径：由 MotionStudyManager.CreateAVIParameter() 得到该对象",
+          "example_quote": "swSaveAVIData = (AVIParameter)swMotionMgr.CreateAVIParameter();",
+          "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+        },
+        {
+          "what": "示例用 Solidworks_Screen 而非 Custom，因此没触及 Remarks 的宽高纵横比分支",
+          "example_quote": "swSaveAVIData.RendererType = (int)swRendererType_e.swRendererType_Solidworks_Screen;",
+          "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例都只设 Solidworks_Screen、不设宽高，Remarks 是条件句，故 conflicts 为空。"
+    }
+  ]
+}

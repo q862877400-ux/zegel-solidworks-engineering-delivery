@@ -1,0 +1,131 @@
+{
+  "idx": 480,
+  "results": [
+    {
+      "member": "SplitFacesOption",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "SplitOpenSegment",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Split_Open_Sketch_Segment_Example_CSharp.md",
+        "Split_Open_Sketch_Segment_Example_VB.md",
+        "Split_Open_Sketch_Segment_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "The selected sketch segment must be an open entity; for example, the start and end points cannot be the same.",
+          "example_quote": "swSketchSegment = swModel.SketchManager.CreateLine(-0.055964, 0.033212, 0.0, 0.102938, -0.014129, 0.0);\nskSegmentArray = (object[])swModel.SketchManager.SplitOpenSegment(0.02, 0.01, 0.0);",
+          "example_file": "Split_Open_Sketch_Segment_Example_CSharp.md",
+          "why": "Remarks 把「已选中的草图段」写成前提；三份示例都在 ClearSelection2 之后从未选段，直接建线就调用。VB/VBNET 同样。前提无法按字面成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例调的是后继 ISketchManager 版（回 object 段数组），成员页本成员签名是 void；两者可同时成立，故不算冲突。",
+          "example_quote": "skSegmentArray = (object[])swModel.SketchManager.SplitOpenSegment(0.02, 0.01, 0.0);",
+          "example_file": "Split_Open_Sketch_Segment_Example_CSharp.md"
+        },
+        {
+          "what": "示例坐标按米给（0.02/0.01 与 -0.055964 同量级），成员页对 X/Y/Z 未写单位。",
+          "example_quote": "swSketchSegment = swModel.SketchManager.CreateLine(-0.055964, 0.033212, 0.0, 0.102938, -0.014129, 0.0);",
+          "example_file": "Split_Open_Sketch_Segment_Example_VB.md"
+        }
+      ],
+      "note": "示例另有 SetUserPreferenceToggle 抑制捕捉，来自后继页 Remarks，本页没写。"
+    },
+    {
+      "member": "StackDirection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md",
+        "Add_Balloon_to_Stacked_Balloon_Example_VB.md",
+        "Add_Balloon_to_Stacked_Balloon_Example_VBNET.md",
+        "Insert_BOM_Table_and_Stacked_Balloon_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只让读者去查 Help；示例给出具体枚举 swStackedBalloonDir_Right 与调用序：先 CreateStackedBalloonOptions 赋本属性，再 InsertStackedBalloon2。",
+          "example_quote": "swStackedBalloons = swModelDocExt.CreateStackedBalloonOptions();\nswStackedBalloons.BalloonsPerLine = 10;\nswStackedBalloons.StackDirection = (int)swStackedBalloonDirection_e.swStackedBalloonDir_Right;",
+          "example_file": "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 无前置/返回/单位断言，四份示例也未与之相抵，找不到冲突。"
+    },
+    {
+      "member": "StaggerAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Fill_Pattern_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IFillPatternFeatureData::PatternLayoutType]] = [[swPatternLayoutType_e]].swPatternLayoutPerforation",
+          "example_quote": "swFeatData.PatternLayoutType = 0;\nswFeatData.StaggerAngle = 1.0471975511966;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+          "why": "swPatternLayoutPerforation=3（enums\\swPatternLayoutType_e.md），示例置 0=swPatternLayoutCircular，与 Remarks 限定的唯一有效前提正相反。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例取值 1.0471975511966 = π/3，即弧度制 60°；成员页对 StaggerAngle 未写单位。",
+          "example_quote": "swFeatData.StaggerAngle = 1.0471975511966;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "唯一一份示例，且是硬矛盾；同页其它角度量也全用弧度。"
+    },
+    {
+      "member": "Staggered",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在读 Staggered 前额外卡了两个条件：IntermittentWeld==true 且 GapOrPitch==false；成员页只写了前半个条件，没提 GapOrPitch。",
+          "example_quote": "else\n{\n    Debug.Print(\"   Intermittent pitch: \" + swCosmeticWeldBeadFeatureData.Pitch);\n    Debug.Print(\"   Intermittent weld length: \" + swCosmeticWeldBeadFeatureData.IntermittentWeldLength);\n    Debug.Print(\"   Stagger welds if welding on both sides? \" + swCosmeticWeldBeadFeatureData.Staggered);\n}",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Example_CSharp.md"
+        }
+      ],
+      "note": "示例只满足 Remarks 两个前提中的 IntermittentWeld，Side 从未赋值也从未校验 —— 是「没管」不是「相反」，故不判冲突。"
+    },
+    {
+      "member": "Standard",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页（IAdvancedHoleElementData.Standard）无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "Standard2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只讲返回 -1 的自定义情形；示例给出真正决定该返回值的环节：先在 HoleWizard 传 swStandardISO，再 GetDefinition 后只读不回写。",
+          "example_quote": "swWizHole = (WizardHoleFeatureData2)swFeat.GetDefinition();",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例对 Standard2 都只读不写，与页面「get-only」一致；无冲突。"
+    }
+  ]
+}

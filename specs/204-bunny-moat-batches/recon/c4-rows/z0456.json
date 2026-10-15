@@ -1,0 +1,146 @@
+{
+  "idx": 456,
+  "results": [
+    {
+      "member": "SetSheets",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Save_File_as_PDF_Example_CSharp.md",
+        "Save_File_as_PDF_Example_VB.md",
+        "Save_File_as_PDF_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "SetSheetsSelected",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Modify_Multiple_Drawing_Sheets_Setups_Example_CSharp.md",
+        "Modify_Multiple_Drawing_Sheets_Setups_Example_VB.md",
+        "Modify_Multiple_Drawing_Sheets_Setups_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只往 NewSheetList 放 Sheet2/Sheet3，Sheet1 未列出，靠 Remarks 的自动包含规则生效。",
+          "example_quote": "sheetNames(0) = \"Sheet2\"\n    sheetNames(1) = \"Sheet3\"\n    sheetNameArray = sheetNames\n    swDrawing.SetSheetsSelected (sheetNameArray)",
+          "example_file": "Modify_Multiple_Drawing_Sheets_Setups_Example_VB.md"
+        },
+        {
+          "what": "Remarks 只说「随后调用 SetupSheet6」；示例给出具体形态：只传一个字串页名 \"Sheet3\"。",
+          "example_quote": "status = swDrawing.SetupSheet6(\"Sheet3\", swDwgPaperSizes_e.swDwgPapersUserDefined, swDwgTemplates_e.swDwgTemplateCustom, 1, 1, True, \"C:\\ProgramData\\SOLIDWORKS\\SOLIDWORKS 2017\\lang\\english\\sheetformat\\a4 - portrait.slddrt\", 0.2794, 0.2159, \"Default\", True, 0, 0, 0, 0, 0, 0)",
+          "example_file": "Modify_Multiple_Drawing_Sheets_Setups_Example_VB.md"
+        }
+      ],
+      "note": "示例印证「首张自动包含」与「随后调 SetupSheet6」，两侧相容。"
+    },
+    {
+      "member": "SetSize",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "SetSmartComponentData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Activate_Smart_Features_in_an_Assembly_Example_CSharp.md",
+        "Activate_Smart_Features_in_an_Assembly_Example_VB.md",
+        "Activate_Smart_Features_in_an_Assembly_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Create two boolean arrays whose elements map one-to-one with the elements in the feature and component arrays.",
+          "example_quote": "componentsSelected(j - 1) = True",
+          "example_file": "Activate_Smart_Features_in_an_Assembly_Example_VB.md",
+          "why": "Remarks 要两布尔数组与 feature/component 数组一对一；示例写 componentsSelected(j-1)，j=0 时索引 -1，无法一对一。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "C#/VB.NET 把 References 包成 DispatchWrapper[]，VBA 直传 Variant 数组。",
+          "example_quote": "DispatchWrapper[] arrRefsIn = new DispatchWrapper[1];",
+          "example_file": "Activate_Smart_Features_in_an_Assembly_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出 References 元素的实际取法：按点 SelectByID2 选面再取对象。",
+          "example_quote": "face = (Face2)selMgr.GetSelectedObject6(1, -1);",
+          "example_file": "Activate_Smart_Features_in_an_Assembly_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例在 components 循环上都用 j-1，与 Remarks 的一对一映射要求冲突。"
+    },
+    {
+      "member": "SetSpeedPakToParent",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_SpeedPak_for_Subassemblies_Example_CSharp.md",
+        "Create_SpeedPak_for_Subassemblies_Example_VB.md",
+        "Create_SpeedPak_for_Subassemblies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示调用前必须重新选中组件；成员页的 Remarks 未把「已选中」写成前置。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"arm1-1@wrench\", \"COMPONENT\", 0, 0, 0, False, 0, Nothing, 0)",
+          "example_file": "Create_SpeedPak_for_Subassemblies_Example_VB.md"
+        },
+        {
+          "what": "示例给出完整链：先 CreateSpeedPak(2) 建 SpeedPak，本方法只负责切回父配置。",
+          "example_quote": "status = swAssembly.CreateSpeedPak(2)",
+          "example_file": "Create_SpeedPak_for_Subassemblies_Example_VB.md"
+        }
+      ],
+      "note": "示例末尾用 UseSpeedPak 切回，与 Remarks 的回退说法一致。"
+    },
+    {
+      "member": "SetSplitReferences",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Path_Segment_SSMember_Example_CSharp.md",
+        "Create_Path_Segment_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出拿到本对象的路径：IsSplit=true → GetSplitMember() → 设 MemberType → 再调用。",
+          "example_quote": "structSplitMember = (StructureSystemSplitMember)structMemDef.GetSplitMember();",
+          "example_file": "Create_Path_Segment_SSMember_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 References 包成 DispatchWrapper[]，元素取自 GetSelectedObject6。",
+          "example_quote": "eArray = ObjectArrayToDispatchWrapperArray(planes);",
+          "example_file": "Create_Path_Segment_SSMember_Example_CSharp.md"
+        }
+      ],
+      "note": "示例在调用前设 MemberType=swStructureSplitMember_Reference，满足 Remarks 前置。"
+    },
+    {
+      "member": "SetStagger",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weld_Symbol_Example_CSharp.md",
+        "Insert_Weld_Symbol_Example_VB.md",
+        "Insert_Weld_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示 SetStagger 作用在 InsertWeldSymbol3() 返回的对象上，且需先选中面/边/草图段。",
+          "example_quote": "Set swWeldSymbol = swModel.InsertWeldSymbol3",
+          "example_file": "Insert_Weld_Symbol_Example_VB.md"
+        }
+      ],
+      "note": "示例随即用 GetStagger 回读，与 Remarks 的回读路径一致。"
+    }
+  ]
+}

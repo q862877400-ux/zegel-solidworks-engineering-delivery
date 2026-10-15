@@ -1,0 +1,102 @@
+{
+  "idx": 37,
+  "results": [
+    {
+      "name": "surface_ref_ops",
+      "level": "verified",
+      "members_found": [
+        "IFeatureManager.InsertRevolvedRefSurface",
+        "IModelDoc2.InsertLoftRefSurface2"
+      ],
+      "examples_used": [],
+      "preconditions": [
+        {
+          "text": "官方示例库无 InsertRevolvedRefSurface 的示例 ⇒ 其前置（选轮廓/中心线）无从由示例取得",
+          "from": "无示例：member-to-example-index.md + b3-4-merged.json(by_member) + C:\\swapi\\examples 全零命中",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方示例库无 InsertLoftRefSurface2 的示例 ⇒ 其前置（profile mark=1、≥2 轮廓）无从由示例取得",
+          "from": "无示例：member-to-example-index.md + b3-4-merged.json(by_member) + C:\\swapi\\examples 全零命中",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "cannot_tell",
+      "note": "两个成员在示例索引与 examples 目录均零命中（Insert_Extruded_Reference_Surface / Create_360-degree_Revolve 用的是别的成员，未计入）。evidence 只有真机建成读数。"
+    },
+    {
+      "name": "ref_geometry",
+      "level": "verified",
+      "members_found": [
+        "IFeatureManager.InsertRefPlane",
+        "IFeatureManager.InsertCoordinateSystem",
+        "IFeatureManager.InsertReferencePoint",
+        "IFeatureManager.InsertCenterOfMass",
+        "IFeatureManager.InsertGlobalBoundingBox2",
+        "IModelDocExtension.Create3DBoundingBox"
+      ],
+      "examples_used": [
+        "Insert_Reference_Plane_Example_VB.md",
+        "Insert_Reference_Points_Example_VB.md",
+        "Insert_Center_of_Mass_Feature_Example_VB.md",
+        "Insert_Coordinate_System_Feature_at_Center_of_Mass_Example_VB.md",
+        "Insert_Coordinate_System_at_Center_of_Mass_Example_VB.md",
+        "Create_3D_Bounding_Box_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "示例 Preconditions 逐字：Verify that the specified part exists（示例打开 plate.sldprt）",
+          "from": "Insert_Reference_Plane_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调用前须先用 SelectByID2 选中参考实体（示例先选 FACE mark 0、再选 EDGE mark 1）",
+          "from": "Insert_Reference_Plane_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "★ **调用前按 `mark` 选一个参考实体**"
+        },
+        {
+          "text": "示例注释逐字 An edge must be preselected：须先开零件/装配并在图形区选中一条边",
+          "from": "Insert_Reference_Points_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "★ **调用前按 `mark` 选一个参考实体**。★ 真机：基准面 `预选 ok=True {face_index:0, mark:0, sel_count:1}` ⇒ 树新增 **`基准面1`**；点同样 `mark=0` ⇒ 树新增 **`点1`**"
+        },
+        {
+          "text": "示例只覆盖 swRefPointAlongCurve（选边）这一路；本条走 FaceCenter ⇒ 该路径前置无示例",
+          "from": "Insert_Reference_Points_Example_VB.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "示例 Preconditions 逐字：Open a part（零参数 InsertCenterOfMass 的文档前置）",
+          "from": "Insert_Center_of_Mass_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "示例先用 SelectData 按 mark 1/2/4 选中 3D 草图的点/X 轴线/Y 轴线三个实体，再调 InsertCoordinateSystem",
+          "from": "Insert_Coordinate_System_Feature_at_Center_of_Mass_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "示例 Preconditions 逐字：Open a part or assembly",
+          "from": "Insert_Coordinate_System_Feature_at_Center_of_Mass_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方示例库无 InsertGlobalBoundingBox2 的示例 ⇒ 其前置（CustomPlane 时先选面/基准面）无从由示例取得",
+          "from": "无示例：member-to-example-index.md + b3-4-merged.json(by_member) + C:\\swapi\\examples 全零命中",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "坐标系那条示例要求先按 mark 选 3 个草图实体，evidence 只写了 InsertCoordinateSystem 一句 ⇒ 未覆盖。Create_3D_Bounding_Box_Example_VB（焊件切割清单）已读但不计入：本条已声明不用该成员。"
+    }
+  ]
+}

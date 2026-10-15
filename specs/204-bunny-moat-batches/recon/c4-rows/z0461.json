@@ -1,0 +1,184 @@
+{
+  "idx": 461,
+  "results": [
+    {
+      "member": "SetUserPreferenceDouble",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_User_Preferences_Example_CSharp.md",
+        "Get_and_Set_User_Preferences_Example_VB.md",
+        "Get_and_Set_User_Preferences_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "This method is equivalent to interactively setting document properties in the SOLIDWORKS Design software.",
+          "example_quote": "boolstatus = ModelDocExtension.SetUserPreferenceDouble((int)swUserPreferenceDoubleValue_e.swDetailingBalloonLeaderLineThicknessCustom, 0, 0.00028);",
+          "example_file": "Get_and_Set_User_Preferences_Example_CSharp.md",
+          "why": "Remarks 把语义全权交给它引用的文档表；该表对同一设置写明第2参为 swDetailingBalloon（反射=101），示例传 0（=swDetailingNoOptionSpecified）。作用域不同，与「等价于交互设置」不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 UserPrefOption 传裸字面量 0；成员页只说「if not needed, then specify swDetailingNoOptionSpecified」，未说可传裸 0。",
+          "example_quote": "boolstatus = ModelDocExtension.SetUserPreferenceDouble((int)swUserPreferenceDoubleValue_e.swDetailingBalloonFrameLineThicknessCustom, 0, 0.00028);",
+          "example_file": "Get_and_Set_User_Preferences_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出 custom thickness 的实际原始量 0.00028；成员页对该值未写单位或量纲。",
+          "example_quote": "Debug.Print(\"Tools > Options > Document Properties > Annotations > Balloons > Custom Frame Thickness: \" + ModelDocExtension.GetUserPreferenceDouble((int)swUserPreferenceDoubleValue_e.swDetailingBalloonFrameLineThicknessCustom, 0));",
+          "example_file": "Get_and_Set_User_Preferences_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 与本批六个成员逐字相同，只有一句「等价于交互设置」，不含前置/单位/mark/返回形态；冲突来自它指向的文档表。"
+    },
+    {
+      "member": "SetUserPreferenceDoubleValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md",
+        "Get_Excel_Cell_Value_for_Density_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例的 Value 取自活动 Excel 单元格（运行时来源），成员页只说「Numeric value to give to the user preference」。",
+          "example_quote": "density = xlsh.Cells(1,1)",
+          "example_file": "Get_Excel_Cell_Value_for_Density_Example_VB.md"
+        },
+        {
+          "what": "示例先把枚举值硬编码为常量 7 再调用；反射 swMaterialPropertyDensity=7 与之吻合，成员页只让读者查枚举表。",
+          "example_quote": "Const swMaterialPropertyDensity",
+          "example_file": "Get_Excel_Cell_Value_for_Density_Example_VB.md"
+        },
+        {
+          "what": "示例把设置放在 NewDocument 之后、建任何几何之前，成员页未说明调用时机。",
+          "example_quote": "swModel = (ModelDoc2)swApp.NewDocument(filedir + \"part.prtdot\", 0, 0.0, 0.0);",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        }
+      ],
+      "note": "两个 IModelDoc2 废弃成员与 Extension 后继的 Remarks 逐字相同；密度 7800 与单位口径均自洽，无可指认的冲突。"
+    },
+    {
+      "member": "SetUserPreferenceInteger",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Drawing_Sheet_Zones_Example_CSharp.md",
+        "Create_Drawing_Sheet_Zones_Example_VB.md",
+        "Create_Drawing_Sheet_Zones_Example_VBNET.md",
+        "Get_and_Set_User_Preferences_Example_CSharp.md",
+        "Get_and_Set_User_Preferences_Example_VB.md",
+        "Get_and_Set_User_Preferences_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "This method is equivalent to interactively setting document properties in the SOLIDWORKS Design software.",
+          "example_quote": "boolstatus = swModel.Extension.SetUserPreferenceInteger((int)swUserPreferenceIntegerValue_e.swRevisionTableMultipleSheetStyle, 0, (int)swRevisionTableMultipleSheetStyle_e.swRevisionTable_Independent);",
+          "example_file": "Create_Drawing_Sheet_Zones_Example_CSharp.md",
+          "why": "Remarks 指向的文档表对 Multiple sheet style 写明第2参为 swDetailingRevisionTable（反射=154），示例传 0（=swDetailingNoOptionSpecified）。作用域不同，不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "同一示例对 balloon 类设置传裸 0，对 overall drafting standard 却用具名常量，两种写法在同一文件里混用。",
+          "example_quote": "boolstatus = ModelDocExtension.SetUserPreferenceInteger((int)swUserPreferenceIntegerValue_e.swDetailingDimensionStandard, (int)swUserPreferenceOption_e.swDetailingNoOptionSpecified, (int)swDetailingStandard_e.swDetailingStandardISO);",
+          "example_file": "Get_and_Set_User_Preferences_Example_CSharp.md"
+        },
+        {
+          "what": "示例对 balloon 设置传裸 0，而成员页只说未需要时指定 swDetailingNoOptionSpecified，未给裸 0 的依据。",
+          "example_quote": "boolstatus = ModelDocExtension.SetUserPreferenceInteger((int)swUserPreferenceIntegerValue_e.swDetailingBalloonLeaderLineThickness, 0, (int)swLineWeights_e.swLW_NUMBER);",
+          "example_file": "Get_and_Set_User_Preferences_Example_CSharp.md"
+        }
+      ],
+      "note": "Create_Drawing_Sheet_Zones 三份示例未列在成员页 Examples 段，是仅由示例侧提供的证据；Revision 一条有官方文档表与反射双重支撑。"
+    },
+    {
+      "member": "SetUserPreferenceIntegerValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 NewDocument 之后立刻把文档单位改成 swMETER；成员页对该枚举的用法与时机均未提及。",
+          "example_quote": "swModel.SetUserPreferenceIntegerValue((int)swUserPreferenceIntegerValue_e.swUnitsLinear, (int)swLengthUnit_e.swMETER);",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        },
+        {
+          "what": "示例随后按 0.05 建草图，示意该单位口径；成员页只说「Numeric value you give」，未给量纲说明。",
+          "example_quote": "Height = 0.05;",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        }
+      ],
+      "note": "Force_Rebuild_Example_VB.md 里那句是 swApp.SetUserPreferenceIntegerValue，属 ISldWorks 的同名成员，不是本成员，故不计入。"
+    },
+    {
+      "member": "SetUserPreferenceString",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_User_Preferences_Example_CSharp.md",
+        "Get_and_Set_User_Preferences_Example_VB.md",
+        "Get_and_Set_User_Preferences_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "This method is equivalent to interactively setting document properties in the SOLIDWORKS Design software.",
+          "example_quote": "boolstatus = ModelDocExtension.SetUserPreferenceString((int)swUserPreferenceStringValue_e.swDetailingBOMUpperCustomProperty, 0, \"Source\");",
+          "example_file": "Get_and_Set_User_Preferences_Example_CSharp.md",
+          "why": "文档表对同一设置写明第2参为 swDetailingBalloon（反射=101），示例传 0。同一文件另一处却用具名常量，证明 0 不是等价写法，与「等价于交互设置」冲突。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "同一示例对 Layer 设置用了文档表要求的具名常量，是本成员唯一写法正确的调用。",
+          "example_quote": "boolstatus = ModelDocExtension.SetUserPreferenceString((int)swUserPreferenceStringValue_e.swDetailingLayer, (int)swUserPreferenceOption_e.swDetailingBalloon, \"test\");",
+          "example_file": "Get_and_Set_User_Preferences_Example_CSharp.md"
+        },
+        {
+          "what": "示例前置要求图纸里先建好名为 test 的图层；成员页未说该字符串必须是已存在的图层名。",
+          "example_quote": "//  2. Create a layer named test in the drawing.",
+          "example_file": "Get_and_Set_User_Preferences_Example_CSharp.md"
+        }
+      ],
+      "note": "冲突只出在 BOMUpperCustomProperty 一处；同一成员在同文件的 Layer 调用与文档表完全一致。"
+    },
+    {
+      "member": "SetUserPreferenceStringValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例写入具体的剖面线样式串；成员页只说「Value of the user preference」，未给合法取值形状。",
+          "example_quote": "swModel.SetUserPreferenceStringValue((int)swUserPreferenceStringValue_e.swMaterialPropertyCrosshatchPattern, \"ISO (Steel)\");",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        },
+        {
+          "what": "Change_Labels 示例里的同名调用挂在 swApp 上，属 ISldWorks 成员，不是本成员。",
+          "example_quote": "= swApp.SetUserPreferenceStringValue(swReferenceTriadXLabel,",
+          "example_file": "Change_Labels_of_SOLIDWORKS_Triad_Example_VB.md"
+        }
+      ],
+      "note": "三份 Annotations 示例均以 swModel(ModelDoc2) 为接收者，确属本成员；Triad 示例是 ISldWorks 同名成员，已排除。"
+    },
+    {
+      "member": "SetUserPreferenceTextFormat",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份候选示例调的是 ModelDocExtension 上 3 参版本(UserPref/UserPrefOption/TextFormat)，不是本 IModelDoc2 的 2 参版本，故无可用示例、无冲突。"
+    }
+  ]
+}

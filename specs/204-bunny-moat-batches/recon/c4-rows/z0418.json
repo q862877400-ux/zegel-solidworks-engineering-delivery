@@ -1,0 +1,109 @@
+{
+  "idx": 418,
+  "results": [
+    {
+      "member": "RoundCorners",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Data_for_Simple_Fillet_Example_CSharp.md",
+        "Get_Data_for_Simple_Fillet_Example_VB.md",
+        "Get_Data_for_Simple_Fillet_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[ISimpleFilletFeatureData2::CurvatureContinuous]] is false, and at least two adjacent edges to fillet are selected.",
+          "example_quote": "// 1. Open a model document with a simple fillet feature.\n// 2. Select the simple fillet feature.",
+          "example_file": "Get_Data_for_Simple_Fillet_Example_CSharp.md",
+          "why": "成员页把该属性限定在 CurvatureContinuous=false 且至少两条相邻待圆角边时；三份示例的前置只要求有一个简单圆角特征，代码无条件读取，两项守卫都没有。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例补出取对象调用序：先对选中特征调 GetDefinition 得到 SimpleFilletFeatureData2 再读该属性，成员页未给。",
+          "example_quote": "Set swFillet = swFeat.GetDefinition",
+          "example_file": "Get_Data_for_Simple_Fillet_Example_VB.md"
+        }
+      ],
+      "note": "示例为纯读取（Get 后 Debug.Print），未演示写；Returns 段布尔形状与示例打印一致。"
+    },
+    {
+      "member": "RoundSharpEdges",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Surface-finish_Image_Path_and_Filename_Example_CSharp.md",
+        "Get_Surface-finish_Image_Path_and_Filename_Example_VB.md",
+        "Get_Surface-finish_Image_Path_and_Filename_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补出成员页缺失的单位口径：写入 0.005 后按 ×1000 打印并标 mm，说明 API 原始值以米计。",
+          "example_quote": "Debug.Print \"Round sharp edges value: \" & swRenderMaterial.RoundSharpEdges * 1000# & \"mm\"",
+          "example_file": "Get_Surface-finish_Image_Path_and_Filename_Example_VB.md"
+        }
+      ],
+      "note": "三份示例实调 RenderMaterial 上的同名属性（IRenderMaterial 页才链这些示例），本成员页无 Examples 段；两页 Remarks 逐字相同。"
+    },
+    {
+      "member": "RoundToFraction",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_User_Units_Example_CSharp.md",
+        "Get_and_Set_User_Units_Example_VB.md",
+        "Get_and_Set_User_Units_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Signature/Returns/See Also，无 ## Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "RouteDiameter",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Connection_Point_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Connection_Point_Feature_Data_Example_VB.md",
+        "Get_and_Set_Connection_Point_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Signature/Returns/Examples/See Also，无 ## Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "RouteSubType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Connection_Point_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Connection_Point_Feature_Data_Example_VB.md",
+        "Get_and_Set_Connection_Point_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Signature/Returns/Examples/See Also，无 ## Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "RouteType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Connection_Point_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Connection_Point_Feature_Data_Example_VB.md",
+        "Get_and_Set_Connection_Point_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Signature/Returns/Examples/See Also，无 ## Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "RoutingComponentGrouping",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Routing_Component_Grouping_Options_for_BOM_Table_Example_CSharp.md",
+        "Get_and_Set_Routing_Component_Grouping_Options_for_BOM_Table_Example_VB.md",
+        "Get_and_Set_Routing_Component_Grouping_Options_for_BOM_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Signature/Returns/Examples/See Also，无 ## Remarks 段，按纪律跳过比对。"
+    }
+  ]
+}

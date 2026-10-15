@@ -1,0 +1,131 @@
+{
+  "idx": 36,
+  "results": [
+    {
+      "name": "sketch_modify_ops",
+      "level": "verified",
+      "members_found": [
+        "SketchModifyTranslate",
+        "SketchModifyRotate",
+        "SketchModifyScale",
+        "SketchModifyFlip",
+        "Stretch"
+      ],
+      "examples_used": [
+        "Translate_Sketch_Example_VB.md",
+        "Rotate_Scale_Copy_Sketch_Example_VB.md",
+        "Flip_Sketch_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "先 SelectByID2 选中基准面再 InsertSketch 建草图",
+          "from": "Rotate_Scale_Copy_Sketch_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "移动/旋转前草图须是活动草图（示例注释：Make sure a sketch is active）",
+          "from": "Translate_Sketch_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "镜像前须先打开模型文档并选中一个草图（示例前置行原文）",
+          "from": "Flip_Sketch_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "SketchModifyScale 前示例按名字选中 Sketch1（SKETCH）",
+          "from": "Rotate_Scale_Copy_Sketch_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "必须先有活动的零件文档（示例 GetType<>swDocPART 即退出）",
+          "from": "Translate_Sketch_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "IModelDocExtension.Stretch 的前置：两索引与 examples 目录均无该成员示例",
+          "from": "(无示例)",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "三个官方示例的前置（选基准面、活动/选中草图、零件文档）evidence 全未提；Stretch 无示例可对账。"
+    },
+    {
+      "name": "surface_edit_ops",
+      "level": "verified",
+      "members_found": [
+        "InsertPlanarRefSurface",
+        "InsertOffsetSurface",
+        "InsertRuledSurfaceFromEdge2",
+        "InsertDeleteFace",
+        "InsertFeatureReplaceFace"
+      ],
+      "examples_used": [
+        "Create_Planar_Surface_Feature_Example_VB.md",
+        "Insert_Solid_Body_Boundary_Surface_Feature_Example_VB.md",
+        "Create_Thicken_Feature_Example_VB.md",
+        "Insert_and_Change_DeleteFace_Feature_Example_VB.md",
+        "Replace_Face_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "这批 4/5 条调用前都要先选面或边",
+          "from": "Insert_and_Change_DeleteFace_Feature_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "而本批 4/5 都要先选面/边"
+        },
+        {
+          "text": "等距曲面示例先选两个参考面再调 InsertOffsetSurface",
+          "from": "Create_Thicken_Feature_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "而本批 4/5 都要先选面/边"
+        },
+        {
+          "text": "平面区域要选一整圈闭合边界边（示例按 mark=1 选 4 条边）",
+          "from": "Create_Planar_Surface_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "替换面须按 mark=1 选被替换的面、mark=2 选替换面",
+          "from": "Replace_Face_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "替换面的替换目标须是曲面体（示例选 Surface-Extrude1 SURFACEBODY）",
+          "from": "Replace_Face_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "删除面示例前置：先打开已有实体零件 knob.sldprt",
+          "from": "Insert_and_Change_DeleteFace_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "等距曲面示例前置：在多实体零件 multi_local.sldprt 里",
+          "from": "Create_Thicken_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "InsertRuledSurfaceFromEdge2 的示例前置：两索引与 examples 均无该成员",
+          "from": "(无示例)",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "Create_Ruled_Surface_From_Edge_Example_VB 调的是 IModeler.CreateRuledSurfaceFromEdge，非本条成员，未计入。"
+    }
+  ]
+}

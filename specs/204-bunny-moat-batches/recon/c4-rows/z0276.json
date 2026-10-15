@@ -1,0 +1,133 @@
+{
+  "idx": 276,
+  "results": [
+    {
+      "member": "GetUseMisalignedDeviationDocumentProperty",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VB.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出拿到 IMate2 的前置：先按名选中 Concentric2 这个 MATE（mark=0），再 GetSelectedObject6→GetSpecificFeature2；成员页没写任何前置。",
+          "example_quote": "swFeature = (Feature)swSelectionManager.GetSelectedObject6(1, -1);\nswMate = (Mate2)swFeature.GetSpecificFeature2();",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 那条「返回 false ⇒ 用 GetMaximumMisalignedDeviation」与示例 Set(false) 后 SetMaximumMisalignedDeviation(0.102) 并读回一致，不构成矛盾。"
+    },
+    {
+      "member": "GetUseParentDisplayMode",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Display_Mode_of_View_Example_CSharp.md",
+        "Set_Display_Mode_of_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律整条跳过；两例都在 SetDisplayMode4 前后各读它一次。"
+    },
+    {
+      "member": "GetUserAngleTolerance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_User_Units_Example_CSharp.md",
+        "Get_and_Set_User_Units_Example_VB.md",
+        "Get_and_Set_User_Units_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，跳过；三例都只把它打印成一行「Angle tolerance:」。"
+    },
+    {
+      "member": "GetUserPoints2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Sketch_Points_and_Their_Persistent_IDs_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "This set of data repeats for each user point in the sketch. The size of the array is (NumPts * 8).",
+          "example_quote": "For i = 0 To UBound(vSketchUserPt) / 3 - 1\n        ' Coordinates in sketch space\n        Debug.Print \" User point (\" & i & \") = (\" & vSketchUserPt(3 * i + 0) * 1000# & \", \" & vSketchUserPt(3 * i + 1) * 1000# & \", \" & vSketchUserPt(3 * i + 2) * 1000# & \") mm\"",
+          "example_file": "Get_Sketch_Points_and_Their_Persistent_IDs_Example_VB.md",
+          "why": "Remarks：每点 8 个 double，前 5 槽是 Color/Line Font/Line Width/Layer ID/Layer Override，坐标在第 5–7 槽。示例按每点 3 个、偏移 3*i 直接当 x,y,z 读；按 8 槽布局，3*i 落在第 i 点的第 4 槽（i=0 时正是 Color）。两种数组布局不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出单位：返回值乘 1000 才得到 mm，即返回的是米；成员页只说 ptLoc[3] 是 x,y,z，没写单位。",
+          "example_quote": "Debug.Print \" User point (\" & i & \") = (\" & vSketchUserPt(3 * i + 0) * 1000# & \", \" & vSketchUserPt(3 * i + 1) * 1000# & \", \" & vSketchUserPt(3 * i + 2) * 1000# & \") mm\"",
+          "example_file": "Get_Sketch_Points_and_Their_Persistent_IDs_Example_VB.md"
+        },
+        {
+          "what": "示例前置：先选中草图，用 GetSelectedObject6 + GetSpecificFeature2 取得 ISketch 才调用；成员页没写前置。",
+          "example_quote": "Set swSketch = swFeat.GetSpecificFeature2",
+          "example_file": "Get_Sketch_Points_and_Their_Persistent_IDs_Example_VB.md"
+        }
+      ],
+      "note": "示例全程只按 3 槽读坐标、完全不碰 Color/线型/层那 5 槽，与 Remarks 的 8 槽布局正面冲突。"
+    },
+    {
+      "member": "GetUserPointsCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Polyline_Data_from_View_Example_VB.md",
+        "Get_Polylines_Information_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例不限于活动草图：对 drawing view 用 GetSketch 取得的草图直接调它，成员页没提这个来源。",
+          "example_quote": "Set swSketch = swView.GetSketch",
+          "example_file": "Get_Polyline_Data_from_View_Example_VB.md"
+        }
+      ],
+      "note": "两例都只把计数打印一行，没按 Remarks 去给 IGetUserPoints2 定数组大小；成员页没写别的前置，故不记冲突。"
+    },
+    {
+      "member": "GetUserPreferenceDouble",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_User_Preferences_Example_CSharp.md",
+        "Get_and_Set_User_Preferences_Example_VB.md",
+        "Get_and_Set_User_Preferences_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出宿主对象的取得方式：先 Part.Extension 再在扩展对象上调；成员页没写必须走 ModelDocExtension。",
+          "example_quote": "Set ModelDocExtension = Part.Extension",
+          "example_file": "Get_and_Set_User_Preferences_Example_VB.md"
+        }
+      ],
+      "note": "示例第二实参直接写 0；swUserPreferenceOption_e 页的 Value 列无数值，判定不了是否等于 swDetailingNoOptionSpecified，故不记冲突。"
+    },
+    {
+      "member": "GetUserPreferenceDoubleValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_of_Assembly_Component_Example_VB.md",
+        "Get_and_Set_Dimension_Extension_Lines_Gaps_Example_VB.md",
+        "Get_and_Set_Material_Density_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出单位：密度读回按 kg/m^3 使用；成员页 Returns 只说 Numeric value，没写单位。",
+          "example_quote": "' Density is returned in metric units, i.e., kg/m^3\n    Debug.Print \" Get current density = \" & nDensity & \" kg/m^3\"",
+          "example_file": "Get_and_Set_Material_Density_Example_VB.md"
+        },
+        {
+          "what": "示例说明可对非活动文档调用：取所选组件的 swComp.GetModelDoc 再读偏好；成员页未限定活动文档。",
+          "example_quote": "Set swCompModel = swComp.GetModelDoc\n    nDensity = swCompModel.GetUserPreferenceDoubleValue(swMaterialPropertyDensity)",
+          "example_file": "Get_Mass_Properties_of_Assembly_Component_Example_VB.md"
+        }
+      ],
+      "note": "C# 那份里的同名字段调用挂在 swApp（ISldWorks）上，属另一成员，不计入本条。"
+    }
+  ]
+}

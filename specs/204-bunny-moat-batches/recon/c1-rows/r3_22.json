@@ -1,0 +1,15 @@
+{"idx":22,"pages_read":13,"rows":[
+{"iface":"IView","file":"GetAlignment.md","signature":"System.int GetAlignment()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetDimensionDisplayInfo3.md","signature":"System.object GetDimensionDisplayInfo3()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetFirstDisplayDimension.md","signature":"System.object GetFirstDisplayDimension()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetRelatedTangentEdgeCount.md","signature":"System.int GetRelatedTangentEdgeCount( System.object BendLine )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetBreakLineInfo.md","signature":"System.double IGetBreakLineInfo( System.int ArraySize )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetFirstDatumTargetSym.md","signature":"DatumTargetSym IGetFirstDatumTargetSym()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"ImportAnnotations.md","signature":"void ImportAnnotations( System.bool IncludeDesignAnnotations, System.bool IncludeCosmeticThreads, System.bool IncludeDimXpertAnnotations, System.bool IncludeHiddenFeatureItems, System.bool Include3DViewAnnotations )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"SetDisplayTangentEdges.md","signature":"void SetDisplayTangentEdges( System.bool DisplayIn )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"CreateAuxiliaryViewAt.md","signature":"System.bool CreateAuxiliaryViewAt( System.double X, System.double Y, System.double Z, System.bool NotAligned )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"EditSketch.md","signature":"void EditSketch()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"ICreateSectionViewAt2.md","signature":"View ICreateSectionViewAt2( System.double X, System.double Y, System.double Z, System.bool NotAligned, System.bool IsOffsetSection, System.string Label, System.bool Chgdirection, System.bool Scwithmodel, System.bool Partial, System.bool Dispsurfcut )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"IReorderSheets.md","signature":"System.bool IReorderSheets( System.int SheetCount, ref System.string NewSheetList )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"ISheet","file":"GetMagneticLines.md","signature":"System.object GetMagneticLines()","obsolete":false,"pointer":false,"zero":"是（空括号）"}
+]}

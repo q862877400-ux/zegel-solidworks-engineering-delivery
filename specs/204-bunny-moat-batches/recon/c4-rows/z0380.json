@@ -1,0 +1,152 @@
+{
+  "idx": 380,
+  "results": [
+    {
+      "member": "Order",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Spline_Example_VB.md",
+        "Get_BCurve_Spline_Points_Example_CSharp.md",
+        "Get_BCurve_Spline_Points_Example_VB.md",
+        "Get_BCurve_Spline_Points_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "取数路径与实参：Order 从 GetBCurveParams5 返回的 SplineParamData 读出；本页示例实参全 False，Get_BCurve 三份用 (True, True)，两者都仍读得出 Order。",
+          "example_quote": "Set swSplineParamData = swCurve.GetBCurveParams5(False, False, False, False)",
+          "example_file": "Edit_Spline_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只给 order↔degree 对照表；四份示例一律只 Debug.Print 该值，不给任何语义，故无冲突。"
+    },
+    {
+      "member": "Orientation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is not valid if [[IAdvancedHoleElementData::ElementType]] is set to [[swAdvWzdGeneralHoleTypes_e]]:\n\n- swAdvWzdStraight\n\n- swAdvWzdStraightTap",
+          "example_quote": "Set swAdvHole_Near_2 = swModel.Extension.CreateAdvancedHoleElementData(swAdvWzdGeneralHoleTypes_e.swAdvWzdStraightTap)\n    swAdvHole_Near_2.Orientation = swHoleElementOrientation_e.swHoleElementOrientation_Nearside",
+          "example_file": "Create_Advanced_Hole_Example_VB.md",
+          "why": "Remarks 说 StraightTap 上该属性无效，VBA 示例却紧接创建就写 Orientation；C#/VB.NET 两份在同一个 swAdvWzdStraightTap 元素上恰好不写。同一示例族三份自相矛盾。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is not valid if [[IAdvancedHoleElementData::ElementType]] is set to [[swAdvWzdGeneralHoleTypes_e]]:\n\n- swAdvWzdStraight\n\n- swAdvWzdStraightTap",
+          "example_quote": "Set swAdvHole_Far_2 = swModel.Extension.CreateAdvancedHoleElementData(swAdvWzdGeneralHoleTypes_e.swAdvWzdStraight)\n    swAdvHole_Far_2.Orientation = swHoleElementOrientation_e.swHoleElementOrientation_Farside",
+          "example_file": "Create_Advanced_Hole_Example_VB.md",
+          "why": "同上：Remarks 点名的 swAdvWzdStraight 被写 Orientation，并在第178行又读回 \" & swStraightHoleFar.Orientation\"；C#/VB.NET 两份在该元素上写与读都没有。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "有效侧的实参取值示例给了，Remarks 只列无效项：CounterSink/TaperTap 设 Nearside、CounterBore 设 Farside。",
+          "example_quote": "swAdvHole_Far_1.Orientation = (int)swHoleElementOrientation_e.swHoleElementOrientation_Farside;",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "Create_Broken_View_Example_CSharp.md 虽被列在候选里，其 swBreakLine.Orientation 属 IBreakLine，不是本成员，故未计入。"
+    },
+    {
+      "member": "Orientation3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Zoom_to_Region_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "只读路径：示例单独读 Orientation3 当 MathTransform 直接喂 MultiplyTransform，全程不碰 Translation3 —— Remarks 的成对要求只约束修改。",
+          "example_quote": "swViewOrient = swModView.Orientation3",
+          "example_file": "Zoom_to_Region_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 那句前提以 When modifying 起头，示例只读不改，两侧可同时成立；无冲突。"
+    },
+    {
+      "member": "Origin",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Drag_Arrow_Manipulator_Example_CSharp.md",
+        "Create_Drag_Arrow_Manipulator_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Before calling this property to change the origin setting, set [[IDragArrowManipulator::FixedLength]] to true.",
+          "example_quote": "swDrag.Origin = swPickPt;",
+          "example_file": "Create_Drag_Arrow_Manipulator_Example_CSharp.md",
+          "why": "Remarks 要求先置 FixedLength=true 再写 Origin；示例主流程在 Length/LengthOppositeDirection 之后直接写 Origin，FixedLength 全程未出现。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Before calling this property to change the origin setting, set [[IDragArrowManipulator::FixedLength]] to true.",
+          "example_quote": "swTmpManipulator.Origin = swMathPoint;",
+          "example_file": "Create_Drag_Arrow_Manipulator_Example_CSharp.md",
+          "why": "上一行 FixedLength=true 被 if ((doneonce == 1)) 包住，而 Origin 无条件写；OnEndDrag 又把 FixedLength 置 false，故第二次起就在 false 下改原点。VB.NET 同形。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把两者耦合讲成运行期行为：首次 FixedLength=true 且原点随之移动，其后 FixedLength=false 且原点不变——比 Remarks 的单向前提更具体。",
+          "example_quote": "// 2. Drag the handle to another location. The first time you drag the handle,\n\t//    IDragArrowManipulator::FixedLength is set to true,\n\t//    and the origin is moved in the direction of the drag. For second and\n\t//    subsequent drags, IDragArrowManipulator::FixedLength is set to false,\n\t//    and the origin is not changed.",
+          "example_file": "Create_Drag_Arrow_Manipulator_Example_CSharp.md"
+        }
+      ],
+      "note": "两份 sldworksapi__Create_Triad_Manipulator_Example_* 里的是 swTriad.Origin，属 ITriadManipulator（另有 Origin.md），未计入。"
+    },
+    {
+      "member": "OriginEntity",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Coordinate_System_Feature_Example_VB.md",
+        "Insert_Coordinate_System_Feature_at_Center_of_Mass_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回值要先判型：示例用 TypeOf 分 Entity 与 SketchPoint 两支，而成员页 Returns 只写 Entity for the origin、签名却是 System.object。",
+          "example_quote": "If TypeOf geo Is Entity Then",
+          "example_file": "Insert_Coordinate_System_Feature_at_Center_of_Mass_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 全文只有一句「See SOLIDWORKS Help for a list of valid entities.」，示例未否认它，无冲突。"
+    },
+    {
+      "member": "OriginFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Signature 与 Returns 两段，没有 ## Remarks，按纪律跳过比较，不做推测。"
+    },
+    {
+      "member": "OuterCornerFilletRadius",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "单位被示例定死为米：0.001 与同段的 GussetThickness=0.003、以及 DraftAngle=3*0.0175（弧度）同族；成员页 Returns 只写 Outer corner fillet radius，无单位。",
+          "example_quote": "swFeatData.OuterCornerFilletRadius = 0.001;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例都先 FilletOuterCorners = true 再写本属性，正好照 Remarks 的次序；无冲突。"
+    }
+  ]
+}

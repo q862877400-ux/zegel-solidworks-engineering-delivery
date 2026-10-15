@@ -1,0 +1,75 @@
+{
+  "idx": 40,
+  "results": [
+    {
+      "name": "surface_revolve",
+      "level": "verified",
+      "members_found": [
+        "IFeatureManager.InsertRevolvedRefSurface",
+        "IModelDoc2.InsertRevolvedRefSurface",
+        "ISketchManager.CreateCenterLine",
+        "IModelDocExtension.SelectByID2",
+        "IFeature.GetTypeName2"
+      ],
+      "examples_used": [],
+      "preconditions": [
+        {
+          "text": "调用前须用 SelectByID2 选好轮廓（官方 Remarks；且官方未给 mark）",
+          "from": "无对应示例：InsertRevolvedRefSurface 在 member-to-example-index.md 与 b3-4-merged.json 均 0 命中；C:\\swapi\\types\\IFeatureManager\\InsertRevolvedRefSurface.md 无 ## Examples 段",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "轮廓须绕一条中心线（centerline）旋转；且不支持 3D 草图",
+          "from": "无对应示例：CreateCenterLine 的示例只有 Create_3D_Sketch_Plane_*（3D 草图，与本能力前提相反）与 Create_Full_Symmetrical_Angular_Dimension_*（角尺寸），均属巧合",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "cannot_tell",
+      "note": "InsertRevolvedRefSurface 在两索引与官方页均 0 命中 ⇒ 示例侧前置无从取得；同族 InsertPlanar/Sew/ExtruRefSurface 示例属巧合，未计入。"
+    },
+    {
+      "name": "sketch_dimension_horizontal",
+      "level": "verified",
+      "members_found": [
+        "IModelDoc2.AddHorizontalDimension2",
+        "IModelDoc2.AddVerticalDimension2",
+        "IEntity.Select4",
+        "IFeature.GetFirstDisplayDimension",
+        "IAnnotation.GetNext2"
+      ],
+      "examples_used": [
+        "Dimension_Edge_in_Drawing_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "A straight edge is selected in the SOLIDWORKS Design graphics area.（调用前必须先选中实体）",
+          "from": "Dimension_Edge_in_Drawing_Example_VB.md（Preconditions 第 (3) 条）",
+          "state": "covered",
+          "evidence_quote": "★ **按对象选中它**（或选两个端点）后调那两个方法：**草图尺寸 0 → H:1 → V:1**（★ 两条**都建成**）"
+        },
+        {
+          "text": "Part or assembly is open.",
+          "from": "Dimension_Edge_in_Drawing_Example_VB.md（Preconditions 第 (1) 条）",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "If an assembly, it is fully resolved.",
+          "from": "Dimension_Edge_in_Drawing_Example_VB.md（Preconditions 第 (2) 条）",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "NOTE: The dimension is not created if the edge cannot be converted in a drawing view.",
+          "from": "Dimension_Edge_in_Drawing_Example_VB.md（Postconditions 后 NOTE 与代码三分支：竖直→AddVerticalDimension2 / 水平→AddHorizontalDimension2 / 否则→AddDimension2）",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "唯一官方示例属工程图语境。实质前置「先选中实体」被 evidence 逐字覆盖；「零件或装配体已打开」evidence 未提 ⇒ not_covered；装配与图纸转换两条属该示例语境。"
+    }
+  ]
+}

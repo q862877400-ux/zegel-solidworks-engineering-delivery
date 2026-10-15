@@ -1,0 +1,144 @@
+{
+ "idx": 321,
+ "results": [
+  {
+   "member": "InsertRow",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md",
+    "Sort_Table_Example_CSharp.md",
+    "Sort_Table_Example_VB.md",
+    "Sort_Table_Example_VBNET.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "- is valid only if Where is set to swTableItemInsertPosition_e.swTableItemInsertPosition_After or swTableItemInsertPosition_e.swTableItemInsertPosition_Before.",
+     "example_quote": "boolstatus = theTableAnnotation.InsertRow(4, 0)",
+     "example_file": "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md",
+     "why": "Remarks 把 Index 限死在 Where=After(3)/Before(2)；此官方示例传 Where=4（枚举里是 Last）却照样带 Index=0，两侧口径不能同时成立。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "三个 Sort Table 示例给出 Where=2（Before）+ Index=2 的实际调用，成员页没给具体取值组合。",
+     "example_quote": "swTable.InsertRow 2, 2",
+     "example_file": "Sort_Table_Example_VB.md"
+    }
+   ],
+   "note": "Remarks 只约束 Index 适用范围；Sort Table 的 Index=2 与「0-based」不冲突。"
+  },
+  {
+   "member": "InsertScale",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_Scale_Feature_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出完整调用形态 swScaleAboutOrigin + Uniform=True + 3,3,3，并按 Remarks 用 GetDefinition 取 IScaleFeatureData。",
+     "example_quote": "Set swScaleFeat = swFeatMgr.InsertScale(swScaleAboutOrigin, True, 3, 3, 3)",
+     "example_file": "Insert_Scale_Feature_Example_VB.md"
+    }
+   ],
+   "note": "示例走「缩放当前模型」分支，Remarks 的图形体前置未触发，未找到矛盾。"
+  },
+  {
+   "member": "InsertScene",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Render_References_Example_CSharp.md",
+    "Get_Render_References_Example_VB.md",
+    "Get_Render_References_Example_VBNET.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "other_conflict",
+     "remarks_quote": "Call [[IModelView::GraphicsRedraw]] or [[IModelView::IGraphicsRedraw]] to repaint the graphics area.",
+     "example_quote": "// and rebuild the model to see it",
+     "example_file": "Get_Render_References_Example_CSharp.md",
+     "why": "Remarks 指定的重绘入口是 GraphicsRedraw/IGraphicsRedraw；三个官方示例一次都没调用它，改调 ForceRebuild3 并注释说明靠 rebuild 来看。"
+    }
+   ],
+   "example_more_specific": [],
+   "note": "参数说明与 Returns（bool）同示例的 status 赋值一致，无返回形状冲突。"
+  },
+  {
+   "member": "InsertSewRefSurface",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Surface_Knit_Feature_Example_CSharp.md",
+    "Create_Surface_Knit_Feature_Example_VB6.md",
+    "Create_Surface_Knit_Feature_Example_VBNET.md",
+    "Fill_Holes_in_Part_Example_CSharp.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "unit_diff",
+     "remarks_quote": "A knit tolerance's:\n\n- lower limit is 0.0001 mm\n\n- upper limit is 0.1 mm",
+     "example_quote": "Debug.Print(\"  Knit tolerance: \" + swSurfaceKnitFeature.KnitTolerance * 1000 + \" mm\");",
+     "example_file": "Create_Surface_Knit_Feature_Example_CSharp.md",
+     "why": "示例回读后要 ×1000 才标 mm，说明裸值单位是米；0.0001 裸值即 0.1 mm，与 Remarks「下限 0.0001 mm」不能同时成立。"
+    },
+    {
+     "kind": "unit_diff",
+     "remarks_quote": "A knit tolerance's:\n\n- lower limit is 0.0001 mm\n\n- upper limit is 0.1 mm",
+     "example_quote": "swNewFeatMgr.InsertSewRefSurface(true, false, false, 3.001639406912E-05, 0.0001);",
+     "example_file": "Fill_Holes_in_Part_Example_CSharp.md",
+     "why": "KnitTolerance 传 3.001639406912E-05；按 Remarks 的 mm 口径它低于 0.0001 mm 下限，按米口径才等于 0.03 mm 落在区间内。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例给出选面顺序：先 BODYFEATURE 后 SURFACEBODY，append 一 false 一 true，两处 mark 都是 1。",
+     "example_quote": "boolstatus = swModelDocExt.SelectByID2(\"Surface-Extrude1\", \"BODYFEATURE\", 0, 0, 0, false, 1, null, 0);",
+     "example_file": "Create_Surface_Knit_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "mark=1 与 Remarks 一致，无 mark_diff；单位是唯一冲突点。"
+  },
+  {
+   "member": "InsertSheetMetal3dBend",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Create_SM_Corner_Relief_Feature_Example_CSharp.md",
+    "Create_SM_Corner_Relief_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页没有 ## Remarks 段，按纪律跳过，不比对。"
+  },
+  {
+   "member": "InsertSheetMetalBaseFlange2",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_SM_Corner_Relief_Feature_Example_CSharp.md",
+    "Create_SM_Corner_Relief_Feature_Example_VBNET.md",
+    "Create_Swept_Flange_Example_CSharp.md",
+    "Create_Swept_Flange_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例先用 CreateCustomBendAllowance() 造 PCBA 并设 KFactor=0.5 再传入，比成员页「Pointer to the custom bend allowance object」具体。",
+     "example_quote": "customBendAllowanceData.KFactor = 0.5d;",
+     "example_file": "Create_SM_Corner_Relief_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "四个示例末三位都是 (false, true, true)，UseAutoSelect=true，Remarks 的 mark 8 分支未触发。"
+  },
+  {
+   "member": "InsertSheetMetalBreakCorner",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Modify_Break_Corner_Feature_Example_CSharp.md",
+    "Modify_Break_Corner_Feature_Example_VB.md",
+    "Modify_Break_Corner_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页没有 ## Remarks 段，按纪律跳过，不比对。"
+  }
+ ]
+}

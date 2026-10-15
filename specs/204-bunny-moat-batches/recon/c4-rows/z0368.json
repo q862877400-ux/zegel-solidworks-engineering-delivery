@@ -1,0 +1,183 @@
+{
+  "idx": 368,
+  "results": [
+    {
+      "member": "MirrorTransferOptions",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md",
+        "Mirror_Components_II_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "If not set, this property defaults to swMirrorPartOptions_e.swMirrorPartoptions_ImportSolids.",
+          "example_quote": "importOptions = (int)swMirrorPartOptions_e.swMirrorPartOptions_ImportSolids;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md",
+          "why": "成员页写 swMirrorPartoptions（小写 o），示例与枚举页写 swMirrorPartOptions（大写 O）；同一枚举成员不可能两种拼写都对。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先把枚举转成 int 变量 importOptions 再赋属性，且赋在 CreateDerivedConfigurations=false 之后。",
+          "example_quote": "swMirroCompFeatData.MirrorTransferOptions = importOptions;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        }
+      ],
+      "note": "两前置示例均已成立（先置 CreateDerivedConfigurations=false；BreakLinks 默认即 false）。"
+    },
+    {
+      "member": "MirrorType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例首次显式设成 swMirrorType_ComponentOrigin，不是成员页写的默认值 CenterOfBoundingBox。",
+          "example_quote": "swMirroCompFeatData.MirrorType = (int)swMirrorComponentMirrorType_e.swMirrorType_ComponentOrigin;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        },
+        {
+          "what": "示例演示第二次经 GetDefinition 取回后改成 CenterOfMass，再由 ModifyDefinition 写回。",
+          "example_quote": "modifyFeatdef.MirrorType = (int)swMirrorComponentMirrorType_e.swMirrorType_CenterOfMass;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 Thread 示例用的是 IThreadFeatureData.MirrorType（swThreadMirrorType_e），同名不同成员，已排除。"
+    },
+    {
+      "member": "MirroredComponentFilenames",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md",
+        "Mirror_Components_II_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "[[IMirrorComponentFeatureData::NameModifierType]] is set to [[swMirrorComponentNameModifier_e]].swMirrorComponentName_Custom,",
+          "example_quote": "swMirroCompFeatData.MirroredComponentFilenames = namesVar;\nswMirroCompFeatData.NameModifierType = (int)swMirrorComponentNameModifier_e.swMirrorComponentName_Custom;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md",
+          "why": "成员页要求先置 NameModifierType=Custom 才有效；示例先赋文件名再置该项，而该属性文档默认是 Prefix，故赋值时前置未成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "VBNET 版对同一属性连赋两次：先传 Object 变量 namesVar，再直接传 String 数组。",
+          "example_quote": "swMirroCompFeatData.MirroredComponentFilenames = mirrorCompFileNames",
+          "example_file": "Mirror_Components_II_Example_VBNET.md"
+        },
+        {
+          "what": "示例把 OppositeHandComponents 放在本属性之前赋值，满足成员页另一半前置。",
+          "example_quote": "swMirroCompFeatData.OppositeHandComponents = CTMOH;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        }
+      ],
+      "note": "NameModifierType 页另称其前置是本属性非 null，与本页构成互为前置；默认 Prefix 见 NameModifierType.md。"
+    },
+    {
+      "member": "MiterMergeCondition",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Merge_Miter_Trimmed_Bodies_Example_CSharp.md",
+        "Merge_Miter_Trimmed_Bodies_Example_VB.md",
+        "Merge_Miter_Trimmed_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is only available when [[IStructuralMemberGroup::CornerTreatmentType]] is [[swSolidworksWeldmentEndCondOptions_e]].swEndConditionMiter.",
+          "example_quote": "Debug.Print(\" Original merge miter trimmed bodies setting: \" + group.MiterMergeCondition);",
+          "example_file": "Merge_Miter_Trimmed_Bodies_Example_CSharp.md",
+          "why": "成员页说该属性仅在 CornerTreatmentType 为 Miter 时可用；示例的读发生在 if 判据之前、无守卫，只有写才有守卫。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "[[swSolidworksWeldmentEndCondOptions_e]].swEndConditionMiter",
+          "example_quote": "Debug.Print(\" Corner treatment type (1 = swSolidworksWeldmentEndCondOptions_e.swEndconditionMiter): \" + group.CornerTreatmentType);",
+          "example_file": "Merge_Miter_Trimmed_Bodies_Example_CSharp.md",
+          "why": "示例注释里同一枚举成员写成 swEndconditionMiter（小写 c），成员页与枚举页均为 swEndConditionMiter；标识符区分大小写。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 true 写在 CornerTreatmentType==Miter 的 if 内，随后 ModifyDefinition 写回。",
+          "example_quote": "if (group.CornerTreatmentType == (int)swSolidworksWeldmentEndCondOptions_e.swEndConditionMiter)\n{\n    group.MiterMergeCondition = true;\n}",
+          "example_file": "Merge_Miter_Trimmed_Bodies_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例结构一致：读无守卫、写有守卫；小写 c 的拼写在三份里都在注释行。"
+    },
+    {
+      "member": "ModelBreakViewName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Capture_3DView_Example_CSharp.md",
+        "Capture_3DView_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先判返回值是否为 null 再打印，说明无模型断裂视图时会返回 null。",
+          "example_quote": "if (modelBreakViewName == null)\n{\n    Debug.Print(\"No model break view\");\n}",
+          "example_file": "Capture_3DView_Example_CSharp.md"
+        },
+        {
+          "what": "VBNET 版改判空串而非 null，判据与 C# 版不同。",
+          "example_quote": "If modelBreakViewName = \"\" Then",
+          "example_file": "Capture_3DView_Example_VBNET.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按硬纪律跳过冲突判定。"
+    },
+    {
+      "member": "ModelDoc",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Switch_Documents_Example_CSharp.md",
+        "Switch_Documents_Example_VB.md",
+        "Switch_Documents_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先由 Frame.ModelWindows 取到对象数组再逐个转型，说明来源是 Frame 的窗口表。",
+          "example_quote": "swModelDoc = (ModelDoc2)swModelWindow.ModelDoc;",
+          "example_file": "Switch_Documents_Example_CSharp.md"
+        },
+        {
+          "what": "VBNET 版不转型直接赋值，靠 VB 后期绑定拿到 ModelDoc2。",
+          "example_quote": "swModelDoc = swModelWindow.ModelDoc",
+          "example_file": "Switch_Documents_Example_VBNET.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按硬纪律跳过冲突判定。"
+    },
+    {
+      "member": "ModelToSketchTransform",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md",
+        "Evaluate_Curves_Defined_in_Sketch_Space_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例取到变换后立刻调 .Inverse() 再 MultiplyTransform，把草图点换成模型坐标。",
+          "example_quote": "swSketchXform = (MathTransform)swSketchXform.Inverse();",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        },
+        {
+          "what": "曲线求值示例把变换当 MathTransform 用 .Inverse 后逐点相乘，对比打印草图与模型两套坐标。",
+          "example_quote": "Set swXform = swSketch.ModelToSketchTransform\nSet swXform = swXform.Inverse",
+          "example_file": "Evaluate_Curves_Defined_in_Sketch_Space_Example_VB.md"
+        }
+      ],
+      "note": "无 ## Remarks；页内 NOTE 称 Set 未实现，签名却写 {get; set;}，属页内自相矛盾，未计入冲突。"
+    }
+  ]
+}

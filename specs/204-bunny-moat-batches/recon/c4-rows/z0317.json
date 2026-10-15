@@ -1,0 +1,160 @@
+{
+  "idx": 317,
+  "results": [
+    {
+      "member": "InsertMoveCopyBody2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Copy_and_Rotate_Body_using_Edge_Example_VB.md",
+        "Move_Bodies_Example_CSharp.md",
+        "Move_Bodies_Example_VB.md",
+        "Move_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "mark_diff",
+          "remarks_quote": "Rotation edge, vertex, coordinate system\n\n2",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"VERTEX\", -0.085, 0, 0.065, True, 4, Nothing, 0)\nstatus = swModelDocExt.SelectByID2(\"\", \"VERTEX\", -0.085, -0.09, 0.065, True, 8, Nothing, 0)\nSet swFeature = swFeatureManager.InsertMoveCopyBody2(0, 0, 0, 0, -0.085, 0, 0.065, 0, 0, 0, True, 1)",
+          "example_file": "Copy_and_Rotate_Body_using_Edge_Example_VB.md",
+          "why": "Remarks 把旋转参考实体定为 mark 2；示例这一次调用传的是旋转原点（RotPoint）却只用 mark 4/8（平移 mark），旋转的 2 从未出现。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例用 SelectData.Mark=1 加 Body2.Select2 标体，而不是 Remarks 指向的 SelectByID2",
+          "example_quote": "status = swBody.Select2(True, swSelData)",
+          "example_file": "Move_Bodies_Example_VB.md"
+        },
+        {
+          "what": "示例先插入再经 IMoveCopyBodyFeatureData 改 TransformType/参考实体为旋转，Remarks 未提改法",
+          "example_quote": "swMoveCopyBodyFeatureData.TransformType = swMoveCopyBodyFeatureTransformType_e.swTransformType_Rotation",
+          "example_file": "Copy_and_Rotate_Body_using_Edge_Example_VB.md"
+        }
+      ],
+      "note": "Move Bodies 三例只走平移，方向与 Remarks 一致；差异只在 Copy_and_Rotate 的 mark。"
+    },
+    {
+      "member": "InsertMoveFace",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Move_Selected_Face_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例 MoveType=1（Translate）仍传 Angle=0.034907；页面说 Angle 只在 Rotate 时生效",
+          "example_quote": "Set\nswFeat = swFeatMgr.InsertMoveFace(1, False, 0.034907, 0.05)",
+          "example_file": "Move_Selected_Face_Example_VB.md"
+        }
+      ],
+      "note": "示例 mark 1 面 + mark 2 线性边，与 Remarks 的 1/2 完全对得上，未找到冲突。"
+    },
+    {
+      "member": "InsertMoveFace3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_and_Modify_Move_Face_Feature_Example_CSharp.md",
+        "Create_and_Modify_Move_Face_Feature_Example_VB.md",
+        "Create_and_Modify_Move_Face_Feature_Example_VBNET.md",
+        "Translate_Move_Face_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "swMoveFaceTypeTranslate\n\nAny option\n\nDirection reference (plane, planar face, linear edge, or reference axis)\n\n2",
+          "example_quote": "boolstatus = swModel.Extension.SelectByID2(\"\", \"FACE\", 0.04239074672171, 0.01587499999999, 0.3283508339712, False, 1, Nothing, 0)\nSet swFeat = swFeatMgr.InsertMoveFace3(swMoveFaceTypeTranslate, False, 0, 0, (transParams), Nothing, swEndCondBlind, 0)",
+          "example_file": "Create_and_Modify_Move_Face_Feature_Example_VB.md",
+          "why": "Remarks 表说 translate 要按 mark 2 选方向参考；四份官方示例都只选 mark 1 的面就直接建成 Move Face1。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例用 TriadTranslationParameters 改三角平移量，页面只写了入参没给改法",
+          "example_quote": "swMoveFaceFeat.TriadTranslationParameters = (transParams)",
+          "example_file": "Create_and_Modify_Move_Face_Feature_Example_VB.md"
+        }
+      ],
+      "note": "「给了 TranslationParams 就别给 Distance/Angle」这条，示例 Distance=0/Angle=0 与 Remarks 相符。"
+    },
+    {
+      "member": "InsertNetBlend",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Boundary_Feature_Example_CSharp.md",
+        "Insert_Boundary_Feature_Example_VB.md",
+        "Insert_Boundary_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 InsertNetBlend 前先调 SetNetBlendCurveData/SetNetBlendDirectionData，Remarks 只写了 mark",
+          "example_quote": "swFeatureMgr.SetNetBlendCurveData 0, 0, 0, 0, 1, True",
+          "example_file": "Insert_Boundary_Feature_Example_VB.md"
+        }
+      ],
+      "note": "示例用 8193/16385 标 Direction 1 的面并传 NCurvesDir1=2，与 Remarks 表逐项一致。"
+    },
+    {
+      "member": "InsertNetBlend2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Solid_Body_Boundary_Surface_Feature_Example_CSharp.md",
+        "Insert_Solid_Body_Boundary_Surface_Feature_Example_VB.md",
+        "Insert_Solid_Body_Boundary_Surface_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 WantsSolid 与 CreateSolid 的配对：Type=2 时前者 False、后者 True",
+          "example_quote": "Set swFeature = swFeatureMgr.InsertNetBlend2(2, 2, 0, False, 0.0001, False, True, True, True, False, -1, -1, False, -1, False, False, -1, False, -1, True, True)",
+          "example_file": "Insert_Solid_Body_Boundary_Surface_Feature_Example_VB.md"
+        }
+      ],
+      "note": "8193/16385 与 Remarks 的 Direction 1 mark 相同，未找到冲突。"
+    },
+    {
+      "member": "InsertNewAssembly",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_and_Save_Virtual_Assembly_Example_CSharp.md",
+        "Insert_and_Save_Virtual_Assembly_Example_VB.md",
+        "Insert_and_Save_Virtual_Assembly_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 API 切换那个选项（true 再 false），比 Remarks 的菜单路径更具体",
+          "example_quote": "swApp.SetUserPreferenceToggle swUserPreferenceToggle_e.swSaveNewComponentsToExternalFile, True",
+          "example_file": "Insert_and_Save_Virtual_Assembly_Example_VB.md"
+        }
+      ],
+      "note": "选中/未选中两种分支的示例与 Remarks 逐句对应，未找到冲突。"
+    },
+    {
+      "member": "InsertNewPart2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Join_Feature_Example_CSharp.md",
+        "Insert_Join_Feature_Example_VB.md",
+        "Insert_Join_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "The Face_or_Plane_to_select argument can be a [[face]] or [[reference plane]], which means that you have to call [[IFeature::GetSpecificFeature2]] first.",
+          "example_quote": "Set swFace = swSelectionMgr.GetSelectedObject6(1, -1)\nstate = swAssemblyDoc.InsertNewPart2(\"C:\\temp\\Part1^arm2.sldprt\", swSelObj)",
+          "example_file": "Insert_Join_Feature_Example_VB.md",
+          "why": "Remarks 说传面必须先 GetSpecificFeature2；三份示例都直接把选择管理器给的 Face2 传进去，全文没有 GetSpecificFeature2。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先 EditPart2 进入零件编辑上下文才调用，页面没写这条前置",
+          "example_quote": "swAssemblyDoc.EditPart2 True, False, info",
+          "example_file": "Insert_Join_Feature_Example_VB.md"
+        }
+      ],
+      "note": "返回值（swInsertNewPartErrorCode_e）与示例把结果存进 state 一致，无返回形态冲突。"
+    }
+  ]
+}

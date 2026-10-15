@@ -1,0 +1,133 @@
+{
+  "idx": 267,
+  "results": [
+    {
+      "member": "GetTableRadii",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 UseGaugeTable=True 与设置 GaugeTablePath 当前置；成员页只提先调 GetTableThicknesses。",
+          "example_quote": "    featDef.UseGaugeTable = True\n    ' Set the path to the sheet metal gauge tables\n    featDef.GaugeTablePath = \"c:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\lang\\english\\Sheet Metal Gauge Tables\\sample table - steel - english units.xls\"",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        },
+        {
+          "what": "示例证明返回半径单位是米（×39.37 得英寸）；成员页 Returns 只写 Array of bend radii，无单位。",
+          "example_quote": "    'Convert meters to inches by multiplying value by 39.37\n    Debug.Print \" Bend radius: \" & (radii(3) * 39.37) & \" inches\"",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        },
+        {
+          "what": "示例设完 ThicknessTableName 后重取一次，注释称所得为「新表」半径；成员页未说返回值随该属性变。",
+          "example_quote": "    ' Get updated radii for new table, which was previously set\n    radii = featDef.GetTableRadii(thicknessNames(3))",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只规定调用顺序，示例完全照做；未找到不能同时成立的说法。"
+    },
+    {
+      "member": "GetTableRowIndex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md",
+        "Insert_Advanced_Variable_Pattern_Feature_Example_VB.md",
+        "Insert_Advanced_Variable_Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值直接当 GetInstanceSuppressStateByIndex 的 TableRowIndex 实参；成员页只说是 Instance 列所在行的值。",
+          "example_quote": "            Debug.Print (\" \" & swDimensionDrivenTablePatternFeat.GetInstanceSuppressStateByIndex(swDimensionDrivenTablePatternFeat.GetTableRowIndex(instanceNames(i))) & \": \" & instanceNames(i))",
+          "example_file": "Insert_Advanced_Variable_Pattern_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例用 GetInstanceNameByIndex(i) 取 InstanceName 且 i 从 1 到 nbr；成员页对索引基准一字未提。",
+          "example_quote": "        For i = 1 To nbr\n            instanceName = swDimensionDrivenTablePatternFeat.GetInstanceNameByIndex(i)",
+          "example_file": "Insert_Advanced_Variable_Pattern_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 指向 GetInstanceNameByIndex，三份示例都照做；未找到矛盾。"
+    },
+    {
+      "member": "GetTableThicknesses",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律 3 跳过。"
+    },
+    {
+      "member": "GetTangentEdges",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Select_Tangent_Edges_Topologically_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律 3 跳过。"
+    },
+    {
+      "member": "GetTempAxisReferenceFace",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Temporary_Axis_and_Its_Reference_Face_Example_CSharp.md",
+        "Get_Temporary_Axis_and_Its_Reference_Face_Example_VB.md",
+        "Get_Temporary_Axis_and_Its_Reference_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律 3 跳过。"
+    },
+    {
+      "member": "GetTemplateName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Name_and_Properties_of_Drawing_Sheet_Template_Example_VB.md",
+        "Get_and_Set_Sheet_Properties_Example_VB.md",
+        "Modify_and_Reload_Sheet_Format_Template_Example_CSharp.md",
+        "Modify_and_Reload_Sheet_Format_Template_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值当真实模板路径用：赋给变量后直接传给 activeSheet.SaveFormat。",
+          "example_quote": "    'Get the sheet format template\n    Dim templateName As String\n    templateName = activeSheet.GetTemplateName()\n    Debug.Print \"Sheet format template name to modify: \" & templateName",
+          "example_file": "Modify_and_Reload_Sheet_Format_Template_Example_VB.md"
+        },
+        {
+          "what": "示例用两次 GetTemplateName 的返回值比相等来筛同模板图纸；成员页未提这层用法。",
+          "example_quote": "                If otherSheet.GetTemplateName = templateName Then",
+          "example_file": "Modify_and_Reload_Sheet_Format_Template_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 两句均未被示例否定；字面量 \"***.drt**\" 疑为 Markdown 残留，逐字照抄未改。"
+    },
+    {
+      "member": "GetTemplateSheetMetal",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Template_Sheet_Metal_Feature_Data_Example_CSharp.md",
+        "Get_Template_Sheet_Metal_Feature_Data_Example_VB.md",
+        "Get_Template_Sheet_Metal_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例说明返回值要先 .GetDefinition() 才得 ISheetMetalFeatureData，且须 AccessSelections 成对。",
+          "example_quote": "    Set swSheetMetalTemplFeature = swModelExt.GetTemplateSheetMetal\n    Set swSheetMetal = swSheetMetalTemplFeature.GetDefinition\n    ' Roll back the model\n    bRet = swSheetMetal.AccessSelections(swModel, Nothing)",
+          "example_file": "Get_Template_Sheet_Metal_Feature_Data_Example_VB.md"
+        },
+        {
+          "what": "示例容忍 Null 的是 FixedReference 那一层，不是本方法的返回值——三层示例都不判本方法空。",
+          "example_quote": "    Else\n        ' A fixed face or fixed edge is not required,\n        ' so Null is a valid value\n        Debug.Print \"There is no fixed face or fixed edge in this sheet metal part.\"",
+          "example_file": "Get_Template_Sheet_Metal_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "示例前置（2013+）与 Remarks 一致；未找到不能同时成立的说法。"
+    }
+  ]
+}

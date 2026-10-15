@@ -1,0 +1,65 @@
+{
+  "idx": 534,
+  "results": [
+    {
+      "member": "updateToolboxComponent",
+      "remarks_empty": true,
+      "examples_actually_used": ["Update_All_Toolbox_Components_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出入参的具体枚举成员名，成员页只写了枚举类型名",
+          "example_quote": "updateToolboxComponents = swAssembly.updateToolboxComponent(swAssemblyLevelToUpdate_e.swAssemblyLevelToUpdate_AllLevels)",
+          "example_file": "Update_All_Toolbox_Components_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，故不判冲突；示例只多给出了入参枚举的具体成员。"
+    },
+    {
+      "member": "visible",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "指定示例调的是 swApp.visible（ISldWorks::Visible），名字相撞，未用到本成员。"
+    },
+    {
+      "member": "volume",
+      "remarks_empty": true,
+      "examples_actually_used": ["Set_Components_and_Transforms_for_Interference_Detection_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回体积的期望值钉在 0.09/0.01 量级，成员页完全没写单位",
+          "example_quote": "expectedInterferenceVolumes.Add 0.09",
+          "example_file": "Set_Components_and_Transforms_for_Interference_Detection_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；示例额外给出返回体积的期望量级。"
+    },
+    {
+      "member": "zoneType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance2_Example_VB.md",
+        "Get_DimXpert_Tolerance3_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先拿 zoneType 与 PlanarPosition 比较，才去取平面区矢量",
+          "example_quote": "If annotation.zoneType = swDimXpertPositionZoneType_PlanarPosition Then",
+          "example_file": "Get_DimXpert_Tolerance3_Example_VB.md"
+        },
+        {
+          "what": "示例列出该属性实际会返回的位置公差带枚举成员，成员页未逐个枚举",
+          "example_quote": "Case swDimXpertPositionZoneType_CylindricalPosition",
+          "example_file": "Get_DimXpert_Tolerance3_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；四份示例均在 CompositePositionData 子程序里调用。"
+    }
+  ]
+}

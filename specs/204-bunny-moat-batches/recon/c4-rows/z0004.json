@@ -1,0 +1,151 @@
+{
+  "idx": 4,
+  "results": [
+    {
+      "member": "ActiveFeatureManagerTabIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Active_Tab_in_Manager_Pane_Example_CSharp.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VB.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：写该索引前须先把 Manager Pane 设为可见（HideFeatureManager 传 false）；成员页只说读写索引，未提可见性。",
+          "example_quote": "swModelDocExtension.HideFeatureManager(false);",
+          "example_file": "Change_Active_Tab_in_Manager_Pane_Example_CSharp.md"
+        },
+        {
+          "what": "示例说明合法索引范围来自 GetFeatureManagerTabs() 返回数组的长度，按 0..n-1 遍历写入；成员页未给取值范围。",
+          "example_quote": "tabs = (object[])swModelViewManager.GetFeatureManagerTabs();",
+          "example_file": "Change_Active_Tab_in_Manager_Pane_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定；前置只由示例给出。"
+    },
+    {
+      "member": "ActiveSketch",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Constrain_Sketch_Example_VBNET.md",
+        "Create_3D_Sketch_Plane_Example_CSharp.md",
+        "Create_3D_Sketch_Plane_Example_VB.md",
+        "Create_3D_Sketch_Plane_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显式判空并给出提示，说明没有活动草图时该属性取到的是 Nothing（VB 里显示为 Is Nothing）。",
+          "example_quote": "swApp.SendMsgToUser2(\"No active sketch; thus, a sketch could not be selected.\", swMessageBoxIcon_e.swMbWarning, swMessageBoxBtn_e.swMbOk)",
+          "example_file": "Constrain_Sketch_Example_VBNET.md"
+        },
+        {
+          "what": "示例在 InsertSketch 收尾之前取该属性（紧跟建线之后），说明须在草图仍处编辑态时取；成员页未提时机。",
+          "example_quote": "swSketch = (Sketch)swSketchManager.ActiveSketch;",
+          "example_file": "Create_3D_Sketch_Plane_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段；四份示例均真调用 ISketchManager.ActiveSketch，非同名撞车。"
+    },
+    {
+      "member": "ActiveView",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Spotlight_and_Get_Light_Feature_Example_CSharp.md",
+        "Add_Spotlight_and_Get_Light_Feature_Example_VB.md",
+        "Add_Spotlight_and_Get_Light_Feature_Example_VBNET.md",
+        "Add_and_Offset_Dimension_Extension_Lines_Jogs_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回的 object 显式转成 ModelView 才使用，说明 Signature 里的 System.object 需落类型；页面未给具体类型。",
+          "example_quote": "swModelView = (ModelView)swModel.ActiveView;",
+          "example_file": "Add_Spotlight_and_Get_Light_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例取到后直接调 GraphicsRedraw，且 rect 声明为 int[] 传 null，说明该属性取回即可驱动图形重绘。",
+          "example_quote": "swModelView.GraphicsRedraw(rect);",
+          "example_file": "Add_Spotlight_and_Get_Light_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段（仅一句 NOTE：get-only），按纪律跳过判定；四份均在 ModelDoc2 上取用。"
+    },
+    {
+      "member": "Add2",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "两份示例调的是 IEquationMgr.Add2，同名不同接口，按纪律不采用；本页也无 Examples 段。"
+    },
+    {
+      "member": "Add3",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_and_Get_Custom_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例的 manager 取自选中的焊件 Feature，而非从模型文档取，比页面的「configuration or model document」更细一层。",
+          "example_quote": "Set swCustPropMgr = swFeat.CustomPropertyManager",
+          "example_file": "Add_and_Get_Custom_Properties_Example_VB.md"
+        },
+        {
+          "what": "示例给出第 4 个实参的一个具体枚举成员 swCustomPropertyDeleteAndAdd；页面只指向 swCustomPropertyAddOption_e 整族。",
+          "example_quote": "nRetVal = swCustPropMgr.Add3(\"Date added\", swCustomInfoType_e.swCustomInfoDate, \"17-Apr-2005\", swCustomPropertyAddOption_e.swCustomPropertyDeleteAndAdd)",
+          "example_file": "Add_and_Get_Custom_Properties_Example_VB.md"
+        }
+      ],
+      "note": "仅 Add_and_Get_Custom_Properties 用本接口；另三份是 IEquationMgr.Add3 同名撞名。"
+    },
+    {
+      "member": "AddAlongXDimension",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_CSharp.md",
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出被标注对象：调用前先用 SelectByID2 选两个 SKETCHPOINT，第二个 append=true；Remarks 未说选什么。",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"Point4\", \"SKETCHPOINT\", 0.08445537697179, 0.02732744880518, -0.01872625210654, true, 0, null, 0);",
+          "example_file": "Add_Along_X_Dimension_To_3D_Sketch_Example_CSharp.md"
+        },
+        {
+          "what": "示例表明三个坐标实参按米传（0.05 即 50 mm，与所选两点 x 差 0.08445537697179 对应 84.46 mm），而参数表未标单位。",
+          "example_quote": "myDisplayDim = (DisplayDimension)Part.SketchManager.AddAlongXDimension(0.05, -0.091, 0.001);",
+          "example_file": "Add_Along_X_Dimension_To_3D_Sketch_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks「只对编辑态 3D 草图有效、尺寸仅编辑态可见」与示例的 EditSketch + 退出条件完全自洽，无冲突。"
+    },
+    {
+      "member": "AddAlongYDimension",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Along_Y_Dimension_To_3D_Sketch_Example_CSharp.md",
+        "Add_Along_Y_Dimension_To_3D_Sketch_Example_VB.md",
+        "Add_Along_Y_Dimension_To_3D_Sketch_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出被标注对象：调用前先用 SelectByID2 选两个 SKETCHPOINT，第二个 append=true；Remarks 未说选什么。",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"Point4\", \"SKETCHPOINT\", 0.08445537697179, 0.02732744880518, -0.01872625210654, true, 0, null, 0);",
+          "example_file": "Add_Along_Y_Dimension_To_3D_Sketch_Example_CSharp.md"
+        },
+        {
+          "what": "示例表明三个坐标实参按米传，且首参即维度起点 x：(-0.1, 0, 0.01111142101618) 与注释里 y 向 63.24 mm 的起点一致；参数表未标单位。",
+          "example_quote": "myDisplayDim = (DisplayDimension)Part.SketchManager.AddAlongYDimension(-0.1, 0, 0.01111142101618);",
+          "example_file": "Add_Along_Y_Dimension_To_3D_Sketch_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 与示例完全自洽：所选两点 y 差 0.06323754541313 m 恰为注释里的 63.24 mm，无冲突。"
+    }
+  ]
+}

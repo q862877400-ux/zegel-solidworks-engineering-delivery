@@ -39,7 +39,12 @@ model.Extension.SelectByID2("前视基准面", "PLANE", 0, 0, 0, False, 0, None,
 model.SketchAddConstraints("sgHORIZONTAL")
 ```
 
-常用约束类型：`sgFIXED`, `sgHORIZONTAL`, `sgVERTICAL`, `sgCOLINEAR`, `sgPARALLEL`, `sgPERPENDICULAR`, `sgTANGENT`, `sgCONCENTRIC`, `sgEQUAL`, `sgSYMMETRIC`, `sgMIDPOINT`, `sgCOINCIDENT`
+常用约束类型：`sgFIXED`, `sgHORIZONTAL`, `sgVERTICAL`, `sgCOLINEAR`, `sgPARALLEL`, `sgPERPENDICULAR`, `sgTANGENT`, `sgCONCENTRIC`, `sgSAMELENGTH`, `sgSYMMETRIC`, `sgATMIDDLE`, `sgCOINCIDENT`
+
+> ⚠ **2026-10-08（spec 222 / 223）订正**：本行原先写的是 `sgEQUAL` / `sgMIDPOINT` —— 这两个串
+> **不在**官方 `IModelDoc2::SketchAddConstraints` 的 Remarks 清单里；官方名分别是
+> **`sgSAMELENGTH`**（等长）与 **`sgATMIDDLE`**（中点）。
+> 用旧名会**静默无效**（`SketchAddConstraints` 一律回 `True` 而不加关系）。
 
 ### 草图选择稳定策略
 

@@ -1,0 +1,133 @@
+{
+  "idx": 32,
+  "results": [
+    {
+      "name": "pattern_and_mirror",
+      "level": "verified",
+      "members_found": [
+        "SelectByID2",
+        "FeatureCircularPattern4",
+        "InsertMirrorFeature2"
+      ],
+      "examples_used": [
+        "Create_Circular_Pattern_Example_CSharp.md",
+        "Create_Circular_Pattern_Example_VB.md",
+        "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+        "Get_Mirror_Pattern_Feature_Data_Example_CSharp.md",
+        "Get_Mirror_Feature_Data_Example_VB.md",
+        "Create_Revolve_Features_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "官方前置：先打开含种子特征的零件文档（varyinstance.sldprt / holecube.sldprt）",
+          "from": "Create_Circular_Pattern_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "FeatureCircularPattern4 前必须 SelectByID2 选中种子特征：Type=BODYFEATURE、mark=4",
+          "from": "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "必须再追加选中方向 1 的轴/边（示例 EDGE、mark=1）；本仓改用 InsertAxis2 建的基准轴",
+          "from": "Create_Circular_Pattern_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "前置 `基准轴1` 由 `IModelDoc2.InsertAxis2` 建"
+        },
+        {
+          "text": "InsertMirrorFeature2 前须 SelectByID2 选待镜像特征：BODYFEATURE、mark=1（示例先 ClearSelection2）",
+          "from": "Get_Mirror_Pattern_Feature_Data_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "镜像的 mark **原本是反的**（特征 4→1 · 平面 1→2"
+        },
+        {
+          "text": "镜像平面/面须按 mark=2 选中（官方示例按点选 FACE）",
+          "from": "Get_Mirror_Pattern_Feature_Data_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "特征 4→1 · 平面 1→2"
+        },
+        {
+          "text": "InsertAxis2 的官方示例要求先选两张 PLANE 再建轴 —— 但那是旋转特征示例，不属本条能力",
+          "from": "Create_Revolve_Features_Example_CSharp.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "镜像两条 mark 前置有逐字证据；圆周阵列的种子特征 mark=4 与样件文档未提；InsertAxis2 示例属旋转域，不计入。Get_Mirror_Solid 例子走的是 SOLIDBODY mark=256（镜体非镜特征），不计。"
+    },
+    {
+      "name": "drawing_view_operations",
+      "level": "verified",
+      "members_found": [
+        "GetFirstView",
+        "GetNextView",
+        "GetName2",
+        "Name",
+        "Type",
+        "ScaleRatio",
+        "ScaleDecimal",
+        "UseSheetScale",
+        "GetAnnotationCount",
+        "GetVisibleComponentCount",
+        "Rotation",
+        "Xform",
+        "GetType"
+      ],
+      "examples_used": [
+        "Set_View_Scale_Example_VB.md",
+        "Activate_Each_View_on_Current_Sheet_Example_VB.md",
+        "Get_Names_of_Annotations_Example_VB.md",
+        "Get_Visible_Components_and_Entities_in_Drawing_View_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "打开的工程图上必须已有一个或多个视图（官方 bolt-assembly.slddrw / 一张带视图的图）",
+          "from": "Set_View_Scale_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "有视图的图（3 视图）—— list/collect ok count=3"
+        },
+        {
+          "text": "官方前置 2：Select a drawing view —— 先选中一个视图，才 GetSelectedObject6(1,-1) 取对象",
+          "from": "Set_View_Scale_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "ScaleRatio 是 n:n 两个数（vScaleRatio(0):vScaleRatio(1)），与 ScaleDecimal 是同一信息的两种读法",
+          "from": "Set_View_Scale_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "ScaleRatio 回 (1.0,500.0)=1:500"
+        },
+        {
+          "text": "改比例前要处理 UseSheetScale（官方注释：Changing scale sets UseSheetScale to false）",
+          "from": "Set_View_Scale_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "关掉 UseSheetScale 后赋值仍不变"
+        },
+        {
+          "text": "改完比例调 EditRebuild3 重算才看得到（官方示例里 Debug.Assert bRet）",
+          "from": "Set_View_Scale_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetFirstView 返回的第一个视图是图纸本身，必须先 GetNextView 一次再遍历",
+          "from": "Get_Names_of_Annotations_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetVisibleComponentCount 前：打开 foodprocessor.slddrw、Select Drawing View2，并断言 CompCount <> 0",
+          "from": "Get_Visible_Components_and_Entities_in_Drawing_View_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "比例与 UseSheetScale 前置有逐字证据；选视图、EditRebuild3、首视图是图纸、可见件数断言均未提；Get_Annotations 例子宿主是 ModelDocExtension，非 IView，不计。"
+    }
+  ]
+}

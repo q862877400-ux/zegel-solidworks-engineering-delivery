@@ -1,0 +1,131 @@
+{
+  "idx": 13,
+  "results": [
+    {
+      "member": "AddParameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Attribute_to_Feature_and_Include_In_Library_Feature_Example_VB.md",
+        "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_CSharp.md",
+        "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_VBNET.md",
+        "Create_Attribute_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例都是 DefineAttribute → AddParameter → Register，与「注册后不能再加参数」一致，无冲突。"
+    },
+    {
+      "member": "AddPartExplodeStep",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Multibody_Part_Explode_Step_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "ExplDirIndex 不设置时示例传具体哨兵值 -1；成员页只说 neither，未给值",
+          "example_quote": "explStep = (PartExplodeStep)config.AddPartExplodeStep(\"Exploded View1\", 0.07, -1, false, true, out errCode);",
+          "example_file": "Add_Multibody_Part_Explode_Step_Example_CSharp.md"
+        },
+        {
+          "what": "成员页要求用 GetCurrentPartExplodeViewName 取名；示例改从 GetExplodedViewNames 取并传视图名",
+          "example_quote": "varViews = (object[])swModel.GetExplodedViewNames((string)configVar[0]);",
+          "example_file": "Add_Multibody_Part_Explode_Step_Example_CSharp.md"
+        }
+      ],
+      "note": "示例 mark=1 选体、0.07 米、打印 (m)，与成员页一致；无冲突。"
+    },
+    {
+      "member": "AddPathLengthDim",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Path_Length_Dimension_Example_CSharp.md",
+        "Create_Path_Length_Dimension_Example_VB.md",
+        "Create_Path_Length_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页未标 X/Y/Z 单位；示例实参是米量级小数",
+          "example_quote": "myDisplayDim = (DisplayDimension)Part.Extension.AddPathLengthDim(-0.0580395474035344, 0.0841706952643316, 0);",
+          "example_file": "Create_Path_Length_Dimension_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出该路径尺寸的期望读数 15.75",
+          "example_quote": "see the path length dimension of 15.75.",
+          "example_file": "Create_Path_Length_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都走「路径不存在」分支：选四段→MakeSketchChain→再选一段→建尺寸，无冲突。"
+    },
+    {
+      "member": "AddPrefix",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Pack_and_Go_an_Assembly_Example_CSharp.md",
+        "Pack_and_Go_an_Assembly_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按属性直接赋值，且与 AddSuffix 成对设置前缀后缀",
+          "example_quote": "swPackAndGo.AddPrefix = \"SW_\";",
+          "example_file": "Pack_and_Go_an_Assembly_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段（只有 Returns/Examples/See Also），按纪律跳过冲突判定。"
+    },
+    {
+      "member": "AddPrintRange",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只调用一次且只打第 1 页，打印后用 ResetPrintRange 清范围",
+          "example_quote": "printSpec.AddPrintRange(1, 1);",
+          "example_file": "Print_Drawing_as_High_Quality_Example_CSharp.md"
+        }
+      ],
+      "note": "「可多次调用」是能力说明，示例调一次不构成矛盾；无冲突。"
+    },
+    {
+      "member": "AddProfileBspline",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Reference_Curve_Example_CSharp.md",
+        "Create_Reference_Curve_Example_VB.md",
+        "Create_Reference_Curve_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "NumCtrlPtCoord = NumCtrlPoints + DimensionControlPoints",
+          "example_quote": "double[] cPoints = new double[18];",
+          "example_file": "Create_Reference_Curve_Example_CSharp.md",
+          "why": "示例 incp=6、iper=0、iDim=3、ord=4：knots=6+4=10 对得上加法，但控制点数组是 18=6×3，按加法只有 9。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "成员页只举 CreateRevolutionSurface / CreateExtrusionSurface，示例改用 FeatureReferenceCurve 建参考曲线",
+          "example_quote": "swRefCurve = (ReferenceCurve)swModel.FeatureReferenceCurve(1, (vCurve), true, \"\", out nRetVal);",
+          "example_file": "Create_Reference_Curve_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例数值相同（iDim=3 iOrd=4 incp=6 iper=0，cPoints 下标 0..17），冲突在示例间一致。"
+    },
+    {
+      "member": "AddPropertyExtension",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份示例调的是 PartDoc.AddPropertyExtension(收 string)，非 IBody2.AddPropertyExtension(收 object)，名字撞车故不用。"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "idx": 273,
+  "results": [
+    {
+      "member": "GetTreatmentGroupFolders",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；两份示例确在 CornerManagementFolder 上调用。"
+    },
+    {
+      "member": "GetTriangleCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Weld_Symbol_Example_CSharp.md",
+        "Insert_Weld_Symbol_Example_VB.md",
+        "Insert_Weld_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；三份示例均在 swWeldSymbol(IDatumTag) 上调用并直接打印返回值。"
+    },
+    {
+      "member": "GetTrimToolMember",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；C# 用 out objType，VBA 传普通变量，示例给出返回 ICornerMember/IFeature 二选一。"
+    },
+    {
+      "member": "GetTrimToolsCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Trimmed_Surface_Feature_Example_CSharp.md",
+        "Create_Trimmed_Surface_Feature_Example_VB.md",
+        "Create_Trimmed_Surface_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出真实调用序：先读 TrimTools 属性、再用 GetTrimToolsCount 当循环上界（与 Remarks 针对 IGetTrimTools 的先后要求方向相反，但它调的是托管属性、不是 IGetTrimTools，故不判矛盾）",
+          "example_quote": "varTrimTools = (object[])surfTrimFeatData.TrimTools; ... for (i = 0; i <= surfTrimFeatData.GetTrimToolsCount() - 1; i++)",
+          "example_file": "Create_Trimmed_Surface_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只约束与 IGetTrimTools 的先后；三例均未调 IGetTrimTools，无实质冲突。"
+    },
+    {
+      "member": "GetTwoAdjacentFaces2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Angle_of_Hole_Not_Normal_to_a_Face_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置与调用序：先选中孔边并 GetSelectedObject6(1,-1)，再调用并无条件取 vFace(0)/vFace(1)，未演示「一面 + NULL」分支",
+          "example_quote": "' 2. Select the edge of a hole that enters the part on a flat face.\n    Set swEdge = swSelMgr.GetSelectedObject6(1, -1)\n    vFace = swEdge.GetTwoAdjacentFaces2\n    Set swFace(0) = vFace(0)\n    Set swFace(1) = vFace(1)",
+          "example_file": "Get_Angle_of_Hole_Not_Normal_to_a_Face_Example_VB.md"
+        }
+      ],
+      "note": "示例所选「孔边」正属 Remarks 说的 body-related edge，前置一致；两边都有效面，不构成矛盾。"
+    },
+    {
+      "member": "GetType",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "所列四份示例均未调用 IAnnotation.GetType：C# 第290行/VB 第273行是 IModelDoc2.GetType，其余是 .NET 反射 GetType。"
+    },
+    {
+      "member": "GetType2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Custom_Properties_for_Configuration_Example_CSharp.md",
+        "Get_Custom_Properties_for_Configuration_Example_VB.md",
+        "Get_Custom_Properties_for_Configuration_Example_VBNET.md",
+        "Get_Solid_Bodies_from_Cut-list_Folders_and_Get_Custom_Properties_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method is not currently implemented for features.",
+          "example_quote": "CustomPropMgr = (CustomPropertyManager)thisFeat.CustomPropertyManager; ... CustomPropType = CustomPropMgr.GetType2(CustomPropName);",
+          "example_file": "Get_Solid_Bodies_from_Cut-list_Folders_and_Get_Custom_Properties_Example_CSharp.md",
+          "why": "Remarks 否认可用于 feature；示例却取 thisFeat.CustomPropertyManager（Feature 级）并调用 GetType2。两者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "另三例走 config.CustomPropertyManager（配置级），与 Remarks 一致；矛盾只出现在特征级那一份。"
+    }
+  ]
+}

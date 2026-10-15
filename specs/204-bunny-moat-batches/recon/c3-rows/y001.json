@@ -1,0 +1,90 @@
+{
+  "idx": 1,
+  "results": [
+    {
+      "name": "requirements_planning",
+      "level": "verified",
+      "members_found": [],
+      "examples_used": [],
+      "preconditions": [],
+      "verdict": "cannot_tell",
+      "note": "实现是 apps/desktop 编排层纯 Python，零 COM 成员 ⇒ 无官方示例前置可核，不编前置。"
+    },
+    {
+      "name": "solidworks_addin_host",
+      "level": "verified",
+      "members_found": [
+        "ConnectToSW",
+        "SetAddinCallbackInfo2",
+        "GetCommandManager",
+        "CreateCommandGroup2",
+        "FileNewNotify2",
+        "IPropertyManagerPage2Handler9"
+      ],
+      "examples_used": [
+        "Load_and_Unload_Add-in_Example_CSharp.md",
+        "Add_Menu_and_Menu_Item_Example_CSharp.md",
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Create_TaskPaneView_Add-in_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "先在 Visual Studio 2010+ 里建好 C# add-in 工程（示例固定在 C:\\test\\SwCSharpAddin1），并打开 Immediate 窗口",
+          "from": "Load_and_Unload_Add-in_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "The SldWorks swApp variable is pre-assigned for you.（⇒ 调用时 SOLIDWORKS 已运行并已连接）",
+          "from": "Load_and_Unload_Add-in_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "SOLIDWORKS API SDK add-in templates 已安装；用 SwCSharpAddin 模板建 C# 工程",
+          "from": "Add_Menu_and_Menu_Item_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "add-in must be built and loaded: class SwAddin implements ISwAddin（须被 SOLIDWORKS 装入并实例化）",
+          "from": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "must call iSwApp.SetAddinCallbackInfo before creating the command group（回调注册必须先于命令组创建）",
+          "from": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "command tab boxes are only added when iCmdMgr.GetCommandTab returns null",
+          "from": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "The addin _must_ call GC.Collect() here in order to retrieve all managed code pointers",
+          "from": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "ComRegisterFunction 须写 HKLM Addins\\{GUID} 与 HKCU AddInsStartup\\{GUID}（DWord）",
+          "from": "Create_TaskPaneView_Add-in_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "ConnectToSW(object ThisSW, int cookie) 由 SolidWorks 主动调用并回 bool；本条前置是否成立取决于索引中是否存在示例",
+          "from": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "工具 probe_addin_host 自身零 COM 调用（winreg/ctypes），COM 成员在进程内 C# Add-in；evidence 一句 pytest 未提任一前置。"
+    }
+  ]
+}

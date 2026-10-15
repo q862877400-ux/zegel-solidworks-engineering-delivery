@@ -1,0 +1,118 @@
+{
+  "idx": 475,
+  "results": [
+    {
+      "member": "SketchSegment",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Broken_Out_Section_Feature_Data_Example_CSharp.md",
+        "Get_Broken_Out_Section_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 EditSketch=true 与取属性之外，还先 AccessSelections(swDoc,null)、后 ReleaseSelectionAccess；Remarks 的两步没提这对包裹",
+          "example_quote": "swFeatData.AccessSelections(swDoc, null);\n\t\t            GetExistingValue();",
+          "example_file": "Get_Broken_Out_Section_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 两步（先 EditSketch=true 再调用）与示例逐字一致，返回 Array of ISketchSegment 也与示例 object[] 强转相符，无矛盾。"
+    },
+    {
+      "member": "SketchSpline",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_2D_Spline_Example_CSharp.md",
+        "Create_2D_Spline_Example_VB.md",
+        "Create_2D_Spline_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把重初始化哨兵具体化为 -1，并给出「先发一次 -1，再循环 4→0 送 5 点」的完整调用序；Remarks 只说 a negative value",
+          "example_quote": "swModelDoc.SketchSpline(-1, 0, 0, 0);\n\t\t            // Sketch four more points of the spline\n            for (j = 4; j >= 0; j += -1)\n\t\t            {\n\t\t                swModelDoc.SketchSpline(j, x[j], y[j], 0);\n\t\t            }",
+          "example_file": "Create_2D_Spline_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示调用前必须先 InsertSketch2(true) 打开活动草图、调用后再 InsertSketch2(true) 收尾；Remarks 完全没提活动草图这条前置",
+          "example_quote": "\t            // Open sketch\n            swModelDoc.InsertSketch2(true);",
+          "example_file": "Create_2D_Spline_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks「5 点即 MorePts 4→0 共 (n+1) 次」与示例循环 5 次完全对上；多出的 -1 那次由 Remarks 第二段的负值重初始化条款覆盖，故不算矛盾。"
+    },
+    {
+      "member": "SketchSplineByEqnParams2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Sketch_Spline_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出一份具体打包实例：头 4 项 = 3/4/7/0，索引 4–14 为 knot，索引 15–35 为 7×3 个控制点坐标，逐项对应 Remarks 的排布",
+          "example_quote": "nPtData(0) = 3      'Dimension\n    nPtData(1) = 4      'Order\n    nPtData(2) = 7      'Number of control points\n    nPtData(3) = 0      'Periodicity",
+          "example_file": "Sketch_Spline_Example_VB.md"
+        },
+        {
+          "what": "示例每个控制点坐标都除以 1000#（毫米折成米），据此显示实参单位为米；Remarks 只说 in sketch space，成员页未写单位",
+          "example_quote": "nPtData(15) = -101.019623655914 / 1000#:    nPtData(16) = -9.38844086021505 / 1000#:    nPtData(17) = 0#",
+          "example_file": "Sketch_Spline_Example_VB.md"
+        },
+        {
+          "what": "示例调用前后各做一次 InsertSketch2 True，说明需活动草图；Remarks 未写这条前置",
+          "example_quote": "swModel.InsertSketch2 True\n    bRet = swModel.SketchSplineByEqnParams2((vPtData))\n    swModel.InsertSketch2 True",
+          "example_file": "Sketch_Spline_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的 SafeArray 排布与「Z 视为 0」在示例中逐字对上（所有 Z 均 0#），无矛盾。"
+    },
+    {
+      "member": "SketchTrim",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks；两份示例调的是 swSketchMgr.SketchTrim（ISketchManager），不是 IModelDoc2::SketchTrim。"
+    },
+    {
+      "member": "SketchUseEdge",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks；四份示例调的是 swModel.SketchManager.SketchUseEdge（ISketchManager），非 IModelDoc2 版。"
+    },
+    {
+      "member": "SketchUseEdge2",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks；示例调的是 swSketchManager.SketchUseEdge2（ISketchManager），非 IModelDoc2 版。"
+    },
+    {
+      "member": "SketchUseEdge3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_CSharp.md",
+        "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md",
+        "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示必须先在基准面上开活动草图，且 Chain=False + InnerLoops=True 时入参是按点选中的 FACE；Remarks 未写这两条",
+          "example_quote": "boolstatus = swModelDocExt.SelectByID2(\"\", \"FACE\", 0.0456486773091456, 0.085157409722342, 0, false, 0, null, 0);\n            //Convert edges and inner loops of selected face to sketch entities\n            boolstatus = swSketchManager.SketchUseEdge3(false, true);",
+          "example_file": "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_CSharp.md"
+        },
+        {
+          "what": "示例 Postcondition 指出转换结果落成一个新草图 Sketch2；Remarks 只说 on the sketch plane，未讲产物形态",
+          "example_quote": "//    entities and creates Sketch2.",
+          "example_file": "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 对 Chain=true 的描述与参数表的 true/false 说明互不矛盾，示例取 False 亦在其内；无冲突。"
+    }
+  ]
+}

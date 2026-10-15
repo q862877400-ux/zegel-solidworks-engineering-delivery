@@ -1,0 +1,138 @@
+{
+  "idx": 175,
+  "results": [
+    {
+      "member": "GetDimOption",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Basic_Dimension_Example_CSharp.md",
+        "Get_and_Set_Basic_Dimension_Example_VB.md",
+        "Get_and_Set_Basic_Dimension_Example_VBNET.md",
+        "Get_and_Set_Datum_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回的 DimXpertDimensionOption 就地改写（TextPosition / DatumLength / FeatureSelectorOptions）再交回 InsertBasicDimension 或 InsertDatum；成员页只说取得选项，未说它可写且需回传。",
+          "example_quote": "swDimXPertDimOpt.TextPosition = varDimXPertTextPos;",
+          "example_file": "Get_and_Set_Basic_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "无 Remarks 段，按纪律跳过冲突判定；本页 ## Examples 列的是 Get and Set Pattern，与这 4 份实际调用者不同。"
+    },
+    {
+      "member": "GetDimXpertFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VB.md",
+        "sldworksapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VBNET.md",
+        "swdimxpertapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_CSharp.md",
+        "swdimxpertapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例除 IAnnotation::IsDimXpert 外，还另查 DisplayDimension 对象上的 IsDimXpert；Remarks 只点名前者，而本页 See Also 指向后者。",
+          "example_quote": "Debug.Print \" Is a DimXpert display dimension? \" & IIf(swDisplayDimension.IsDimXpert = False, \"False\", \"True\")",
+          "example_file": "sldworksapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例对返回对象先判空再取 Name/Type；Remarks 未提返回值可能为空。",
+          "example_quote": "If Not DimXpertFeat Is Nothing Then",
+          "example_file": "sldworksapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VB.md"
+        }
+      ],
+      "note": "4 份示例的判定序（先 swDisplayDimension 再 IsDimXpert 再取）与 Remarks 一致，无矛盾。"
+    },
+    {
+      "member": "GetDimXpertManagerTabIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Active_Tab_in_Manager_Pane_Example_CSharp.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VB.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在取值前显式调 HideFeatureManager(false) 让管理器窗格可见；Returns 只说在窗格里返回 3、不在返回 -1，未给前置步骤。",
+          "example_quote": "swModelDocExtension.HideFeatureManager(false);",
+          "example_file": "Change_Active_Tab_in_Manager_Pane_Example_CSharp.md"
+        }
+      ],
+      "note": "无 Remarks 段，跳过冲突判定；返回值语义只出现在 Returns 行（3 / -1）。"
+    },
+    {
+      "member": "GetDimXpertName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VB.md",
+        "sldworksapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在遍历循环顶部对每一个标注都调用它，位置在显示尺寸类型判断之前；成员页只说取该标注的 DimXpert 名称。",
+          "example_quote": "Debug.Print \"Annotation DimXpert name = \" & swAnnotation.GetDimXpertName",
+          "example_file": "sldworksapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VB.md"
+        }
+      ],
+      "note": "无 Remarks 段；被指派的 4 份里只有 sldworksapi 两份真调用，swdimxpertapi 两份未调用。"
+    },
+    {
+      "member": "GetDimension",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Dimensions_of_Gear_Mate_Example_VB.md",
+        "Determine_if_Display_Dimension_Marked_for_Drawing_Example_VB.md",
+        "Edit_Mate_Example_CSharp.md",
+        "Edit_Mate_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例的显示尺寸来自配合维度 DisplayDimension2(0)/(1) 或零件里选中的标注，比 Remarks 只举的图纸多视图同尺寸情形更广。",
+          "example_quote": "Set swDim_1 = swDispDim_1.GetDimension",
+          "example_file": "Change_Dimensions_of_Gear_Mate_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 用 For example 举例，未限定来源，故不判矛盾；本页已标 Obsolete，示例仍用零参形态。"
+    },
+    {
+      "member": "GetDimension2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Dimension_Tolerance_in_Configuration_Example_CSharp.md",
+        "Change_Dimension_Tolerance_in_Configuration_Example_VB.md",
+        "Change_Dimension_Tolerance_in_Configuration_Example_VBNET.md",
+        "Get_Dimension_Tolerance_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例落在 Remarks 所述非倒角、Index 被忽略的一档：草图尺寸与工程图直径尺寸固定传 0，且切换配置后再调一次。",
+          "example_quote": "swDimension = (Dimension)swDisplayDimension.GetDimension2(0);",
+          "example_file": "Change_Dimension_Tolerance_in_Configuration_Example_CSharp.md"
+        }
+      ],
+      "note": "4 份示例全传 0，与 Remarks 的倒角限定不冲突；本页 ## Examples 只列 Get and Set Sensor 三份。"
+    },
+    {
+      "member": "GetDimensionItemAtIndex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出计数的具体用法：上界为 count-1 且用 <=，即合法索引 0..count-1；Remarks 只说用 GetDimensionItemCount 设 Index。",
+          "example_quote": "for (k = 0; k <= swPMIDataDim.GetDimensionItemCount() - 1; k++)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "本页无 ## Examples 段（只有 See Also）；两份示例的循环边界与 Remarks 完全一致。"
+    }
+  ]
+}

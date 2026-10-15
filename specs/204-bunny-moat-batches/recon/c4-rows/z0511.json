@@ -1,0 +1,133 @@
+{
+  "idx": 511,
+  "results": [
+    {
+      "member": "UpdateFeatureTree",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Comments_in_Comments_Folder_Example_CSharp.md",
+        "Get_Comments_in_Comments_Folder_Example_VB.md",
+        "Get_Comments_in_Comments_Folder_Example_VBNET.md",
+        "Insert_BOM_Table_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；4 份示例均实测调用 swFeatMgr.UpdateFeatureTree。"
+    },
+    {
+      "member": "UpdateGraphics",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Update_Graphics_After_Changing_Render_Options_Example_CSharp.md",
+        "Update_Graphics_After_Changing_Render_Options_Example_VB.md",
+        "Update_Graphics_After_Changing_Render_Options_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没有的前置：光线追踪渲染引擎必须已在 SOLIDWORKS 中加载，且要先存在并打开指定零件。",
+          "example_quote": "//    * specified part exists.\n//    * ray-trace rendering engine is loaded in SOLIDWORKS Design.",
+          "example_file": "Update_Graphics_After_Changing_Render_Options_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出调用位置的具体形态：改完 ContourCartoonRenderingEnabled / RenderType / HasCartoonEdges 之后，作为最后一条语句调用。",
+          "example_quote": "            swRayTraceRenderOptions.HasCartoonEdges = true;\n            Debug.Print(\"  Has cartoon edges? \" + swRayTraceRenderOptions.HasCartoonEdges);\n            swRayTraceRenderOptions.UpdateGraphics();",
+          "example_file": "Update_Graphics_After_Changing_Render_Options_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 与三份示例一致（改选项后、渲染前调用）。附带观察：C#/VB.NET 两份把 GetRayTraceRenderer 整句注释掉，VBA 版才实取渲染器。"
+    },
+    {
+      "member": "UpdateParagraph",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Paragraph_Properties_Example_CSharp.md",
+        "Get_and_Set_Paragraph_Properties_Example_VB.md",
+        "Get_and_Set_Paragraph_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没有的前置：必须是工程图里的批注，且该批注要在图形区处于选中状态（代码用 SelectionManager 取）。",
+          "example_quote": "// 1. Open a drawing with a note annotation that contains one or more\n//    paragraphs.\n// 2. Select the annotation in the graphics area.",
+          "example_file": "Get_and_Set_Paragraph_Properties_Example_CSharp.md"
+        },
+        {
+          "what": "示例表明是「每个当前段落各调一次」：在段落循环内切 CurrentParagraph 后立即调用，循环外不再补调。",
+          "example_quote": "                    paragraphs.CurrentParagraph = paragraphIndex;\n                    Debug.Print(\"paragraph(\" + paragraphIndex + \"): \");",
+          "example_file": "Get_and_Set_Paragraph_Properties_Example_CSharp.md"
+        },
+        {
+          "what": "示例比 Remarks 多一步收尾：所有段落更新完还要再调 GraphicsRedraw2 才刷新画面。",
+          "example_quote": "                swModel.GraphicsRedraw2();",
+          "example_file": "Get_and_Set_Paragraph_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只说 Set* 之后必须调用；示例照此且顺序一致（SetTextSegmentFormat 先、UpdateParagraph 后），无矛盾。"
+    },
+    {
+      "member": "UpdatePlane",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Update_Plane_Example_CSharp.md",
+        "Update_Plane_Example_VB.md",
+        "Update_Plane_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；3 份示例均为 swRefPlaneFeatureData.UpdatePlane = true（属性赋值）。"
+    },
+    {
+      "member": "UpdateSensor",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Sensor_Example_CSharp.md",
+        "Get_and_Set_Sensor_Example_VB.md",
+        "Get_and_Set_Sensor_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。附带观察（示例之间，非对成员页）：VBA 版丢弃返回值，C#/VB.NET 版接收 bool。"
+    },
+    {
+      "member": "UpdateTable",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Row_to_Design_Table_Example_VB.md",
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_CSharp.md",
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_VB.md",
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页未指定的实参取值：Type 一律传 swUpdateDesignTableAll，Close 一律传 True（即顺带关闭设计表）。",
+          "example_quote": "    boolstatus = swDesignTable.UpdateTable(SwConst.swDesignTableUpdateOptions_e.swUpdateDesignTableAll, True)",
+          "example_file": "Add_Row_to_Design_Table_Example_VB.md"
+        },
+        {
+          "what": "示例显示「改设计表特征属性」与「更新表」是两件事：EnableCellDropdownLists 先由 UpdateFeature() 落库，UpdateTable 只负责更新并关闭。",
+          "example_quote": "            status = swDesignTable.UpdateFeature();\n            Debug.Print(\"Design table feature updated? \" + status);\n            //Update and close design table\n            swDesignTable.UpdateTable((int)swDesignTableUpdateOptions_e.swUpdateDesignTableAll, true);",
+          "example_file": "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出前置：零件必须已含设计表，且要先 EditTable2/EditTable 进入编辑态。",
+          "example_quote": "// 1. Open a part that has a design table.",
+          "example_file": "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只说 UpdateModel 是简化版；4 份示例都没调 UpdateModel，也未与该说法冲突。参数与返回值用法一致。"
+    },
+    {
+      "member": "UpdateToolboxComponent",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Update_All_Toolbox_Components_Example_CSharp.md",
+        "Update_All_Toolbox_Components_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；2 份示例均传 swAssemblyLevelToUpdate_AllLevels 并把 int 结果赋给变量。"
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+ "idx": 58,
+ "results": [
+  {
+   "member": "CreateBodyFromCone",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_CSharp.md",
+    "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_VB.md",
+    "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例要求先用 Check3 取故障实体校验临时体，成员页只说返回 Body",
+     "example_quote": "swFaultEnt = (FaultEntity)swConeBody.Check3;",
+     "example_file": "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_CSharp.md"
+    }
+   ],
+   "note": "9 个 double 的下标顺序三份示例与 Remarks 完全一致，无冲突。"
+  },
+  {
+   "member": "CreateBodyFromFaces",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Create_Body_From_Selected_Faces_Example_CSharp.md",
+    "Create_Body_From_Selected_Faces_Example_VB.md",
+    "Create_Body_From_Selected_Faces_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "前置：必须先用 CreateNewBody 建临时体，再在该体上调本成员",
+     "example_quote": "swBody = (Body2)swPart.CreateNewBody();",
+     "example_file": "Create_Body_From_Selected_Faces_Example_CSharp.md"
+    },
+    {
+     "what": "FaceList 的来源与取法：按 SelectionMgr 的计数逐个取面组成数组",
+     "example_quote": "swSelFace[i - 1] = (Face2)swSelMgr.GetSelectedObject6(i, -1);",
+     "example_file": "Create_Body_From_Selected_Faces_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页无 Remarks 段，按纪律跳过冲突判定；两条前置信息只出自示例。"
+  },
+  {
+   "member": "CreateBodyFromSurfaces",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Body_using_Trimmed_Surfaces_Example_CSharp.md",
+    "Create_Body_using_Trimmed_Surfaces_Example_VB.md",
+    "Create_Body_using_Trimmed_Surfaces_Example_VBNET.md",
+    "Create_Imported_Solid_Body_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "同一成员也用来把单个修剪面做成曲面体（对应 Returns 里 surface body 那一档 False）",
+     "example_quote": "SurfaceBody.CreateBodyFromSurfaces",
+     "example_file": "Create_Body_using_Trimmed_Surfaces_Example_VB.md"
+    }
+   ],
+   "note": "六面缝合流程、Knots/CtrlPointDbls/UVRange 取值与 Remarks 表格逐项一致。"
+  },
+  {
+   "member": "CreateBreakOutSection",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Create_BreakOut_Section_Example_CSharp.md",
+    "Create_BreakOut_Section_Example_VB.md",
+    "Create_BreakOut_Section_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "前置：先在工程图视图里画一条闭合样条并选中，本成员页对此一字未提",
+     "example_quote": "skSegment.Select4(true, selectData);",
+     "example_file": "Create_BreakOut_Section_Example_CSharp.md"
+    },
+    {
+     "what": "Depth 实参取 0.00254 且丢弃 bool 返回值，暗示按米给值",
+     "example_quote": "dDoc.CreateBreakOutSection(0.00254);",
+     "example_file": "Create_BreakOut_Section_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页无 Remarks 段，跳过冲突判定；Depth 只写“深度”，无单位。"
+  },
+  {
+   "member": "CreateByCollapse",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+    "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+    "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md",
+    "swmotionstudyapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例实演 StartTime 累计规则：前段 explode 占 0-5 秒，故 collapse 从 5 起",
+     "example_quote": "boolstatus = swMotionStudy1.CreateByCollapse(False, 10, 5)",
+     "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md"
+    }
+   ],
+   "note": "签名三参、返回 bool 与 Remarks 相符。示例自身注释写 5 秒却传 10，属示例内部不一致，非两侧冲突。"
+  },
+  {
+   "member": "CreateByExplode",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+    "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+    "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md",
+    "swmotionstudyapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "' Precondition: Active document contains an exploded view of an assembly.",
+     "example_quote": "' MotionStudy 1 and a collapsed exploded view.",
+     "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+     "why": "成员摘要说炸开的是 collapsed 视图，Remarks 前置却要求文档已含 exploded 视图；示例前置写的是 collapsed exploded view，两个状态不能同时成立。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "接在已有动画序列后面时 DeleteExistingPath 传 False（页内示例传的是 True）",
+     "example_quote": "boolstatus = swMotionStudy1.CreateByExplode(False, 5, 0)",
+     "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md"
+    }
+   ],
+   "note": "四份示例前置文字一致：collapsed exploded view。"
+  },
+  {
+   "member": "CreateByRotateModel",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+    "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+    "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md",
+    "swmotionstudyapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "other_conflict",
+     "remarks_quote": "' set the animation duration to 5 seconds, and play",
+     "example_quote": "'Set the animation duration to 10 seconds",
+     "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+     "why": "Remarks 注释称时长 5 秒（同页调用却传 10），示例注释称 10 秒并传 10；5 与 10 不能同时成立。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例先按名取已有算例并激活它，再调本成员；页内示例是先 CreateMotionStudy",
+     "example_quote": "if (!swMotionStudy1.IsActive)",
+     "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+    },
+    {
+     "what": "示例用 Y 轴（页内示例用 X 轴），Direction 同为 Clockwise、RotationCount=1",
+     "example_quote": "swMotionStudy1.CreateByRotateModel(true, (int)swAnimatorAxisOfRotation_e.swRotationAboutYAxis, 1, (int)swAnimatorDirectionOfRotation_e.swRotationClockwise, 10, 0)",
+     "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+    }
+   ],
+   "note": "四份示例都写 10 秒；冲突只在成员页自身注释的 5 秒。"
+  }
+ ]
+}

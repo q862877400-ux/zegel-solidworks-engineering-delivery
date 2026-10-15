@@ -1,0 +1,170 @@
+{
+  "idx": 316,
+  "results": [
+    {
+      "member": "InsertMacroFeature3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Macro_Feature_Subfeature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把安全例程三格显式留空，落地「不用安全过程时三者必须全为空串」这一条件",
+          "example_quote": "Methods(7) = \"\": Methods(8) = \"\"",
+          "example_file": "Create_Macro_Feature_Subfeature_Example_VB.md"
+        },
+        {
+          "what": "IconFiles 只给 3 个串（对应成员页的 Three 行），且都在调用前赋值",
+          "example_quote": "icons(2) As String",
+          "example_file": "Create_Macro_Feature_Subfeature_Example_VB.md"
+        },
+        {
+          "what": "EditBodies 传空，靠返回特征调 MakeSubFeature 挂子特征，成员页未提这条替代路径",
+          "example_quote": "feat.MakeSubFeature(selFeat)",
+          "example_file": "Create_Macro_Feature_Subfeature_Example_VB.md"
+        }
+      ],
+      "note": "示例是 VBA，与成员页「MacroMethods 只对 VBA 有效」一致；四处说法可同时成立"
+    },
+    {
+      "member": "InsertMagneticLine",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Autoballoon_to_Face_Example_CSharp.md",
+        "Add_Autoballoon_to_Face_Example_VB.md",
+        "Add_Autoballoon_to_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都先把 Layout 设成 Square（不是 Circle）再置本属性，兑现 Returns 里的有效性条件",
+          "example_quote": "autoballoonParams.Layout = (int)swBalloonLayoutType_e.swDetailingBalloonLayout_Square;",
+          "example_file": "Add_Autoballoon_to_Face_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 版用未带枚举前缀的同一常量写法，说明成员页拼写的 Optons 是官方笔误",
+          "example_quote": "autoballoonParams.Layout = swDetailingBalloonLayout_Square",
+          "example_file": "Add_Autoballoon_to_Face_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只是指向 SOLIDWORKS Help 的空壳；Insert_Magnetic_Line 例用的是 ISheet 同名成员，非本成员"
+    },
+    {
+      "member": "InsertMateReference2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Edit_Mate_Reference_Example_CSharp.md",
+        "Edit_Mate_Reference_Example_VB.md",
+        "Edit_Mate_Reference_Example_VBNET.md",
+        "Get_Mate_Reference_Properties_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "InsertMidSurface",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Areas_of_MidSurface_FAces_Example_VBNET.md",
+        "Get_Areas_of_MidSurface_Faces_Example_CSharp.md",
+        "Get_Areas_of_MidSurface_Faces_Example_VB.md",
+        "Insert_MidSurface_in_Component_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "零件场景示例先 SelectByID2 选两个面再传 null/Nothing，成员页的算法描述里没有这一步",
+          "example_quote": "// 2. Selects two faces and inserts a midsurface feature.",
+          "example_file": "Get_Areas_of_MidSurface_Faces_Example_CSharp.md"
+        },
+        {
+          "what": "零件场景下 Body2 与 ModelDoc2 两参都传 null，印证「非装配体上下文」那条分支",
+          "example_quote": "swFeatureManager.InsertMidSurface(null, null, 0.0, false);",
+          "example_file": "Get_Areas_of_MidSurface_Faces_Example_CSharp.md"
+        },
+        {
+          "what": "装配场景示例的 FeatureManager 取自装配文档，pBody/pPartDoc 才换成组件的，成员页未规定二者须同源",
+          "example_quote": "featMgr = (FeatureManager)swModel.FeatureManager;",
+          "example_file": "Insert_MidSurface_in_Component_Example_CSharp.md"
+        },
+        {
+          "what": "组件分支用 Placement 0.5 且 KnitFlag=True，成员页只说范围 -1 到 1，未给缝合成单张的具体取值",
+          "example_quote": "midSurf = (MidSurface3)featMgr.InsertMidSurface(pBody, swModel, 0.5, true);",
+          "example_file": "Insert_MidSurface_in_Component_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说方法自行找全部平行面，示例却先选两面；两者可同时成立（选区未被该方法消费）"
+    },
+    {
+      "member": "InsertMirrorFeature2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mirror_Feature_Data_Example_VB.md",
+        "Get_Mirror_Pattern_Feature_Data_Example_CSharp.md",
+        "Get_Mirror_Pattern_Feature_Data_Example_VBNET.md",
+        "Get_Mirror_Solid_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先整批按 mark 0 选一遍，再 ClearSelection2 后按成员页那张 mark 表重选，给出完整调用序",
+          "example_quote": "Must be preselected and marked with a value of...",
+          "example_file": "Get_Mirror_Pattern_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "作镜面的那个面是按坐标选出的 FACE、用 mark 2（Planes or planar faces 行），从未用到 Faces 行的 128",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", 0.232539736404746, -0.0399999999999068, 0.0224388980993808, true, 2, null, 0);",
+          "example_file": "Get_Mirror_Pattern_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "实体分支同时用到 Planes 行(PLANE Top 标 2)与 Bodies 行(SOLIDBODY 标 256)，与成员页表逐行对上",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Extrude-Thin1\", \"SOLIDBODY\", 0, 0, 0, True, 256, Nothing, 0)",
+          "example_file": "Get_Mirror_Solid_Data_Example_VB.md"
+        },
+        {
+          "what": "三份示例的 ScopeOptions 都固定传 swFeatureScope_AllBodies，成员页未给默认取值",
+          "example_quote": "InsertMirrorFeature2(false, false, false, false, (int)swFeatureScope_e.swFeatureScope_AllBodies);",
+          "example_file": "Get_Mirror_Pattern_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "mark 表与示例逐行吻合（特征1 / 平面或平面面2 / 体256）；无矛盾"
+    },
+    {
+      "member": "InsertModelAnnotations3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例只用过 Option=0 这一档，正好落在 Remarks 更正表的 EntireModel 行，未触及 1/2/3",
+          "example_quote": "swDraw.InsertModelAnnotations3(0, (int)swInsertAnnotation_e.swInsertDimensionsMarkedForDrawing, true, true, false, true);",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        },
+        {
+          "what": "示例连调五次、每次只换 Types 一个常量，其余五参一字不变，且从未激活或选中任何视图",
+          "example_quote": "swDraw.InsertModelAnnotations3 0, swInsertDatumTargets, True, True, False, True",
+          "example_file": "Get_Annotations_Array_Example_VB.md"
+        }
+      ],
+      "note": "页面摘要把当前选中视图当条件，示例靠 AllViews=True 规避；不构成不能同时成立"
+    },
+    {
+      "member": "InsertModelAnnotations4",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Model_Annotations_Example_CSharp.md",
+        "Insert_Model_Annotations_Example_VB.md",
+        "Insert_Model_Annotations_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过"
+    }
+  ]
+}

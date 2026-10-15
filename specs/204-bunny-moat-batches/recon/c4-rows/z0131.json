@@ -1,0 +1,123 @@
+{
+  "idx": 131,
+  "results": [
+    {
+      "member": "FixedAspectRatio",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md",
+        "Get_Surface-finish_Image_Path_and_Filename_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 false 分支的具体配法：关掉固定长宽比后用 FitHeight/FitWidth 各自独立适配；成员页只描述 true 分支的等比缩放效果。",
+          "example_quote": "swMaterial.FixedAspectRatio = false;\n            swMaterial.FitHeight = true;\n            swMaterial.FitWidth = true;",
+          "example_file": "Add_Decal_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例都真调用（Decal 三份写 false，Surface-finish 一份只读）；两侧无相斥说法。"
+    },
+    {
+      "member": "FixedFace",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份 Insert_and_Access_Fold_Feature 都调 FixedFace，但对象是 FoldsFeatureData（IFoldsFeatureData），不是 IFlatPatternFeatureData，故不算用到本成员。"
+    },
+    {
+      "member": "FixedFace2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Fixed_Face_of_Flat-Pattern_Feature_Example_CSharp.md",
+        "Get_Fixed_Face_of_Flat-Pattern_Feature_Example_VB.md",
+        "Get_Fixed_Face_of_Flat-Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体访问序：先 AccessSelections 取选择访问权、读 FixedFace2、再 ReleaseSelectionAccess；成员页只指向文档不给调用序。",
+          "example_quote": "bRet = swFlatPatt.AccessSelections(swModel, null);",
+          "example_file": "Get_Fixed_Face_of_Flat-Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "页面称可返回面或（圆柱件的）边，三份示例只走 Face2 一支；未构成与页面相斥，故不记冲突。"
+    },
+    {
+      "member": "FixedLength",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Drag_Arrow_Manipulator_Example_CSharp.md",
+        "Create_Drag_Arrow_Manipulator_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例写明该值是逐次手势自动翻转的：首次拖动置 true 让原点跟动，之后置 false 锁住原点；成员页只给「改 Origin 前置 true」这一句。",
+          "example_quote": "//    IDragArrowManipulator::FixedLength is set to true,\n//    and the origin is moved in the direction of the drag. For second and",
+          "example_file": "Create_Drag_Arrow_Manipulator_Example_CSharp.md"
+        }
+      ],
+      "note": "示例的 true/false 语义与页面 Returns「True to permit changing the origin」一致，无冲突。"
+    },
+    {
+      "member": "FixedReference",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Fixed_Face_of_Sheet_Metal_Part_Example_VB.md",
+        "Get_Template_Sheet_Metal_Feature_Data_Example_CSharp.md",
+        "Get_Template_Sheet_Metal_Feature_Data_Example_VB.md",
+        "Get_Template_Sheet_Metal_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Fixed reference entity (edge or face)",
+          "example_quote": "    Set swFixedFace = swSheetMetal.FixedReference\n    If Not swFixedFace Is Nothing Then\n        Debug.Print \"A fixed face or fixed edge is selected.\"",
+          "example_file": "Get_Template_Sheet_Metal_Feature_Data_Example_VB.md",
+          "why": "页面承诺返回值可能是边，示例却声明为 Face2 并直接赋值后又打印「fixed edge」；真返回边时该转换不成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例写明返回 Nothing 是合法结果（未在界面指定固定面/边），成员页的 Returns 未提这一分支。",
+          "example_quote": "        ' A fixed face or fixed edge is not required,\n        ' so Null is a valid value",
+          "example_file": "Get_Template_Sheet_Metal_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都真调用；Get_Fixed_Face_of_Sheet_Metal_Part 用 Entity 承接，与页面一致，另三份硬转 Face2。"
+    },
+    {
+      "member": "FlangePosition",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Example_CSharp.md",
+        "Create_Swept_Flange_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 ## Remarks 段，按纪律跳过冲突判定。页面引用 swSweptFlangePostionTypes_e，示例用 swSweptFlangePositionTypes_e（多一个 i）。"
+    },
+    {
+      "member": "FlatPatternSketchSegments2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Names_of_Sketch_Segments_Example_CSharp.md",
+        "Get_Names_of_Sketch_Segments_Example_VB.md",
+        "Get_Names_of_Sketch_Segments_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显式给出单位口径：坐标取回后 ×1000 再标 mm，即接口返回米；成员页通篇未提单位。",
+          "example_quote": "swSkStartPt.X * 1000# & \", \" & swSkStartPt.Y * 1000# & \", \" & swSkStartPt.Z * 1000# & \") mm\"",
+          "example_file": "Get_Names_of_Sketch_Segments_Example_VB.md"
+        }
+      ],
+      "note": "示例前置「Unsuppress the flat pattern」正是页面给的两条展平路径之一，无冲突；页面提到的老零件无展平分支示例未覆盖。"
+    }
+  ]
+}

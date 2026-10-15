@@ -1,0 +1,160 @@
+{
+  "idx": 399,
+  "results": [
+    {
+      "member": "QuantityOverride",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md",
+        "Add_Balloon_to_Stacked_Balloon_Example_VB.md",
+        "Add_Balloon_to_Stacked_Balloon_Example_VBNET.md",
+        "Insert_BOM_Table_and_Stacked_Balloon_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把该属性挂在 CreateStackedBalloonOptions() 得到的 StackedBalloonOptions 上，而不是 CreateBalloonOptions() 的 BalloonOptions。",
+          "example_quote": "swStackedBalloons = swModelDocExt.CreateStackedBalloonOptions();",
+          "example_file": "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md"
+        },
+        {
+          "what": "四份示例都显式写 false（显式关闭覆盖），且关闭时从不去设 QuantityOverrideValue。",
+          "example_quote": "StackedBalloonParams.QuantityOverride = false;",
+          "example_file": "Insert_BOM_Table_and_Stacked_Balloon_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 段只有一句『See the SOLIDWORKS Help for additional details about balloons.』，无可比对的具体说法。"
+    },
+    {
+      "member": "QuantityOverrideValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VB.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Returns 说「valid only when QuantityOverride is true」，示例却在 Override=False 的同一串里把它显式置空串。",
+          "example_quote": "BomBalloonParams.QuantityOverrideValue = \"\";",
+          "example_file": "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md"
+        }
+      ],
+      "note": "「Override=False 时写空串」与『仅在 Override 为 true 时有效』可同时成立，不算矛盾，故不记冲突。"
+    },
+    {
+      "member": "QuantityPlacement",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md",
+        "Add_Balloon_to_Stacked_Balloon_Example_VB.md",
+        "Add_Balloon_to_Stacked_Balloon_Example_VBNET.md",
+        "Insert_BOM_Table_and_Stacked_Balloon_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "叠加气泡场景取 swBalloonQuantityPlacement_Top。",
+          "example_quote": "swStackedBalloons.QuantityPlacement = (int)swBalloonQuantityPlacement_e.swBalloonQuantityPlacement_Top;",
+          "example_file": "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md"
+        },
+        {
+          "what": "BOM 气泡场景取 swBalloonQuantityPlacement_Right，与叠加气泡不同。",
+          "example_quote": "BomBalloonParams.QuantityPlacement = (int)swBalloonQuantityPlacement_e.swBalloonQuantityPlacement_Right;",
+          "example_file": "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md"
+        }
+      ],
+      "note": "Returns 只说『按 swBalloonQuantityPlacement_e 定义』，示例给出的两个具体枚举值都不与之冲突。"
+    },
+    {
+      "member": "QuitDoc",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+        "Change_Imported_File_Associated_with_an_Imported_Feature_Example_VB.md",
+        "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_CSharp.md",
+        "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "四份示例的实参一律取自 IModelDoc2.GetTitle()（文档标题），而非 GetPathName() 的全路径。",
+          "example_quote": "modelName = swModel.GetTitle();\nswApp.QuitDoc(modelName);",
+          "example_file": "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_CSharp.md"
+        },
+        {
+          "what": "示例把调用放在宏收尾处丢弃未保存改动，与『without saving changes』及 Remarks 的收尾建议一致。",
+          "example_quote": "' Close the part without saving changes",
+          "example_file": "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_VB.md"
+        }
+      ],
+      "note": "Parameters 只写『Name of document to close』，未说该用哪个属性取值；示例补上了这一点，非矛盾。"
+    },
+    {
+      "member": "RadiatedEntities",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Planar_Surface_Feature_Example_CSharp.md",
+        "Create_Planar_Surface_Feature_Example_VB.md",
+        "Create_Planar_Surface_Feature_Example_VBNET.md",
+        "Create_Radiate_Surface_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按 Remarks 指向的 Selections that Define Features 次序，先 AccessSelections 再读本属性。",
+          "example_quote": "boolStatus = swRadiate.AccessSelections(Part, null);",
+          "example_file": "Create_Radiate_Surface_Example_CSharp.md"
+        },
+        {
+          "what": "返回的 System.object 被直接转成 object[]（VB 侧当 Variant 数组），元素逐个转 Entity。",
+          "example_quote": "vRadEnt = (object[])swRadiate.RadiatedEntities;",
+          "example_file": "Create_Radiate_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "示例中途 ClearSelection2(true) 后仍读取，但 AccessSelections/ReleaseSelectionAccess 配对完整，与所引文档不冲突。"
+    },
+    {
+      "member": "Radius",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；另三份所列示例用的是 HemFeatureData.Radius 与 IMeasure.Radius，不是本成员。"
+    },
+    {
+      "member": "RadiusOfCurvature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Spline_Handles_Example_CSharp.md",
+        "Get_and_Set_Spline_Handles_Example_VB.md",
+        "Get_and_Set_Spline_Handles_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Curvature control must be enabled for this property to have an effect. Use [[ISplineHandle::CurvatureControlled]] to see if curvature control is enabled or to set curvature control for this spline handle.",
+          "example_quote": "swSplineHandle.RadiusOfCurvature = swSplineHandle.RadiusOfCurvature / 2;",
+          "example_file": "Get_and_Set_Spline_Handles_Example_CSharp.md",
+          "why": "Remarks 说必须先启用曲率控制才有效；三份示例读写本属性前后都从未调用或设置 CurvatureControlled。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "同一循环里 X/Y/Z 都乘 1000 换算成 mm，本属性却原样打印 ⇒ COM 读数按米制使用。",
+          "example_quote": "Debug.Print(\" Radius of curvature: \" + swSplineHandle.RadiusOfCurvature);",
+          "example_file": "Get_and_Set_Spline_Handles_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出取到 SplineHandle 的链路，成员页没写；且改完半径紧接着调 Reset()。",
+          "example_quote": "objSplineHandle = (object[])swSpline.GetSplineHandles();",
+          "example_file": "Get_and_Set_Spline_Handles_Example_CSharp.md"
+        }
+      ],
+      "note": "Returns 只写『Radius of curvature』，未给单位，故单位差异只作示例侧记录，不记 unit_diff 冲突。"
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "idx": 266,
+  "results": [
+    {
+      "member": "GetSymmetric",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weld_Symbol_Example_VB.md",
+        "Insert_Weld_Symbol_Example_CSharp.md",
+        "Insert_Weld_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序：先 SetSymmetric(swWeldSymmetric) 再 GetSymmetric 打印；成员页只说设置用 SetSymmetric，未给序。",
+          "example_quote": "swWeldSymbol.SetSymmetric swWeldSymmetric",
+          "example_file": "Insert_Weld_Symbol_Example_VB.md"
+        },
+        {
+          "what": "示例给出前置：必须先选中面/边/草图线段，InsertWeldSymbol3 才建得出；成员页无任何前置。",
+          "example_quote": "// 2. Select a face, edge, or sketch segment for Weld Symbol insertion.",
+          "example_file": "Insert_Weld_Symbol_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只指向 SetSymmetric；三份示例与之一致，未见冲突。"
+    },
+    {
+      "member": "GetSystemChamferValues",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Chamfer_Dimension_Example_CSharp.md",
+        "Get_Chamfer_Dimension_Example_VB.md",
+        "Get_Chamfer_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 Angle 出参单位=弧度（×57.3 换算成度）；成员页只写 Angle of chamfer，无单位。",
+          "example_quote": "Debug.Print(\"Angle = \" + (angle * 57.3) + \" degrees\");",
+          "example_file": "Get_Chamfer_Dimension_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出前置：须先插入并选中倒角标注，经 GetSelectedObject6→GetDimension 拿到 IDimension。",
+          "example_quote": "swDisplayDimension = (DisplayDimension)swSelMgr.GetSelectedObject6(1, -1);",
+          "example_file": "Get_Chamfer_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说的是显示文本与返回值不同，示例只做换算打印，不构成冲突。"
+    },
+    {
+      "member": "GetSystemTextureName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Texture_on_Face_in_Specified_Configuration_Example_CSharp.md",
+        "Change_Texture_on_Face_in_Specified_Configuration_Example_VB.md",
+        "Change_Texture_on_Face_in_Specified_Configuration_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 FileNameIn 的实际形态：SOLIDWORKS 安装目录下的完整贴图路径（checker2.jpg）。",
+          "example_quote": "namStr = \"C:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\data\\Images\\textures\\pattern\\checker2.jpg\"",
+          "example_file": "Change_Texture_on_Face_in_Specified_Configuration_Example_VB.md"
+        },
+        {
+          "what": "示例给出前置：须先经 face.GetTexture(configName) 或 CreateTexture(...) 拿到 Texture 对象。",
+          "example_quote": "texture = swModelDocExt.CreateTexture(namStr, 5, 45, false);",
+          "example_file": "Change_Texture_on_Face_in_Specified_Configuration_Example_VB.md"
+        }
+      ],
+      "note": "三份示例都是传 texture.MaterialName，与 Remarks 的调用序一致；用的是 SW 自带贴图。"
+    },
+    {
+      "member": "GetSystemValue2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md",
+        "Get_Block_Information_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（正文只有 Obsolete 一句），按纪律跳过比对。"
+    },
+    {
+      "member": "GetSystemValue3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Dimensions_of_Gear_Mate_Example_VB.md",
+        "Edit_Mate_Example_CSharp.md",
+        "Edit_Mate_Example_VB.md",
+        "Edit_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 in system units 具体化：长度=米（×1000 得 mm）。",
+          "example_quote": "Debug.Print \"Original gear dimensions: \" & dimValue_2(0) * 1000 & \"mm, \" & dimValue_1(0) * 1000 & \"mm\"",
+          "example_file": "Change_Dimensions_of_Gear_Mate_Example_VB.md"
+        },
+        {
+          "what": "示例一律 Config_names 传 Empty/Nothing/null 且用 swThisConfiguration，印证只有 swSpecifyConfiguration 才用该参数。",
+          "example_quote": "vDimValueArr = swDim.GetSystemValue3(swThisConfiguration, Empty)",
+          "example_file": "Edit_Mate_Example_VB.md"
+        },
+        {
+          "what": "示例给出前置：先由 Mate2.DisplayDimension2(0) 取 DisplayDimension，再 GetDimension 拿到 IDimension。",
+          "example_quote": "Set swDispDim = swMate.DisplayDimension2(0)",
+          "example_file": "Edit_Mate_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的两条限制与示例传参一致；单位口径只由示例给出。"
+    },
+    {
+      "member": "GetTableAnnotationCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "给的 4 份都没用到 IBendTable：Create_Drawing_Sheet_Zones 是 RevisionTableFeature，Get_General_Table_Feature 是 GeneralTableFeature。成员页自己列的是 Insert_Bend_Table_示例。"
+    },
+    {
+      "member": "GetTableAnnotations",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks；给的示例调的是 BomFeature.GetTableAnnotations，不是 IBendTable。"
+    }
+  ]
+}

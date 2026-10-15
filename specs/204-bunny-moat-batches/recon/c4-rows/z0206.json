@@ -1,0 +1,149 @@
+{
+ "idx": 206,
+ "results": [
+  {
+   "member": "GetIndicator",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Gtol_Frame_Information_Example_CSharp.md",
+    "Get_Gtol_Frame_Information_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "前置：须先在图形区选中一个 Gtol，成员页未写此前置",
+     "example_quote": "// 1. Select a Gtol in the graphics area.",
+     "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+    },
+    {
+     "what": "注释列出该 frame 指示器实际支持的 BorderType 只有 4 个，成员页只写见枚举、未列",
+     "example_quote": "// supported border types: swGtolIndicatorBorderType_CollectionPlane,\nswGtolIndicatorBorderType_OrientationPlane\nswGtolIndicatorBorderType_IntersectionPlane\nswGtolIndicatorBorderType_DirectionFeature",
+     "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+    }
+   ],
+   "note": "示例用最后一个 frame 的 IndicatorCount 作全部 frame 的上界；成员页未说该计数逐 frame。"
+  },
+  {
+   "member": "GetIndicatorCount",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Gtol_Frame_Information_Example_CSharp.md",
+    "Get_Gtol_Frame_Information_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "前置：须先由 swGtol.GetFrame(FrameCount) 取到 GtolFrame 才能调用，成员页未写",
+     "example_quote": "swGtolFrame = (GtolFrame)swGtol.GetFrame(FrameCount);\nIndicatorCount = swGtolFrame.GetIndicatorCount();",
+     "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+    },
+    {
+     "what": "示例注明计数随 AddIndicator 成功而 +1，成员页只说返回数量、未说增减语义",
+     "example_quote": "AddIndicator is \" + IndicatorCount); // should increase by 1 from AddIndicator",
+     "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+    }
+   ],
+   "note": "两个示例都在 GetFrame 之后、AddIndicator 之前/之后各取一次计数做对照。"
+  },
+  {
+   "member": "GetInstanceCount",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_CSharp.md",
+    "Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_VB.md",
+    "Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "前置：须先 AccessSelections(swModel, null) 回滚进入访问态，成员页无任何前置",
+     "example_quote": "            status = swDimensionDrivenTablePatternFeat.AccessSelections(swModel, null);",
+     "example_file": "Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_CSharp.md"
+    },
+    {
+     "what": "计数随 AddInstanceAt 后重新取一次，成员页未说明计数会随增删实例变化",
+     "example_quote": "            Debug.Print(\"Instance added to table? \" + status);\n            nbr = swDimensionDrivenTablePatternFeat.GetInstanceCount();",
+     "example_file": "Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "Get_Blocks_in_Drawing 用的是 SketchBlockDefinition.GetInstanceCount，同名不同对象，已排除。"
+  },
+  {
+   "member": "GetInstanceDimensionName",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md",
+    "Insert_Advanced_Variable_Pattern_Feature_Example_VB.md",
+    "Insert_Advanced_Variable_Pattern_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "前置：须先 AccessSelections 才读实例与控制尺寸，成员页未提",
+     "example_quote": "            status = swDimensionDrivenTablePatternFeat.AccessSelections(swModel, null);",
+     "example_file": "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md"
+    },
+    {
+     "what": "示例把两个入参的来源并排回显，正是 Remarks 指定的两个成员",
+     "example_quote": "                 patternName = swDimensionDrivenTablePatternFeat.GetInstanceDimensionName(instanceNames[i], controllingDimNames[j]);\n                 Debug.Print(\"  \" + patternName + \": \" + instanceNames[i] + \": Controlling dimension name: \" + swDimensionDrivenTablePatternFeat.GetControllingDimensionName(j));",
+     "example_file": "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "官方 C# 示例内层循环写成 for (j = 1; j < dimNbr; i++)，递增的是 i；VB.NET/VBA 版为 j。"
+  },
+  {
+   "member": "GetInstanceNameByIndex",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md",
+    "Insert_Advanced_Variable_Pattern_Feature_Example_VB.md",
+    "Insert_Advanced_Variable_Pattern_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出 1..nbr 的具体循环写法，nbr 取自 GetInstanceCount",
+     "example_quote": "            for (i = 1; i <= nbr; i++)\n            {\n                instanceName = swDimensionDrivenTablePatternFeat.GetInstanceNameByIndex(i);",
+     "example_file": "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md"
+    },
+    {
+     "what": "示例另用 GetTableRowIndex(实例名) 反推行下标，成员页未提此换算路径",
+     "example_quote": "            Debug.Print(\"Table row indices of pattern instances:\");\n            for (i = 0; i <= nbr - 1; i++)\n            {\n                Debug.Print(\"  \" + swDimensionDrivenTablePatternFeat.GetTableRowIndex(instanceNames[i]) + \": \" + instanceNames[i]);",
+     "example_file": "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "Remarks 的 1-based 与示例 for (i = 1; i <= nbr; i++) 完全一致，未见冲突。"
+  },
+  {
+   "member": "GetInstanceSuppressStateByIndex",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md",
+    "Insert_Advanced_Variable_Pattern_Feature_Example_VB.md",
+    "Insert_Advanced_Variable_Pattern_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例把 GetTableRowIndex(实例名) 嵌套进本成员，一步取得抑制状态",
+     "example_quote": "                Debug.Print(\"  \" + swDimensionDrivenTablePatternFeat.GetInstanceSuppressStateByIndex(swDimensionDrivenTablePatternFeat.GetTableRowIndex(instanceNames[i])) + \": \" + instanceNames[i]);",
+     "example_file": "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md"
+    },
+    {
+     "what": "前置：须先 AccessSelections，成员页未提",
+     "example_quote": "            status = swDimensionDrivenTablePatternFeat.AccessSelections(swModel, null);",
+     "example_file": "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "Remarks 点名 GetTableRowIndex，示例正是用它取行号，两侧一致。"
+  },
+  {
+   "member": "GetInstanceToVaryOptions",
+   "remarks_empty": false,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "示例库无一份调用本成员：给的两份 Vary_Linear_Pattern 用的是 ILinearPatternFeatureData 的同名成员。"
+  }
+ ]
+}

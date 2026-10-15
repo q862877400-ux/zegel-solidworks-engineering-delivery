@@ -1,0 +1,121 @@
+{
+  "idx": 1,
+  "results": [
+    {
+      "member": "AccessSelections",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "唯一有 Remarks 的成员，但 4 份候选示例调的都不是本接口：ExtrudeFeatureData2 / RipFeatureData / CornerTreatmentFeatureData（两份），属名字撞车，无可比示例。"
+    },
+    {
+      "member": "Accuracy",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md",
+        "Attach_Files_to_MBD_3D_PDF_Example_VB.md",
+        "Attach_Files_to_MBD_3D_PDF_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体枚举成员 swLow；页面 Returns 只写见 sw3DPDFAccuracy_e。",
+          "example_quote": "swMBDPdfData.Accuracy = (int)sw3DPDFAccuracy_e.swLow;",
+          "example_file": "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；三份示例写法一致（仅 C# 带 (int) 强转）。"
+    },
+    {
+      "member": "AccuracyFactor",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md",
+        "Get_Data_for_Surface_Flatten_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例表明须先 AccessSelections 才读得到该值；成员页无此前置说明。",
+          "example_quote": "swSurfaceFlattenFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例建特征时实参取 8，落在页面给的 1..10 区间内（页面不给具体值）。",
+          "example_quote": "swFeature = (Feature)swFeatureManager.InsertFlattenSurface2(8, true);",
+          "example_file": "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "页面 Returns 给区间 1..10 且 1 为最高精度；两份示例均为只读回显。"
+    },
+    {
+      "member": "ActionLocation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Force_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例赋的是一个 FACE，而 Returns 只列 Vertex／圆形边／直线边。",
+          "example_quote": "swForceFeat.ActionLocation = swSelMgr.GetSelectedObject6(1, -1)",
+          "example_file": "Create_Force_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Returns 与示例的对象类型口径不一致；因无 Remarks，按纪律不作冲突判定。"
+    },
+    {
+      "member": "ActionType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Force_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体枚举成员；页面 Returns 只指向 swSimulationForceActionType_e。",
+          "example_quote": "swForceFeat.ActionType = swSimulationForceAction_ActionOnly",
+          "example_file": "Create_Force_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例给出该数据对象的来路：MotionStudy1.CreateDefinition。",
+          "example_quote": "Set swForceFeat = swMotionStudy1.CreateDefinition(swFmAEMLinearForce)",
+          "example_file": "Create_Force_Feature_Example_VB.md"
+        }
+      ],
+      "note": "与 ActionLocation 共用同一份示例；该成员页无 Remarks 段。"
+    },
+    {
+      "member": "Activate",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份候选示例均非 IAnnotationView：MotionStudy.Activate / CommandGroup.Activate / FeatureManagerTabTop.ActivateView。"
+    },
+    {
+      "member": "ActivateControlTab",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_ActiveX_Tabs_to_Model_View_Example_CSharp.md",
+        "Add_ActiveX_Tabs_to_Model_View_Example_VB.md",
+        "Add_ActiveX_Tabs_to_Model_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Name 用与 AddControl 相同的常量，激活后用 IsControlTabActive 回验。",
+          "example_quote": "status = swModViewMgr.ActivateControlTab(calTabName1)",
+          "example_file": "Add_ActiveX_Tabs_to_Model_View_Example_VB.md"
+        },
+        {
+          "what": "示例走 AddControl 而非 See Also 列出的 AddControl3，先建页签再激活。",
+          "example_quote": "swModViewMgr.AddControl(calTabName1,",
+          "example_file": "Add_ActiveX_Tabs_to_Model_View_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例调用序一致：AddControl → ActivateControlTab → IsControlTabActive → ActivateModelTab。"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{"idx": 48, "pages_read": 13, "rows": [
+{"iface": "IView", "file": "GetCenterMarkCount.md", "signature": "System.int GetCenterMarkCount()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetDisplayData2.md", "signature": "System.object GetDisplayData2()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetLines.md", "signature": "System.object GetLines()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetTemporaryAxes.md", "signature": "System.object GetTemporaryAxes()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetDimensionDisplayString2.md", "signature": "System.string IGetDimensionDisplayString2()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetPolylines5.md", "signature": "System.double IGetPolylines5( System.short CrossHatchOption, System.int ArraySize )", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IView", "file": "ISetXform.md", "signature": "System.bool ISetXform( ref System.double Transform )", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "AddHoleCallout2.md", "signature": "System.object AddHoleCallout2( System.double X, System.double Y, System.double Z )", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "CreateLinearDim3.md", "signature": "System.object CreateLinearDim3( System.object P0, System.object P1, System.object P2, System.object P3, System.object P4, System.double Val, System.int PrimPrec, System.string Text, System.object TextPoint, System.double Angle, System.double TextHeight, System.string Prefix, System.string Suffix, System.string Callout1, System.string Callout2, System.int TolType, System.string TolMin, System.string TolMax, System.int TolPrec, System.double ArrowSize, System.int ArrowStyle, System.int ArrowDir, System.double WitnessGap, System.double WitnessOvershoot, System.bool DualDisplay, System.int DualPrec )", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "GetPenCount.md", "signature": "System.int GetPenCount()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "InsertCenterLine2.md", "signature": "Centerline InsertCenterLine2()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "SetLineWidth.md", "signature": "void SetLineWidth( System.int Width )", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "ISheet", "file": "InsertTitleBlock.md", "signature": "TitleBlock InsertTitleBlock( System.object Notes )", "obsolete": false, "pointer": false, "zero": "否（有形参）"}
+]}

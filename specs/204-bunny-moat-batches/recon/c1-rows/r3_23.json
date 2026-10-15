@@ -1,0 +1,15 @@
+{"idx":23,"pages_read":13,"rows":[
+{"iface":"IView","file":"GetAnnotationCount.md","signature":"System.int GetAnnotationCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetDimensionDisplayInfo4.md","signature":"System.object GetDimensionDisplayInfo4()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetFirstDisplayDimension2.md","signature":"System.object GetFirstDisplayDimension2()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetRelatedTangentEdges.md","signature":"System.object GetRelatedTangentEdges( System.object BendLine )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetBreakLineInfo2.md","signature":"System.double IGetBreakLineInfo2( System.int ArraySize )","obsolete":false,"pointer":true,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetFirstDisplayDimension.md","signature":"DisplayDimension IGetFirstDisplayDimension()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"InsertAlternateView.md","signature":"View InsertAlternateView( System.string ConfigurationName )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"SetDisplayTangentEdges2.md","signature":"void SetDisplayTangentEdges2( System.int DisplayIn )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"CreateAuxiliaryViewAt2.md","signature":"System.object CreateAuxiliaryViewAt2( System.double X, System.double Y, System.double Z, System.bool NotAligned, System.string Label, System.bool Showarrow, System.bool Flip )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"EditTemplate.md","signature":"void EditTemplate()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"ICreateSectionViewAt3.md","signature":"View ICreateSectionViewAt3( System.double X, System.double Y, System.double Z, System.bool NotAligned, System.bool IsOffsetSection, System.string Label, System.bool Chgdirection, System.bool Scwithmodel, System.bool Partial, System.bool Dispsurfcut, System.int NumExcludedComponents, ref System.object PExcludedComponents )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"IsDetailingMode.md","signature":"System.bool IsDetailingMode()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"ISheet","file":"GetMagneticLinesCount.md","signature":"System.int GetMagneticLinesCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"}
+]}

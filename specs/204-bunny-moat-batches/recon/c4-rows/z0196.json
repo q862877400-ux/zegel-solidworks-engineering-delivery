@@ -1,0 +1,167 @@
+{
+  "idx": 196,
+  "results": [
+    {
+      "member": "GetFirstNote",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Note_By_Name_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在调用前先 EditTemplate 打开图纸模板编辑，GetFirstView 拿到的是模板本身",
+          "example_quote": "    swDrawing.EditTemplate",
+          "example_file": "Get_Note_By_Name_Example_VB.md"
+        },
+        {
+          "what": "示例给出更快的替代路径：按名 SelectByID 直接选中注释，不必遍历全部注释",
+          "example_quote": "        ret = swModel.SelectByID(\"DetailItem300@Sheet Format1\", \"NOTE\", 0, 0, 0)",
+          "example_file": "Get_Note_By_Name_Example_VB.md"
+        }
+      ],
+      "note": "成员页只要求 sheet 可见，示例未显式处理可见性；未构成矛盾。"
+    },
+    {
+      "member": "GetFirstNote2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Note_Text_Example_VB.md",
+        "Get_All_Notes_in_Drawing_Template_Example_VB.md",
+        "Select_Silhouette_Edge_Attached_to_Note_Example_CSharp.md",
+        "Select_Silhouette_Edge_Attached_to_Note_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例不用 GetFirstView 遍历，而先 ActivateView 再取 ActiveDrawingView 定位具体视图",
+          "example_quote": "    Set swView = swDrawing.ActiveDrawingView",
+          "example_file": "Select_Silhouette_Edge_Attached_to_Note_Example_VB.md"
+        },
+        {
+          "what": "C# 示例把返回值强转为 Note 再取注解与附着实体，说明 System.object 需显式转型",
+          "example_quote": "            swNote = (Note)swView.GetFirstNote2();",
+          "example_file": "Select_Silhouette_Edge_Attached_to_Note_Example_CSharp.md"
+        }
+      ],
+      "note": "同段既称支持非活动图纸又称图纸必须可见（成员页内部张力）；示例未涉及这点。"
+    },
+    {
+      "member": "GetFirstSegment",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Curve_Segments_Example_VB.md",
+        "Get_Reference_Curve_Information_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Because edges returned by this method are not selectable; you should not call any Select methods to get them. Select methods return NULL for any returned edges.",
+          "example_quote": "        status = swEntity.Select4(True, Nothing)",
+          "example_file": "Get_Curve_Segments_Example_VB.md",
+          "why": "成员页说返回的边不可选、Select 回 NULL；示例却把它赋给 Entity 调 Select4 并取其状态。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出取得 IReferenceCurve 的前置：按 REFCURVE 选中曲线特征再 GetSpecificFeature2",
+          "example_quote": "    status = swModelDocExt.SelectByID2(\"Curve1\", \"REFCURVE\", 0, 0, 0, False, 0, Nothing, 0)",
+          "example_file": "Get_Curve_Segments_Example_VB.md"
+        },
+        {
+          "what": "另一示例只读不选：返回的边直接取曲线与参数，印证不可选但可当几何源用",
+          "example_quote": "        Set swCurve = swEdge.GetCurve",
+          "example_file": "Get_Reference_Curve_Information_Example_VB.md"
+        }
+      ],
+      "note": "两份示例一个照禁令不选、一个直接 Select4，故只记一处冲突。"
+    },
+    {
+      "member": "GetFirstSubFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Check_Interference_Among_Bodies_Example_VB.md",
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例具体化：高级孔特征的第一个子特征就是它的定义草图，取出即 Select2 编辑",
+          "example_quote": "    Set swSketchFeature = feat.GetFirstSubFeature",
+          "example_file": "Create_Advanced_Hole_Example_VB.md"
+        },
+        {
+          "what": "示例具体化：实体体文件夹特征的子特征也是实体体文件夹，可再取 GetSpecificFeature2",
+          "example_quote": "            Set swFeature = swFeature.GetFirstSubFeature",
+          "example_file": "Check_Interference_Among_Bodies_Example_VB.md"
+        }
+      ],
+      "note": "三份 AdvancedHole 示例都假定子特征存在、不判 Nothing，与“可能回 NULL”不冲突。"
+    },
+    {
+      "member": "GetFirstTableAnnotation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Total_Columns_Rows_Example_CSharp.md",
+        "Get_Total_Columns_Rows_Example_VB.md",
+        "Get_Total_Columns_Rows_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整迭代：GetFirstView 起、视图内 GetFirstTableAnnotation + GetNext、视图间 GetNextView",
+          "example_quote": "                swTable = swView.GetFirstTableAnnotation();",
+          "example_file": "Get_Total_Columns_Rows_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetFirstTableAnnotation2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Table_Annotation_and_Contents_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 VBA 侧直接 Set 返回值（无强转），并按视图外层 Do While 逐视图取表",
+          "example_quote": "        Set swTable = swView.GetFirstTableAnnotation2",
+          "example_file": "Get_Table_Annotation_and_Contents_Example_VB.md"
+        }
+      ],
+      "note": "成员页只说支持非活动图纸，示例仅用当前图纸遍历，不构成矛盾。"
+    },
+    {
+      "member": "GetFirstView",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Activate_Each_View_on_Current_Sheet_Example_VB.md",
+        "Change_Display_Mode_to_Draft_Quality_Example_VB.md",
+        "Change_Note_Text_Example_VB.md",
+        "Create_Section_View_at_Specified_Location_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例具体化：该图纸伪视图的 Name 等于 GetCurrentSheet 的名字，据此跳过它",
+          "example_quote": "            ' Does not work on drawing sheet, which IDrawingDoc::GetFirstView returns",
+          "example_file": "Change_Display_Mode_to_Draft_Quality_Example_VB.md"
+        },
+        {
+          "what": "示例具体化：对该伪视图 ActivateView 回 False，须退回 ActivateSheet 才激活",
+          "example_quote": "        ' Returns false if trying to activate the drawing sheet",
+          "example_file": "Activate_Each_View_on_Current_Sheet_Example_VB.md"
+        },
+        {
+          "what": "示例具体化：注释示例把它当模板（sheet format）用并继续 GetNextView 逐视图遍历",
+          "example_quote": "    Set swView = swDraw.GetFirstView ' This is the drawing template",
+          "example_file": "Change_Note_Text_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都确认首返回的是图纸本身，与 Remarks 完全一致。"
+    }
+  ]
+}

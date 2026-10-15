@@ -1,0 +1,134 @@
+{
+  "idx": 133,
+  "results": [
+    {
+      "member": "FlipDirections",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md",
+        "Mirror_Components_II_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出数组长度口径：FlipDir 与 ARef 同为 2，对齐 PLANE2/PLANE3 两个基准面，且在 AlignmentReferences 之后赋。",
+          "example_quote": "Dim FlipDir(1) As Boolean",
+          "example_file": "Mirror_Components_II_Example_VBNET.md"
+        }
+      ],
+      "note": "Remarks 的前置与默认值两句话，示例都照做，无冲突。"
+    },
+    {
+      "member": "FlipFaceTangentTo",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Shut-Off_Surface_Data_Example_CSharp.md",
+        "Get_Shut-Off_Surface_Data_Example_VB.md",
+        "Get_Shut-Off_Surface_Data_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Index of the loop to use to create the patch",
+          "example_quote": "    params = swFeatData.Edges\r\n    For i = 0 To UBound(params)\r\n        Set swEnt = params(i)\r\n        boolstatus = swEnt.Select4(False, Nothing)\r\n        Set swEnt = swFeatData.GetFaceTangentTo(i)\r\n        If Not swEnt Is Nothing Then\r\n            boolstatus = swEnt.Select4(True, Nothing)\r\n        End If\r\n        swFeatData.FlipFaceTangentTo (i)",
+          "example_file": "Get_Shut-Off_Surface_Data_Example_VB.md",
+          "why": "成员页 Parameters 说 Index 是「环」的序号，示例却用 Edges 数组下标传参；同文件另有 GetLoopCount 循环证明两套下标空间不同。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "前置落到模型状态上：零件里已有的 Shut-Off Surface1 须已是 Tangent 补丁类型，代码不调用 SetAllPatchTypes。",
+          "example_quote": "the patch type of swShutOffSurfacePatchType_e.swPatchTypeTangent = 2.",
+          "example_file": "Get_Shut-Off_Surface_Data_Example_VB.md"
+        }
+      ],
+      "note": "C# 与 VB.NET 两份示例同一形状；冲突只在下标空间这一处。"
+    },
+    {
+      "member": "FlipOffset",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「UseOffset 为真才有效」落成代码顺序：先开 UseOffset、再给 OffsetDistance，最后才设 FlipOffset。",
+          "example_quote": "swFeatData.UseOffset = True\r\n       \tswFeatData.OffsetDistance = 0.05\r\n       \tswFeatData.FlipOffset = False",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+        }
+      ],
+      "note": "前置与示例一致，无冲突。"
+    },
+    {
+      "member": "FlipSide",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Rib_Feature_Data_Example_CSharp.md",
+        "Get_Rib_Feature_Data_Example_VB.md",
+        "Get_Rib_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例只读不写：GetDefinition() 拿到的对象可直接读出 FlipSide 打印，不经 ModifyDefinition。",
+          "example_quote": "Debug.Print(\"Add material to reverse side of the rib? \" & swRibFeat.FlipSide)",
+          "example_file": "Get_Rib_Feature_Data_Example_VBNET.md"
+        }
+      ],
+      "note": "示例从不给 FlipSide 赋值，Remarks 那句「改值需 ModifyDefinition」无从冲突。"
+    },
+    {
+      "member": "FlipSides",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Belt_Chain_Feature_Example_CSharp.md",
+        "Create_Belt_Chain_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体配平：两个轮面对应 PulleyComponents / PulleyDiameters / FlipSides 三者长度同为 2，赋值有先后。",
+          "example_quote": "beltChainFeatData.FlipSides = pullyFlips",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "一一对应关系与示例一致，无冲突。"
+    },
+    {
+      "member": "FlipView",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Flip_Flat-Pattern_View_of_Sheet_Metal_Part_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在展开视图上直接读写 FlipView，写完不调任何重建或更新。",
+          "example_quote": "swView.FlipView = False",
+          "example_file": "Create_and_Flip_Flat-Pattern_View_of_Sheet_Metal_Part_Example_VB.md"
+        }
+      ],
+      "note": "成员页没有 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "Flipped",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Flip_Dowel_Pin_Symbol_Example_CSharp.md",
+        "Flip_Dowel_Pin_Symbol_Example_VB.md",
+        "Flip_Dowel_Pin_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取到 DowelSymbol 的选择类型串与注释名，属性要在选中该对象后才可写。",
+          "example_quote": "\"DetailItem354@Drawing View1\", \"DOWELSYM\"",
+          "example_file": "Flip_Dowel_Pin_Symbol_Example_VB.md"
+        }
+      ],
+      "note": "三份示例都是先赋 Flipped 再 EditRebuild3，与 Remarks 一致；Flip_Sketch_Picture 命中的是 ISketchPicture.Flipped，撞名不采用。"
+    }
+  ]
+}

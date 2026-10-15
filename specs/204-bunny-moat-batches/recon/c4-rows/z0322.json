@@ -1,0 +1,163 @@
+{
+  "idx": 322,
+  "results": [
+    {
+      "member": "InsertSheetMetalClosedCorner",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Modify_Closed_Corner_Feature_Example_CSharp.md",
+        "Create_and_Modify_Closed_Corner_Feature_Example_VB.md",
+        "Create_and_Modify_Closed_Corner_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有标题+Signature+See Also，无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "InsertSheetMetalEdgeFlange",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Sheet_Metal_Edge_Flange_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks；示例里该调用在 #If 0 Then 死分支内（第201行）。"
+    },
+    {
+      "member": "InsertSheetMetalEdgeFlange2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Sheet_Metal_Edge_Flange_Example_VB.md",
+        "Create_Corner_Relief_Feature_Example_CSharp.md",
+        "Create_Corner_Relief_Feature_Example_VB.md",
+        "Create_Corner_Relief_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说「create a profile for the flange」；示例给出具体建法：Select2 特征→EditSketch→SketchUseEdge 把边转成草图段",
+          "example_quote": "bValue = swModel.SketchManager.SketchUseEdge(False)",
+          "example_file": "Create_Corner_Relief_Feature_Example_VB.md"
+        },
+        {
+          "what": "页面只写 FlangeEdges/SketchFeats 是「Array of edges / sketches」；示例须先装进定长数组再赋给 Variant 才传入",
+          "example_quote": "vFlangeEdges = aFlangeEdges",
+          "example_file": "Create_Corner_Relief_Feature_Example_VB.md"
+        },
+        {
+          "what": "页面只说 BooleanOptions 是 swInsertEdgeFlangeOptions_e；示例显示置了 UseDefaultRadius/UseDefaultRelief 位后半径与让位实参全传 0",
+          "example_quote": "nOptions = swInsertEdgeFlangeOptions_e.swInsertEdgeFlangeUseDefaultRadius + swInsertEdgeFlangeOptions_e.swInsertEdgeFlangeUseDefaultRelief",
+          "example_file": "Create_Corner_Relief_Feature_Example_VB.md"
+        }
+      ],
+      "note": "四份示例调用序与 Remarks 的 InsertSketchForEdgeFlange→建轮廓→调用完全一致，未见矛盾。"
+    },
+    {
+      "member": "InsertSheetMetalFold",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_and_Access_Fold_Feature_Example_CSharp.md",
+        "Insert_and_Access_Fold_Feature_Example_VB.md",
+        "Insert_and_Access_Fold_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说「选中对象」未定个数与 mark；示例固定两个对象：折弯边 EdgeBend3 用 Mark=4",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"EdgeBend3\", \"BODYFEATURE\", 1.35437392197559E-02, 4.60611937937756E-02, -0.019419982567797, True, 4, Nothing, 0)",
+          "example_file": "Insert_and_Access_Fold_Feature_Example_VB.md"
+        },
+        {
+          "what": "另一个对象是面且用 Mark=1；建好后它正是 GetDefinition 读出的 FixedFace",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", 0, 0, 0, True, 1, Nothing, 0)",
+          "example_file": "Insert_and_Access_Fold_Feature_Example_VB.md"
+        }
+      ],
+      "note": "三份示例一致；Remarks 未给 mark/对象数，示例更具体但不矛盾。"
+    },
+    {
+      "member": "InsertSheetMetalGussetFeature3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Sheet_Metal_Gusset_Feature_Example_CSharp.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_VB.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 的「linear edge or sketch segment」「vertex, sketch point, or reference point」在示例里落到 EXTSKETCHSEGMENT / EXTSKETCHPOINT",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"Line1@Sketch6\", \"EXTSKETCHSEGMENT\", -6.09049483400968E-03, -8.95139047397037E-02, 0, True, 0, Nothing, 0)",
+          "example_file": "Insert_Sheet_Metal_Gusset_Feature_Example_VB.md"
+        },
+        {
+          "what": "Remarks 只说「call SelectByID2 to select」未给 mark；示例选腿面/定向段/定位点一律 Mark=0",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"\", \"FACE\", -5.38403893476129E-02, -2.24553153327633E-03, 0.087801420904043, True, 0, Nothing, 0)",
+          "example_file": "Insert_Sheet_Metal_Gusset_Feature_Example_VB.md"
+        },
+        {
+          "what": "页面未给单位；示例注释写 mm/degrees，实参却是 0.05 与 3 * 0.0175（长度按米、拔模角按弧度）",
+          "example_quote": "Set myFeature = Part.FeatureManager.InsertSheetMetalGussetFeature3(True, 0.05, False, swSheetMetalGussetProfileDimType_IndentDepth, 0.01, 0, False, 0, 0, True, 0.01, 0.003, True, 3 * 0.0175, True, 0.002, True, 0.001, swSheetMetalRibGussetType_Rounded, False, 0, True, True, True)",
+          "example_file": "Insert_Sheet_Metal_Gusset_Feature_Example_VB.md"
+        }
+      ],
+      "note": "示例自带注释与实参在 bFlipSides(#1) 与 dWidth(#3) 上互斥，三份示例写法相同。"
+    },
+    {
+      "member": "InsertSheetMetalHem2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Sheet_Metal_Hem_Example_CSharp.md",
+        "Insert_Sheet_Metal_Hem_Example_VB.md",
+        "Insert_Sheet_Metal_Hem_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 第4步「Select one or more edges」在示例里不是代码动作，而是宏启动前人工完成的前置条件",
+          "example_quote": "' 2. Select the edge to which you can add a hem.",
+          "example_file": "Insert_Sheet_Metal_Hem_Example_VB.md"
+        },
+        {
+          "what": "Remarks 第2步「Initialize the CustomBendAllowance object」在示例里具体就是设 Type=2 与 KFactor=0.5",
+          "example_quote": "CBAObject.Type = 2",
+          "example_file": "Insert_Sheet_Metal_Hem_Example_VB.md"
+        },
+        {
+          "what": "页面说 DRad/DAngle 仅 tear-drop/rolled hem 有效；示例用 open hem 照样传 DAngle=0、DRad=0.005",
+          "example_quote": "swHemTypes_e.swHemTypeOpen, swHemPositionTypes_e.swHemPositionTypeOutside, False, 0.01, 0.01, 0, 0.005, 0.0011, CBAObject",
+          "example_file": "Insert_Sheet_Metal_Hem_Example_VB.md"
+        }
+      ],
+      "note": "三份示例的调用序与 Remarks 第1–4 步一一对应，未见矛盾。"
+    },
+    {
+      "member": "InsertSheetMetalLoftedBend2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Lofted_Bend_Feature_Example_CSharp.md",
+        "Insert_Lofted_Bend_Feature_Example_VB.md",
+        "Insert_Lofted_Bend_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 说「two sketch profiles that are on parallel planes」；示例先 InsertRefPlane 建平行基准面再在上面画第二草图",
+          "example_quote": "Set refPlane = Part.FeatureManager.InsertRefPlane(8, 0.05, 0, 0, 0, 0)",
+          "example_file": "Insert_Lofted_Bend_Feature_Example_VB.md"
+        },
+        {
+          "what": "Remarks 只说 Mark=1；示例证实选的是 SKETCH 类型的草图特征名且调用前先 ClearSelection2",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"Sketch2\", \"SKETCH\", 0, 0, 0, True, 1, Nothing, 0)",
+          "example_file": "Insert_Lofted_Bend_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例把 BFormed=False 与 EFacetOption=swBendsPerTransitionSegment、INumBends=2 配对，其余 facet 参数全 0",
+          "example_quote": "Set feat = Part.FeatureManager.InsertSheetMetalLoftedBend2(0, 0.0007366, False, 0.0007366, True, swBendsPerTransitionSegment, 0, 2, 0, 0)",
+          "example_file": "Insert_Lofted_Bend_Feature_Example_VB.md"
+        }
+      ],
+      "note": "三份示例一致，Remarks 的 Mark=1 与示例完全吻合，未见矛盾。"
+    }
+  ]
+}

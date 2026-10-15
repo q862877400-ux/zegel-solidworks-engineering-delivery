@@ -1,0 +1,39 @@
+{
+ "role": "V3",
+ "my_numbers": {
+  "a_vs_b_agreement": "原始串比较 3000/3152=95.18% (signature 644/788, obsolete 788, pointer 788, zero 780/788); signature 去 markdown 反引号后 3144/3152=99.75% (四栏 788/788/788/780); 再把 zero 的 形号 归一为 形参 后 3152/3152=100%",
+  "a_vs_truth": "signature 规范化 + obsolete_loose: 3152/3152=100%; 改取 obsolete_strict: 3150/3152=99.94% (差 CreateCompoundNote.md / ICreateCompoundNote.md 2 格); 完全不规范化(仅宽松 obsolete): 3022/3152=95.88%",
+  "b_vs_truth": "signature 规范化 + obsolete_loose: 3144/3152=99.75% (8 处全在 zero 栏, 均为 形号/形参 之误); obsolete_strict: 3142/3152=99.68%; 归一该错别字后 3152/3152=100%; 完全不规范化: 3052/3152=96.83%"
+ },
+ "denominator_note": "3152 = 788 行 x 4 字段。A/B/truth 键集完全一致、无重行、无缺行，属字段级分母，非行级(788)。",
+ "mismatch_with_reported": [
+  {
+   "item": "A vs B 原始一致率",
+   "reported": "3144/3152 = 99.75%（被称为“原始一致”）",
+   "mine": "3000/3152 = 95.18%（原始串直接比较）",
+   "why": "3144 是去反引号后的值。原始串里 signature 有 144 处只差一对反引号（truth 0 行带`、A 130、B 92），该归一未在报告中披露。"
+  },
+  {
+   "item": "A 对标准答案 100% 的成立条件",
+   "reported": "3152/3152 = 100%（无条件）",
+   "mine": "只有 signature 规范化 + 取 obsolete_loose 才 3152；取 strict 为 3150",
+   "why": "这两页 strict=false、loose=true，A/B 均答 true；取 strict 即掉 2 格。"
+  },
+  {
+   "item": "归一错别字即 100%",
+   "reported": "只把 参/号 归一即 3152/3152",
+   "mine": "须同时去反引号；只归一错别字得 3008/3152",
+   "why": "144 处反引号差异不在错别字范围内；且 号 在 459 行是合法的 括号，只能限定替换 形号->形参。"
+  }
+ ],
+ "methodology_issues": [
+  "错别字当不一致会把一致率虚低：8 处 形号/形参 全是 B 的抄写噪声，与能力无关；归一后 B 对 truth 也是 100%，raw 与归一两档应并报。",
+  "分母 3152（788x4）把四栏等权：两栏布尔、signature 长串一字错即整格错、zero 4 态；signature 的字符敏感度主导曲线，按行数 788 更贴近抄对没有。",
+  "signature 栏实际在测“抄没抄 markdown 反引号”而非“签名对不对”：truth 0 行带 `、A 130、B 92，144 处不一致全由此生，须先规范化再判。",
+  "obsolete 栏取 strict 还是 loose 从未声明。取 loose 才 100%、取 strict 是 99.94%，这 2 格是真实分歧被口径选择藏起来，不是抄对了。口径必须在报告里写死。",
+  "zero 栏有“查不到”未定义态 3 行（IDrawingDoc/Sheet.md、ISheet/TableAnchor.md、IView/RootDrawingComponent2.md），进了分母却不构成可判对错的二值项。",
+  "整体 replace(号->参) 不安全：号 在 459 行是合法的 括号（414 空括号 + 45 无括号），只有 8 行是错字。必须限定 形号->形参。我验过两种写法在本数据上结果相同，但只有后者可靠。",
+  "一致率不等于正确率：A 对 B 高只说明两路互相像，两路同型抄错同一处在此度量下仍拿满分。要判对错只能用 truth，而 truth 本身也是解析器产物、未经人工复核。",
+  "144 处不一致全部落在两个长尾字段（signature 644/788 与 zero 780/788），obsolete 与 pointer 两栏均 788/788 全同；逐栏分开报比报一个总数更能定位问题。"
+ ]
+}

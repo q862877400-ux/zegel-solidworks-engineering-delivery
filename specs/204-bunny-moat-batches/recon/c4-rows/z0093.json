@@ -1,0 +1,193 @@
+{
+  "idx": 93,
+  "results": [
+    {
+      "member": "Diagonal",
+      "remarks_empty": false,
+      "examples_actually_used": ["Create_Fill_Pattern_Example_CSharp.md"],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if both are true:\n\n- [[IFillPatternFeatureData::FeaturesToPatternType]] = [[swFeaturesToPatternType_e]].swFeaturesToPatternCreateSeedCut\n\n- [[IFillPatternFeatureData::CreateSeedCutType]] = [[swCreateSeedCutType_e]].swCreateSeedCutDiamond",
+          "example_quote": "swFeatData.CreateSeedCutType = 0;\nswFeatData.Diagonal = 0.008;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+          "why": "swCreateSeedCutType_e 枚举 0=None、3=Diamond；示例显式设 CreateSeedCutType=0 后立刻写 Diagonal，与 Remarks 要求的 Diamond(=3) 相反。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- [[IFillPatternFeatureData::FeaturesToPatternType]] = [[swFeaturesToPatternType_e]].swFeaturesToPatternCreateSeedCut",
+          "example_quote": "swFeatData.FeaturesToPatternType = 0;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+          "why": "枚举 0=swFeaturesToPatternSelectedFeatures、1=swFeaturesToPatternCreateSeedCut；示例最终设为 0，按 Remarks 此时 Diagonal 无效。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例按米给值：Diagonal = 0.008 即 8 mm，并与 FillPattern 的 Diameter 同值；成员页未写单位。",
+          "example_quote": "swFeatData.Diagonal = 0.008;\nswFeatData.Diameter = 0.008;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "CreateSeedCutType=0 在 Diagonal 之前显式赋值，不依赖默认值；FeaturesToPatternType=0 一条说的是建特征时的最终状态。"
+    },
+    {
+      "member": "Diameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IAdvancedHoleElementData::DiameterOverride]] is set to true.",
+          "example_quote": "swAdvHole_Near_1.Diameter = ConvFactorLength * 0.225;",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md",
+          "why": "该元素（Near_1 沉头）在三份官方示例里都未写过 DiameterOverride，却先写 Diameter 再进 AdvancedHole2。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IAdvancedHoleElementData::DiameterOverride]] is set to true.",
+          "example_quote": "swAdvHole_Near_2.Diameter = ConvFactorLength * 0.089;\nswAdvHole_Near_2.EndCondition = (int)swEndConditions_e.swEndCondUpToNext;\nswAdvHole_Near_2.DiameterOverride = true;",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md",
+          "why": "示例次序是 Diameter 先写、DiameterOverride 后置 true，与 Remarks 要求的「先 Override 才有效」相反。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IAdvancedHoleElementData::DiameterOverride]] is set to true.",
+          "example_quote": "Debug.Print(\"   Diameter in m: \" + ((AdvancedHoleElementData)swCounterSinkNear).Diameter);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md",
+          "why": "读侧同样在 Near_1 未设 DiameterOverride 时读 .Diameter；Remarks 的前提没区分读写方向。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出直径按米计量：先设 ConvFactorLength = 25.4 / 1000 再相乘，读回也标 'Diameter in m'；成员页未写单位。",
+          "example_quote": "ConvFactorLength = 25.4 / 1000;\nswAdvHole_Near_1.Diameter = ConvFactorLength * 0.225;",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        },
+        {
+          "what": "示例在建孔那一行注明 'specify to not use baseline dimensions'；成员页完全没提 baseline 尺寸。",
+          "example_quote": "//Create the Advanced Hole using the near and far side element arrays; specify to not use baseline dimensions; customize Hole Callouts",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "Create_Fill_Pattern_Example_CSharp.md 的 .Diameter 是 FillPatternFeatureData 的同名成员，不属本接口，已排除。"
+    },
+    {
+      "member": "DiameterOverride",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例对 4 个元素各写一次 DiameterOverride = True，并读回 StraightHoleFar 的该值；成员页无 Remarks。",
+          "example_quote": "Debug.Print(\"   Diameter override? \" + ((AdvancedHoleElementData)swStraightHoleFar).DiameterOverride);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出逐元素单独设该标志的形态；成员页没有调用序，也没有取值表。",
+          "example_quote": "swAdvHole_Far_1.DiameterOverride = true;",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks ⇒ 跳过冲突判定。Create_a_Thread_Feature_Example_CSharp.md 调的是 IThreadFeatureData 的同名成员。"
+    },
+    {
+      "member": "DiameterType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Traverse_All_Cosmetic_Threads_Example_CSharp.md",
+        "Traverse_All_Cosmetic_Threads_Example_VB.md",
+        "Traverse_All_Cosmetic_Threads_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Diameter 与 DiameterType 相邻读出，Diameter 按米取值（×1000 得 mm）；成员页未写单位。",
+          "example_quote": "Debug.Print(\"      Diameter         = \" + swCosThread.Diameter * 1000.0 + \" mm\");\nDebug.Print(\"      DiameterType     = \" + swCosThread.DiameterType);",
+          "example_file": "Traverse_All_Cosmetic_Threads_Example_CSharp.md"
+        },
+        {
+          "what": "示例用 InsertCosmeticThread3 建螺纹后遍历子特征读回；成员页未给获取路径。",
+          "example_quote": "swCosThread = (CosmeticThreadFeatureData)swSubFeat.GetDefinition();",
+          "example_file": "Traverse_All_Cosmetic_Threads_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只指向 ICosmeticThreadFeatureData::Diameter，无可对撞的前提/单位 ⇒ 无冲突；Rack_and_Pinion 例调的是 IRackPinionMateFeatureData 同名成员。"
+    },
+    {
+      "member": "DiameterVal",
+      "remarks_empty": false,
+      "examples_actually_used": ["Rack_and_Pinion_Mate_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先设 DiameterType=0 再写 DiameterVal=0.0254；成员页既没给赋值先后，也没写单位。",
+          "example_quote": "MateData.DiameterType = 0;\nMateData.DiameterVal = 0.0254;",
+          "example_file": "Rack_and_Pinion_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "0 在 swRackPinionMateDistanceOptions_e 中即 swPinionPitchDiameter，正落在 Remarks 的第一分支上。",
+          "example_quote": "MateData.DiameterVal = 0.0254;",
+          "example_file": "Rack_and_Pinion_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "示例与 Remarks 两个分支自洽，无矛盾；enums/swRackPinionMateDistanceOptions_e.md 记 0=swPinionPitchDiameter。"
+    },
+    {
+      "member": "Diametric",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Radial_to_Diametric_Style_Example_VB.md",
+        "Create_Non-associative_Diameter_Dimension_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出先读后写的翻转写法（If Diametric Then … Else …），成员页只写 Gets or sets。",
+          "example_quote": "If swDispDim.Diametric Then\n    swDispDim.Diametric = False\nElse\n    swDispDim.Diametric = True\nEnd If",
+          "example_file": "Change_Radial_to_Diametric_Style_Example_VB.md"
+        },
+        {
+          "what": "示例改用 DrawingDoc::CreateDiamDim4 先建非关联直径尺寸再切 Diametric；成员页只点名 AddSpecificDimension。",
+          "example_quote": "Set swDispDim = swDraw.CreateDiamDim4(vDimLoc, vCircPt1, vCircPt2, vPlaneNorm, vTextPt, nDimVal, nTextHt)\nswDispDim.Diametric = False",
+          "example_file": "Create_Non-associative_Diameter_Dimension_Example_VB.md"
+        },
+        {
+          "what": "两份示例都在设完 Diametric 后紧接 swModel.GraphicsRedraw2，印证 Remarks 的重绘要求。",
+          "example_quote": "swDispDim.Diametric = False\nswModel.GraphicsRedraw2",
+          "example_file": "Create_Non-associative_Diameter_Dimension_Example_VB.md"
+        }
+      ],
+      "note": "两份示例与 Remarks 的类型限定和 redraw 要求均不冲突；建尺寸入口不同属 CreateDiamDim4 自身语义，故未判为矛盾。"
+    },
+    {
+      "member": "DimXpertManager",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpertManager_Info_Example_VB.md",
+        "Get_DimXpertManager_Info_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示 IConfiguration.DimXpertManager 只收一个布尔实参，并与 IModelDocExtension.DimXpertManager(\"Default\", True) 的两参形态并列。",
+          "example_quote": "swSchema = swConfig.DimXpertManager(True)",
+          "example_file": "Get_DimXpertManager_Info_Example_VBNET.md"
+        },
+        {
+          "what": "示例先用 GetConfigurationByName(\"Default\") 取得 IConfiguration 再调该属性；成员页未给前置。",
+          "example_quote": "swConfig = swModel.GetConfigurationByName(\"Default\")\nswSchema = swConfig.DimXpertManager(True)",
+          "example_file": "Get_DimXpertManager_Info_Example_VBNET.md"
+        }
+      ],
+      "note": "成员页只有 front-matter 与标题，无 Signature/Returns/Remarks ⇒ 跳过冲突判定；Auto_Dimension_Scheme 两份调的是 IModelDocExtension。"
+    }
+  ]
+}

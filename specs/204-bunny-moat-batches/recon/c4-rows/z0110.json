@@ -1,0 +1,139 @@
+{
+  "idx": 110,
+  "results": [
+    {
+      "member": "EnablePresentation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Use_Presentation_Transforms_to_Move_Component_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补充两条运行期现象：启用期间菜单被锁、重绘会让显示回退，故末尾须显式置 False 复位",
+          "example_quote": "' * When presentation transforms are enabled, access to most of the menus is blocked.",
+          "example_file": "Use_Presentation_Transforms_to_Move_Component_Example_VB.md"
+        }
+      ],
+      "note": "示例顺序 True→PresentationTransform→False，与 Remarks 完全一致，未见冲突"
+    },
+    {
+      "member": "EnablePushPin",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Create_Multi-row_Callouts_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例设 True 后立刻用 SelectByID2 把该 callout 作为 Callout 重新选中，说明赋值须在重选之前",
+          "example_quote": "swCallout(i).EnablePushPin = True",
+          "example_file": "sldworksapi__Create_Multi-row_Callouts_Example_VB.md"
+        }
+      ],
+      "note": "该成员页无 ## Remarks 段（只有 Returns/Examples/See Also），按规则跳过冲突判定"
+    },
+    {
+      "member": "EnableUpdate",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Tags_in_Hole_Table_Example_CSharp.md",
+        "Change_Tags_in_Hole_Table_Example_VB.md",
+        "Change_Tags_in_Hole_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例把 Remarks 里「consider 设为 false」做成必做的固定三段式：False→改 HoleTag→True",
+          "example_quote": "swHoleTable.EnableUpdate = False ' Don't update hole table or model view",
+          "example_file": "Change_Tags_in_Hole_Table_Example_VB.md"
+        }
+      ],
+      "note": "示例顺序与 Remarks 一致；另示重名标签会被拒绝，Remarks 未提"
+    },
+    {
+      "member": "EndCondition",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property can be set for a given hole element only when its corresponding override property is set to true:",
+          "example_quote": "swAdvHole_Near_1.EndCondition = (int)swEndConditions_e.swEndCondBlind;",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md",
+          "why": "成员页要求先置 override 才能设 EndCondition；三份示例一律先设 EndCondition，随后（C# 第 102 行 / VB 第 90 行 / VB.NET 第 90 行）才置 EndConditionOverride = True"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体取值组合：沉头/锥孔用 swEndCondBlind，近侧直丝锥用 swEndCondUpToNext",
+          "example_quote": "swAdvHole_Near_2.EndCondition = (int)swEndConditions_e.swEndCondUpToNext;",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points 读的是 IWizardHoleFeatureData2::EndCondition，名字撞但对象不同，已排除"
+    },
+    {
+      "member": "EndConditionOffset",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_a_Thread_Feature_Example_CSharp.md",
+        "Create_a_Thread_Feature_Example_VB.md",
+        "Create_a_Thread_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "同一枚举两种拼法：VBA 写 swThreadEndCondition_UpToSelection，C#/VB.NET 写带 swThreadEndCondition_e. 前缀并强制转 int",
+          "example_quote": "swThreadFeatData.EndCondition = (int)swThreadEndCondition_e.swThreadEndCondition_UpToSelection;",
+          "example_file": "Create_a_Thread_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "示例确已把 EndCondition 置为 UpToSelection，满足本页唯一前置，未见冲突"
+    },
+    {
+      "member": "EndConditionOffsetDistance",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_a_Thread_Feature_Example_CSharp.md",
+        "Create_a_Thread_Feature_Example_VB.md",
+        "Create_a_Thread_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "[[IThreadFeatureData::EndConditionOffset]] is set to true.",
+          "example_quote": "Debug.Print \"End condition offset distance: \" & swThreadFeatData.EndConditionOffsetDistance",
+          "example_file": "Create_a_Thread_Feature_Example_VB.md",
+          "why": "成员页把有效性挂在 EndConditionOffset=true 上；三份示例从未给 EndConditionOffset 赋值（全库 grep 零命中），却照读本属性并期待打出值"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "Returns 写 0.0 为默认，示例也未设；两侧都未标单位，无 unit_diff"
+    },
+    {
+      "member": "EndConditionOffsetReverse",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_a_Thread_Feature_Example_CSharp.md",
+        "Create_a_Thread_Feature_Example_VB.md",
+        "Create_a_Thread_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "[[IThreadFeatureData::EndConditionOffset]] is set to true.",
+          "example_quote": "Debug.Print \"Reverse end condition offset? \" & swThreadFeatData.EndConditionOffsetReverse",
+          "example_file": "Create_a_Thread_Feature_Example_VB.md",
+          "why": "同 Distance：示例只置了 EndCondition=UpToSelection，从未置 EndConditionOffset=true 即读取本属性"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "三份语言版本示例代码顺序完全一致，可互相佐证"
+    }
+  ]
+}

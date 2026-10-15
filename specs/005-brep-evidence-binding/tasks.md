@@ -11,9 +11,9 @@
 ## Phase 0: 读契约（**不猜**）
 
 - [x] **T-101** 定位 `brep_evidence` 的处理分支
-  **✅** `Select-String scripts/dfm_review.py -Pattern 'brep_evidence|brepEvidence'` ⇒
+  **✅** `Select-String archive/inherited-methods/scripts/dfm_review.py -Pattern 'brep_evidence|brepEvidence'` ⇒
   `_load_brep_evidence`（L284）/ `_brep_size`（L260）/ `_bounds`（L218）/ `build_dfm_report`（L858）。
-  `→ 验收:` `Select-String scripts\dfm_review.py -Pattern '_load_brep_evidence'`
+  `→ 验收:` `Select-String archive/inherited-methods/archive/inherited-methods/scripts/dfm_review.py -Pattern '_load_brep_evidence'`
 
 - [x] **T-102** 逐条读 `_load_brep_evidence` 的**每一条 `raise`**（那些 `raise` 就是契约）
   **✅** 8 条 `raise` ⇒ 落成 `spec.md §一` 的契约表：
@@ -22,11 +22,11 @@
   sourceArtifact 必须存在且后缀匹配 · **sourceSha256 == 该文件的真实 sha256** ·
   路径不得逃出 allowed_root · 三轴包络必须有效 · OCCT 必须 topology.solids >= 1
   ```
-  `→ 验收:` `Select-String scripts\dfm_review.py -Pattern 'raise ValueError\("B-Rep'`
+  `→ 验收:` `Select-String archive/inherited-methods/archive/inherited-methods/scripts/dfm_review.py -Pattern 'raise ValueError\("B-Rep'`
 
 - [x] **T-103** 读 `_brep_size` 拿到**包络字段名**
   **✅** 优先级：`envelope_mm{length,width,height}` → `bounds.size` → `bounds.{min,max}`。
-  `→ 验收:` `Select-String scripts\dfm_review.py -Pattern 'envelope_mm'`
+  `→ 验收:` `Select-String archive/inherited-methods/archive/inherited-methods/scripts/dfm_review.py -Pattern 'envelope_mm'`
 
 ---
 

@@ -1,0 +1,94 @@
+{
+  "idx": 45,
+  "results": [
+    {
+      "name": "feature_cosmetic_thread",
+      "level": "verified",
+      "members_found": [
+        "ClearSelection2",
+        "GetBodies2",
+        "GetFaces",
+        "GetSurface",
+        "IsCylinder",
+        "GetEdges",
+        "Select2",
+        "Select4",
+        "CreateSelectData",
+        "InsertCosmeticThread3",
+        "GetTypeName2",
+        "Name",
+        "FirstFeature",
+        "GetNextFeature"
+      ],
+      "examples_used": [
+        "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+        "Traverse_All_Cosmetic_Threads_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "打开一个含圆孔的零件文档（官方示例指定 holecube.sldprt）",
+          "from": "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "一个带圆孔的实体"
+        },
+        {
+          "text": "调用 InsertCosmeticThread3 前必须先选中一条 EDGE（示例用 SelectByID2(\"\", \"EDGE\", x,y,z) 按点选边）",
+          "from": "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "★ 选**圆柱面的边**   ⇒ **成** ✓\n       ★ 选**圆柱面本身**   ⇒ 不成 ✗\n       ★ **什么都不选**     ⇒ 不成 ✗"
+        },
+        {
+          "text": "螺纹线是孔/切除特征的子特征，须 FirstFeature→GetFirstSubFeature 遍历才找得到",
+          "from": "Traverse_All_Cosmetic_Threads_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "选边前置已被三格对照覆盖；但示例里螺纹线挂在孔的子特征下、须 GetFirstSubFeature 才找得到，证据未提。"
+    },
+    {
+      "name": "sketch_spline",
+      "level": "verified",
+      "members_found": [
+        "ClearSelection2",
+        "SelectByID2",
+        "InsertSketch",
+        "SketchManager",
+        "CreateSpline2"
+      ],
+      "examples_used": [
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "Preconditions: Verify that the specified part template exists.",
+          "from": "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "CreateSpline2 之前草图必须已处于编辑态（示例先 Insert3DSketch(True) 再建样条）",
+          "from": "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "先 `start_sketch`，再 `CreateSpline2(VARIANT(VT_ARRAY|VT_R8, [x,y,z,…]), False)` ⇒ **草图段数 0 → 1**"
+        },
+        {
+          "text": "PointData 须扁平一维 double 数组、按 X,Y,Z 交替（示例 new double[12]，4 组三元）",
+          "from": "Add_Along_X_Dimension_To_3D_Sketch_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "② ★ **数组形态 = `VARIANT(VT_ARRAY|VT_R8, 扁平 list)`** （★ 而**扁平 list / list of tuples 都回 `None`**）"
+        },
+        {
+          "text": "示例三份都把 SimulateNaturalEnds 传 true，证据定为 False；示例未就此写前置",
+          "from": "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "官方示例在 3D 草图内建样条且 SimulateNaturalEnds=true；证据用 start_sketch 的草图 + False，示例未就此写前置。"
+    }
+  ]
+}

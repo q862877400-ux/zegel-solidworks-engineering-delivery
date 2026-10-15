@@ -1,0 +1,133 @@
+{
+  "idx": 351,
+  "results": [
+    {
+      "member": "LengthRatioMember2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Secondary_SSMembers_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "前置的具体落地：先写 SecondaryMemberOffsetType = 1，再写两个比例，最后 ModifyDefinition，顺序不可颠倒",
+          "example_quote": "secMemDatTochange.SecondaryMemberOffsetType = 1;\nsecMemDatTochange.LengthRatioMember1 = 0.1d;\nsecMemDatTochange.LengthRatioMember2 = 0.2d;",
+          "example_file": "Create_Secondary_SSMembers_Example_CSharp.md"
+        },
+        {
+          "what": "同一示例另一处用 SecondaryMemberOffsetType = 0 + DistanceMember1/2 表达「绝对距离」模式，说明两种模式互斥",
+          "example_quote": "memBetweenPointsSecDef.SecondaryMemberOffsetType = 0;\nmemBetweenPointsSecDef.DistanceMember1 = 0.5d;\nmemBetweenPointsSecDef.DistanceMember2 = 0.4d;",
+          "example_file": "Create_Secondary_SSMembers_Example_CSharp.md"
+        }
+      ],
+      "note": "示例遵守成员页的前置，未发现冲突"
+    },
+    {
+      "member": "LengthType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Sketch_Slot_Data_Example_vb.md",
+        "Insert_and_Resize_Sketch_Slot_Example_CSharp.md",
+        "Insert_and_Resize_Sketch_Slot_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有签名与 Returns，无 Remarks，按纪律跳过；三份示例都读到 swSketchSlot.LengthType"
+    },
+    {
+      "member": "LengthUnit",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_DXF_File_and_Add_Dimension_Example_VB.md",
+        "Insert_DXF_File_and_Add_Dimensions_Example_VBNET.md",
+        "Insert_and_Position_DXF_File_in_Drawing_Example_VB.md",
+        "Insert_and_Position_DXF_File_in_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无正文无 Remarks，按纪律跳过；四份示例都写 importData.LengthUnit(\"\") = swLengthUnit_e"
+    },
+    {
+      "member": "LibraryProfileMaterial",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_VB.md",
+        "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出读取的确切调用序：先 AccessSelections 取定义、读完 ReleaseSelectionAccess，再取下一组",
+          "example_quote": "Set swStructuralMemberFeatData = swWeldFeat.GetDefinition\nswStructuralMemberFeatData.AccessSelections swModel, Nothing",
+          "example_file": "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_VB.md"
+        },
+        {
+          "what": "示例把它与 TransferMaterial、ConfigurationName 一并打印，说明三者配套出现",
+          "example_quote": "Debug.Print \" Transfer material? \" & swStructuralMemberFeatData.TransferMaterial\nDebug.Print \" Library material profile: \" & swStructuralMemberFeatData.LibraryProfileMaterial",
+          "example_file": "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_VB.md"
+        }
+      ],
+      "note": "示例只读不写，与签名 {get;} 一致；Remarks 只讲转移材料的前提，未与示例冲突"
+    },
+    {
+      "member": "LightSourcePropertyValues",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Redirect_Spotlight_Example_VB.md",
+        "Turn_Lights_On_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有标题，无 Remarks，按纪律跳过；两例均按灯光 ID 下标读写该属性"
+    },
+    {
+      "member": "LightSourceUserName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Turn_Lights_On_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有标题，无 Remarks，按纪律跳过；Turn_Lights_On 只读一次该属性"
+    },
+    {
+      "member": "LightWeight",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Whether_Components_Are_Loaded_Example_CSharp.md",
+        "Get_Whether_Components_Are_Loaded_Example_VBNET.md",
+        "Open_Assembly_Document_Example_CSharp.md",
+        "Open_Assembly_Document_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "[[IDocumentSpecification::UseLightWeightDefault]] must be false for this property to have an effect.",
+          "example_quote": "        swDocSpecification.UseLightWeightDefault = true;\n        swDocSpecification.LightWeight = true;",
+          "example_file": "Get_Whether_Components_Are_Loaded_Example_CSharp.md",
+          "why": "成员页要求 UseLightWeightDefault 为 false 才生效，示例却设成 true，则此处的 LightWeight 按官方说法无效；同一示例仍依赖它「只加载 Magnet-1」。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "[[IDocumentSpecification::UseLightWeightDefault]] must be false for this property to have an effect.",
+          "example_quote": "        swDocSpecification.UseLightWeightDefault = True\n        swDocSpecification.LightWeight = True",
+          "example_file": "Get_Whether_Components_Are_Loaded_Example_VBNET.md",
+          "why": "VB.NET 版与 C# 版同样把 UseLightWeightDefault 设为 True 后再设 LightWeight，与成员页的 false 前置直接冲突。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Open Assembly Document 两版都先把 UseLightWeightDefault 设 False 再设 LightWeight，给出合规写法",
+          "example_quote": "            swDocSpecification.UseLightWeightDefault = false;\n            swDocSpecification.LightWeight = true;",
+          "example_file": "Open_Assembly_Document_Example_CSharp.md"
+        },
+        {
+          "what": "该示例还写明两者都在 OpenDoc7 之前、连同 Selective 与 DisplayState 一起设置",
+          "example_quote": "            swDocSpecification.Selective = true;\n            swDocSpecification.DisplayState = \"Default_Display State-1\";\n            swDocSpecification.UseLightWeightDefault = false;",
+          "example_file": "Open_Assembly_Document_Example_CSharp.md"
+        }
+      ],
+      "note": "同族四例中 Open Assembly Document 合规、Get Whether Components Are Loaded 违反成员页前置"
+    }
+  ]
+}

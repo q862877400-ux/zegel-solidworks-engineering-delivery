@@ -1,0 +1,91 @@
+{
+  "idx": 523,
+  "results": [
+    {
+      "member": "Visibility",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页仅 10 行、只有 frontmatter 与标题，无 ## Remarks，按纪律跳过，不读示例。"
+    },
+    {
+      "member": "Visible",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "给定的 4 份示例都没用它：3 份转成 SketchBlockInstance 用的是 ISketchBlockInstance.Visible，1 份用 swLayer 是 ILayer.Visible；IAnnotation.Visible 无可比对示例。"
+    },
+    {
+      "member": "Volume",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（只有 Returns/Examples/See Also），按纪律跳过，不读示例。"
+    },
+    {
+      "member": "Warning",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（只有 Returns/Examples/See Also），按纪律跳过，不读示例。"
+    },
+    {
+      "member": "WatermarkBehindGeometry",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Watermark_to_Part_Example_CSharp.md",
+        "Add_Watermark_to_Part_Example_VB.md",
+        "Add_Watermark_to_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例比 Remarks 具体：先交互式右键 Watermark 让 WatermarkNote 为真，再由选区 GetSelectedObject6(1,0) 取到 Note 才可写本属性；Remarks 只说 WatermarkNote 为 true。",
+          "example_quote": "swNote = (Note)swSelectionMgr.GetSelectedObject6(1, 0);\nDebug.Print(\"Is note a watermark? \" + swNote.WatermarkNote);\nswNote.WatermarkBehindGeometry = true;",
+          "example_file": "Add_Watermark_to_Part_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例一致且满足 Remarks 前置，未见冲突；示例另有选区与 ClearSelection2/EditRebuild3 收尾。"
+    },
+    {
+      "member": "WatermarkNote",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Watermark_to_Part_Example_CSharp.md",
+        "Add_Watermark_to_Part_Example_VB.md",
+        "Add_Watermark_to_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只读取本属性、不在代码里写它；其为真由前置步骤 2.e 的交互式 Watermark 保证，Remarks 步骤 6 只描述界面操作、未说明代码如何取到该注记。",
+          "example_quote": "//    e. Right-click the note and click Watermark.",
+          "example_file": "Add_Watermark_to_Part_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 六步与示例前置逐条对应；示例额外给出从选区取 Note 的取法。"
+    },
+    {
+      "member": "WatermarkTransparencyLevel",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Watermark_to_Part_Example_CSharp.md",
+        "Add_Watermark_to_Part_Example_VB.md",
+        "Add_Watermark_to_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出中间取值与显示口径：设 0.5 后 ×100 按百分比打印，Postconditions 称设为 50%；Remarks 只定义 0.0 与 1.0 两端含义。",
+          "example_quote": "swNote.WatermarkTransparencyLevel = 0.50;\nDebug.Print(\"Note transparency level = \" + swNote.WatermarkTransparencyLevel * 100 + \"%\");",
+          "example_file": "Add_Watermark_to_Part_Example_CSharp.md"
+        }
+      ],
+      "note": "0.5 落在 Remarks 的 0.0–1.0 区间内，无单位冲突；三份示例一致。"
+    }
+  ]
+}

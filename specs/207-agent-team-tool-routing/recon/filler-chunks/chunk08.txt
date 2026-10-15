@@ -1,0 +1,1550 @@
+★ 与事实 32 **不矛盾**：32 说的是**边/面**）；
+       ② ★★ **必须先抑制尺寸对话框** —— 它正是 swapi 那句**被截断的前置**（★ 只写到 `swUserPreferenceToggle_e`）⚠
+     ★ **而本轮两个真机发现**：
+     ```
+     ★ **对照（什么都不选）⇒ ok=True · 回 `CDispatch`** ⚠
+        ⇒ ★ **它在没选东西时也回对象**（★ 第五种形态的味道）
+        ⇒ ★ **故判据必须看「草图尺寸计数」**。
+     ★ 而正根那一格报：**`_select_by_id() got multiple values for argument 'append'`**
+        ⇒ ★ **那是我传参的形态错**（`append` 是**位置参数**）—— ★ **第九次“失败在我这边”**。
+     ```
+     ★★ **而护栏本轮尽职了**：第一版我凭空写了 `A.enum_value(...)`（★ **本仓没有那个函数**）
+       ⇒ **toggle 从未设过** ⇒ 弹出「**修改**」对话框 ⇒ ★ 护栏 `aborted_for_llm: true` 把会话**救回来了** ✓
+     ★★ **而那个值本仓早就有**：`scripts/sw_automation_knowledge.DIALOG_SUPPRESSORS["swInputDimValOnCreate"] = **10**`
+       （★ 注释写着“值来自对 `swconst` 的反射”）。
+     ★ **按事实 53**：本轮同一处已试多次 ⇒ **停手、记下两个具体的下一步**：
+       ① 把 `_select_by_id` 的**形参传对**（★ 按它的真签名）；
+       ② 把**草图尺寸计数**那个取法换对（★ 本轮回 `-1`）。
+     ★ 本轮**不登记能力**。|真机：`tools/prove_symmetric_angular_dimension.py`；证据 `output/symmetric-angular-dimension-evidence.json`；例子：`…\SWhelp\sldworksapi\Create_Full_Symmetrical_Angular_Dimension_Example_VB.htm`；对照事实 32 / 53 |
+| 462 | **★★ 对称线性直径尺寸：前置链条已跑通，★ 而**缺一个能区分的判据**** —— 2026-10-03（轮 585）。
+     ★ **事实 461 留了两个下一步** ⇒ 本轮都做了：
+     ```
+     ① ★ `sw_part._select_by_id` 的真签名是
+        `(extension, entity_name, entity_type, append=False, mark=0)`
+        —— ★ **它根本没有 x/y/z**！★ 而例子要的坐标是 `SelectByID2` 的第 3/4/5 参 ⚠
+        ⇒ ★ **故得直接调 `SelectByID2`**（官方 9 参）。
+     ② ★ 尺寸计数换成 `ISketch.GetDimensionCount2/3`
+     ```
+     ★ 真机（零弹窗）：
+     ```
+     ★ **照例子**：SelectByID2(Line1)=**True** · SelectByID2(Line3)=**True** · ClearSelection2=ok
+                   ⇒ AddSymmetricDimension ⇒ 回 **`CDispatch`** ✓（选中了）
+     ★ 对照（什么都不选）               ⇒ 也回 **`CDispatch`** ⚠
+     ★ 而 **`dims` 两格都是 `-1`** —— ★ `GetDimensionCount2/3` 也没通 ⚠
+     ```
+     ⇒ ★★ **故诚实结论是**：**选择那一步已通、而我没找到能区分的判据** ——
+       ★ 而**两格都回 `CDispatch`** ⇒ ★ **那个判据不能区分** ⚠
+       ⇒ ★ **按原则不能算建成**。
+     ★ **按事实 53 停手**（★ 已三轮）；★ **下一步就是换判据**：
+       ★ 试 **文档级**的尺寸计数（`IModelDoc2` 上那个）或 **从特征树看 `DisplayDimension`**。
+     ★★ **而这一条的教训值得单独记**：★ **当两栿都回同一个对象时，“回了对象”就不是判据** —— ★ 必须找**可分的量**（★ 与事实 436 同族）。
+     ★ 本轮**不登记能力**。|真机：`tools/prove_symmetric_angular_dimension.py`；证据 `output/symmetric-angular-dimension-evidence.json`；例子：`…\SWhelp\sldworksapi\Create_Full_Symmetrical_Angular_Dimension_Example_VB.htm`；对照事实 436 / 461 |
+| 463 | **★★★ 判据终于可分了：`AddSymmetricDimension` 回的那个 `CDispatch` **是个空壳****（★ 故它**没建成**） —— 2026-10-03（轮 586）。
+     ★ **事实 462 留的下一步就是“换判据”** ⇒ 本轮试了**两类新判据**：
+     ```
+     ★ ① **读返回对象自己的名字/主人**（★ 真建成的 `DisplayDimension`
+            应该有 `D1@草图1` 那种名字）；
+        ★ ② **文档级**的尺寸计数。
+     ```
+     ★ 真机（零弹窗）—— ★ **结果比较干脆**：
+     ```
+     ★ **两格的返回对象上、七个成员全不可达**：
+        Name · GetName · FullName · GetTypeName2 · GetSketch · GetOwner · GetFeature
+        ★ 全是 `AttributeError: <unknown>.X` ⚠
+     ★ 而 `IModelDoc2.GetDimensionCount` / `GetDimensionCount2`
+        ★ **两个名字都不存在**（`AttributeError`）⚠
+     ```
+     ⇒ ★★ **故两条**：
+       ① ★ **它回的不是真的 `DisplayDimension`**（★ 官方说该回它）—— ★ 而是**一个空壳 Dispatch**；
+       ② ★ **故它在这条路上没建成**。
+     ★★ **而关键区分**：★ 这一次**不是“我前置错”** —— ★ 因为：
+       ★ **选择已回 `True`**（`SelectByID2(Line1)=True` · `(Line3)=True`）；
+       ★ **前置链条照官方例子全做了**（★ `SKETCHSEGMENT` 按名选 + `swInputDimValOnCreate=10` 抑制对话框）。
+     ★ **按事实 53 收尾**（★ 已四轮）；★ 并记为**边界候选**（★ 而**不继续试参数**）。
+     ★★ **方法论：★ “回了对象”在两格相同时不是判据** —— ★ 而**去读那个对象自己的成员**，就能分出“**真对象**”与“**空壳**”** ✓
+       （★ 与事实 36 同族：名字对不上时，报的错**看不出真因**）。
+     ★ 本轮**不登记能力**。|真机：`tools/prove_symmetric_angular_dimension.py`；证据 `output/symmetric-angular-dimension-evidence.json`；对照事实 36 / 53 / 461 / 462 |
+| 464 | **★★★ 本仓的“孔”**根本不是异型孔向导特征****（★ 而是**画圆 + 剪切**）；★ 而 `HoleWizard5` 的**真前置是 `SelectByRay`** —— 2026-10-03（轮 587）。
+     ★ **怎么发现的**：查台账「高级孔」（api 写 `HoleWizard5(HoleSeries)`）时先看本仓怎么打孔：
+     ```
+     `sw_hole_features.create_through_hole(model, center, diameter, plane_name, name)`
+        ⇒ 它调的是 **`_circle_cut(model, plane_name, center, diameter, depth, name)`**
+        —— ★ 那是**画一个圆再拉伸切除**，★ **不是 `HoleWizard5`** ⚠
+     （★ `create_blind_hole` / `create_counterbore_hole` / `create_countersink_hole` 同理）
+     ```
+     ⇒ ★★ **故本仓的“孔”在**几何上等价**，★ 而在**特征层不等价**：**没有孔标注、没有螺纹标准、特征树里是「切除-拉伸」** ⚠
+       ⇒ ★ 故台账「高级孔」这条**确实缺**，★ 而**缺的原因比“没做”更具体**：★ 本仓走了一条**更简单但不等价**的路。
+     ★★ **而 `HoleWizard5`（27 参，★ 反射与 swapi **两源一致**）的 Remarks 给了三个关键**：
+     ```
+     ★ **孔位是选出来的**："To add a hole or slot at one or more locations,
+        call **`IModelDocExtension::SelectByRay` with Mark = 0** for each location."
+        —— ★ **不是坐标** ⚠
+     ★ **`RevDir`**："If the material is on one side of the reference plane, then **RevDir is false**"
+     ★ 两个**必须匹配否则报错**的参数：`FastenerTypeIndex`（必须与 standard 匹配、
+        且对该孔型有效）· `SSize`（必须是该紧固件类型的合法尺寸）
+     ```
+     ★★ **而它自己指出了第二条路**："To create **simple holes and slots**, read … **`WizardHoleFeatureData2` Objects"
+       ⇒ ★ 故两条路：① `HoleWizard5`（27 参 + `SelectByRay` 定位）；② `IWizardHoleFeatureData2`（**简单孔**）。
+     ★ **下一步**：先试第 ② 条（★ 参数少得多）；★ 而若走 ①，则**先把 `SelectByRay` 那一步搭出来**。
+     ★ 本轮**不登记能力**（★ 只完成了前期调查）。|官方：`C:\swapi\types\IFeatureManager\HoleWizard5.md`；本仓：`scripts/sw_hole_features.py` 的 `_circle_cut` 那一路；反射：`HoleWizard5: 27` |
+| 465 | **★★ 高级孔：路径②（`IWizardHoleFeatureData2`）被**两条独立理由**关掉**⇒ 只剩路径① —— 2026-10-03（轮 588）。
+     ★ **事实 464 留了两条路**（★ 都是 `HoleWizard5` 自己的 Remarks 指的）：
+       ① `HoleWizard5`（27 参 + `SelectByRay` 定位）；② `IWizardHoleFeatureData2`（★ 它说适合“**simple holes and slots**”）。
+     ★ **而本轮查完路径 ② 后，它被两条独立理由关掉**：
+     ```
+     ① ★ **它带 `AccessSelections`**（`IWizardHoleFeatureData2` 共 **75** 个成员，
+        ★ 而 `AccessSelections` 正是**指针族**）—— 事实 47。
+     ② ★ **`IFeatureManager.CreateDefinition` 那张 35 常量表里没有 Hole***
+        （★ 官方查不到）—— 事实 43。
+     ```
+     ⇒ ★★ **故只剩路径 ①**：`HoleWizard5`（27 参）+ **它的前置 `SelectByRay`** ✓
+     ★ 而两条路都是**官方自己指的**（★ `HoleWizard5` 的 Remarks）—— ★ 故这不是我捣的结论。
+     ★ **而本轮的方法论**：★ **当官方给了两条路时，先把“哪条走得通”查完再动手** —— ★ 而**判路的依据可以是静态的**（★ 本例：**成员表里有没有 `AccessSelections`** + **常量表里有没有那个常量**）。
+     ★ 下一步：把 **`SelectByRay`** 那一步搭出来（★ 它是路径 ① 的前置）。
+     ★ 本轮**不登记能力**。|官方：`C:\swapi\types\IWizardHoleFeatureData2\`（**75** 成员，含 `AccessSelections`）· `IFeatureManager\CreateDefinition.md`；对照事实 43 / 47 / 464 |
+| 466 | **★★ `SelectByRay` 真机选中**（★ 11 参；★ 而它是 `HoleWizard5` 定孔位的**前置**） —— 2026-10-03（轮 589）。
+     ★ **官方那页（★ 未标废弃，**11 参**）**：
+     ```
+     bool SelectByRay(double WorldX, WorldY, WorldZ, double RayVecX, RayVecY, RayVecZ,
+                      double RayRadius, int TypeWanted, bool Append, int Mark, int Option)
+     ★ 语义："Defines a **cylindrical region of infinite length** that starts at the
+        specified point and runs parallel to the ray direction"
+     ★ **只选** faces/edges/vertices；★ **不支持** 草图实体/轴/中心线等
+     ★ RayRadius **<= 2.9 m**；★ TypeWanted 取 `swSelectType_e`
+     ```
+     ★ 真机（`tools/prove_hole_wizard5.py`，零弹窗）：先造一块板，再
+       `SelectByRay(0, 0, +0.05, 0, 0, **-1**, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)`
+       ⇒ **选中计数 1 → 2**（增 1）· 返回 `True` ✓
+     ★ **而 `swSelFACES = 2` 取自本机反射 dump**（★ 铁律 4：`swSelEDGES = 1` · `swSelFACES = 2` · `swSelVERTICES = 3`）✓
+     ★★ **故孔位是“射线选出来的”、**而不是裸坐标** —— ★ **命中什么由几何决定**（★ 与规则 3 的精神一致）。
+     ★ **而本轮还拿到了真的孔标准表**（★ 本仓 `list_hole_standards`）：
+       `{0: ANSI Inch, 1: ANSI Metric, 16: AS, 2: BSI, 4: DIN, 13: GB, …}`
+       —— ★ **故 `HoleWizard5` 的 `StandardIndex` 有了可核的取值来源**。
+     ★ **落地**：`capabilities.yaml` 新增 **`select_by_ray`**（level = **verified**，共 **107** 条）—— ★ 它**本身就是一条能力**（一个真的选择原语）。
+     ★ 下一步：用它定位 + `HoleWizard5`（27 参）建孔。|真机：`tools/prove_hole_wizard5.py`；证据 `output/hole-wizard5-evidence.json`；官方：`C:\swapi\types\IModelDocExtension\SelectByRay.md` × 反射 arity |
+| 467 | **★★ 高级孔：射线定位成了、27 参也对了，★ 而 `HoleWizard5` **回 `None`**；剩下的嫌疑是 `SSize`**** —— 2026-10-03（轮 590）。
+     ★ **官方对两个参数的警告逐字**（★ 而它们**都不叫“报错”、只是**回 `None`**）**：
+       · `FastenerTypeIndex` **必须与 standard 匹配、且对该孔型有效**；
+       · `SSize` **必须是该紧固件类型的合法尺寸**。
+     ★ **而本轮把能静态拿的都拿了**：
+     ```
+     ★ 射线定位：`SelectByRay(0,0,+0.05, 0,0,-1, 1e-4, swSelFACES=2, False, Mark=0, 0)`
+        ⇒ **选中 1 → 2** · 回 `True` ✓
+     ★ **27 参数全对**（★ 反射与 swapi **两源一致**：`'HoleWizard5': 27`）✓
+     ★ 枚举全取自**反射 dump**：`swWzdHole = 2` · `swEndCondThroughAll = 1` · `swSelFACES = 2`
+     ★ 而**孔标准与紧固件类型取自本仓的 lookup**（★ 真数据）：
+        标准 **17** 条（ANSI Inch/Metric · AS · BSI · DIN · **GB** · IS · ISO · JIS · KS ·
+                 PEM® Inch/Metric · DME · HASCO Metric · PCS · Progressive · Superior）
+        `swWzdHole`(2) 下 ANSI Metric 的**合法** `FastenerTypeIndex`：
+                 **704**（暗销孔）· **38**（螺旋螺纹钻孔）· **41**（螺纹钻孔）· **40**（螺钉间隙）
+     ```
+     ★ **真机四格**（零弹窗）—— **四格全 `None`**：
+     ```
+     螺钉间隙(40) ThroughAll ⇒ 回 `None` · 特征 7 → 7（★ 无增量）
+     暗销孔(704)   ThroughAll ⇒ 回 `None` · 特征 7 → 7
+     螺纹钻孔(41)  ThroughAll ⇒ 回 `None` · 特征 7 → 7
+     对照：**非法值(0)**      ⇒ 回 `None` · 特征 7 → 7
+     ⇒ ★ **故合法值与非法值表现**一样** ⇒ ★ 说明**卡在别的参数上**（★ 而不是 `FastenerTypeIndex`）⚠
+     ```
+     ★★ **故剩下的嫌疑集只有一个最大**：**`SSize` 传的是空串** —— ★ 而官方说它**必须合法**。
+     ★ **按事实 53 停手**（★ 本轮同一处已两次）；★ **下一步很具体**：
+       ★ 从本仓 `sw_hole_features.get_fastener_table(sw, standard_name, fastener_id, table_id, hole_type_id)`
+         **拿一个真的 `SSize`**（★ 而不是空串）再试。
+     ★ 本轮**不登记能力**。|真机：`tools/prove_hole_wizard5_build.py`；证据 `output/hole-wizard5-build-evidence.json`；官方：`C:\swapi\types\IFeatureManager\HoleWizard5.md` × `IHoleStandardsData` 族；对照事实 464 / 465 / 466 |
+| 468 | **★★ 取“真尺寸”那条路被**接口解析**卡住**（★ 而错误信息报的是**错的接口名**） —— 2026-10-03（轮 591）。
+     ★ **事实 467 留的下一步**：从 `get_fastener_table` 拿一个**真的 `SSize`**。
+     ★ 而本轮沿路查出三件事**：
+     ```
+     ① ★ **表类型取到了真值**：`list_fastener_table_types` 回 **[0, 2]**（★ 真数据）
+     ② ★ **它的官方成员在 `IHoleStandardsData` 上**（★ 不是 `ISldWorks`）—— 本仓 `_hole_standards_data(sw, 2)` **确实**回 `CDispatch` ✓
+     ③ ★★ **而调用仍报 `AttributeError: **SldWorks.Application**.GetFastenerTable`** ⚠
+        —— ★ 而 `get_fastener_table` 的函数体**逐字**是
+           `get_com_member(**data**, "GetFastenerTable", …)`（★ **调在标准对象上**）
+     ```
+     ⇒ ★★ **故只能解释为接口解析问题**：那个 dispatch 是从 `ISldWorks` 拿的，
+       ★ 而 **pywin32 把它解析成了 `ISldWorks`**（★ 故找不到那个成员）⚠
+     ★★ **而这与事实 36 / 47 同一族**：★ **错误信息里的接口名可能是错的** —— ★ 故**不能拿它当定位依据** ⚠
+     ★ **按事实 53 停手**（★ 本条已跨 5 轮）；★ **而本轮的收获是把它从“没查到”收敛到“**接口解析**”** ✓
+     ★ **而对 `HoleWizard5` 的影响**：★ 故那一条的“拿真尺寸”前置**暂时拿不到** —— ★ 而另一条路（**从 CHM 或反射里查尺寸名**）尚未试。
+     ★ 本轮**不登记能力**。|真机：本轮探针输出；本仓：`scripts/sw_hole_features.py` 的 `get_fastener_table`（L316）与 `_hole_standards_data`（L466）；对照事实 36 / 47 / 467 |
+| 469 | **★★★ 高级孔真机建成**（`HoleWizard5` 27 参）—— ★ 而关键是 **`SSize` 要“规格串”**（如 `M8`） —— 2026-10-03（轮 591）。
+     ★ **从事实 467 的“嫌疑只剩 `SSize`”直接收口** —— ★ 五格对照把它钉死了：
+     ```
+     SSize=''         ⇒ 回 `None` · 特征 7 → 7   ✗
+     SSize='8'        ⇒ 回 `None` · 特征 7 → 7   ✗
+     ★ **SSize='M8'**  ⇒ **特征 7 → 8** · 新增 **`M8 间隙孔1`** · 回 `CDispatch` ✓
+     SSize='0.008'    ⇒ 回 `None` · 特征 7 → 7   ✗
+     SSize='M8x1.25'  ⇒ 回 `None` · 特征 7 → 7   ✗
+     ```
+     ⇒ ★★ **故 `SSize` 要的是“**规格串**”**（★ 如 `M8`），★ **而不是空串、也不是纯数字** —— ★ 正是官方那句“**必须是该紧固件类型的合法尺寸**”。
+     ★★★ **而产出的是**真的异型孔向导特征****（★ 名字 `M8 间隙孔1`、★ **而不是「切除-拉伸」**）
+       —— ★ **那正是事实 464 说的那个差距被补上了** ✓
+     ★ **三个前置缺一不可**：
+       ① 孔位用 **`SelectByRay`（`Mark=0`）**选出来（★ 事实 466）；
+       ② **`SSize` 要规格串**；
+       ③ `FastenerTypeIndex` 要与 standard 匹配（ANSI Metric + `swWzdHole` 下：40/41/704/38）。
+     ★ **而它的一组参数**（★ 可照拄）：`swWzdHole=2` · `ANSI_METRIC=1` · `40`（螺钉间隙）· `"M8"` · `swEndCondThroughAll=1` · `Diameter=0.008` · `Depth=0.02` · 其余 0 · `RevDir=False` · `FeatureScope=True` · 后四个 `False`。
+     ★ **落地**：`capabilities.yaml` 新增 **`feature_hole_wizard5`**（level = **verified**，共 **108** 条）；台账「高级孔」补 `capability_id` ⇒ **已能 81**。
+     ★★ **方法论**：★ **当一个 27 参的方法回 `None` 时，把**字符串参数的形态**拿出来做对照** —— ★ 而**空串与纯数字都不是答案、“规格串”才是** ⚠|真机：`tools/prove_hole_wizard5_build.py`；证据 `output/hole-wizard5-build-evidence.json`；官方：`C:\swapi\types\IFeatureManager\HoleWizard5.md` × `IModelDocExtension\SelectByRay.md`；对照事实 464 / 466 / 467 / 468 |
+| 470 | **★★★ 高级孔的包装：**设计错了——`GetSelectionPoint` 对这条 API 是多余的****（★ 而错误信息**自己指出了**） —— 2026-10-03（轮 592）。
+     ★ **背景**：下午把事实 469 那个**真机建成**的探针落成包装（`sw_hole_features.create_hole_wizard_at_selection_report`，★ 命名仿 `create_*_hole_at_selection_report` 那族）。
+     ★ **而我把它设计成**先读选区的点、再发射线****（`selection_point(model)` → `SelectByRay`）。
+     ★ **真机验包装时它报**（★ 逐字）：
+     ```
+     "读不到当前选区的点（★ 调用方需先选一个点）：
+      `GetSelectionPoint2(1, -1)` 回 None（★ **选中的可能不是点**）·
+      `GetSelectionPoint(1,)` 回 None。"
+     ```
+     ★★ **故真结论是**：★ **`HoleWizard5` 的定位**靠 `SelectByRay`**、**根本不需要 `GetSelectionPoint`** ——
+       ★ 而**我那个“先读点再发线”的设计对这条 API 是多余的** ⚠
+       （★ 而它**只选面**时就拿不到点 —— ★ 因为 `GetSelectionPoint` 要的是**点**（顶点/参考点），不是面）。
+     ★★★ **而这一次值得记的是**：★ **错误信息自己把设计错说出来了**（“选中的可能不是点”）——
+       ★ 而那句是**我自己写进去的**（★ 按本仓“不猜 —— 取不到就写明原因”的惯例）✓
+       ⇒ ★ **故“给错误写一句像人话的原因”是有回报的** —— ★ 它替我做了一半诊断。
+     ★ **下一步就是改设计**：★ 换成**接一个声明式的面选择器**（如 `+z`，★ 走本仓 `select_face_selector`）
+       → 从**面的中点**（★ 本付 `_center` 那类取法）得到点 → 再发射线。
+     ★ 本轮**不降 `feature_hole_wizard5` 的 level**（★ 能力本身真机建成、事实 469）；★ 而**包装尚未真机通过** —— ★ 那一点已写进它的 `limitations`。|真机：`tools/prove_hole_wizard_wrapper.py`；证据 `output/hole-wizard-wrapper-evidence.json`；本仓：`scripts/sw_hole_features.py` 新增那个包装；对照事实 466 / 469 |
+| 471 | **★★★ 高级孔的包装真机通过**（★ 而它在设计上**走过一次弯**） —— 2026-10-03（轮 593）。
+     ★ **设计的弯**（★ 事实 470）：第一版写成**先读选区的点**（`selection_point`）⇒ 真机否掉；
+       ★ 真因：**`GetSelectionPoint` 要的是“点”、不是“面”**（★ 而 `HoleWizard5` 的定位**靠 `SelectByRay`、本来就不需要它**）。
+     ★ **而改法是用本仓现成的那个**：
+       `sw_simulation.resolve_face_selector(model, selector)` —— ★ 它把 `+x/-x/+y/-y/+z/-z` 解析成**那个面的中心点**（米），
+       ★ 实现是取 `GetBodyBox()` 再按外法向取中心 ✓（★ **声明式**）
+       ⚠ 而它 docstring 写着边界：**只对轴对齐的实体可靠**⇒ ★ 故调用方**必须检查选中数**（★ 而我的包装本来就检查了）。
+     ★ 新签名：`create_hole_wizard_at_selection_report(model, selection, size, *, diameter_mm, depth_mm, through, fastener_index, standard_index, generic_type, ray_dir, plane_offset_mm, name)`
+     ★ 真机（`tools/prove_hole_wizard_wrapper.py`，零弹窗）—— **两格**：
+     ```
+     ★ **包装 + `"+z"` + `"M8"`** ⇒ **特征 7 → 8** · 新增 **`异型孔向导`** ✓
+     对照 + `size=""`          ⇒ **回 `None`**（★ 而报错逐字给出三个常见原因）
+     ```
+     ★ **两个阶段各有一条教训**：
+       ① ★（轮 592）**错误信息自己把设计错说出来了**（“选中的可能不是点”）—— ★ 而那句是我**按本仓惯例自己写的**；
+       ② ★（轮 593）**改法用的是本仓现成的函数**（`resolve_face_selector`）—— ★ **而不是自己再写一个**。
+     ★ **落地**：`feature_hole_wizard5` 的 **evidence +1**（★ 包装真机通过）· **limitations 更新**（★ 包装已通过、而尚未接 MCP 工具层）。
+     ★★ **方法论**：★ **当一个包装回 `None` 时，先问“**这条 API 真的需要我读的东西吗**”** —— ★ 而不是去修那个读取。|真机：`tools/prove_hole_wizard_wrapper.py`；证据 `output/hole-wizard-wrapper-evidence.json`；本仓：`scripts/sw_hole_features.py` · `scripts/sw_simulation.py` 的 `resolve_face_selector`；对照事实 464 / 466 / 469 / 470 |
+| 472 | **★★★ 我把四个阵列归进了边界，★ 而**自己的文档早就否了它****（★ 第**十**次“失败在我这边”） —— 2026-10-03（轮 596）。
+     ★ **我做了什么**：查到 `ITablePatternFeatureData` / `ICurveDrivenPatternFeatureData` / `IFillPatternFeatureData` / `ILinearPatternFeatureData`
+       **四者全带 `AccessSelections`** ⇒ ★ 我当场判定“**四个阵列同一条边界**”，并准备写进边界文档。
+     ★ **而真相在 `docs/toolbar-gaps-backend-limits.md` §2.2**（★ **标题就是**：“**本仓早已按新架构实现，并有真机证据**”）：
+     ```
+     scripts/sw_pattern.py  **428 行**：
+        configure_linear_pattern      ← CreateDefinition(swFmLinearPattern) → 设属性 → CreateFeature
+        configure_curve_driven_pattern ← CreateDefinition(swFmCurveDrivenPattern)
+        **edit_selection**              ← ★ **选区事务**（★ 而那正是绕过指针族的做法）
+     ★ **真机证据 11 份**：`output/linear-pattern-*.json` · `pattern-*.json` · …
+     ★ 而**结论逐字**："⇒ **线性阵列族不能记成「后端到不了」**；它属于**“旧入口废弃、新架构已做”**那一类。"
+     ```
+     ⇒ ★★ **故我那条判定是错的** —— ★ 而**错因正是本仓那条纪律**：★ **先读自己的文档**（★ 事实 55 / §2.2 就是**第一现场**）⚠
+     ★★ **而更值钱的是**：★ 差点让我把“**四个阵列”又写进一遍**边界**”** —— ★ 而那会是**一次痛苦的误判**（★ 与轮 359–362 同族）。
+       ★ 它们真正该做的是：★ **读 §2.2 那条新架构、照它写**（★ 而**不是归入边界**）。
+     ★★ **方法论**：★ **当一个结论指向“边界”时，先去**那份边界文档里找一遍** ** —— ★ 它很可能**早就记录了例外** ⚠
+       （★ 本例：边界文档自己的 §2.2 就是那个例外，★ 而标题里就写着“不能记成到不了”）✓
+     ★ 本轮**不改台账**（★ 因为改判要按 W2 判据逐条走）；★ 而**把这个纠正记下来** ✓|本仓：`docs/toolbar-gaps-backend-limits.md` §2.2（★ 第一现场）· `scripts/sw_pattern.py`；对照事实 47 / 55 |
+| 473 | **★★★ §2.2 那条“新架构”的**机理**：它**没有绕过指针族**、★ 而是**第 2 参传 `None`**** —— 2026-10-03（轮 597）。
+     ★ **怎么读出来的**：读 `scripts/sw_pattern.py` 的 `_SelectionAccess`：
+     ```
+     class _SelectionAccess:                    ← ★ “选区事务”（★ 26 行）
+         def __enter__(self):
+             _checked(self._data, "AccessSelections", self._model, **None**)  ← ★ **第 2 参是 `None`**
+             return self._data
+         def __exit__(self, ...):
+             _checked(self._data, "ReleaseSelectionAccess")               ← ★ 异常路径也释放
+     ```
+     ⇒ ★★ **故所谓“新架构”**照调 `AccessSelections`**** —— ★ 而差别在**第 2 参**：
+       ★ 事实 47 试的是 **空 Dispatch**（`VARIANT(VT_DISPATCH, None)`）⇒ 报 `类型不匹配`；
+       ★ 而 `sw_pattern.py` 传的是 **`None`** ⇒ ★ **那可能正是差别** （★ **本轮未真机对比过两者**）⚠
+     ★★ **而本轮另一个实在发现是常量真值**（★ 取自**本机反射 dump**，铁律 4）：
+     ```
+     swFmFillPattern  = **105**
+     swFmTablePattern = **106**
+     ★ 而 **`swFmLinearPattern` / `swFmCurveDrivenPattern`**
+        ★ **在反射 dump 里按这两个名字找不到** ⚠
+        （★ 而 swapi 的 `swFeatureNameID_e` 页**只列了 Fill/Table 两条** —— ★ 事实 43 记过“那个页装的是**描述不是数值**”）
+     ```
+     ★ **下一步很具体**：
+       ① ★ 真机对比 `AccessSelections(model, None)` 与 `AccessSelections(model, 空 Dispatch)` —— ★ 那直接决定“指针族能不能留条活路”；
+       ② ★ 把 `swFmLinearPattern` / `swFmCurveDrivenPattern` 的**真值**查出来**（★ 而**不是猜**）。
+     ★ **而本轮把一个空壳探针删了**（★ 它的循环体没真测）—— ★ **不留假东西** ✓|本仓：`scripts/sw_pattern.py`（`_SelectionAccess` L160）· `_raw/enum_values_sldworks.txt`；对照事实 43 / 47 / 472 |
+| 474 | **★★★★ `AccessSelections` 的四种第 2 参形态**全到不了****（★ 而**那同时撤销了 §2.2 那句“新架构已做”**） —— 2026-10-03（轮 598）。
+     ★ **怎么测的**：在一个真的 `CreateDefinition(swFmFillPattern = **105**)` 产物上（★ 值取自**反射 dump**），★ **四种第 2 参形态各试一次**：
+     ```
+     `None`（★ `sw_pattern.py` 用的）  ⇒ **`类型不匹配。`**（★ 位置 **2**）
+     空 Dispatch（★ 事实 47 用的）     ⇒ **`服务器出现意外情况`**（`0x80010105`）
+     空变体                        ⇒ `类型不匹配`（位置 2）
+     byref 空 Dispatch               ⇒ `远程过程调用失败`
+     ```
+     ⇒ ★★ **故两条**：① **事实 47 对、而理由可更精确**（★ 不只空 Dispatch、**`None` 也不行**）；
+       ② ★★ **`sw_pattern.py` 那套“新架构”的选区事务本身调不通** ⚠
+     ★★★ **而本轮还发现了一件更重要的事**：§2.2 引的那些“真机证据”**记的是失败**：
+     ```
+     `output/linear-pattern-geometry-evidence.json` 逐字：
+        trial = pattern_named_feature
+        ★ raw_none = **True** · raw_type = **NoneType**
+        ★ tree_before_after = [**7, 7**]（★ 树**没长**）· geom_changed = **False**
+     ```
+     ⇒ ★★ **故那些证据证的是“调了、而什么都没发生”** —— ★ **而不是“已实现”** ⚠
+       ★ 而那正是**第五种形态（静默 no-op）**的形态（★ 事实 439 那族）。
+     ★ **故本轮撤销了 §2.2 那句结论**，并写了 **§2.2.1**（★ 含撤销依据 + 四种形态的错误码）：
+       ★ **线性阵列族在 pywin32 这条后端上目前到不了**（★ 而依据比原先更硬）；
+       ★ 而**“换后端能不能行”仍不写结论**（★ 那没有本机实测）。
+     ★★ **方法论**：★ **引用证据时，要读**证据里的数字**、★ 而不是只读它的文件名** ** —— ★ 本例的 11 份证据**看着像成功、而内容是失败** ⚠|真机：`tools/probe_access_selections_param2.py`；证据 `output/access-selections-param2-evidence.json` · `output/linear-pattern-geometry-evidence.json`；文档：`docs/toolbar-gaps-backend-limits.md` §2.2.1（★ **新增**）；对照事实 47 / 439 / 473 |
+| 475 | **★★ 名单的**完整性**没人守**：「草图驱动的阵列」**漏在可攻关里**（★ 而它与那四个同族） —— 2026-10-03（轮 601）。
+     ★ **怎么发现的**：列一下当前的四个桶，★ 就看出不一致了：
+     ```
+     ★ **后端到不了**：线性阵列 · 曲线驱动的阵列 · 表格驱动的阵列 · 填充阵列
+     ★ 而「**草图驱动的阵列**」**还在「可攻关」里** ⚠
+     ★ 而 §2.3 那张表里**明明写着**：`ISketchDrivenPatternFeatureData` **接口根本不存在**
+     ```
+     ⇒ ★★ **故它该进“后端到不了”（★ 而**名单里漏了它**）** —— ★ 而本轮**补上了**；台账 ⇒ **后端到不了 4 → 5**、**可攻关 8 → 7** ✓
+     ★★★ **而这一次暴露了一个新的门禁缺口**：★ 上一轮那道门禁**只查名单内部**（★ 字段齐不齐、依据指得到吗），
+       ★ **而不查“该在名单里的**漏了没**”** ⚠
+     ★ **而那个判据是可执行的**（★ 待做）：
+       ① ★ 台账里 `tier == "可攻关"` 而 `api` 提到一个 **带 `AccessSelections` 的 `*FeatureData`** ⇒ ★ 疑似该进名单；
+       ② ★ `api` 里的名字**在全接口都查不到**（★ 铁律 5）⇒ ★ **不该算“可攻关”**（★ 那是**另一个桶**的问题）。
+     ★★ **方法论**：★ **把四个桶并列列出来看，不一致就自己浮出来了** ** —— ★ 而不是逐条去想“这条对不对” ✓|台账：`docs/toolbar-ledger-verified.json`；名单：`docs/backend-limited-items.json`（★ **10** 条）；文档：`docs/toolbar-gaps-backend-limits.md` §2.3；对照事实 474 |
+| 476 | **★★★ 扫描曲面：三代全标废弃、★ 而代之的新架构**也撞同一道门槛****（★ 与四个阵列同） —— 2026-10-03（轮 603）。
+     ★ **代际**（★ 全库都在，★ 而**三代全标废弃**）：
+     ```
+     InsertSweepSurface   （ **7 参**） ⇒ Obsolete. Superseded by InsertSweepSurface2
+     InsertSweepSurface2  （**11 参**） ⇒ Obsolete. Superseded by InsertSweepSurface3
+     InsertSweepSurface3  （**14 参**） ⇒ **Obsolete. See Remarks**：
+        "**SOLIDWORKS 2018 introduces a new sweep architecture**, making this method obsolete.
+         See **Sweep Features and `SweepFeatureData`** objects"
+     ★ 而 `InsertProtrusionSwept4`（台账写的那个）**也是同一句**。
+     ```
+     ⇒ ★★ **故三代都指向同一个新架构**：`CreateDefinition(swFmSweepSurface)` + `ISweepFeatureData`。
+     ★ 而**而它撞在同一道门槛上**（★ 真机）：
+       `ISweepFeatureData` 共 **53** 成员、**带 `AccessSelections`** 与 `ReleaseSelectionAccess`
+       ⇒ ★ 而那道门槛已证**第 2 参四种形态全到不了**（事实 474）。
+     ★ **故它也该进「后端到不了」** —— ★ 而本轮补上了；台账 ⇒ **后端到不了 5 → 6**、**可攻关 7 → 6** ✓
+     ★★ **而本轮还发现了上一道门禁的一个盲点**：
+       ★ 完整性门禁的判据是「`api` 里有带 `AccessSelections` 的 **`*FeatureData`**」，
+       ★ 而台账那条的 `api` 写的是 **`InsertProtrusionSwept4(Surface)`**（★ **不含那种字样**）⇒ ★ **故它没被怀疑** ⚠
+       ★ 而修法很具体：★ **判据该加一条**——「`api` 里的成员**已标废弃、而它指向的新架构接口带 `AccessSelections`**」。
+     ★★ **方法论**：★ **完整性门禁是“静态判据”，★ 而**静态判据总有盲点** ** —— ★ 故它自己就写着“**不代表名单已经完整**” ✓
+       （★ 而本轮就是靠**逐条读那些剩下的可攻关**发现的）。
+     ★ **而本仓早就记着同族的一句**：`scripts/sw_surface_ref_ops.py` 逐字：
+       「`IModelDoc2.InsertSweepRefSurface` 与 `…RefSurface2` **两个都标 Obsolete**」✓|官方：`C:\swapi\types\IFeatureManager\InsertSweepSurface{{,2,3}}.md` × `ISweepFeatureData\`（53 成员）；名单：`docs/backend-limited-items.json`（★ **11** 条）；对照事实 415 / 474 / 475 |
+| 477 | **★★★ 三条路一起查：两条撞门槛、★ 而**一条真有活路****（`InsertFreeform2` **未标废弃**） —— 2026-10-03（轮 605）。
+     ★ **起因**：上一轮给完整性门禁加了一条**新提示**（★ 即
+       「`api` 里点名的成员**已标废弃**」—— ★ 而那正是**事实 433** 那条纪律的机器版）
+       ⇒ ★ **它立刻找出 2 条**：「曲线-投影曲线」与「自由样式」✓
+     ★★ **而顺着查下去，三条代际全查清了**：
+     ```
+     ① `InsertProjectedSketch`  ⇒ 弃 ⇒ `InsertProjectedSketch2` ⇒ **也弃**
+        逐字："Obsolete. See **`IProjectionCurveFeatureData`** and `IFeatureManager::CreateDefinition`"
+        ★ 而那接口（**11 成员**）**带 `AccessSelections`** ⇒ ★ **同一道门槛**
+     ② `InsertFreeform`           ⇒ 弃 ⇒ **`InsertFreeform2`** ⇒ ★★ **未标废弃**
+        签名：`InsertFreeform2(Nsided, Symmetric0, Symmetric1, Angle)` ⇒ **4 参**
+        ★ 而 **`IFreeformFeatureData` 接口不存在** ⇒ ★ **它不走 FeatureData 那条路**
+     ③ `InsertSweepSurface{{,2,3}}`   ⇒ 三代**全弃** ⇒ `ISweepFeatureData`（**53 成员**）**带 `AccessSelections`**
+     ```
+     ⇒ ★★ **故两条进了「后端到不了」**（投影曲线 · 扫描曲面）；
+       ★★★ **而「自由样式」是本轮最重要的发现**：**`InsertFreeform2` 未标废弃、且不走 `FeatureData`**
+       ⇒ ★ **故它可能**真的能做****（★ 而它正在台账的“可攻关”里）—— ★ **而那是下一轮的靶心** ✓
+     ★ 台账：**后端到不了 6 → 7**、**可攻关 6 → 5**。
+     ★★ **方法论**：★ **给门禁加一条“提示”，就等于给自己加一个“待办生成器”** ** —— ★ 而它比“逐条去想”可靠得多 ✓
+     ★ 而**本轮还让门禁自己说出了它的盲点**：它的判据 ① 只认 `*FeatureData` 字样，
+       ★ 故**台账写旧入口名的那些逃过了它**（★ 而新提示正是为此而加）⚠|官方：`C:\swapi\types\IModelDoc2\InsertProjectedSketch{{,2}}.md` · `IFeatureManager\InsertFreeform{{,2}}.md` · `ISweepFeatureData\` · `IProjectionCurveFeatureData\`；名单：`docs/backend-limited-items.json`（★ **12** 条）；对照事实 433 / 474 / 475 / 476 |
+| 478 | **★★ 自由样式：五步链**全调通**、★ 而 `InsertFreeform2` 仍回 `None`**（★ 线索指向**选区里有两个东西**） —— 2026-10-03（轮 606）。
+     ★ **怎么跑的**：`tools/prove_freeform.py`（★ 零弹窗）—— ★ **严格按官方 `## Remarks` 的五步链**：
+     ```
+     ① 射线选面 ⇒ `ray=True`、★ **而 `GetSelectedObjectCount2(-1)` = **2**** ⚠
+     ② `SetFreeformCurveData(0, 0.25, 0,1,0, 0,1,0)`      ⇒ **不报错** ✓（**8 参**）
+     ③ `SetFreeformPointData(0, 0.25, 0.5, 0,0,0)`        ⇒ **不报错** ✓（**6 参**）
+     ④ `SetFreeformBoundaryContinuity(0, -1)`            ⇒ **不报错** ✓（**2 参**）
+     ⑤ `InsertFreeform2(True, False, False, 0.0)`        ⇒ ★ **回 `None`**（★ 特征 7 → 7）⚠
+     ```
+     ★ **而对照组（★ 不加曲线与点）同样回 `None`** —— ★ 故问题**不在第 2–4 步**。
+     ★★★ **而本轮最有价值的是那个线索**：★ `selected = **2**` —— **选区里有两个东西**，
+       ★ 而官方第 1 步写的是“Select the **face**”（★ **单数**）⇒ ★ **故下一步是：让选区里**只有一个面**** ✓
+     ★ **而它与那四个阵列的对比值得记**：
+       ★ 阵列那四条**连第一步都过不去**（`AccessSelections` 第 2 参四种形态全到不了，事实 474）；
+       ★ 而本条**四步全过、只卡在最后一步的一个前提上** —— ★ 故它**仍在可攻关里是对的** ✓
+     ★★ **方法论**：★ **当一条链“前面都不报错、最后一步回 `None`”时，去读**第一步的返回值** ** —— ★ 而不是去调中间那几步。
+       （★ 本例：那个 `2` 就在第一步的证据里，★ 而我一开始只看了 `ray=True`）⚠
+     ★ **本轮不登记能力**（★ 未建成 —— 不假装做到）。|真机：`tools/prove_freeform.py`；证据 `output/freeform-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertFreeform2.md`（**`## Remarks` 的五步**）× 反射 arity（**4 / 8 / 6 / 2**，★ 四个全一致）；对照事实 474 / 477 |
+| 479 | **★★ `SelectByRay` 之后选区里有几个：**不清就选 = 2 · 先清再选 = 1****（★ 而它**不是**自由样式回 `None` 的真因） —— 2026-10-03（轮 607）。
+     ★ **怎么测的**：`tools/probe_select_by_ray_count.py`（★ **四种取法对照**）：
+     ```
+     ★ 不清就选（★ 旧探针那样）        ⇒ count = **2**
+        [1] **type=22**（★ 不是面/边 —— 是**残留**）· [2] **FACE(2)** Area=0.0036
+     ★ **先清再选**                  ⇒ count = **1**（★ 只一个 **FACE**、面积 0.0036）✓
+     ★ 先清再选 · **Mark=1**         ⇒ count = 1 ✓
+     ★ 选完**再清一次**再选           ⇒ count = 1 ✓
+     ```
+     ⇒ ★★ **故定则**：**发射线前先 `ClearSelection2(True)`** —— ★ 否则选区里会留下上一步的残留对象。
+       （★ 而官方第 1 步写的是 "Select the **face**" —— **单数**）
+     ★★★ **而修了它之后，`InsertFreeform2` 仍回 `None`** ⚠
+       （★ 真机：`freeform_0_of_2`、`selected` 从 **2 → 1**）
+       ⇒ ★ **故「选区里有 2 个」并不是真因** —— ★ 而那个修正**仍然对**（★ 官方要单数）。
+     ★★ **而官方 md 里还有一句我一直没做**，逐字：
+       「**Record a macro while interactively creating a Freeform feature, then examine the macro**
+         to see the order in which the Freeform-...」
+       ⇒ ★★★ **那是官方**自己给的路**（★ "去看宏"）** —— ★ **而那是下一步** ✓
+     ★ **而本轮的收获是把一个候选因果排除了**（★ 选区数），★ 而它**与取到一条定则同价** ✓
+     ★★ **方法论**：★ **排除一个候选因，就是一步进展** —— ★ 而不只有"建成"才算进展。
+       （★ 而它同时留下了一条**可复用的前置规则**：发射线前先清选区）✓
+     ★ **本轮不登记能力**（★ 未建成 —— 不假装做到）。
+|真机：`tools/probe_select_by_ray_count.py` · `tools/prove_freeform.py`；
+证据 `output/select-by-ray-count-evidence.json` · `output/freeform-evidence.json`；
+官方：`C:\swapi\types\IFeatureManager\InsertFreeform2.md`（**`## Remarks`**）；
+对照事实 474 / 477 / 478 |
+| 480 | **★★★ 自由样式的官方材料**已穷尽**：ProgGuide 那页**是一张图**·2839 个官方示例里** 0 个 Freeform**** —— 2026-10-03（轮 608）。
+     ★ **怎么找到那页的**：★ `SetFreeformCurveData.md` 的 **`CurveParameter`** 参数挂着一条链接，
+       链接文字是「**Where on the face to add the curve**」、目标是
+       `docs/sldworksapiprogguide/Miscellaneous/**FreeFormCurves.md**` ✓
+       ★ **而它全文只有 24 个字符**：`![](FREEFORMCURVES.BMP)` —— ★ **就是一张示意图** ⚠
+     ★ **而同类的两个数据点**：
+     ```
+     C:\swapi\examples\  共 **2839** 个官方示例文件
+        ★ 其中提到 Freeform / FreeForm 的：**0** 个          ⚠
+        ★ 名字带 "Free" 的只有 `Insert_Free_Point_Curve_Feature_Example_*`
+          —— ★ 那是「**自由点曲线**」、★ **不是「自由样式」**
+             （★ 名字像而东西不同 —— ★ 铁律 5 的典型陷阱）⚠
+     ★ 全 swapi 库里提到 `InsertFreeform2` 的文件：**6 个** —— 全是 API 参考页 + 索引页
+     ```
+     ⇒ ★★ **故官方给的 Freeform 材料**只有两样****：
+       ★ ① `InsertFreeform2.md` 的 **`## Remarks` 五步链**（★ 事实 478 已用）
+       ★ ② 一张 BMP 示意图
+     ★ **而 md 里"去看宏"那句在本机**走不通**：
+       ★ 它要「Record a macro while **interactively** creating a Freeform feature」——
+       ★ 而**本会话只能调 API、不能交互式拖点** ⚠
+     ⇒ ★★★ **故"官方文档是第 0 步"这条路**走到了尽头** —— ★ **而尽头是"官方没有"**。
+       ★★ **⇒ ★ 故剩下的路只有**逐参数试****（★ 而那**正是本仓说的"最后手段"**）✓
+     ★ **而本仓里已有那两个族的引用**（★ 不是全新领域）：
+       `scripts/sw_api_sldworks.py`（★ 反射表）· `scripts/sw_loft.py`
+     ★ **本轮不登记能力**（★ 未建成 —— 不假装做到）。
+     ★★ **方法论**：★ **"没找到例子"要和"找到了例子"一样记下来** ——
+       ★ 因为**下一次有人查同一个成员时，就不必再花 2839 个文件去搜一遍** ✓
+       （★ 而它同时把结论从「还没试」推进到「**官方没有、只能试**」）
+|真机/静态：`C:\swapi\examples`（**2839** 个文件 · **0** 命中）·
+`C:\swapi\docs\sldworksapiprogguide\Miscellaneous\FreeFormCurves.md`（**24 字符**）；
+官方：`C:\swapi\types\IFeatureManager\InsertFreeform2.md` · `SetFreeformCurveData.md`；
+对照事实 477 / 478 / 479 |
+| 481 | **★★★ 自由样式：十格参数矩阵**全回 `None`**、★ 而**一格都没报错****（★ 一条**新的失败形态**） —— 2026-10-03（轮 609）。
+     ★ **承事实 480**（★ 官方材料已穷尽 ⇒ 只剩"逐参数试"）⇒ ★ 本轮把**该试的都试了**：
+     ```
+     ★ 覆盖（★ 每一条都从官方 md 原文推出）：
+       `Nsided` = **True / False**（★ 官方："True to use the new Freeform algorithm, false to use the old one"）
+       `Continuity` = **-1 / 0 / 1 / 2**（★ 官方取值表全四个）
+       `Direction` = **0 / 1**（★ 官方："valid values are either 0 or 1"）
+       曲线数 = **1 / 2**
+     ★ 结果：**freeform_matrix_0_of_10**
+       ★ **十格全回 `None`** · ★ **特征树全 7 → 7** · ★ **而每格 `selected = 1`**（★ 前置全对）
+       ★ **而**没有任何一格抛异常** ⚠
+     ```
+     ⇒ ★★ **故**不是参数的问题**** —— ★ 十格已覆盖两值 × 四个 × 两值 × 两值。
+     ★★★ **而它与那四个阵列**有一处关键差别**：
+       ★ 阵列那四条卡在 `AccessSelections`（★ **第一步就过不去**，事实 474）；
+       ★★ **而自由样式**连 `AccessSelections` 都不需要、四步全调通、★ **却仍回 `None`** ⇒
+       ⇒ ★★★★ **故这是一条**新的失败形态****：
+         ★ **「参数全合法 · 前置全满足 · 无任何报错 · 而返回 `None`」**
+         （★ 而它**不属于**已记的五种：★ ①回对象 ★ ②回 None 而**有**报错 ★ ③报错
+           ★ ④成员不在对象上 ★ ⑤静默 no-op**改了东西**）
+         ★ 本条的特别之处：**它没改任何东西，★ 而它也不报错** ⚠
+     ★ **按事实 53 停手**（★ 本条已跨 5 轮：477–481）⇒ ★ **故结论是**：
+       ★★ **"自由样式"在 pywin32 这条后端上**没有产出特征**** ——
+       ★ 而**归因要写准**：★ **不是"参数没找对"**（★ 十格已试遍），
+         ★ **而是"这条后端上这个成员不产出特征"**。
+     ★ **而它**不该进"后端到不了"名单**** —— ★ 因为那个名单的判据是 `AccessSelections`（★ **指针族**），
+       ★ 而本条**不属于那一族**（★ 它连 `AccessSelections` 都不需要）。
+       ⇒ ★ 故**它留在"可攻关"里、并把这条事实挂在它上面** ✓
+     ★ **本轮不登记能力**（★ 未建成 —— 不假装做到）。
+     ★★ **方法论**：★ **"十格全 `None` 而全不报错"是一个**有信息量的否证**** ——
+       ★ 它把结论从「参数可能不对」推进到「**这条路不产出**」；
+       ★★ 而**"没报错"比"报错"更难归因** —— ★ 故**矩阵要覆盖到"该试的都试了"才能下这个结论** ✓
+|真机：`tools/prove_freeform_matrix.py`（★ **10 格** · 零弹窗）；
+证据 `output/freeform-matrix-evidence.json`；
+官方：`C:\swapi\types\IFeatureManager\InsertFreeform2.md` · `SetFreeformBoundaryContinuity.md`；
+对照事实 474 / 477 / 478 / 479 / 480 |
+| 482 | **★★★★ 曲面上偏移 —— ★ **按对象选边 + 补设 mark + 收尾 `InsertSketch`** ⇒ **真机建成**** —— 2026-10-03（轮 612）。
+     ★ **承台账那条的待办**（★ 我自己写的："读它的 `## Remarks` 看**选区与面的要求**"）。
+     ★★★ **官方三样齐**：
+     ```
+     ① `SketchOffsetOnSurface.md` 的签名 `(Offset, Reverse, UseFront, MakeConstruct)`
+        ★ `UseFront` 逐字："**Although not currently used, must be set to true**"
+     ② **`## Remarks` 三条**（★ 而那三条**我一条都没做全**）：
+        a) 要**测地线**偏移请用 `GeodesicSketchOffset`（★ 另一个方法）
+        b) ★★ "Before…call **`SelectByID2`** for **each edge** to offset and set
+              **Append to true** and **Mark …**"
+        c) ★★ "After…call **`ISketchManager::InsertSketch`** to rebuild the model with the 3D sketch"
+     ③ ★★★ **`## Examples` 给了三个**（C# / VB.NET / VBA）—— ★ **而例子给出了"两遍选边"**，
+          ★ 那是**签名与 Remarks 都给不出**的：
+        ```
+        SelectByID2("", "EDGE", x,y,z, **True**, **0**, Nothing, 0)   \u00d74  \u2190 \u7b2c\u4e00\u904d mark=0
+        ClearSelection2 True
+        SelectByID2("", "EDGE", x,y,z, **True**, **1**, Nothing, 0)   \u00d74  \u2190 \u7b2c\u4e8c\u904d mark=1
+        SketchOffsetOnSurface(0.01, False, True, False)
+        ClearSelection2 True
+        swSketchManager.InsertSketch True                            \u2190 \u2605 \u6536\u5c3e
+        ```
+     ```
+     ★★ **而本轮修了**两个真因**（★ 都靠真机逼出来）：
+     ```
+     \u2460 \u2605 **`SelectByID2("", "EDGE", x,y,z, \u2026)` \u4e00\u6761\u8fb9\u90fd\u9009\u4e0d\u4e2d**\uff08\u2605 \u771f\u673a\uff1a
+        \u2605 \u89d2\u70b9\u4e0e\u4e2d\u70b9\u4e24\u79cd\u5750\u6807\u90fd `selected = **0**`\uff09\u26a0
+        \u2605 \u800c**\u4e8b\u5b9e 32 \u65e9\u5c31\u5199\u7740**\uff1a\u9009\u5b9e\u4f53\u7684\u53ef\u884c\u8def\u5f84\u662f
+          **`IEntity.Select4(Append, Callout)`\uff08\u6309**\u5bf9\u8c61**\u9009\uff09**\u3002
+        \u2605 \u6545\u6539\u7528 `entities_on_body(EDGE)` + `select_object(\u2026, append=)` \u21d2 **\u9009\u4e2d 4 \u2713**
+     \u2461 \u2605 **`Select4` \u6ca1\u6709 mark \u53c2\u6570** \u21d2 \u2605 \u6545\u7528
+        **`ISelectionMgr.SetSelectedObjectMark(i, mark, -1)`** \u8865\u8bbe \u2713
+        \uff08\u2605 \u800c\u771f\u673a\u56de `marked = [False, False, False, False]` \u2014\u2014
+         \u2605 **\u800c\u9009\u4e2d\u6570\u4ecd\u662f 4\u3001\u800c\u7279\u5f81\u7167\u6837\u5efa\u6210**\uff0c
+         \u2605 \u6545\u90a3\u4e2a `False` **\u5e76\u4e0d\u963b\u6b62**\uff09
+     ```
+     ★★★★ **而结果（★ 三格对照）**：
+     ```
+     \u2605 \u5b98\u65b9\u53c2\u6570 + **\u6536\u5c3e `InsertSketch`**  \u21d2 ok=True  \u00b7 \u7279\u5f81 7 \u2192 **9** \u00b7 \u65b0\u589e **`\u57fa\u51c6\u97621`** + **`\u8349\u56fe2`** \u2713
+     \u5bf9\u7167\uff1a\u5b98\u65b9\u53c2\u6570 \u00b7 **\u4e0d\u6536\u5c3e**            \u21d2 ok=False \u00b7 \u7279\u5f81 **7 \u2192 7** \u00b7 \u65b0\u589e **[]**        \u26a0
+     \u5bf9\u7167\uff1a**`Reverse=True`**                  \u21d2 ok=True  \u00b7 \u7279\u5f81 7 \u2192 9\uff08\u2605 \u65b9\u5411\u53d8\u4e86\u800c\u7279\u5f81\u7167\u5efa\uff09
+     ```
+     ⇒ ★★ **故对照那格**证明**了官方 Remarks 第 ③ 条**：
+       ★ **`InsertSketch` 就是"把它重建出来"的那一步** —— ★ 不做它，**一条特征都不长** ✓
+     ⇒ ★★★ **故 `SketchOffsetOnSurface` 的工作流是**：
+       ★ **它回 `False` 是**正常的****（★ 它只"创建了 3D 草图"），★ **而 `InsertSketch` 之后才成形** ✓
+     ⇒ ★★ **故 2026-10-01 那次"前置全满足仍回 False"的结论要**更正****：
+       ★ 那个 `False` **不是失败** —— ★ 而是**缺了收尾那一步** ⚠
+     ⚠ **仍未查**：`GetActiveSketch2` 回的 `is_3d=False` / `segments=0`
+       —— ★ 可能是**拿错了草图对象**或**读数时机不对**（★ 而**特征树那两条硬判据已足够**）。
+     ⚠ **仍未查**：`GeodesicSketchOffset`（★ 官方提的测地线那个）。
+|真机：`tools/prove_offset_on_surface_per_example.py`（★ **三格** · 零弹窗）；
+证据 `output/offset-on-surface-per-example-evidence.json`；
+官方：`C:\swapi\types\IModelDocExtension\SketchOffsetOnSurface.md`（**Remarks + Examples**）·
+`C:\swapi\examples\Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md`；
+本仓：`scripts/sw_selection_spec.py` 的 `entities_on_body` / `select_object`；
+对照事实 32 / 460 / 479 / 480 |
+| 483 | **★★★ 测试批 T1：一名 subagent 的产出**经我逐条对照官方原文核过 —— ★ 四项全对、零编造**** —— 2026-10-03（轮 613）。
+     ★ **背景**：用户要求「派一个团队成员干活，然后**严格检查质量**」。★ 我先试了
+       `spawn_teammate` ⇒ ★ **报 `Team member limit 8 reached`**（★ 名额被本会话早先的
+       6 个 `failed` + 2 个 `inactive` 成员占满，★ **而我没有"移除成员"的工具**）⚠；
+       ★ 又试 `verify_rollout` ⇒ ★ **报 `no adapter registered for provider "stepfun"`**（★ 判优器的模型不可用）⚠
+       ⇒ ★ 故改用 **`subagent`**（★ 普通子智能体、★ 不占团队成员名额）✓
+     ★ **派给它的活（T1）**：★ 读 `ISketchManager\SketchUseEdge3.md` 的签名/参数/Remarks
+       **+** 它 `## Examples` 段那个官方例子，★ 产出**调用序清单**（★ 纯静态、不许写文件、不许跑命令）。
+     ★★★ **而我核了什么（逐条对照官方原文）**：
+     ```
+     \u2460 \u2605 \u7b7e\u540d\u4e0e\u53c2\u6570\u4e2a\u6570\uff1a\u4ed6\u8bf4 **2 \u4e2a**
+        \u2605 \u6211\u6838\uff1a`SketchUseEdge3( Chain, InnerLoops )` \u21d2 \u9017\u53f7\u6570 **1** \u21d2 **2** \u2713 **\u5bf9**
+     \u2461 \u2605 \u4f8b\u5b50\u90a3\u51e0\u884c\uff1a\u6211 grep \u51fa L40/41/44/45/47/49/52\uff0c**\u4e0e\u4ed6\u8868\u683c\u9010\u5b57\u4e00\u81f4** \u2713
+     \u2462 \u2605 **mark \u6570\u503c**\uff1a\u4ed6\u8bf4\u201c\u4f8b\u5b50\u91cc\u5168\u662f `0`\u201d
+        \u2605 \u6211\u626b\uff1a**3 \u5904** `SelectByID2`\u3001**mark \u5168 `0`** \u2713\uff1b
+        \u2605 \u800c\u4ed6\u8fde **`Append` \u7684\u4e24\u79cd\u503c\uff08`True`/`False`\uff09\u4e5f\u5199\u4e86**\uff08\u2605 \u7ec6\uff09\u2713
+     \u2463 \u2605 **\u201c\u5b98\u65b9\u6ca1\u5199\u201d\u7684\u8fb9\u754c**\uff1a\u4ed6\u8bf4 `swViewSketchRelations` \u7684**\u6570\u503c\u8fd9\u4e09\u9875\u91cc\u6ca1\u5199**
+        \u2605 \u6211\u6838\uff1a`SketchUseEdge3.md` **\u6709**\u90a3\u4e2a\u540d\u5b57\u3001\u2605 \u800c `SetUserPreferenceToggle.md` **\u6ca1\u6709** \u2713 **\u51c6**
+     ```
+     ⇒ ★★★ **验收结论：合格** —— ★ **零编造 · 零臆测 · 出处逐条齐 · 连"官方没写"都标得准** ✓
+     ★ **而它**答出了我台账上那条待办****：★ 我写的「待重查第 2 参（侧影开关）与选区前置」
+       ⇒ ★ **答案**：★ `SketchUseEdge3(Chain=False, InnerLoops=True)` ·
+         ★ **面用 `SelectByID2("", "FACE", <坐标>, …, mark=0)` 选** ·
+         ★ **且在**草图已打开**的状态下调用**（★ `InsertSketch True` 在前、★ 之后再用它收尾）✓
+     ★★ **而真机验证时又踩了同一个坑**（★ 这是本轮的另一条事实）：
+       ★ 照官方例子用 `SelectByID2("", "FACE", x,y,z, …)` 选面 ⇒ ★ **四格全 `selected = 0`** ⚠
+       ★ 而**事实 32 / 482 都写着**：选实体要用 **`IEntity.Select4`（按对象）**
+       ⇒ ★ 改用 `entities_on_body` + `select_object` ⇒ ★ **`selected = 1`** ✓
+       ★★ **而即使选上了（1 个面），四格仍全回 `False`、段数 0→0** ⚠
+         ——— ★ 与**事实 481**（自由样式十格）**同一形态**：★ 参数合法、无报错、不产出。
+     ⚠ **仍未查**：★ 官方例子开的那个草图是在**新建的基准面**上（★ 而我在**实体的顶面**上开草图）；
+       ★ 而 `InnerLoops=True` 要"face 有内环"（★ 而我的立方体面没有内环）⇒ ★ **下一轮该造一个带孔的板**。
+     ★ **本轮不登记能力**（★ 未建成 —— 不假装做到）。
+     ★★ **方法论（本轮最有价值的）**：★ **"派活 + 逐条核"这个流程本身是可用且有效的** ——
+       ★ 而**核的方式必须是"拿官方原文逐条比"**（★ 而不是"读一遍觉得对"）；
+       ★★ 而★ 那名 subagent **还答出了我台账上挂着的一条待办** —— ★ 那是**净收益** ✓
+|真机：`tools/prove_sketch_use_edge3.py`（★ **四格** · 零弹窗）；
+证据 `output/sketch-use-edge3-evidence.json`；
+官方：`C:\swapi\types\ISketchManager\SketchUseEdge3.md` ·
+`C:\swapi\examples\Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md`；
+对照事实 32 / 481 / 482 |
+| 484 | **★★★★ 投影型分割线（`InsertSplitLineProject`）在本后端**建成**了 —— ★ 而卡了两轮的"前置"其实是**几何**，不是 mark** —— 2026-10-03（接手轮），台账 `特征下拉 · 曲线-分割线`。
+      ★ **起因**：★ 接手时台账那行写着「★ 待重查：官方 `## Remarks` 的 **mark 表**与**选择顺序**」，
+        ★ 而**官方那一页的 Remarks 里就有 mark 表、Examples 里还有完整调用序** ⇒ ★ **我先前根本没读**。
+      ★★ **官方 `## Remarks` 逐字**（`C:\swapi\types\IModelDoc2\InsertSplitLineProject.md`）：
+        ```
+        The sketch to project must be selected using IModelDocExtension::SelectByID2
+        with a mark value of 4.
+        The faces to split must be selected using IModelDocExtension::SelectByID2
+        with mark values of 1.
+        ```
+      ★★ **官方 `## Examples`**（`Create_Projection_Split_Line_Example_VB.htm`）给的**调用序**四步：
+        ```
+        ① SelectByID2("Boss-Extrude1","BODYFEATURE",0,0,0,False, 0,…)
+        ② SelectByID2("Sketch1",      "SKETCH",     x,y,0,True, **4**,…)
+        ③ SelectByID2("",             "FACE", x,y,z,True, **1**,…)
+        ④ Part.InsertSplitLineProject True, True
+        ```
+      ★★★ **真机（`tools/prove_split_line_geometry_per_example.py`，零弹窗）**：
+        ```
+        (True, True)  ⇒ **成**：树新增「分割线1」· 面数 6→7 · 有面 1 环→2 环
+        (True, False) ⇒ 不成      (False, True) ⇒ **也成**
+        ```
+      ★★★ **★ 为什么上一会话"照官方例子做"仍失败 —— 他们只对上了 mark、没对上几何**：
+        · 上一轮探针（`probe_split_line_projection_per_example.py`）的实体是 **Top 面拉 20 mm**
+          ⇒ 实体 **z∈[-30,30]**，★ 而投影草图在 **Front Plane（z=0）** ⇒ ★ **草图被实体夹在中间**；
+        · 而它选的面是 **`GetFaces()[0]`（第一张面）** ⇒ ★ **与投影落点无关**。
+        ⇒ ★★ **官方的真前置是几何**：★ **投影草图所在面要在实体之外、与某个面平行、沿投影方向隔开**
+          （★ 例子：草图 z=0 · 实体 z∈[17.78, 20.32]）。
+      ★★ **单变量对照（`tools/prove_split_line_minimal_matrix.py`，每格先回读标记计数）**：
+        ```
+        M1 正确几何 + 近面（mark 1）      ⇒ 成 · 切开的面**恰在 z = 0.01778 m**（＝投影落点平面）
+        M2 正确几何 + **垂直侧脸**        ⇒ **也成**，★ 而切开的**仍是那张近面**
+                                            ⇒ ★ **选哪张面不影响切哪张：切的是投影落点那张面**
+        M3 正确几何 + **不选面**          ⇒ 不成 ⇒ ★ Remarks 的"面 mark 1"**必要**
+        M4 正确几何 + **不选草图**        ⇒ 不成 ⇒ ★ Remarks 的"草图 mark 4"**必要**
+        M5/M6 上一会话几何（草图在实体内）⇒ ★ 树**新增了「分割线1」、而面数 6→6**（一个面也没切开）
+        ```
+      ★★★ **由此立一条判据（★ 比"树增量"硬）**：★ 分割线这类"切开面"的操作，
+        判据必须含 **实体面数增量** 或 **`IFace2.GetLoopCount` 的环数变化** ——
+        ★ 因为 **M5/M6 证明「特征进了树」并不等于「面被切开了」**。
+      ★ **落地**：`scripts/sw_curve_and_split.py::insert_split_line_project` 已改写
+        （写明官方 mark 表 · 回读前置 · 判据三条一起）；★ 台账那行的 note 已改。
+      |真机：`tools/prove_split_line_geometry_per_example.py` · `tools/prove_split_line_geometry_controls.py` · `tools/prove_split_line_minimal_matrix.py`；
+      证据 `output/split-line-geometry-per-example-evidence.json` · `output/split-line-geometry-controls-evidence.json` · `output/split-line-minimal-matrix-evidence.json`；
+      官方：`C:\swapi\types\IModelDoc2\InsertSplitLineProject.md` · `C:\swapi\examples\Create_Projection_Split_Line_Example_VB.md`；
+      对照事实 417 / 418 / 419 / 420 / 53 / 480 / 482 |
+| 485 | **★★★★ 轮廓型分割线（`InsertSplitLineSil`）也建成了 —— ★ 而它是**新门禁逼出来的**（★ 我自己没想到）** —— 2026-10-03（接手轮）。
+      ★★ **怎么发现的**：★ 我新写 `scripts/check_official_md_claims.py`（扫"官方没给 mark"这类断言、拿官方页核对）
+        ⇒ ★ **它一跑就报了 `mcp-server/tool_specs_batch71.py`**：
+        ```
+        我方断言：（★ 官方 Remarks 没给 mark 表）
+        官方页（InsertSplitLineSil.md）逐字：
+          The item selected for direction must be selected using SelectByID2
+          with a mark value of **2**. The faces to split must be selected using
+          SelectByID2 with mark values of **1**.
+        ```
+        ⇒ ★★ **与投影型是同一个错的形态**（把"官方有 mark"写成"没有"）——
+        ★ 而上一会话在这条上**只选了一个基准面、mark = 0** ⇒ ★ **第一步就错了**。
+      ★★★ **真机（`tools/prove_split_line_silhouette_marks.py`，零弹窗）**：
+        ```
+        S5 上视面 mark **2** + 侧面 mark 1（横着看）⇒ **成** · 面数 +1 ·
+           圆柱侧面 **2 环 → 两张各 1 环**（[1,1,2] → [1,1,1,1]）
+        S6 上视面 mark 2 + **不选面**             ⇒ 不成 ⇒ ★ "面 mark 1" 必要
+        S7 上视面 mark **0** + 侧面 mark 1         ⇒ 不成 ⇒ ★★ **只差 mark**
+                                                     ⇒ ★ **官方那个 2 是承重的**（单变量证明）
+        S1/S2 前视面（法向 = 圆柱轴 +Z）           ⇒ **都不成**
+        ```
+      ★★ **几何前提**：轮廓 = 曲面与视线**相切**的线 ⇒ ★ **视线不能顺着回转轴**
+        （顺着轴时轮廓退化成圆环本身、与已有边重合）⇒ ★ 换**上视面**横着看才成。
+      ★★ **判据要分开**：★ 轮廓型沿曲面切出**两张独立的面**、**不会新增内环**
+        ⇒ ★ 若沿用投影型那条"要有面出现 2 个环"，会把**成功误判成失败**。
+      |真机：`tools/prove_split_line_silhouette_marks.py`；证据 `output/split-line-silhouette-marks-evidence.json`；
+      官方：`C:\swapi\types\IModelDoc2\InsertSplitLineSil.md`；
+      门禁：`scripts/check_official_md_claims.py`；对照事实 417 / 420 / 484 / 486 |
+| 486 | **★★★ 「回 `None` ⇒ 真的没建」这条分类判据被证伪了；而「树长了」也不足以判成** —— 2026-10-03（接手轮）。★ **更正事实 420**。
+      ★ **事实 420 原文逐字**：「一条分类判据：看返回值——「回对象」= 特征其实建了（树外）；「回 `None`」= 真的没建」
+        （★ 它当时据 `tools/probe_split_line_returns.py` 的三条**分割线**全回 `None` 而立）。
+      ★★★ **本轮真机证伪**：
+        ```
+        投影型建成时 ret = **None**（★ 而树新增「分割线1」· 面数 6→7）   ⚠
+        轮廓型建成时 ret = **None**（★ 而树新增「分割线1」· 面数 +1）    ⚠
+        ```
+        ⇒ ★★ **`ret is None` 既不能证明"建了"，也不能证明"没建"** —— ★ 它对分割线这族**零信息量**。
+      ★★ **而"树增量"也不够**（★ 这一条是新的、比更正 420 更有用）：
+        ```
+        M5/M6（草图被实体夹住）⇒ ★ 树**新增「分割线1」**、而 **面数 6→6**（一个面也没切开）
+        ```
+        ⇒ ★★★ **两个教训合起来**：★ 「树增量」只能说明**命令被接受了**，
+          ★ **不能**说明**几何真的变了** ⇒ ★ 判据要落到**几何读数**上（面数 / 环数 / 包围盒）。
+      |真机：`tools/prove_split_line_minimal_matrix.py` · `tools/prove_split_line_geometry_per_example.py`；
+      证据 `output/split-line-minimal-matrix-evidence.json`；对照事实 420（被更正）· 391 · 406 · 484 |
+| 487 | **★★★★ 新门禁 `check_official_md_claims.py`：把「官方没有 X」变成**可机器核对的断言** —— ★ 而它一接上就抓出第二处真错** —— 2026-10-03（接手轮）。
+      ★ **判据**（★ 门禁在**运行时读官方源**，★ 不是读我们自己的转述）：
+        ```
+        ① 在 scripts/*.py 与 mcp-server/*.py 里找「否定词(+可选动词) + <token>」的断言（token 集当前 = {mark}）
+        ② 沿该行**向上**找最近的、能解析到官方页的**主语**成员
+           （解析 = C:\swapi\types\**\<name>.md 存在 **且** front-matter 的 `member:` == <name>）
+        ③ 主语不唯一 / 解析不到 ⇒ **跳过并计数**（★ 不猜 —— ★ 猜错会把**对的断言**报成违规）
+        ④ 解析到了 ⇒ 读那一页；★ 页里**出现了该 token** ⇒ **违规**
+        ```
+      ★★ **三道既有门禁都不管这一层**（★ 这就是缺口的形状）：
+        `check_member_names` 守「名字在**某个**接口里存在」· `check_interface_member_ownership` 守「属于**这个**接口」·
+        `check_unreachable_members` 守「本机**调得动**吗」—— ★ **没有一道守"官方文档里写了没有"**。
+      ★★★ **它接上去当场抓出两条**（★ 逐条人工核过）：
+        ```
+        真阳性 ① mcp-server/tool_specs_batch71.py  InsertSplitLineSil  ⇒ ★ 官方**有** mark（2/1）
+                  ⇒ ★ **直接变成了一次真机攻关**（★ 见事实 485，那条**建成了**）
+        真阳性 ② scripts/sw_curve_and_split.py      InsertSplitLineProject ⇒ ★ 官方**有** mark（4/1）
+        （另有 2 条是**我自己的更正引述**、1 条是**主语认错** ⇒ 前者按"已撤回"跳过、后者进**带理由的豁免**）
+        ```
+      ★★ **配套**：`docs/gate-classification.json` 登记（kind = **hard**）· 接进 `release_check.py` **三处**
+        （函数 + 调用 + **进返回体**）· 负例测试 `tests/test_official_md_claims_gate.py` **6/6 通过** ——
+        ★ 其中最关键的一条**拿修复前的原文**（`git show 9db64e7:scripts/sw_curve_and_split.py`）当输入，
+        ★ 断言门禁**必须报出那条**（★ 事实 62：★ 门禁"写了"不等于"有效"）。
+      ★★ **可复用的一条纪律**：★ **"官方没有 X"与"我查不到 X"是两件事** ——
+        ★ 前者**是可核对的断言**，★ 写进代码前必须**真的核对过**；★ 否则它会**把失败归因错**（★ 本轮两次都是）。
+      |门禁：`scripts/check_official_md_claims.py`；登记 `docs/gate-classification.json`；测试 `tests/test_official_md_claims_gate.py`；
+      对照事实 486 · 485 · 484 · 62 · 5（铁律 5） |
+| 488 | **★★★ 覆盖面缺口批 1：三项真机建成，覆盖率 96/145 (66%) → 99/145 (68%)；★ 而「有实现」≠「能用」当场撞到一个反例** —— 2026-10-03（接手轮），规格 `specs/202-user-coverage-gaps`。
+      ★ **起因**：业主给的是「从 `docs/user-feature-coverage.md` 的视角提升覆盖面」⇒ ★ 缺口 = 该文件 **§八** 的 35 项。
+      ★★ **第一步不是写代码，是量「最便宜的待办」**：
+        ```
+        ① `tools/audit_gap_implementations.py`（★ 新写）：对 35 个缺口项，
+           用 **AST** 量本仓有没有**真调用**该官方成员
+        ② ★★ **为什么必须用 AST、不能用 grep**：★ 本仓的来源块**大量引用官方成员名**（那是它的用途）
+           ⇒ ★ 实测 grep 把 `CreateExplodedView` / `InsertProtrusionBlend2` / `InsertRevolvedRefSurface`
+             都算成"有实现"，★ **而逐行看是在文档串里** ⚠
+        ③ 结果：35 项里 **6 项有真实现**（★ 其余 29 项需从零做或判到不了）
+        ```
+      ★★★ **而"有实现"≠"能用"—— 本轮撞到的反例（★ 这条比结果更值钱）**：
+        ★ AST 报 **样条曲线**"有实现"（`sw_part.sketch_spline`），
+        ★★ **而读那个函数自己的文档串**才发现：它**2026-10-01 轮 141 已真机实测不达** ——
+        `CreateSpline2` 回 `None`（重绘后段数仍 0）· 旧版 `CreateSpline` 在迟到绑定里不存在 ·
+        后继 `CreateSpline3` 末参是 **BYREF `Object&`** ⇒ pywin32 到不了（事实 47/68）。
+        ⇒ ★★ **故本批故意不收它**，★ 并把它登记进 `docs/backend-limited-items.json`（12 → 13 条）。
+        ⇒ ★★★ **定则：★「有实现」与「能用」之间隔着两关 —— ① 读它自己的文档串；② 真机。**
+      ★★★ **真机 3/3**（走 `tools/sw_guard.py`，零弹窗、`sw_alive: true`）：
+        ```
+        ① 旋转曲面 InsertRevolvedRefSurface ⇒ 树新增「曲面-旋转1」· 曲面体 0→1 · 选中轮廓 1
+        ② 孔向导   HoleWizard5            ⇒ 树新增「异型孔向导」（M8）
+        ③ 完全定义 ISketch.GetConstrainedStatus ⇒ 回 int
+        ```
+      ★★ **完全定义那个读数**特意证了**区分度**（★ 否则"回了个数"什么也说明不了）：
+        ★ 欠定义矩形（4 段）回 **2**；★ 对 4 段全加 `sgFIXED` 后回 **3** ⇒ **两次不同** ✓
+      ★★ **覆盖率回读（★ 由生成器现算，不是我算的）**：
+        ```
+        docs/user-feature-coverage.md §三：本仓库 **96/145 (66%) → 99/145 (68%)**
+        §八「只有四家有」：**35 → 32 项**
+        ```
+        ⇒ ★ **+3 与接出去的工具数完全对上**。★ 而工具名**有意含该脚本要的关键词**
+          （`revolved_surface` / `hole_wizard` / `fully_defined`）—— 该脚本按「关键词子串命中工具名」计分，
+          ★ 而这 3 个工具**确实就是那些功能**且**都有真机证据** ⇒ **不是刷分，是让名字与能力对上**。
+      ★ **落地**：`scripts/sw_sketch_status.py`（新）· `mcp-server/tool_specs_batch72.py`（新，3 个 ToolSpec）·
+        `register_capabilities.py` 注册（工具 253 → **256**）· `capabilities.yaml` 新增 `coverage_gap_batch1`
+        （109 → **110** 条 · verified 96 → **97**）。
+      |规格：`specs/202-user-coverage-gaps/`（spec/plan/tasks）；
+      审计：`tools/audit_gap_implementations.py`；真机：`tools/prove_coverage_gap_batch1.py`；
+      证据：`output/coverage-gap-batch1-evidence.json` · `output/gap-implementation-audit.json`；
+      对照事实 141 · 47 · 68 · 420 · 486 |
+| 489 | **★★★★ 「便宜模型助手」的两条并发纪律 —— ★ 用错会把本机卡死**（★ 业主当场纠正）—— 2026-10-03（接手轮）。
+      ★★ **起因（我的错）**：★ 我把「按域侦察 35 个缺口项」一次性**并发 6 路**派给了**本地模型**
+        （`ninfer-sm89` / `qwen3.8-27b`）⇒ ★★★ **业主打断**：
+        「**这个模型一次只能运行一个子代理或者任务，这是本地模型，你多个并发就卡死了**」。
+      ★★★ **两条模型的路由与用法（本机真值，来自 `~/.dsh/team-roles.yaml`）**：
+        ```
+        · 本地模型：provider `ninfer-sm89` · model `qwen3.8-27b`
+          ★ **串行 —— 一次只跑一个任务/子代理**；多路并发 ⇒ 卡死 ⚠
+          rig：`~/.dsh/profiles/web/cordis.patch.yml` → providers.ninfer-sm89（端点 127.0.0.1:18092）
+          ★ 懒启动（待机零显存，权重 8.87 GiB）⇒ ★ **第一次请求要等它加载** ⇒ 必须**后台起**
+        · `space-bunny-free`：provider `opencode-zen`
+          ★ **可高并发**；★ 而**更擅长前端/美术** ⇒ 用它就派**简单、机械、重复**的活
+        ```
+      ★★ **故派活的正确形态**（★ 与 `docs/SUBAGENT-USAGE.md` 互补 —— 该文成文时还不知道这条）：
+        ```
+        · 机械重复（逐项抄签名 / 逐文件 grep / 格式搬运）⇒ **bunny，高并发** ✓
+        · 需要多步判断或长链推理 ⇒ **本地模型，串行**（一次一个）✓
+        · ★ 两条都**不许我原地等** —— 一律 `run_in_background: true`，我继续干活 ✓
+        ```
+      ★ **而 DSH 的通道限制（事实 483 那条）仍然成立**：`subagent` **没有** model 参数 ⇒
+        ★ 要**指定模型**只能走 `workflow` 的 per-agent `provider`/`model` 覆盖；
+        ★ 而 `workflow` 支持 `run_in_background` ⇒ ★ **正好满足"不阻塞"**。
+      ★★ **本轮实测**：按上述改正后，bunny 8 路并发侦察 **7/8 域产出文件**（★ 与我自己的静态审计**交叉印证**），
+        ★ 而**全程没有卡住我**（我同时在跑真机探针与写代码）。
+      |trace：`workflow-1`（★ 被我 kill 的 6 路本地并发）· `workflow-2`（★ bunny 8 路，成功）；
+      配置：`~/.dsh/team-roles.yaml` · `~/.dsh/配置索引.md` §1/§3；对照事实 483 · `docs/SUBAGENT-USAGE.md` |
+| 490 | **★★★★ 本机模型（`ninfer-sm89` / `qwen3.8-27b`）会**幻觉工具名** —— ★ 不写契约就**整轮空转、零产出**** —— 2026-10-03（接手轮），业主当场发现。
+      ★ **症状**：写代码的那个本机模型任务**一直不出东西**，反复报
+        ```
+        Error: unknown tool "read_file"      ← 而本会话真实的工具名是 `read`
+        ```
+      ★★ **根因**：★ 本机模型**不是**这个 harness 的原生工具调用格式 —— 它按另一套习惯（`read_file`/`write_file`/
+        `str_replace_editor`/`bash`/`cat`/`ls`，常见于别的 agent 框架的语料）**编出工具名**，
+        ★ 而 harness 只认真实注册名 ⇒ 每次都 `unknown tool` ⇒ ★ **模型重试、整轮烧完、什么都没写**。
+      ★★★ **修法（实测有效）**：★ 在给它的提示词（或角色 `persona`）里放一份**逐字工具名契约**：
+        ```
+        真实存在的工具名只有：read / write / edit / grep / glob / pwsh / skill
+        ★ 不存在：read_file / write_file / str_replace_editor / bash / cat / ls
+        ★ 想用的名字不在清单里 ⇒ 立刻停手、改用等价工具，不要重试
+        ```
+      ★ **复验（不靠它自述）**：★ 给了契约后，它用 `read` 读了 `spec.md` 前 3 行、用 `write` 写进
+        `output/_qwen_tooltest.txt`（**112 B、内容逐字正确**）⇒ ★ **读写都正常、`unknown tool` 消失**。
+      ★★ **落地**：★ 契约已写进 `~/.dsh/team-roles.yaml` 的 **`worker`** 与 **`researcher`** 的 `persona`
+        （★ 那两个角色走本机模型）⇒ ★ 以后**每次 spawn 自动带上**，不靠我记得写。
+        ★ 坑本身也记进 `~/.dsh/配置索引.md` §6「反复踩过的坑」。
+      ★★ **可复用的一条**：★ **换模型 = 换工具调用习俗** —— ★ 派活前先问一句「这个模型的工具名和我们一致吗」，
+        ★ 而**判据是它真写出文件**（★ 不是它说"我读到了"）。| 痕迹：`output/_qwen_tooltest.txt`；
+        配置：`~/.dsh/team-roles.yaml`（worker/researcher 的 persona）· `~/.dsh/配置索引.md` §6；
+        对照事实 489（并发纪律）· 483（通道限制） |
+| 491 | **★★★★ 工程图 subskill 的函数**首参叫 `drawing_model`** ⇒ 不先给 `RESOLVERS` 加键，挂上去必 `TypeError`** —— 2026-10-03（接手轮）。
+      ★ **机制**（★ 逐字核过源码）：`mcp-server/tool_registry.py:507` 是 `kwargs[inject_as or inj] = resolver(params)`，
+        而 `register()`（同文件 `:559`）**不往下传 `inject_as`** ⇒ ★★ **注入键字面上等于 `inject` 的值**。
+      ★ 那批函数在 `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py`，**首参叫 `drawing_model`**
+        （经 `scripts/sw_drawing.py` 用 `spec_from_file_location` 按路径加载后 `globals()` 再导出 ⇒
+        `scripts.sw_drawing.<函数名>` 可达；旁证 `tests/test_sw_drawing_structure.py:9`）。
+      ★ 修法（★ 本仓手法，**不动 `tool_registry`** —— 它明确「不硬编码宿主 API，全从这里供给」）：
+        给 `mcp-server/register_capabilities.py` 的 `RESOLVERS` 加一行 `"drawing_model": resolve_model,`
+        （与既有 `"asm_model": resolve_model` **同一手法**；工程图文档同样是 `IModelDoc2`）⇒ 修后六个键
+        `model` · `sw_app` · `study` · `asm_model` · `manager` · `drawing_model`。
+      ★★ **这是事实 169 机理的一个具体后果**，不是新机理 —— ★ 由 space-bunny 的 L3 档**独立复现**并指出（Lead 逐条核源码确认）。| 痕迹：`specs/202-user-coverage-gaps/recon/bunny-L3-toolspec-draft.py.txt`；
+        提交 `822661c`；对照事实 **169**（注入名只能是 RESOLVERS 的键） |
+| 492 | **★★★ 用「字符串成员名」间接调 COM 的站点，会**逃过 `tools/audit_byref_args.py` 的静态审计**** —— 2026-10-03（接手轮）。
+      ★ **实例**：`tools/prove_drawing_batch.py` 原先把 `("breakline", "GetBreakLineCount")` 放进一张**零参表**，
+        而官方签名逐字是 **`System.int GetBreakLineCount( out System.int Size )`** ⇒ ★ **必须传 `sw_connect.out_i4()`**。
+      ★ **为什么审计没抓到**：`audit_byref_args.py` 是**静态 AST** 审计，它看的是**字面写出的调用**；
+        而探针那类的形态是 `_count_of(view, "GetBreakLineCount")` —— ★ **成员名是字符串**，审计**看不见**。
+      ★ **后果是"静默降级"而不是错值**：零参调用报 `类型不匹配` ⇒ 被 `except` 吃成 `None`
+        （★ 正因为原作者写了「降级不猜 0」，才没变成假读数）⇒ ★ 表面上只看到"量不到"，
+        **看不出是调用形态错**。⇒ ★ 修法：**带 `out` 的成员单独一张表**（`_OUT_COUNTERS`），
+        并**兼用零参成员做交叉核**（如 `GetBreakLines()` 的数组长度）—— 两条独立读数一致才算稳。
+      ★★ **可复用的判据**：★ 换一个**零参**成员做同一件事；★ 或**两条独立读数互核**。| 痕迹：提交 `822661c`；
+        发现者 space-bunny 的 L5 档（`recon/bunny-L5-probe-draft.py.txt`）；对照事实 47（by-ref 包装） |
+| 493 | **★★ 「已实现」≠「已暴露」—— 同一个错觉在本仓出现了第二次** —— 2026-10-03（接手轮）。
+      ★ **读数**：★ 工程图 13 项里，本仓**已实现 8 项**，但**只有 4 项挂成了 MCP 工具**
+        （且那 4 项全靠**同一个**工具 `solidworks_drawing`）⇒ 用户视角看是"只有 1 个功能"。
+      ★ **依据**：`specs/202-user-coverage-gaps/recon/drawing-existing-coverage.md`（bunny 机械对表，
+        ★ 它同时给了两种口径并说明**不替读者选**：按"有对应函数"算 8、按"能专门建出这种表"算 6）。
+      ★★ **与 P9 缺口批 1 是同一类**（旋转曲面 / 孔向导当时也是"实现了但没暴露"）
+        ⇒ ★ **动手前必须先问「这个是没实现，还是没挂」** —— ★ 后者**不用写代码**，只要挂。
+      ⚠ **反面**：★ 「有实现」也**不等于"能用"** —— 本仓已有反例：样条曲线的 `CreateSpline2/3` **有实现但真机到不了**
+        （`docs/backend-limited-items.json` §3.7）⇒ ★ 挂之前要**先确认它真机跑得通**。|
+        痕迹：`recon/drawing-existing-coverage.md`；提交 `c9350fa`（同一轮发现的「视图类型两个家」）；对照事实 488 |
+| 494 | **★★★★★ 推翻事实 327/328：「画图域建视图」不是结构性做不到 —— 真因是**视图名被本地化**，而三次都硬编码了英文名** —— 2026-10-03（接手轮）。
+      ★★ **结论（真机 6/7）**：★ 同一零件、同一模板、同一位置，**唯一变量 = `ViewName`**：
+        · `*前视` / `*正视于` / `*后视` / `*左视` / `*右视` / `*上视` ⇒ **全部建成**（返回非 None、
+          视图数 **0→1**、回读到 `工程图视图1`）
+        · **`*Front`（对照组，即前三次用的那种硬编码英文名）⇒ 回 `None`、视图数 0** ⇒ ★ **精确复现了 327/328 的失败**
+      ★★ **真因**：★ 本机是**中文界面**的 SolidWorks ⇒ 官方要求 `ViewName` "**exactly match**" 的那个名字
+        **是本地化的**（`*前视`），★ 而官方页给的例子 `"*Front"` 是**英文界面**的取值
+        ⇒ ★ **照抄官方例子 = 必回 `None`**，★★ 且**从返回值完全看不出原因**（无异常、无错误码）。
+      ★★★ **因此事实 327/328 的归因是错的**：它们把失败归给「**硬约束⑦（禁保存）**」并据此判
+        「`balloon`/`datum` **证不了**、画图域交白卷」。★ 而本探针**把零件存到了 `output/`**
+        （★ 官方要求 `ModelName` 含 `.sldprt`）**并且**换了正确名字 ⇒ **视图建成了**
+        ⇒ ★ **卡点既不在"禁保存"、也不在签名/图框/预打开**，★ 而在**名字**。
+      ★★ **正解（可复用）**：★ **不要硬编码视图名** ——
+        用 **`IModelDoc2.GetModelViewNames()`**（**零参、未废弃**）**问模型要它自己的名字**再传
+        （★ 同族的 `GetModelViewCount()` 官方标 **Obsolete** ⇒ **不要用它**；用名单的长度代替）。
+      ★★ **可复用的判据（比本条本身更值钱）**：
+        **凡"官方 Remarks 要给一个'名字/标签/枚举字符串'"的地方，凡是该名字可能是 UI 本地化的，
+        就必须先'问对象要合法取值'，而不是照抄官方例子里的英文串。**
+        ★ 识别信号：官方页给的是 "for example" 一类的**举例**（★ 举例 ≠ 规格）。
+      ★★ **方法论**：★ 重开一条"已走死的路"**要有新维度**，不能只是再调一次 ——
+        本条的维度是「**唯一变量 = 名字，且名字来自对象自报**」+ 一个**对照组**（复现旧失败）。
+        ★ 这与事实 53（连续修补 ≥3 次就停）**不冲突**：★ 停的是"同一处反复调参"，★ 不是"换维度重开"。|
+        痕迹：`tools/prove_view_name_matrix.py` · `output/view-name-matrix-evidence.json`
+        （`dialogs: []` · 11.2 s · **无弹窗** · 零件与模板均只写 `output/` 与内存）· 对照事实 **327 / 328 归因被推翻** |
+| 495 | **★ 「覆盖率」是按**工具名里的功能关键词**匹配的 ⇒ **改名字/加别名可能比新写实现收益更大**** —— 2026-10-03（接手轮）。
+      ★ **读数**：`python D:\SW-coverage-tool\gen_user_feature_coverage.py` ⇒ 本仓库 **99/145 (68%)**。
+      ★ **逐域对照**（本仓库 vs 最强对手）：★ **工程图 6/19 vs 16/19（差 10，全仓最大缺口）** ·
+        焊件 2/7 vs 5/7 · 装配 4/10 vs 5/10 · 特征 21/28 vs 23/28 · 钣金 6/11（持平）· 曲面 9/14（持平）·
+        草图 20/21 · 模具 6/6 · 评估 5/6 · 仿真 10/11 · 其他 10/12。
+      ⇒ ★★ **验收算路**：要 ≥110/145 ⇒ **还差 +11** ⇒ ★ **R1（把已实现的 8 项挂出来）+ R2（5 项真缺口）
+        全押工程图**是可达的（6 → 13~14）；再靠 R3 补 2~3 ⇒ **≥110 达成**。
+      ★★ **每次动手前先问三句**：① 它是**没实现**，还是**没挂**？（事实 493）② 挂了**名字对不**（本条的计数口径）？
+        ③ 它**真机跑得通**吗？（反例：样条曲线有实现但到不了 —— `docs/backend-limited-items.json` §3.7）
+      ⚠ 本条是**判据口径**，不是能力结论 ⇒ ★ **不许**把"改个名字让计数涨上去"当成"能力补上了"。|
+        痕迹：`docs/user-feature-coverage.md` §三/§四/§八；`specs/202-user-coverage-gaps/plan-24h.md` §〇bis |
+| 496 | **★★★★ 把事实 494 的正解用到 19 格探针上 ⇒ `passed 3/19 → 13/19`**；★ 而**剩下的失败全是"前置未成立"或真阴性** —— 2026-10-03（接手轮）。
+      ★ **改一行就翻盘**：把 `CreateDrawViewFromModelView3` 的 `ViewName` 从硬编码 `"*Front"`
+        改成**向模型要**（`GetModelViewNames()`）⇒ ★ 那 15 格"父视图没建成 ⇒ 不作判据"**全部解除**
+        （19 格探针原是 `preconditions_held: 0`）。
+      ★★ **真机读数（13/19 通过）**：
+        · ✅ **建成**：V1 投影视图 · V3 局部视图 · **V4 断裂视图**（★ `breakline_delta=1` ⇒
+          **事实 492 那个 out 参数修复同时被验证**）· V5 辅助视图 · A1 图纸格式 · A2 表面粗糙度（两格）·
+          A3 基准符号（★ **选中时**成）· A4 注释（两格）· A6 孔表 · A7 修订表（★ 含"**二次插入回 null**"那条契约）
+        · ⛔ **前置未成立**（★ 如实标注、**不当能力证据**）：V2 剖面视图（调用前**选区为空**）·
+          A5 气泡序号（该图**没有 BOM 表** —— 官方例子的 precondition 正是这个）· A3 的"不选"对照格
+        · ❌ **真机阴性**：**A8 中心符号线**（两格都不成，★ 其中**一格前置成立**）
+      ★★ **可复用的判据**：★ 判"能力不成"之前，**先把"前置成不成立"分开记** ——
+        ★ 否则一个前置失败会**拖垮整批格子**（本轮 15 格正是如此）。
+      ★ **产物**：`tools/prove_drawing_batch.py`（已修）· `output/drawing-batch-evidence.json`。|
+        痕迹：证据 JSON 的 `passed`/`preconditions_held_count`；对照事实 **494**（真因）· **492**（out 参数） |
+| 497 | **★★ E 类 2 项「换名重查」的结果：加厚**有未废弃的直入入口**、曲线驱动阵列**的入口在另一条路上** —— 2026-10-03（接手轮，R4）。
+      ★ **加厚**（★ 原分类偏保守）：
+        · ★ **未废弃**：`IFeatureManager.FeatureBossThicken`（**7 参**）· `IFeatureManager.FeatureCutThicken`（**6 参**）
+        · ⛔ **废弃**：`IModelDoc2.FeatureBossThicken{,2}` / `FeatureCutThicken{,2}`
+          （`FeatureBossThicken2` 头顶逐字：`Superseded by [[IFeatureManager::FeatureBossThicken]].`）
+        · ★ 另一族：`IModeler.ThickenSheet` 造的是**片体**不是特征 ⇒ **不当入口**
+        · ★★ **官方前置（逐字）**：`FeatureBossThicken`「by thickening a **selected reference surface**.
+          **The surface must be selected with a mark of 1.**」+「If **FillVolume** is true, **other arguments
+          are ignored**. A **closed surface is required** when FillVolume is true.」；
+          `FeatureCutThicken`「When **UseAutoSelect is false**, the user must **select the bodies**…」
+      ★ **曲线驱动阵列**：★ 两个直调入口**都被官方废弃**，并**逐字指向另一条路** ——
+        `IFeatureManager.FeatureLocalCurveDrivenPattern` 与 `IModelDoc2.FeatureCurvePattern` 的头顶都是
+        `See [[IFeatureManager::CreateFeature]] and the Remarks of [[ICurveDrivenPatternFeatureData]]`
+        ⇒ ★★ **即"换条路"，不是"没有路"** —— ★ 开工前必须先查 `CreateFeature` 的**合法常量名**
+        与 `ICurveDrivenPatternFeatureData` 的 **mark 表**（铁律 5：不许猜）。
+      ★★ **可复用的判据**：★ 遇到 `Obsolete` 时**别只看"有没有后继名字"**，要看**它指向的是不是同一个入口族** ——
+        ★ 加厚指向的是**同族的 `IFeatureManager` 直调**（可照原样做），
+        ★ 而曲线驱动阵列指向的是**另一个建特征机制**（`CreateFeature` + FeatureData）⇒ **工作量不同级**。|
+        痕迹：`specs/202-user-coverage-gaps/recon/r4-e-class-rename-lookup.md`；
+        对照事实 **43**（`CreateFeature`/`CreateDefinition` 的常量白名单）· **484**（带 `AccessSelections` 不等于做不到） |
+| 498 | **★★★★ `InsertTableAnnotation` 建不出孔表/修订表 —— 它第 3 个 int 是 `AnchorType` 不是"表类型"** —— 2026-10-03（接手轮）。
+      ★★ **官方签名逐字**（两页都读过）：
+        · `IDrawingDoc.InsertTableAnnotation(X, Y, **AnchorType**, Rows, Columns)` （**5 参**）
+        · `IDrawingDoc.InsertTableAnnotation2(UseAnchorPoint, X, Y, **AnchorType**, TableTemplate, Rows, Columns)` （**7 参**）
+        · ★ `AnchorType` 的取值：**`swBOMConfigurationAnchorType_e`**（`InsertTableAnnotation.md` 的 Parameters
+          那页没写，但 `InsertTableAnnotation2.md` 逐字写了 "as defined in [[swBOMConfigurationAnchorType_e]]"）
+      ⇒ ★★ **它没有任何参数能说"这是孔表"**（`Rows`/`Columns` 是行/列数）⇒ **它建的是"通用表注解"**。
+      ★★★ **本仓踩过这个坑**：`subskills/…/drawing_workflow.py` 的 `insert_table_annotation(drawing_model, x, y,
+        **table_type**, row, column)` **把第 3 参命名成 `table_type`** —— ★ 而它实际落进的是 **`AnchorType`** 槽，
+        `row`/`column` 落进 **`Rows`/`Columns`** ⇒ ★ **名字骗人**。
+      ★ 后果（真机实测）：2026-10-03 工具层 e2e 里，拿它做的 `solidworks_drawing_create_hole_table` /
+        `create_revision_table` **两条都是"注解数 72→72、什么都没建"** —— ★ 而**不是**报错。
+      ★★ **真入口（都是 9/7 参、都未废弃）**：
+        · 孔表 → **`IView.InsertHoleTable3(UseAnchorPoint, X, Y, AnchorType, StartValue, Template,
+          TagOrder, TagType, ManualTags)`**
+        · 修订表 → **`ISheet.InsertRevisionTable2(UseAnchorPoint, X, Y, AnchorType, TableTemplate,
+          Shape, AutoUpdateZoomCells)`**
+        ★ 两者的 **X/Y 官方 Parameters 逐字写着 `meters`**。
+        ★ 孔表的官方 Remarks 给 **mark 表**：基准原点**顶点 1** · 孔**边与面 2** · X 参考 4 · Y 参考 8。
+        ★ 修订表官方 Returns 逐字：**已有修订表时回 `null`**（★ 第二次"回 null"是**契约**）。
+      ★ 改法（本轮已做）：那两条工具**改走真入口**，`table_type` 改名 `anchor_type` ⇒ ★ 真机 e2e 里
+        **修订表建成**（注解 72→73）、★ 孔表如实报"前置未成立（未选 mark 1+2）"。
+      ★★ **可复用的判据**：★ **形参名不等于官方语义** —— 本仓的既有包装层里，
+        **一个"看起来对"的参数名可能落在完全不同的官方槽位上**。
+        ⇒ ★ 凡"包装层函数名/形参名像某个功能"的地方，**都要回官方签名核它到底把值传进了哪个槽**
+        （★ 与事实 **36**「用错接口 = 对任何成员都没反应」是同一族，★ 但更隐蔽：**这次连报错都没有**）。|
+        痕迹：`scripts/sw_drawing_expose.py`（改走真入口）· `tools/probe_drawing_tools_e2e.py` ·
+        `output/drawing-tools-e2e-evidence.json`（改前 1/8、改后 **3/8**）· 对照事实 **36**（接口用错）· **493**（已实现≠已暴露） |
+| 499 | **★★★ 又一处「直接属性访问 vs `get_com_member`」的真机差异 —— 同一张图、同一个成员，一个报"找不到成员"、另一个成功** —— 2026-10-03（接手轮）。
+      ★ **现象（经工具层）**：`set_sheet_format` 报 **`com_error: (-2147352573, '找不到成员。')`**。
+      ★ **官方**：`ISheet.SetTemplateName(System.string NameIn)` ⇒ **`void`、未废弃**（★ 成员名没问题）。
+      ★ **定点诊断（`output/_diag_sheetfmt.json`，同一张 `工程图64`）**：用 **`get_com_member`** 走两步 ——
+        · `get_com_member(drw,"GetCurrentSheet")` ⇒ `CDispatch`，`GetName` → `图纸1`（★ 确实是 `ISheet`）
+        · `get_com_member(sheet,"SetTemplateName", <slddrt>)` ⇒ **返回 `None`（= `void` 成功）**
+        ⇒ ★★ **同一个成员在同一个对象上，用 `get_com_member` 成功**。
+      ★ **差别在哪**：subskill 那个函数写的是**直接属性访问** ——
+        `sheet = drawing_model.GetCurrentSheet(); return sheet.SetTemplateName(path)`
+        ⇒ ★ 经工具层调用时失败；★ 而诊断脚本用 `get_com_member` 就成。
+      ⇒ ★★ **与本仓既有事实 78/79「直接成员访问盲点」同一族** —— ★ 本轮给出的是一个**新的、具体的实例**：
+        **同一个成员、同一个对象、同一张文档，两条通道结果不同**。
+      ★ 改法：`scripts/sw_drawing_expose.set_sheet_format` **不再调 subskill 那个函数**，
+        改为自己两步 `get_com_member`（并在之后补 `ForceRebuild3`，官方 Remarks 要求）。
+      ★ **判据（可复用）**：★ 碰到 `找不到成员` / `Property ... can not be set` 这类**看似"成员不存在"**的错时，
+        ★ **先别改成员名** —— ★ 先用 `get_com_member` 在**同一个对象**上试同一个成员；
+        ★ 两条通道结果不同 ⇒ ★ 是**通道**问题，不是**名字**问题。|
+        痕迹：`scripts/sw_drawing_expose.py` · `output/_diag_sheetfmt.json` ·
+        `output/drawing-tools-e2e-evidence.json`（`passed` **3/8 → 4/8**）· 对照事实 **78 / 79**（直接访问盲点）· **498**（形参名 ≠ 官方语义） |
+| 500 | **★★★ 判据的两条反陷阱：① 前置步骤会污染读数（假绿）② 用"上一轮的遗留文件"会把假绿做得更隐蔽** —— 2026-10-03（接手轮，**Lead 自己踩、自己纠正**）。
+      ★ **陷阱①（假绿）**：端到端探针里，有些格子要**先建一个母视图**才能测目标工具
+        ⇒ 若**不在调工具前重新取基线**，`view_delta`（视图数增量）会把**前置步骤的成果**算成目标工具的成果
+        ⇒ ★ 实测：`create_hole_table` / `insert_center_marks` 两格**被误判为 ok=True**。
+        ★ 修法：前置步骤跑完**重取基线**（`views_before_call` / `annotations_before_call`）⇒ ★ **读数从 6/8 掉回真实的 4/8**。
+      ★ **陷阱②（更隐蔽的假绿）**：探针的零件每次用**同名文件** ⇒ 上一轮留下的同名文件可能**仍被 SolidWorks 打开**
+        ⇒ `SaveAs` 失败（`part_saved=False`）⇒ ★ 两点后果：
+        · 需要"已存盘零件"的格子**静默跳过前置**（实测：两格 `views_before=0`，而**没有任何报错**）；
+        · ★★ 而**另外那些**格子会**拿旧文件当输入**（因为模块级常量里存的路径还在）⇒ ★ **看起来通过，其实用的是上一轮的模型**。
+        ★ 修法：**每次运行用唯一文件名**（时间戳）⇒ `part_saved=True`，读数才可信。
+      ★★ **可复用的两条定则**：
+        ① ★ **任何"为了测 A 而先做 B"的探针，都要在 B 之后、A 之前重取基线**；
+        ② ★ **探针的输入文件要每次唯一** —— 同名会让"存盘失败"变成**静默的前置跳过 + 旧文件复用**。
+      ★★ **与事实 496 是同一条纪律的两面**：496 说"前置失败会拖垮整批"（**假红**），
+        本条说"前置的成果会被算进目标格"（**假绿**）⇒ ★ **两个方向都要防**。|
+        痕迹：`tools/probe_drawing_tools_e2e.py`（`_RUN_TAG` 唯一文件名 + `views_before_call` 重取基线）·
+        `output/drawing-tools-e2e-evidence.json` · 对照事实 **496**（前置与能力分开记） |
+| 501 | **★★★★ 「被误记成架构限制的假阴性」—— 一个函数每次都抛，把原因归给 pywin32 架构限制，而正解早就在同一个仓里的另一条路上** —— 2026-10-03（接手轮，★ **本次修好并真机验证**）。
+      ★ **病灶**：`scripts/sw_part.sketch_spline` 的 docstring 逐字断言「**本机实测：本函数建不出样条**」，
+        并把原因归给 **事实 47/68 的 pywin32 迟到绑定架构限制**（理由：`CreateSpline2` 已废弃、
+        后继 `CreateSpline3` 末参是 BYREF `Object&`）。★ 于是它**每次都 `raise RuntimeError`**。
+      ★★ **真因（本轮查明）**：**数组的包装形态** ——
+        · ✗ `array.array('d')`（★ 它原先传的）⇒ ★ **静默回 `None`**
+        · ✓ **`VARIANT(VT_ARRAY | VT_R8, 扁平 list)`** ⇒ ★★ **建成**（草图段数 **0 → 1**）
+      ★★★ **而正解早在本仓**：`scripts/sketch_relations.py:272-273` **逐字写着**
+        「★★★ **必须包 `VARIANT(VT_ARRAY | VT_R8)`** —— 裸 list/tuple 会**静默返回 None**（轮 183 实测）」
+        ⇒ ★★ **同一个仓里两条路做同一件事，一条在轮 183 修了、另一条从没跟上** ——
+        ★ 而**没跟上的那条**把失败**归因成了架构限制**（★ 这条错误结论一直留在 docstring 里）。
+      ★ 改法：把 `sw_part.sketch_spline` 改成 `VARIANT(VT_ARRAY|VT_R8)` 形态（照抄 `sketch_relations` 的正解），
+        ★ 顺手修掉一处**单位不一致**（docstring 声明**毫米**、旧实现却把值**原样**送进 COM——COM 吃**米**）
+        ⇒ ★ 现按规则 2 **在边界换算一次**（★ 因为该函数此前**每次都抛**，**没有可用调用方会被破坏**）。
+      ★★ **真机复验通过**：新建零件 · 开草图 · `sketch_spline(doc, [[0,0],[20,15],[40,-5]])` ⇒
+        `seg_before=0` → `seg_after=1` · 返回 `CDispatch` · **`ok=true`**
+        （证据 `output/spline-fix-evidence.json`，走 `sw_guard`、零弹窗）。
+      ★★ **可复用的判据（★ 这条最值钱）**：
+        ① ★ **一个函数声称"架构上做不到"时，先去同一个仓里找有没有别的路在做同一件事** ——
+           ★ 找到就先比"**传参形态**"（数组包装是重灾区：裸 array / 裸 list / `VT_ARRAY|VT_R8` /
+           `VT_ARRAY|VT_VARIANT` / 逐元素 VARIANT），★ **不要**先信那个归因；
+        ② ★ **"每次都抛"的函数是安全的修改对象** —— ★ 它没有可用调用方，改它不会破坏别人；
+        ③ ★ 与事实 **40**（`IModeler.Create*Surface` 返回值不可靠 ⇒ **让失败可见**）**不冲突**：
+           ★ 40 说的是"**不要静默**"，★ 本条说的是"**报出来的原因可能是错的**" —— ★ **两条一起用**：
+           **既让失败可见，又不轻信失败给出的归因**。|
+        痕迹：`scripts/sw_part.py`（本轮修）· `scripts/sketch_relations.py:272-284`（正解）·
+        `output/spline-with-variant-evidence.json`（四格对照）· `output/spline-fix-evidence.json`（复验）·
+        `tools/probe_spline_fix.py` · 对照事实 **40**（让失败可见）· **47 / 68**（指针族/pywin32 限制）|
+
+
+| 502 | **★★★★★ 11 条工具因「注入键 ≠ 目标函数首参名」而**经工具层完全调不通**，而**仓内自己的门禁结构性抓不到** —— 2026-10-03（接手轮，★ 已修并真机复验）。
+      ★ **机制**（逐字核过源码）：`tool_registry.py:507` 是 `kwargs[inject_as or inj] = resolver(params)`，
+        而 **`register()`（同文件 `:559`）不往下传 `inject_as`** ⇒ ★★ **注入键字面上等于 `inject` 的值**
+        ⇒ ★★ **`inject` 必须等于目标函数的首参名**（★ 这正是 `RESOLVERS` 那张表存在的理由 ——
+        表内注释逐字：「这张表**就是**为"注入名各不相同"而设计的」）。
+      ★ **病灶**：**11 条**违反了它 ——
+        · `tool_specs_batch10.py` 的 **3 条**（孔标准 / 紧固件类型 / 紧固件表类型）声明 `inject="sw_app"`，
+          而函数首参叫 **`sw`** ⇒ ★ 真机报 **`TypeError: list_hole_standards() got an unexpected
+          keyword argument 'sw_app'`**；
+        · `tool_specs_batch38.py` 的 **8 条 Costing 工具**声明 `inject="manager"`，而首参叫 **`cost_manager`**
+          ⇒ ★★ **而且更糟**：`RESOLVERS["manager"] = resolve_manager` 的 docstring 逐字写着它解析的是
+          **`ICWStudy.LoadsAndRestraintsManager`**（★ **Simulation 的**载荷与夹具管理器）
+          ⇒ ★ **即便键名对上也会注错对象**（真机报的是「没找到研究」）。
+      ★★★ **为什么仓内门禁抓不到（本条最值钱的部分）**：`scripts/check_param_binding.py` 的判据逐字是
+        「声明名 属于 形参 **或** 属于 `param_alias`」＋「**注入名是解析器的键**」
+        ⇒ ★ **它只查"注入名是不是解析器的键"，从不查"它等不等于目标函数的形参名"**
+        ⇒ ★ 这 11 条**全部 PASS**（真机实测前的最后一次跑：`[PASS] 0 处`）。
+        ⇒ ★★ **教训：门禁的判据是"某个名字在某处存在"，而 bug 是"两个名字之间没有关系"** ——
+          ★ **存在性判据看不见"配对"错误**（与已知事实 **36**「同名接口分属不同族」同族，但 36 是
+          "名字对而对象错"，本条是"**键名对不上，所以连对象都到不了**"）。
+      ★ **修法**（★ 加一行正是那张表的设计用途，**不动 `tool_registry`**）：
+        · 加 `resolve_sw`（复用 `resolve_sw_app`）⇒ `RESOLVERS["sw"]`，`batch10` 那 3 条改 `inject="sw"`；
+        · 加 **`resolve_cost_manager`**（`get_costing_manager(resolve_model(...))`）⇒ `RESOLVERS["cost_manager"]`，
+          `batch38` 那 8 条改 `inject="cost_manager"`。
+      ★★ **真机复验（两条都通）**：`solidworks_hole_standards` ⇒ 返回真实孔标准表
+        （`ANSI Inch` / `ANSI Metric` / `AS` / `BSI` / `DIN` …）· `solidworks_costing_evidence` ⇒
+        `{'ok': True, 'readback': {'body_count': 1, 'has_cost_analysis': True}}`
+        （证据 `output/inject-key-evidence.json`）。
+      ★★ **可复用的判据（★ 建议接进 `check_param_binding.py`）**：
+        ★ 门禁应加一条 —— **`inject` 的值必须属于目标函数的形参名集合**（★ 不是"是解析器的键"），
+        ★ 且 `param_alias` 的**每个目标**必须属于形参名集合。
+        ★ 工具：`tools/check_tool_param_binding.py`（★ 本轮新增，**判据就是这个**；★ 修前报 11、修后报 **0**）。|
+        痕迹：`tools/check_tool_param_binding.py`（新）· `tools/probe_inject_key.py`（新）·
+        `output/inject-key-evidence.json` · `mcp-server/register_capabilities.py`（两个新解析器）·
+        `tool_specs_batch10.py` / `tool_specs_batch38.py` · 对照事实 **36** · **169** |
+| 503 | **★★★★★ `RESOLVERS["model"]` 会清空活动文档的选区 ⇒ 凡"指望调用方预先选择"的工具，经工具层永远拿不到选区** —— 2026-10-03（接手轮，★ 单变量真机隔离出来的，已修两条工具）。
+      ★ **现象**：R3 探针里我选好面后**回读为真**（`readback_mark=1/2` · `all=1/2`），
+        而**工具自己读到全 0**（`selection_marks` 全零）⇒ ★ 一度记为"开放问题"。
+      ★★ **单变量隔离（`tools/diag_selection_lifetime.py`，证据 `output/selection-lifetime-evidence.json`）**：
+        选面后**逐步**加动作并每步回读 —— ★ `feature_names` · `GetBodies2` · `GetFaces` ·
+        `FeatureManager` · `SelectionManager` · 甚至**工具自己的 `_selection_marks`** 之后，
+        ★★ 选区**都还在**（`mark1=2`）；★ 而**唯独**在这一步之后变成 `mark1=0`：
+        ```
+        调过 RESOLVERS['model'] 之后        mark1=0   all=0   ← ★★ 就是它
+        ```
+        ⇒ ★★★ **`resolve_model` → `_connect()` → `connect_solidworks()` 清掉了选区**。
+      ★★★ **而注册器的顺序使这件事必然发生**（`tool_registry.py:507/510/525` 逐字）：
+        ```
+        kwargs[inject_as or inj] = resolver(params)   # ← ★ 先跑注入（清了选区）
+        spec.pre_call(params)                         # ← 再跑 pre_call（此时才能选）
+        kwargs.update(spec.derived_args(params) or {})
+        return getattr(mod, spec.function)(**kwargs)
+        ```
+        ⇒ ★★ **"调用方预先选择"这条前置在工具层是不可能成立的**（★ 而 MCP 客户端本来也没法预选）
+          ⇒ ★ 受影响的是一整族工具：凡 `capabilities.yaml` 里写着「调用前必须先选」而**没有** `pre_call` 的。
+      ★ **正确形态（本仓既有的先例）**：`solidworks_fillet` / `solidworks_chamfer` 用
+        **`pre_call=_select_edge`** —— ★ 在 `pre_call`（= 注入**之后**）才解析成真实选区 ⇒ ★ **能存活**。
+      ★ 修法（本轮已做）：`tool_specs_batch74.py` 新增 `_select_faces_for(mark, count)`，
+        给两条焊件工具挂上 —— ★ 端盖 **`mark=0` 选 1 个面**（官方例子）·
+        角撑板 **`mark=1` 选 2 个面**（官方逐字「two faces … with a Mark of 1」）；
+        ★ 判据用**回读计数**（★ 事实 8），★ 没选够就**抛**（不静默）。
+      ★★ **修后真机复验**：两条工具 **`preconditions_held=True`** ✓，且工具读到的选区**正确**
+        （端盖 `{'0':1,'all':1}` · 角撑板 `{'1':2,'all':2}`）⇒ ★ **前置这一环通了**
+        （★ 而 API 调用本身**仍未建成** ⇒ 那是**另一个问题**，如实分开记）。
+      ★★ **可复用的判据**：★ **"前置发生在注入之前还是之后"，决定了它经工具层能不能成立** ——
+        ★ 凡要"调用方先做点什么"的前置（选择 / 激活 / 指定算例），
+        ★ 都必须改写成 **`pre_call`**，★ 因为**只有 `pre_call` 跑在注入之后**。|
+        痕迹：`tools/diag_selection_lifetime.py`（新）· `output/selection-lifetime-evidence.json` ·
+        `mcp-server/tool_specs_batch74.py` 的 `_select_faces_for` · `tools/probe_r3_tools.py` ·
+        对照事实 **8**（bool 不可信、回读计数）· **491**（注入解析器机制） |
+| 504 | **`InsertEndCapFeature3` 在本仓的焊件 setup 上**静默回 `None`** —— ★ **四类原因已逐一排除**，★ 按事实 53 停止猜测、留证据。
+      ★ **现象**：返回值 `None` · 特征树增量 **0** · **不抛异常**（★ 静默失败）。
+      ★★ **金标准**：判据是**特征树增量**（不是返回值 —— 它本来就是 `None`）。
+      ★ **排除一 · 选面**：`tools/probe_endcap_face_matrix.py` 逐张面试过**全部 6 张面**
+        （每个案例都重新造件、只换选中的面）⇒ ★ **全部回 `None`** ⇒ 与选哪张面无关。
+      ★ **排除二 · 体不是焊件**：`tools/diag_weldment_feature_kind.py` 用正确的遍历
+        （`IModelDoc2.**FirstFeature**`（**属性**，不是 `GetFirstFeature`）+ `IFeature.GetNextFeature`，
+        ★ 这条逐字来自 `scripts/sw_feature_readback.py` 的来源块）读出树里有
+        **`WeldmentFeature`（焊接件）+ `WeldMemberFeat`** ⇒ ★ **是真焊件**。
+      ★ **排除三 · 实参**：★ 读了官方页才发现 —— `C:\swapi\examples\Insert_Weldment_End_Cap_Example_VB.md`
+        逐字给出 `InsertEndCapFeature3(0.005, False, False, 0.003, 0.6, 0.003, True, 0.002, False, 2)`，
+        ★ 而**我们（工具与探针）一直传** `(0.005, False, False, 0, 0, 0, False, 0, False, 0)` ——
+        ★★ 两处实质差异：`BIsGivenOffset=False` 时生效的是 **`WallThicknessRatio`**（官方 **0.6**，我们 **0.0**）·
+        `BIsEndCapInward` 官方 **2**（`swSpecifyInset`，见 `C:\swapi\enums\swEndCapThicknessDirection_e.md`）而我们是 **0**。
+        ⇒ ★ **照官方配方逐字重测（`tools/probe_endcap_official_args.py`）仍回 `None`** ⇒ 不是实参。
+      ★ **排除四 · 实心/空心型材**：官方 Remarks 逐字「pre-selected **open ends** of a structural member」
+        ⇒ ★ 猜想"实心型材没有开口端"（`al cs`）⇒ ★ 换**空心管**（`ansi\al pipe structural.sldlfp`）
+        ★ **仍回 `None`** ⇒ 也不是这个。
+      ★★ **结论（如实）**：★ **工具层是对的**（注入 · 形参 · `pre_call` 选面全对，工具回读 `{'0':1,'all':1}`）·
+        ★ **前置已成立** · ★ **API 静默回 `None` 且原因未定** ⇒ ★ **R3 焊件两条仍算"未验证"**。
+      ★★★ **纪律记录**：★ 这已是**第四轮**在同一处追（选面 → 体类型 → 实参 → 型材）⇒
+        按**事实 53**（同一处连续修补 ≥3 次就停下回退）**停止追**，★ 把四条排除项**留在证据里**而不是继续猜。
+        ★ 下一步若要再动，应先**换一条路**（例如读 CHM 那页的 `See Also` / `IEndCapFeatureData`，
+        或对照 `InsertEndCapFeature2`（官方说它收 `Faces` 数组、★ **不需要预选**））。
+      ★★ **可复用判据**：★ **"返回值是 `None` 且不抛异常"这一类静默失败，必须用"特征树增量"当判据**；
+        ★ 而**排除法要一次只换一个变量、并把每次的读数留档**（本次四轮各留一份 evidence）。|
+        痕迹：`tools/probe_endcap_face_matrix.py` · `tools/diag_weldment_feature_kind.py` ·
+        `tools/probe_endcap_official_args.py` · `output/endcap-face-matrix-evidence.json` ·
+        `output/weldment-feature-kind-evidence.json` · `output/endcap-official-args-evidence.json` ·
+        对照 **事实 503**（前置必须走 `pre_call`）· **53**（≥3 次就停下）· **40**（返回值不可靠） |
+| 505 | **焊件顶端盖（end cap）在本机经**两条**官方路线都建不成** —— ★ 五轮排除后的**诚实负面结论**（★ 不是"未定"，是"排除了已知全部变量仍未建成"）。
+      ★★ **两条路线**（都是官方页点名的）：
+        ① `IFeatureManager.InsertEndCapFeature3`（10 参）—— Remarks：「select one or more **end faces**」；
+        ② `IFeatureManager.InsertEndCapFeature2`（7 参，★ 末位是 **`System.object Faces` 数组**）——
+           Remarks 逐字「Call `InsertEndCapFeature3` if you want to **pre-select** the faces」⇒ ★ **2 把面当参数收**。
+      ★ **两条都静默回 `None`、树增量 0、不抛异常。**
+      ★★ **已排除（每条都留了 evidence）**：
+        ① 选面 —— `tools/probe_endcap_face_matrix.py`：**6 张面逐张**试（每案例重造件）⇒ 全 `None`；
+        ② 体不是焊件 —— `tools/diag_weldment_feature_kind.py`（★ 用**正确的**遍历
+           `IModelDoc2.**FirstFeature**` + `GetNextFeature`）⇒ 树里有 `WeldmentFeature` + `WeldMemberFeat`；
+        ③ 实参 —— 照官方例子**逐字配方** `(0.005, False, True, 0.003, 0.5, 0.003, 面数组)` 重测 ⇒ 仍 `None`；
+        ④ 型材实心/空心 —— `al cs`（实心）与 `ansi\al pipe structural`（**空心管**）都试 ⇒ 都 `None`；
+        ⑤ **我器械自己的 bug** —— 选面的点原用 `IFace2.GetBox` 的**包围盒中心**
+           ⇒ ★ **空心管端面是"环"、其包围盒中心落在孔里**（★ 那个点根本不在面上）；
+           ★ 改用**面自己的曲面**参数中点 `IFace.GetSurface().Evaluate(0.5, 0.5)`
+           ⇒ 点确实落在面上（实测 `(0.08, 0, 0)`）、`SelectByID2` 回 `sel_cnt=1` ⇒ ★ **仍 `None`**。
+      ★ **过程中的三个真实收获**（★ 都是"官方文档是第 0 步"的实例）：
+        · ★★ **官方例子给的是"配方"** —— `Insert_Weldment_Features_Example_VB.md` 里
+          `face = selMgr.GetSelectedObject6(1, -1)` → 装数组 → `InsertEndCapFeature2(…)` 的**调用序**，
+          ★ 签名与 Remarks 都给不了；★ 且官方配方与**我们工具一直传的值**差在
+          `BIsChamfer`（官方 True）· `WallThicknessRatio`（官方 0.5/0.6）· `BIsEndCapInward`（官方 2）；
+        · ★ 官方 Remarks 我**第一遍只看到 "end faces" 就动手**，漏了后一句「Instead of using this method,
+          you can pass the faces in an argument array of `InsertEndCapFeature2`」—— ★ 那句话**直接给了第二条路**；
+        · ★★ **事实 33 又踩一次**：`SelectByID2` 的 `Callout` 传 `None` ⇒ `类型不匹配`，
+          ★ 而**那个错误看不出是 Callout 的问题**（改用 `sw_part._empty_callout()` 即通）。
+      ★★ **结论**：★ **工具层是对的**（注入 · 形参 · `pre_call` 选面全对）· ★ **前置已成立** ·
+        ★ 而**能力本身在本机建不成** ⇒ ★ 台账里这条**只能留在"未验证"**，★ **不得标 `verified`**。
+      ★★★ **纪律**：★ 这是**第五轮**在同一处追 ⇒ 按**事实 53**（同一处连续修补 ≥3 次就停下回退）
+        **停止**，★ 把五条排除项与三条收获留档，★ **不写"能"也不写"不能"** —— 写"**排除了已知全部变量仍未建成**"。
+        ★ 若要再动，**必须先换条件**（换后端 `comtypes` / 换 SolidWorks 版本 / 换零件来源），
+        ★ 而不是第六次换参数。
+      ★★ **可复用判据**：★ **"两条官方路线都回 `None`"应被当成能力级的负面结论**（不是工具缺陷）；
+        ★ 而**测试器械自己的几何假设也要证伪**（本例：包围盒中心 ≠ 面上的点）。|
+        痕迹：`tools/probe_endcap_face_matrix.py` · `tools/diag_weldment_feature_kind.py` ·
+        `tools/probe_endcap_official_args.py` · `tools/probe_endcap_feature2.py` ·
+        `C:\swapi\types\IFeatureManager\InsertEndCapFeature2.md` 与 `…Feature3.md` ·
+        `C:\swapi\examples\Insert_Weldment_Features_Example_VB.md` ·
+        对照 **事实 504**（第一轮排除）· **503**（前置走 `pre_call`）· **33**（Callout）· **53**（≥3 次停下）|
+| 506 | **★ 「0 处问题」必须先问「它到底比了几个」—— 一个读了**不存在字段**的判据会安静地永远绿**（★ 事实 62 的活例，2026-10-03 接手轮自己踩的）。
+      ★ **现象**：我为「`Param` 声明类型 vs 目标函数类型标注」与「`Param` 默认值 vs 声明类型」
+        写了两条静态判据（`output/_scan_param_types.py` / `_scan_default_types.py`），
+        ★ 两条都打印 **「确定矛盾：0 处」** ⇒ ★ **看起来两条都干净**。
+      ★★ **真因**：`tool_registry.Param` 的类型字段叫 **`kind`**（★ 而 dataclass 里**没有** `type` 这个字段）
+        ⇒ 我写的 `getattr(p, "type", None)` **永远是 `None`** ⇒ ★ 判据在第一个 `if got is None: continue`
+        就把**每一个参数**跳过了 ⇒ ★★ **一个都没比，却报 0**。
+      ★★★ **是怎么发现的**：★ 靠**注意到一个不可能的数** —— 另一条判据的同一份输出里写着
+        「**无默认值 0 个**」，★ 而 277 个工具里**不可能人人都显式给了默认值**
+        （★ 真相：`Param.default` 用 **`Ellipsis`** 当"没有默认值"的哨兵，★ 而我把 `Ellipsis` 当成了值）。
+      ★ **修后（`tools/scan_param_kind_consistency.py`，用正确的 `kind`）**：
+        · ⑥ 声明类型 vs 函数标注 ⇒ ★ **0 处矛盾**（真比了；★ 函数无标注的跳过，如实报数）；
+        · ⑦ 默认值 vs 声明类型 ⇒ ★ **0 处矛盾**（★ **349 个无默认值**）。
+        ⇒ ★★ 两条**真的干净** —— ★ 但**只有修好之后这个"干净"才算数**。
+      ★★ **定则（★ 可复用）**：
+        ① ★ **判据必须报"覆盖面"**（比了几个 / 跳过几个 / 为什么跳）——
+           ★ 只报"违规数"的判据**无法自证它在工作**；
+        ② ★ **输出里出现"0"或"全 0"时，先去找那个应该非 0 的数**（本例就是"无默认值"那格）；
+        ③ ★ **摸一个框架的数据类，先看字段名**（★ `dataclasses.fields()` 一打印就清楚）——
+           ★ 凭印象写 `getattr(obj, "type", None)` 是**静默失败**的经典形态。
+      ★ 与**事实 62**（"门禁写了 ≠ 有效，负例是唯一证明"）互补：★ 62 讲**判据要能失败**，
+        ★ 本条讲**判据要先证明它真的在跑**。|
+        痕迹：`tools/scan_param_kind_consistency.py`（修后）· `output/_scan_param_types.py` 与
+        `_scan_default_types.py`（★ **空跑版，留着当反例**）· `mcp-server/tool_registry.py` 的 `Param` |
+| 507 | **★ 静态判据必须**跟调用图** —— 只看**一个函数**的文本会把「薄包装」整类判错**（★ 三轮内第二次同类失误，2026-10-03 接手轮）。
+      ★ **现象**：我普查「有 `pre_call` 的工具**选完之后有没有回读选区计数**」
+        （★ 这是**事实 8** 的纪律：只信回读、不信 bool 返回值），
+        ★ 首版只 `inspect.getsource(pre_call)` 取**那一个函数**的文本、搜 `GetSelectedObjectCount` 等词
+        ⇒ ★ 报出 **3 个"没回读"**：`_pre_draft` · `_pre_edge_flange` · `_pre_gusset`。
+      ★★ **真因**：★ 它们都是**薄包装** —— 例如 `_pre_edge_flange(params)` 的**全部函数体**就是
+        `_select(params, "EDGE")`，★ 而**回读发生在被调用的 `_select` 里**
+        （`tool_specs_batch4._select` ⇒ 又委派给 `scripts/sw_selection_spec.resolve_selection`，
+        后者 docstring 逐字「按 `selection` 入参选中一个实体，返回**回读计数**（**0 就报错，不静默**）」）。
+        ⇒ ★ 判据**连一层委派都没跟**，于是把**写得最规范的三个**判成了违规。
+      ★★ **修后（`tools/census_pre_calls.py` v2，递归收集本模块被调函数，深 3 层）**：
+        · 有 `pre_call` 的工具 **22 个**（总 277）；
+        · ★★ **没回读的：0 个** ⇒ ★ **这一族全部遵守事实 8 的纪律**；
+        · 回读方式分布：★ **20 个**走 `resolve_selection` · **2 个**走
+          `GetSelectedObjectCount2` + `SelectionManager`（★ 后两个是接手轮自己加的焊件那对）。
+      ★★★ **与事实 506 并列成两条"判据自证"纪律**：
+        · **506**：★ 判据必须**自报覆盖面**（比了几个 / 跳过几个 / 为什么跳）——
+          ★ 否则"一个都没比"与"全都合格"**打印出来一模一样**；
+        · **507**：★ 判据必须**跟调用图**（至少一层委派）——
+          ★ 否则"薄包装"与"真的没做"**打印出来一模一样**。
+        ★★ 两条的共同形态：★ **判据的输出无法区分「合格」与「没测」** ⇒ ★ 这就是它们必须自证的原因。
+      ★ 两次失误都是同一个人（我）在三轮内犯的，★ 且**两次都是被"一个不该出现的数"抓出来的**：
+        · 506 那次是「无默认值 **0** 个」（277 个工具不可能人人都有默认值）；
+        · 507 那次是「3 个违规**恰恰是写得最规范的三个**」（★ 反直觉 ⇒ 去读源码 ⇒ 发现是薄包装）。
+      ⇒ ★ **可复用判据**：★ **当一个判据的输出"太好"或"太整齐"时，先去证伪判据本身**，
+        ★ 而不是去改被判的对象。|
+        痕迹：`tools/census_pre_calls.py`（修后，跟调用图）· `mcp-server/tool_specs_batch4.py` 的
+        `_select` / `_model` · `scripts/sw_selection_spec.py::resolve_selection` ·
+        对照 **事实 506**（覆盖面自报）· **8**（只信回读计数）· **62**（负例是门禁有效的唯一证明） |
+| 508 | **★★★★★ MCP 层的序列化器没有 `default=` ⇒ **凡是返回原始 COM 对象（或任何不可 JSON 序列化的东西）的工具，成功了也会被报成 error**** —— 2026-10-03（接手轮，真机证出并**一处修好全族**）。
+      ★ **病灶**（`mcp-server/server.py` 的 `_result`，改前逐字）：
+        ```python
+        def _result(payload: Dict[str, Any], response_format) -> str:
+            if response_format == ResponseFormat.JSON:
+                return json.dumps(payload, ensure_ascii=False, indent=2)   # 没有 default=
+            lines = [f"# {payload.get('status', 'result')}"]               # 非 dict 连 .get 都会炸
+        ```
+        ★ 而 `_run_locked`（同文件）把 `_result` 包在 `try/except` 里 ⇒
+        ★★ **`json.dumps` 抛 `TypeError` ⇒ 被吞掉 ⇒ 返回 `_tool_error`**
+        ⇒ ★★★ **"建成了却报错"**（★ 本仓最反对的那类"错误信息指不出真因"）。
+      ★★ **真机证据**（`tools/probe_result_serializer.py` · `output/result-serializer-evidence.json`）：
+        · `sw_part.fillet(doc, 2.0)` 选出 1 条边后调用 ⇒ ★ **特征树里出现 `圆角1`**（**能力建成了**）；
+        · 而它的返回是 **`CDispatch`** ⇒ ★ `json.dumps(ret)` 报
+          **`TypeError: Object of type CDispatch is not JSON serializable`**；
+        · ★ 连 markdown 分支也不行：`ret.get("status", …)` ⇒ **`AttributeError: <unknown>.get`**。
+      ★ **规模**：静态扫（`tools/scan_nondict_returns.py`）报 **111 个工具**的返回里有**裸 return（非 dict）**
+        —— ★ 那是**启发式上界**（有些裸调用其实回 dict），★ 但**病灶同一个**。
+      ★★★ **修法选了"一处"而不是"逐个改 111 个"**（★ 这才是根治）：
+        在 `server.py` 新增 **`_jsonable(value)`** 降级器 + 让 `_result` **不再假定 `payload` 是 dict**：
+        · 非 dict ⇒ **裹成** `{"status":"ok","result":<降级值>,"result_type":<原始类型名>,"note":…}`；
+        · COM 对象 ⇒ 尽量读 `Name` / `GetTypeName2` ⇒ 降级成 **`<CDispatch 圆角1>`**（★ **保住名字**，
+          ★ 调用方看得出"建成了什么"）；读不到就 `<类型名>`；
+        · 两处 `json.dumps` 都补 **`default=_jsonable`** 当兜底。
+      ★ **验证（两条路）**：
+        · **离线**：`tests/test_result_serializer.py` —— **6 passed**，★ 含**正对照**
+          （「本来规范的 dict **一个字节都不许变**」）与**负例**（COM 对象 / 标量 / markdown 分支）；
+        · ★ **真机**：`fillet` 那条路径的返回已能过序列化（★ 特征建成 + 返回可解析）。
+      ★★ **可复用判据**：★ **"成功"与"报错"的分界线在序列化器上，而不在被调函数里** ——
+        ★ 因此**只要有一个工具回非 dict，就要问一句"它过得了 `json.dumps` 吗"**；
+        ★★ 而**修的时候选"容错点"（一处）而不是"逐个改调用方"（111 处）**。
+      ★ 与**事实 40**（`IModeler.Create*Surface` 返回值不可靠）**互补**：★ 40 讲"返回值可能骗人"，
+        ★ 本条讲"**返回值可能根本传不出去**"。|
+        痕迹：`mcp-server/server.py` 的 `_jsonable` / `_result` · `tests/test_result_serializer.py` ·
+        `tools/probe_result_serializer.py` · `tools/scan_nondict_returns.py` ·
+        `output/result-serializer-evidence.json` · 对照 **事实 40** · **36**（报错指不出真因）|
+| 509 | **★★★ 纠正事实 503 的**机制**：`RESOLVERS["model"]` **不会**清空选区** —— ★ **结论（"前置要写成 `pre_call`"）仍然成立，但我给的机制是错的**（2026-10-03 接手轮，**自证伪**）。
+      ★★ **怎么发现的**：★ 第 28 轮我先按 503 的机制写了「诊断型工具（`selection_count` 等）
+        经工具层**永远报 0**」的探针 ⇒ ★★ **实测反了**：`count_after_select=1` · 调过解析器后
+        **仍是 1** · 而 `solidworks_selection_count` **正确回了 1**（证据 `output/selection-count-e2e-evidence.json`）。
+      ★★★ **两轮受控实验（都不是推理）**：
+        · **重复实验**（`output/resolver-selection-repeat-evidence.json`）：同一个件、
+          **6 次**「选边 → 调解析器 → 再调一次解析器 → 重选」⇒ ★ **6/6 全部 `1 → 1`，一次没掉**；
+        · **mark 矩阵**（`tools/probe_resolver_mark_matrix.py`，`output/resolver-mark-matrix-evidence.json`）：
+          **`FACE` / `EDGE` × `mark` 0/1/2/4 × 选 1 个 / 2 个 = 16 组** ⇒ ★★ **0/16 掉**
+          （每一组都是 `picked == before == after_resolver`）。
+      ⇒ ★★★ **结论：`RESOLVERS["model"]`（经 `connect_solidworks()`）**不清空选区**。**
+      ★ **那第 17 轮那个 `2 → 0` 是什么？** ★ 那次的 `diag_selection_lifetime.py` 用的是
+        **焊件件（结构构件）+ `mark=1` 选面**，而本轮两组实验用的是**普通拉伸件**。
+        ★ 两次都是真读数 ⇒ ★★ **差异落在"何种零件/何种调用序"上，而我没能复现它**
+        ⇒ ★ 按事实 53 **停止追**，★ 但**必须把 503 的机制断言改掉**（★ 不能再拿一个复现不出的机制去推理）。
+      ★★ **503 里哪部分仍然成立**（★ 这才是重要的）：
+        · ✅ **结论**：★ 凡「要求调用方**先选好**某个东西」的工具，**必须把选择写进 `pre_call`**；
+        · ✅ **理由（改后的）**：★ **工具层没有"调用方预选"这条通路** ——
+          ★ MCP 客户端**根本没机会**在工具调用之前操作 SolidWorks 的选区
+          （★ 这不需要"解析器清选区"这个机制，**它本身就足以推翻预选式前置**）；
+        · ✅ **已做的两处修复仍然正确**（★ 焊件对的 `_select_faces_for` 让 `pre=True` ✓ ·
+          `surface_fill` 的回退让它在工具层建成 ✓）—— ★ **它们治的是"前置拿不到"，与机制无关**。
+      ★★★ **可复用判据（★ 本条最重要的产出）**：
+        ★ **一个"机制性"结论，必须用**多种零件 / 多种调用序**重复验证，才能写进事实表**；
+        ★ 只在一处观测到的机制，★ 很可能只是**那一个状态的巧合** ——
+        ★★ 而**基于错误机制做的推理会整片出错**（★ 本轮就差点把 5 条诊断型工具误判成"永远报 0"）。
+      ★ 与**事实 417–419**（"判据在这条路上间歇性不稳"）同族：★ 本仓已有过"间歇性"的先例，
+        ★ 本条再次说明**单次观测不足以立机制**。|
+        痕迹：`tools/probe_selection_count_e2e.py` · `tools/probe_resolver_mark_matrix.py` ·
+        `output/selection-count-e2e-evidence.json` · `output/resolver-selection-repeat-evidence.json` ·
+        `output/resolver-mark-matrix-evidence.json` · ★ 原证据 `output/selection-lifetime-evidence.json`
+        （第 17 轮那次 `2 → 0`，★ **保留不动当反例**）· 对照 **事实 503**（★ 机制部分据此条更正）|
+| 510 | **★ 一条"看起来很好"的静态门禁，**实测标定后**发现它会把"清空选区"和"只读报告"也抓进来** —— 2026-10-03（接手轮，★ 我**没有**按原样接线）。
+      ★ **提案出处**：bunny 的 `recon/preselect-family-merged.md` §四 建议 3，判据逐字：
+        「当 spec 的 doc（或目标函数 docstring）含**「调用前 / 先选 / caller must first select /
+         the selected entities / selected profiles / last selection」**且
+         `pre_call is None and derived_args is None` ⇒ 报」，★ 它**估**「一次抓住本表 **30 条**」。
+      ★★ **我先标定再接线**（★ 事实 506/507 的教训：判据要能自证、要跟调用图）——
+        标定件 `output/_calibrate_preselect_gate.py`（★ 带**覆盖面自报** + **跟一层调用图**）：
+        · ★ **覆盖面**：扫 **277** 条 spec · 文档里出现「先选/预选」类信号的 **63** 条；
+        · ★★ **按原判据会被报：52 条**（★ 不是它估的 30）；
+        · ★★★ **含**已文档化的假阳性**（它自己那句"不代选"就写在同一份函数文档里）：
+          `clear_selection` / `clear_selection_for_preview`（★ 它们是**清空**选区，不是前置）·
+          `current_selection`（★ 它**报告**选区）·
+          `drawing_create_auxiliary_view` / `drawing_create_section_view` /
+          `drawing_insert_surface_finish_symbol`（★ 这三条的文档里**逐字写着「不代选」「只回读」**）。
+      ★ **可用的修正**（★ 我实测定下来的）：
+        · ★ 加**反向信号**排除：文档含「**不代选 / 不预选 / 自己选 / 只回读 / 报告选区**」⇒ **不报**；
+        · ★★ 真信号仍是**"前置由选区算出"**（★ 即本仓已实现的
+          `tools/scan_preselect_requiring_tools.py`：函数**据此早退失败**，或
+          `preconditions_held` 由选区读得出）⇒ ★ 那版报 **2 条**，★ 且两条与真机「前置未成立」**独立吻合**。
+      ★ **一个有价值的副产品**：★ 标定里「**报出的 52 条中，有 `selection` 参数的 0 条**」
+        ⇒ ★★ 说明**凡声明了 `selection` 参数的工具，都已经配了 `pre_call`**（★ 仓内卫生是好的）⇒
+        ★ 真正缺的是**没写 `selection` 参数、却在函数里读选区**的那批。
+      ★★★ **可复用判据**：★ **别人（或另一个模型）给的判据，也要先标定再接线** ——
+        ★ 标定的三样是：**① 覆盖面（扫了几条）· ② 报几条 · ③ 抽 5 条看是不是假阳性**；
+        ★★ 而"判据的作者估了几条"**不能替代实测**（★ 本例估 30、实测 52，★ 且错的那 22 条里有它自己文档化的豁免）。
+      ★ 与**事实 62**（负例是门禁有效的唯一证明）与**506/507**（自报覆盖面 · 跟调用图）构成一组：
+        ★ 62 讲**判据要能失败** · 506 讲**判据要证明自己在跑** · 507 讲**判据要跟调用图** ·
+        ★★ 510 讲**判据要标定过才准接线**。|
+        痕迹：`output/_calibrate_preselect_gate.py`（标定件）· `tools/scan_preselect_requiring_tools.py`
+        （★ 实测定下来的那版，报 2 条）· `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §四 |
+| 511 | **★★★★ 官方 API 是「**接口 × 成员**」的二维表 —— ★ 按**成员名**扫（废弃 / 枚举 / 签名）**必有假阳性****（2026-10-03 接手轮，★ 自证伪 + 量化）。
+      ★★ **怎么发现的**：★ 我按业主"批量推进"的提议造了第一台机器
+        （`tools/build_obsolete_index.py` 建官方废弃名单 ⇒ `tools/scan_obsolete_usage.py` 扫全仓），
+        ★ 它报出 **870 处**"用到官方废弃成员" ⇒ ★ 看着像一笔大活。
+      ★★★ **而头几名逐个摊开全是假阳性**（★ 量化在 `tools/build_members_index.py` 的产物里）：
+        | 成员 | 定义它的接口数 | 其中废弃的 | 判定 |
+        |---|---|---|---|
+        | `Name` | **24** | **2** | ★ **假阳性** |
+        | `Select` | **28** | 部分 | ★ **假阳性** |
+        | `GetBodies2` | 2 | 1（`IComponent2`）| ★ **假阳性**（★ `IModelDoc2.GetBodies2` 好好的）|
+        | `GetEdges` | 8 | 1 | ★ **假阳性** |
+        | `CreateLine` | 3 | 1 | ★ **假阳性** |
+        | ★ **`FeatureCut4`** | 2 | 1 | ★ **假阳性** —— ★★ 而**本仓事实 1** 逐字说「切除的正确入口是 `FeatureCut4`」 |
+      ★ **全量索引的读数**（`recon/official-members-index.json`）：
+        ★ 官方页 **12123** 篇 · 接口 **566** 个 · **唯一成员名 8239** 个；
+        · ★ **在所有接口上都废弃**的名字 **1163** 个 ⇒ ★ **只有这批「按名字判」不含歧义**；
+        · ★★ **有歧义的**（部分接口废弃、部分不废弃）**292** 个 ⇒ ★ **按名字判必错**。
+      ★★★ **为什么这是结构性的**（★ 不是"多加小心"能解决的）：
+        ★ COM 调用形如 `get_com_member(x, "GetBodies2")`，★ 而 **`x` 属于哪个接口在静态源码里看不出来**
+        （★ 它是运行时对象）⇒ ★★ **要判"这一处是不是废弃调用"，必须知道运行时接收者的接口**
+        ⇒ ★ 于是**纯静态批量扫的上限，止步于"能定接口的那部分"**。
+      ★★ **可批量与不可批量的确切边界**（★ 这是本轮最有用的产出）：
+        · ✅ **能真批量**：★ 名在「**所有接口都废弃**」那 1163 个里的（★ 按名字判安全）；
+        · ❌ **必须逐处判**：★ 名在**有歧义**那 292 个里的 —— ★ 而 `Name` / `Select` / `GetType` 这些
+          **最常用的名字恰好都在歧义名单里**（★ 所以"扫一遍全改"这条路**对高频名字是堵死的**）。
+      ★★ **可复用判据**：★ **凡"按名字对名单"的批量判据，先问一句「这个名字在几个接口上出现、
+        其中几个命中」** —— ★ 命中数 < 出现数 ⇒ ★ **那条判据会误报**；
+        ★★ 而**误报率高的批量清单比没有清单更糟**（★ 与**事实 40/510**同族：一个没人当真的守卫等于没有）。
+      ★ 与**事实 36**（「同名接口分属不同族 —— 用错接口 = 对象对任何成员都没反应」）**同源**：
+        ★ 36 讲**用错接口**会怎样，★ **本条讲"按名字扫"为什么必然会误判接口**。|
+        痕迹：`tools/build_obsolete_index.py` · `tools/scan_obsolete_usage.py`（★ **误报版，留着当反例**）·
+        `tools/build_members_index.py`（★ 量化版）· `recon/official-obsolete-index.json` ·
+        `recon/official-members-index.json` · 对照 **事实 36 / 40 / 510** |
+| 512 | **★★★★ "覆盖率从 76.9% 涨到 91.3%、判据从 21% 降到 8.66%" 是一次**假象** —— ★ 真因是抽取器把全仓文档拖进了每个工具**（2026-10-03 接手轮，★ 四版修正的完整链条）。
+      ★ **背景**：★ 为把 277 个工具映射到它们真正调的 **COM 成员**（★ 好把矩阵填上），
+        我写了 `tools/map_tools_to_members.py` —— ★ **它改了四版，每一版都被不同的自检抓到问题**：
+      ```
+      v1 ★ 只在本模块内跟调用图
+         ⇒ ★★ fillet / chamfer / extrude_boss / sketch_add_line 被算成"无 COM 成员引用"
+         ⇒ ★ 那 4 个**明显调 COM** ⇒ ★ 「有成员引用」只有 73.3% ⇒ 无处可放 59 个
+      v2 ★ 改成**按裸函数名**建全仓池（★ 为了支持跨模块）
+         ⇒ ★★ 覆盖 73.3% → **91.3%**、判据① 21.30% → **8.66%** ⇒ ★★★ **看着像大成功**
+      v3 ★ 抽查 6 个工具 ⇒ ★★★ **每一个都含同一批成员**
+         （Activate / InsertDome / InsertMoldShutOffSurface / RunAnalysis）
+         ⇒ ★★ **91.3% 是虚高、8.66% 是假象** ⇒ 改成按 import 精确解析
+         ⇒ ★★ **抽查仍然污染**（★ 说明根因不在"名字串"，★ 而在别处）
+      v4 ★★★ 找到**真根因**：★ `sw_connect.get_com_member` **被每个模块 import**，
+         而**它的 docstring 里有示例**（InsertDome / InsertMoldShutOffSurface / RunAnalysis / Activate）
+         ⇒ ★★ **"跟到它"就把全仓文档拖进了每一个工具** ✓
+         ⇒ ★ 修法两条：★ ① **抽成员名前先剥注释与 docstring**（★ 但保留字符串字面量 ——
+           因为 `get_com_member(x, "M")` 的成员名就是字符串）；
+           ★ ② **跟图跳过"管道层"模块**（sw_connect / sw_preflight / sw_api_sldworks / sw_selection_spec）。
+         ⇒ ★★ 抽查**干净了** · 成员引用 1971 → **908**（★ 清掉 1063 处污染）· 覆盖 **85.9%**
+      ```
+      ★★ **真实读数**（★ 四版之后）：★ 有成员引用 **85.9%** · ★★ 判据① 无处可放率 **20.94%**
+        （★ 阈值 ≤20% ⇒ **差 0.94 个百分点**）· 判据② 空格率 57.14% ✓ · 判据③ 44.42% ✓
+        ★ 而网格分布也从 `建×特征 239`（★ 显然污染）回到 **74**（★ 合理）。
+      ★★★ **可复用判据（★ 本条最重要的产出）**：
+        ★ **① 任何"抽取/扫描器"的覆盖率读数，都必须在**抽查样本**之后才可信** ——
+          ★★ 本链条里"覆盖率高、判据改善"**恰好出现在错的那一版**上；
+        ★★ **② 抽查要抽"看起来太好"的那个数** —— ★ 我是看到 `建×特征 239` 这个不合理的分布才发现错的；
+        ★★★ **③ "跟调用图"必须定义**边界**：★ 跟到**管道层/通用帮手**（被所有人 import 的那种）
+          等于把**那份文件的全部内容**（★ 含文档示例）算成每个人的用法；
+        ★ **④ 从源码抽名字时，"剥注释"与"剥注释+字符串"必须分清**（★ 事实 61 定则④）——
+          ★ 这里要**剥注释、留字符串**（★ 成员名是字符串）✓
+      ★ 与**事实 506/507/510/511** 构成一组：★ 506 判据要自报覆盖面 · 507 要跟调用图 ·
+        510 要先标定 · 511 按名字对必误配 · ★★ **512 说"抽查是唯一能识破假象的手段"**。|
+        痕迹：`tools/map_tools_to_members.py`（★ 四版都在文件头有说明）· `tools/build_capability_matrix_v2.py` ·
+        `output/tool-to-member-map.json` · `output/operation-object-matrix-v2.json` |
+| 513 | **★★★★ 「剥注释」这四个字里藏着一个更隐蔽的源：**docstring** —— 同一个根因在本会话的**两个工具**里各犯一次**（2026-10-03 接手轮）。
+      ★ **实例一（事实 512）**：★ `tools/map_tools_to_members.py` 从**原始源码**抽 COM 成员名 ⇒
+        ★★ `sw_connect.get_com_member` **被每个模块 import**，★ 而**它的 docstring 里有示例**
+        （`InsertDome` / `InsertMoldShutOffSurface` / `RunAnalysis` / `Activate`）⇒
+        ★★★ **于是那批示例出现在了**每一个工具**上** ⇒ ★ 覆盖率虚高到 91.3%、判据① 降到假 8.66% ✓
+      ★★ **实例二（本条）**：★ `tools/scan_obsolete_safe.py` 要"剥注释但留字符串"（★ 因为
+        `get_com_member(x, "M")` 的**成员名是字符串字面量**）⇒ ★★★ **而 docstring 也是字符串**
+        ⇒ ★ 于是 `sw_sketch_modify_ops.py` / `sw_delivery.py` / `sw_custom_property.py` 的
+        **docstring 里写的示例**（如「原来是 `get_com_member(model, "GetActiveSketch2")`」）
+        **被当成了真调用** ⇒ ★ 扫描器报"注释型命中" ✓
+      ★★★ **"剥注释"这件事在本会话改了五版，前四版全错**（★ 完整链条）：
+      ```
+      v1 ★ strip_comments_and_strings（既剥注释又剥字符串）
+         ⇒ ★★ 字符串也没了 ⇒ 成员名一起丢 ⇒ 漏掉全部 get_com_member 形态（★ 真命中 17，假阴性）
+      v2 ★ tokenize 丢 COMMENT 再 untokenize(out)
+         ⇒ ★★ 实测**注释被原样还原**（★ 负例：某文件 2 处 → 剥后仍 2 处）
+      v3 ★ 自己写逐行引号状态机
+         ⇒ ★★ **三引号状态没正确关闭** ⇒ docstring 之后的行一律不裁 `#`
+      v4 ★ tokenize 拿 COMMENT 的位置、按位置挖（★ 不重建 token 流）
+         ⇒ ★ 注释剥掉了，★★ **但"剥后"那些行仍带 `#`/`★`** ⇒ 负例自检回 **(False, True)**
+      v5 ★★ **发现真根因：那些不是注释，是 docstring 的正文**
+         ⇒ ★ 加 **AST 剥 docstring**（找"模块/类/函数体的第一条字符串表达式"，按位置挖）
+         ⇒ ★★ 负例自检回 **(True, True)** ✓
+      + ★ **一条兜底**：★ 剥完**仍以 `#` 开头**的行**一律跳过**（★ 合法 Python 代码行不以 `#` 开头）
+        —— ★ 为什么加它：★ v5 修好主因后**仍有 17 条残留**，★ 按**事实 53**（同一处 ≥3 次就该停）
+        ★ **加一道判据无歧义、开销为零的兜底，比继续追真因划算** ✓
+      ```
+      ★★★★ **可复用判据（本条最重要的产出）**：
+        ★ **① "剥注释"必须同时想清楚三样**：★ **`#` 注释** · ★★ **docstring** ·
+          ★ **普通字符串字面量**。★ 前两者**都该剥**，★ 第三者**必须留** ——
+          ★★ 而"留字符串"这条规则**天然把 docstring 也留下了** ⇒ **这就是坑的来源** ✓
+        ★★ **② 负例自检是唯一能识破它的手段** —— ★ `_strip_selftest()` 回 `(False, True)` 那一刻，
+          ★ 我才从"注释没剥掉"这个**错误假设**转到"那是 docstring" ✓（★ 与**事实 62**同族）
+        ★★★ **③ 判据的数字，在"修判据"的过程中会一直动** —— ★ 本会话 `scan_obsolete_safe.py`
+          的真命中读数动了 **8 次**：★ 17 → 70 → 68 → 66 → 63 → 59 → 65 → **55**。
+          ⇒ ★★ **所以"读数是 X"这句话必须带上"用哪一版判据"** ✓
+      ★ 与**事实 506/507/510/511/512** 构成一组：★ 506 判据自报覆盖面 · 507 跟调用图 ·
+        511 按名字对必误配 · 512 抽查是唯一能识破假象的手段 ·
+        ★★ **513 说"剥注释"这件事本身就有三个层，而 documentation 层最容易被漏**。|
+        痕迹：`tools/scan_obsolete_safe.py`（`strip_comments_only` + `_strip_selftest`）·
+        `tools/map_tools_to_members.py`（`_strip_comments_and_docstrings`）·
+        `output/_test_strip2.py` · `output/obsolete-dotcall-scan.json` |
+| 514 | **★★★★★ 「消解废弃成员」的完整方法论 —— 8 批真机实践攒出来的五条**（2026-10-03/04 接手轮的 24h 任务）。
+      ★ **背景**：★ `tools/scan_obsolete_safe.py` 扫出**生产代码**里的废弃成员调用（★ 当前 **15** 条 ·
+        ★ 起点 **35** 条）⇒ ★ 逐条消解。★★ 过程里攒出**五条可复用判据**，★ 每一条都由真机代价换的 ✓
+      ```
+      ★★ ① **判据先行，且判据要用负例校准**
+         ★ 扫描器（`tools/scan_obsolete_safe.py`）的读数在本会话**动了 8 次**
+           （17 → 70 → 68 → 66 → 63 → 59 → 65 → 55 → … → 40）
+         ⇒ ★★★ **"读数是 X"必须带上"用哪一版判据"** ✓
+         ★ 它的 `_strip_selftest()`（负例自检）**抓到了 4 个版本的全部错误** ——
+           ★ 含"剥注释里藏着 docstring"那一条（**事实 513**）✓
+
+      ★★★ ② **三源互证 —— 而当反射自身分裂时，只有真机能定**
+         ★ 三个源：★ 官方 markdown（`C:\swapi`）· ★★ 反射（出厂类型库）· ★★★ 真机
+         ★ 铁律 4 说"冲突时以**出厂类型库**为准" ⇒ ★★ 而本会话见到**反射自身给两个答案**：
+         ```
+         ★ FeatureFillet3 的参数量：★ 官方 markdown 15 · 反射组 A 15 · 反射组 B 9
+         ★ 真机：★ 传 15 ⇒ `com_error: '无效的参数数目'` ⇒ **只有真机能定**
+         ```
+         ⇒ ★★★ **"以反射为准"在反射分裂时不够用** ✓
+
+      ★★★★ ③ **"废弃" ≠ "不能用"；"更新" ≠ "更好"** ⇒ **换之前必须问两个可核的问题**
+         ★ **Q1：★ 旧的现在能不能用？**（★ 能用 ⇒ **没有换的必要**）
+         ★★ **Q2：★ 新的能不能**做到同一件事**？**（★ 不是"能不能调"，★ 而是"**结果对不对**"）
+         ★ 实例：
+         - ★ `FeatureFillet(7 参)` ⇒ ★ **真机建成了倒角**（特征树 +1）· ★ 而 `FeatureFillet3(15 参)`
+           **连调都调不通** ⇒ ★★ **不换**（★ 本轮最强的一条"不换"理由）
+         - ★ `AddMate5` ⇒ ★ 与后继 `CreateMate` **两条都建不成**（★ 同一根因：没选中面）·
+           ★ 而旧的**还多给一个 `error_status` 诊断** ⇒ ★★ **不换**（★ 换过去只会**丢掉能见度**）
+         - ★ `GetDependencies2(3 参)` ⇒ ★ **真机**能调**、有返回值 ⇒ ★★ **不换**
+           （★ 官方 markdown 里它标 Obsolete，★ **而反射里 `IModelDocExtension.GetDependencies2`
+             3 参存在、无废弃标记** ⇒ ★ 真机路由到的是后者）✓
+
+      ★★★★★ ④ **"有据保留"是一个**合法结论**，但必须写给后人看** —— 本会话攒出 **5 类**
+         | ★ 类 | ★ 例子 | ★ 保留理由 |
+         |---|---|---|
+         | ★ 指针族不可调 | `DeleteRenderMaterial` | ★ 后继在 **pywin32 下造不出可调用对象**（事实 47）|
+         | ★ 两条都不通 | `AddMate5` | ★ 同一根因挡住两条路，★ 而旧的**多给诊断** |
+         | ★ 刻意的兜底 | `AddComponent4` | ★ `AddComponent5 → None → 退回 4`（★ 人工读源码确认）|
+         | ★ 后继是另一个成员 | `GetDependencies2` | ★ 能调，★ 而"后继"签名与语义都不同 |
+         | ★ ★★ **旧的做到了、新的做不到** | `FeatureFillet` | ★ 特征树 +1 vs **调不通** |
+         ★★ **这 5 类都不能靠"名单"判** —— ★ **必须**人工读代码 + 真机 + 官方签名**三样一起判** ✓
+         ★★★ 且**理由要写进 docstring / 提交信息** —— 否则后人会当成"漏改"再改一遍 ✓
+
+      ★★★★★ ⑤ **"造不出前置"时，★ 换路比继续造有效**
+         ★ 实例：★ `GetSystemValue3` 的验证**卡了三轮**（★ 都卡在"要有一个真实尺寸"）：
+           `GetFirstDisplayDimension`（★ 拉伸特征没有）· `Parameter("D1@草图1")`（★ 草图没尺寸）·
+           `AutoDimension2` + `FullyDefineSketch`（★ 一个不可调、★ 一个类型不匹配）
+         ★★ 按**事实 53**（≥3 次就停）停下之后 ⇒ ★★★ **换成"打开仓里**现成**的 `.SLDPRT`"**
+           （★ 仓里有 **68 个**，★ 其中一个**正好带尺寸**）⇒ ★★★★ **一次就成** ✓
+         ⇒ ★★ **可复用判据**：★ **"构造前置"连续失败 ≥3 次 ⇒ 先问"仓里有没有**现成**的同类对象"** ✓
+         （★ 与**事实 53** 配套：★ **53 说"该停"，本条说"停下之后往哪走"**）✓
+      ```
+      ★★★★ **另一条横贯全过程的判据**：★★ **`get_com_member(x, "M")` 在"无参调用失败"时会回
+        **成员本身**（一个 `bound method`）** ⇒ ★ 本会话**三次**撞它：
+        ★ 事实 512（跟调用图把 `sw_connect` 的 docstring 拉进每个工具）·
+        ★ `sw_delivery._get_pack_and_go`（把方法当 `IPackAndGo` 返回）· ★ `GetTotalTransform`（★ 官方是 1 参）。
+        ⇒ ★★★ **凡收到它的返回值，判据必须是**结构性的**（`hasattr(v, "_oleobj_")`），★ 不能只判 `is not None`** ✓
+      ★ 与**事实 40/47/53/62/506/507/510/511/512/513** 构成一组。|
+        痕迹：`tools/scan_obsolete_safe.py` · `tools/plan_obsolete_fixes.py` ·
+        `tools/probe_*successor*.py` · `tools/probe_fillet_generations.py` ·
+        `tools/probe_mate5_vs_createmate.py` · `output/obsolete-fix-plan.json` |
+
+| 515 | **★★★★★ 「核对已做」的第 4 类账：★ 佐证里的**统计错觉** —— 成功的样本全是同一个样子，★ 于是把「类别规律」看成了「共同特征」**（2026-10-04 接手轮，★ 处置 `JUDGE-A_B.md` 的 **A-features F1**）。
+     ★ **背景**：★ `workflow-16` 的裁判裁 18 份对账稿，★ 把 13 条列为 🔴 立刻要改（★ 全是「台账把证据否定写成肯定」那一类）。★ 本条是其中**影响面最大**的一条 —— ★ 那句错断言**已从台账扩散到 `mcp-server` 的 MCP 工具描述** ✓
+     ## 一、★★★★ 病灶：★ 一句结论里**叠了三处**读数错，★ 而它们**错法各不相同**
+     ★ 台账与 MCP 描述当时写：「★ 对盒体 12 条边的**两两共 66 对**逐一试 · ★ 成功的边对是 … （**8/8**，到上限就停）—— ★★ **含边 0 的组合都成**」✓
+     ★★ 而逐字读 `output/dimension-edge-pairs-evidence.json`：★ `tried: **12**` · ★ `edge_count: 12` ·
+       ★ `successes = [[0,1],[0,2],[0,3],[0,4],[0,7],[0,8],[0,11],[1,2]]`（★ **正好 8 项**）·
+       ★ `pairs` 全表 **12** 行里 `created=True` **8** 行 / `created=False` **4** 行 ✓
+     | ★ 原话 | ★ 文件里的事实 | ★★ 错法 |
+     |---|---|---|
+     | ★ 「两两共 **66 对**逐一试」 | ★ `tried: **12**` | ★★ **把「计划数」说成了「实跑数」**（★ C(12,2)=66 是计划，★ 到上限就停 ⇒ 实跑 12）|
+     | ★★ 「**8/8**」 | ★ `successes` 8 项、★ 而 12 对里**成功 8 失败 4** | ★★ **把「成功的 8 个」读成了「8 对里 8 个成功」** |
+     | ★★★ 「**含边 0 的组合都成**」 | ★ 失败的 4 对是 `[0,5] [0,6] [0,9] [0,10]` —— ★ **全部含边 0** | ★★★★ **否定结果被写成肯定** ✓ |
+     ## 二、★★★★★ 而真因是**统计错觉**（★ 本条最有价值的部分）
+     ★ 为什么三处错里**只有第三处是「实质错」**？★ 因为前两处是**表述**、★ 而第三处是**结论** ✓
+     ★★ 那个结论**是怎么看出来的**：★ 成功的 8 对**恰好全部含边 0** ⇒ ★ 眼看「含 0 的都成」 ✓
+     ★★★ 而**证据自己的 `note` 早就给了正确的分类**（★ 逐字：「★ 盒体的 12 条边按 SolidWorks 惯例分组：**0-3 / 4-7 是上下两个面环、8-11 是竖边**」）⇒ ★★ 按分组重看那 12 对：
+     | ★ 边对 | ★ 关系 | ★ 结果 |
+     |---|---|---|
+     | ★ 0↔1 / 0↔2 / 0↔3 | ★ **同一条面环内** | ★ **成** |
+     | ★ 0↔4 / 0↔7 | ★ **对面环的对应边** | ★ **成** |
+     | ★ 0↔8 / 0↔11 | ★ **与竖边** | ★ **成** |
+     | ★★ 0↔5 / 0↔6 | ★ **对面环上错位的边** | ★★ **不成** |
+     | ★★ 0↔9 / 0↔10 | ★★ **同上** | ★★ **不成** |
+     ⇒ ★★★★ **真正的规律是「边对属于哪一类」，★ 不是「含不含边 0」** ——
+       ★★★ **后者是从 8 个成功样本里看出来的错觉**（★ 因为成功的那 8 个恰好都含 0，★ 而**失败的 4 个也都含 0** —— ★ 只数成功的、不数失败的，★ 就会看到「含 0 都成」）✓
+     ## 三、★★★★ 可复用判据（★ 与既有事实同族）
+     ★★★ **判「某特征是不是成因」，不能只看**成功的样本**有什么共同点 —— 必须同时看**失败的样本**有没有同一个特征** ✓
+     ★ 本条里：★ 成功的 8 个含 0、★ **失败的 4 个也含 0** ⇒ ★ **「含 0」根本不是判别特征** ✓
+     ★★ 手段（★ 与**事实 53** 的处方配套）：★ 事实 53 说「**把猜测变成一张穷举表**」· ★★ 本条补一句：★★★ **表里必须**成功与失败都在**，★ 否则「表」会变成错觉的放大器** ✓
+     ★★★ 与**事实 57**（★「一直是绿的测试，可能只是环境恰好满足」）· **事实 62**（★「负例是门禁有效的唯一证明」）**同族**：★ **本条说的是「负样本是结论有效的唯一证人」** ✓
+     ## 四、★ 处置
+     ① ★ 台账 `capabilities.yaml` 的 `part_and_features`：★ 原文**保留**（★ 证据不可变），★ **另加三段更正**（★ 分开讲三处错法 · ★ 讲分组规律 · ★ 给「正确的一句话」并注明 ★★★ **「本结论只由那 12 对样本支撑，★ 未穷举 66 对 ⇒ 不要外推」**）✓
+     ② ★★ `mcp-server/tool_specs_batch56.py`（★ **扩散出去的那一处**）：★ 注释里逐字更正 ✓
+     ③ ★★★ **不改**：★ 探针 `tools/probe_dimension_edge_pairs.py`（★ 它写的是「66 对」的**计划**，★ 没错）· ★ 裁判稿（★ 核错记录 —— ★ 引错是**证据**）✓
+     ④ ⚠★ **一条通道的说明**：★ `docs/harvest-digest.md` 是**生成物** ⇒ ★ 它下次重跑时会同步 ✓
+     ★★ **依据**：`specs/202-user-coverage-gaps/recon/verify50/JUDGE-A_B.md`（★ A-features F1 · ★ 两处）· `vd50-A-features.md`（★ §38 判定 · §57/§59 逐条对照）· `output/dimension-edge-pairs-evidence.json` ✓
+
+---
+
+## 516 · ★★★★★ A4 的存量账：**13 个 `verified` 条目挂在一个「自己说没实测过」的文件上**
+
+**发现时间**：2026-10-04（接手轮 · 处置 `JUDGE-C_D_E` 🔴 #10 · `C-sm-1 V-2 / V-3`）
+
+### 一 · 起因（★ 一条很小的事）
+★ 裁判说 `sheet_metal` 的 `level: verified` **违反 A4**：
+> ★ 「两条 evidence 一条**不碰 COM**、一条按字面 pytest **收 0 个用例**」✓
+
+★ **我实跑复核，两条都对**：
+| ★ evidence | ★ 实跑结果 | ★ 为什么不构成运行证据 |
+|---|---|---|
+| ★ `pytest tests/test_sw_sheet_metal.py` | ★ **6 passed** | ★ 该文件 71 行、只 `import sw_export` 与 `BaseFlangeSpec`（**一个 dataclass**）⇒ `COM` / `connect` / `get_com_member` / `SolidWorks` **各 0 次** |
+| ★ `pytest tests/solidworks_sheet_metal_regression.py` | ★★ **`no tests ran`（收 0 个，exit 1）** | ★ **什么都没验** |
+
+### 二 · ★★★ 而顺手写出的判据，把问题**放大到了全仓**
+★ 判据（★ 可核）：★ `level == "verified"` 的条目，★ 其 `evidence` 里**至少一条**要含运行证据的措辞 ✓
+★ 第一版**太窄**（★ 只认「真机/实跑/实测」）⇒ 报了 **21** 个，★ 而其中**有明显是运行证据的**：
+  · `python tools/verify_dfm_e2e.py`（**11/11 通过 · verdict: pass**）
+  · `output/b1-sketch-primitives-evidence.json`（★ 真机证据**文件**）
+  · 「既有冒烟（**权威 · 本仓库自己的判据**）：`python tools/verify_dome_smoke.py`」
+⇒ ★★ **补齐三类形态**（★ `tools/verify` / `evidence.json` / `verdict`）后 ⇒ ★★★ **降到 13 个** ✓
+
+### 三 · ★★★★★ 那 13 个的形态**完全一致**（★ 这才是本条事实的要点）
+★ **13 个的 evidence 全是 `pytest tests/xxx.py`** —— ★ **一个纯文件名，★ 没有任何运行结果的痕迹** ✓
+★ 而**其中 12 个指向同一个文件**：`tests/test_cad_reliability.py` ✓
+
+**而那个文件自己逐字写着**（★ 来源块）：
+> ★ 「⚠ **未在本机实测 SolidWorks**（见 AGENTS.md 铁律 2）。本次是清单形状与授权判据的迁移，
+>   ★ **不改变任何 COM 调用**」✓
+
+★ **实测复核**：★ `sw_guard` **0** 次 · ★ `get_com_member` **0** 次 · ★ `mock` **0** 次 · ★ `fake` **0** 次 ✓
+
+⇒ ★★★★ **即：12 个 `verified` 条目，★ 它们唯一的证据是一个"自己声明没实测过 SolidWorks"的文件** ✓
+
+### 四 · 那 13 个 id（★ 待核账）
+```
+ 1. requirements_planning                pytest tests/test_engineering_orchestrator.py
+ 2. solidworks_addin_host                pytest tests/test_cad_reliability.py   ← 12 个共用它
+ 3. external_spur_gear_geometry          pytest tests/test_cad_reliability.py
+ 4. parameter_updates                    pytest tests/test_cad_reliability.py
+ 5. custom_properties_and_bom            pytest tests/test_cad_reliability.py
+ 6. pack_and_go                          pytest tests/test_sw_delivery.py
+ 7. motion_study                         pytest tests/test_sw_motion_audit.py
+ 8. drawing_dimension_insertion          pytest tests/test_cad_reliability.py
+ 9. drawings_and_bom                     pytest tests/test_delivery_compare.py
+10. geometry_and_delivery_review         pytest tests/test_delivery_compare.py
+11. configurations_and_design_tables     pytest tests/test_cad_reliability.py
+12. autocad_script_backend               pytest tests/test_acad_script_backend.py
+13. autocad_dotnet_backend               pytest tests/test_acad_dotnet_preflight.py
+```
+
+### 五 · ★ 本轮做了什么、没做什么（★ 如实）
+★ **做了**：★ `sheet_metal` 那一条**补齐**了真机证据（★ 指向
+  `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS`，★ 逐字含「**闭轮廓**真机建成：特征树出现
+  「钣金6 / 基体-法兰1 / 平展型式6」」+ 时间 2026-10-01 + 版本 SW 2026 SP4.1 + **范围仅闭轮廓**）✓
+★★ **没做**：★ **那 13 个** —— ★ 因为**每个都要核实机证据到底在不在**（★ 有的可能真跑过、
+  ★ 只是没把结果写进 `evidence`）⇒ ★★ **不是一轮能清完的** ✓
+★★★ **而我的处理是**：★ 新增 `tests/test_verified_level_has_runtime_evidence.py`，
+  ★★ **断言"存量不增加"**（★ `BASELINE = 13`）—— ★★★ **而不是把判据放宽到看不见它** ✓
+  ★ **每减少一个就调小 `BASELINE`**，★ 到 0 时改成 `assert not bad` ✓
+
+### 六 · ★★★★ 可复用判据（★ 三条）
+> ① ★★★★ **「pytest 文件名」不是运行证据** —— ★ 它是**"我们跑过某个文件"**，
+>    ★ 而**不是"我们跑过 SolidWorks"**；★ 两者只有在那个文件**真的碰 COM** 时才等价 ✓
+> ② ★★★★ **判"某文件碰不碰 COM"的判据是**可数的**** —— ★ `sw_guard` / `get_com_member` /
+>    ★ `win32` / ★ `dispatch` 的出现次数 ⇒ ★★ **0 次就是不碰**（★ 不必读全文）✓
+> ③ ★★★★ **判据第一次跑出来的清单里，★ 要先看"有没有明显不该报的"** ——
+>    ★ 有 ⇒ ★ **那是判据太窄**（★ 不是条目错）⇒ ★ 补形态、★ 再跑 ✓
+>    ★★ **本条的 21 → 13 就是这么来的** ✓
+
+### 七 · ★ 与已有序号的关系
+★ **A4** 是 `AGENTS.md §一` 的验收标准（★ 「`verified` 必须有**我们自己的运行证据**」）⇒
+  ★★ **本条事实是 A4 在全仓的第一次**可执行盘点**** ✓
+★ 与**事实 62**（★ 负例是门禁有效的唯一证明）**互补**：★ 62 说的是「门禁要能抓」，
+  ★★ **本条说的是「门禁抓出来的清单要有人去清」** ✓
+★ **依据**：`specs/202-user-coverage-gaps/recon/verify50/JUDGE-C_D_E.md`（★ 🔴 #10 · `C-sm-1 V-2 / V-3`）·
+  `vd50-C-sm-1.md` §3 · ★ 本轮的 `tests/test_verified_level_has_runtime_evidence.py` ·
+  ★ 实跑：`python -m pytest tests/test_sw_sheet_metal.py -q`（6 passed）·
+  `python -m pytest tests/solidworks_sheet_metal_regression.py -q`（no tests ran）✓
+
+---
+
+## 517 · ★★★★★ 「官方 API 吃米」这个假设**不普遍成立** —— 它随**文档单位**变；★ 而它对 `GetSystemValue3` **明确不成立**
+
+**发现时间**：2026-10-04（接手轮 · 轮 56–57）
+
+### 一 · 真机定

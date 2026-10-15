@@ -1,0 +1,188 @@
+{
+  "idx": 9,
+  "results": [
+    {
+      "member": "AddDisplayStateSpecificRenderMaterial",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+        "Get_Appearance_Filename_Example_CSharp.md",
+        "Get_Appearance_Filename_Example_VB.md",
+        "Get_Appearance_Filename_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 DisplayStateOption 传 swAllDisplayState，并把 GetDisplayStates() 的结果转成 string[] 当 DisplayStateNames 传入，说明该参数不可省。",
+          "example_quote": "status = swModelDocExt.AddDisplayStateSpecificRenderMaterial(swRenderMaterial, (int)swDisplayStateOpts_e.swAllDisplayState, displayStateNames, out materialID1, out materialID2);",
+          "example_file": "Get_Appearance_Filename_Example_CSharp.md"
+        },
+        {
+          "what": "两个 out ID 返回后，还可用 IRenderMaterial::GetMaterialIds 再回读同一对 ID。",
+          "example_quote": "swRenderMaterial.GetMaterialIds materialID1, materialID2",
+          "example_file": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按规定跳过冲突判定；四份示例均真实调用本成员。"
+    },
+    {
+      "member": "AddDisplayText",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Replace_Dimension_with_Text_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "调用前须先选中尺寸并经 ISelectionMgr 取回 DisplayDimension，示例还判 selType = swSelDIMENSIONS；页面未写这条前置。",
+          "example_quote": "If selType = SwConst.swSelDIMENSIONS Then",
+          "example_file": "Replace_Dimension_with_Text_Example_VB.md"
+        },
+        {
+          "what": "Format 实参是 ITextFormat，取自 GetUserPreferenceTextFormat(swDetailingDimensionTextFormat) 并先设 CharHeightInPts=48；Position 以 3 个 Double 的 Variant 传入，WidthFactor 传 1。",
+          "example_quote": "boolstatus = selDim.AddDisplayText(\"Hi!\", (vEntData), textFont, SwConst.swTextJustificationCenter, 1#)",
+          "example_file": "Replace_Dimension_with_Text_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的“临时图形”与示例“temporarily replace”口径一致，未构成冲突。"
+    },
+    {
+      "member": "AddDistanceMate",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Edit_Distance_Mate_Example_CSharp.md",
+        "Add_and_Edit_Distance_Mate_Example_VB.md",
+        "Add_and_Edit_Distance_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "To specify a distance mate without limits, set the DistanceAbsUpperLimit and DistanceAbsLowerLimit parameters equal to the Distance parameter.",
+          "example_quote": "Set swMate = swAssembly.AddDistanceMate(2, False, 0.2, 0, 0, 1, 1, errors)",
+          "example_file": "Add_and_Edit_Distance_Mate_Example_VB.md",
+          "why": "页面说上下限等于 Distance 才是无限制；示例 Distance=0.2 却把上下限都传 0（C#/VBNET 同），两种写法不能同时是无限制正解。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "2. Call [[IModelDoc2::ClearSelection2]].",
+          "example_quote": "swEnt2.Select4 True, Nothing",
+          "example_file": "Add_and_Edit_Distance_Mate_Example_VB.md",
+          "why": "页面规定取到实体后先 ClearSelection2 再 Select4；示例两次 SelectByRay 后直接 Select4，全程未调 ClearSelection2。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例传 FirstArcCondition=1、SecondArcCondition=1 并回读打印 DistanceFirstArcCondition/SecondArcCondition；页面只给组合表未给这些枚举数值。",
+          "example_quote": "Debug.Print \"First arc condition as defined in swDistanceMateArcConditions_e: \" & swMate.DistanceFirstArcCondition",
+          "example_file": "Add_and_Edit_Distance_Mate_Example_VB.md"
+        }
+      ],
+      "note": "三份示例写法一致（2, False, 0.2, 0, 0, 1, 1），与 Remarks 的取限规则直接抵触。"
+    },
+    {
+      "member": "AddEdges",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Edge_Flange_Example_CSharp.md",
+        "Create_Edge_Flange_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "两个实参是 object[]；示例把 InsertSketchForEdgeFlange 用的那条 Edge 放进 aFlangeEdges，Sketch 取自 EditSketch 后的 GetActiveSketch2。",
+          "example_quote": "aFlangeEdges[0] = swEdge;",
+          "example_file": "Create_Edge_Flange_Example_CSharp.md"
+        },
+        {
+          "what": "AddEdges 紧接在 CreateDefinition(swFmEdgeFlange) 之后、其余 FeatData 属性之前调用；返回的 swEdgeFlangeError_e 码在示例中被丢弃，不作判定。",
+          "example_quote": "Call FeatData.AddEdges(vFlangeEdges, vSketchFeats)",
+          "example_file": "Create_Edge_Flange_Example_VBNET.md"
+        }
+      ],
+      "note": "两份示例都先调 InsertSketchForEdgeFlange，与 Remarks 的前置完全一致，未见冲突。"
+    },
+    {
+      "member": "AddEntity",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md",
+        "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "实参是实体对象而非选区：示例先经 GetSelectedObject6 取到 Face2，再 ClearSelection2 清掉选区，之后才调 AddEntity。",
+          "example_quote": "swModel.ClearSelection2(true);",
+          "example_file": "Add_Decal_Example_CSharp.md"
+        },
+        {
+          "what": "AddEntity 也可作用在 Decal 上：示例把 CreateDecal() 返回的 Decal 直接转成 RenderMaterial 再调 AddEntity。",
+          "example_quote": "swMaterial = (RenderMaterial)swDecal;",
+          "example_file": "Add_Decal_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按规定跳过冲突判定；四份示例均真实调用本成员。"
+    },
+    {
+      "member": "AddExplodeStep2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Explode_Step_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "If AutoSpaceComponentsOnDrag is set to true, then RotateAboutOrigin is false and ExplAng is 0.0.",
+          "example_quote": "Set explStep = config.AddExplodeStep2(0.5, -1, True, num, -1, True, False, True, errCode)",
+          "example_file": "Add_Explode_Step_Example_VB.md",
+          "why": "页面称 AutoSpaceComponentsOnDrag=true 时 ExplAng 必为 0；示例第8参传 True，而 ExplAng=num=3.1415/3≈1.047rad。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "2. Call [[IAssemblyDoc::ShowExploded2]] to activate an explode view.",
+          "example_quote": "Call swModel.AutoExplode",
+          "example_file": "Add_Explode_Step_Example_VB.md",
+          "why": "页面把 ShowExploded2 列为调用前必须步骤；示例只用 AutoExplode 建视图，从未调 ShowExploded2 就调 AddExplodeStep2。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "两个索引都传 -1；示例只选 mark=2 的方向实体（SelectByRay 的 Mark 参数为 2），未选 mark=32 的旋转轴。",
+          "example_quote": "boolstatus = swModel.Extension.SelectByRay(9.95048714770577E-02, 0.104317306113359, 5.68280010933222E-02, -2.53410890435057E-03, -0.389900775392565, 0.920853388786911, 6.25890574839405E-03, 1, True, 2, 0)",
+          "example_file": "Add_Explode_Step_Example_VB.md"
+        },
+        {
+          "what": "返回值直接赋给 SldWorks.ExplodeStep，并回读 ExplodeDistance/RotationAngle 等属性；页面 Returns 只写 Explode step。",
+          "example_quote": "Debug.Print \"Explode distance (m): \" & explStep.ExplodeDistance",
+          "example_file": "Add_Explode_Step_Example_VB.md"
+        }
+      ],
+      "note": "ExplDist 用米、ExplAng 用弧度，与页面口径一致；冲突集中在 AutoSpace 与 ShowExploded2。"
+    },
+    {
+      "member": "AddExternalDocuments",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md",
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_VB.md",
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 里字符串数组要先经 BStrWrapper[] 包装才能传入，而 GetRenderStockReferences() 返回的 object[] 可直接传。",
+          "example_quote": "status = swPackAndGo.AddExternalDocuments(ObjectArrayToBStrWrapperArray(otherFiles));",
+          "example_file": "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md"
+        },
+        {
+          "what": "VB/VB.NET 里 String 数组直接传即可；AddExternalDocuments 须早于 SetSaveToName2 与 SavePackAndGo，文件才会被打包。",
+          "example_quote": "status = swPackAndGo.AddExternalDocuments(otherFiles)",
+          "example_file": "Add_and_Remove_Files_from_Pack_and_Go_Example_VB.md"
+        }
+      ],
+      "note": "示例未添加重复文件，且自述加入的均为非 SOLIDWORKS 文件，与 Remarks 相容。"
+    }
+  ]
+}

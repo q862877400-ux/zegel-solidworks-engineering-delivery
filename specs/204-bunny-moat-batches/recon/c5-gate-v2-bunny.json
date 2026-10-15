@@ -1,0 +1,163 @@
+{
+ "role": "V2",
+ "attacked": 185,
+ "false_positives": [
+  {
+   "op": "model_annotations",
+   "claimed": "词根全落在 solidworks_drawing_view_annotations",
+   "why_wrong": "全库440工具里含annot的只有它一个，且读的是工程图视图IView.GetAnnotations；3D模型上的IAnnotation无任何工具可读，只有写入的gtol_insert。",
+   "real_tool": "无"
+  },
+  {
+   "op": "activate_document",
+   "claimed": "词根全落在 solidworks_activate_configuration",
+   "why_wrong": "5个activate工具=配置x2+预览+结果图+模型视图，无一是激活文档；ActivateDoc3只在sw_review.set_standard_view内部用，未暴露成工具。",
+   "real_tool": "无"
+  },
+  {
+   "op": "part",
+   "claimed": "词根全落在 solidworks_misumi_suggest_part",
+   "why_wrong": "那是纯Python HTTP查米思米商品号(api.cn.misumi.com.cn/partNumber/suggest)，与CAD零件操作毫无关系，只因part一词撞上。",
+   "real_tool": "有"
+  },
+  {
+   "op": "loft",
+   "claimed": "词根全落在 cadstudio_create_ocp_loft",
+   "why_wrong": "那是OCP/OCCT离线管线(吃JSON请求文件、吐STEP/BREP/STL)，不碰活动SolidWorks会话；放样应为solidworks_part_loft。",
+   "real_tool": "有"
+  },
+  {
+   "op": "assembly",
+   "claimed": "词根全落在 solidworks_assembly_auto_explode",
+   "why_wrong": "该工具是生成爆炸视图(IAssemblyDoc.AutoExplode)，与建装配体无关；建装配应为new_document(doc_type=assembly)。",
+   "real_tool": "有"
+  },
+  {
+   "op": "drawing",
+   "claimed": "词根全落在 solidworks_drawing_set_sheet_scale",
+   "why_wrong": "该工具只设图纸比例(1:n)，与新建工程图无关；建图应为new_document(doc_type=drawing)。",
+   "real_tool": "有"
+  },
+  {
+   "op": "component",
+   "claimed": "词根全落在 solidworks_assembly_replace_component",
+   "why_wrong": "该工具是替换已有组件(ReplaceComponents2)，非通用组件操作；对应应为solidworks_add_component。",
+   "real_tool": "有"
+  },
+  {
+   "op": "features",
+   "claimed": "词根全落在 solidworks_inspect_hole_features",
+   "why_wrong": "只读孔的几何；通用特征树应为solidworks_feature_list_names或collect_model_summary。",
+   "real_tool": "有"
+  },
+  {
+   "op": "model_info",
+   "claimed": "词根全落在 solidworks_feature_info",
+   "why_wrong": "它只读单个特征的元数据；model_info应为collect_model_summary(标题/类型/特征树/路径)。",
+   "real_tool": "有"
+  },
+  {
+   "op": "model_view",
+   "claimed": "词根全落在 solidworks_view_roll_view",
+   "why_wrong": "该工具是IModelView.RollBy绕视线滚转相机，属相机操作；model_view应为view_activate或set_standard_view。",
+   "real_tool": "有"
+  },
+  {
+   "op": "extrude",
+   "claimed": "词根全落在 solidworks_extrude_cut",
+   "why_wrong": "generic extrude指拉伸凸台(加料)，该工具是切除(去料)，语义相反；应为solidworks_extrude_boss。",
+   "real_tool": "有"
+  },
+  {
+   "op": "sketch",
+   "claimed": "词根全落在 solidworks_sketch_offset",
+   "why_wrong": "该工具是偏移草图实体；sketch应指建草图(sketch_start/sketch_end)，与offset无关。",
+   "real_tool": "有"
+  },
+  {
+   "op": "materials",
+   "claimed": "词根全落在 solidworks_list_render_materials",
+   "why_wrong": "列的是渲染/外观材质，非仿真/成本材料库；全库无任何材料库枚举工具，仅list_render_materials。",
+   "real_tool": "有"
+  },
+  {
+   "op": "draft",
+   "claimed": "词根全落在 solidworks_mold_draft_analysis",
+   "why_wrong": "模具拔模分析属另一域；CAD里draft通常是钣金拔模(sheet_metal_create_draft)，该工具本机还不可用。",
+   "real_tool": "有"
+  },
+  {
+   "op": "material",
+   "claimed": "词根全落在 solidworks_costing_set_default_material",
+   "why_wrong": "它设的是成本类别默认材料(ICostingDefaults)，非给零件赋材料；应为simulation_set_material。",
+   "real_tool": "有"
+  },
+  {
+   "op": "simulation_study",
+   "claimed": "词根全落在 solidworks_list_simulation_study_options",
+   "why_wrong": "它只列可选设置器、无需文档，且不建不算算例；应为simulation_create_study/list_studies。",
+   "real_tool": "有"
+  },
+  {
+   "op": "status",
+   "claimed": "词根全落在 solidworks_addin_host_status",
+   "why_wrong": "那是C#加载项宿主部署诊断；通用状态应为feature_whats_wrong(错误项数)。",
+   "real_tool": "有"
+  }
+ ],
+ "should_be_renamed": [
+  {
+   "op": "fillet",
+   "suggest": "改指 solidworks_fillet（现指向 _params 只读工具）"
+  },
+  {
+   "op": "sweep",
+   "suggest": "改指 solidworks_part_sweep（现指向 _params 只读）"
+  },
+  {
+   "op": "revolve",
+   "suggest": "改指 solidworks_revolve_boss/_cut（现指向 _params）"
+  },
+  {
+   "op": "shell",
+   "suggest": "改指 solidworks_part_shell（现指向 _params 只读）"
+  },
+  {
+   "op": "equation",
+   "suggest": "改指 solidworks_equation_add/_list（现指向 evaluate=解算）"
+  },
+  {
+   "op": "circle",
+   "suggest": "改指 solidworks_sketch_add_circle（现误指3点 perimeter_circle）"
+  },
+  {
+   "op": "ellipse",
+   "suggest": "改指 solidworks_sketch_add_ellipse（现误指 partial=椭圆弧）"
+  },
+  {
+   "op": "rectangle",
+   "suggest": "改指 solidworks_sketch_add_rectangle（现误指3点中心矩形）"
+  },
+  {
+   "op": "clear_selection",
+   "suggest": "改指 solidworks_clear_selection（现误指 for_preview 变体）"
+  },
+  {
+   "op": "dimension",
+   "suggest": "改指 solidworks_add_dimension（现指向 auto_dimension_sketch）"
+  },
+  {
+   "op": "bodies",
+   "suggest": "仅 costing 域可用；若需通用体表须新增工具"
+  },
+  {
+   "op": "bom",
+   "suggest": "可保留，但 export_assembly_bom 仅为导出侧"
+  },
+  {
+   "op": "appearance",
+   "suggest": "写入侧应为 solidworks_set_appearance"
+  }
+ ],
+ "conclusion": "找到反例，推翻「真缺=0」。①结论与其自带证据 c5_gap_handcheck.json 自相矛盾：27 行里有 3 行 verdict=真缺（rebuild_document / rebuild_model / security），独立复核成立——440 个工具名含 rebuild 的 0 个、title/doc 提到 Rebuild 的 0 个；security/license/permission 亦 0 个 ⇒ 真缺≥3。②model_annotations 与 activate_document 的对应关系不成立且无真实替代 ⇒ 再添 2 个真缺。③另在 150 个「换名已有」里查出 16 处假阳性（part→米思米商品号搜索、loft→OCP 离线管线、extrude→切除、assembly/drawing→爆炸视图/图纸比例等），多数有真实对应工具，只错在 why 指向。④反查 8 个「判不了」：6 个其实已是换名已有（分类偏低），2 个(display_states/rename_feature)是真缺被埋在判不了里 ⇒ 172 个判不了从未被判过真缺，「真缺=0」对它们未成立。"
+}

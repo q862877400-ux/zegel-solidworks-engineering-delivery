@@ -1,0 +1,426 @@
+**other**（188）
+- cadstudio_build_dxf_preview_scene — Convert an existing DXF into a
+- cadstudio_check_dfm — Run whitelisted DFM checks for
+- cadstudio_check_routing — Review neutral routing topolog
+- cadstudio_create_ocp_loft — Create and reopen a real param
+- cadstudio_fea_preflight — Discover approved CalculiX or 
+- cadstudio_prepare_fea — Generate a versioned CalculiX
+- cadstudio_resolve_backend — Select Python, C#, C++, SWBasi
+- cadstudio_review_advanced_geometry — Validate advanced surface/mold
+- cadstudio_routing_preflight — Probe SolidWorks Routing type 
+- cadstudio_run_fea — Run a structured FEA 1
+- cadstudio_run_fea_convergence — Run 3-8 approved CalculiX mesh
+- cadstudio_write_open_format — Write STEP/IGES/BREP/STL/OBJ/G
+- activate_configuration — Activate an existing configura
+- activate_model_for_preview — Activate the model for preview
+- add_coincident_mate — Add a coincident mate between 
+- add_component — Add an existing part/subassemb
+- add_concentric_mate — Add a concentric mate between 
+- add_dimension — 给已选中的实体加一个显示尺寸
+- add_distance_mate — Add a distance mate between na
+- add_rotary_motor — Create a Motion Study on the a
+- addin_host_status — Inspect the Add-in assembly, e
+- api_deprecated_successor — Given a member name, return th
+- appearance_delete_render_material — 官方签名：System
+- automation_enter_command_lock — Set ISldWorks
+- automation_exit_command_lock — Release the lock set by solidw
+- automation_explain_hresult — Turn an HRESULT into plain wor
+- automation_get_flag — Read a preference switch back 
+- automation_is_command_locked — Read whether CommandInProgress
+- automation_set_flag — Set a preference switch on ISl
+- available_direction_selectors — List the direction-selector na
+- available_point_selectors — List the point-selector names 
+- base_flange_params — 读钣金基体法兰特征的一组参数
+- build_review_report — Build structured review-report
+- chamfer — Chamfer the selected edge
+- circular_pattern — Create a circular pattern abou
+- clear_selection — Clear the current selection se
+- clear_selection_for_preview — Clear the selection so the pre
+- close_documents — Close the active document or a
+- collect_appearance_evidence — Collect appearance evidence fo
+- collect_model_summary — Summarise the model: title, ty
+- config_activate — Activate a configuration and v
+- config_create — Create a configuration, option
+- config_inspect — List the document's configurat
+- config_read_custom_property — Read one custom property as a 
+- config_set_custom_properties — Set several custom properties 
+- config_update_dimension — Update an exact named dimensio
+- connect — Connect to a running SolidWork
+- create_basic_part — Create a simple cylinder or bo
+- create_configuration — Create, optionally activate, r
+- create_hole_feature — Create a constrained blind/thr
+- csys_params — 读坐标系特征的一组参数
+- current_selection — Read the current selection set
+- custom_property_count — Return how many custom propert
+- custom_property_get — Read ONE file custom property:
+- custom_property_list — Read ALL file custom propertie
+- custom_property_names — Return the custom property nam
+- delivery_bom_traceability — Build a traceability record fr
+- delivery_pack_and_go_audit_matrix — Build the audit matrix that a 
+- dome_params — 读圆顶特征的一组参数
+- entities_on_body — List the entities of one body
+- equation_add — Add a global equation
+- equation_delete — Delete one global equation by 
+- equation_evaluate — Solve the global equations and
+- equation_list — Return the document's global e
+- extrude_boss — Extrude a sketch into a solid 
+- extrude_cut — Extrude a sketch as a CUT
+- extrude_depth — 读拉伸特征的深度
+- extrude_midplane — Extrude a sketch symmetrically
+- extrude_params — 读拉伸特征的一组参数
+- fastener_table_types — List the fastener table type i
+- fastener_types — List the fastener types under 
+- feature_cosmetic_thread — 装饰螺纹线：IFeatureManager
+- feature_delete — Delete one FEATURE via IModelD
+- feature_info — 读一个特征的一组通用属性
+- feature_list_names — 官方签名：查不到
+- feature_present — 官方签名：查不到
+- feature_suppress — Suppress one FEATURE via the s
+- feature_unsuppress — Unsuppress one FEATURE via the
+- feature_whats_wrong — 官方签名：System
+- fillet — Round the selected edge with t
+- fillet_params — 读简单圆角特征的一组参数
+- gear_calculate_spur — Compute the external involute 
+- gear_create_spur — Create an external spur gear b
+- get_active_view — Get the currently active 3D vi
+- gtol_insert — Insert a GTol annotation )
+- health_check — Check Python dependencies, Sol
+- helix_insert — Insert a helix/spiral
+- hole_blind_by_selection — Create a blind circular hole a
+- hole_counterbore_by_selection — Create a counterbore hole at a
+- hole_countersink_by_selection — Create a countersink hole at a
+- hole_params — 读异型孔向导特征的一组参数
+- hole_pattern — 按显式孔位一次创建一组孔
+- hole_standards — List the Hole Wizard standards
+- hole_through_by_selection — Create a fully-through circula
+- hole_wizard — 孔向导 / 异型孔：IFeatureManager
+- insert_center_of_mass — 质心：IFeatureManager
+- insert_coordinate_system — 坐标系：IFeatureManager
+- insert_curve_through_points — 通过参考点的曲线：InsertCurveFileBegin 
+- insert_delete_face — 删除面：IModelDocExtension
+- insert_global_bounding_box — 边界框：IFeatureManager
+- insert_ref_plane — 基准面：IFeatureManager
+- insert_reference_point — 点：IFeatureManager
+- insert_replace_face — 替换面：IModelDoc2
+- inspect_configurations — Inspect configuration names an
+- inspect_hole_features — Read B-Rep holes, compound seg
+- inspect_motion_studies — Inspect Motion Study definitio
+- list_render_materials — List the render materials avai
+- loft_params — 读放样特征的一组参数
+- macro_build_prompt — Build the prompt that asks a m
+- macro_extract_vba_code — Pull the VBA code out of a mod
+- macro_fallback_template — Return the local fallback VBA 
+- macro_normalize_model_family — Map a concrete model name onto
+- macro_run — Run a macro from a project fil
+- macro_select_template — Choose the local VBA template 
+- macro_validate_vba_code — Check a VBA macro against the 
+- macro_write_file — Write VBA source to a file so 
+- measure_selection — 量当前选中的实体—— 走 IModelDocExtensio
+- mesh_configure_import_preferences — 官方签名：System
+- mesh_restore_import_preferences — 官方签名：System
+- mirror_feature — Mirror an existing feature abo
+- misumi_suggest_part — 官方签名：查不到（非 SolidWorks API 成员 —
+- motion_collect_summary — Return a JSON-able summary of 
+- motion_create_study — Create a Motion Study on the a
+- motion_ensure_type_library — Check the Motion type library
+- motion_study_manager — Return the assembly's motion s
+- motion_validate_studies — Validate the motion studies ag
+- motion_validate_summary — Validate a motion-study summar
+- new_document — Create a new part, assembly, o
+- open_document — Open a SolidWorks document by 
+- pack_and_go — Run the native Pack and Go API
+- part_axis — 从当前选中的几何建一条参考轴 —— 走 IModelDoc2
+- part_bounding_box — Get the bounding box of the fi
+- part_insert_composite_curve — Join the selected entities int
+- part_insert_dome — Add a dome on the selected fac
+- part_loft — 用「轮廓草图」放样 —— 走 IFeatureManager
+- part_mass_properties — Read the mass properties of th
+- part_rib — Create a rib from an existing 
+- part_shell — Hollow the part with a wall th
+- part_sweep — 用「轮廓 + 路径」建扫描特征 —— 走官方现代入口 IFe
+- part_wrap — 对已选中的「草图+ 面」建包覆特征 —— 走官方 IFeat
+- pattern_params — 读线性阵列特征的一组参数
+- preflight_check_com_dependencies — 官方签名：查不到
+- read_document_units — 读文档单位
+- read_sensors — 列出文档里的传感器并读它们当前的值 —— 走 ISensor
+- ref_geometry_create_3d_bounding_box — 官方签名：Signature: void Create3DB
+- refresh_scene_graph — Refresh the graphics/scene gra
+- repo_find_real_implementations — Search the repo for real imple
+- resolve_entity — 解析声明式选择器并回报结果
+- resolve_selection — 把声明式选择器解析并选中，只回报回读到的选区计数
+- review_active — Export preview BMPs and a JSON
+- review_collect_geometry_measurements — 官方签名：Signature: System
+- review_evaluate_report — 官方签名：查不到
+- review_inspect_bmp — 官方签名：查不到
+- review_pdf_text_layout — 官方签名：查不到 —— 本函数不是 SolidWorks A
+- review_run — 官方签名：查不到
+- review_write_report — 官方签名：查不到
+- review_write_summary — 官方签名：查不到 —— writemarkdownsumma
+- revolve_boss — Revolve a profile sketch into 
+- revolve_cut — 官方签名：Feature FeatureRevolve2( 
+- revolve_params — 读旋转特征的一组参数
+- save_document — Save the active SolidWorks doc
+- select_by_selector — 用声明式选择器选中一个实体 —— MCP 可用的形态
+- select_entity_by_index — 按序号选中体上的一个实体
+- select_face_selector — Select ONE face by a declarati
+- selection_count — 回读当前选区计数
+- selection_point — 读当前选区那个点的坐标
+- selector_resolve_direction — Resolve a named direction sele
+- selector_resolve_point — Resolve a named point selector
+- session_busy_status — Report whether SolidWorks is b
+- session_solver_processes — List the solver kernels curren
+- session_stuck_status — Report whether SolidWorks look
+- session_wait_until_idle — Block until solidworkssessionb
+- set_appearance — Set appearance color on the ac
+- set_component_fixed — Fix or float a component in th
+- set_custom_properties — Set and read back file-level o
+- set_standard_view — Switch the model to a named st
+- shell_params — 读抽壳特征的一组参数
+- slot_semicircular_by_selection — Create a semicircular-end slot
+- sweep_params — 读扫描特征的一组参数
+- thicken — 加厚 / 加厚切除：IFeatureManager
+- toolbox_list_standards — List the Toolbox standards ava
+- toolbox_load_index — Load the Toolbox index as a JS
+- toolbox_part_path — Resolve a Toolbox part name to
+- toolbox_search — Search the Toolbox index by ke
+- undo — 撤销 —— 走 IModelDoc2
+- update_dimension — Update an exact named dimensio
+- validate_motion_study — Enforce Motion Study type, dur
+- view_zoom_to_fit — 官方签名：查不到
+**simulation**（63）
+- list_simulation_study_options — List the simulation study opti
+- simulation_apply_centrifugal_force — Apply a CENTRIFUGAL FORCE to t
+- simulation_apply_convection — Apply a CONVECTION load to the
+- simulation_apply_distributed_mass — Add a DISTRIBUTED MASS to the 
+- simulation_apply_elastic_connector — Add an ELASTIC CONNECTOR betwe
+- simulation_apply_fixed_restraint — Apply a FIXED restraint to the
+- simulation_apply_force — Add a FORCE / MOMENT to the se
+- simulation_apply_gravity — Apply a GRAVITY load to the se
+- simulation_apply_heat_flux — Apply a HEAT FLUX load to the 
+- simulation_apply_heat_power — Apply a HEAT POWER load to the
+- simulation_apply_link_connector — Add a LINK CONNECTOR between t
+- simulation_apply_normal_force — Apply a NORMAL force to the se
+- simulation_apply_pressure — Apply a PRESSURE load to the s
+- simulation_apply_radiation — Apply a RADIATION load to the 
+- simulation_apply_remote_load — Add a REMOTE LOAD to the selec
+- simulation_apply_rigid_connector — Add a RIGID CONNECTOR between 
+- simulation_apply_temperature — Apply a TEMPERATURE load to th
+- simulation_apply_torque — Apply a TORQUE load to the sel
+- simulation_check_mesh_size — Decide whether a global elemen
+- simulation_collect_evidence — Return a JSON-able summary of 
+- simulation_configure_buckling_solver — Configure the buckling solver 
+- simulation_configure_fr_ae4aaed2131e — Configure the frequency solver
+- simulation_configure_static_solver — Configure the static solver op
+- simulation_create_mesh — Mesh the study and return a RE
+- simulation_create_mesh_for_control — Mesh the study using a named m
+- simulation_create_mesh_safely — THE RECOMMENDED WAY to mesh a 
+- simulation_create_study — Create a STATIC simulation stu
+- simulation_create_study_by_type — 官方签名：CWStudy CreateNewStudy3( 
+- simulation_default_elem_cb3269210f2a — Get the suggested element size
+- simulation_default_solv_598f45b145e6 — 官方签名：查不到 —— 它不是 SolidWorks API
+- simulation_ensure_addin — 官方签名：查不到
+- simulation_find_study — Look up a simulation study by 
+- simulation_generate_report — Generate a study report to a f
+- simulation_get_edge_weld_connector — 官方签名：Function GetEdgeWeldConne
+- simulation_get_loads_manager — 官方签名：查不到 —— C:\swapi\types\ 下 
+- simulation_get_results — 官方签名：查不到 —— C:\swapi\types\ 下无
+- simulation_get_study_manager — 官方签名：ICWModelDoc
+- simulation_list_setter_summary — Return the catalogue of simula
+- simulation_list_studies — List every simulation study in
+- simulation_mesh_settings_report — 官方签名：查不到 —— C:\swapi\types\ 下没
+- simulation_mesh_size — Return the suggested mesh {ele
+- simulation_run_analysis — Run the study and return a REA
+- simulation_set_material — Assign a material to the activ
+- simulation_set_study_option — Set one study option by its re
+- simulation_set_study_options — Set several study options and 
+- simulation_solve_memory_preflight — 官方签名：查不到
+- simulation_solver_type — Return {ok, value, name, reaso
+- topology_collect_numbers — Read the topology study's numb
+- topology_create_demold_control — Create a de-mold control for a
+- topology_create_factor__3fad0e919bd3 — Create a factor-of-safety cons
+- topology_create_mass_constraint — Create a mass constraint for a
+- topology_create_preserved_region — Create a preserved region for 
+- topology_create_stress_constraint — Create a stress constraint for
+- topology_create_study — Create a topology optimization
+- topology_create_symmetry_control — Create a symmetry control for 
+- topology_create_thickness_control — Create a thickness control for
+- topology_evidence — Read back the topology studies
+- topology_list_constraints — Report which constraints and c
+- topology_manager_report — Return a JSON-able report abou
+- topology_options_report — Return a JSON-able report abou
+- topology_run — Mesh and solve the topology st
+- topology_set_goal — Set the topology study goal an
+- topology_set_iteration_options — Set the topology iteration opt
+**sketch**（44）
+- add_sketch_relation — Add a sketch geometric relatio
+- auto_dimension_sketch — 按官方 ISketch
+- current_sketch_name — 读当前活动草图的特征名
+- sketch_add_3point_arc — Draw a 3-point arc
+- sketch_add_3point_center_rectangle — Draw a 3-point CENTER rectangl
+- sketch_add_3point_rectangle — Draw a 3-point corner rectangl
+- sketch_add_arc — 在当前草图里画一段圆弧
+- sketch_add_centerline — 在当前草图里画一条中心线
+- sketch_add_circle — Draw a CIRCLE in the open sket
+- sketch_add_conic — Draw a conic curve
+- sketch_add_ellipse — 在当前草图里画一个整椭圆
+- sketch_add_line — Draw a straight LINE in the op
+- sketch_add_parabola — Draw a parabola
+- sketch_add_parallelogram — Draw a parallelogram
+- sketch_add_partial_ellipse — Draw a PARTIAL ellipse
+- sketch_add_perimeter_circle — Draw a 3-point PERIMETER circl
+- sketch_add_polygon — 在当前草图里画正多边形
+- sketch_add_rectangle — Draw a RECTANGLE in the open s
+- sketch_add_slot — 在当前草图里画槽口
+- sketch_add_tangent_arc — Draw an arc TANGENT to the las
+- sketch_circular_pattern — Create a CIRCULAR sketch patte
+- sketch_convert_entities — Convert the selected model edg
+- sketch_count_arcs — Count the ARCS in a sketch
+- sketch_count_lines — Count the straight LINES in a 
+- sketch_count_segments — Count ALL segments in a sketch
+- sketch_create_chamfer — Create a chamfer on the select
+- sketch_end — Leave the current sketch
+- sketch_extend — Extend the selected sketch ent
+- sketch_fillet — Create a SKETCH fillet on two 
+- sketch_flip_entities — 镜像/翻转：IModelDoc2
+- sketch_fully_defined_status — 草图完全定义状态：ISketch
+- sketch_insert_chain_dimensions — 官方签名：System
+- sketch_is_3d — Whether the sketch is a 3D ske
+- sketch_linear_pattern — Create a LINEAR sketch pattern
+- sketch_mirror — Mirror the selected sketch ent
+- sketch_move_entities — 移动实体：IModelDoc2
+- sketch_offset — Offset the selected sketch ent
+- sketch_rotate_entities — 旋转实体：IModelDoc2
+- sketch_scale_entities — 缩放实体比例：IModelDoc2
+- sketch_select_segment — 官方签名：查不到（本函数无同名官方成员 —— 官方 ISke
+- sketch_spline — 草图样条曲线：ISketchManager
+- sketch_start — Enter a new sketch on a refere
+- sketch_stretch_entities — 伸展实体：IModelDocExtension
+- sketch_trim — Trim the selected sketch entit
+**drawing**（31）
+- drawing_add_note — 注释/文字：InsertNote
+- drawing_collect_view_evidence — Collect the capability layer's
+- drawing_create_auxiliary_view — 辅助视图：IDrawingDoc
+- drawing_create_broken_view — 断裂视图：IView
+- drawing_create_detail_view — 局部视图：CreateDetailViewAt4
+- drawing_create_hole_table — 孔表：IView
+- drawing_create_projected_view — 投影/模型视图：CreateDrawViewFromMode
+- drawing_create_revision_table — 修订表：ISheet
+- drawing_create_section_view — 剖面视图：CreateSectionViewAt5
+- drawing_create_three_standard_views — 官方签名：System
+- drawing_current_sheet_info — Return info about the sheet cu
+- drawing_current_sheet_name — Return the name of the sheet c
+- drawing_get_current_sheet — Read the current sheet: paper 
+- drawing_insert_center_marks — 中心符号线：AutoInsertCenterMarks2
+- drawing_insert_datum_tag — 基准符号：IModelDoc2
+- drawing_insert_surface_finish_symbol — 表面粗糙度符号：IModelDocExtension
+- drawing_list_sheets — Sheet overview of the active d
+- drawing_list_views — List the views on the CURRENT 
+- drawing_set_sheet_format — 图纸格式/模板：ISheet
+- drawing_set_sheet_scale — 设工程图图纸的比例并回读 —— 走 ISheet
+- drawing_sheet_count — Return the number of sheets in
+- drawing_sheet_names — Return the drawing's sheet nam
+- drawing_sheet_scale — 读工程图图纸的比例 —— 走官方 Remarks 指定的 I
+- drawing_sheets_summary — Return a per-sheet summary dic
+- drawing_view_annotations — 读当前图纸每个视图上的注释 / 显示尺寸 / 弧数✓ 为什么
+- drawing_view_scale — Get one view's scale by name
+- drawing_view_set_scale — Set one view's scale and retur
+- generate_drawing — 按 DrawingSpec v1 创建工程图、PDF、预览和
+- inspect_drawing — 只读读取工程图页、视图、尺寸、注释和表格结构，并生成预览证据
+- review_drawing — 打开工程图并执行 DrawingSpec、布局、尺寸、孔槽和
+- review_drawing_layout — 官方签名：查不到（非 API 成员，无官方 Signatur
+**assembly**（21）
+- assembly_add_mate_checked — 官方签名：Signature: Mate2 AddMate5
+- assembly_add_parallel_mate — 官方签名：def addmateparallel:
+- assembly_auto_explode — Automatically generate an expl
+- assembly_check_interference — Run interference detection on 
+- assembly_create_exploded_view — Create an explode view of the 
+- assembly_dissolve — 官方签名：Signature: System
+- assembly_edit_explode_parameters — Call IAssemblyDoc
+- assembly_exit_edit_part_in_context — 官方签名：void EditAssembly
+- assembly_exploded_view_configuration — Thin wrapper over IAssemblyDoc
+- assembly_get_exploded_view_count — Return the number of exploded 
+- assembly_get_exploded_view_names — Return the exploded-view NAMES
+- assembly_list_components — List the components of the ACT
+- assembly_list_mates — List the MateGroup and mate fe
+- assembly_replace_component — 官方签名：System
+- assembly_show_exploded — Display the named exploded vie
+- assembly_suppress_component — 官方签名：System
+- assembly_unsuppress_component — 官方签名：System
+- assembly_view_collapse — Collapse the display back , ze
+- assembly_view_explode — Explode the selected exploded 
+- collect_assembly_bom — Read the assembly BOM as struc
+- export_assembly_bom — Export a component/property BO
+**surface**（14）
+- cadstudio_create_ocp_surface — Create smooth loft, sweep, kni
+- create_revolved_surface — 旋转曲面：IFeatureManager
+- flatten_surface — 曲面展平：IFeatureManager
+- insert_lofted_ref_surface — 放样曲面：IModelDoc2
+- insert_offset_surface — 等距曲面：IModelDoc2
+- insert_planar_surface — 平面区域：IModelDoc2
+- insert_ruled_surface — 直纹曲面：IFeatureManager
+- surface_create_extruded — 用已有草图建「曲面-拉伸」特征 —— 走 IFeatureM
+- surface_cut — 官方签名：Feature InsertCutSurface(
+- surface_evidence — Read back the surface bodies o
+- surface_extend — 延伸曲面 —— 走 IModelDoc2
+- surface_fill — 填充曲面 —— 走 IFeatureManager
+- surface_knit — 把曲面缝成一张 —— 走 IFeatureManager
+- surface_midsurface_create — 曲面中面：IFeatureManager
+**weldment**（14）
+- weldment_create_cut_list — Create the weldment cut list a
+- weldment_create_profile_center_mate — Create a profile-center mate b
+- weldment_create_structural_member — Create a STRUCTURAL MEMBER alo
+- weldment_create_sub_weld_folder — Create a sub-weldment folder i
+- weldment_create_weldment_profile — Create a weldment profile from
+- weldment_ensure_cut_list — Create the cut list if it is m
+- weldment_evidence — Read back the weldment state: 
+- weldment_export_cut_list_csv — Write a cut-list evidence dict
+- weldment_gusset_create — 焊件角撑板：IFeatureManager
+- weldment_insert_end_cap — 焊件顶端盖：IFeatureManager
+- weldment_iter_features — 官方签名：查不到
+- weldment_read_property_manager — Read the active PropertyManage
+- weldment_set_cut_list_properties — Set cut-list properties and re
+- weldment_update_cut_list — Refresh the cut list and retur
+**export**（11）
+- batch_export_files — Export multiple local SolidWor
+- delivery_export_bom_csv — Export the assembly BOM to CSV
+- export_active — Export the active SolidWorks d
+- export_bmp — Export a BMP image of the acti
+- export_dxf — Export to DXF and return a REA
+- export_iges — Export to IGES and return a RE
+- export_image — 把当前视图存成图片
+- export_parasolid — Export to Parasolid and return
+- export_step — Export the active document to 
+- export_stl — Export to STL and return a REA
+- review_export_previews — 官方签名：System
+**costing**（10）
+- costing_body_count — Return how many bodies Costing
+- costing_default_template — Return the default Costing tem
+- costing_defaults — 官方签名：Object getCostingDefaults
+- costing_evidence — Return the Costing overview
+- costing_list_bodies — Return the Costing body names
+- costing_list_templates — Return the Costing template na
+- costing_method_value — Return the current value of on
+- costing_read_analysis — Read every readable field of t
+- costing_read_body — Read one body's cost data
+- get_costing_manager — Get the SOLIDWORKS Costing man
+**sheetmetal**（9）
+- sheet_metal_create_base_flange — Create a native base flange fr
+- sheet_metal_create_draft — Create a native draft on a SEL
+- sheet_metal_create_edge_flange — Create a native edge flange on
+- sheet_metal_create_gusset — Create a native sheet-metal gu
+- sheet_metal_create_one_bend — Create a single sheet-metal be
+- sheet_metal_create_swept_flange — Create a native swept flange a
+- sheet_metal_evidence — Read back the sheet-metal stat
+- sheet_metal_insert_closed_corner — 钣金闭合角：IModelDoc2
+- sheet_metal_insert_miter_flange — 钣金斜接法兰：IFeatureManager
+**mold**（7）
+- mold_core_cavity_split — Split the mold into core and c
+- mold_draft_analysis — Run mold draft analysis
+- mold_evidence — 当前这条在真机上读不到东西、 如实说明 —— 处置 JUDG
+- mold_parting_line — Insert a mold parting line
+- mold_parting_surface — Insert the mold parting surfac
+- mold_shut_off_surface — Auto-create shut-off surfaces 
+- mold_undercut_detect — Detect mold undercuts along a 
+**gui**（2）
+- gui_get_foreground_window — 官方签名：查不到—— 底层真源是 pywin32 的 win
+- gui_screen_png — 官方签名：查不到 —— 本函数是本仓自研的 PIL 整屏截图

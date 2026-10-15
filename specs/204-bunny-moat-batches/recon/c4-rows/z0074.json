@@ -1,0 +1,174 @@
+{
+  "idx": 74,
+  "results": [
+    {
+      "member": "CreateTransform",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VBNET.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VB.md",
+        "Align_Assembly_Component_to_Assembly_Origin_and_Planes_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "The SOLIDWORKS transformation matrix is stored as a homogeneous matrix of 16 elements, ordered as shown. The first 9 elements (a to i) are elements of a 3x3 rotational sub-matrix, the next 3 elements (j,k,l) define a translation vector, and the next 1 element (m) is a scaling factor.",
+          "example_quote": "' Create unit transform\n    Set swXform = swMathUtil.CreateTransform(Nothing)",
+          "example_file": "Align_Assembly_Component_to_Assembly_Origin_and_Planes_Example_VB.md",
+          "why": "Remarks（与参数表 ArrayDataIn=Sixteen (16) components）要求传 16 分量数组；官方示例传 Nothing 并当作单位变换用，两种契约不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把平移写在 9/10/11 位、缩放 1 写在第 12 位，坐实 a..i 旋转 / j,k,l 平移 / m 缩放的次序；单位 Remarks 未写。",
+          "example_quote": "TransformData(9) = -0.179380053887144",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VB.md"
+        },
+        {
+          "what": "C# 把 double[16] 装箱成 object 再传入，说明 ArrayDataIn 是 16 元素 double 数组；VBA 版则传 Variant。",
+          "example_quote": "TransformDataObj = (object)TransformData;",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "矩阵图按列主序读会与同段文字的 j,k,l / m 位置打架，属页内矛盾，未计入五类。"
+    },
+    {
+      "member": "CreateTransformRotateAxis",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rotate_Assembly_Component_on_Axis_Example2_CSharp.md",
+        "Rotate_Assembly_Component_on_Axis_Example2_VB.md",
+        "Rotate_Assembly_Component_on_Axis_Example2_VBNET.md",
+        "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Angle 写成 1.0*RadPerDeg（RadPerDeg = PI/180），说明该角是弧度；成员页只写 Angle，未给单位。",
+          "example_quote": "swXform = (MathTransform)swMathUtil.CreateTransformRotateAxis(swOriginPt, swX_Axis, 1.0 * RadPerDeg);",
+          "example_file": "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+        },
+        {
+          "what": "示例注释说明这是增量旋转，故每次 Drag 都重复传同一角度值。",
+          "example_quote": "// This is an incremental rotation,",
+          "example_file": "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "CreateTrimmedCurve",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Intersecting_Faces_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 IntersectCurve 输出数组的前 6 个数原样当 6 个坐标传入，正好填上参数表六处 No description。",
+          "example_quote": "Set CreateTrimmedCurve = swCurve.CreateTrimmedCurve(vPointArray(0), vPointArray(1), vPointArray(2), vPointArray(3), vPointArray(4), vPointArray(5))",
+          "example_file": "Get_Intersecting_Faces_Example_VB.md"
+        }
+      ],
+      "note": "该文件另有一个同名本地 VBA 函数，第 85 行才是真正调用 API 成员；无 Remarks，已跳过冲突判定。"
+    },
+    {
+      "member": "CreateTrimmedCurve2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Temporary_Extruded_Body_Example_CSharp.md",
+        "Create_Temporary_Extruded_Body_Example_VB.md",
+        "Create_Temporary_Extruded_Body_Example_VBNET.md",
+        "Return_Untrimmed_Curve_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Extruded Body 示例把 6 个坐标直接取自 slotLength/slotWidth 的原值（0.045/0.02）不做换算，说明与 swModeler 同单位。",
+          "example_quote": "Set trimCurves(0) = trimCurves(0).CreateTrimmedCurve2(-halfLength, halfWidth, 0#, halfLength, halfWidth, 0#)",
+          "example_file": "Create_Temporary_Extruded_Body_Example_VB.md"
+        },
+        {
+          "what": "示例改用 MakeIsoCurve2 产生的等参曲线调用，说明 Remarks 只提弧/线并不限于此。",
+          "example_quote": "swCurveU = swCurveU.CreateTrimmedCurve2(vUIsoStartPt[0], vUIsoStartPt[1], vUIsoStartPt[2], vUIsoEndPt[0], vUIsoEndPt[1], vUIsoEndPt[2]);",
+          "example_file": "Return_Untrimmed_Curve_Example_CSharp.md"
+        }
+      ],
+      "note": "参数表把 Z1 写成 z end point（与 X1/Y1 的 start、Z2 的 end 打架），属页内笔误，未计入五类。"
+    },
+    {
+      "member": "CreateTrimmedSheet",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Temporary_Extruded_Body_Example_CSharp.md",
+        "Create_Temporary_Extruded_Body_Example_VB.md",
+        "Create_Temporary_Extruded_Body_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出强制顺序样板：4 条 CreateLine/CreateArc 曲线全部先过 CreateTrimmedCurve2，再整体传入且无分隔项。",
+          "example_quote": "Set profileBody = planeSurf.CreateTrimmedSheet((trimCurves))",
+          "example_file": "Create_Temporary_Extruded_Body_Example_VB.md"
+        },
+        {
+          "what": "C# 版把返回值强转为 Body2，坐实该成员回的是临时片体而非面集合。",
+          "example_quote": "profileBody = (Body2)planeSurf.CreateTrimmedSheet((trimCurves));",
+          "example_file": "Create_Temporary_Extruded_Body_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页标 Obsolete（后继 CreateTrimmedSheet4），示例仍在用；三份示例调用形状一致，未见冲突。"
+    },
+    {
+      "member": "CreateTrimmedSheet4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Temporary_Elliptical_Extrusion_Example_VB.md",
+        "Fill_Holes_in_Part_Example_CSharp.md",
+        "Fill_Holes_in_Part_Example_VB.md",
+        "Fill_Holes_in_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例指出 Returns 并非总能得到片体：与曲面垂直的环（圆柱端环）返回 Nothing。",
+          "example_quote": "' Typically nothing is returned if the loop is",
+          "example_file": "Fill_Holes_in_Part_Example_VB.md"
+        },
+        {
+          "what": "Fill Holes 传的是 Edge.GetCurve 取出的未裁剪曲线，说明该修剪前置只覆盖 CreateArc/CreateLine 产物。",
+          "example_quote": "Set swCurve(i) = swEdge.GetCurve",
+          "example_file": "Fill_Holes_in_Part_Example_VB.md"
+        },
+        {
+          "what": "椭圆示例把未裁剪的 CreateEllipse 曲线直接传入并把 PreserveAnalyticCurves 传 True，坐实椭圆免裁剪。",
+          "example_quote": "Set profileBody = planeSurf.CreateTrimmedSheet4((swCurve), True)",
+          "example_file": "Create_Temporary_Elliptical_Extrusion_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 对返回是否可能为空只字未提，故记为示例更具体而非 return_shape_diff。"
+    },
+    {
+      "member": "CreateTrimmedSheet5",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Spherical_Surface_Trimmed_Sheet_and_Feature_From_Body_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 0.00001 原样当 Tolerance 传入，与 Remarks 所述默认 parasolid 容差同值。",
+          "example_quote": "Set swBody = swSurf.CreateTrimmedSheet5(ZeroTrimmingCurves,\nTrue, 0.00001)",
+          "example_file": "Create_Spherical_Surface_Trimmed_Sheet_and_Feature_From_Body_Example_VB.md"
+        },
+        {
+          "what": "示例把数组声明为 ZeroTrimmingCurves(0 To 0) 且只放一个 Nothing，坐实周期面免裁剪时的单元素写法。",
+          "example_quote": "ZeroTrimmingCurves(0) = Nothing",
+          "example_file": "Create_Spherical_Surface_Trimmed_Sheet_and_Feature_From_Body_Example_VB.md"
+        }
+      ],
+      "note": "示例与 Remarks 完全一致（周期面 + 单 Nothing + 容差 0.00001），无冲突。"
+    }
+  ]
+}

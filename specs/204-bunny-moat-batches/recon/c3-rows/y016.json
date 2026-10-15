@@ -1,0 +1,137 @@
+{
+  "idx": 16,
+  "results": [
+    {
+      "name": "gtol_insert",
+      "level": "verified",
+      "members_found": [
+        "InsertGtol",
+        "CanConvertFormat",
+        "ConvertFormat",
+        "GetFrameCount",
+        "AddFrame",
+        "GetFrame"
+      ],
+      "examples_used": [
+        "Insert_GTol_Example_VB.md",
+        "Get_Gtol_Frame_Information_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "Preconditions: 1. Verify that the drawing exists.（须是已存在的工程图）",
+          "from": "Insert_GTol_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Open a drawing that contains a GTol created with SolidWorks 2021 or 2022/2022+.",
+          "from": "Get_Gtol_Frame_Information_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "示例不新建：须在图形区选中已存在的 Gtol，用 GetSelectedObject6(1,-1) 取对象",
+          "from": "Get_Gtol_Frame_Information_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "ConvertFormat 只在 CanConvertFormat() 为真且 GetFormat()==GTOL_SW2021 时才调，调用前先 Save()",
+          "from": "Get_Gtol_Frame_Information_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "AddFrame 只对 2022+ 格式的 GTol 有效 ⇒ 必须先 ConvertFormat 再 AddFrame",
+          "from": "Get_Gtol_Frame_Information_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "`ConvertFormat()` ⇒ 0 → **`AddFrame()` ⇒ True**"
+        },
+        {
+          "text": "取帧须先 AddFrame 让帧数涨上去，再按 1 基帧号 GetFrame(FrameCount)",
+          "from": "Get_Gtol_Frame_Information_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "**`AddFrame()` ⇒ True** → `GetFrameCount` ⇒ **2** → `GetFrame(1)/(2)` **有对象**"
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "两条官方示例都以「已存在的工程图 + 已存在的 GTol」为前提；本条证据是在「新零件」上现建对象，工程图与 GTol 来源前提未覆盖。"
+    },
+    {
+      "name": "drawing_current_sheet_query",
+      "level": "verified",
+      "members_found": [
+        "GetType",
+        "GetCurrentSheet",
+        "GetSheetCount",
+        "GetSheetNames",
+        "GetSheetByName",
+        "GetFirstView",
+        "GetNextView",
+        "ISheet.GetName",
+        "ISheet.GetProperties",
+        "ISheet.GetProperties2",
+        "ISheet.GetSheetFormatName",
+        "ISheet.SetScale",
+        "IView.Type",
+        "IView.GetName2"
+      ],
+      "examples_used": [
+        "Get_Drawing_View_Names_and_Types_Example_VB.md",
+        "Get_Names_of_Annotations_Example_VB.md",
+        "Get_Sheet_Numbers_and_Names_Example_VB.md",
+        "Get_Loaded_Sheets_Example_VB.md",
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_and_Set_Sheet_Properties_Example_VB.md",
+        "Set_Drawing_Sheet_Properties_Example_VB.md",
+        "Custom_Check_Document_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "Preconditions: 1. Open a drawing document.（取图纸前先判 GetType()==swDocDRAWING）",
+          "from": "Get_Drawing_View_Names_and_Types_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "新建空工程图 ⇒ 三个读数 + 在零件上的负例"
+        },
+        {
+          "text": "'First drawing view is the sheet, so get first drawing view' —— GetFirstView 首个是图纸本身",
+          "from": "Get_Names_of_Annotations_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "空图纸 GetFirstView() 回的是图纸本身"
+        },
+        {
+          "text": "Preconditions: 1. Open a drawing that has multiple sheets.",
+          "from": "Get_Sheet_Numbers_and_Names_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetSheetNames 示例前置：打开 foodprocessor.slddrw，按「选择要打开的图纸」只加载 Sheet1",
+          "from": "Get_Loaded_Sheets_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方顺序：模板建图→ActivateSheet→GetCurrentSheet→SetSize→SetScale→之后才建视图",
+          "from": "Get_Annotations_Array_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetProperties 示例前置：先由 block1.sldprt 建出含前视/侧视/俯视三视图的图纸",
+          "from": "Get_and_Set_Sheet_Properties_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetProperties2 示例前置：勾 Use custom property values from the sheet，并清掉 Sheet2 的 Same as sheet",
+          "from": "Set_Drawing_Sheet_Properties_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "「必须是工程图」与「首个视图即图纸本身」两条已覆盖；多图纸、需按选择加载图纸、有视图、文档属性开关等前置只验过空图纸，均未覆盖。"
+    }
+  ]
+}

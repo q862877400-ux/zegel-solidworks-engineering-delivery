@@ -1,0 +1,140 @@
+{
+  "idx": 289,
+  "results": [
+    {
+      "member": "HoleDepth",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Hole_Wizard_Feature_Data_Object_and_Hole_Wizard_Feature_Example_VB.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 HoleDepth 乘 1000 再标 mm ⇒ 该属性按米返回；成员页 Returns 只写「Hole depth」，未给单位",
+          "example_quote": "Debug.Print(\"  HoleDepth                    = \" + swWizHole.HoleDepth * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        },
+        {
+          "what": "示例用米制字面量赋值（0.15 ⇒ 150 mm），与 HoleWizard5 页「input values are in meters」同口径",
+          "example_quote": "swWzdHole.HoleDepth = 0.15",
+          "example_file": "Create_Hole_Wizard_Feature_Data_Object_and_Hole_Wizard_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只指向 Selections 文档，未写单位与生效前置；示例补上了米制口径，两侧不冲突。"
+    },
+    {
+      "member": "HoleDiameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Hole_Wizard_Feature_Data_Object_and_Hole_Wizard_Feature_Example_VB.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 HoleDiameter 乘 1000 再标 mm ⇒ 按米返回；成员页 Returns 只写「Hole diameter」",
+          "example_quote": "Debug.Print(\"  HoleDiameter                 = \" + swWizHole.HoleDiameter * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        },
+        {
+          "what": "示例紧接 HoleDepth 用米制字面量写该属性（0.0555 m），并写在 InitializeHole 之后、CreateFeature 之前",
+          "example_quote": "swWzdHole.HoleDiameter = 0.0555",
+          "example_file": "Create_Hole_Wizard_Feature_Data_Object_and_Hole_Wizard_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的排除项 swTapered/swTaperedDrilled 在示例的沉孔孔型下不触发；两侧可同时成立。"
+    },
+    {
+      "member": "HoleTable",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Labels_of_Datum_Origin_Example_CSharp.md",
+        "Get_Labels_of_Datum_Origin_Example_VB.md",
+        "Get_Labels_of_Datum_Origin_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Signature/Returns/Examples，无 ## Remarks ⇒ 按纪律跳过比对。"
+    },
+    {
+      "member": "HoleTag",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Tags_in_Hole_Table_Example_VB.md",
+        "Change_Tags_in_Hole_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页正文为空（仅标题与 front-matter），无 Remarks 可比；示例按索引调用 HoleTag(1)/(4)。"
+    },
+    {
+      "member": "HoleWizard",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（仅 Obsolete 行与 18 个 No description 形参），按纪律跳过。"
+    },
+    {
+      "member": "HoleWizard5",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Hole_Wizard_Hole_Example_CSharp.md",
+        "Create_Hole_Wizard_Hole_Example_VB.md",
+        "Create_Hole_Wizard_Hole_Example_VBNET.md",
+        "Get_Sketch_Points_in_Wizard_Hole_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把末尾 6 个布尔量具体化为 RevDir=false 且作用域开关为 true；成员页只逐项解释含义",
+          "example_quote": "Set swFeat = swFeatMgr.HoleWizard5(swWzdCounterSink, swStandardAnsiMetric, swStandardAnsiMetricFlatHead82, \"M2\", swEndCondThroughAll, 0.0102, 0.010312189893273, 0, 0.0044, 1.57079632679489, 1.52189893272978E-04, 0, -1, -1, -1, -1, 1, -1, -1, -1, \"\", False, True, True, True, True, False)",
+          "example_file": "Create_Hole_Wizard_Hole_Example_VB.md"
+        },
+        {
+          "what": "沉孔示例在 Value 区连传 4 个 -1、尾部再传 3 个 -1，具体印证 Remarks「ignores parameters set to -1」",
+          "example_quote": "0, -1, -1, -1, -1, 1, -1, -1, -1, \"\", False, True, True, True, True, False)",
+          "example_file": "Create_Hole_Wizard_Hole_Example_VB.md"
+        },
+        {
+          "what": "基准面路线示例按 mark=0 选中 Plane1 后调用，mark 口径与 Remarks 的 SelectByRay(Mark=0) 一致",
+          "example_quote": "boolstatus = swModelDocExt.SelectByID2(\"Plane1\", \"PLANE\", -1.56784487003801E-02, -9.16715285390111E-03, 5.58270998665543E-02, False, 0, Nothing, 0)",
+          "example_file": "Create_Hole_Wizard_Hole_Example_VB.md"
+        }
+      ],
+      "note": "单位（米/弧度）、沉孔 Value 顺序、EndType=10 需 mark=2、RevDir 判定与四份示例均可同时成立。"
+    },
+    {
+      "member": "HorizonHeight",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在读 HorizonHeight 之前先把 FlattenFloor 置 True，具体化了 Remarks 的有效性前提",
+          "example_quote": "Scene.FlattenFloor = True",
+          "example_file": "Get_and_Set_Scene_Properties_Example_VB.md"
+        },
+        {
+          "what": "示例只读不赋值 HorizonHeight，且紧接其后读 EnvironmentSize，同属环境球一组属性",
+          "example_quote": "Debug.Print \"Horizon height: \" & Scene.HorizonHeight",
+          "example_file": "Get_and_Set_Scene_Properties_Example_VB.md"
+        }
+      ],
+      "note": "示例遵守 FlattenFloor 前提，与 Remarks「valid only if」及 0..1 范围无矛盾。"
+    }
+  ]
+}

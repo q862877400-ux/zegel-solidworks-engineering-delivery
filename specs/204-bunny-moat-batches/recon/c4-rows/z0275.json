@@ -1,0 +1,129 @@
+{
+  "idx": 275,
+  "results": [
+    {
+      "member": "GetUnitsString",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律跳过，不读示例。"
+    },
+    {
+      "member": "GetUnloadedComponentNames",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Hidden_Components_Filenames_Example_VB.md",
+        "Get_Hidden_Components_Filenames_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "To get whether an assembly has hidden or suppressed unloaded components, call [[IAssemblyDoc::HasUnloadedComponents]].",
+          "example_quote": "if (Reasons[index] == 1)",
+          "example_file": "Get_Hidden_Components_Filenames_Example_CSharp.md",
+          "why": "页面参数表说该数组按 swComponentLoadStatus_e 三值（Unknown/Hidden/Suppressed）返回；C# 示例只判 ==1、其余全当 suppressed，VBA 版更直接赋给 Boolean，两者都把 Unknown 与 Suppressed 混为一谈。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页只提名称没写步骤的前置：先以 Large Design Review 打开装配体，再对 ball valve-1 做 Selective Open > Open Selected。",
+          "example_quote": "click ball valve-1 in the FeatureManager design tree",
+          "example_file": "Get_Hidden_Components_Filenames_Example_CSharp.md"
+        },
+        {
+          "what": "示例要求五个数组必须同 LBound 同 UBound，否则报错退出；成员页完全没提这项一致性要求。",
+          "example_quote": "Error: Array lower bounds do not match!",
+          "example_file": "Get_Hidden_Components_Filenames_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只说明何时用；形状差异见 return_shape_diff。"
+    },
+    {
+      "member": "GetUpperAndLowerLimit",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律跳过，不读示例。"
+    },
+    {
+      "member": "GetUpperRight",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Upper-right_Text_Coordinates_of_Selected_Note_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补出成员页没写的前置：先在模型文档里选中注释，再经 SelectionMgr 取对象后调用。",
+          "example_quote": "Set swNote = swSelMgr.GetSelectedObject6(1, 0)",
+          "example_file": "Get_Upper-right_Text_Coordinates_of_Selected_Note_Example_VB.md"
+        },
+        {
+          "what": "示例用 0 到 UBound 遍历返回值，与 Remarks 的三个分量（下标 0..2）正好对上，是该说法的实证。",
+          "example_quote": "For i = 0 To UBound(vpoints)",
+          "example_file": "Get_Upper-right_Text_Coordinates_of_Selected_Note_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的三分量与示例遍历方式一致，未找到冲突。"
+    },
+    {
+      "member": "GetUseDocTextFormat",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Detail_Circle_and_Detail_View_Example_CSharp.md",
+        "Create_Detail_Circle_and_Detail_View_Example_VB.md",
+        "Create_Detail_Circle_and_Detail_View_Example_VBNET.md",
+        "Get_All_Elements_of_Sketch_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "The index argument is not used and should be set to 0.",
+          "example_quote": "swDetailCircle.GetUseDocTextFormat()",
+          "example_file": "Create_Detail_Circle_and_Detail_View_Example_CSharp.md",
+          "why": "成员页签名是 GetUseDocTextFormat(System.int Index)，Remarks 要求把 index 设为 0；四份官方示例（C#/VB/VBNET/草图元素）全部零参调用，按这个 1 参签名这四行都编译不通过。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把它用在 SketchText 上，该类型不在 Remarks 枚举的三组注释类型里，说明实际适用范围比 Remarks 列的更宽。",
+          "example_quote": "Debug.Print \" Use doc fmt = \" & swSkText.GetUseDocTextFormat",
+          "example_file": "Get_All_Elements_of_Sketch_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的注释类型表未覆盖示例用的 DetailCircle 与 SketchText。"
+    },
+    {
+      "member": "GetUseDocUnits",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Chamfer_Display_Dimension_Example_CSharp.md",
+        "Get_Chamfer_Display_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「用本地覆盖单位」的前置写成可执行步骤：在 Dimension Text 的 Other 选项卡勾 Override Units，使该方法返回 False。",
+          "example_quote": "// 6. On the Other tab, select Override Units.",
+          "example_file": "Get_Chamfer_Display_Dimension_Example_CSharp.md"
+        },
+        {
+          "what": "示例说明返回 False 后改读 GetChamferUnits 取本地长度/角度单位枚举，比 Remarks 的抽象描述更具体。",
+          "example_quote": "bRet = swDispDim.GetChamferUnits(out LenUnit, out AngUnit);",
+          "example_file": "Get_Chamfer_Display_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "签名与两份示例都是零参、布尔返回；未见冲突。"
+    },
+    {
+      "member": "GetUseGaugeTable",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律跳过，不读示例。"
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "idx": 220,
+  "results": [
+    {
+      "member": "GetModelViewCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Obsolete 注 + Returns），按纪律跳过"
+    },
+    {
+      "member": "GetModelViewNames",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "GetModelViews",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Scale_of_Each_Model_View_Example_CPlusPlus_COM.md",
+        "Get_Scale_of_Each_Model_View_Example_CSharp.md",
+        "Get_Scale_of_Each_Model_View_Example_VB.md",
+        "Get_Scale_of_Each_Model_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例多一条 Remarks 没写的硬前置：须先点中一个 model view 并滚动中键滚轮；Remarks 只说用 Window > Viewport 或 ViewportDisplay 设置",
+          "example_quote": "// 3. Click a model view and spin the middle-mouse",
+          "example_file": "Get_Scale_of_Each_Model_View_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 GetModelViews 与 GetModelViewCount 配对并按 0..Count-1 下标遍历（VB/VBNET 则用 LBound/UBound）；Remarks 完全没提这个计数成员",
+          "example_quote": "Count = swModelDocExt.GetModelViewCount();",
+          "example_file": "Get_Scale_of_Each_Model_View_Example_CSharp.md"
+        },
+        {
+          "what": "C++ 示例给出成员页「返回 object 数组」在 COM 层的实形：收 VARIANT SafeArray、PackVariant 打包，再逐个 GetDispatch 取回 IModelView",
+          "example_quote": "hres = swDocExt->GetModelViews(&vPacked);",
+          "example_file": "Get_Scale_of_Each_Model_View_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "四份示例前置都写 Window > Viewport，与 Remarks 同向，未见冲突"
+    },
+    {
+      "member": "GetModeler",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "GetModifiedDimensions",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Vary_Linear_Pattern_Instances_Example_CSharp.md",
+        "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把双向公式代入具体数：D2TotalInstances=2 且注释标 (2,2)，按 I=n2*(i-1)+(j-1) 得 3，与传入 Instance=3 自洽",
+          "example_quote": "// Modify a specific dimension just for pattern instance #3 (2,2)",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 第 1 步「把 D2PatternSeedOnly 设为 false」在示例里是建特征前的一行显式赋值，比文字更具体",
+          "example_quote": "swFeatData.D2PatternSeedOnly = false;",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示两个 out 数组实形为 string[] 尺寸名 + double[] 值，且成员名带特征后缀（@Sketch2）；Remarks 只说「数组」",
+          "example_quote": "vDims[0] = \"Near C'Sink Dia.@Sketch2\";",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+        }
+      ],
+      "note": "示例按 Remarks 的 (2,2)→3 公式取值，两侧自洽"
+    },
+    {
+      "member": "GetMomentOfInertia",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+        "Get_Mass_Properties_Using_IMassProperty_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 Remarks 没写的前置：须先由扩展取到 MassProperty2 对象；两份 Multibody 示例用的是 CreateMassProperty 的 MassProperty(v1)，非本成员",
+          "example_quote": "MyMassProp = (MassProperty2)Extn.CreateMassProperty2();",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 只讲九个 double 的顺序、没讲单位；示例用 UseSystemUnits=false（MKS）后才读，九个值的量纲由此开关决定",
+          "example_quote": "// Use document property units (MKS)",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 WhereTaken 直接写成字面量 0（=swMassPropertyMomentAboutCenterOfMass），比 Remarks 的枚举引用更具体",
+          "example_quote": "vValue = (double[])MyMassProp.GetMomentOfInertia(0);",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        }
+      ],
+      "note": "两份 Multibody 示例调的是 MassProperty(v1)，已剔除；两侧数组次序一致"
+    },
+    {
+      "member": "GetMotionFeatures",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过"
+    }
+  ]
+}

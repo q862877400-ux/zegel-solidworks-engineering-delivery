@@ -1,0 +1,209 @@
+{
+  "idx": 313,
+  "results": [
+    {
+      "member": "InsertFeatureShell",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_and_Release_Access_to_Edges_Example_CSharp.md",
+        "Access_and_Release_Access_to_Edges_Example_VB.md",
+        "Access_and_Release_Access_to_Edges_Example_VBNET.md",
+        "Add_and_Edit_Distance_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 SelectByRay（TypeWanted=2 即 swSelFACES、Mark=1）预选待移除面，成员页只写了 SelectByID2 这条路",
+          "example_quote": "boolstatus = Part.Extension.SelectByRay(-0.0108900020093756, 0.0655319999998483, -0.00515652172191494, -0.400036026779312, -0.515038074910024, -0.758094294050284, 0.00167637314537445, 2, false, 1,",
+          "example_file": "Add_and_Edit_Distance_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "示例明确 Outward 传 False（内侧抽壳），Thickness 传 0.01 / 0.00254（米制，对应 10 mm / 2.54 mm）",
+          "example_quote": "swModel.InsertFeatureShell(0.01, false);",
+          "example_file": "Access_and_Release_Access_to_Edges_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例都真调用了它；成员页 Examples 段列的是 Create_Shell_Feature_*，与任务给的清单不同源。"
+    },
+    {
+      "member": "InsertFeatureTreeFolder2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Folder_in_FeatureManager_Design_Tree_Example_VB.md",
+        "Move_Assembly_Components_to_New_Folder_Example_CSharp.md",
+        "Move_Assembly_Components_to_New_Folder_Example_VB.md",
+        "Move_Assembly_Components_to_New_Folder_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「预选对象」设为文件夹本身；成员页只列 features / components / surface feature 三种预选对象",
+          "example_quote": "Select the folder above which you want to",
+          "example_file": "Insert_Folder_in_FeatureManager_Design_Tree_Example_VB.md"
+        },
+        {
+          "what": "预选文件夹 + swFeatureTreeFolder_Containing ⇒ 新文件夹建在被选文件夹之上，被选文件夹成为其子文件夹",
+          "example_quote": "Set swFeat = swFeatMgr.InsertFeatureTreeFolder2(swFeatureTreeFolder_Containing)",
+          "example_file": "Insert_Folder_in_FeatureManager_Design_Tree_Example_VB.md"
+        },
+        {
+          "what": "示例对返回值做 Nothing 判定（成员页 Returns 只说 Newly created folder feature，没说可返回 Nothing）",
+          "example_quote": "Return Nothing if unable to create the folder",
+          "example_file": "Insert_Folder_in_FeatureManager_Design_Tree_Example_VB.md"
+        },
+        {
+          "what": "EmptyBefore + 多个组件：成员页说空文件夹只建在首个有效特征之前，组件仍需另调 ReorderComponents 搬入",
+          "example_quote": "feature = featureMgr.InsertFeatureTreeFolder2((int)swFeatureTreeFolderType_e.swFeatureTreeFolder_EmptyBefore);",
+          "example_file": "Move_Assembly_Components_to_New_Folder_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的「文件夹不能建在另一个文件夹里、已在文件夹内的选中项被忽略」与示例不冲突：新文件夹建在上方。"
+    },
+    {
+      "member": "InsertFillSurface2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Fill_Gaps_in_Body_Example_CSharp.md",
+        "Get_and_Fill_Gaps_in_Body_Example_VB.md",
+        "Get_and_Fill_Gaps_in_Body_Example_VBNET.md",
+        "Insert_Fill-surface_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "You must use [[IModelDocExtension::SelectByID2]] and the following Mark values to select edges that bound the surface to be filled:",
+          "example_quote": "bRet = swEnt.Select4(true, swSelData);",
+          "example_file": "Get_and_Fill_Gaps_in_Body_Example_CSharp.md",
+          "why": "成员页写「必须用 SelectByID2」选边界；示例改用 IEntity::Select4 + SelectData（Mark=257）选边，官方示例走的是成员页没写的另一条路径。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "**VPatchBoundaries**: Array of [[edges]] or [[sketches]] for the patch boundaries",
+          "example_quote": "swFeat = (Feature)swFeatMgr.InsertFillSurface2(3, (int)swFeatureFillSurfaceOptions_e.swOptimizeSurface, swSelData, (int)swContactType_e.swContact, null, null);",
+          "example_file": "Get_and_Fill_Gaps_in_Body_Example_CSharp.md",
+          "why": "页内参数表称第3参是 edges/sketches 数组、第4参是控制方法数组；示例第3参传 SelectData 对象、第4参传标量枚举 swContact，两处形状都不符。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 Mark=257 写进 SelectData 再 Select4，等于成员页的 contact curvature control 那一档",
+          "example_quote": "swSelData.Mark = 257",
+          "example_file": "Get_and_Fill_Gaps_in_Body_Example_VBNET.md"
+        },
+        {
+          "what": "Resolutions 实际取值：缝隙例传 3，Loft 例传 2；Options 传 swOptimizeSurface",
+          "example_quote": "swFeat = (Feature)swFeatMgr.InsertFillSurface2(2, (int)swFeatureFillSurfaceOptions_e.swOptimizeSurface, selObj, (int)swContactType_e.swContact, null, null);",
+          "example_file": "Insert_Fill-surface_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例先按成员页说的 Diagnose 取缝隙边（GetCoEdgesAtGap），再逐缝建一个填充特征",
+          "example_quote": "vCoEdgeArr = (object[])swDiagnose.GetCoEdgesAtGap(i - 1);",
+          "example_file": "Get_and_Fill_Gaps_in_Body_Example_CSharp.md"
+        }
+      ],
+      "note": "mark 值本身（257）与成员页对得上；不一致在「用哪个 API 选」与「第3/4参实参形状」。"
+    },
+    {
+      "member": "InsertFilletBeadFeature3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weldment_Features_Example_CSharp.md",
+        "Insert_Weldment_Features_Example_VB.md",
+        "Insert_Weldment_Features_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 SelectByID2 的 mark 1/2/4 给面上标签，再用 GetSelectedObject6(1, mark) 分装成两个面数组",
+          "example_quote": "fbFaceObj1[0]\n= (Face2)selMgr.GetSelectedObject6(1, 1);",
+          "example_file": "Insert_Weldment_Features_Example_CSharp.md"
+        },
+        {
+          "what": "第12个实参 Flag=0（参数表称 One-sided and no tangent propagation），示例却仍同时传 v1、v2 两个面数组",
+          "example_quote": "= fm.InsertFilletBeadFeature3(0,\n0.003, 0.003, 2, 0.003, 0.006, 0, 0.003, 0.003, 2, 0.003, 0, 1, edgeArray,\n0, null, v1, v2);",
+          "example_file": "Insert_Weldment_Features_Example_CSharp.md"
+        },
+        {
+          "what": "Size/Length/Pitch 传 0.003 / 0.006，成员页与参数表都没写单位（示例按米用）",
+          "example_quote": "= fm.InsertFilletBeadFeature3(0,\n0.003, 0.003, 2, 0.003, 0.006, 0, 0.003, 0.003, 2, 0.003, 0, 1, edgeArray,\n0, Nothing, v1, v2)",
+          "example_file": "Insert_Weldment_Features_Example_VBNET.md"
+        }
+      ],
+      "note": "Remarks 只有一句「两侧各一个面数组」，示例正是这么做的，未见 Remarks 级冲突。"
+    },
+    {
+      "member": "InsertFlattenSurface2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md",
+        "Get_Data_for_Surface_Flatten_Feature_Example_VB.md",
+        "Get_Data_for_Surface_Flatten_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "AccuracyFactor 实传 8、ShouldUseTears 实传 true；建完立刻回读 AccuracyFactor 与 ShouldMakeTears",
+          "example_quote": "swFeature = (Feature)swFeatureManager.InsertFlattenSurface2(8, true);",
+          "example_file": "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例只用到 mark 1（面）、8（撕裂边）、16（锚点），没用 2 引导边与 4 映射边",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"VERTEX\", 0, -0.0400014251170795, -0.00054185036618795, True, 16, Nothing, 0)",
+          "example_file": "Get_Data_for_Surface_Flatten_Feature_Example_VBNET.md"
+        },
+        {
+          "what": "锚点用 VERTEX（不是边上点），撕裂边一律标 8，示例内 ShouldMakeTears 为真才遍历",
+          "example_quote": "if (swSurfaceFlattenFeatureData.ShouldMakeTears == true)",
+          "example_file": "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例的 mark 与成员页的 1/2/4/8/16 表逐项对得上，未见冲突。"
+    },
+    {
+      "member": "InsertGeneralTableAnnotation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_General_Table_in_Part_Example_CSharp.md",
+        "Insert_General_Table_in_Part_Example_VB.md",
+        "Insert_General_Table_in_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例固定 TableTemplate=\"\" 走 Remarks 的「空模板」分支，并给 Rows=2、Columns=2、Anchor=TopLeft",
+          "example_quote": "myTable = modelDocExt.InsertGeneralTableAnnotation(true, 0, 0, (int)swBOMConfigurationAnchorType_e.swBOMConfigurationAnchor_TopLeft, \"\", 2, 2);",
+          "example_file": "Insert_General_Table_in_Part_Example_CSharp.md"
+        },
+        {
+          "what": "UseAnchorPoint=True 同时把 X、Y 都传 0：说明坐标被忽略、位置由 AnchorType 决定（参数表语义）",
+          "example_quote": "Set myTable = modelDocExt.InsertGeneralTableAnnotation(True, 0, 0, swBOMConfigurationAnchor_TopLeft, \"\", 2, 2)",
+          "example_file": "Insert_General_Table_in_Part_Example_VB.md"
+        }
+      ],
+      "note": "三份示例与 Remarks 的「空模板分支」完全一致；参数表「坐标单位」两侧都没写。"
+    },
+    {
+      "member": "InsertGeneralToleranceTableAnnotation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_General_Tolerance_Table_Example_CSharp.md",
+        "Insert_General_Tolerance_Table_Example_VB.md",
+        "Insert_General_Tolerance_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 Remarks 里 install_dir\\lang\\<lang> 的真实实例（lang\\english），并传 X=481、Y=163（页面未写单位）",
+          "example_quote": "Set gttAnno = mde.InsertGeneralToleranceTableAnnotation(\"c:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\lang\\english\\bom-standard.sldbomtbt\", 481, 163)",
+          "example_file": "Insert_General_Tolerance_Table_Example_VB.md"
+        },
+        {
+          "what": "建表后先 EditRebuild3，再由返回对象取 GeneralToleranceTableFeature 与 Feature.Name",
+          "example_quote": "boolstatus = Part.EditRebuild3()",
+          "example_file": "Insert_General_Tolerance_Table_Example_VB.md"
+        }
+      ],
+      "note": "模板路径与 Remarks 的写法吻合；X/Y 的单位官方两侧都没有，不能据此判冲突。"
+    }
+  ]
+}

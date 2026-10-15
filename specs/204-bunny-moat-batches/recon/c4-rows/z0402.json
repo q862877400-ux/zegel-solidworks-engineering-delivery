@@ -1,0 +1,123 @@
+{
+  "idx": 402,
+  "results": [
+    {
+      "member": "ReferenceComponent",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Mate_Example_VB.md",
+        "Edit_Mate_Example_CSharp.md",
+        "Edit_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "The component instance tree of a subassembly is not loaded because a subassembly does not have a view of its own. Thus, this property returns Nothing or null if the **Inplace** mate is in a subassembly.",
+          "example_quote": "Set swComp = swMateEnt(i).ReferenceComponent ... Debug.Print \"        Component          = \" & swComp.Name2 & \" (\" & swComp.ReferencedConfiguration & \") --> \" & swComp.GetPathName",
+          "example_file": "Edit_Mate_Example_VB.md",
+          "why": "Remarks 说子装配 Inplace 配合会回 Nothing/null；三份示例都直接解引用 swComp.Name2，无 Is Nothing / null 保护，且前置只写「Open an assembly with a mate」，未排除子装配。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例按 MateEntity 循环逐实体取本属性，并顺带取 EntityParams（点/半径都按 mm 打印）；Remarks 未说它是逐配合实体的。",
+          "example_quote": "Set swComp = swMateEnt(i).ReferenceComponent | vMateEntPar = swMateEnt(i).EntityParams",
+          "example_file": "Edit_Mate_Example_VB.md"
+        }
+      ],
+      "note": "Create_Force_Feature_Example_VB.md 命中的是 ISimulationForceFeatureData.ReferenceComponent（可写），非同族，未采用。"
+    },
+    {
+      "member": "ReferenceEntity2",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 10 行标题骨架，无 Signature / Returns / Remarks，按纪律 3 跳过。"
+    },
+    {
+      "member": "ReferenceEntityCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mate_Reference_Properties_Example_VB.md",
+        "Get_Mate_Reference_Properties_Example_VBNET.md",
+        "Get_Mate_Reference_Properties_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只列了 ReferenceAlignment / ReferenceEntity / ReferenceType 三个；示例实际调的是 ReferenceEntity2(0) 与 Remarks 未提的 ReferenceEntityType(0)。",
+          "example_quote": "Set mateRefObj = swMateReference.ReferenceEntity2(0) | mateRefEntityType = swMateReference.ReferenceEntityType(0)",
+          "example_file": "Get_Mate_Reference_Properties_Example_VB.md"
+        },
+        {
+          "what": "示例给出这四个兄弟属性都带下标且只取 0（primary），并说明 ReferenceEntityType 的返回值可直接与 swSelectType_e.swSelFACES 比较。",
+          "example_quote": "mateRefEntityType = swMateReference.ReferenceEntityType(0) | If mateRefEntityType = swSelectType_e.swSelFACES Then",
+          "example_file": "Get_Mate_Reference_Properties_Example_VB.md"
+        }
+      ],
+      "note": "Remarks「returns a value 3」与示例无正面冲突：示例只打印 nCount，不断言其值。"
+    },
+    {
+      "member": "ReferenceEntityType",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 10 行标题骨架，无 Remarks，按纪律 3 跳过。"
+    },
+    {
+      "member": "ReferenceFaceOrPlane",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Bounding_Box_Example_VB.md",
+        "Create_Bounding_Box_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说先 SelectByRay 选面；示例还必须把选中对象赋给 PlanarEntity，否则本属性设了也没把实体交出去。",
+          "example_quote": "swGPData.ReferenceFaceOrPlane = 2 | swGPData.PlanarEntity = ent",
+          "example_file": "Create_Bounding_Box_Example_VB.md"
+        },
+        {
+          "what": "示例把两个「2」都写死：本属性传 2 = swBoundingBoxType_CustomPlane，SelectByRay 的 TypeWanted 传 2 = swSelFACES，与 Remarks 完全对上。",
+          "example_quote": "boolstatus = Part.Extension.SelectByRay(1.08472195143463E-02, 3.96239999998329E-02, -1.01823136031953E-03, -0.400036026779312, -0.515038074910024, -0.758094294050284, 1.1224765174324E-03, 2, False, 0, 0)",
+          "example_file": "Create_Bounding_Box_Example_VB.md"
+        }
+      ],
+      "note": "已核 swGlobalBoundingBoxFitOptions_e（CustomPlane=2）与 swSelectType_e（swSelFACES=2），两侧一致，无冲突。"
+    },
+    {
+      "member": "ReferenceFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Signature / Returns / Examples，无 ## Remarks 段，按纪律 3 跳过。"
+    },
+    {
+      "member": "ReferenceLine",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Sheet_Metal_Gusset_Feature_Example_VB.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_VBNET.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出改本属性的完整时序：GetDefinition → AccessSelections → 选 EXTSKETCHSEGMENT → GetSelectedObject6 → 赋值 → ModifyDefinition，Remarks 只讲「不设则默认」。",
+          "example_quote": "Set swFeatData = swFeat.GetDefinition | swFeatData.AccessSelections Part, Nothing | Set refLine = Part.SelectionManager.GetSelectedObject6(1, -1) | swFeatData.ReferenceLine = refLine | swFeat.ModifyDefinition swFeatData, Part, Nothing",
+          "example_file": "Insert_Sheet_Metal_Gusset_Feature_Example_VB.md"
+        },
+        {
+          "what": "创建路径用「预选」而非设本属性：示例在 Insert 前把线段与两面、点一起以 mark 0 预选，与 Returns 的 sketch segment 一致。",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"Line1@Sketch6\", \"EXTSKETCHSEGMENT\", -6.09049483400968E-03, -8.95139047397037E-02, 0, True, 0, Nothing, 0)",
+          "example_file": "Insert_Sheet_Metal_Gusset_Feature_Example_VB.md"
+        }
+      ],
+      "note": "ISMGussetFeatureData 接口 Remarks 的「bend line adjacent to the gusset legs」与本成员页的默认说明一致，无冲突。"
+    }
+  ]
+}

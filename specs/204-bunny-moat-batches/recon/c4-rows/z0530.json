@@ -1,0 +1,86 @@
+{
+  "idx": 530,
+  "results": [
+    {
+      "member": "faces",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "配给的示例用的是 IClosedCornerFeatureData::Faces（另一个同名接口），不是本页成员，无从比对。"
+    },
+    {
+      "member": "featureUpdateTimes",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_VB.md",
+        "Get_Part's_Feature_Statistics_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；两示例均以小写 featureUpdateTimes 调用。"
+    },
+    {
+      "member": "features",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_VB.md",
+        "Get_Part's_Feature_Statistics_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；两示例均用 swFeatStat.features。"
+    },
+    {
+      "member": "fileName",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 跳过；两示例读的是 swRenderMaterial.fileName，非本页成员。"
+    },
+    {
+      "member": "filePath",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 跳过；两示例写的是 swMBDPdfData.filePath，非本页成员。"
+    },
+    {
+      "member": "groups",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_VB.md",
+        "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_VBNET.md",
+        "Merge_Arc_Segment_Bodies_With_Adjacent_Bodies_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 AccessSelections 再读 groups、读完 ReleaseSelectionAccess；成员页只泛指通用文档",
+          "example_quote": "swStructuralMemberFeatData.AccessSelections swModel, Nothing",
+          "example_file": "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的 GetGroupsCount>0 门槛与 CreateStructuralMemberGroup 均被三份示例遵守。"
+    },
+    {
+      "member": "guideCurves",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Guide_Curves_in_Loft_Feature_Example_VB.md",
+        "Get_Guide_Curves_in_Loft_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 AccessSelections 再读 guideCurves、读完 ReleaseSelectionAccess；成员页只泛指通用文档",
+          "example_quote": "status = swLoftFeatureData.AccessSelections(swModel, Nothing)",
+          "example_file": "Get_Guide_Curves_in_Loft_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Sweep 那份用的是 ISweepFeatureData::GuideCurves，不属本页成员。"
+    }
+  ]
+}

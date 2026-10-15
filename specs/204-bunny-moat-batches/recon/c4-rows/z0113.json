@@ -1,0 +1,120 @@
+{
+ "idx": 113,
+ "results": [
+  {
+   "member": "EnumDocuments2",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_List_of_Open_Documents_Example_CPlusPlus_COM.md",
+    "Traverse_All_Open_Documents_Example_CPlusPlus_COM.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "return_shape_diff",
+     "remarks_quote": "The list of [[IModelDoc2]] objects contained in the [[IEnumDocuments2]] object contain any open IModelDoc2 pointer. This includes IModelDoc2 objects that may have been opened as file references, for example, from an assembly or drawing.",
+     "example_quote": "LPENUMDOCUMENTS pDocEnum\n= NULL;\nhres = TheApplication->m_pSldWorks->EnumDocuments2(&pDocEnum);",
+     "example_file": "Traverse_All_Open_Documents_Example_CPlusPlus_COM.md",
+     "why": "Remarks 指返回 IEnumDocuments2 且元素是 IModelDoc2；示例取的是 LPENUMDOCUMENTS / LPMODELDOC 这一代旧接口，两者不是同一个返回对象。"
+    }
+   ],
+   "example_more_specific": [],
+   "note": "Get List 示例用 CComPtr<IEnumDocuments2> + IModelDoc2，与 Remarks 一致；Traverse 示例是旧代接口。"
+  },
+  {
+   "member": "EnumFaces",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Enumerate_Bodies_Example_CPlusPlus_COM.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出 C++ COM 下另一条具体路径：EnumFaces 取枚举后用 Next 逐个取面，落在非 OLE 自动化一侧。",
+     "example_quote": "resultVal = pOldBody->EnumFaces(&pFaceEnum);\nint faceNum = 0;\nLPFACE pFace;\nresultVal = pFaceEnum->Next(1, &pFace, NULL);",
+     "example_file": "Enumerate_Bodies_Example_CPlusPlus_COM.md"
+    }
+   ],
+   "note": "Remarks 只劝 OLE 自动化应用改用 GetFirstFace/GetNextFace；示例是 C++ COM，非矛盾。"
+  },
+  {
+   "member": "EnumRelatedBodies",
+   "remarks_empty": false,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "唯一示例调的是 IPartDoc.EnumRelatedBodies（那页标 Obsolete、返回 EnumBodies），对象不同，不采用。"
+  },
+  {
+   "member": "EnvelopeRequirement",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_DimXpert_Tolerance2_Example_VB.md",
+    "Get_DimXpert_Tolerance2_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例只在 swDimXpertDimTol_Diameter 分支里、先把 annotation 转成 IDimXpertDiameterDimTol 再读它。",
+     "example_quote": "         envReq = diaDim.EnvelopeRequirement",
+     "example_file": "Get_DimXpert_Tolerance2_Example_VB.md"
+    }
+   ],
+   "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+  },
+  {
+   "member": "EnvironmentRotation",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_and_Set_Scene_Properties_Example_CSharp.md",
+    "Get_and_Set_Scene_Properties_Example_VB.md",
+    "Get_and_Set_Scene_Properties_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例先把 BackgroundType 置为 swBackgroundType_UseEnvironment 才读该属性，成员页未写这一前置。",
+     "example_quote": "            Debug.Print(\"Scene environment rotation: \" + Scene.EnvironmentRotation);",
+     "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定；三份示例行为一致。"
+  },
+  {
+   "member": "EnvironmentSize",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_and_Set_Scene_Properties_Example_CSharp.md",
+    "Get_and_Set_Scene_Properties_Example_VB.md",
+    "Get_and_Set_Scene_Properties_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出满足前置的具体次序：先置 FlattenFloor = true 再读 EnvironmentSize，成员页只给条件不给次序。",
+     "example_quote": "Scene.FlattenFloor = true;\n            Debug.Print(\"Flatten the scene floor of the spherical environment? \" + Scene.FlattenFloor);\n            Debug.Print(\"Horizon height: \" + Scene.HorizonHeight);\n            Debug.Print(\"Environment size: \" + Scene.EnvironmentSize);",
+     "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+    }
+   ],
+   "note": "三份示例都满足 Remarks 的 FlattenFloor 前置，无矛盾。"
+  },
+  {
+   "member": "EqualDistance",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_Chamfer_Distances_Example_CSharp.md",
+    "Get_Chamfer_Distances_Example_VB.md",
+    "Get_Chamfer_Distances_Example_VBNET.md",
+    "Get_Edge_Chamfer_Distances_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出取值路径：先 GetDefinition 转成 ChamferFeatureData2 再读它；要取几何体还得先 AccessSelections。",
+     "example_quote": "Set swChamfer = swFeat.GetDefinition\n    ' Get chamfer information\n    Debug.Print \"File = \" & swModel.GetPathName\n    Debug.Print \"  \" & swFeat.Name\n    Debug.Print \"    EdgeChamferAngle          = \" & swChamfer.EdgeChamferAngle * DegPerRad & \" degrees\"\n    Debug.Print \"    EqualDistance             = \" & swChamfer.EqualDistance",
+     "example_file": "Get_Chamfer_Distances_Example_VB.md"
+    }
+   ],
+   "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定；四份示例都经 ChamferFeatureData2 读它。"
+  }
+ ]
+}

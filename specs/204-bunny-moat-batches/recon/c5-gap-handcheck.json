@@ -1,0 +1,493 @@
+[
+ {
+  "op": "annotation",
+  "keys": [
+   "annotation",
+   "note",
+   "gtol",
+   "datum",
+   "balloon"
+  ],
+  "hits": [
+   "solidworks_drawing_add_note",
+   "solidworks_drawing_insert_datum_tag",
+   "solidworks_drawing_view_annotations",
+   "solidworks_gtol_insert"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server",
+   "Slacker-LLC/solidworks-mcp",
+   "andrewbartels1/SolidworksMCP-python"
+  ]
+ },
+ {
+  "op": "background",
+  "keys": [
+   "background",
+   "scene",
+   "appearance"
+  ],
+  "hits": [
+   "cadstudio_build_dxf_preview_scene",
+   "solidworks_appearance_delete_render_material",
+   "solidworks_collect_appearance_evidence",
+   "solidworks_refresh_scene_graph",
+   "solidworks_set_appearance"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server"
+  ]
+ },
+ {
+  "op": "balloon",
+  "keys": [
+   "balloon",
+   "note",
+   "drawing"
+  ],
+  "hits": [
+   "solidworks_drawing_add_note",
+   "solidworks_drawing_collect_view_evidence",
+   "solidworks_drawing_create_auxiliary_view",
+   "solidworks_drawing_create_broken_view",
+   "solidworks_drawing_create_detail_view"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server"
+  ]
+ },
+ {
+  "op": "bbox",
+  "keys": [
+   "bounding",
+   "bbox",
+   "box"
+  ],
+  "hits": [
+   "solidworks_insert_global_bounding_box",
+   "solidworks_part_bounding_box",
+   "solidworks_ref_geometry_create_3d_bounding_box",
+   "solidworks_toolbox_list_standards",
+   "solidworks_toolbox_load_index"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server",
+   "Slacker-LLC/solidworks-mcp",
+   "vespo92/SolidworksMCP-TS"
+  ]
+ },
+ {
+  "op": "capture_screenshot",
+  "keys": [
+   "screenshot",
+   "export_image",
+   "export_bmp",
+   "screen"
+  ],
+  "hits": [
+   "solidworks_export_bmp",
+   "solidworks_export_image",
+   "solidworks_gui_screen_png"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server",
+   "Slacker-LLC/solidworks-mcp",
+   "vespo92/SolidworksMCP-TS"
+  ]
+ },
+ {
+  "op": "edges",
+  "keys": [
+   "entit",
+   "edge",
+   "body"
+  ],
+  "hits": [
+   "solidworks_costing_body_count",
+   "solidworks_costing_read_body",
+   "solidworks_entities_on_body",
+   "solidworks_resolve_entity",
+   "solidworks_select_entity_by_index"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Slacker-LLC/solidworks-mcp"
+  ]
+ },
+ {
+  "op": "error_handling",
+  "keys": [
+   "error",
+   "whats_wrong",
+   "hresult",
+   "explain"
+  ],
+  "hits": [
+   "solidworks_automation_explain_hresult",
+   "solidworks_feature_whats_wrong"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "vespo92/SolidworksMCP-TS"
+  ]
+ },
+ {
+  "op": "execute_workflow",
+  "keys": [
+   "workflow",
+   "macro",
+   "run",
+   "batch"
+  ],
+  "hits": [
+   "cadstudio_run_fea",
+   "cadstudio_run_fea_convergence",
+   "solidworks_batch_export_files",
+   "solidworks_macro_build_prompt",
+   "solidworks_macro_extract_vba_code"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "andrewbartels1/SolidworksMCP-python"
+  ]
+ },
+ {
+  "op": "faces",
+  "keys": [
+   "entit",
+   "face",
+   "body"
+  ],
+  "hits": [
+   "cadstudio_create_ocp_surface",
+   "solidworks_costing_body_count",
+   "solidworks_costing_read_body",
+   "solidworks_create_revolved_surface",
+   "solidworks_drawing_insert_surface_finish_symbol"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Slacker-LLC/solidworks-mcp"
+  ]
+ },
+ {
+  "op": "fold",
+  "keys": [
+   "fold",
+   "flatten",
+   "sheet"
+  ],
+  "hits": [
+   "solidworks_drawing_current_sheet_info",
+   "solidworks_drawing_current_sheet_name",
+   "solidworks_drawing_get_current_sheet",
+   "solidworks_drawing_list_sheets",
+   "solidworks_drawing_set_sheet_format"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server"
+  ]
+ },
+ {
+  "op": "gdt",
+  "keys": [
+   "gtol",
+   "gdt",
+   "tolerance",
+   "datum"
+  ],
+  "hits": [
+   "solidworks_drawing_insert_datum_tag",
+   "solidworks_gtol_insert",
+   "solidworks_simulation_default_element_size_and_tolerance"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server"
+  ]
+ },
+ {
+  "op": "hem",
+  "keys": [
+   "hem",
+   "flange",
+   "sheet"
+  ],
+  "hits": [
+   "solidworks_base_flange_params",
+   "solidworks_drawing_current_sheet_info",
+   "solidworks_drawing_current_sheet_name",
+   "solidworks_drawing_get_current_sheet",
+   "solidworks_drawing_list_sheets"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server"
+  ]
+ },
+ {
+  "op": "hide_all_planes",
+  "keys": [
+   "hide",
+   "show",
+   "plane",
+   "visibility"
+  ],
+  "hits": [
+   "solidworks_assembly_show_exploded",
+   "solidworks_extrude_midplane",
+   "solidworks_insert_ref_plane"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server"
+  ]
+ },
+ {
+  "op": "hide_all_sketches",
+  "keys": [
+   "hide",
+   "show",
+   "sketch",
+   "visibility"
+  ],
+  "hits": [
+   "solidworks_add_sketch_relation",
+   "solidworks_assembly_show_exploded",
+   "solidworks_auto_dimension_sketch",
+   "solidworks_current_sketch_name",
+   "solidworks_sketch_add_3point_arc"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server"
+  ]
+ },
+ {
+  "op": "intersect",
+  "keys": [
+   "intersect",
+   "interference",
+   "combine",
+   "cut"
+  ],
+  "hits": [
+   "solidworks_assembly_check_interference",
+   "solidworks_extrude_cut",
+   "solidworks_mold_undercut_detect",
+   "solidworks_revolve_cut",
+   "solidworks_surface_cut"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server"
+  ]
+ },
+ {
+  "op": "jog",
+  "keys": [
+   "jog",
+   "bend",
+   "flange",
+   "sheet"
+  ],
+  "hits": [
+   "solidworks_base_flange_params",
+   "solidworks_drawing_current_sheet_info",
+   "solidworks_drawing_current_sheet_name",
+   "solidworks_drawing_get_current_sheet",
+   "solidworks_drawing_list_sheets"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server"
+  ]
+ },
+ {
+  "op": "operations",
+  "keys": [
+   "operation",
+   "batch",
+   "list"
+  ],
+  "hits": [
+   "solidworks_assembly_list_components",
+   "solidworks_assembly_list_mates",
+   "solidworks_batch_export_files",
+   "solidworks_costing_list_bodies",
+   "solidworks_costing_list_templates"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "vespo92/SolidworksMCP-TS"
+  ]
+ },
+ {
+  "op": "optimize_performance",
+  "keys": [
+   "performance",
+   "optimize",
+   "topology"
+  ],
+  "hits": [
+   "solidworks_topology_create_demold_control",
+   "solidworks_topology_create_factor_of_safety_constraint",
+   "solidworks_topology_create_mass_constraint",
+   "solidworks_topology_create_preserved_region",
+   "solidworks_topology_create_stress_constraint"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "andrewbartels1/SolidworksMCP-python"
+  ]
+ },
+ {
+  "op": "pdm_operations",
+  "keys": [
+   "pdm",
+   "vault",
+   "revision"
+  ],
+  "hits": [
+   "solidworks_drawing_create_revision_table"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "vespo92/SolidworksMCP-TS"
+  ]
+ },
+ {
+  "op": "rebuild_document",
+  "keys": [
+   "rebuild"
+  ],
+  "hits": [],
+  "verdict": "真缺",
+  "sources": [
+   "Slacker-LLC/solidworks-mcp"
+  ]
+ },
+ {
+  "op": "rebuild_model",
+  "keys": [
+   "rebuild"
+  ],
+  "hits": [],
+  "verdict": "真缺",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server",
+   "vespo92/SolidworksMCP-TS"
+  ]
+ },
+ {
+  "op": "recording",
+  "keys": [
+   "record",
+   "macro"
+  ],
+  "hits": [
+   "solidworks_macro_build_prompt",
+   "solidworks_macro_extract_vba_code",
+   "solidworks_macro_fallback_template",
+   "solidworks_macro_normalize_model_family",
+   "solidworks_macro_run"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "vespo92/SolidworksMCP-TS"
+  ]
+ },
+ {
+  "op": "security",
+  "keys": [
+   "security",
+   "license",
+   "permission"
+  ],
+  "hits": [],
+  "verdict": "真缺",
+  "sources": [
+   "vespo92/SolidworksMCP-TS"
+  ]
+ },
+ {
+  "op": "sketches",
+  "keys": [
+   "sketch"
+  ],
+  "hits": [
+   "solidworks_add_sketch_relation",
+   "solidworks_auto_dimension_sketch",
+   "solidworks_current_sketch_name",
+   "solidworks_sketch_add_3point_arc",
+   "solidworks_sketch_add_3point_center_rectangle"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Slacker-LLC/solidworks-mcp"
+  ]
+ },
+ {
+  "op": "take_photoview_screenshot",
+  "keys": [
+   "screenshot",
+   "photoview",
+   "export_image",
+   "render"
+  ],
+  "hits": [
+   "solidworks_appearance_delete_render_material",
+   "solidworks_export_image",
+   "solidworks_list_render_materials"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server"
+  ]
+ },
+ {
+  "op": "unfold",
+  "keys": [
+   "unfold",
+   "flatten",
+   "sheet"
+  ],
+  "hits": [
+   "solidworks_drawing_current_sheet_info",
+   "solidworks_drawing_current_sheet_name",
+   "solidworks_drawing_get_current_sheet",
+   "solidworks_drawing_list_sheets",
+   "solidworks_drawing_set_sheet_format"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Eduardof0nt/Solidworks-MCP-Server"
+  ]
+ },
+ {
+  "op": "vertices",
+  "keys": [
+   "entit",
+   "vertex",
+   "vertices",
+   "body"
+  ],
+  "hits": [
+   "solidworks_costing_body_count",
+   "solidworks_costing_read_body",
+   "solidworks_entities_on_body",
+   "solidworks_resolve_entity",
+   "solidworks_select_entity_by_index"
+  ],
+  "verdict": "换名已有",
+  "sources": [
+   "Slacker-LLC/solidworks-mcp"
+  ]
+ }
+]

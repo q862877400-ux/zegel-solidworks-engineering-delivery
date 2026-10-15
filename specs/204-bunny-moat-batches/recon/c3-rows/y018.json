@@ -1,0 +1,83 @@
+{
+  "idx": 18,
+  "results": [
+    {
+      "name": "feature_build_extrude",
+      "level": "verified",
+      "members_found": ["FeatureExtrusion3", "FeatureCut4", "SelectByID2", "FeatureByName", "ClearSelection2"],
+      "examples_used": [
+        "Insert_Feature_Extrusion_Example_CSharp.md",
+        "Insert_Feature_Extrusion_Example_VB.md",
+        "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_VB.md",
+        "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_VBNET.md"
+      ],
+      "preconditions": [
+        {
+          "text": "指定的零件模板 Part.prtdot 必须存在，新建零件成为活动文档",
+          "from": "Insert_Feature_Extrusion_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "新建零件 → batch21 建草图（矩形 40×20）→ extrude_boss(10)"
+        },
+        {
+          "text": "草图必须用 InsertSketch(true) 闭合退出后，才能被选中用于拉伸",
+          "from": "Insert_Feature_Extrusion_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "batch21 建草图（矩形 40×20）→ extrude_boss(10)"
+        },
+        {
+          "text": "起止条件引用面须按 mark=32 / mark=1 选中（官方示例用 OffsetFromSurface）",
+          "from": "Insert_Feature_Extrusion_Example_CSharp.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "要打开的钣金零件 2012-sm.sldprt 必须存在并静默打开",
+          "from": "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_VBNET.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "起止面 mark=32/1 与轮廓选择属本工具未暴露的端条件，判 cannot_tell；唯一硬缺口是证据从未打开过任何零件文件。"
+    },
+    {
+      "name": "chamfer_fillet_on_selection",
+      "level": "verified",
+      "members_found": ["InsertFeatureChamfer", "FeatureFillet3", "Select4", "GetEdges", "GetSelectedObjectCount2"],
+      "examples_used": [
+        "Get_Edge_Chamfer_Distances_Example_CSharp.md",
+        "Get_Edge_Chamfer_Distances_Example_VBNET.md",
+        "Create_Asymmetric_Elliptic_Fillets_Example_VBNET.md",
+        "Create_Curvature_Continuous_Variable_Fillet_Feature_Example_VBNET.md"
+      ],
+      "preconditions": [
+        {
+          "text": "倒角前必须先选中要倒的边；官方示例用 SelectByID2 空名+坐标选两条 EDGE，第二条 mark=1",
+          "from": "Get_Edge_Chamfer_Distances_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "建草图→拉伸成盒 → 选 `index:0` → `chamfer(2mm)` ⇒ 特征「**倒角1**」（19→20）"
+        },
+        {
+          "text": "FeatureFillet3 之前必须选中一条 EDGE（SelectByID2, append=True, mark = 1）",
+          "from": "Create_Asymmetric_Elliptic_Fillets_Example_VBNET.md",
+          "state": "covered",
+          "evidence_quote": "再选 `index:1` → `fillet(3mm)` ⇒ 特征「**圆角1**」（→21）"
+        },
+        {
+          "text": "An EDGE must be selected with mark 1 before FeatureFillet3",
+          "from": "Create_Curvature_Continuous_Variable_Fillet_Feature_Example_VBNET.md",
+          "state": "covered",
+          "evidence_quote": "再选 `index:1` → `fillet(3mm)` ⇒ 特征「**圆角1**」（→21）"
+        },
+        {
+          "text": "零件 block.sldprt / block20.sldprt 必须存在并已打开",
+          "from": "Create_Asymmetric_Elliptic_Fillets_Example_VBNET.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "官方用 SelectByID2 按点选边、本仓走 IEntity.Select4，机制不同但前置（先选中）已被证据覆盖；AccessSelections 属读数能力，未计入。"
+    }
+  ]
+}

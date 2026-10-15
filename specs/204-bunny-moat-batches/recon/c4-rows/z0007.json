@@ -1,0 +1,146 @@
+{
+  "idx": 7,
+  "results": [
+    {
+      "member": "AddConfiguration",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Derived_Configurations_Example_CSharp.md",
+        "Add_Derived_Configurations_Example_VB.md",
+        "Add_Derived_Configurations_Example_VBNET.md",
+        "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "The Options argument can be a combination of any of the following values:",
+          "example_quote": "swConfig = (Configuration)swConfigMgr.AddConfiguration(\"nxn\", \"\", \"\", (int)swConfigurationOptions2_e.swConfigOption_DontActivate, \"\", \"\");",
+          "example_file": "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md",
+          "why": "Remarks 把 Options 的可用取值列全为随后的三项；示例却传 swConfigOption_DontActivate，两侧取值集合不一致。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "同名（含派生）配置已存在时返回 Nothing/null；页的 Returns 只说「新建的配置」。",
+          "example_quote": "// Nohting or null if the new configuration already exists.",
+          "example_file": "Add_Derived_Configurations_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 Add_Derived 均传 Options=1；该值落在哪个标志无法从页判定，不作断言。"
+    },
+    {
+      "member": "AddConfiguration2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Work_with_Configurations_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "非派生配置把 ParentConfigName 传空串 \"\"，只有派生配置才传父名；页只写 Name of parent configuration。",
+          "example_quote": "ConfigMgr.AddConfiguration2 \"Config1\", \"Config1 comment\", \"alternateName\", 1, \"\", \"no description\", True",
+          "example_file": "Work_with_Configurations_Example_VB.md"
+        }
+      ],
+      "note": "示例两次调用 Options 同为 1，仅 ParentConfigName 不同；7 个实参与签名逐位对上。"
+    },
+    {
+      "member": "AddConfiguration3",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_CSharp.md",
+        "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_VB.md",
+        "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Options 具体用 DoDisolveInBOM + DontShowPartsInBOM；该页无 Remarks，一个具体选项都没列。",
+          "example_quote": "swConfig = (Configuration)swModel.AddConfiguration3(\"Config2\", \"\", \"\", (int)swConfigurationOptions2_e.swConfigOption_DoDisolveInBOM + (int)swConfigurationOptions2_e.swConfigOption_DontShowPartsInBOM);",
+          "example_file": "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 Remarks 段，按纪律跳过冲突判定；4 个实参与签名逐位对上。"
+    },
+    {
+      "member": "AddContextMenuFlyout",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Flyouts_in_the_CommandManager_Example_CSharp.md",
+        "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "该 flyout 组须先由 CommandManager.CreateFlyoutGroup2 建出，并在同一次调用里带上图标与回调；成员页完全没提这一步。",
+          "example_quote": "flyoutGroup = iCmdMgr.CreateFlyoutGroup2(flyoutGroupID, \"Dynamic Flyout\", \"Dynamic Flyout\", \"Flyout Hint\",",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        },
+        {
+          "what": "给出文档类型与选择类型的具体配对（零件 + 面），页只说按两个枚举传。",
+          "example_quote": "bResult = flyoutGroup.AddContextMenuFlyout((int)swDocumentTypes_e.swDocPART, (int)swSelectType_e.swSelFACES);",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例各只调一次，与 Remarks「每组参数调一次」一致，未见冲突。"
+    },
+    {
+      "member": "AddControl",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_ActiveX_Tabs_to_Model_View_Example_CSharp.md",
+        "Add_ActiveX_Tabs_to_Model_View_Example_VB.md",
+        "Add_ActiveX_Tabs_to_Model_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回值赋给调用方自己声明的 ActiveX 控件接口变量（页的 Returns 只说「指针」），且 BstrLicKey 实传空串而非 NULL。",
+          "example_quote": "Set calCtrl1 = swModViewMgr.AddControl(calTabName1, \"activex_control_CLSID_or_ProgID\", \"\")",
+          "example_file": "Add_ActiveX_Tabs_to_Model_View_Example_VB.md"
+        },
+        {
+          "what": "须先打开零件文档、再从 ModelDoc2 取 ModelViewManager 才能建标签页，成员页未提这一前置。",
+          "example_quote": "swModViewMgr = swModel.ModelViewManager;",
+          "example_file": "Add_ActiveX_Tabs_to_Model_View_Example_CSharp.md"
+        }
+      ],
+      "note": "Add_Buttons_to_Task_Pane_Example_CSharp.md 里的 AddControl 是 ITaskpaneView 的 2 参成员，撞名不采。"
+    },
+    {
+      "member": "AddControl2",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "该页无 Remarks。两份 .NET 控件示例里的 AddControl2 是 IPropertyManagerPageGroup 的 6 参成员，撞名不采。"
+    },
+    {
+      "member": "AddCornerReliefCorner",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Corner_Relief_Feature_Example_CSharp.md",
+        "Create_Corner_Relief_Feature_Example_VB.md",
+        "Create_Corner_Relief_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "1. Call [[IModelDocExtension::SelectByID2]] with Mark = 0 and Append = true to select the sheet metal body in which to create a corner relief feature.",
+          "example_quote": "swModel.ClearSelection2(true);",
+          "example_file": "Create_Corner_Relief_Feature_Example_CSharp.md",
+          "why": "Remarks 第 1 步要求体以 Mark=0/Append 选中并保留、再由第 2 步追加两面；三份示例都在选完体后立刻 ClearSelection2，调用时选区里只剩两个 Mark=4 的面。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Index of corner to which to apply the corner relief; used by [[IFeatureManager::AddCornerReliefType]]",
+          "example_quote": "myReliefType = swModel.FeatureManager.AddCornerReliefType(-1, (int)swCornerReliefType_e.swCornerSquareRelief, 0.0001, 0.0007366, 0.00018415, false, false, false, true, false);",
+          "example_file": "Create_Corner_Relief_Feature_Example_CSharp.md",
+          "why": "页说返回的角索引要喂给 AddCornerReliefType；三份示例都把返回值存进 myCorner 后从不使用，改传 -1。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "签名回 System.int，而三份示例都用 long myCorner 接收（隐式加宽，不据此判冲突）。"
+    }
+  ]
+}

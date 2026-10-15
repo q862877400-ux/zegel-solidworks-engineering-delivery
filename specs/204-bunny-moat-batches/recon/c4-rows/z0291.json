@@ -1,0 +1,151 @@
+{
+  "idx": 291,
+  "results": [
+    {
+      "member": "ICreateCircle2",
+      "remarks_empty": false,
+      "examples_actually_used": ["Create_Cylinder_Example_CPlusPlus_COM.md"],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "This method creates a partial arc in the active 2D sketch.",
+          "example_quote": "' Postconditions: A cylinder is created.",
+          "example_file": "Create_Cylinder_Example_CPlusPlus_COM.md",
+          "why": "Remarks 说产出 partial arc；示例把同一次调用直接 FeatureExtrusion2 并期望圆柱，拉伸圆弧片段得不到圆柱。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例在无活动草图时先 SelectByID2 选 Front Plane、再 InsertSketch2，才调 ICreateCircle2。",
+          "example_quote": "swDoc->InsertSketch2(VARIANT_TRUE);",
+          "example_file": "Create_Cylinder_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例按 Parameters 声明的米制传参：半径 0.025 即 25 mm，随后双向各拉伸 0.100 m。",
+          "example_quote": "0.0, 0.0, 0.025, 0.0, 0.0, &swSkSeg);",
+          "example_file": "Create_Cylinder_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "Remarks 自身亦自相矛盾：标题与 Returns 写 circle，正文却写 partial arc。"
+    },
+    {
+      "member": "ICreateExtrusionSurface",
+      "remarks_empty": false,
+      "examples_actually_used": ["Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例走修剪路线：挤出面后立刻 AddTrimmingLoop（4 条曲线＋节点/控制点数组），再 CreateTrimmedSurface 与 CreateBodyFromSurfaces。",
+          "example_quote": "swSurface.AddTrimmingLoop(nCurves,",
+          "example_file": "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出 Remarks 允许的曲线来源：IAddProfileArc 建圆弧曲线、IAddProfileLine 建直线。",
+          "example_quote": "swCurve = swBody.IAddProfileArc(center,",
+          "example_file": "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+        }
+      ],
+      "note": "示例曲线经 IAddProfileArc（其 Remarks 写 always creates a full circle）/IAddProfileLine，落在 line/circle 内，不判冲突。"
+    },
+    {
+      "member": "ICreateNewBody2",
+      "remarks_empty": false,
+      "examples_actually_used": ["Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 ICreateNewBody2 放在遍历草图段的 while 循环内，每取一段就新建一个 body 并立即收尾。",
+          "example_quote": "swBody = swPart.ICreateNewBody2();",
+          "example_file": "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+        },
+        {
+          "what": "示例前置是「已选中一个圆形草图」，body 由 IEnumSketchSegments 驱动建构。",
+          "example_quote": "' Preconditions: A circular sketch is selected.",
+          "example_file": "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+        }
+      ],
+      "note": "Returns 段写 [[Body]]，签名与示例都是 Body2；types 下无 IBody 目录，未判 return_shape 冲突。"
+    },
+    {
+      "member": "ID",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Camera_Example_CSharp.md",
+        "Insert_Camera_Example_VB.md",
+        "Insert_Camera_Example_VBNET.md",
+        "Turn_Cameras_On_and_Off_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对；四份示例确实都读了 swCamera.ID。"
+    },
+    {
+      "member": "IDeSelect",
+      "remarks_empty": true,
+      "examples_actually_used": ["Deselect_Every_Other_Selected_Object_Example_CPlusPlus_COM.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Obsolete 声明与 No description 参数），按纪律跳过。"
+    },
+    {
+      "member": "IEnumSketchSegments",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md",
+        "Select_All_Sketch_Segments_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 示例只处理 swSketchARC 与 swSketchLINE，其余段型落到 Debug.Assert 失败分支。",
+          "example_quote": "\"Unhandled sketch segment type\");",
+          "example_file": "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+        },
+        {
+          "what": "Select All 示例先取活动草图，取不到直接 return，即枚举前必须已有活动草图。",
+          "example_quote": "// No Active Sketch",
+          "example_file": "Select_All_Sketch_Segments_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "Remarks 列五类段元；示例仅覆盖 arc/line 且各有前置，不构成矛盾，未判冲突。"
+    },
+    {
+      "member": "IFirstFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Assembly_Example_CPlusPlus_COM.md",
+        "Get_Names_of_Creators_of_Features_Examples_CPlusCPlus_COM.md",
+        "Get_Sketches_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "any feature has a specific name. Because features can be renamed, you cannot assume that the first reference plane feature is named Plane1.",
+          "example_quote": "hres = swFeature->get_Name(&sGetFeatureName);",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md",
+          "why": "Remarks 叫你不要假定特征名；示例却把组件名 bracket-1 当作唯一识别依据去找特征。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "When traversing the FeatureManager design tree, your application should use [[IFeature::GetTypeName2]] and [[IFeature::GetSpecificFeature2]] to identify specific features instead of relying solely on [[IFeature::Name]].",
+          "example_quote": "if (sGetFeatureName == sFeatureName)",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md",
+          "why": "Remarks 要求用 GetTypeName2/GetSpecificFeature2；示例只做 Name 相等比较，正是 Remarks 说的 solely on Name。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Get Sketches 示例做两层遍历：IFirstFeature 外层 + IGetFirstSubFeature 内层取草图。",
+          "example_quote": "hres = pFeature->IGetFirstSubFeature( &pSubFeat );",
+          "example_file": "Get_Sketches_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "该 Get Sketches 示例确实调用 IFirstFeature，但成员页 Examples 段没有列它。",
+          "example_quote": "hres = pModelDoc->IFirstFeature(&pFeature);",
+          "example_file": "Get_Sketches_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "两处冲突均出自 Access Assembly 示例按名字定位组件；另两份示例只用 IFirstFeature 起遍历。"
+    }
+  ]
+}

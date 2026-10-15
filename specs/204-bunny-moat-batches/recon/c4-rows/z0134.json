@@ -1,0 +1,147 @@
+{
+  "idx": 134,
+  "results": [
+    {
+      "member": "FloorAutoSize",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ISwScene 的取得路径（由 Configuration.GetScene 取得），成员页完全未说明该对象从哪来",
+          "example_quote": "Scene = swConfig.GetScene();",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 ## Remarks；示例只读不写 FloorAutoSize，且它恰是 FloorRotation 的前置开关。"
+    },
+    {
+      "member": "FloorDirection",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ISwScene 的取得路径（由 Configuration.GetScene 取得），成员页完全未说明该对象从哪来",
+          "example_quote": "Scene = swConfig.GetScene();",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 ## Remarks；示例标签“Flip the scene floor direction?”与页内“flip the direction of the floor”一致。"
+    },
+    {
+      "member": "FloorOffset",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ISwScene 的取得路径（由 Configuration.GetScene 取得），成员页完全未说明该对象从哪来",
+          "example_quote": "Scene = swConfig.GetScene();",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 ## Remarks；Returns 与示例标签同为“距离”，两侧都没给单位，无单位冲突可报。"
+    },
+    {
+      "member": "FloorOffsetDirection",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ISwScene 的取得路径（由 Configuration.GetScene 取得），成员页完全未说明该对象从哪来",
+          "example_quote": "Scene = swConfig.GetScene();",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 ## Remarks；示例标签说 flip offset direction、页说 swap positions，措辞不同但效果等价，不判冲突。"
+    },
+    {
+      "member": "FloorReflections",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[ISwScene::FloorShadows]] is set to true.",
+          "example_quote": "Scene.FloorReflections = true;",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md",
+          "why": "示例写入 FloorReflections 前从未把 FloorShadows 设为 true；该文件唯一一次 FloorShadows 访问是紧接其后的读取（第 69 行），前置未建立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ISwScene 的取得路径（由 Configuration.GetScene 取得），成员页完全未说明该对象从哪来",
+          "example_quote": "Scene = swConfig.GetScene();",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例代码逐行一致，差别不在语言版本；冲突只在“前置未建立”这一处。"
+    },
+    {
+      "member": "FloorRotation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[ISwScene::FloorAutoSize]] is false.",
+          "example_quote": "Debug.Print(\"Scene floor rotation: \" + Scene.FloorRotation);",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md",
+          "why": "示例直接读 FloorRotation 且从不赋值；此前第 63 行对 FloorAutoSize 也只是 Debug.Print 读取，从未置 false，前置未建立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ISwScene 的取得路径（由 Configuration.GetScene 取得），成员页完全未说明该对象从哪来",
+          "example_quote": "Scene = swConfig.GetScene();",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "Returns 的“0.0..360.0 in degrees”在 Remarks 之外、示例又未给单位，故不报 unit_diff。"
+    },
+    {
+      "member": "FloorShadows",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ISwScene 的取得路径（由 Configuration.GetScene 取得），成员页完全未说明该对象从哪来",
+          "example_quote": "Scene = swConfig.GetScene();",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 ## Remarks；它是 FloorReflections 的前置开关，但示例里只被读取、从未被赋值。"
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "idx": 298,
+  "results": [
+    {
+      "member": "IGetVersionHistoryCount",
+      "remarks_empty": false,
+      "examples_actually_used": ["Document_Version_History_Example_CPlusPlus_COM.md"],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Size of array required for the version history",
+          "example_quote": "hres\n= pModelDoc->IGetVersionHistoryCount(&versHistCount);",
+          "example_file": "Document_Version_History_Example_CPlusPlus_COM.md",
+          "why": "成员页签名零参、返回 System.int 即数组长度；示例传入 &versHistCount 出参，并把返回值当 HRESULT 判 S_OK。两种出口形态不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把「状态」与「计数」分成两个出口（先判 hres != S_OK，再判 versHistCount == 0），成员页只有返回值一个出口。",
+          "example_quote": "if\n(hres != S_OK || versHistCount == 0)",
+          "example_file": "Document_Version_History_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "唯一冲突是出口形态；语义（数组长度）两侧一致。"
+    },
+    {
+      "member": "IInsertMacroFeature",
+      "remarks_empty": true,
+      "examples_actually_used": ["Insert_Macro_Feature_Example_CPlusPlus_COM.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过对比；示例实测传 10 个实参（第 10 个 &pFeat）并把返回值赋给 hr。"
+    },
+    {
+      "member": "INewDocument2",
+      "remarks_empty": false,
+      "examples_actually_used": ["Access_Assembly_Example_CPlusPlus_COM.md"],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Newly created [[document]] or NULL if the operation fails",
+          "example_quote": "hres = swApp->INewDocument2(sDrawingDocTemplate,\nlPaperSize, dWidth, dHeight, &swNewModel);",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md",
+          "why": "成员页签名 4 参、返回 ModelDoc2；示例传 5 个实参（第 5 个 &swNewModel 为出参），并把返回值赋给 hr 当状态判。新文档归谁返回，两侧不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例在 PaperSize=2（swDwgPaperBsize）下仍传 0.2794/0.4318；成员页说 Width/Height 仅在 swDwgPapersUserDefined 时才用。",
+          "example_quote": "double dWidth = 0.2794;\ndouble dHeight = 0.4318;\nlong lPaperSize = 2;",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "Remarks 只谈取默认模板的方法，不涉返回形态，故冲突落在签名/Returns 与示例之间。"
+    },
+    {
+      "member": "ISelectionManager",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md",
+        "Get_Direction_of_a_Bend_Example_CSharp.md",
+        "Get_Direction_of_a_Bend_Example_VB.md",
+        "Get_Direction_of_a_Bend_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例全部取出即用，未违背 Remarks 的「选择一变指针即失效」；找不到冲突。"
+    },
+    {
+      "member": "ISketchSplineByEqnParams",
+      "remarks_empty": false,
+      "examples_actually_used": ["Insert_Spline_in_Drawing_Example_CPlusPlus_COM.md"],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "True if created successfully, false if not",
+          "example_quote": "hr\n= pModel->ISketchSplineByEqnParams(pPropArray,\npKnotsArray, pCntrlPntCoordArray, &retval);",
+          "example_file": "Insert_Spline_in_Drawing_Example_CPlusPlus_COM.md",
+          "why": "成员页 3 参、返回值即成败布尔；示例多传第 4 个出参 &retval，用 _ASSERT(retval) 判成败，而返回值被当成 hr。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "The PropArray argument contains 4 integers packed into the first two doubles in the array",
+          "example_quote": "int\npPropArray[4];",
+          "example_file": "Insert_Spline_in_Drawing_Example_CPlusPlus_COM.md",
+          "why": "Remarks 说 4 个整数压进数组头两个 double；示例声明 int pPropArray[4] 并用下标 0..3 放 Dimension/Order/NCP/Periodicity。同一实参两种布局不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给的具体数字与 Remarks 的公式对得上：NCP=7、Order=4 → Knots[11]；Dimension=3 → 控制点坐标 21 个 double。Remarks 只给公式。",
+          "example_quote": "double\npKnotsArray[11];\ndouble\npCntrlPntCoordArray[21];",
+          "example_file": "Insert_Spline_in_Drawing_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例把 Periodicity 显式置 0（非闭合样条），正对 Remarks 的 NOTE：闭合样条必须标 periodic。",
+          "example_quote": "pPropArray[3]\n= 0;      //Periodicity",
+          "example_file": "Insert_Spline_in_Drawing_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "两条冲突互不重叠：一条是出口形态，一条是 PropArray 的内存布局。"
+    },
+    {
+      "member": "IVersionHistory",
+      "remarks_empty": false,
+      "examples_actually_used": ["Document_Version_History_Example_CPlusPlus_COM.md"],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Array of strings showing the history of the document",
+          "example_quote": "hres\n= pModelDoc->IVersionHistory(versionHistStrings);",
+          "example_file": "Document_Version_History_Example_CPlusPlus_COM.md",
+          "why": "成员页签名零参、返回 System.string 即数组本身；示例由调用方 new BSTR[versHistCount] 后传入，并把返回值赋给 hr。数组归谁分配，两侧不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例自述「返回数组 ⇒ 代码必须放进进程内 DLL 编译」，成员页没有写这条进程内限制。",
+          "example_quote": "history of a file. IModelDoc2::IVersionHistory returns an array, so this\ncode must be used in an in-process DLL.",
+          "example_file": "Document_Version_History_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例给出元素的所有权与释放方式：逐项 SysFreeString，而成员页只说格式与条数。",
+          "example_quote": "CString\ntempstr2(versionHistStrings[ii]);\nAfxMessageBox\n(tempstr2);\nSysFreeString(\nversionHistStrings[ii]);",
+          "example_file": "Document_Version_History_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "Remarks 的「先用 IGetVersionHistoryCount 取数组长度」与示例调用序一致，不构成冲突。"
+    },
+    {
+      "member": "IconList",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Flyouts_in_the_CommandManager_Example_CSharp.md",
+        "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只用 3 种尺寸（nxn / nnxnn / nnn×nnn），Remarks 却列了 6 种（20/32/40/64/96/128）——是取舍，不是矛盾。",
+          "example_quote": "icons[2] = \"Pathname_to_toolbar_nnnxnnn_image\";",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出下标↔尺寸的对应：0=Small、1=Medium、2=Large；Remarks 只列尺寸、不说下标含义。",
+          "example_quote": "Debug.Print(\" Small toolbar button: \" & icons(0))\nDebug.Print(\" Medium toolbar button: \" & icons(1))\nDebug.Print(\" Large toolbar button: \" & icons(2))",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+        },
+        {
+          "what": "示例在 cmdGroup.Activate() 之前先赋 IconList，Remarks 没写这个先后顺序要求。",
+          "example_quote": "cmdGroup.IconList = icons",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+        }
+      ],
+      "note": "Remarks 的「顺序须与 MainIconList 一致」两份示例都遵守（同样 3 元素、同序）。"
+    }
+  ]
+}

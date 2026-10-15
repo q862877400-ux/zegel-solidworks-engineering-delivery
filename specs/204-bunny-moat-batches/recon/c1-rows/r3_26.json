@@ -1,0 +1,15 @@
+{"idx":26,"pages_read":13,"rows":[
+{"iface":"IView","file":"GetArcCount.md","signature":"System.int GetArcCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetDimensionDisplayInfoSize2.md","signature":"System.int GetDimensionDisplayInfoSize2()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetFirstDisplayDimension5.md","signature":"DisplayDimension GetFirstDisplayDimension5()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetSection.md","signature":"System.object GetSection()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetCenterLines.md","signature":"Centerline IGetCenterLines( System.int NumCenterLine )","obsolete":false,"pointer":true,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetFirstDowelSymbol.md","signature":"DowelSymbol IGetFirstDowelSymbol()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"InsertBomTable2.md","signature":"BomTableAnnotation InsertBomTable2( System.bool UseAnchorPoint, System.double X, System.double Y, System.int AnchorType, System.int BomType, System.string Configuration, System.string TableTemplate )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"SetMirrorViewOrientation.md","signature":"System.bool SetMirrorViewOrientation( System.bool BSetIsMirrorView, System.int BMirrorVieworientation )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"CreateCompoundNote.md","signature":"System.object CreateCompoundNote( System.double Height, System.double X, System.double Y, System.double Z )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"ExplodeCustomSymbol.md","signature":"void ExplodeCustomSymbol()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"ICreateText2.md","signature":"Note ICreateText2( System.string TextString, System.double TextX, System.double TextY, System.double TextZ, System.double TextHeight, System.double TextAngle )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"MakeBlockDefinition.md","signature":"BlockDefinition MakeBlockDefinition( System.string Name, System.string XRefFileName, System.bool Instance )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"ISheet","file":"GetOLEObjectData.md","signature":"System.object GetOLEObjectData( System.int Index )","obsolete":true,"pointer":false,"zero":"否（有形参）"}
+]}

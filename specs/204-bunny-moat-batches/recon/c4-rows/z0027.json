@@ -1,0 +1,86 @@
+{
+  "idx": 27,
+  "results": [
+    {
+      "member": "AutoPropagation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Normal_Cut_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定。示例在 CreateFeature 前置为 true。"
+    },
+    {
+      "member": "AutoReliefType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Edge_Flange_Example_CSharp.md",
+        "Create_Edge_Flange_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "选 Tear 让位后还需配对设 ReliefTearType（swReliefTearTypes_e），成员页未提这层配套。",
+          "example_quote": "                FeatData.AutoReliefType = (int)swSheetMetalReliefTypes_e.swSheetMetalReliefTear;\n                FeatData.ReliefTearType = (int)swReliefTearTypes_e.swReliefTearTypeRip;",
+          "example_file": "Create_Edge_Flange_Example_CSharp.md"
+        }
+      ],
+      "note": "两示例都设 Tear，落在 Remarks 列的三值内，无冲突。"
+    },
+    {
+      "member": "AutoSelect",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份指定示例全是同名撞名：Sweep/Thicken/SurfCutFeatureData，非本接口。"
+    },
+    {
+      "member": "AutoSelectComponents",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份全用 SweepFeatureData；grep 确认无 ExtrudeFeatureData2 字样。"
+    },
+    {
+      "member": "AutoSpaceBodiesOnDrag",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Multibody_Part_Explode_Step_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，跳过冲突判定。示例在 PartExplodeStep 上回读该属性。"
+    },
+    {
+      "member": "AutoSpaceComponentsOnDrag",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Explode_Step_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "示例只回读、且未打印取值，无法证伪 Remarks 的默认关系，不判冲突。"
+    },
+    {
+      "member": "AutomaticSolveOrder",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Automatically_Solve_Equations_in_Sequence_Example_CSharp.md",
+        "Automatically_Solve_Equations_in_Sequence_Example_VB.md",
+        "Automatically_Solve_Equations_in_Sequence_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "置 true 的实际次序语义：独立方程先于从属方程执行；成员页只说「由 SOLIDWORKS 定序」。",
+          "example_quote": "// 1. Sets the equation's Automatic solve order option\n//    to true, which results in the model's\n//    independent equations executing before\n//    dependent equations, if any.",
+          "example_file": "Automatically_Solve_Equations_in_Sequence_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例写法一致；成员页无 Remarks，跳过冲突判定。"
+    }
+  ]
+}

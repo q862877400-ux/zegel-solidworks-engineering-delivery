@@ -1,0 +1,110 @@
+{
+  "idx": 361,
+  "results": [
+    {
+      "member": "MateAccuracy",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Motion_Study_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先读后写、给出具体值 1，成员页只描述语义不给取值",
+          "example_quote": "swPhysicalSimProps.MateAccuracy = 1",
+          "example_file": "Get_Motion_Study_Example_VB.md"
+        },
+        {
+          "what": "示例前置：须载入 Motion Study 加载项并引用 MotionStudy 类型库，成员页无任何前置",
+          "example_quote": "In SOLIDWORKS Design, load the SOLIDWORKS Motion Study add-in",
+          "example_file": "Get_Motion_Study_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只谈网格互穿语义，示例侧只有前置与赋值，无矛盾。"
+    },
+    {
+      "member": "MateAlignment",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Limit_Angle_Mate_Example_CSharp.md",
+        "Create_Limit_Angle_Mate_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 MateAlignment 写在选面与 EntitiesToMate 之前，成员页不给调用序",
+          "example_quote": "swAngleMateData.MateAlignment = (int)swMateAlign_e.swMateAlignALIGNED;",
+          "example_file": "Create_Limit_Angle_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "另两份示例把同名属性设在 CamFollower/Hinge 的 FeatureData 上，是另接口成员，非本成员。"
+    },
+    {
+      "member": "MateComponentName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Component_Names_and_Types_for_Inplace_Mate_Example_VB.md",
+        "Get_Mates_Example_VB.md",
+        "Get_Mates_Example_VBNET.md",
+        "Insert_Join_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有标题、无签名无 Remarks，按纪律跳过；示例按 i=0..Count-1 带索引访问。"
+    },
+    {
+      "member": "MateEntity",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Mate_Example_CSharp.md",
+        "Edit_Mate_Example_VB.md",
+        "Edit_Mate_Example_VBNET.md",
+        "Get_Mate_Definition_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显式判返回为 Nothing；成员页 Returns 只写 Mate entity，未提失败/空值",
+          "example_quote": "If Nothing Is swMateEnt Then",
+          "example_file": "Get_Mate_Definition_Example_VB.md"
+        }
+      ],
+      "note": "四份示例均先取 GetMateEntityCount 再 0 基循环，与参数说明一致。"
+    },
+    {
+      "member": "MateEntity1",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Linear_Coupler_Mate_Example_CSharp.md",
+        "Create_Linear_Coupler_Mate_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过；两示例先 SelectByRay(mark=0) 选两面再赋 Face2。"
+    },
+    {
+      "member": "MateEntity2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Linear_Coupler_Mate_Example_CSharp.md",
+        "Create_Linear_Coupler_Mate_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过；示例把两面对象分别写入 MateEntity1/MateEntity2。"
+    },
+    {
+      "member": "MateEntityType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Component_Names_and_Types_for_Inplace_Mate_Example_VB.md",
+        "Get_Mates_Example_VB.md",
+        "Get_Mates_Example_VBNET.md",
+        "Insert_Join_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有标题、无签名无 Remarks，按纪律跳过；示例作带索引访问并直接拼接打印。"
+    }
+  ]
+}

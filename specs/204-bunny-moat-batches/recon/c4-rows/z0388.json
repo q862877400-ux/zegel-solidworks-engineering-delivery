@@ -1,0 +1,136 @@
+{
+  "idx": 388,
+  "results": [
+    {
+      "member": "Pitch",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks；job 列的 helix 示例调的是 IHelixFeatureData.Pitch，非本成员"
+    },
+    {
+      "member": "PitchCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_VB.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 段，按纪律跳过；3 份示例确以 PitchCount 作循环上界"
+    },
+    {
+      "member": "PitchMethod",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Modify_Chain_Pattern_Feature_Example_CSharp.md",
+        "Modify_Chain_Pattern_Feature_Example_VB.md",
+        "Modify_Chain_Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出可运行的读取序：先按名字+类型选中特征、GetDefinition，再 AccessSelections(swModel, null)，之后才能读 PitchMethod",
+          "example_quote": "            status = swChainPatternFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Modify_Chain_Pattern_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例把它当 int 直接打印（标签写 Pitch type），Remarks 未说清返回值的呈现形态",
+          "example_quote": "            Debug.Print(\"  Pitch type: \" + swChainPatternFeatureData.PitchMethod);",
+          "example_file": "Modify_Chain_Pattern_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例前置说明该值取自 UI 的 Distance Linkage（=swChainPatternDistanceLinkage）",
+          "example_quote": "    //       1. Click Distance Linkage in Pitch Method.",
+          "example_file": "Modify_Chain_Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只说 get/set 链特征类型；三份示例一致，未见冲突"
+    },
+    {
+      "member": "PitchOverride",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_a_Thread_Feature_Example_CSharp.md",
+        "Create_a_Thread_Feature_Example_VB.md",
+        "Create_a_Thread_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例明确先置 PitchOverride=True 再赋 Pitch=0.01，且随后须 ModifyDefinition 才生效",
+          "example_quote": "    swThreadFeatData.PitchOverride = True\n    swThreadFeatData.Pitch = 0.01",
+          "example_file": "Create_a_Thread_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例按布尔读出（Pitch overridden?），印证 Returns 的 bool",
+          "example_quote": "    Debug.Print \"Pitch overridden? \" & swThreadFeatData.PitchOverride",
+          "example_file": "Create_a_Thread_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的「置 true 后用 Pitch」与示例完全一致"
+    },
+    {
+      "member": "PlaceFilesInOneFolder",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md",
+        "Mirror_Components_II_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出写入序：先 OppositeHandComponents，再 CreateDerivedConfigurations=false，紧接着才置本属性",
+          "example_quote": "                swMirroCompFeatData.CreateDerivedConfigurations = false;\n                swMirroCompFeatData.PlaceFilesInOneFolder = true;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示它必须与 MirrorComponentsFolderLocation / MirroredComponentFilenames 连用才有意义",
+          "example_quote": "                swMirroCompFeatData.MirrorComponentsFolderLocation = mirrorCompFolder;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        }
+      ],
+      "note": "示例先置 CreateDerivedConfigurations=false，与 Remarks 的有效条件吻合"
+    },
+    {
+      "member": "PlacementFace",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Forming_Tool_Feature_Example_CSharp.md",
+        "Create_Forming_Tool_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 段，跳过；注意另有同名的 IGroundPlaneFeatureData.PlanarEntity，别混"
+    },
+    {
+      "member": "PlanarEntity",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Bounding_Box_Example_CSharp.md",
+        "Create_Bounding_Box_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出该有效条件的具体字面值 2，且必须紧邻写在 PlanarEntity 赋值之前",
+          "example_quote": "            swGPData.ReferenceFaceOrPlane = 2;\n            swGPData.PlanarEntity = ent;",
+          "example_file": "Create_Bounding_Box_Example_CSharp.md"
+        },
+        {
+          "what": "示例表明赋值对象是从选区取出的 Face2 面对象，不是平面对象",
+          "example_quote": "            ent = (Face2)((SelectionMgr)(Part.SelectionManager)).GetSelectedObject6(1, -1);",
+          "example_file": "Create_Bounding_Box_Example_CSharp.md"
+        },
+        {
+          "what": "Create_Ground_Plane 例调的是 IGroundPlaneFeatureData.PlanarEntity，非本成员，已排除",
+          "example_quote": "            swGPData.PlanarEntity = ent;",
+          "example_file": "Create_Ground_Plane_Example_CSharp.md"
+        }
+      ],
+      "note": "枚举页确认 2 = swBoundingBoxType_CustomPlane，示例与 Remarks 一致"
+    }
+  ]
+}

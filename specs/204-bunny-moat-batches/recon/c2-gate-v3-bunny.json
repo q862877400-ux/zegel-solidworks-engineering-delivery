@@ -1,0 +1,55 @@
+{
+  "role": "V3",
+  "my_numbers": {
+    "per_project": "Eduardof0nt n=228 mnf=67 argc=26 ->40.8% | andrewbartels1 n=534 mnf=51 argc=11 ->11.6% | SolidworksMCP-TS n=593 mnf=82 argc=64 ->24.6% | Slacker-LLC n=244 mnf=3 argc=4 ->2.9%  (n=evidence命中)",
+    "overall": "total=1635, ev_ok=1599, ev_miss=36; verdict_all match=1126 member_not_found=207 argc_mismatch=115 cannot_tell=187; ev_ok内缺陷 308/1599=19.3% (若分母取1635则 322/1635=19.7%); cannot_tell全算缺陷则 495/1599=31.0%"
+  },
+  "denominator_note": "分母用 evidence 逐字命中的 1599 条（228/534/593/244）；36 条未命中已剔除，不用 1635。",
+  "mismatch_with_reported": [
+    {
+      "item": "四家缺陷率 40.8 / 11.6 / 24.6 / 2.9 %",
+      "reported": "Eduardof0nt 40.8% · andrewbartels1 11.6% · TS 24.6% · Slacker 2.9%",
+      "mine": "40.79%(93/228) · 11.61%(62/534) · 24.62%(146/593) · 2.87%(7/244)",
+      "why": "四家全部复现；分子=mnf+argc_mismatch，分母=evidence命中的那批，无出入。"
+    },
+    {
+      "item": "member_not_found 207 过两索引的拆分",
+      "reported": "185 条两源都无 / 19 条只在反射 / 3 条 swapi 其实有页",
+      "mine": "swapi 有页=3（复现）；两源都无=184、反射有=20（宽口径裸词命中）；严格按成员行则 187/17",
+      "why": "差 1-2 行，来源是反射索引口径（是否含 get_/set_ 属性名与接口名裸词），非算错。"
+    },
+    {
+      "item": "「那 185 条去重后 162 个名字」",
+      "reported": "185 行 -> 162 个唯一名 -> CHM 37 有 / 125 三源全无",
+      "mine": "162 只在「两源都无」子集成立；全部 207 行去重是 177 个名（162+15）",
+      "why": "分母没写清是哪一批；37+125=162 自洽，且这 162 恰是反射清单零命中的那批。"
+    },
+    {
+      "item": "CHM 37 / 125",
+      "reported": "37 个在 CHM 里有出现、125 个三源全无",
+      "mine": "c2_absent_resolved.json: in_chm 37 键 + absent_from_all3 125 = 162，与上面 162 闭合",
+      "why": "一致。但 in_chm 存的是子串出现次数（SldWorks 15673、Item 3304），信号很弱。"
+    },
+    {
+      "item": "总体缺陷率",
+      "reported": "（未给总体口径）",
+      "mine": "308/1599=19.3%（分母取 1635 则 19.7%；cannot_tell 全算缺陷则 31.0%）",
+      "why": "补一个总体数，报告里应写明用的是哪个分母。"
+    },
+    {
+      "item": "措辞「与官方签名不一致」的分寸",
+      "reported": "全量用「与官方签名不一致」，不说「他们错了」",
+      "mine": "argc_mismatch 部分成立；member_not_found 应写「在我们核过的源里查不到」",
+      "why": "反射只覆盖 15 个 interop 程序集，缺席≠不存在，按铁律 5 不能断言签名不一致。"
+    }
+  ],
+  "methodology_issues": [
+    "分母是调用点不是工具：Eduardof0nt 187 工具/238 调用(1.27)，TS 103 工具/609 调用(5.9)，EditRebuild3 在 TS 出现 12 次；按调用点加权会放大重复封装的一方。",
+    "cannot_tell 187 条分布极不均（andrew 18.9%、TS 12.1%、另两家约 3%），其中 126 条是我方 argc 解不出；全算缺陷则 andrew 11.6%→30.5%、TS 24.6%→36.8%，排名翻转。",
+    "缺陷率把源侧假阴性记成对方缺陷：206/207 条 mnf 只「不在 swapi 与反射清单」，而反射只覆盖 15 个程序集 ⇒ 只能写「我们核过的源里查不到」，不能写「与官方签名不一致」。",
+    "分子混入非 COM 调用点：90 行 note 自述是 docstring / VBA / 伪代码（ev_ok 85），9 行被判 argc_mismatch（如 TS AddConfiguration 是往 VBA 宏 push 的串）。",
+    "argc 口径不统一：mnf 里 34 行 argc=None、62 行 argc=0（属性式）；66 行标 has_out_variant 却没说 out 是否计入 argc，属性与带默认值的长签名不能用单一 argc 判。",
+    "两行 verdict 自相矛盾：1 条 argc_mismatch 的 official_argc 为 None 却判不一致；1 条 member_not_found 却 official_found=True，应退回。",
+    "36 条 evidence 未命中剔除是对的，但剔除量按项目不均（TS 16 / Eduardof0nt 10 / andrew 10 / Slacker 0），四家基数因此不同，横比须一并注明。"
+  ]
+}

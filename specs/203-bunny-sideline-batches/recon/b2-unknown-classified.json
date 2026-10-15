@@ -1,0 +1,1031 @@
+[
+ {
+  "cls": "member_missing",
+  "link": "IModelDoc2::ShowNameView2",
+  "raw": "Obsolete. Superseded by [[IModelDoc2::ShowNameView2]].",
+  "file": "ShowNamedView.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IModelDoc2::ListAuxiliaryExtenalFileReferencesCount",
+  "raw": "Call [[IModelDoc2::ListAuxiliaryExtenalFileReferencesCount]] before calling of this method to determine the size of the arrays.",
+  "file": "IListAuxiliaryExternalFileReferences.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IFeatureMgrView::ActivateView",
+  "raw": "Obsolete. Superseded by [[IFeatureMgrView::ActivateView]] or [[IModelDocExtension::ActivateFeatureMgrViewx64]].",
+  "file": "ActivateFeatureMgrView.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IModelViewMgr::CreateFeatureMgrView2",
+  "raw": "If you do not have an existing view, then use [[IModelViewMgr::CreateFeatureMgrView2]], which returns a view handle",
+  "file": "AddFeatureMgrView3.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IVew::GetBendLineCount Method",
+  "raw": "- [[IVew::GetBendLineCount Method]]",
+  "file": "GetBendLines.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IVew::GetSMBoundaryBoxDisplayData2",
+  "raw": "Obsolete. Superseded by [[IVew::GetSMBoundaryBoxDisplayData2]].",
+  "file": "GetSMBoundaryBoxDisplayData.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IDrawingDoc::SuIppressView Method",
+  "raw": "- [[IDrawingDoc::SuIppressView Method]]",
+  "file": "SuppressState.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IModelDoc2::EditRebuild2",
+  "raw": "Changing this property can cause changes to the graphics of the drawing. After making all the of the view-related changes, call the [[IModelDoc2::Edit",
+  "file": "ScaleDecimal.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IModelDoc2::ViewZoomtofit2",
+  "raw": "To force the generation of all possible polyline data, call [[IModelDoc2::ViewZoomtofit2]].",
+  "file": "GetPolylines6.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "other",
+  "link": "ILayer",
+  "raw": "An integer value indicating which layer holds this entity; [[ILayer]] can be obtained by passing this integer value to [[ILayerMgr::GetLayerById]] and",
+  "file": "GetBreakLineInfo2.md",
+  "why": ""
+ },
+ {
+  "cls": "member_missing",
+  "link": "IModelDocExtension::GetAttachmentCoun",
+  "raw": "Call [[IModelDocExtension::GetAttachmentCoun]]t before calling this method to determine the size of the array.",
+  "file": "IGetAttachments.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IModelViewMgr::CreateFeatureMgrView2",
+  "raw": "If you do not have an existing view, then use [[IModelViewMgr::CreateFeatureMgrView2]], which returns a view handle",
+  "file": "AddFeatureMgrView3x64.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IModelDocExtension::IDecal Interface",
+  "raw": "- [[IModelDocExtension::IDecal Interface]]",
+  "file": "GetDecals.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IModelDocExtension::GetPersistentReferenceCount3",
+  "raw": "1. Call [[IModelDocExtension::GetPersistentReferenceCount3]] to determine the size of the persistent reference ID.",
+  "file": "IGetObjectByPersistReference3.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IModelDocExtension::GetMassPropertiesSelectedComp Method",
+  "raw": "- [[IModelDocExtension::GetMassPropertiesSelectedComp Method]]",
+  "file": "GetMassProperties.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ISldWorks::IGetDocumetnDependencies2",
+  "raw": "Gets the size of the array needed for a call to [[ISldWorks::IGetDocumetnDependencies2]].",
+  "file": "IGetDocumentDependenciesCount2.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ISldWorks::RemoveToobar2",
+  "raw": "Obsolete. Superseded by [[ISldWorks::RemoveToobar2]].",
+  "file": "RemoveToolbar.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IDocumentSpecifiation::PLMObjectSpecification",
+  "raw": "Also see [[IDocumentSpecifiation::PLMObjectSpecification]].",
+  "file": "OpenDoc7.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IFeatureManager::InsertProtusionSwept3",
+  "raw": "Obsolete. Superseded by [[IFeatureManager::InsertProtusionSwept3]].",
+  "file": "InsertProtrusionSwept.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IFeatureManager::AddVariablePitchHelixFirstPitchAndDiamenter",
+  "raw": "2. [[IFeatureManager::AddVariablePitchHelixFirstPitchAndDiamenter]] to add the first segment.",
+  "file": "EndVariablePitchHelix.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "FeatureManager::HoleWizard5",
+  "raw": "- is separate from the Hole Wizard functionality (see [[FeatureManager::HoleWizard5]]).",
+  "file": "AdvancedHole.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISMNormalCutFeatureData::Offset",
+  "raw": "8. [[ISMNormalCutFeatureData::Offset]] to change the profile of the Normal Cut.",
+  "file": "AddSMNormalCutType.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IFeature::GetFeatures Method",
+  "raw": "- [[IFeature::GetFeatures Method]]",
+  "file": "GetFeatureCount.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IDrawngDoc::IDrawngDoc::ICreateSectionViewAt4 Method",
+  "raw": "- [[IDrawngDoc::IDrawngDoc::ICreateSectionViewAt4 Method]]",
+  "file": "CreateSectionView.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IDrawingDoc::IEditOrdinate Method",
+  "raw": "- [[IDrawingDoc::IEditOrdinate Method]]",
+  "file": "InsertOrdinate.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IDrawingDoc::1stAngleViews2",
+  "raw": "Obsolete. Superseded by [[IDrawingDoc::1stAngleViews2]].",
+  "file": "Create1stAngleViews.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "SketchManager::GetSketchBlockDefinitions",
+  "raw": "Obsolete. Superseded by [[SketchManager::GetSketchBlockDefinitions]].",
+  "file": "GetBlockDefinition.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IModel2::ForceRebuild3",
+  "raw": "Obsolete. Superseded by [[IModel2::ForceRebuild3]].",
+  "file": "ForceRebuild.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IDrawingDoc::UnInsertBreakVertical Method",
+  "raw": "- [[IDrawingDoc::UnInsertBreakVertical Method]]",
+  "file": "InsertBreakHorizontal.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IDrawingDoc::SetSelectedSheets",
+  "raw": "call [[IDrawingDoc::SetSelectedSheets]] before calling IDrawingDoc::SetupSheet6.",
+  "file": "SetupSheet6.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "DrawingDoc::CreateFlatPatternViewFromModelView2 Method",
+  "raw": "- [[DrawingDoc::CreateFlatPatternViewFromModelView2 Method]]",
+  "file": "ChangeRefConfigurationOfFlatPatternView.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IDrawingDoc::GetCurrentSheet",
+  "raw": "You can use [[IDrawingDoc::GetCurrentSheet]] or [[IDrawing::IGetCurrentSheet]] with an active sheet to gain access to the ISheet interface.",
+  "file": "ActivateSheet.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IBody2::GetProcessedBodyWithSelFace",
+  "raw": "For use with [[IBody2::GetProcessedBodyWithSelFace]] and [[IBody2::IGetPrcoessedBodyWithSelFace]] and intended for IGES routines.",
+  "file": "GetSelectedFaceCount.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IAssemblyDoc::AddComponents",
+  "raw": "Or, you can use [[IAssemblyDoc::AddComponents]] or [[IAssemblyDoc::AddComponents2]] to specify the transform when inserting a component",
+  "file": "AddComponent4.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IAssemblyDoc::CreateMate.",
+  "raw": "Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]",
+  "file": "AddMate5.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IComponent::IGetRenderMaterials",
+  "raw": "Call this method before calling [[IComponent::IGetRenderMaterials]] to get the size of the array for that method.",
+  "file": "GetRenderMaterialsCount.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IAssemblyDoc::EnablePresentation",
+  "raw": "Set [[IAssemblyDoc::EnablePresentation]] to false after a user is finished with presentation transforms and has called IComponent2::RemovePresentation",
+  "file": "RemovePresentationTransform.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IConfiguration::GetRootComponent.",
+  "raw": "For more information, see [[IConfiguration::GetRootComponent.]]",
+  "file": "GetModelDoc.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISketchManagerRelation::IGetAllowedRelations Method",
+  "raw": "- [[ISketchManagerRelation::IGetAllowedRelations Method]]",
+  "file": "GetAllowedRelations.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IPunch::TagStyle Property",
+  "raw": "- [[IPunch::TagStyle Property]]",
+  "file": "CombineTags.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IPropertyManagerPageStyle::GetRange",
+  "raw": "If you do not use this method to specify the range, it will default to a range of 0 to 10. Use [[IPropertyManagerPageStyle::GetRange]] to get the curr",
+  "file": "SetRange.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IDisplayDimension::GetAlternateTolPrecision",
+  "raw": "Obsolete. Superseded by [[IDisplayDimension::GetAlternateTolPrecision]].",
+  "file": "GetAlternateTolPrecision.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "INote::vGetBalloonOptions Method ()",
+  "raw": "- [[INote::vGetBalloonOptions Method ()]]",
+  "file": "IsBomBalloon.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "INote::IGetTextPoint",
+  "raw": "Obsolete. Superseded by [[INote::IGetTextPoint]].",
+  "file": "IGetTextPoint.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ISheet::SheetFormatVisible.",
+  "raw": "The sheet must be visible. See [[ISheet::SheetFormatVisible.]]",
+  "file": "GetNext.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "ModelDoc2::IParameter Method",
+  "raw": "- [[ModelDoc2::IParameter Method]]",
+  "file": "Parameter.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "other",
+  "link": "swCornerReliefBendType_e",
+  "raw": "- **Face3**: Third IFace2 that defines this three-bend corner; valid only if ICornerReliefFeatureData::CornerReliefBendType is [[swCornerReliefBendTyp",
+  "file": "AddNewCorner.md",
+  "why": ""
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IComponent::FirstFeature Method",
+  "raw": "- [[IComponent::FirstFeature Method]]",
+  "file": "GetNextFeature.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IAssembyDoc::IToolsCheckInterference3 Method",
+  "raw": "- [[IAssembyDoc::IToolsCheckInterference3 Method]]",
+  "file": "ICheckInterference2.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IIModeler::CreateBsplineCurve Method",
+  "raw": "- [[IIModeler::CreateBsplineCurve Method]]",
+  "file": "CreateBsplineSurface.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IModeler::IICreateBodiesFromSheets2 Method",
+  "raw": "- [[IModeler::IICreateBodiesFromSheets2 Method]]",
+  "file": "ICreateWireBody.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IModeler::ICreateBodyFromFace3",
+  "raw": "Obsolete. Superseded by [[IModeler::ICreateBodyFromFace3]].",
+  "file": "ICreateBodyFromFaces.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ITesssellation::MatchType",
+  "raw": "To tessellate a general body, set [[ITesssellation::MatchType]] to swTesselationMatchFacetGeometry, which sets the Parasolid facet match to clipping f",
+  "file": "GeneralTopology.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IFeature::ModifyDefinition",
+  "raw": "- [[IFeature::ModifyDefinition]] or [[IFeature::IModifiyDefinition2]] if you modified the feature",
+  "file": "AccessSelections.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IColorTable::ISetBodiesToCombine Method",
+  "raw": "- [[IColorTable::ISetBodiesToCombine Method]]",
+  "file": "GetBodiesToCombineCount.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IGtol::GetLeaderCount",
+  "raw": "Use [[IGtol::GetLeaderCount]] to see how many leaders are on the [[IGTol]] object.",
+  "file": "GetLeaderInfo.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IGetDimXpertTolerance::GetPrimaryDatums",
+  "raw": "The members of the array returned by this method map to the members of the array returned by [[IGetDimXpertTolerance::GetPrimaryDatums]].",
+  "file": "GetPrimaryDatumModifiers.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ISketchRegion::GetSketchRegions Method",
+  "raw": "- [[ISketchRegion::GetSketchRegions Method]]",
+  "file": "GetSketchRegionCount.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IModelDocExtension::SetLinkedDisplayStates Method ()",
+  "raw": "- [[IModelDocExtension::SetLinkedDisplayStates Method ()]]",
+  "file": "GetLinkedDisplayStates.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "SketchManager::ActiveSketch",
+  "raw": "You can check for an active sketch using I[[SketchManager::ActiveSketch]].",
+  "file": "CreateArc.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IShutOffSurfaceFeatureData::IGetLoopsEdges",
+  "raw": "Call this method before calling [[IShutOffSurfaceFeatureData::IGetLoopsEdges]] to get the size of the array for that method.",
+  "file": "GetLoopEdgeCount.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IMagnetLine::GetNotes Method",
+  "raw": "- [[IMagnetLine::GetNotes Method]]",
+  "file": "GetNotesCount.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ITableAnnnotation::InsertColumn2",
+  "raw": "Obsolete. Superseded by [[ITableAnnnotation::InsertColumn2]].",
+  "file": "InsertColumn.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ITableAnnotation::ITableAnnotation::GridLineWeight Property",
+  "raw": "- [[ITableAnnotation::ITableAnnotation::GridLineWeight Property]]",
+  "file": "BorderLineWeight.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "SwComFeature::Regenerate",
+  "raw": "Parent features set by this method are not persistent when the macro feature is regenerated. Reset the parent features in the [[SwComFeature::Regenera",
+  "file": "ISetParents.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IConfigurationManager::IConfigurationManager::SetConfigurationParams Method",
+  "raw": "- [[IConfigurationManager::IConfigurationManager::SetConfigurationParams Method]]",
+  "file": "ISetParameters.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IConfiguration::AddCADFamilyConfiguration Method ()",
+  "raw": "- [[IConfiguration::AddCADFamilyConfiguration Method ()]]",
+  "file": "Set3DExperienceType.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IReplaceFeatureFeatureData::ISetFacesForReplacement Method",
+  "raw": "- [[IReplaceFeatureFeatureData::ISetFacesForReplacement Method]]",
+  "file": "IGetFacesForReplacement.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IBody2::CreateRevolutionSurface",
+  "raw": "The list of trimming loops is created by a previous call to one of the base surface creation functions, [[IBody2::CreateRevolutionSurface]] or [[IBody",
+  "file": "AddTrimmingLoop2.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IModelDoc::GraphicsRedraw2",
+  "raw": "[[IModelDoc::GraphicsRedraw2]] is the most common API that causes a model view to redraw.",
+  "file": "SuppressWaitCursorDuringRedraw.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IStructuralMemberFeatureData::ReleaseSelctionAccess",
+  "raw": "- [[IStructuralMemberFeatureData::ReleaseSelctionAccess]] if you did not",
+  "file": "AccessSelections.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISimpleFilletFeatureData::IGetHoldLines",
+  "raw": "Call this method before calling [[ISimpleFilletFeatureData::IGetHoldLines]] to get the size of the array for that method.",
+  "file": "GetHoldLineCount.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ISimpleFilletFeatureData2::AutoSelect Property",
+  "raw": "- [[ISimpleFilletFeatureData2::AutoSelect Property]]\n- [[ISimpleFilletFeatureData2::AutoSelectComponents Property]]",
+  "file": "PropagateFeatureToParts.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ICurve::Length2",
+  "raw": "This method returns the length of the holding (e.g., trimmed) curve and not the base curve. The now obsolete [[ICurve::Length2]] returned the length o",
+  "file": "GetLength3.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IMate2Entity::Reference2",
+  "raw": "Obsolete. Superseded by [[IMate2Entity::Reference2]].",
+  "file": "ReferenceType.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IMBD3DPdfData::GetTextCustomProperties",
+  "raw": "5. Get and set text and custom properties in the theme using [[IMBD3DPdfData::GetTextCustomProperties]] and [[ITextAndCustomProperty]].",
+  "file": "_overview.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "AVIParameter::ScreenWidth",
+  "raw": "To set the width of the image, call [[AVIParameter::ScreenWidth]]. To [[preserve the aspect ratio]] of the animation, specify [[screen ratio]] or a [[",
+  "file": "ScreenHeight.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "Callout::Position",
+  "raw": "Obsolete. Superseded by [[Callout::Position]].",
+  "file": "UpdatePosition.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ITabAndSlotGroupData::D2OffsetFromStart",
+  "raw": "If you want the tabs/slots to span the entire edge of the model, set both this property and [[ITabAndSlotGroupData::D2OffsetFromStart]] to zero.",
+  "file": "D2OffsetFromEnd.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ISelectionMgr::ISelectionMgr::GetSelectionPoint2 Method",
+  "raw": "- [[ISelectionMgr::ISelectionMgr::GetSelectionPoint2 Method]]",
+  "file": "DeSelect2.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ILinearFeaturePatternData::D1Axis Property",
+  "raw": "- [[ILinearFeaturePatternData::D1Axis Property]]",
+  "file": "D1ReverseDirection.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ICustomerPropertyManager::Delete Method",
+  "raw": "- [[ICustomerPropertyManager::Delete Method]]",
+  "file": "Add2.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "DislayData::GetLineAtIndex3",
+  "raw": "Obsolete. Superseded by [[DislayData::GetLineAtIndex3]].",
+  "file": "GetLineAtIndex2.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IDisplayData::IDisplayData::GetTextCount Method",
+  "raw": "- [[IDisplayData::IDisplayData::GetTextCount Method]]",
+  "file": "GetTextAngleAtIndex.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "DisplayData::GetTextInBoxHeightAtIndex Method",
+  "raw": "- [[DisplayData::GetTextInBoxHeightAtIndex Method]]",
+  "file": "GetTextInBoxStyleAtIndex.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "DisplayData::IGetTextCount Method",
+  "raw": "- [[DisplayData::IGetTextCount Method]]",
+  "file": "GetTextInBoxWidthAtIndex.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IDisplayData::GetPolygonSizeAtIndex Method",
+  "raw": "- [[IDisplayData::GetPolygonSizeAtIndex Method]]",
+  "file": "IGetPolylineAtIndex2.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ILocalLinearPatternFeatureData::IGetSkippedItemCount Method",
+  "raw": "- [[ILocalLinearPatternFeatureData::IGetSkippedItemCount Method]]",
+  "file": "SkippedItemArray.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISurfaceRadiateSurfaceData::GetRadiatedEntitiesCount Method",
+  "raw": "- [[ISurfaceRadiateSurfaceData::GetRadiatedEntitiesCount Method]]",
+  "file": "RadiatedEntities.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IRayTraceRenderer::Invoke FinalRender",
+  "raw": "When this method is called after calling [[IRayTraceRenderer::Invoke FinalRender]] or [[IRayTraceRenderer::RenderToFile]], then both the preview and f",
+  "file": "CloseRayTraceRender.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "other",
+  "link": "ISwOLEObjectAspect",
+  "raw": "[[ISwOLEObjectAspect]], [[ISwOLEObject::Boundaries]]",
+  "file": "IGetOLEObjectSettings.md",
+  "why": ""
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISketdhParabola::IGetFocalPoint2 Method",
+  "raw": "[[ISketdhParabola::IGetFocalPoint2 Method]]",
+  "file": "GetFocalPoint2.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISketchBlockInstnace::GetLeaderStyle",
+  "raw": "Use [[ISketchBlockInstnace::GetLeaderStyle]] to determine the number of points in the leader.",
+  "file": "GetLeaderPoints.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IDrawingDoc::EditTempate",
+  "raw": "- Get block instances on a drawing sheet format and edit the sheet format using [[IDrawingDoc::EditTempate]] and [[IModelDoc2::GetActiveSketch2]]",
+  "file": "_overview.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IFeature::IModifyDefintion2",
+  "raw": "- [[IFeature::IModifyDefintion2]] if you modified the feature",
+  "file": "IAccessSelections2.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IConfgurationManager::GetConfigurationParamsCount",
+  "raw": "Call [[IConfgurationManager::GetConfigurationParamsCount]] before calling this method to get the value for ParamCount.",
+  "file": "IGetConfigurationParams.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IDimension::IGetReferencePointsCount",
+  "raw": "Call [[IDimension::IGetReferencePointsCount]] before calling this method to determine the size of the array.",
+  "file": "IGetReferencePoints.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "ConvertSolidFeatureData::GaugeTableFile",
+  "raw": "See [[ConvertSolidFeatureData::GaugeTableFile]].",
+  "file": "GaugeThickness.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISweptFlangeFeatuareData::UseGaugeTable",
+  "raw": "[[ISweptFlangeFeatuareData::UseGaugeTable]] cannot both be set to true",
+  "file": "swSweptFlangeError_e.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IFrame::AddItemToThirdPartyPopupMenu2 Method ()",
+  "raw": "- [[IFrame::AddItemToThirdPartyPopupMenu2 Method ()]]",
+  "file": "AddMenuPopupIcon3.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IDrSectionView::GetAutoHatch",
+  "raw": "This property is valid only if [[IDrSectionView::GetAutoHatch]] is true.",
+  "file": "RandomizeScale.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISurfacePlanarSurfaceData::GetBoundingEntitiesCount Method",
+  "raw": "- [[ISurfacePlanarSurfaceData::GetBoundingEntitiesCount Method]]",
+  "file": "BoundingEntities.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IDrSection::SetPartialSection Method",
+  "raw": "- [[IDrSection::SetPartialSection Method]]",
+  "file": "GetReversedCutDirection.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IPropertyManagerPage2Handler8::OnListboxRMBUp",
+  "raw": "Implement the event handler [[IPropertyManagerPage2Handler8::OnListboxRMBUp]] to position and display a menu when the right mouse button is released.",
+  "file": "_overview.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IEdge::IGetTangentEdges.",
+  "raw": "Call this method before calling [[IEdge::IGetTangentEdges.]]",
+  "file": "GetTangentEdgesCount.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IMidSurface3::GetGetFirstFaceArray",
+  "raw": "- Call [[IMidSurface3::GetGetFirstFaceArray]] once.",
+  "file": "GetNextFaceArray.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ITessellate::GetVertexParams Method",
+  "raw": "- [[ITessellate::GetVertexParams Method]]",
+  "file": "IGetVertexPoint.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ICoordinateSystemFeatureData::ICoordinateSystemFeatureData::ISetYAxisEntities Method",
+  "raw": "- [[ICoordinateSystemFeatureData::ICoordinateSystemFeatureData::ISetYAxisEntities Method]]",
+  "file": "IGetYAxisEntities.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IPropertyManagerPageGroup::AddControl",
+  "raw": "PropertyManager controls are displayed in a single, left-aligned column. Slight vertical spacing adjustment is available with the [[IPropertyManagerPa",
+  "file": "_overview.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "PropertyManagerPage2::SetMessage3",
+  "raw": "Obsolete. Superseded by [[PropertyManagerPage2::SetMessage3]].",
+  "file": "SetMessage2.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISimpleHoleFeature2::SurfaceOffset Property",
+  "raw": "- [[ISimpleHoleFeature2::SurfaceOffset Property]]",
+  "file": "ReverseOffset.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "other",
+  "link": "swAutodimEntitiesSelected",
+  "raw": "| swAutodimMarkEntities | 1 or 0x1; Sketch entities to autodimension when [[swAutodimEntitiesSelected]] is passed as the entitiesToDimension argument ",
+  "file": "swAutodimMark_e.md",
+  "why": ""
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISelectionManager::CreateCallout2",
+  "raw": "1. Use [[ISelectionManager::CreateCallout2]] to create the basic callout information.",
+  "file": "Callout.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IRenamedDocumentReferences::ReferenceArray",
+  "raw": "6. Get the references found in the previous step using [[IRenamedDocumentReferences::ReferenceArray]].",
+  "file": "_overview.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "other",
+  "link": "CalloutVariable",
+  "raw": "Iterate through the [[CalloutVariable]] objects returned by IDisplayDimension::GetHoleCalloutVariables and call [[ICalloutVariable::Type]].",
+  "file": "_overview.md",
+  "why": ""
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "ICurveDrivenPatternFeatureData::IGetPatternFeatureArray Property",
+  "raw": "- [[ICurveDrivenPatternFeatureData::IGetPatternFeatureArray Property]]",
+  "file": "IGetPatternFeatureArray.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IFeature::ModifyDefinition",
+  "raw": "Use this method to restore the rollback state if you did not modify the feature or use [[IFeature::ModifyDefinition]] or [[IFeature::IModifyDefintion2",
+  "file": "ReleaseSelectionAccess.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "IFeatMgrView::GetFeatMgrViewWnd",
+  "raw": "you can use [[IFeatMgrView::GetFeatMgrViewWnd]]",
+  "file": "CreateFeatureMgrView2.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISurfaceParameterization::UProperties Property",
+  "raw": "- [[ISurfaceParameterization::UProperties Property]]",
+  "file": "UMax.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IMirrorSolidFeaturePattern::IAccessSelections2 Method",
+  "raw": "- [[IMirrorSolidFeaturePattern::IAccessSelections2 Method]]",
+  "file": "AccessSelections.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "MathVector::Add Method",
+  "raw": "- [[MathVector::Add Method]]",
+  "file": "IAdd.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISurfTranslateFeatureData::SetTranslateSurface Method",
+  "raw": "- [[ISurfTranslateFeatureData::SetTranslateSurface Method]]",
+  "file": "GetTranslateSurface.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IMoveFaceFeatureData::SetFromEntity Method ()",
+  "raw": "- [[IMoveFaceFeatureData::SetFromEntity Method ()]]",
+  "file": "SetFromEntity.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "SketchBlockDefinition::GetNotes Method",
+  "raw": "- [[SketchBlockDefinition::GetNotes Method]]",
+  "file": "GetNoteCount.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ISketchBlockDefinition::MakeSketchBlockFromFile Method",
+  "raw": "- [[ISketchBlockDefinition::MakeSketchBlockFromFile Method]]\n- [[ISketchBlockDefinition::MakeSketchBlockFromSelected Method]]\n- [[ISketchBlockDefiniti",
+  "file": "LinkToFile.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IEnvironment::GetSymArcs2.",
+  "raw": "Obsolete. Superseded by [[IEnvironment::GetSymArcs2.]]",
+  "file": "IGetSymArcs.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IFlatPatternFeatureData::IBreakCornerFeatureData Interface",
+  "raw": "- [[IFlatPatternFeatureData::IBreakCornerFeatureData Interface]]",
+  "file": "BreakCornerRadius.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "PropertyManagerPageNumberbox::SetRange2",
+  "raw": "Obsolete. Superseded by [[PropertyManagerPageNumberbox::SetRange2]].",
+  "file": "SetRange.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IPropertyManagerNumberbox::SetRange2 Method",
+  "raw": "- [[IPropertyManagerNumberbox::SetRange2 Method]]",
+  "file": "SetSliderParameters.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IShellFeatureData::ReleaseSelections",
+  "raw": "- [[IShellFeatureData::ReleaseSelections]] if you did not",
+  "file": "AccessSelections.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ISketchSegment::GetSketchSegmentCount Method",
+  "raw": "- [[ISketchSegment::GetSketchSegmentCount Method]]",
+  "file": "GetSketchPaths.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "IAttribute::Register Method",
+  "raw": "- [[IAttribute::Register Method]]",
+  "file": "AddParameter.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ILocalCurveDrivenPatternFeature::SkippedItemArray Property ()",
+  "raw": "- [[ILocalCurveDrivenPatternFeature::SkippedItemArray Property ()]]",
+  "file": "GetSkippedItemCount.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ILocalCurvePatternFeatureData::Dir1IsEqualSpaced",
+  "raw": "set [[ILocalCurvePatternFeatureData::Dir1IsEqualSpaced]] to false",
+  "file": "D1Spacing.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IDatumTargetSymbol::GetAnnotation Method",
+  "raw": "- [[IDatumTargetSymbol::GetAnnotation Method]]",
+  "file": "IGetAnnotation.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISketchHandle::SplinePointNumber Property",
+  "raw": "- [[ISketchHandle::SplinePointNumber Property]]",
+  "file": "ShowInflectionPoints.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "SketchManager::CreateEquationSpline2 Method",
+  "raw": "- [[SketchManager::CreateEquationSpline2 Method]]",
+  "file": "GetEquationParameters2.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ICommandGroup::AddComandItem2",
+  "raw": "Obsolete. Superseded by [[ICommandGroup::AddComandItem2]].",
+  "file": "AddCommandItem.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ICommandGruop::SelectType",
+  "raw": "This method is applicable only if[[ICommandGruop::SelectType]] is a custom feature type, like swSelATTRIBUTES. For example, if you want a context-sens",
+  "file": "CustomNames.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IAdvancedSelectionCriteriaClass::GetItem",
+  "raw": "Call this method before calling [[IAdvancedSelectionCriteriaClass::GetItem]] and [[IAdvancedSelectionCriteriaClass::DeleteItem]] to get the number of ",
+  "file": "GetItemCount.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "member_missing",
+  "link": "ICommandManager::HasToolbar Property",
+  "raw": "- [[ICommandManager::HasToolbar Property]]",
+  "file": "ToolbarId.md",
+  "why": "接口在、成员不在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IWrapeatureData::AccessSelections",
+  "raw": "[[IWrapeatureData::AccessSelections]] puts the model in a rollback state to allow access to the selections that define the feature.",
+  "file": "ReleaseSelectionAccess.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "IWrapFeatureData2::ReleaseSelectionAccess",
+  "raw": "- [[IWrapFeatureData2::ReleaseSelectionAccess]] if you did not",
+  "file": "AccessSelections.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ITableDrivenPatternFeatureData::IAccessSelections2 Method",
+  "raw": "- [[ITableDrivenPatternFeatureData::IAccessSelections2 Method]]",
+  "file": "AccessSelections.md",
+  "why": "接口名查不到"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "ICoEdge::IGetCurveParams Method",
+  "raw": "- [[ICoEdge::IGetCurveParams Method]]",
+  "file": "IGetCurveParams.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "ok_after_norm",
+  "link": "ICoEdge::IGetNext Method",
+  "raw": "- [[ICoEdge::IGetNext Method]]",
+  "file": "IGetNext.md",
+  "why": "归一后其实在"
+ },
+ {
+  "cls": "iface_name_wrong",
+  "link": "ISectionView::KeepCapColor",
+  "raw": "and [[ISectionView::KeepCapColor]] to color them.",
+  "file": "FirstColor.md",
+  "why": "接口名查不到"
+ }
+]

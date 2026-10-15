@@ -1,0 +1,83 @@
+{
+  "idx": 226,
+  "results": [
+    {
+      "member": "GetNominalSphere",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Sphere_Feature_Example_VB.md",
+        "Get_DimXpert_Sphere_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律 3 跳过比对"
+    },
+    {
+      "member": "GetNominalTopPlane",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Cone_Feature_Example_VB.md",
+        "Get_DimXpert_Cone_Feature_Example_VBNET.md",
+        "Get_DimXpert_Feature_Example_VB.md",
+        "Get_DimXpert_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律 3 跳过比对"
+    },
+    {
+      "member": "GetNominalValue",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 段跳过；示例里是 annotation.GetNominalValue"
+    },
+    {
+      "member": "GetNormalVector",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md",
+        "Get_All_Elements_of_Sketch_Example_VB.md",
+        "Get_Sketch_Arc_Data_Example_CSharp.md",
+        "Get_Sketch_Arc_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律 3 跳过比对"
+    },
+    {
+      "member": "GetNoteCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "唯一带 Remarks 的成员；但其示例调的是 View.GetNoteCount，非本成员，故无两侧可比"
+    },
+    {
+      "member": "GetNotes",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks；所列示例的 GetNotes 属 IView/ITitleBlock/ISketchBlockDefinition"
+    },
+    {
+      "member": "GetNotesCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Magnetic_Line_Example_CSharp.md",
+        "Insert_Magnetic_Line_Example_VB.md",
+        "Insert_Magnetic_Line_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律 3 跳过比对"
+    }
+  ]
+}

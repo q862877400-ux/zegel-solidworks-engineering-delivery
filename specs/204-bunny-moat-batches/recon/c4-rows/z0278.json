@@ -1,0 +1,134 @@
+{
+  "idx": 278,
+  "results": [
+    {
+      "member": "GetUserUnit",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_User_Units_Example_CSharp.md",
+        "Get_and_Set_User_Units_Example_VB.md",
+        "Get_and_Set_User_Units_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "写回具体到两个整型偏好键与选项值，Remarks 只泛指 SetUserPreference*",
+          "example_quote": "boolstatus = ModelDocExtension.SetUserPreferenceInteger(swUserPreferenceIntegerValue_e.swUnitsAngular, swUserPreferenceOption_e.swDetailingNoOptionSpecified, swAngleUnit_e.swDEG_MIN_SEC)",
+          "example_file": "Get_and_Set_User_Units_Example_VB.md"
+        }
+      ],
+      "note": "三语言示例一致：只读 IUserUnit 属性、写走 SetUserPreferenceInteger，无矛盾。"
+    },
+    {
+      "member": "GetVDirection2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出调用序：CenterPoint2→UDirection2→VDirection2，且三次复用同一组 x/y/z 变量",
+          "example_quote": "swRenderMaterial.GetVDirection2 xcoord, ycoord, zcoord",
+          "example_file": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md"
+        }
+      ],
+      "note": "示例确实调用本成员，且顺序与 Remarks 指向 GetUDirection2 一致。"
+    },
+    {
+      "member": "GetValue3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Dimension_Values_in_All_Configurations_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "BSTR 数组要经定长 String 数组再赋给 Variant 中转，且断言返回数组长度=1",
+          "example_quote": "vDimValArr = swDim.GetValue3(swSpecifyConfiguration, vSpecConfigNameArr): Debug.Assert 0 = UBound(vDimValArr)",
+          "example_file": "Get_Dimension_Values_in_All_Configurations_Example_VB.md"
+        }
+      ],
+      "note": "示例用 swSpecifyConfiguration + 单元素 BSTR 数组，与 Remarks 完全相符。"
+    },
+    {
+      "member": "GetValues",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Create_Plots_and_Get_Values_Example_CSharp.md",
+        "sldworksapi__Create_Plots_and_Get_Values_Example_VB.md",
+        "sldworksapi__Create_Plots_and_Get_Values_Example_VBNET.md",
+        "swmotionstudyapi__Create_Plots_and_Get_Values_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "8. Set the entities for the x-axis and y-axis feature data objects.",
+          "example_quote": "swSimPlotYAxisFeatureData[0].Entities = swEntityArray;",
+          "example_file": "sldworksapi__Create_Plots_and_Get_Values_Example_CSharp.md",
+          "why": "Remarks 要求同时给 x 轴与 y 轴设实体；三语言示例只给两个 y 轴设，x 轴 Entities 从未赋值。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "第三参在 C# 中须包成 DispatchWrapper[]，VB.NET 声明为 Object() 再由强类型数组赋值",
+          "example_quote": "DispatchWrapper[] swYAxisArray = new DispatchWrapper[2];",
+          "example_file": "sldworksapi__Create_Plots_and_Get_Values_Example_CSharp.md"
+        }
+      ],
+      "note": "参数页只说「y 轴特征数据数组」，未给包装形态；四份示例均实际调用本成员。"
+    },
+    {
+      "member": "GetVertexChamferDistance",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Chamfer_Distances_Example_CSharp.md",
+        "Get_Chamfer_Distances_Example_VB.md",
+        "Get_Chamfer_Distances_Example_VBNET.md",
+        "Get_Edge_Chamfer_Distances_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "The Side parameter is relevant only for vertex-type of chamfers.",
+          "example_quote": "swChamfer.GetVertexChamferDistance(0) * 1000.0 + \" mm\"",
+          "example_file": "Get_Edge_Chamfer_Distances_Example_CSharp.md",
+          "why": "该示例先 InsertFeatureChamfer 建倒角，未判 Type 就读 0/1/2；Remarks 声明仅顶点型倒角才相关。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "返回值按米返回，示例 ×1000.0 后拼 mm；成员页 Returns 未给单位",
+          "example_quote": "swChamfer.GetVertexChamferDistance(0) * 1000.0 + \" mm\"",
+          "example_file": "Get_Chamfer_Distances_Example_CSharp.md"
+        },
+        {
+          "what": "读距离不需先 AccessSelections：示例在取几何实体之前就读完 0/1/2",
+          "example_quote": "bRet = swChamfer.AccessSelections(swModel, null);",
+          "example_file": "Get_Chamfer_Distances_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例都用 0/1/2，与 Remarks 的三边说法一致；分歧只在适用类型与未声明单位。"
+    },
+    {
+      "member": "GetVertexCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份候选示例调的都是 ILoop2::GetVertexCount（swLoop/myLoop），本页也无 Examples 段。"
+    },
+    {
+      "member": "GetVertexPoint",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VB.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；三份示例均以 GetFinVertices 的 ID 调本成员。"
+    }
+  ]
+}

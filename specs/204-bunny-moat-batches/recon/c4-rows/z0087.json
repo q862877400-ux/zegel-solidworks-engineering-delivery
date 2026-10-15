@@ -1,0 +1,135 @@
+{
+  "idx": 87,
+  "results": [
+    {
+      "member": "DecalID",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Delete_Decal_Example_CSharp.md",
+        "Delete_Decal_Example_VB.md",
+        "Delete_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例读出 ID 后调 DeleteDecal(iDecalID, true)，第二参传 true；成员页只讲默认持久化情形。",
+          "example_quote": "boolstatus = swModelDocExt.DeleteDecal(iDecalID, true);",
+          "example_file": "Delete_Decal_Example_CSharp.md"
+        }
+      ],
+      "note": "页面 Remarks 与三份示例无相互矛盾之处。"
+    },
+    {
+      "member": "DefaultRadius",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Partial_Chamfer_Example_CSharp.md",
+        "Get_Data_for_Simple_Fillet_Example_CSharp.md",
+        "Get_Data_for_Simple_Fillet_Example_VB.md",
+        "Get_Data_for_Simple_Fillet_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出写入时机：CreateDefinition/Initialize 之后、CreateFeature 之前设 DefaultRadius。",
+          "example_quote": "swFilletData.DefaultRadius = 0.01;",
+          "example_file": "Create_Partial_Chamfer_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "DefineAttribute",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Attribute_to_Feature_and_Include_In_Library_Feature_Example_VB.md",
+        "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_CSharp.md",
+        "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_VBNET.md",
+        "Create_Attribute_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "The Name argument used for this attribute definition must be unique and qualified among the attributes defined in the current session. To ensure this, the first three letters of the name must be an officially recognized third-party identifier.",
+          "example_quote": "swAttributeDef = (AttributeDef)swApp.DefineAttribute(\"TestPropagationOfAttribute\");",
+          "example_file": "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_CSharp.md",
+          "why": "Remarks 要求名称前三字母是官方第三方标识（或 pub），示例用 Tes 前缀且声明成功。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出实例名撞名时的重试循环，成员页只讲四步流程、未提实例名唯一性。",
+          "example_quote": "While swAtt Is Nothing",
+          "example_file": "Create_Attribute_Example_VB.md"
+        }
+      ],
+      "note": "四份示例全部真调 DefineAttribute；命名前提与示例不一致已记 precondition_diff。"
+    },
+    {
+      "member": "DefinedBy",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_VB.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 DefinedBy 读入后按三个 swHelixDefinedBy_e 分支决定各区段哪些参数可改。",
+          "example_quote": "case (int)swHelixDefinedBy_e.swHelixDefinedByHeightAndRevolution:",
+          "example_file": "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "Definition",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Face_Hatch_Data_Example_CSharp.md",
+        "Get_Face_Hatch_Data_Example_VB.md",
+        "Get_Face_Hatch_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取得途径：先 View.GetFaceHatches 取数组再逐个读 .Definition，成员页未说来源。",
+          "example_quote": "vFaceHatch = (object[])swView.GetFaceHatches();",
+          "example_file": "Get_Face_Hatch_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Get_Block_Instance 那份调的是 SketchBlockInstance.Definition，撞名已排除。另 NOTE 称只读而签名是 {get; set;}，属页内自相矛盾、非两侧冲突。"
+    },
+    {
+      "member": "Delete",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_New_Part_from_Existing_Part_Using_Temporary_Body_Example_CSharp.md",
+        "Create_New_Part_from_Existing_Part_Using_Temporary_Body_Example_VB.md",
+        "Create_New_Part_from_Existing_Part_Using_Temporary_Body_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "Add_Equation 那份调的是 EquationMgr.Delete(0)，撞名已排除。示例只按页内已写的参数传 True，无更具体处。"
+    },
+    {
+      "member": "Delete2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Custom_Properties_for_Configuration_Example_CSharp.md",
+        "Get_Custom_Properties_for_Configuration_Example_VB.md",
+        "Get_Custom_Properties_for_Configuration_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回码存进 lRetVal 却从不判读，改用 Count 回读删除后条数来验证。",
+          "example_quote": "lRetVal = cusPropMgr.Delete2(\"ADATE\")",
+          "example_file": "Get_Custom_Properties_for_Configuration_Example_VB.md"
+        }
+      ],
+      "note": "该页无 ## Remarks 段，按纪律跳过冲突判定。"
+    }
+  ]
+}

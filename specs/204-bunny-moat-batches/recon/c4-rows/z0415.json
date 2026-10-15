@@ -1,0 +1,137 @@
+{
+  "idx": 415,
+  "results": [
+    {
+      "member": "ReverseRotationDirection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Explode_Step_Example_VB.md",
+        "Edit_Radial_Explode_Step_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IExplodeStep::ExplodeStepType]] is set to [[swAssemblyExplodeStepType_e]].swAssemblyExplodeStepType_Translate.",
+          "example_quote": "explStep.ReverseRotationDirection = Not explStep.ReverseRotationDirection",
+          "example_file": "Edit_Radial_Explode_Step_Example_VB.md",
+          "why": "示例对 radial 步操作：explode 方向用 2+32(=34)，正是 IExplodeStep Remarks 标注的 radial 专用 mark；同例还读写仅 radial 有效的 DivergeFromAxis/DivergeDirection。Remarks 却限定本属性仅 Translate 步有效。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例显示该值在建步时即由 AddExplodeStep2 第 6 位形参 ReverseAng=True 一次性写入，成员页只讲属性本身。",
+          "example_quote": "Set explStep = config.AddExplodeStep2(0.5, -1, True, num, -1, True, False, True, errCode)",
+          "example_file": "Add_Explode_Step_Example_VB.md"
+        }
+      ],
+      "note": "Add_Explode_Step 建的是 regular(Translate) 步，与 Remarks 一致，无冲突。"
+    },
+    {
+      "member": "ReverseThickness",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "The setter of this property is valid only if [[IBaseFlangeFeatureData::OverrideDefaultSheetMetalParameters]] is true and [[IBaseFlangeFeatureData::UseMaterialSheetMetalParameters]] is false.",
+          "example_quote": "featDef.ReverseThickness = False",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md",
+          "why": "该例从未把 OverrideDefaultSheetMetalParameters 置 true（只设 OverrideRadius/Thickness/KFactor=False），随后又 featDef.UseGaugeTable = True；此时 setter 的两个前提均不成立。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "另两份 ConvertSolid 示例用的是 IConvertSolidFeatureData.ReverseThickness，非本成员。"
+    },
+    {
+      "member": "ReverseThicknessDir",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Rib_Feature_Data_Example_CSharp.md",
+        "Get_Rib_Feature_Data_Example_VB.md",
+        "Get_Rib_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先判 If Not IsTwoSided 再读该属性；成员页只给前置，未给守卫写法。",
+          "example_quote": "Debug.Print \"Single-sided rib is extruded on the reverse side? \" & swRibFeat.ReverseThicknessDir",
+          "example_file": "Get_Rib_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "三例均以 InsertRib(True, ...) 建双侧肋，守卫分支实际不会执行；两侧并非矛盾。"
+    },
+    {
+      "member": "ReverseTranslationDirection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Explode_Step_Example_VB.md",
+        "Edit_Radial_Explode_Step_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IExplodeStep::ExplodeStepType]] is set to [[swAssemblyExplodeStepType_e]].swAssemblyExplodeStepType_Translate.",
+          "example_quote": "explStep.ReverseTranslationDirection = Not explStep.ReverseTranslationDirection",
+          "example_file": "Edit_Radial_Explode_Step_Example_VB.md",
+          "why": "同上：该 radial 步的 explode 方向用 mark 2+32(=34)，diverge 用 64，都是 IExplodeStep Remarks 里 radial 专用值；示例仍在该步翻转本属性。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例显示该值在建步时即由 AddExplodeStep2 第 3 位形参 ReverseDir=True 一次性写入，成员页只讲属性本身。",
+          "example_quote": "Set explStep = config.AddExplodeStep2(0.5, -1, True, num, -1, True, False, True, errCode)",
+          "example_file": "Add_Explode_Step_Example_VB.md"
+        }
+      ],
+      "note": "Add_Multibody 那份用的是 IPartExplodeStep.ReverseTranslationDirection，非本成员。"
+    },
+    {
+      "member": "RevisionNumber",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Infinite_Plane_Example_VB.md",
+        "Get_Material_Property_Names_Example_VB.md",
+        "Get_Version_History_of_Future_Version_Document_Example_CSharp.md",
+        "Get_Version_History_of_Future_Version_Document_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它与 GetBuildNumbers2、DateCode 并列打印以还原完整构建标识，成员页只讲版本号格式。",
+          "example_quote": "Debug.Print(\"RevisionNumber = \" + strRevisionNumber);",
+          "example_file": "Get_Version_History_of_Future_Version_Document_Example_CSharp.md"
+        },
+        {
+          "what": "C# 用方法式 swApp.RevisionNumber()，VBA 用属性式 swApp.RevisionNumber，两种形态都能取到字符串。",
+          "example_quote": "Debug.Print \"SOLIDWORKS revision number = \" & swApp.RevisionNumber",
+          "example_file": "Get_Material_Property_Names_Example_VB.md"
+        }
+      ],
+      "note": "四例都只把返回值当字符串用，未给格式证据；与 Remarks 无冲突。"
+    },
+    {
+      "member": "RevisionTable",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Revision_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "RevisionTableFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Drawing_Sheet_Zones_Example_CSharp.md",
+        "Create_Drawing_Sheet_Zones_Example_VB.md",
+        "Create_Drawing_Sheet_Zones_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    }
+  ]
+}

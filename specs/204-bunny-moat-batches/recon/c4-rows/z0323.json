@@ -1,0 +1,160 @@
+{
+ "idx": 323,
+ "results": [
+  {
+   "member": "InsertSheetMetalUnfold",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_and_Access_Fold_Feature_Example_CSharp.md",
+    "Insert_and_Access_Fold_Feature_Example_VB.md",
+    "Insert_and_Access_Fold_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例按 mark 分角色: 固定面 FACE 用 mark=1, 四个 EdgeBend BODYFEATURE 用 mark=4; Remarks 只说先选对象, 未给 mark",
+     "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", 0.0135437392197275, 0.013831948116092, 0.0180159642212061, false, 1, null, 0);",
+     "example_file": "Insert_and_Access_Fold_Feature_Example_CSharp.md"
+    },
+    {
+     "what": "示例先按 mark=0 选一遍, 随即 ClearSelection2 清空, 真正生效的是第二轮 mark=1/4",
+     "example_quote": "swModel.ClearSelection2(true);",
+     "example_file": "Insert_and_Access_Fold_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "无冲突。mark 角色语义只能从示例取, 成员页未写。"
+  },
+  {
+   "member": "InsertSizeDimension",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_and_Set_Size_Dimension_Example_CSharp.md",
+    "Get_and_Set_Size_Dimension_Example_VB.md",
+    "Get_and_Set_Size_Dimension_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例把选边写成宏运行前的 Preconditions 第 2 条, 代码内没有任何 Select 调用",
+     "example_quote": "// 2. Select an edge.",
+     "example_file": "Get_and_Set_Size_Dimension_Example_CSharp.md"
+    },
+    {
+     "what": "示例丢弃 bool 返回值, 改用 GetFeatureCount / GetFeatures 回读确认尺寸是否建成",
+     "example_quote": "featCount = dimXpertPart.GetFeatureCount();",
+     "example_file": "Get_and_Set_Size_Dimension_Example_CSharp.md"
+    },
+    {
+     "what": "FeatureSelectorOptions 只写 int[1], 首元素 -1 表示默认特征",
+     "example_quote": "dimarray[0] = -1;",
+     "example_file": "Get_and_Set_Size_Dimension_Example_CSharp.md"
+    }
+   ],
+   "note": "Remarks 第 4 步选面或边, 与示例前置不冲突: 选区保留到调用时仍有效。"
+  },
+  {
+   "member": "InsertSketch",
+   "remarks_empty": true,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 Remarks 段。4 份示例调的是 ISketchManager::InsertSketch(True), 不是本成员(零参)。"
+  },
+  {
+   "member": "InsertSketch2",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Change_Dimension_Tolerance_in_Configuration_Example_CSharp.md",
+    "Change_Dimension_Tolerance_in_Configuration_Example_VB.md",
+    "Change_Dimension_Tolerance_in_Configuration_Example_VBNET.md",
+    "Create_2D_Spline_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 Remarks 段。示例确在 ModelDoc2 上调用并传 True。"
+  },
+  {
+   "member": "InsertSketchBlockInstance",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Block_Definition_and_Insert_Block_Instance_Example_VB.md",
+    "Create_Block_Definition_and_Insert_Block_Instance_Example_CSharp.md",
+    "Create_Block_Definition_and_Insert_Block_Instance_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例的 BlockDef 由 MakeSketchBlockFromSelected 现建, 并非读自 .sldblk 文件, 故 Remarks 的实例名等于文件名那句不适用",
+     "example_quote": "swSketchBlockDef = swSketchMgr.MakeSketchBlockFromSelected(Nothing)",
+     "example_file": "Create_Block_Definition_and_Insert_Block_Instance_Example_VB.md"
+    },
+    {
+     "what": "块定义只建一次, 只插入一个实例, Scale=1, Angle=0",
+     "example_quote": "swBlockInst = swSketchMgr.InsertSketchBlockInstance(swSketchBlockDef, swMathPoint, 1, 0)",
+     "example_file": "Create_Block_Definition_and_Insert_Block_Instance_Example_VBNET.md"
+    },
+    {
+     "what": "Position 用 double[3], 分量先除以 1000 再传",
+     "example_quote": "nPt(0) = 60.0# / 1000.0#",
+     "example_file": "Create_Block_Definition_and_Insert_Block_Instance_Example_VBNET.md"
+    }
+   ],
+   "note": "示例 Postconditions 声称插入两个实例, 代码只调用一次, 是示例自身不一致。"
+  },
+  {
+   "member": "InsertSketchForEdgeFlange",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Corner_Relief_Feature_Example_CSharp.md",
+    "Create_Corner_Relief_Feature_Example_VB.md",
+    "Create_Corner_Relief_Feature_Example_VBNET.md",
+    "Create_Edge_Flange_Example_CSharp.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "After calling this method, you must create the profile for the flange on the appropriate plane. Then use [[IFeatureManager::CreateDefinition]], [[IEdgeFlangeFeatureData]], and [[IFeatureManager::CreateFeature]] to create the edge flange.",
+     "example_quote": "swFeature = swModel.FeatureManager.InsertSheetMetalEdgeFlange2((vFlangeEdges), (vSketchFeats), nOptions, dAngle, 0.0, (int)swFlangePositionTypes_e.swFlangePositionTypeBendOutside, dLength, (int)swSheetMetalReliefTypes_e.swSheetMetalReliefNone, 0.0, 0.0,",
+     "example_file": "Create_Corner_Relief_Feature_Example_CSharp.md",
+     "why": "Remarks 说必须走 CreateDefinition/EdgeFlangeFeatureData/CreateFeature 三步; 该示例改用单次 InsertSheetMetalEdgeFlange2 建同一法兰(三种语言版一致), 两条不能同时是必需步骤。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "Edge Flange 示例在 CreateDefinition 之后先 AddEdges(边数组, 草图数组), Remarks 的三步里没有这一步",
+     "example_quote": "FeatData.AddEdges(vFlangeEdges, vSketchFeats);",
+     "example_file": "Create_Edge_Flange_Example_CSharp.md"
+    },
+    {
+     "what": "轮廓草图先画线再用 InsertSketch2(true) 提交, 然后才 CreateDefinition",
+     "example_quote": "swModel.InsertSketch2(true);",
+     "example_file": "Create_Edge_Flange_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页连 Examples 段都没有; DAngle 三份示例都按弧度传 (90/180)*3.1415926535897。"
+  },
+  {
+   "member": "InsertSketchPicture2",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Flip_Sketch_Picture_Example_CSharp.md",
+    "Flip_Sketch_Picture_Example_VB.md",
+    "Flip_Sketch_Picture_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例在 Part.prtdot 零件文档里调用并显式传 False, 与 Remarks 的非图纸默认 false 一致",
+     "example_quote": "swSketchPicture = swModel.SketchManager.InsertSketchPicture2(\"c:\\\\temp\\\\image_file\", false);",
+     "example_file": "Flip_Sketch_Picture_Example_CSharp.md"
+    },
+    {
+     "what": "调用前后各用一次 InsertSketch(True) 开, 收草图",
+     "example_quote": "swModel.SketchManager.InsertSketch(true);",
+     "example_file": "Flip_Sketch_Picture_Example_CSharp.md"
+    }
+   ],
+   "note": "示例传 c:\\temp\\image_file 无扩展名, 参数表却写 including file extension(该句在 Parameters 段, 未计入冲突)。"
+  }
+ ]
+}

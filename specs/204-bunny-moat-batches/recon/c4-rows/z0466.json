@@ -1,0 +1,131 @@
+{
+  "idx": 466,
+  "results": [
+    {
+      "member": "ShowChildComponentsInBOM",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Configuration_Properties_Example_VB.md",
+        "Traverse_Hierarchy_of_Configurations_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property applies only to assembly configurations. SOLIDWORKS always returns false when you get this property on a part configuration. Setting this property on a part configuration has no effect.",
+          "example_quote": "Open a part that contains one or more configurations.",
+          "example_file": "Change_Configuration_Properties_Example_VB.md",
+          "why": "成员页称该属性只适用于装配配置、在零件配置上恒返回 false 且写入无效；示例前置却要求打开零件，并把它当常规配置属性逐条打印，示例未给出该限制。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property applies only to assembly configurations. SOLIDWORKS always returns false when you get this property on a part configuration. Setting this property on a part configuration has no effect.",
+          "example_quote": "Open a part or assembly.",
+          "example_file": "Traverse_Hierarchy_of_Configurations_Example_VB.md",
+          "why": "同一示例的前置以「零件或装配」并列，读该属性时可能正落在零件配置上，与成员页「仅装配、零件上恒 false」的适用范围相反。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "成员页首行还标 Obsolete，被 ChildComponentDisplayInBOM 取代。"
+    },
+    {
+      "member": "ShowComponentConfigurationDescriptions",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Show_Components_and_Component_Configurations_Names_and_Descriptions_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面只有 Returns 与 See Also，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "ShowComponentConfigurationNames",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Show_Components_and_Component_Configurations_Names_and_Descriptions_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 Remarks 段，按纪律跳过；示例仅读写真值，未给额外约束。"
+    },
+    {
+      "member": "ShowComponentDescriptions",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Show_Components_and_Component_Configurations_Names_and_Descriptions_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没有的互斥约束：与 ShowComponentNames 不能同时为 false。",
+          "example_quote": "swFeatMgr.ShowComponentDescriptions = False ' This call does not work because FeatureManager::ShowComponentNames display is set to false",
+          "example_file": "Show_Components_and_Component_Configurations_Names_and_Descriptions_Example_VB.md"
+        }
+      ],
+      "note": "页面无 Remarks；该互斥规则只存在于示例正文。"
+    },
+    {
+      "member": "ShowComponentNames",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Show_Components_and_Component_Configurations_Names_and_Descriptions_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例明写两者不能同为 false，而该页连 Examples 段都没有。",
+          "example_quote": "' FeatureManager::ShowComponentNames and FeatureManager::ShowComponentDescriptions\n' cannot both be set to false",
+          "example_file": "Show_Components_and_Component_Configurations_Names_and_Descriptions_Example_VB.md"
+        }
+      ],
+      "note": "成员页既无 Remarks 也无 Examples 段，示例却确实读写该属性。"
+    },
+    {
+      "member": "ShowConfiguration2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Are_the_Assembly_Configurations_Loaded_Example_CSharp.md",
+        "Are_the_Assembly_Configurations_Loaded_Example_VB.md",
+        "Are_the_Assembly_Configurations_Loaded_Example_VBNET.md",
+        "Change_Dimension_Tolerance_in_Configuration_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "If you made changes to the model and the configuration to which you are switching needs to be updated to reflect those changes, then you must rebuild the model using [[IModelDoc2::EditRebuild3]]. Otherwise, the FeatureManager design tree will show the model as needing to be rebuilt.",
+          "example_quote": "status = swDimensionTolerance.SetValues2(0.01, 0.015, (int)swSetValueInConfiguration_e.swSetValue_InThisConfiguration, \"\");",
+          "example_file": "Change_Dimension_Tolerance_in_Configuration_Example_CSharp.md",
+          "why": "示例先用 SetValues2 改了尺寸公差（对模型的改动），随后调 ShowConfiguration2 切配置；全文 grep Rebuild/EditRebuild 零命中，未做成员页要求的重建。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没有的验证法：切换后回读 ActiveConfiguration，而非只信返回的 bool。",
+          "example_quote": "boolstatus = swModel.ShowConfiguration2(ConfName);\n                swConfiguration = (Configuration)swConfigurationMgr.ActiveConfiguration;",
+          "example_file": "Are_the_Assembly_Configurations_Loaded_Example_CSharp.md"
+        },
+        {
+          "what": "示例在零件（.sldprt）上切配置，说明该成员并非只适用于装配体。",
+          "example_quote": "fileName = \"C:\\\\Users\\\\Public\\\\Documents\\\\SOLIDWORKS\\\\SOLIDWORKS 2018\\\\samples\\\\tutorial\\\\PDMWorks\\\\speaker_frame.sldprt\";",
+          "example_file": "Change_Dimension_Tolerance_in_Configuration_Example_CSharp.md"
+        }
+      ],
+      "note": "Are_the_Assembly 三例只读不改模型，不触发重建前置，故不记冲突。"
+    },
+    {
+      "member": "ShowConfigurationDescriptions",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Work_with_Configurations_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把描述与名称同时置 true，说明 Remarks 的「二者其一」只禁同时为 false。",
+          "example_quote": "ConfigMgr.ShowConfigurationDescriptions = True\n    ConfigMgr.ShowConfigurationNames = True",
+          "example_file": "Work_with_Configurations_Example_VB.md"
+        }
+      ],
+      "note": "示例同时置 true，未违反 Remarks 的互斥前置，故不记冲突。"
+    }
+  ]
+}

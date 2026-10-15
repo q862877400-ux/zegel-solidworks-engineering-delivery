@@ -1,0 +1,97 @@
+{
+  "idx": 29,
+  "results": [
+    {
+      "name": "mold_analysis",
+      "level": "verified",
+      "members_found": ["FeatureManager", "MoldDraftAnalysis", "MoldUndercutDetect2"],
+      "examples_used": [],
+      "preconditions": [
+        {
+          "text": "无法从官方示例确定前置：两个索引与 C:\\swapi\\examples 全树都没有用 MoldDraftAnalysis 的示例",
+          "from": "（无相关示例：member-to-example-index.md 与 b3-4-merged.json 的 by_member 均无该成员）",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "无法从官方示例确定前置：没有任何示例用 MoldUndercutDetect2（旧 6 参 MoldUndercutDetect 也没有）",
+          "from": "（无相关示例：grep C:\\swapi\\examples 的 Mold* 只命中分型面/型腔族，非本条能力）",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "cannot_tell",
+      "note": "成员读自 scripts/sw_mold.py。MoldDraftAnalysis 在 IModelDoc2，底切走后继 IFeatureManager.MoldUndercutDetect2。"
+    },
+    {
+      "name": "preview_and_review_report",
+      "level": "verified",
+      "members_found": [
+        "ShowNamedView2",
+        "ViewZoomtofit2",
+        "ActiveView",
+        "GraphicsRedraw",
+        "SaveBMP",
+        "FirstFeature",
+        "GetNextFeature",
+        "GetTypeName2",
+        "Name",
+        "GetTitle",
+        "GetPathName",
+        "GetType",
+        "ForceRebuild3",
+        "ClearSelection2",
+        "GetSelectedObjectCount2",
+        "ActivateDoc3"
+      ],
+      "examples_used": [
+        "Change_to_Isometric_and_Zoom_to_Fit_View_Mode_Example_VB.md",
+        "Show_Named_View_Example_VB.md",
+        "Roll_Model_View_Example_VB.md",
+        "Get_Error_Codes_for_Features_Example_VB.md",
+        "Get_Type_of_Instant3D_Feature_Example_CSharp.md",
+        "Save_Model_as_Bitmap_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "「Preconditions: Model document is open.」—— ShowNamedView2/ViewZoomtofit2 前须有已打开的模型文档",
+          "from": "Change_to_Isometric_and_Zoom_to_Fit_View_Mode_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "示例注释逐字：单调 ShowNamedView2「model is zoomed out a bit further」，须紧跟 ViewZoomtofit2 才与 UI 一致",
+          "from": "Change_to_Isometric_and_Zoom_to_Fit_View_Mode_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "「Preconditions: Open a part or assembly.」—— 取 ActiveView 并用其成员前须已打开零件或装配",
+          "from": "Roll_Model_View_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "「Preconditions: 1. Open a part.」；遍历须由 FirstFeature 起、GetNextFeature 回 Nothing 收尾",
+          "from": "Get_Error_Codes_for_Features_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "「Preconditions: 1. Verify that the specified part exists.」；遍历到 null 为止",
+          "from": "Get_Type_of_Instant3D_Feature_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "「Preconditions: 1. Open: …cstick.sldprt 2. Run macro.」—— SaveBMP 前须有已打开文档",
+          "from": "Save_Model_as_Bitmap_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "证据只有一行 PASS 读数（ok=true / 20 个特征 / 4 个非空 BMP / ActiveView 报 <unknown>），六条官方前置一条都没提到。"
+    }
+  ]
+}

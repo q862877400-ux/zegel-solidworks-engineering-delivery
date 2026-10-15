@@ -1,0 +1,118 @@
+{
+  "idx": 498,
+  "results": [
+    {
+      "member": "TitleBlock",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Notes_from_New_or_Existing_Title_Block_Example_VB.md",
+        "Get_Notes_from_New_or_Existing_Title_Block_Example_VBNET.md",
+        "Get_Notes_from_New_or_Existing_Title_Block_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说「if it exists」；示例给出缺失时的补建路径：取视图 GetNotes 前两条装进 notesArray，InsertTitleBlock 后回填同一变量。",
+          "example_quote": "swTitleBlock = swSheet.InsertTitleBlock(notesArray)",
+          "example_file": "Get_Notes_from_New_or_Existing_Title_Block_Example_VB.md"
+        },
+        {
+          "what": "Remarks 未给出「不存在」时的返回形态；示例用 Is Nothing（C# 用 == null）判定，并因此与「一张图纸只有一个标题栏」的自查逻辑配套。",
+          "example_quote": "If swTitleBlock Is Nothing Then",
+          "example_file": "Get_Notes_from_New_or_Existing_Title_Block_Example_VB.md"
+        }
+      ],
+      "note": "两侧不冲突：三份示例都先判空、为空才 InsertTitleBlock，与 Remarks 一致。"
+    },
+    {
+      "member": "TitleBlockTableFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Title_Block_Tables_Example_CSharp.md",
+        "Get_Title_Block_Tables_Example_VB6.md",
+        "Get_Title_Block_Tables_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "TitleVisible",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Export_BOMs_to_XML_Example_CSharp.md",
+        "Export_BOMs_to_XML_Example_VB.md",
+        "Export_BOMs_to_XML_Example_VBNET.md",
+        "Get_Model_Path_Names_in_BOM_Table_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "ToScale",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IPrintSpecification::ScaleMethod]] is set to [[swPrintSelectionScaleFactor_e]].swPrintSelection.",
+          "example_quote": "printSpec.FromScale = 1.5;\n            printSpec.ToScale = 0.5;\n            printSpec.ScaleMethod = (int)swPrintSelectionScaleFactor_e.swPrintSelection;",
+          "example_file": "Print_Drawing_as_High_Quality_Example_CSharp.md",
+          "why": "Remarks 说写 ToScale 的前置是 ScaleMethod 已为 swPrintSelection；示例却在下一行才设 ScaleMethod，写入瞬间前置不成立，两者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说它是 From:To 里的「to」因子；示例给出具体配对值 From=1.5 / To=0.5，且 From 在前。",
+          "example_quote": "printSpec.FromScale = 1.5;\n            printSpec.ToScale = 0.5;",
+          "example_file": "Print_Drawing_as_High_Quality_Example_VBNET.md"
+        },
+        {
+          "what": "Remarks 未提读回；示例设完后再读 ToScale 并打印到 Immediate 窗口。",
+          "example_quote": "Debug.Print(\"  To scale: \" + printSpec.ToScale);",
+          "example_file": "Print_Drawing_as_High_Quality_Example_CSharp.md"
+        }
+      ],
+      "note": "三份打印示例顺序完全一致：FromScale→ToScale→ScaleMethod，故冲突记一条。"
+    },
+    {
+      "member": "TolType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "TolValue",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "Tolerance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Dimension_Tolerance_in_Configuration_Example_CSharp.md",
+        "Change_Dimension_Tolerance_in_Configuration_Example_VB.md",
+        "Change_Dimension_Tolerance_in_Configuration_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks，跳过；Get_DimXpert_Datum_Example_VB 的 annotation.Tolerance 属 DimXpert*Tolerance，非 IDimension.Tolerance。"
+    }
+  ]
+}

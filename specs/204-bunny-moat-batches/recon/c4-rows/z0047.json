@@ -1,0 +1,123 @@
+{
+ "idx": 47,
+ "results": [
+  {
+   "member": "ComponentList",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Whether_Components_Are_Loaded_Example_CSharp.md",
+    "Get_Whether_Components_Are_Loaded_Example_VBNET.md",
+    "Open_Assembly_Document_Example_CSharp.md",
+    "Open_Assembly_Document_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例把数组元素写成「组件名@装配体名」字符串，而非组件对象（页面只说 Selected components）",
+     "example_quote": "componentsArray[0] = \"food bowl-1@bowl and chute\";",
+     "example_file": "Open_Assembly_Document_Example_CSharp.md"
+    },
+    {
+     "what": "另一示例同样用「组件名@装配体名」字符串格式",
+     "example_quote": "sComponents[0] = \"Magnet-1@speaker\";",
+     "example_file": "Get_Whether_Components_Are_Loaded_Example_CSharp.md"
+    }
+   ],
+   "note": "四份示例都真调用 ComponentList；页面与示例一致，元素格式仅示例给出。"
+  },
+  {
+   "member": "ComponentOrientationsAlignToComponentOrigin",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Mirror_Components_II_Example_CSharp.md",
+    "Mirror_Components_II_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例在 GetDefinition() 取回的镜像定义上单独改朝向数组，未重设组件数组即 ModifyDefinition",
+     "example_quote": "modifyFeatdef.ComponentOrientationsAlignToComponentOrigin = orientationArray2;",
+     "example_file": "Mirror_Components_II_Example_CSharp.md"
+    }
+   ],
+   "note": "示例两侧数组均为 2 元素，未触发「元素更少→默认」分支，故无矛盾可判。"
+  },
+  {
+   "member": "ComponentOrientationsAlignToSelection",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Mirror_Components_II_Example_CSharp.md",
+    "Mirror_Components_II_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例同样在 GetDefinition() 的定义上单独改朝向数组后 ModifyDefinition",
+     "example_quote": "modifyFeatdef.ComponentOrientationsAlignToSelection = orientationArrayPlane2;",
+     "example_file": "Mirror_Components_II_Example_CSharp.md"
+    }
+   ],
+   "note": "示例两侧数组均为 2 元素；页面未给「取回后改」这条路径，仅示例有。"
+  },
+  {
+   "member": "ComponentReference",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Component_Name_From_Selected_Entity_Example_CSharp.md",
+    "Get_Component_Name_From_Selected_Entity_Example_VB.md",
+    "Get_Component_Name_From_Selected_Entity_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出 ForceRebuild3 的用途：重建后组件引用才显示在特征树的组件名旁",
+     "example_quote": "// 3. Locate the component to which the component reference was added",
+     "example_file": "Get_Component_Name_From_Selected_Entity_Example_CSharp.md"
+    }
+   ],
+   "note": "示例「先设引用、后 ForceRebuild3」与 Remarks 完全一致，无冲突。"
+  },
+  {
+   "member": "Components",
+   "remarks_empty": false,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "三份 Run_Interference_Detection 示例调的是 interference.Components（IInterference），与 ICavityFeatureData::Components 同名不同对象，按纪律排除。"
+  },
+  {
+   "member": "ComponentsToInstanceAlignToComponentOrigin",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Mirror_Components_II_Example_CSharp.md",
+    "Mirror_Components_II_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例先把组件取成 Component2，再逐个包成 DispatchWrapper 才赋给该数组属性",
+     "example_quote": "CTI[0] = new DispatchWrapper(swCompInst);",
+     "example_file": "Mirror_Components_II_Example_CSharp.md"
+    }
+   ],
+   "note": "示例该数组与 OppositeHandComponents 两组组件不重叠，与 Remarks 的排他条件一致。"
+  },
+  {
+   "member": "ComponentsToInstanceAlignToSelection",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Mirror_Components_II_Example_CSharp.md",
+    "Mirror_Components_II_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例的组件数组与 AlignmentReferences 各 2 元素，一一对应到 PLANE2 / PLANE3",
+     "example_quote": "ARef[0] = new DispatchWrapper(mirrorPlane2);",
+     "example_file": "Mirror_Components_II_Example_CSharp.md"
+    }
+   ],
+   "note": "示例两者同为 2 个，未触发「更多则创建失败」；无矛盾。"
+  }
+ ]
+}

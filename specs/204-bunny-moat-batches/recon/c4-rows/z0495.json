@@ -1,0 +1,126 @@
+{
+  "idx": 495,
+  "results": [
+    {
+      "member": "ThinWallType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Properties_of_Sweep_Feature_Example_VB.md",
+        "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md",
+        "Insert_Sweep_Cut_Feature_Example_CSharp.md",
+        "Insert_Sweep_Cut_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。四份示例命中的是 swSweep.ThinWallType（ISweepFeatureData），非本页 IExtrudeFeatureData2 的同名成员。"
+    },
+    {
+      "member": "ThirdColor",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_VBNET.md",
+        "Get_Section_View_Data_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Use [[ISectionViewData::ShowSectionCap]] to display the caps of section views and [[ISectionView::KeepCapColor]] to color them.",
+          "example_quote": "data.KeepCapColor = true;",
+          "example_file": "Create_Section_View_in_Model_Example_CSharp.md",
+          "why": "示例在 data（SectionViewData）上设 KeepCapColor，Remarks 却指向 ISectionView::KeepCapColor ⇒ 归属对象不同。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出颜色取值的具体形态：VB 用 RGB(0, 0, 255)、C# 用 Information.RGB(0, 0, 255)；成员页只说 Third RGB value of the color。",
+          "example_quote": "data.ThirdColor = RGB(0, 0, 255)",
+          "example_file": "Create_Section_View_in_Model_Example_VB.md"
+        },
+        {
+          "what": "示例给出赋值顺序：先写 ThirdColor，再开 Redraw / ShowSectionCap / KeepCapColor；成员页未说顺序。",
+          "example_quote": "data.ThirdColor = Information.RGB(0, 0, 255);\ndata.Redraw = true;\ndata.ShowSectionCap = true;\ndata.KeepCapColor = true;",
+          "example_file": "Create_Section_View_in_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "唯一冲突：KeepCapColor 归属接口。types 树里 KeepCapColor 只在 ISectionViewData\\KeepCapColor.md，无 ISectionView 目录。"
+    },
+    {
+      "member": "ThirdOffset",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_VBNET.md",
+        "Get_Section_View_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段（只有 Signature / Returns / Examples / See Also），按纪律跳过。"
+    },
+    {
+      "member": "ThirdPlane",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_VBNET.md",
+        "Get_Section_View_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 SelectByID2 的完整实参形态：类型 PLANE、Append=True、mark=4；三面按 mark 1/2/4 依次追加。",
+          "example_quote": "boolstatus = swModelDocExt.SelectByID2(\"Right\", \"PLANE\", -0.000808330303073, 0.07304457560201, -0.003890984556108, True, 4, Nothing, 1)",
+          "example_file": "Create_Section_View_in_Model_Example_VB.md"
+        },
+        {
+          "what": "读取示例回读 ThirdPlane 后用 Select2(true, 4) 复选同一 mark，并按 mark 1/2/4 分别取 First/Second/ThirdPlane。",
+          "example_quote": "p3.Select2(true, 4);",
+          "example_file": "Get_Section_View_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 Create 示例与读取示例的 mark 均为 4，与 Remarks 一致，未见冲突。"
+    },
+    {
+      "member": "ThirdReverseDirection",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_VBNET.md",
+        "Get_Section_View_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段（只有 Signature / Returns / Examples / See Also），按纪律跳过。"
+    },
+    {
+      "member": "ThirdRotationX",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_VBNET.md",
+        "Get_Section_View_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段（只有 Signature / Returns / Examples / See Also），按纪律跳过。"
+    },
+    {
+      "member": "ThirdRotationY",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_VBNET.md",
+        "Get_Section_View_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段（只有 Signature / Returns / Examples / See Also），按纪律跳过。"
+    }
+  ]
+}

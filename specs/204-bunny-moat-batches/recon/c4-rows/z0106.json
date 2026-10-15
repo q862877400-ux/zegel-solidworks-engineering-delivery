@@ -1,0 +1,142 @@
+{
+  "idx": 106,
+  "results": [
+    {
+      "member": "EditRebuild",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Copy_Components_With_Mates_To_Assembly_Example_CSharp.md",
+        "Copy_Components_With_Mates_To_Assembly_Example_VBNET.md",
+        "Display_of_Item_in_Feature_Manager_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把调用写在静态类型为 AssemblyDoc 的变量上，紧跟 CopyWithMates 之后作重建步",
+          "example_quote": "swAssy.EditRebuild();",
+          "example_file": "Copy_Components_With_Mates_To_Assembly_Example_CSharp.md"
+        },
+        {
+          "what": "C++ 示例须先 QueryInterface 到 IID_IAssemblyDoc 才拿得到本成员；同文件另有 Part/Drawing 两个分支属另两个同名成员",
+          "example_quote": "= pModelDoc->QueryInterface(IID_IAssemblyDoc,",
+          "example_file": "Display_of_Item_in_Feature_Manager_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "无 ## Remarks 段；Create_and_Name_Plane 的 Model 声明为 ModelDoc2（该接口无本成员），实为 PartDoc 分支，已排除。"
+    },
+    {
+      "member": "EditRebuild3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Distance_Mates_Example_VB.md",
+        "Add_Explode_Step_Example_VB.md",
+        "Add_Multibody_Part_Explode_Step_Example_CSharp.md",
+        "Add_Watermark_to_Part_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说 in-context of the active document；示例给出具体取法：先取 ActiveDoc 再转型为 ModelDoc2",
+          "example_quote": "swModel = (ModelDoc2)swApp.ActiveDoc;",
+          "example_file": "Add_Watermark_to_Part_Example_CSharp.md"
+        },
+        {
+          "what": "多体零件爆炸示例同样由 ActiveDoc 转 PartDoc 再转 ModelDoc2，四例都满足该前置",
+          "example_quote": "swModel = (PartDoc)swApp.ActiveDoc;",
+          "example_file": "Add_Multibody_Part_Explode_Step_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例均以 ActiveDoc 为源，无一违反该前置；且都丢弃 System.bool 返回值。"
+    },
+    {
+      "member": "EditRebuildAll",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rebuild_All_Configurations_Without_Activating_Each_Configuration_Example_CSharp.md",
+        "Rebuild_All_Configurations_Without_Activating_Each_Configuration_Example_VB.md",
+        "Rebuild_All_Configurations_Without_Activating_Each_Configuration_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks 段；三例均经 swModel.Extension 取得 ModelDocExtension 后调用，文档取自 ActiveDoc。"
+    },
+    {
+      "member": "EditRedo2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Fire_Undo_and_Redo_Pre-_and_Post-notifications_in_Part_Document_Example_CSharp.md",
+        "Fire_Undo_and_Redo_Pre_and_Post-notifications_in_Part_Document_Example_VB6.md",
+        "Fire_Undo_and_Redo_Pre_and_Post-notifications_in_Part_Document_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks 段；三例都以 Steps=1 与 EditUndo2 成对调用，返回 void 不取值。"
+    },
+    {
+      "member": "EditRollback",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Move_Rollback_Bar_Using_Feature_Example_CSharp.md",
+        "Move_Rollback_Bar_Using_Feature_Example_VB.md",
+        "Move_Rollback_Bar_Using_Feature_Example_VBNET.md",
+        "Roll_Back_Model_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页只写 Feature 是 Name of the feature；示例先 SelectByID2 选中 Sweep1，随后传空串作为 Feature",
+          "example_quote": "status = swFeatureMgr.EditRollback((int)swMoveRollbackBarTo_e.swMoveRollbackBarToBeforeFeature, \"\");",
+          "example_file": "Move_Rollback_Bar_Using_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "移到选中特征这一步由同名但不同接口的 IPartDoc::EditRollback 承担，FeatureManager 版只按 Location+Feature 定位",
+          "example_quote": "swPart.EditRollback();",
+          "example_file": "Move_Rollback_Bar_Using_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例说明返回 false 的合法情形：树中无法回滚或前进的项，如 Lighting 或 Annotations 文件夹",
+          "example_quote": "// Do not assert because you may be trying to roll back or roll forward",
+          "example_file": "Roll_Back_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 两句均未被示例证伪；四例都直接调 FeatureManager 的两参版。"
+    },
+    {
+      "member": "EditRoute",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks；两份示例调的是 SWRoutingLib.RouteManager::EditRoute（另一程序集的接口），与 IModelDoc2 无关，全排除。"
+    },
+    {
+      "member": "EditSheet",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Drawing_Sheet_Zones_Example_CSharp.md",
+        "Create_Drawing_Sheet_Zones_Example_VB.md",
+        "Create_Drawing_Sheet_Zones_Example_VBNET.md",
+        "Modify_and_Reload_Sheet_Format_Template_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 说可与 EditTemplate 配用；示例把它当作退出图纸格式编辑的配对调用，其后即 InsertNote 之外的后续处理",
+          "example_quote": "swDrwng.EditSheet();",
+          "example_file": "Modify_and_Reload_Sheet_Format_Template_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 说可与 EditSketch 配用；示例中 EditSheet 之后紧接 EditSketch",
+          "example_quote": "swDraw.EditSheet();",
+          "example_file": "Create_Drawing_Sheet_Zones_Example_CSharp.md"
+        },
+        {
+          "what": "同一示例的 VBA/VBNET 版经声明为 ModelDoc2 的变量 swModel 调用本成员，C# 版则改用 DrawingDoc 变量 swDraw",
+          "example_quote": "swModel.EditSheet",
+          "example_file": "Create_Drawing_Sheet_Zones_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 两句与四例调用序一致，未见冲突；GetEditSheet 在这四例中均未使用。"
+    }
+  ]
+}

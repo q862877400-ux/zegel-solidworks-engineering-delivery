@@ -1,0 +1,99 @@
+{
+  "idx": 235,
+  "results": [
+    {
+      "member": "GetPlane",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Move_Annotations_to_First_Annotation_View_Example_CSharp.md",
+        "Move_Annotations_to_First_Annotation_View_Example_VB.md",
+        "Move_Annotations_to_First_Annotation_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；三例均调用 swAnn.GetPlane()"
+    },
+    {
+      "member": "GetPlaneFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Intersect_Features_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 跳过；job 另两份示例无此调用，只有此例 L383 调用它"
+    },
+    {
+      "member": "GetPlaneFeatures",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Feature_Example_VB.md",
+        "Get_DimXpert_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 跳过；Intersect 例 L472 是 iLineFeature 的同名方法，非本成员"
+    },
+    {
+      "member": "GetPlotCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md",
+        "swmotionstudyapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没写的前置：模型须含名为 PhysSim 的算例且至少一个 motion study plot",
+          "example_quote": "' 1. Open a model that has a COSMOSMotion motion study\n' named PhysSim and at least one COSMOSMotion motion\n' study plot.",
+          "example_file": "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md"
+        },
+        {
+          "what": "示例把返回值当标量直接打印，与 Remarks 的「给 IGetPlotFeatures 定数组大小」用途不同但不冲突",
+          "example_quote": "    Debug.Print \" Number of plots: \" & swCosmosMotionStudyResults.GetPlotCount",
+          "example_file": "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md"
+        }
+      ],
+      "note": "两例都调用但都不调 IGetPlotFeatures；Remarks 与 IGetPlotFeatures 页互证，不矛盾"
+    },
+    {
+      "member": "GetPlusAndMinusTolerance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md",
+        "Get_DimXpert_Tolerance2_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 跳过；四例的接收者是 DimXpertDistanceBetweenDimTol / IDimXpertDimensionTolerance"
+    },
+    {
+      "member": "GetPlusAndMinusToleranceIntraFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md",
+        "Get_DimXpert_Tolerance2_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 跳过；四例均在 CompositeDistanceBetweenData(As DimXpertCompositeDistanceBetweenDimTol) 内调用"
+    },
+    {
+      "member": "GetPoint",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Check_Interference_Between_Two_Bodies_Example_VB.md",
+        "Check_Interference_using_Modeler_CheckInterference_Example_VB.md",
+        "Get_Distance_Between_Entities_Example_CSharp.md",
+        "Get_Distance_Between_Entities_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 跳过；四例均在 IVertex 对象上调用（C# 例有显式 Vertex 转换）"
+    }
+  ]
+}

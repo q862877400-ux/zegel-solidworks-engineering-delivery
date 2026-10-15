@@ -1,0 +1,79 @@
+{
+  "idx": 40,
+  "project": "andrewbartels1",
+  "files_read": 2,
+  "calls": [
+    {
+      "member": "SldWorks",
+      "file": "tests/solidworks_mcp/tools/test_vba_generation.py",
+      "argc": 0,
+      "has_out_variant": false,
+      "evidence": "Set swApp = Application.SldWorks",
+      "official_found": false,
+      "official_signature": "",
+      "official_argc": null,
+      "verdict": "member_not_found",
+      "note": "C:\\swapi\\types 下无 SldWorks.md，也无 IApplication 接口目录；属性读，0 实参"
+    },
+    {
+      "member": "ActiveDoc",
+      "file": "tests/solidworks_mcp/tools/test_vba_generation.py",
+      "argc": 0,
+      "has_out_variant": false,
+      "evidence": "Set swModel = swApp.ActiveDoc",
+      "official_found": true,
+      "official_signature": "System.object ActiveDoc {get;}",
+      "official_argc": 0,
+      "verdict": "match",
+      "note": "官方 ISldWorks.ActiveDoc 为只读属性，签名无形参列表；调用处 0 实参"
+    },
+    {
+      "member": "FeatureExtrusion2",
+      "file": "tests/solidworks_mcp/tools/test_vba_generation.py",
+      "argc": 20,
+      "has_out_variant": false,
+      "evidence": "swModel.FeatureManager.FeatureExtrusion2 True, False, False, 0, 0, 25.0, 0.0, False, False, False, False, 0.0, 0.0, Fals",
+      "official_found": true,
+      "official_signature": "Feature FeatureExtrusion2( System.bool Sd, System.bool Flip, System.bool Dir, System.int T1, System.int T2, System.double D1, System.double D2, System.bool Dchk1, System.bool Dchk2, System.bool Ddir1, System.bool Ddir2, System.double Dang1, System.double Dang2, System.bool OffsetReverse1, System.bool OffsetReverse2, System.bool TranslateSurface1, System.bool TranslateSurface2, System.bool Merge, System.bool UseFeatScope, System.bool UseAutoSelect, System.int T0, System.double StartOffset, System.bool FlipStartOffset )",
+      "official_argc": 23,
+      "verdict": "argc_mismatch",
+      "note": "实参 20 个 vs 官方形参 23 个；evidence 为第 49 行前 120 字（该行共 160 字）"
+    },
+    {
+      "member": "FeatureRevolve2",
+      "file": "tests/solidworks_mcp/tools/test_vba_generation.py",
+      "argc": 17,
+      "has_out_variant": false,
+      "evidence": "swModel.FeatureManager.FeatureRevolve2 True, True, False, False, False, False, 6.28318530717959, 0, False, False, 2",
+      "official_found": true,
+      "official_signature": "Feature FeatureRevolve2( System.bool SingleDir, System.bool IsSolid, System.bool IsThin, System.bool IsCut, System.bool ReverseDir, System.bool BothDirectionUpToSameEntity, System.int Dir1Type, System.int Dir2Type, System.double Dir1Angle, System.double Dir2Angle, System.bool OffsetReverse1, System.bool OffsetReverse2, System.double OffsetDistance1, System.double OffsetDistance2, System.int ThinType, System.double ThinThickness1, System.double ThinThickness2, System.bool Merge, System.bool UseFeatScope, System.bool UseAutoSelect )",
+      "official_argc": 20,
+      "verdict": "argc_mismatch",
+      "note": "实参 17 个 vs 官方形参 20 个；evidence 为第 115 行前 115 字（该行共 156 字）"
+    },
+    {
+      "member": "AddComponent5",
+      "file": "tests/solidworks_mcp/tools/test_vba_generation.py",
+      "argc": 7,
+      "has_out_variant": false,
+      "evidence": "Set swComponent = swAssembly.AddComponent5(\"C:\\\\Parts\\\\bracket.sldprt\", \"\", True, \"\", 0, 0, 0)",
+      "official_found": true,
+      "official_signature": "Component2 AddComponent5( System.string CompName, System.int ConfigOption, System.string NewConfigName, System.bool UseConfigForPartReferences, System.string ExistingConfigName, System.double X, System.double Y, System.double Z )",
+      "official_argc": 8,
+      "verdict": "argc_mismatch",
+      "note": "实参 7 个 vs 官方形参 8 个；官方 ISldWorks 页无同名重载"
+    },
+    {
+      "member": "CreateDrawViewFromModelView3",
+      "file": "tests/solidworks_mcp/tools/test_vba_generation.py",
+      "argc": 5,
+      "has_out_variant": false,
+      "evidence": "Set swView = swDrawing.CreateDrawViewFromModelView3(\"C:\\\\Models\\\\part.sldprt\", \"*Front\", 0.1, 0.1, 0)",
+      "official_found": true,
+      "official_signature": "View CreateDrawViewFromModelView3( System.string ModelName, System.string ViewName, System.double LocX, System.double LocY, System.double LocZ )",
+      "official_argc": 5,
+      "verdict": "match",
+      "note": "实参 5 个与官方形参 5 个一致"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "idx": 83,
+  "results": [
+    {
+      "member": "D2EndConditionType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base_Flange_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先设 OffsetDirections = 2 打开方向2，再设类型并配距离；页面只说类型枚举",
+          "example_quote": "        swBaseFlangeFeat.OffsetDirections = 2\n        swBaseFlangeFeat.D2EndConditionType = 1\n        swBaseFlangeFeat.D2EndConditionDistance = 0.05",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "页面 Returns 引 swFlangeOffsetTypes_e（offset 枚举）却名为 EndConditionType"
+    },
+    {
+      "member": "D2InstanceCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "3 份示例对象均为 LocalCurvePatternFeatureData，非本接口 ⇒ 按规则不采用"
+    },
+    {
+      "member": "D2IsEqualSpaced",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "3 份示例对象均为 LocalCurvePatternFeatureData，非本接口 ⇒ 按规则不采用"
+    },
+    {
+      "member": "D2OffsetDistance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体值 0.001 并与 D2OffsetType、D2ReverseOffset 连写；页面无单位无示例值",
+          "example_quote": "    featDef.D2OffsetDistance = 0.001\n    featDef.D2OffsetType = 1\n    featDef.D2ReverseOffset = True",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        }
+      ],
+      "note": "页面标 Obsolete→D2EndConditionDistance；本示例仍用旧名，另一示例用新名"
+    },
+    {
+      "member": "D2OffsetType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 D2OffsetDistance 之后紧接着赋常量 1；页面只说见 swFlangeOffsetTypes_e",
+          "example_quote": "    featDef.D2OffsetDistance = 0.001\n    featDef.D2OffsetType = 1\n    featDef.D2ReverseOffset = True",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        }
+      ],
+      "note": "页面标 Obsolete→D2EndConditionType；本示例仍用旧名，另一示例用新名"
+    },
+    {
+      "member": "D2PatternSeedOnly",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例：3 份 LocalCurvePatternFeatureData、1 份 LinearPatternFeatureData ⇒ 全不可用"
+    },
+    {
+      "member": "D2ReverseDirection",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例：3 份 LocalCurvePatternFeatureData、1 份 LinearPatternFeatureData ⇒ 全不可用"
+    }
+  ]
+}

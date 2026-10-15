@@ -1,0 +1,91 @@
+{
+  "idx": 360,
+  "results": [
+    {
+      "member": "Margins",
+      "remarks_empty": true,
+      "examples_actually_used": ["Create_Fill_Pattern_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IFillPatternFeatureData.Margins.md 无 ## Remarks 段；示例确有 Margins 引用，按纪律跳过比较。"
+    },
+    {
+      "member": "Mark",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员为 IPropertyManagerPageSelectionbox.Mark。列出的 4 份示例均无 Selectionbox，只用 SelectData.Mark，属另一接口；页面自带 Examples 指向 Select_Multiple_Objects_for_Selection_Boxes_*（不在本任务清单）。"
+    },
+    {
+      "member": "MarkedForDrawing",
+      "remarks_empty": true,
+      "examples_actually_used": ["Determine_if_Display_Dimension_Marked_for_Drawing_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IDisplayDimension.MarkedForDrawing.md 无 ## Remarks 段；示例确有引用，按纪律跳过比较。"
+    },
+    {
+      "member": "MaskType",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_Mask_Types_of_Each_Decal_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IDecal.MaskType.md 无 ## Remarks 段（取值表在 Returns 里）；示例确有引用，按纪律跳过比较。"
+    },
+    {
+      "member": "Mass",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+        "Get_Mass_Properties_Using_IMassProperty_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "If [[IMassPropertyOverrideOptions::OverrideMass]] is true or [[IMassProperty2::IncludeHiddenBodiesOrComponents]] is reset, then call [[IMassProperty2::Recalculate]] before using this property.",
+          "example_quote": "OvProp.OverrideMass = true;\n...\nval = MyMassProp.Mass;",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+          "why": "示例把 OverrideMass 置 true 后未调 Recalculate 就读 Mass；Recalculate 只出现在后面的 SetOverrideOptions 之后。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 Mass 的正确读序：同一对象先读一次基线，SetOverrideOptions+Recalculate 后再读对比；页面未说明。",
+          "example_quote": "MyMassProp.SetOverrideOptions(OvProp, (int)swInConfigurationOpts_e.swThisConfiguration, null);\nMyMassProp.Recalculate();",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        },
+        {
+          "what": "示例用 UseSystemUnits 决定读数单位口径；页面 Returns 只写「Mass」，未给单位。",
+          "example_quote": "// Use document property units (MKS)\nMyMassProp.UseSystemUnits = false;",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        }
+      ],
+      "note": "另两份 Multibody 示例声明的是 MassProperty（CreateMassProperty），非 MassProperty2，故未计入；C:\\swapi\\types 下无 IMassProperty 目录。"
+    },
+    {
+      "member": "MassPerUnitLength",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "ICosmeticWeldBeadFolder.MassPerUnitLength.md 无 ## Remarks 段；3 份示例均确有引用，按纪律跳过。"
+    },
+    {
+      "member": "MatchType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VB.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "ITessellation.MatchType.md 无 ## Remarks 段（枚举指向在 Returns）；3 份示例均确有引用，按纪律跳过。"
+    }
+  ]
+}

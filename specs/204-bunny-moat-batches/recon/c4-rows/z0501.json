@@ -1,0 +1,103 @@
+{
+  "idx": 501,
+  "results": [
+    {
+      "member": "TotalCost",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规则跳过；三例均经 GetWeldBeadFolder 取到 swWeldFolder 后读取。"
+    },
+    {
+      "member": "TotalInstances",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Bidirectional_Circular_Pattern_Feature_Example_CSharp.md",
+        "Create_Bidirectional_Circular_Pattern_Feature_Example_VB.md",
+        "Create_Bidirectional_Circular_Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出方向1与方向2的差别：方向1的 TotalInstances 无条件读取，方向2才放进 If Direction2 守卫；成员页未写这一差别。",
+          "example_quote": "            Debug.Print(\"Direction 1:\");\n            Debug.Print(\"  Equal spacing: \" + swCircularPatternFeatureData.EqualSpacing);\n            Debug.Print(\"  Spacing: \" + swCircularPatternFeatureData.Spacing);\n            Debug.Print(\"  Total instances: \" + swCircularPatternFeatureData.TotalInstances);\n            if (swCircularPatternFeatureData.Direction2 == true)\n            {\n                Debug.Print(\"Direction 2:\");",
+          "example_file": "Create_Bidirectional_Circular_Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只是一句指向 Selections that Define Features 的指引，无实质前置可与示例冲突。Create_Local_Circular_Pattern_Example_CSharp.md 里的 TotalInstances 属 ILocalCircularPatternFeatureData，非本成员，已排除。"
+    },
+    {
+      "member": "TotalInstances2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Bidirectional_Circular_Pattern_Feature_Example_CSharp.md",
+        "Create_Bidirectional_Circular_Pattern_Feature_Example_VB.md",
+        "Create_Bidirectional_Circular_Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is only available when: - [[ICircularPatternFeatureData::Direction2]] is true, and - [[ICircularPatternFeatureData::Symmetric]] is false.",
+          "example_quote": "            if (swCircularPatternFeatureData.Direction2 == true)\n            {\n                Debug.Print(\"Direction 2:\");\n                Debug.Print(\"  Symmetric: \" + swCircularPatternFeatureData.Symmetric);\n                Debug.Print(\"  Equal spacing: \" + swCircularPatternFeatureData.EqualSpacing2);\n                Debug.Print(\"  Spacing: \" + swCircularPatternFeatureData.Spacing2);\n                Debug.Print(\"  Total instances: \" + swCircularPatternFeatureData.TotalInstances2);\n            }",
+          "example_file": "Create_Bidirectional_Circular_Pattern_Feature_Example_CSharp.md",
+          "why": "Remarks 要求 Direction2 为真且 Symmetric 为假；示例只用 Direction2 一条守卫，Symmetric 仅打印不判断，Symmetric 为真时仍会读它。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "VBA 与 VB.NET 两份同形，守卫完全一致；冲突三例同源，此处记 C# 一条。"
+    },
+    {
+      "member": "TotalLength",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规则跳过。Measure_Selected_Entities_Example_CSharp.md 的 TotalLength 属 IMeasure（swMeasure），非本成员，已排除。"
+    },
+    {
+      "member": "TotalMass",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规则跳过；三例读取点逐字相同（附带 lb 单位字符串）。"
+    },
+    {
+      "member": "TotalNumber",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规则跳过；签名虽为 System.double，语义是计数，示例未另行说明。"
+    },
+    {
+      "member": "TotalRebuildTime",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_CSharp.md",
+        "Get_Part's_Feature_Statistics_Example_VB.md",
+        "Get_Part's_Feature_Statistics_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Returns/Examples/See Also），按规则跳过；三例均先 Refresh() 再读。"
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "idx": 77,
+  "results": [
+    {
+      "member": "CurvatureContinuous",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Data_for_Simple_Fillet_Example_CSharp.md",
+        "Get_Data_for_Simple_Fillet_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 GetDefinition() 后直接读该属性，同批打印其它属性，全程未调 AccessSelections；Remarks 未提选择访问。",
+          "example_quote": "Debug.Print(\"   Curvature continuous? \" + swFillet.CurvatureContinuous);",
+          "example_file": "Get_Data_for_Simple_Fillet_Example_CSharp.md"
+        }
+      ],
+      "note": "另两份 Curvature 变量圆角示例实调 IVariableFilletFeatureData2，已排除。"
+    },
+    {
+      "member": "CurveTag",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Edge_Curve_Parameterization_Example_CSharp.md",
+        "Get_Edge_Curve_Parameterization_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取得路径：先由所选 Edge 调 GetCurveParams3() 得 CurveParamData，再读 CurveTag。",
+          "example_quote": "swCurveParaData = (CurveParamData)swEdge.GetCurveParams3();",
+          "example_file": "Get_Edge_Curve_Parameterization_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段（只有 Returns 与 See Also），按纪律跳过冲突判定。"
+    },
+    {
+      "member": "CurveType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Edge_Curve_Parameterization_Example_CSharp.md",
+        "Get_Edge_Curve_Parameterization_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它当枚举 int 打印，并在打印串里写 swCurveType_e；成员页 Returns 写的是 swCurveTypes_e（C:\\swapi\\enums 下确为复数）。",
+          "example_quote": "Debug.Print(\"The curve type as defined in swCurveType_e is: \" + swCurveParaData.CurveType);",
+          "example_file": "Get_Edge_Curve_Parameterization_Example_CSharp.md"
+        }
+      ],
+      "note": "无 Remarks 故跳过冲突。Get_Style_Spline 两份走 ISketchSpline.CurveType，已排除。"
+    },
+    {
+      "member": "CurvesAsSketches",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Specify_IGES_Levels_and_Values,_Then_Import_IGES_File_Example_VB.md",
+        "Specify_IGES_Levels_and_Values_Then_Import_IGES_File_Example_CSharp.md",
+        "Specify_IGES_Levels_and_Values_Then_Import_IGES_File_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体置位次序：先 IncludeSurfaces、再 IncludeCurves = True，之后才置本属性；随行注释补充 False 时的行为。",
+          "example_quote": "importData.CurvesAsSketches = True ' False = Curves as Curves",
+          "example_file": "Specify_IGES_Levels_and_Values,_Then_Import_IGES_File_Example_VB.md"
+        }
+      ],
+      "note": "三份示例都与 Remarks 一致（都先置 IncludeCurves=True），未构成冲突。"
+    },
+    {
+      "member": "CustomInfo2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "List_Custom_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它当带两个下标的属性调用（配置名 + 属性名），取回的是 Text 显示文本；成员页是残页，连签名与 Returns 都没有。",
+          "example_quote": "Debug.Print \" Text = \" & swModel.CustomInfo2(vConfigName, vCustInfoName)",
+          "example_file": "List_Custom_Properties_Example_VB.md"
+        }
+      ],
+      "note": "成员页仅 10 行（只有 front matter 与标题），无 Remarks/Returns/Examples。"
+    },
+    {
+      "member": "CustomProperties",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份示例全调 IMirrorPartFeatureData.CustomProperties，非本接口，实际未用。"
+    },
+    {
+      "member": "CustomPropertyManager",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例走 IFeature 与 IConfiguration 的同名成员，均非 IComponent2，实际未用。"
+    }
+  ]
+}

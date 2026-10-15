@@ -1,31 +1,71 @@
 {
+  "started": "2026-10-07 18:24:29",
+  "solidworks_revision": "34.4.1",
+  "verdict": "pass",
   "steps": {
+    "build_part": {
+      "title": "零件1",
+      "size_mm": [
+        100,
+        60,
+        20
+      ]
+    },
     "get_costing_manager": {
       "ok": true
     },
-    "evidence": {
-      "ok": true,
-      "preview": "{'ok': True, 'readback': {'body_count': 1, 'has_cost_analysis': True}}"
+    "templates": {
+      "0": {
+        "count": 2,
+        "pathnames": [
+          "c:\\programdata\\solidworks\\solidworks 2026\\lang\\chinese-simplified\\costing templates\\multibodytemplate_default(englishstandard).sldctc",
+          "c:\\programdata\\solidworks\\solidworks 2026\\lang\\chinese-simplified\\costing templates\\multibodytemplate_default(metric).sldctc"
+        ]
+      },
+      "1": {
+        "count": 2,
+        "pathnames": [
+          "c:\\programdata\\solidworks\\solidworks 2026\\lang\\chinese-simplified\\costing templates\\sheetmetaltemplate_default(metric).sldcts",
+          "c:\\programdata\\solidworks\\solidworks 2026\\lang\\chinese-simplified\\costing templates\\sheetmetaltemplate_default(englishstandard).sldcts"
+        ]
+      }
     },
-    "body_count": {
-      "ok": true,
-      "preview": "{'ok': True, 'body_count': 1}"
+    "defaults": {
+      "template_name_0": "c:\\programdata\\solidworks\\solidworks 2026\\lang\\chinese-simplified\\costing templates\\multibodytemplate_default(englishstandard).sldctc",
+      "material_name_0": "普通碳钢",
+      "material_class_0": "钢",
+      "manufacturing_method_0": 0
     },
-    "list_bodies": {
-      "ok": true,
-      "preview": "{'ok': True, 'count': 1, 'names': ['?']}"
+    "bodies": {
+      "count": 1
     },
-    "list_templates": {
-      "ok": false,
-      "preview": "{'ok': False, 'error': 'AttributeError: <unknown>.GetTemplatePathnames'}"
+    "cost_analysis": {
+      "template": "c:\\programdata\\solidworks\\solidworks 2026\\lang\\chinese-simplified\\costing templates\\machiningtemplate_default(englishstandard).sldctm",
+      "costing_type": 0,
+      "lot_size": 100,
+      "total_quantity": 100,
+      "markup_type": 2,
+      "markup_percent": 0.0,
+      "currency_code": "USD",
+      "currency_name": "美元",
+      "currency_separator": ".",
+      "length_unit": 1,
+      "mass_unit": 1,
+      "unit_system": 1,
+      "material_cost": 3.2714499345031918,
+      "manufacturing_cost": 0.0,
+      "setup_cost": 0.0,
+      "total_to_manufacture": 3.2714499345031918,
+      "total_to_charge": 3.2714499345031918
     },
-    "read_analysis": {
-      "ok": true,
-      "preview": "{'ok': True, 'readback': {'template': 'c:\\\\programdata\\\\solidworks\\\\solidworks 2026\\\\lang\\\\chinese-simplified\\\\costing t"
+    "close": {
+      "ok": true
     }
   },
-  "captured_at": "2026-10-02T13:28:34",
-  "passed": 5,
-  "of": 6,
-  "verdict": "partial"
+  "assertions": {
+    "total_to_manufacture_gt_0": true,
+    "costing_type_is_a_real_value": true,
+    "template_is_a_costing_template": true
+  },
+  "finished": "2026-10-07 18:24:39"
 }

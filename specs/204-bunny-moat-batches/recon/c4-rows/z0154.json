@@ -1,0 +1,143 @@
+{
+  "idx": 154,
+  "results": [
+    {
+      "member": "GetBoundingBoxDirection4",
+      "remarks_empty": false,
+      "examples_actually_used": ["Slice_a_Model_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置要求把文档单位改成 MKS，且写入 -0.1397 ⇒ Returns 里那个无单位区间按文档长度单位(米)计，成员页只给区间不给单位。",
+          "example_quote": "// 2. Change units to MKS.",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出 Remarks 那句 pre-selected 的具体做法：先 SelectByID2 选中 Front Plane 当第一切片面，再取 SlicingData 读该值。",
+          "example_quote": "boolstatus = modDoc.Extension.SelectByID2(\"Front Plane\", \"PLANE\", 0, 0, 0, false, 0, null/* TODO Change to default(_) if this is not a reference type */, 0);",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "示例调用顺序与 Remarks 的前置一致；-0.1397 落在 Returns 给的区间内。"
+    },
+    {
+      "member": "GetBoundingEntitiesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Planar_Surface_Feature_Example_CSharp.md",
+        "Create_Planar_Surface_Feature_Example_VB.md",
+        "Create_Planar_Surface_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 count 当 BoundingEntities 属性的遍历上界，而 Remarks 只说它用于给 IGetBoundingEntities 定数组大小。",
+          "example_quote": "for (i = 0; i <= swPlane.GetBoundingEntitiesCount() - 1; i++) {",
+          "example_file": "Create_Planar_Surface_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例读该数据前需先选中 REFSURFACE、取 GetDefinition 并 AccessSelections，成员页没写这串前置。",
+          "example_quote": "boolStatus = swPlane.AccessSelections(Part, null);",
+          "example_file": "Create_Planar_Surface_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三种语言示例调用一致，且与 BoundingEntities 属性配对使用。"
+    },
+    {
+      "member": "GetBox",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Assembly_Bounding_Box_Using_Assembly_Example_CSharp.md",
+        "Get_Assembly_Bounding_Box_Using_Assembly_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值乘 1000 再标 mm ⇒ 单位是米；成员页全篇未声明 GetBox 返回值的单位。",
+          "example_quote": "Debug.Print(\"  (\" + Str(X_min * 1000.0#) + \",\" + Str(Y_min * 1000.0#) + \",\" + Str(Z_min * 1000.0#) + \") mm\")",
+          "example_file": "Get_Assembly_Bounding_Box_Using_Assembly_Example_VBNET.md"
+        },
+        {
+          "what": "示例给出 Options 的具体枚举值，成员页只说「见 swBoundingBoxOptions_e」。",
+          "example_quote": "Box = (object)swAssy.GetBox((int)swBoundingBoxOptions_e.swBoundingBoxIncludeRefPlanes);",
+          "example_file": "Get_Assembly_Bounding_Box_Using_Assembly_Example_CSharp.md"
+        }
+      ],
+      "note": "另两份 Using Components 示例调的是 IComponent2.GetBox，按规则不计入本页。"
+    },
+    {
+      "member": "GetBreakLineCount2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Break_Line_Data_Example_CSharp.md",
+        "Get_Break_Line_Data_Example_VB.md",
+        "Get_Break_Line_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 说 Size 给 IGetBreakLines 定长；示例显示 Size 就是 GetBreakLineInfo2 返回数组的总长度，数据从下标 10 起。",
+          "example_quote": "for (j = 10; j <= Size - 1; j++)",
+          "example_file": "Get_Break_Line_Data_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 强调有断线≠已断开、要看 IsBroken；示例只把 Breaks==0 当有无数据的闸门，并未调 IsBroken。",
+          "example_quote": "if (!(Breaks == 0))",
+          "example_file": "Get_Break_Line_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "参数说明(指向 GetBreakLineInfo2)与第三条 Remarks(指向 IGetBreakLines)不一致，属页内问题，非与示例冲突。"
+    },
+    {
+      "member": "GetBreakLineInfo2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Break_Line_Data_Example_CSharp.md",
+        "Get_Break_Line_Data_Example_VB.md",
+        "Get_Break_Line_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把整个返回强转 Double[] 并按下标 0..9 读通用字段、10 起读几何数据；Remarks 只列字段顺序，未给下标与元素类型。",
+          "example_quote": "infoArray = (Double[])info;",
+          "example_file": "Get_Break_Line_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例只读一次通用字段(0..9)，其余按下标 10 到 Size-1 全当几何数据 ⇒ 通用字段不按 break 重复。",
+          "example_quote": "for (j = 10; j <= Size - 1; j++)",
+          "example_file": "Get_Break_Line_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "示例读到的 10 个通用字段含义与 Remarks 的数组布局逐项对上。"
+    },
+    {
+      "member": "GetBreakOutSectionCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Broken_Out_Section_Feature_Data_Example_CSharp.md",
+        "Get_Broken_Out_Section_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 说 count 用来给 IGetBreakOutSections 定数组大小；示例改用返回数组自身的 GetUpperBound 遍历。",
+          "example_quote": "for (K = varBS.GetLowerBound(0); K <= varBS.GetUpperBound(0); K++)",
+          "example_file": "Get_Broken_Out_Section_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "count 先于 GetBreakOutSections 被调用，与 Remarks 的先后要求一致。"
+    },
+    {
+      "member": "GetBreakOutSections",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Broken_Out_Section_Feature_Data_Example_CSharp.md",
+        "Get_Broken_Out_Section_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "该页没有 ## Remarks 段，按规则跳过冲突判定。"
+    }
+  ]
+}

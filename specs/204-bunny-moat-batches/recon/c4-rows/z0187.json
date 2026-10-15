@@ -1,0 +1,150 @@
+{
+  "idx": 187,
+  "results": [
+    {
+      "member": "GetErrorCodes",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md",
+        "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在赋完 Path/Profile 之后、建特征之前先调一次，取的是『定义阶段』的错误码；页面的 creation/modification 措辞没写这一层。",
+          "example_quote": "Debug.Print(\"Swept flange definition error code: \" + System.Convert.ToString(errCode));",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        },
+        {
+          "what": "CreateFeature 之后再调一次，同一方法名在两个时点语义不同：definition 错误 vs creation 错误。",
+          "example_quote": "Debug.Print(\"Swept flange creation error code: \" + System.Convert.ToString(errCode));",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "页无 Remarks 段，按纪律跳过冲突判定；两份示例都真调用该成员，返回值只被 Debug.Print 打印，未与 swSweptFlangeError_e 比对。"
+    },
+    {
+      "member": "GetErrorMessages",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Messages_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只说『调用后栈被清空』；示例的前置给出怎样先攒出非空消息栈——不重建零件、不保存装配。",
+          "example_quote": "' 2. Open, edit, close, and save a part in the assembly,\n' but do not rebuild the part.",
+          "example_file": "Get_Messages_Example_VB.md"
+        }
+      ],
+      "note": "两侧无矛盾：≤20 条、MsgTypes 为 MS 消息框常量位掩码、调用即清栈，示例与 Remarks 完全对得上，故 conflicts 为空。"
+    },
+    {
+      "member": "GetExplodeStep",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Explode_Step_Example_CSharp.md",
+        "Get_Explode_Step_Example_VB.md",
+        "Add_Explode_Step_Example_VB.md",
+        "Edit_Radial_Explode_Step_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Before calling this method, call [[IConfiguration::GetNumberOfExplodeSteps]] to get the number of explode steps in the explode step sequence.",
+          "example_quote": "swExplodeStep = (ExplodeStep)swConfiguration.GetExplodeStep(0);",
+          "example_file": "Get_Explode_Step_Example_CSharp.md",
+          "why": "Remarks 把 GetNumberOfExplodeSteps 列为调用前必做，四份官方示例却都直接取索引 0，从未调过它。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出让步骤序列必然存在的办法：先 AutoExplode 再取索引 0；两份 Get 示例则把『已带爆炸视图』当前置。",
+          "example_quote": "Call swModel.AutoExplode",
+          "example_file": "Add_Explode_Step_Example_VB.md"
+        }
+      ],
+      "note": "只报一处差异；Add/Edit 两份示例同样是 AutoExplode 后直接 GetExplodeStep(0)，同样没调 GetNumberOfExplodeSteps。"
+    },
+    {
+      "member": "GetExplodedViewConfigurationName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Exploded_Views_for_Configuration_Example_CSharp.md",
+        "Get_Exploded_Views_for_Configuration_Example_VB.md",
+        "Get_Exploded_Views_for_Configuration_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ExplodedViewName 的来源：先取指定配置下的视图名数组再逐个传入；页面的参数表没说这名字从哪来。",
+          "example_quote": "viewNames = (string[])swAssembly.GetExplodedViewNames2(activeConfigName);",
+          "example_file": "Get_Exploded_Views_for_Configuration_Example_CSharp.md"
+        }
+      ],
+      "note": "页无 Remarks 段，跳过冲突判定。Add_Multibody_Part_Explode_Step_Example_CSharp.md 用的是 IPartDoc 同名成员（带配置名形参），非本成员，已排除。"
+    },
+    {
+      "member": "GetExplodedViewCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Exploded_Views_Example_CSharp.md",
+        "Create_Exploded_Views_Example_VB.md",
+        "Create_Exploded_Views_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都先循环建 5 个爆炸视图、再读数量；页面只说返回爆炸视图数，没说必须先建、也没说读的是活动配置。",
+          "example_quote": "Debug.Print(\"Number of exploded views created:  \" + swAssembly.GetExplodedViewCount());",
+          "example_file": "Create_Exploded_Views_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只是交叉引用表，无实质前置；页标 Obsolete 但三份官方示例仍调用它——废弃≠不可达，不构成矛盾，故 conflicts 为空。"
+    },
+    {
+      "member": "GetExplodedViewCount2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Exploded_Views_for_Configuration_Example_CSharp.md",
+        "Get_Exploded_Views_for_Configuration_Example_VB.md",
+        "Get_Exploded_Views_for_Configuration_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例说明 ConfigurationName 传的是活动配置名，且要先对同一配置连建 5 个爆炸视图；页面只写『配置名』。",
+          "example_quote": "Debug.Print(\"  Number of exploded views created: \" + swAssembly.GetExplodedViewCount2(activeConfigName));",
+          "example_file": "Get_Exploded_Views_for_Configuration_Example_CSharp.md"
+        }
+      ],
+      "note": "页无 Remarks 段，跳过冲突判定；三份示例对该成员的用法彼此一致，也没有与页面冲突之处。"
+    },
+    {
+      "member": "GetExplodedViewNames",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Exploded_Views_Example_CSharp.md",
+        "Create_Exploded_Views_Example_VB.md",
+        "Create_Exploded_Views_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Array of strings of the names of the exploded views in the active configuration",
+          "example_quote": "vViewName = (object[])swAssembly.GetExplodedViewNames();",
+          "example_file": "Create_Exploded_Views_Example_CSharp.md",
+          "why": "页面说返回字符串数组，C# 示例声明 object[]、接成 object[] 且逐元素 (string) 转换；而后继 Names2 的示例接成 string[]。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把每个返回项直接喂给 ShowExploded2，说明返回值即可直接使用的视图名字符串，无需二次解析。",
+          "example_quote": "swAssembly.ShowExploded2(true, sViewName);",
+          "example_file": "Create_Exploded_Views_Example_CSharp.md"
+        }
+      ],
+      "note": "Add_Multibody_Part_Explode_Step_Example_CSharp.md 调的是 IPartDoc.GetExplodedViewNames(string)，同名不同对象，已排除；只报返回形态一处。"
+    }
+  ]
+}

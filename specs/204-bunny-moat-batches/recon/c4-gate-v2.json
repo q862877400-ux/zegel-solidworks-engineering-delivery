@@ -1,0 +1,117 @@
+{
+  "role": "V2",
+  "attacked": 13,
+  "counterexamples": [
+    {
+      "member": "SetupSheet6",
+      "why": "示例调用的 SetSheetsSelected 就是 Remarks 要求的那一步；页面写 SetSelectedSheets 是官方笔误。另一条 unit_diff 也反了：示例注释写「9 zones」且实参 ZoneRow=3 ZoneCol=3，正好等于 Remarks 的乘积公式。",
+      "evidence": "页 IDrawingDoc/SetupSheet6.md Remarks:「To modify the setups of multiple drawing sheets with just one call to IDrawingDoc::SetupSheet6, call [[IDrawingDoc::SetSelectedSheets]] before calling IDrawingDoc::SetupSheet6.」/「Multiplying ZoneRow by ZoneCol equals the total number of zones…」；例 Create_Drawing_Sheet_Zones_Example_VB.md:59「' Modify Test to have 9 zones」+ 实参「…, 0.5, 0.5, 0.5, 0.5, 3, 3)」；例 Modify_Multiple_Drawing_Sheets_Setups_Example_CSharp.md「swDrawing.SetSheetsSelected(sheetNameArray);」；真页 IDrawingDoc/SetSheetsSelected.md「Sets the specified drawing sheets whose setups to modify. … After calling this method, call [[IDrawingDoc::SetupSheet6]]」（接口目录内只有 SetSheetsSelected.md，无 SetSelectedSheets.md）"
+    },
+    {
+      "member": "Penetration",
+      "why": "示例把 Penetration 放在 Else 分支里读，即 UseRestitutionCoefficient 为假时——正是 Remarks 要求的前提。判据只按关键词命中，没看分支极性。",
+      "evidence": "页 ISimulation3DContactFeatureData/Penetration.md Remarks 逐字:「Available only when [[ISimulation3DContactFeatureData::UseRestitutionCoefficient]] and [[ISimulation3DContactFeatureData::SpecifyMaterial]] are both false.」；例 Create_3DContact_Feature_Example_VB.md:78 起「If swContFeat.UseRestitutionCoefficient Then … Else … Debug.Print \"    Penetration at which maximum damping is applied: \" & swContFeat.Penetration」（C#/VB.NET 两份同型）"
+    },
+    {
+      "member": "GetLeaderPointsAtIndex",
+      "why": "示例先按引线样式算点数再 ReDim 出正确长度的数组，正是 Remarks 规定的前置；agent 引的 ReDim 行与调用行只隔 4 行，属行窗口误判。",
+      "evidence": "页 IAnnotation/GetLeaderPointsAtIndex.md Remarks 逐字:「Use [[IAnnotation::GetLeaderStyle]] to determine the number of points in the leader. … If IAnnotation::GetLeaderStyle returns swBENT, then the number of points = 3.」/「you must determine the number of points to allocate the appropriate size array」；例 Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md:124-133「If True = swAnn.GetBentLeader Then / nNumPts = 3 / Else / nNumPts = 2 / End If / vLeaderPt = swAnn.GetLeaderPointsAtIndex(i) / … / ReDim leaderPt(nNumPts) As Double」"
+    },
+    {
+      "member": "UseDefaultBendRelief",
+      "why": "被当成例证的那一行是 VBNET 里以单引号开头的注释块；生效代码只 Debug.Print 读它，而 Remarks 禁的只是「改」，不禁「读」。",
+      "evidence": "页 IBaseFlangeFeatureData/UseDefaultBendRelief.md Remarks 逐字:「Whether to use the default bend relief was set during the [[initialization]] of this base flange and cannot be changed.」；例 Create_Base_Flange_Feature_Example_VBNET.md:76-85 全为注释「'Initialize( / 'UseDefaultBendRelief=False, / …」，生效行 86 为「Call swBaseFlangeFeat.Initialize(False, False, cba, False, swSheetMetalReliefTypes_e.swSheetMetalReliefRectangular, True, 0.8, 0#, 0#)」，其后 90 行只「Debug.Print \"Use default bend relief? \" & baseFlangeFeatData.UseDefaultBendRelief」"
+    },
+    {
+      "member": "UseDefaultBendAllowance",
+      "why": "同上：引文是注释行，生效代码是 Initialize 的实参 + 只读回显，与 Remarks 完全一致。",
+      "evidence": "页 IBaseFlangeFeatureData/UseDefaultBendAllowance.md Remarks 逐字:「Whether to use the default bend allowance is set during the initialization of this base flange and cannot be changed.」；例 Create_Base_Flange_Feature_Example_VBNET.md:78「'UseDefaultBendAllowance=False,」为注释；生效行「Call swBaseFlangeFeat.Initialize(False, False, cba, False, …)」后接「Debug.Print \"Use default bend allowance? \" & baseFlangeFeatData.UseDefaultBendAllowance」"
+    },
+    {
+      "member": "ShowChildComponentsInBOM",
+      "why": "引文是示例的 Preconditions 注释「Open a part…」，不是对该成员的断言；代码只读一次，而 Remarks 明写读零件配置就返回 false。",
+      "evidence": "页 IConfiguration/ShowChildComponentsInBOM.md Remarks 逐字:「This property applies only to assembly configurations. SOLIDWORKS always returns false when you get this property on a part configuration.」；例 Change_Configuration_Properties_Example_VB.md:12 注释「' 1. Open a part that contains one or more configurations.」，生效行 63「Debug.Print \"ShowChildComponentsInBOM \", thisConfig.ShowChildComponentsInBOM」；另一例 Traverse_Hierarchy_of_Configurations_Example_VB.md 的引文「Open a part or assembly.」同样只是 Preconditions 注释"
+    },
+    {
+      "member": "SetSheetScale",
+      "why": "Remarks 禁的是「导入到零件草图」即 swImportDxfDwg_ImportToPartSketch；示例用的是 ImportToExistingPart，是另一个枚举成员，页面并未禁止。属把 ExistingPart 误读成 part sketch。",
+      "evidence": "页 IImportDxfDwgData/SetSheetScale.md Remarks 逐字:「This method only supports importing to a drawing; it does not support importing to a part sketch.」；枚举 swImportDxfDwg_ImportMethod_e.md 逐字「swImportDxfDwg_ImportToExistingPart | 4 = Import this sheet (layout) into an existing part」「swImportDxfDwg_ImportToPartSketch | 2 = Import this sheet (layout) into a sketch in a new part」；例 Insert_DXF_File_and_Add_Dimensions_Example_CSharp.md 先「importData.SetSheetScale(\"\", 1.0, 2.0);」再「importData.set_ImportMethod(\"\", (int)swImportDxfDwg_ImportMethod_e.swImportDxfDwg_ImportToExistingPart);」"
+    },
+    {
+      "member": "UpperText",
+      "why": "跨接口同名撞车，不是 Remarks/示例矛盾。示例变量是 StackedBalloonOptions，IStackedBalloonOptions 另有同名 UpperText；按本流水线自己的口径（见 AccessSelections 条「名字撞车，无可比示例」）应剔出。",
+      "evidence": "页 IAutoBalloonOptions/UpperText.md / IStackedBalloonOptions/UpperText.md 两页并存（接口目录均存在）；例 Add_Balloon_to_Stacked_Balloon_Example_VB.md 逐字「Dim swStackedBalloons As SldWorks.StackedBalloonOptions」与「swStackedBalloons.UpperText = \"\"\"\"\"」；对照 c4_merged.json 中 AccessSelections 条 note「属名字撞车，无可比示例」"
+    },
+    {
+      "member": "ViewCollapseAssembly",
+      "why": "示例先 AutoExplode 再 ViewCollapseAssembly，正是 Remarks 说的「配对使用来 toggle 显示」；直接调用并不违反任何前提。属把方法描述句当硬前置。",
+      "evidence": "页 IAssemblyDoc/ViewCollapseAssembly.md Remarks 逐字:「Use this method with [[IAssemblyDoc::ViewExplodeAssembly]] to toggle the display of the exploded assembly view.」；例 Access_Assembly_Example_CPlusPlus_COM.md 逐字「hres = swAssemblyDoc->AutoExplode(&retVal);」紧接「hres = swAssemblyDoc->ViewCollapseAssembly();」"
+    },
+    {
+      "member": "GetStartVertex",
+      "why": "Remarks 否认的是「可预测」先后，不是「同一会话内取到就可用」。示例拿到 ver1 后是就这个顶点读半径，未依赖顶点顺序，属措辞角度不同。",
+      "evidence": "页 IEdge/GetStartVertex.md Remarks 逐字:「Because edges have no natural direction, you cannot necessarily predict which of the two points you will get first and which last.」；例 Create_Asymmetric_Elliptic_Fillets_Example_VB.md:77-79「Set ver1 = swedge.GetStartVertex / If ver1 Is Nothing Then ErrorMsg … / Set ver2 = swedge.GetEndVertex」，随后「AsyRadius1 = swFeatData.GetRadius2(ver1, True)」"
+    }
+  ],
+  "more_specific_false": [
+    {
+      "member": "ScaleDraftEdges",
+      "member_page_actually_says": "Remarks 逐字：「This property is only valid when [[IPageSetup::HighQuality]] is set to true.」示例只是把同一条前置写成 if/else 守卫，agent 自己的 note 也承认「与 Remarks 前置同样的写法」，仍计入 more_specific。"
+    },
+    {
+      "member": "SolidForTrim",
+      "member_page_actually_says": "页面 Signature 逐字「System.bool SolidForTrim {get; set;}」，get 本就写在签名里；claim「成员页只说窗口，不提读」不成立，agent note 亦自认「与 Remarks 完全一致」。"
+    },
+    {
+      "member": "InsertVaryInstanceOverride",
+      "member_page_actually_says": "被当作 example_quote 的那段文字其实是成员页自己的 Parameters 行「- **InstanceColumnIndex**: 0 < column index … valid only for P…」；在 Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md 里 grep InstanceColumnIndex = 0 命中。而页面已明写该参数的条件，claim 反说页面没写。"
+    },
+    {
+      "member": "IsTwoSided",
+      "member_page_actually_says": "描述句逐字「Gets or sets whether the rib is created on two sides of the midplane **or in a single direction (see [[IRibFeatureData2::ReverseThicknessDir]])**」——「单侧」就是适用条件，claim「未给适用条件」不成立。"
+    },
+    {
+      "member": "SetDisplayMode4",
+      "member_page_actually_says": "Parameters 逐字「Faceted: True for draft quality, false for precision quality」「CThreadHighQuality: True for precision quality cosmetic threads, false for draft quality」「Edges: True if edges are displayed when this view is in shaded mode, false if not」；Remarks 列出 swSHADED，swDisplayMode_e.md 逐字「swSHADED | 3 |」。示例注释只是复述，无新增信息。"
+    },
+    {
+      "member": "ActiveDrawingView",
+      "member_page_actually_says": "Remarks 逐字：「If the drawing sheet is active, the property returns NULL and you can use [[IDrawingDoc::GetCurrentSheet]] to get the current sheet」——示例前置的 NULL 情形页面已写，claim「成员页未提」不成立。"
+    }
+  ],
+  "missed_conflicts": [
+    {
+      "member": "PositionOffsetDistance",
+      "detail": "conflits=[]。Remarks 前置引 `[[IEdgeflangeFeatureData::PostionOffsetType]]`（官方笔误，缺 i），接口里不存在；示例设的是真成员 PositionOffsetType。照页面写代码必然失败，agent 只把它记成 more_specific 并判「无冲突」。"
+    },
+    {
+      "member": "AddComponent4",
+      "detail": "confllicts=[]。Remarks 逐字「you can use [[IAssemblyDoc::AddComponents]] or [[IAssemblyDoc::AddComponents2]]」；IAssemblyDoc 目录只有 AddComponents.md 与 AddComponents3.md，无 AddComponents2.md。指引指向不存在的成员。"
+    },
+    {
+      "member": "AddComponent5",
+      "detail": "conflits=[]。同一处 ghost：Remarks 引 AddComponents2，接口无此页。agent note 只写「ConfigName 传 Default…不冲突」，没核成员名是否存在。"
+    },
+    {
+      "member": "InsertVariablePitchHelix",
+      "detail": "conflicts=[]。Remarks 第 2 步逐字「[[IFeatureManager::AddVariablePitchHelixFirstPitchAndDiamenter]] to add the first segment」；IFeatureManager 实际只有 AddVariablePitchHelixFirstPitchAndDiameter.md（Diamenter 是页面笔误）。"
+    },
+    {
+      "member": "EndVariablePitchHelix",
+      "detail": "conflits=[]。Remarks 同样引 AddVariablePitchHelixFirstPitchAndDiamenter，成员名不存在。四步调用序里的第 2 步照抄即断。"
+    },
+    {
+      "member": "GetLength3",
+      "detail": "conflits=[]。Remarks 逐字「The now obsolete [[ICurve::Length2]] returned the length of the base curve.」；ICurve 下只有 GetLength/GetLength2/GetLength3，无 Length2.md，是改名前的残留名。"
+    },
+    {
+      "member": "GetLoopEdgeCount",
+      "detail": "conflits=[]。Remarks 逐字「Call this method before calling [[IShutOffSurfaceFeatureData::IGetLoopsEdges]]」；接口实际成员为 IGetLoopEdges.md（无 s）。前置按名调用会报成员不存在。"
+    },
+    {
+      "member": "GetLines4",
+      "detail": "conflicts=[]。Remarks 逐字「combine this data with the three return values from [[IView::GetXForm]] or [[IView::IGetXForm]]」；IView 实际是 GetXform/IGetXform（f 小写），仅大小写不同即取不到。"
+    }
+  ],
+  "conclusion": "找到 10 条反例 / 6 条 example_more_specific 假阳性 / 8 条漏报（漏报全属同一类：Remarks 回链的成员名在同接口里根本不存在——官方页笔误或改名前的残留名，照页面写代码必失败；这是流水线完全没设的闸）。攻击 13 条冲突，10 条不能成立（7 条硬反例：引的是注释行、分支极性读反、把 ImportedToExistingPart 误当 part sketch、跨接口同名撞车、页面自身笔误、get/set 已在签名里、直接把方法描述句当硬前置）；确认成立的 3 条是 SetTwistAngle（示例设 TwistControlType=0=swTwistControlFollowPath，Remarks 要 8=swTwistControlConstantTwistAlongPath）、SetSuppression2（Returns 写 swSuppressionError_e，示例断言 swComponentResolveStatus_e.swResolveError，nRetVal 确为 SetSuppression2 返回值）、FieldOfViewAngle（Returns 写 radians，示例 ×1000 后打印 mm，是官方示例把长度惯用法抄到角度上）。另外 ViewCollapseAssembly / GetStartVertex 属可议可不议（角度不同），未计入硬反例统计口径。5 条反例的根因是同一个机制：判据按关键词命中跨行窗口，不解析分支极性与注释状态——建议补两道闸：① 示例引文必须逐字在所引文件中出现（C++ 用 `->` 不是 `.`，两处已核）；② 匹配到的行若以注释符开头或落在 if/else 的对侧分支，直接降级为 more_specific。查漏时我逐条读了两侧原文，以下成员经核**无**漏报，不应补记：SetPathPointAtIndex（Remarks 明确允许 Index=-1）、SketchOffsetOnSurface（示例确有 InsertSketch）、EditMate4（选面次序与 Remarks 完全一致）、CreateTrimmedCurve2（示例确先 CreateTrimmedCurve2）、Recalculate / SetUnits2 / AddToDB / AddText / CoreCavitySplit（无 Remarks 或示例已满足）。"
+}

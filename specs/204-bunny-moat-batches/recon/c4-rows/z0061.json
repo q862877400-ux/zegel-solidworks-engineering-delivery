@@ -1,0 +1,132 @@
+{
+  "idx": 61,
+  "results": [
+    {
+      "member": "CreateCustomBendAllowance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_SM_Corner_Relief_Feature_Example_CSharp.md",
+        "Create_SM_Corner_Relief_Feature_Example_VBNET.md",
+        "Create_Swept_Flange_Example_CSharp.md",
+        "Create_Swept_Flange_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示返回的 CustomBendAllowance 对象须先填 KFactor，再整块传给钣金特征",
+          "example_quote": "customBendAllowanceData.KFactor = 0.5;",
+          "example_file": "Create_Swept_Flange_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；4 份示例均真调 IFeatureManager.CreateCustomBendAllowance()"
+    },
+    {
+      "member": "CreateDecal",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示 CreateDecal 只造对象，必须再调 AddDecal 才把贴花挂到模型上",
+          "example_quote": "status = swModelDocExt.AddDecal(swDecal, out nDecalID);",
+          "example_file": "Add_Decal_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，无可判冲突；3 份示例都在 IModelDocExtension 上调用"
+    },
+    {
+      "member": "CreateDefinition",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份候选示例调的是 swMotionStudy1.CreateDefinition（MotionStudy 对象），非 IFeatureManager，按规则弃用"
+    },
+    {
+      "member": "CreateDerivedConfigurations",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md",
+        "Mirror_Components_II_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置次序：先赋 OppositeHandComponents，紧接着才赋本属性",
+          "example_quote": "swMirroCompFeatData.CreateDerivedConfigurations = False",
+          "example_file": "Mirror_Components_II_Example_VBNET.md"
+        },
+        {
+          "what": "示例给出『创建期赋值』边界：设完即 CreateFeature，GetDefinition 之后不再改本属性",
+          "example_quote": "swFeat = FeatMgr.CreateFeature(swMirroCompFeatData);",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 两条前置与 False+Custom 组合在两份示例中均被满足，未见矛盾"
+    },
+    {
+      "member": "CreateDetailViewAt3",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Detail_View_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补出 X/Y/Z 的坐标系语义：相对图纸原点",
+          "example_quote": "uses the x,y,z coordinates relative to the sheet's origin.",
+          "example_file": "Create_Detail_View_Example_VB.md"
+        },
+        {
+          "what": "示例补出本族位置参数的单位口径：米与弧度",
+          "example_quote": "of meters and radians for length and angle values, respectively.",
+          "example_file": "Create_Detail_View_Example_VB.md"
+        }
+      ],
+      "note": "成员页标 Obsolete 却无 Remarks 段；官方示例仍在调本成员，故不判冲突"
+    },
+    {
+      "member": "CreateDetailViewAt4",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Detail_Circle_and_Detail_View_Example_CSharp.md",
+        "Create_Detail_Circle_and_Detail_View_Example_VB.md",
+        "Create_Detail_Circle_and_Detail_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置调用序：先 ActivateView 父视图并建局部圆，最后才调本方法",
+          "example_quote": "status = swDrawing.ActivateView(\"Drawing View4\");",
+          "example_file": "Create_Detail_Circle_and_Detail_View_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出 12 参实参取值（Scale1=1、Scale2=1，末参 ShapeIntensity 传 5）",
+          "example_quote": "swView = (View)swDrawing.CreateDetailViewAt4(0.22305342706156, 0.0762140266484527, 0, (int)swDetViewStyle_e.swDetViewSTANDARD, 1, 1, \"A\", (int)swDetCircleShowType_e.swDetCircleCIRCLE, true, true, false, 5);",
+          "example_file": "Create_Detail_Circle_and_Detail_View_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页只有 Parameters 无 Remarks 段；3 份示例均为 12 参调用，与签名一致"
+    },
+    {
+      "member": "CreateDiamDim4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Non-associative_Diameter_Dimension_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示 Val 由调用方直接给定，不取 P1/P2 间距（0.1255 米）",
+          "example_quote": "nDimVal = 0.1255",
+          "example_file": "Create_Non-associative_Diameter_Dimension_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 仅一句『在两指定点之间创建、与几何无关』，示例未与之相悖"
+    }
+  ]
+}

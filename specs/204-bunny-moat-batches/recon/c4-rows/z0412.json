@@ -1,0 +1,132 @@
+{
+  "idx": 412,
+  "results": [
+    {
+      "member": "ResetPrintRange",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过；3 份示例均在 PrintOut4 之后成对调用 RestoreDefaults + ResetPrintRange。"
+    },
+    {
+      "member": "ResetSketchVisibility",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Reset_Visibility_of_Sketches_in_Drawing_View_Example_CSharp.md",
+        "Reset_Visibility_of_Sketches_in_Drawing_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过；示例先 BlankSketch 隐藏再在选中视图上调用本成员。"
+    },
+    {
+      "member": "ResetUntitledCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_CSharp.md",
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_VBNET.md",
+        "Add_Along_Y_Dimension_To_3D_Sketch_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出确切实参 (0, 0, 0) 并置于 NewDocument 之前，随后按名激活 Part1，把页面「起始索引」落到具体行为",
+          "example_quote": "longstatus = swApp.ResetUntitledCount(0, 0, 0);",
+          "example_file": "Add_Along_X_Dimension_To_3D_Sketch_Example_CSharp.md"
+        }
+      ],
+      "note": "4 份示例均为 Main 首句调用，与 Remarks「beginning or end」一致；实参语义不宜推测，未判冲突。"
+    },
+    {
+      "member": "ResolutionControl",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Fill-surface_Feature_Example_CSharp.md",
+        "Insert_Fill-surface_Feature_Example_VB.md",
+        "Insert_Fill-surface_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出可写的确切次序：先 OptimizeSurface=false，再在 if(OptimizeSurface==false) 保护下写 ResolutionControl",
+          "example_quote": "                swFillSurfaceFeatureData.OptimizeSurface = false;\n                Debug.Print(\"  Patch optimized? \" + swFillSurfaceFeatureData.OptimizeSurface);\n                Debug.Print(\"  Original resolution control: \" + swFillSurfaceFeatureData.ResolutionControl);\n                if (swFillSurfaceFeatureData.OptimizeSurface == false)\n                {\n                    swFillSurfaceFeatureData.ResolutionControl = 1;\n                }",
+          "example_file": "Insert_Fill-surface_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例以 OptimizeSurface 选项建面、编辑期再改 false，说明该限制只在编辑期生效",
+          "example_quote": "            swFeat = (Feature)swFeatMgr.InsertFillSurface2(2, (int)swFeatureFillSurfaceOptions_e.swOptimizeSurface, selObj, (int)swContactType_e.swContact, null, null);",
+          "example_file": "Insert_Fill-surface_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "3 份示例与 Remarks 完全一致，且打印串复述「valid values 1, 2 and 3」；无冲突。"
+    },
+    {
+      "member": "ResolveAllLightWeightComponents",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md",
+        "Get_Visibility_of_and_Resolve_Lightweight_Components_Example_VB.md",
+        "Lock_All_External_References_Example_VB.md",
+        "Resolve_All_Components_Fix_A_Component_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "The assembly must be open in its own window. Call [[ISldWorks::ActivateDoc2]] or [[IModelDoc2::Visible]] to ensure that it is.",
+          "example_quote": "            swAssy = (AssemblyDoc)swModel;\n            swModelDocExt = (ModelDocExtension)swModel.Extension;\n            swSelMgr = (SelectionMgr)swModel.SelectionManager;\n            // Resolve all lightweight components\n            errors = swAssy.ResolveAllLightWeightComponents(true);",
+          "example_file": "Resolve_All_Components_Fix_A_Component_Example_CSharp.md",
+          "why": "4 份示例均无 ActivateDoc2/Visible：C# 紧接静默 OpenDoc6 即调用并当成功；3 份 VBA 只取 ActiveDoc。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例以 WarnUser=true 调用并直接打印结果，宏内无任何弹窗抑制或等待",
+          "example_quote": "errors = swAssy.ResolveAllLightWeightComponents(true);",
+          "example_file": "Resolve_All_Components_Fix_A_Component_Example_CSharp.md"
+        }
+      ],
+      "note": "返回值口径两边一致（VBA 断言 swResolveOk，C# 打印 0=全部解析）。"
+    },
+    {
+      "member": "RestitutionCoefficient",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_3DContact_Feature_Example_VB.md",
+        "Create_3D_Contact_Feature_Example_CSharp.md",
+        "Create_3D_Contact_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例只把 UseRestitutionCoefficient 当读取条件，从不置 true，Remarks 的前置在示例中从未被建立",
+          "example_quote": "                if (swContFeat.UseRestitutionCoefficient)\n                {\n                    Debug.Print(\"  Use coefficient of restitution:\");\n                    Debug.Print(\"    Coefficient of restitution: \" + swContFeat.RestitutionCoefficient);\n                }",
+          "example_file": "Create_3D_Contact_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出该开关为 false 时的替代参数组：Exponent / MaxDamping / Penetration / Stiffness",
+          "example_quote": "                    Debug.Print(\"    Exponent of exponential force: \" + swContFeat.Exponent);\n                    Debug.Print(\"    Maximum damping coefficient: \" + swContFeat.MaxDamping);\n                    Debug.Print(\"    Penetration at which maximum damping is applied: \" + swContFeat.Penetration);\n                    Debug.Print(\"    Stiffness of material at boundary of interaction: \" + swContFeat.Stiffness);",
+          "example_file": "Create_3D_Contact_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "示例守卫与 Remarks「UseRestitutionCoefficient 为 true 时才可用」一致；C# 选 COMPONENT、VBA 选 FACE 属示例间差异，未计入。"
+    },
+    {
+      "member": "RestoreDefaults",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过；3 份示例均在 PrintOut4 之后紧接 ResetPrintRange 调用本成员。"
+    }
+  ]
+}

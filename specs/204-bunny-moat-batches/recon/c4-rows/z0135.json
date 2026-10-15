@@ -1,0 +1,130 @@
+{
+  "idx": 135,
+  "results": [
+    {
+      "member": "FlyoutFeatureTreeVisibility",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_State_of_Flyout_FeatureManager_Design_Tree_Example_CSharp.md",
+        "Get_and_Set_State_of_Flyout_FeatureManager_Design_Tree_Example_VB.md",
+        "Get_and_Set_State_of_Flyout_FeatureManager_Design_Tree_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例逐一列出成员页未展开的三个具体状态取值；成员页只指向 swFeatureTreeState_e 枚举页",
+          "example_quote": "If Status = swFlyoutFeatureTree_Hidden Then Debug.Print \"FlyoutFeatureTree Hidden\"",
+          "example_file": "Get_and_Set_State_of_Flyout_FeatureManager_Design_Tree_Example_VB.md"
+        }
+      ],
+      "note": "成员页只有 Returns/Examples/See Also 三节，无 Remarks。VB 示例用 swFlyoutFeatureTree_* 裸常量，C#/VBNET 用 swFeatureTreeState_e.swFlyoutFeatureTree_*，命名不同但非矛盾。"
+    },
+    {
+      "member": "FlyoutType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Flyouts_in_the_CommandManager_Example_CSharp.md",
+        "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 setter 的具体取值与必需的 (int) 转换；成员页只说取值见 swCommandFlyoutStyle_e",
+          "example_quote": "flyoutGroup.FlyoutType = (int)swCommandFlyoutStyle_e.swCommandFlyoutStyle_Simple;",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段。C# 示例设 Simple，VBNET 示例设 LastUsed，两者同属成员页所指的 swCommandFlyoutStyle_e。"
+    },
+    {
+      "member": "ForceRebuild",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例全部在 DrawingDoc 类型对象上对 .slddrw 调用，绑定的是 IDrawingDoc::ForceRebuild（同名同签名），非本成员。"
+    },
+    {
+      "member": "ForceRebuild3",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Attribute_to_Feature_and_Include_In_Library_Feature_Example_VB.md",
+        "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_VBNET.md",
+        "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+        "Apply_and_Remove_Texture_By_Model_Display_State_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用时机：改动之后重建以验证效果，返回 bool 被丢弃；成员页只描述行为未给调用序",
+          "example_quote": "' Rebuild the model to verify texture was removed",
+          "example_file": "Apply_and_Remove_Texture_By_Model_Display_State_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段。成员页 Examples 所列 9 份均不含本任务指定的 4 份，属交叉引用缺口而非冲突。"
+    },
+    {
+      "member": "ForceRebuildAll",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rebuild_All_Features_in_All_Configurations_Example_CSharp.md",
+        "Rebuild_All_Features_in_All_Configurations_Example_VB.md",
+        "Rebuild_All_Features_in_All_Configurations_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先读 NeedsRebuild2 再决定是否调用，把返回值存入变量；成员页未提这道前置闸门",
+          "example_quote": "bRet = swModelDocExt.NeedsRebuild2",
+          "example_file": "Rebuild_All_Features_in_All_Configurations_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段。C# 与 VBA 两版结构一致：NeedsRebuild2 为真才调 ForceRebuildAll。"
+    },
+    {
+      "member": "Foreshortened",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Whether_Linear_Dimension_Is_Foreshortened_Example_CSharp.md",
+        "Get_Whether_Linear_Dimension_Is_Foreshortened_Example_VB.md",
+        "Get_Whether_Linear_Dimension_Is_Foreshortened_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没写的额外前置：Foreshortened 项须勾选 Automatic + Zigzag",
+          "example_quote": "// 4. Verify that the following check box and option are selected in\n//    Foreshortened:\n//    * Automatic\n//    * Zigzag",
+          "example_file": "Get_Whether_Linear_Dimension_Is_Foreshortened_Example_CSharp.md"
+        },
+        {
+          "what": "示例说明目标对象须预先选中并由 SelectionMgr 取出，成员页未提选区前置",
+          "example_quote": "swDisplayDimension = (DisplayDimension)swSelectionMgr.GetSelectedObject6(1, -1);",
+          "example_file": "Get_Whether_Linear_Dimension_Is_Foreshortened_Example_CSharp.md"
+        }
+      ],
+      "note": "本批唯一有 Remarks 的成员。示例 NOTES 逐字复述同一句限制，两侧一致，未发现冲突。"
+    },
+    {
+      "member": "FormToolConfiguration",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Forming_Tool_Feature_Example_CSharp.md",
+        "Create_Forming_Tool_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体写入的配置名 \"Default\"，成员页只说返回配置名",
+          "example_quote": "swLibFormFeatData1.FormToolConfiguration = \"Default\";",
+          "example_file": "Create_Forming_Tool_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出写侧调用序：先 AccessSelections 取得选取访问权才能改该属性，成员页未提",
+          "example_quote": "swLibFormFeatData1.AccessSelections(swModel, null);",
+          "example_file": "Create_Forming_Tool_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页既无 Remarks 段也无 Examples 小节，但两份指定示例都确实调用该属性。"
+    }
+  ]
+}

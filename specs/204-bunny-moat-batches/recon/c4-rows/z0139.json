@@ -1,0 +1,117 @@
+{
+  "idx": 139,
+  "results": [
+    {
+      "member": "FromType",
+      "remarks_empty": true,
+      "examples_actually_used": ["Create_Extruded_Thin_Feature_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把取值域具体化：用 Select Case 列出 4 个枚举成员（页面 Returns 只交叉引用 swExtrudeFromType_e）",
+          "example_quote": "Case SwConst.swExtrudeFrom_e.swExtrudeFrom_SketchPlane",
+          "example_file": "Create_Extruded_Thin_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例要求先 GetDefinition + AccessSelections 才能读 FromType，页面未写这一前置",
+          "example_quote": "bValue = swExtrusionData.AccessSelections(Part, Nothing)",
+          "example_file": "Create_Extruded_Thin_Feature_Example_VB.md"
+        }
+      ],
+      "note": "本页无 Remarks 段，按纪律跳过冲突判定。示例读的是 ExtrudeFeatureData2.FromType，归属正确。"
+    },
+    {
+      "member": "FullName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Determine_if_Display_Dimension_Marked_for_Drawing_Example_VB.md",
+        "Get_Block_Information_Example_VB.md",
+        "Get_Depth_of_Extrusion_Example_VB.md",
+        "Get_Depth_of_Extrusion_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "Remarks 语法模板的占位符在本页已丢失（只剩 @@）；4 份示例都只打印 FullName、不断言其格式，无可交叉核对的矛盾。"
+    },
+    {
+      "member": "FullyDefineSketch",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Fully_Define_Underdefined_Sketch_Example_CSharp.md",
+        "Fully_Define_Underdefined_Sketch_Example_VB.md",
+        "Fully_Define_Underdefined_Sketch_Example_VBNET.md",
+        "Insert_DXF_File_and_Add_Dimension_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例须先选中草图特征并 InsertSketch False 进入编辑态才能调用，页面未写此前置",
+          "example_quote": "swSketchManager.InsertSketch False",
+          "example_file": "Fully_Define_Underdefined_Sketch_Example_VB.md"
+        }
+      ],
+      "note": "无 Remarks 故不判冲突。但请注意：Parameters 写 datum 用 selection mark = 6，示例却用 lMarkHorizontal = 2 / lMarkVertical = 4。"
+    },
+    {
+      "member": "Gap",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "该页连 Examples 段都没有。所列 4 份示例里的 .Gap 分别是 IRipFeatureData.Gap 与 ICosmeticWeldBeadFeatureData.Gap，同名不同接口，已排除。"
+    },
+    {
+      "member": "GapDistance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Modify_Closed_Corner_Feature_Example_CSharp.md",
+        "Create_and_Modify_Closed_Corner_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例直接赋具体值 0.005 并原样打印（无单位换算），成员页未给单位也未给量级",
+          "example_quote": "swClosedCornerFeatureData.GapDistance = 0.005",
+          "example_file": "Create_and_Modify_Closed_Corner_Feature_Example_VB.md"
+        }
+      ],
+      "note": "另 2 份 Create_Edge_Flange 示例的 FeatData 是 EdgeFlangeFeatureData，同名不同接口，已排除。"
+    },
+    {
+      "member": "GapForOtherGroups",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Merge_Arc_Segment_Bodies_With_Adjacent_Bodies_Example_CSharp.md",
+        "Merge_Arc_Segment_Bodies_With_Adjacent_Bodies_Example_VB.md",
+        "Merge_Arc_Segment_Bodies_With_Adjacent_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示它必须在 InsertStructuralWeldment5 之前对 group 对象赋值，页面未说明这个时序",
+          "example_quote": "group1.GapForOtherGroups = 0",
+          "example_file": "Merge_Arc_Segment_Bodies_With_Adjacent_Bodies_Example_VB.md"
+        }
+      ],
+      "note": "3 份示例用法一致（都在插入焊件前写 0），无相互矛盾。页面 Returns 写「in meters」，但无 Remarks，不判单位冲突。"
+    },
+    {
+      "member": "GapOrPitch",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只声明「IntermittentWeld 为 true 时有效」；示例先主动把它置为 True 才读 GapOrPitch",
+          "example_quote": "If swCosmeticWeldBeadFeatureData.IntermittentWeld = False Then\n        swCosmeticWeldBeadFeatureData.IntermittentWeld = True\n    End If",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Example_VB.md"
+        }
+      ],
+      "note": "示例与 Remarks 完全吻合：True 读 Gap、False 读 Pitch，两侧说法一致，无冲突。"
+    }
+  ]
+}

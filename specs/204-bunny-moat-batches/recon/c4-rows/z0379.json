@@ -1,0 +1,131 @@
+{
+  "idx": 379,
+  "results": [
+    {
+      "member": "OperationType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Combine_Bodies_Example_CSharp.md",
+        "Combine_Bodies_Example_VB.md",
+        "Combine_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks；三例都只读回该属性，注释里列出 swCombineBodiesOperationType_e 的 0/2/1。"
+    },
+    {
+      "member": "Operations2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Combine_Assembly_Components_into_Part_Example_VB.md",
+        "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_CSharp.md",
+        "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_VB.md",
+        "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出 Check3 的具体判定：FaultEntity.Count<>0 即打印 faulty 并退出；成员页只说用 Check3 确保是有效实体。",
+          "example_quote": "    If nCount <> 0 Then\n        Debug.Print \"Faulty cone!\"\n        Exit Sub\n    End If",
+          "example_file": "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_VB.md"
+        },
+        {
+          "what": "返回值被直接强转 object[] 再逐个 CreateFeatureFromBody3；成员页只说「结果体的指针数组」，未给晚绑定形状。",
+          "example_quote": "vNewBodyArr = (object[])swConeBody.Operations2((int)swBodyOperationType_e.SWBODYADD, swBoxBody, out nRetVal);",
+          "example_file": "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_CSharp.md"
+        }
+      ],
+      "note": "四例均先 Copy 再 Operations2，并都对两个体先 Check3，与 Remarks 一致；未找到矛盾。"
+    },
+    {
+      "member": "OppositeHandComponents",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md",
+        "Mirror_Components_II_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "每个 IComponent2 先用 DispatchWrapper 包一层再放入数组；成员页只写 Array of IComponent2，未说晚绑定要这样包装。",
+          "example_quote": "CTMOH[0] = new DispatchWrapper(swCompInst);",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        },
+        {
+          "what": "同一次赋值里两个 align-to 数组与 OppositeHandComponents 同时给出且互不相交，说明 Remarks 的「A 或 B」是三类组件分工，不是互斥。",
+          "example_quote": "swMirroCompFeatData.ComponentsToInstanceAlignToComponentOrigin = CTI;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只区分反面手/非反面手，与两例的三组组件划分相容，未构成矛盾。"
+    },
+    {
+      "member": "OptimizeGeometry",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_CSharp.md",
+        "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_VB.md",
+        "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例不直接写该属性，而是靠 FeatureCut4 末尾一串 bool 造出「优化的法向切除」再读回；成员页只说设置需 NormalCut 为真。",
+          "example_quote": "//Create an optimized, normal, cut extrude",
+          "example_file": "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_CSharp.md"
+        }
+      ],
+      "note": "Create_Normal_Cut_Feature_Example_CSharp.md 用的是 SMNormalCutFeatureData2.OptimizeGeometry，同名不同接口，未采用。"
+    },
+    {
+      "member": "OptimizeSurface",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Fill-surface_Feature_Example_CSharp.md",
+        "Insert_Fill-surface_Feature_Example_VB.md",
+        "Insert_Fill-surface_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "初始「优化」来自 InsertFillSurface2 的 swOptimizeSurface 选项位，之后才把属性改 false 并调 ResolutionControl。",
+          "example_quote": "swFeat = (Feature)swFeatMgr.InsertFillSurface2(2, (int)swFeatureFillSurfaceOptions_e.swOptimizeSurface, selObj, (int)swContactType_e.swContact, null, null);",
+          "example_file": "Insert_Fill-surface_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三例都先置 OptimizeSurface=false 再写 ResolutionControl，与 Remarks 的「仅未优化时可调分辨率」一致。"
+    },
+    {
+      "member": "Option",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Color_of_Component_in_Specific_Display_State_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "After calling this method:\n\n1. Call [[IDisplayStateSetting::Names]] or [[IDisplayStateSetting::ISetNames]] to specify the display states.\n\n2. Call [[IDisplayStateSetting::Entities]] or [[IDisplayStateSetting::ISetEntities]] to specify the entities.",
+          "example_quote": "swDisplayStateSetting.Entities = swComponents\nswDisplayStateSetting.Option = swDisplayStateOpts_e.swSpecifyDisplayState\ndisplayStateNames(0) = \"Display State-1\"\nswDisplayStateSetting.Names = displayStateNames",
+          "example_file": "Change_Color_of_Component_in_Specific_Display_State_Example_VBNET.md",
+          "why": "Remarks 定的次序是本方法(Option)→Names→Entities；示例却先设 Entities 再设 Option、最后才设 Names。两种次序规定不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例在调 DisplayStateSpecMaterialPropertyValues 前先设 PartLevel 以区分装配级/零件级颜色，成员页 6 步里没有这一步。",
+          "example_quote": "swDisplayStateSetting.PartLevel = False",
+          "example_file": "Change_Color_of_Component_in_Specific_Display_State_Example_VBNET.md"
+        }
+      ],
+      "note": "Option 本身取值为 swDisplayStateOpts_e.swSpecifyDisplayState，与 Returns 一致；冲突只在步骤先后。"
+    },
+    {
+      "member": "Options",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "两份示例用的都是 IDeleteFaceFeatureData.Options（swDeleteFaceFeature.Options），与本成员不同接口，均未采用。"
+    }
+  ]
+}

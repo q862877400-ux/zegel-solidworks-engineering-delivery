@@ -1,0 +1,97 @@
+{
+  "idx": 85,
+  "results": [
+    {
+      "member": "Datum",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_PMI_Data_Example_CSharp.md", "Get_PMI_Data_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取到 IPMIGtolFrameDatum 对象的完整调用序（注释→Gtol→Frame→GtolDatumAtIndex），成员页未写",
+          "example_quote": "swPMIGtolFrameDatum = (PMIGtolFrameDatum)swPMIFrameData.GetGtolDatumAtIndex(l);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说配 DatumLinked1/2 读，示例正是这个顺序，无冲突"
+    },
+    {
+      "member": "DatumLength",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_and_Set_Datum_Example_CSharp.md", "Get_and_Set_Datum_Example_VB.md", "Get_and_Set_Datum_Example_VBNET.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都赋 0.06，量级与 Returns 的「in meters」自洽（0.06 m）",
+          "example_quote": "dimOption.DatumLength = 0.06;",
+          "example_file": "Get_and_Set_Datum_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；示例只写不读，未与 Returns 冲突"
+    },
+    {
+      "member": "DatumLinked1",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_PMI_Data_Example_CSharp.md", "Get_PMI_Data_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按 GetGtolDatumCount 逐个遍历，说明一个 frame 可含多组 linked datum",
+          "example_quote": "for (l = 0; l <= swPMIFrameData.GetGtolDatumCount() - 1; l++)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks；示例读法与 Returns「First linked datum」一致"
+    },
+    {
+      "member": "DatumLinked2",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_PMI_Data_Example_CSharp.md", "Get_PMI_Data_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；示例仅按 Returns 原样打印，无额外更具体信息"
+    },
+    {
+      "member": "DatumLinkedModifier1",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_PMI_Data_Example_CSharp.md", "Get_PMI_Data_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例落实 Remarks 的指引：紧接着打印 DatumLinkedModifierValue1 取值",
+          "example_quote": "Debug.Print(\"      Value, if present, of material modifier of first linked datum: \" + swPMIGtolFrameDatum.DatumLinkedModifierValue1);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Returns 与示例标签都写 swMaterialModifier_e，两侧一致"
+    },
+    {
+      "member": "DatumLinkedModifier2",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_PMI_Data_Example_CSharp.md", "Get_PMI_Data_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例落实 Remarks 的指引：紧接着打印 DatumLinkedModifierValue2 取值",
+          "example_quote": "Debug.Print(\"      Value, if present, of material modifier of second linked datum: \" + swPMIGtolFrameDatum.DatumLinkedModifierValue2);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "同上：Returns 与示例标签均指 swMaterialModifier_e"
+    },
+    {
+      "member": "DatumLinkedModifierValue1",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_PMI_Data_Example_CSharp.md", "Get_PMI_Data_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它与枚举 modifier 成对打印并标注「if present」，即取值可缺省",
+          "example_quote": "Debug.Print(\"      Value, if present, of material modifier of first linked datum: \" + swPMIGtolFrameDatum.DatumLinkedModifierValue1);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks；示例标签与 Returns「first linked datum modifier」一致"
+    }
+  ]
+}

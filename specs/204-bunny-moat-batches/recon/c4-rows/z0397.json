@@ -1,0 +1,121 @@
+{
+  "idx": 397,
+  "results": [
+    {
+      "member": "PropagateFromOriginalPart",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md",
+        "Mirror_Components_II_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按序先设 CreateDerivedConfigurations=false 再设本属性，且场景含 OppositeHandComponents。",
+          "example_quote": "swMirroCompFeatData.CreateDerivedConfigurations = false;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例都满足 Remarks 的前置，与成员页不冲突。"
+    },
+    {
+      "member": "PropagateToTangentFaces",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过。所列4份示例用的都是 ISurfaceRadiateFeatureData 的同名属性，非本接口。"
+    },
+    {
+      "member": "PropagateVisualProperties",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_CSharp.md",
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_VB.md",
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过。三份示例确用 IDimPattern 的复数名属性。"
+    },
+    {
+      "member": "PropagateVisualProperty",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "See [Accessing Selections that Define Features](<../../docs/Programming with the SOLIDWORKS API/Selections that Define Features.md>) for additional details on using this property.",
+          "example_quote": "swFeatData.PropagateVisualProperty = true;",
+          "example_file": "Create_Table_Pattern_Example_CSharp.md",
+          "why": "同名属性散落9个接口；该示例设在 TablePatternFeatureData 上且不做选择访问，与本页指向的'须先 AccessSelections'互斥。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "所列4份示例无一调用 ICircularPatternFeatureData；含 AccessSelections 的那3份属 IDerivedPatternFeatureData。"
+    },
+    {
+      "member": "Proportional",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Spline_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过。示例要求先在图形区选中样条线，成员页未写此前置。"
+    },
+    {
+      "member": "PublishSTEP242File",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Export_SOLIDWORKS_MBD_to_STEP_242_Example_CSharp.md",
+        "Export_SOLIDWORKS_MBD_to_STEP_242_Example_VB.md",
+        "Export_SOLIDWORKS_MBD_to_STEP_242_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method requires that the SOLDWORKS MBD add-in be loaded. ([[ISldWorks::LoadAddIn]])",
+          "example_quote": "// 1. Verify that:\n//    * specified part,\n//    * SOLIDWORKS MBD 3D PDF theme, and\n//    * c:\\temp exist.",
+          "example_file": "Export_SOLIDWORKS_MBD_to_STEP_242_Example_CSharp.md",
+          "why": "Remarks 要求先载入 MBD 加载项；三份示例前置清单不含它，代码也从不调 LoadAddIn。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把回读码语义写死为 0=成功，成员页只说'按 swStep242Error_e'。",
+          "example_quote": "Debug.Print(\"Status of exporting SOLIDWORKS MBD part to STEP 242 (0 = success): \" + status);",
+          "example_file": "Export_SOLIDWORKS_MBD_to_STEP_242_Example_CSharp.md"
+        }
+      ],
+      "note": "示例口径与 swStep242Error_e 的 Success=0 一致，无返回值冲突。"
+    },
+    {
+      "member": "PublishTo3DPDF",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md",
+        "Attach_Files_to_MBD_3D_PDF_Example_VB.md",
+        "Attach_Files_to_MBD_3D_PDF_Example_VBNET.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- requires the that the SOLDWORKS MBD add-in be loaded. ([[ISldWorks::LoadAddIn]])",
+          "example_quote": "// 1. Verify that the specified SOLIDWORKS MBD 3D PDF theme,\n//    files to attach, and C:\\temp exist.",
+          "example_file": "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md",
+          "why": "同上：Remarks 要求先载入 MBD 加载项，4份示例的前置与代码均无 LoadAddIn。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例多设一个成员页 7 步清单里没有的开关 ViewPdfAfterSaving=true。",
+          "example_quote": "swMBDPdfData.ViewPdfAfterSaving = true;",
+          "example_file": "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md"
+        }
+      ],
+      "note": "示例 0=success 与 swPublishTo3DPDFError_e 的 Success=0 一致，无返回值冲突。"
+    }
+  ]
+}

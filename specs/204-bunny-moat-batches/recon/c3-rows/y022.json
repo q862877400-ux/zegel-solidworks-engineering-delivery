@@ -1,0 +1,138 @@
+{
+ "idx": 22,
+ "results": [
+  {
+   "name": "simulation_load_family_breadth",
+   "level": "verified",
+   "members_found": [
+    "AddPressure",
+    "AddForce",
+    "AddGravity",
+    "AddCentrifugalForce",
+    "AddConvection",
+    "AddHeatFlux",
+    "AddHeatPower",
+    "AddTemperature",
+    "AddRadiation",
+    "AddDistributedMass",
+    "AddRemoteLoad",
+    "AddElasticConnector",
+    "AddRigidConnector",
+    "ICWLoadsAndRestraintsManager.Count",
+    "ICWStudy.LoadsAndRestraintsManager",
+    "ICWModelDoc.StudyManager",
+    "ISldWorks.GetAddInObject",
+    "ISldWorks.LoadAddIn",
+    "IModelDoc2.ClearSelection2",
+    "IBody2.GetFaces"
+   ],
+   "examples_used": [
+    "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt"
+   ],
+   "preconditions": [
+    {
+     "text": "必须先把 SolidWorks Simulation 作为加载项装上（示例前置 1：Tools > Add-ins > SolidWorks Simulation）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "必须把 Simulation 主互操作程序集 SolidWorks.Interop.cosworks.dll 作为引用加入（示例前置 2）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "covered",
+     "evidence_quote": "→ `SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）"
+    },
+    {
+     "text": "需按需修改 solidworks materials.sldmat 路径（示例前置 3；示例先给模型赋材料再加载荷）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "算例必须先由 StudyManager.CreateNewStudy 建出（本示例建 Static_solid 静力算例）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "covered",
+     "evidence_quote": "改成**带时间戳的唯一名**后立刻 pass"
+    },
+    {
+     "text": "必须先取到 Study.LoadsAndRestraintsManager，否则示例报 No loads and restraints manager.",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "covered",
+     "evidence_quote": "`LoadsAndRestraintsManager.Count` ⇒ **3**"
+    },
+    {
+     "text": "第 2 参 DispArray 必须是实体数组 Object()（示例先 GetObjectByPersistReference3 取面再 Dim varArray2 As Object() = {pointer3}）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "第 3 参 RegGeom 传 Nothing（空 Dispatch）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "covered",
+     "evidence_quote": "`RegGeom`/`RefGeom` **不能裸传 `None`**"
+    },
+    {
+     "text": "末尾第 4 参是 ByRef ErrorCode，调用后必须判 errCode <> 0（示例两处都判）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "covered",
+     "evidence_quote": "末尾 `ByRef ErrorCode` 统一补 `out_i4()`"
+    },
+    {
+     "text": "压力值要经 PressureBeginEdit → 设 Unit/Value → PressureEndEdit(errCode) 提交才真正生效",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "其余 13 个工具所调 Add*（重力/离心/热载荷/连接件/远程/分布质量）在两份 recon 索引与 C:\\swapi\\examples 里 0 命中",
+     "from": "（两份 recon 索引 + C:\\swapi\\examples，均无官方示例）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "只有 AddPressure 有官方示例（重载+参数形状已对上）；加载项、材料、DispArray 数组形状、压力值提交四项证据未提。"
+  },
+  {
+   "name": "mesh_size_sanity_gate",
+   "level": "verified",
+   "members_found": [
+    "IPartDoc.GetBodies2",
+    "IBody2.GetBodyBox",
+    "IPartDoc.GetPartBox（仅示例用到，本能力未调）"
+   ],
+   "examples_used": [
+    "Get_Part_Bounding_Box_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "零件文档必须处于打开状态（示例逐字：Preconditions: Part is open.）",
+     "from": "Get_Part_Bounding_Box_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetBodies2 要分别传 swSolidBody 与 swSheetBody 取实体体与曲面体；返回可能为空，示例用 IsEmpty(vBodies) Then Exit Sub 兜底",
+     "from": "Get_Part_Bounding_Box_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方明写包围盒为近似值：返回的框通常更大且非最小框，不可用于计算——本闸门恰用它做 element_size 比较",
+     "from": "Get_Part_Bounding_Box_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "本能力实际调的是 IBody2.GetBodyBox，而它在 C:\\swapi\\examples 里 0 命中，没有对应官方示例",
+     "from": "（C:\\swapi\\examples 无 GetBodyBox 示例）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "该闸门只经 GetBodies2+GetBodyBox 量包围盒；四条 evidence 全是过数与静态门禁，没提零件已打开、GetBodies2 口径或近似值警告。"
+  }
+ ]
+}

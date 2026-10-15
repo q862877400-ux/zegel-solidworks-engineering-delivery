@@ -1,0 +1,101 @@
+{
+  "idx": 19,
+  "results": [
+    {
+      "name": "mass_property_read",
+      "level": "verified",
+      "members_found": [
+        "GetType",
+        "Extension",
+        "CreateMassProperty2",
+        "CreateMassProperty",
+        "Mass",
+        "Volume",
+        "SurfaceArea",
+        "CenterOfMass",
+        "Density"
+      ],
+      "examples_used": [
+        "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+        "Get_Mass_Properties_using_MassProperty_Object_Example_VB.md",
+        "Get_Mass_Properties_of_Multibody_Assembly_Component_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "示例前置：先 OpenDoc6 打开一个已存在的文档，再对其 Extension 取 CreateMassProperty2",
+          "from": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "建草图（矩形 40×20）→ 拉伸 10mm → 读质量属性"
+        },
+        {
+          "text": "示例显式设 UseSystemUnits=false（注释 Use document property units）才按文档单位给读数",
+          "from": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "要读指定组件/体的质量属性须先选中该组件并 AddBodies，再读 CenterOfMass/Volume",
+          "from": "Get_Mass_Properties_of_Multibody_Assembly_Component_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "「文档已存在并可读」被 evidence 覆盖；UseSystemUnits 单位开关与 AddBodies（组件级读数）两条官方示例前置在 evidence 里一字未提。"
+    },
+    {
+      "name": "assembly_read",
+      "level": "verified",
+      "members_found": [
+        "GetComponents",
+        "Name2",
+        "GetPathName",
+        "IsSuppressed",
+        "Visible",
+        "FirstFeature",
+        "GetNextFeature",
+        "GetFirstSubFeature",
+        "GetNextSubFeature",
+        "GetTypeName2",
+        "InterferenceDetectionManager",
+        "TreatSubAssembliesAsComponents",
+        "TreatCoincidenceAsInterference",
+        "Done",
+        "GetInterferenceCount",
+        "GetInterferences",
+        "Volume",
+        "GetComponentCount"
+      ],
+      "examples_used": [
+        "Run_Interference_Detection_Example_CSharp.md",
+        "Run_Interference_Detection_Example_VB.md",
+        "Set_Components_and_Transforms_for_Interference_Detection_Example_CSharp.md",
+        "Activate_Smart_Features_in_an_Assembly_Example_CSharp.md",
+        "Get_Mates_Example_CSharp.md",
+        "Get_Mates_and_Mate_Entities_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "示例前置：必须打开一个装配文档（ActiveDoc 强转 AssemblyDoc）才可取 InterferenceDetectionManager",
+          "from": "Run_Interference_Detection_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "造临时零件（40×20×10 盒）存到 output/_fixtures/ → 建装配 → 同一零件加两次"
+        },
+        {
+          "text": "两例冲突：Run_Interference 先调 ToolsCheckInterference() 打开面板，Set_Components… 直接取 manager",
+          "from": "Run_Interference_Detection_Example_CSharp.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "配合是 MateGroup 的子特征：须先按 GetTypeName()==MateGroup 定位，再下钻其子特征取 Mate2",
+          "from": "Get_Mates_and_Mate_Entities_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "装配文档已打开这条被 evidence 覆盖；MateGroup/子特征下钻这条前置没被提到；ToolsCheckInterference 是否必须，两份官方示例互相矛盾。"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{"idx":51,"pages_read":13,"rows":[
+{"iface":"IView","file":"GetCenterMarks.md","signature":"System.object GetCenterMarks()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetDisplayDimensionCount.md","signature":"System.int GetDisplayDimensionCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetLines4.md","signature":"System.object GetLines4( System.short CrossHatchOption )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"GetUseParentDisplayMode.md","signature":"System.bool GetUseParentDisplayMode()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetDimensionIds.md","signature":"System.string IGetDimensionIds()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetPolyLinesAndCurves.md","signature":"System.double IGetPolyLinesAndCurves( System.short CrossHatchOption, System.int ArraySize )","obsolete":false,"pointer":true,"zero":"否（有形参）"},
+{"iface":"IView","file":"IsLightweight.md","signature":"System.bool IsLightweight()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"AddOrdinateDimension2.md","signature":"System.int AddOrdinateDimension2( System.int DimType, System.double LocX, System.double LocY, System.double LocZ )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"CreateOrdinateDim2.md","signature":"System.bool CreateOrdinateDim2( System.object P0, System.object P1, System.object P2, System.object P3, System.object P4, System.double Angle, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot, System.object P5 )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"GetSheetNames.md","signature":"System.object GetSheetNames()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"InsertCenterMark3.md","signature":"CenterMark InsertCenterMark3( System.int Style, System.bool Propagate, System.bool Slot )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"SetupSheet.md","signature":"void SetupSheet( System.string Name, System.short PaperSize, System.short TemplateIn, System.double Scale1, System.double Scale2 )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"ISheet","file":"PageSetup.md","signature":"System.object PageSetup {get;}","obsolete":false,"pointer":false,"zero":"是（无括号）"}
+]}

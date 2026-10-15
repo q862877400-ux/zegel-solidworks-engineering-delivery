@@ -1,0 +1,94 @@
+{
+  "idx": 334,
+  "results": [
+    {
+      "member": "IsDimXpertAnnotation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpertManager_Info_Example_VB.md",
+        "Get_DimXpertManager_Info_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；两份示例均实调该成员。"
+    },
+    {
+      "member": "IsDimXpertFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpertManager_Info_Example_VB.md",
+        "Get_DimXpertManager_Info_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；两份示例均实调该成员。"
+    },
+    {
+      "member": "IsDirty",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Are_the_Assembly_Configurations_Loaded_Example_CSharp.md",
+        "Are_the_Assembly_Configurations_Loaded_Example_VB.md",
+        "Are_the_Assembly_Configurations_Loaded_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在「未激活」的配置（GetConfigurationByName 取得）上也调用 IsDirty，比 Remarks 只谈激活态更具体。",
+          "example_quote": "Debug.Print(\"Traverse assembly without activating other configurations...\");",
+          "example_file": "Are_the_Assembly_Configurations_Loaded_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的清除办法是激活+保存；三示例只激活且明令不保存，属只读查询，不构成矛盾。"
+    },
+    {
+      "member": "IsDisplayPaneVisible",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_TaskPaneView_Add-in_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；C# 示例 6 处实调该成员。"
+    },
+    {
+      "member": "IsEllipse",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Temporary_Elliptical_Extrusion_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（连 Examples 段也没有），按纪律跳过。"
+    },
+    {
+      "member": "IsEndCapInward",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Weldment_End_Cap_Example_CSharp.md",
+        "Insert_Weldment_End_Cap_Example_VB.md",
+        "Insert_Weldment_End_Cap_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；示例自写枚举 (0=outward,1=inward,2=inset)。"
+    },
+    {
+      "member": "IsEnvelope",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Component_to_Envelope_Example_CSharp.md",
+        "Change_Component_to_Envelope_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例改包络实际调用 CompConfigProperties6 并在同一 swComponent 上复问，比 See Also 的 5 代更具体。",
+          "example_quote": "status = swAssembly.CompConfigProperties6((int)swComponentSuppressionState_e.swComponentFullyResolved, (int)swComponentSolvingOption_e.swComponentRigidSolving, true, true, \"Default\", false, true, (int)swASMSLDPRTCompPref_e.swAlwaysInclude);",
+          "example_file": "Change_Component_to_Envelope_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 仅版本戳「SOLIDWORKS 2001Plus FCS, Revision Number 10.0」，无可比语义。"
+    }
+  ]
+}

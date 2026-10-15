@@ -1,0 +1,145 @@
+{
+  "idx": 452,
+  "results": [
+    {
+      "member": "SetPathSegments",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md",
+        "Create_Path_Segment_SSMember_Example_CSharp.md",
+        "Create_Path_Segment_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": ".NET 示例给出把 object[] 转成 IDispatch 数组的具体做法；成员页只说「必须 marshal」。",
+          "example_quote": "dArray = ObjectArrayToDispatchWrapperArray(segments);",
+          "example_file": "Create_Path_Segment_SSMember_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 示例完全不 marshal、直接传数组，说明该限制只针对 .NET，页面没点明这条边界。",
+          "example_quote": "memPathSegDef.SetPathSegments(segments)",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md"
+        }
+      ],
+      "note": "两侧一致，无冲突。页首描述行写 Gets 与 Returns 的 set 语义相反（页内自相矛盾，非与示例冲突）。"
+    },
+    {
+      "member": "SetPeripheral",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weld_Symbol_Example_CSharp.md",
+        "Insert_Weld_Symbol_Example_VB.md",
+        "Insert_Weld_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页完全没写的前置：插入前必须先选中面/边/草图线段。",
+          "example_quote": "2. Select a face, edge, or sketch segment for Weld Symbol insertion.",
+          "example_file": "Insert_Weld_Symbol_Example_CSharp.md"
+        },
+        {
+          "what": "示例把写侧与读侧成对出现，正好印证 Remarks 指向 GetPeripheral 取值。",
+          "example_quote": "Debug.Print(\"Weld all around the contour? \" + swWeldSymbol.GetPeripheral());",
+          "example_file": "Insert_Weld_Symbol_Example_CSharp.md"
+        }
+      ],
+      "note": "两侧一致。示例只传 false，未覆盖 true 分支。"
+    },
+    {
+      "member": "SetPickMode",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Ordinate_Dimensions_Example_CSharp.md",
+        "Create_Ordinate_Dimensions_Example_VB.md",
+        "Create_Ordinate_Dimensions_Example_VBNET.md",
+        "Create_Polygon_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页没有 ## Remarks 段，按纪律跳过冲突检测。"
+    },
+    {
+      "member": "SetPlacementFace",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Forming_Tool_Feature_Example_CSharp.md",
+        "Create_Forming_Tool_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页没有 ## Remarks 段，按纪律跳过冲突检测。"
+    },
+    {
+      "member": "SetPoints",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Point_Length_SSMember_Example_CSharp.md",
+        "Create_Point_Length_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 EndCondition 与 Length 定长，全程没调 Remarks 指向的 UnChainPointsAndLength。",
+          "example_quote": "memPointLengthDef.Length = 5;",
+          "example_file": "Create_Point_Length_SSMember_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出点的取法：SelectByID2 用 EXTSKETCHPOINT 选中后取对象再转 DispatchWrapper[]。",
+          "example_quote": "dArray = ObjectArrayToDispatchWrapperArray(startPoints);",
+          "example_file": "Create_Point_Length_SSMember_Example_VBNET.md"
+        }
+      ],
+      "note": "两侧一致，无冲突。示例点为 ISketchPoint，落在 Parameters 允许的类型内。"
+    },
+    {
+      "member": "SetPosition",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Anchor_a_Note_Example_CSharp.md",
+        "Anchor_a_Note_Example_VB.md",
+        "Anchor_a_Note_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先置 Note.LockPosition = true 再调 SetPosition，成员页全篇未提 LockPosition。",
+          "example_quote": "myNote.LockPosition = true;",
+          "example_file": "Anchor_a_Note_Example_CSharp.md"
+        },
+        {
+          "what": "示例确认走的是受支持类型（工程图内 Note），与 Remarks 表里 Notes 行一致。",
+          "example_quote": "myNote = (Note)Part.InsertNote(\"Drawing View1 Note\");",
+          "example_file": "Anchor_a_Note_Example_CSharp.md"
+        }
+      ],
+      "note": "Create_Broken_View_Example_CSharp.md 的 SetPosition 是 IBreakLine 两参版本（断线），非本成员，已剔除。"
+    },
+    {
+      "member": "SetPosition2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Block_Definition_and_Insert_Block_Instance_Example_CSharp.md",
+        "Create_Block_Definition_and_Insert_Block_Instance_Example_VB.md",
+        "Create_Block_Definition_and_Insert_Block_Instance_Example_VBNET.md",
+        "Get_Corresponding_Objects_in_Assembly_Component_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在零件（NewDocument Part.prtdot）里定位，而 Remarks 只定义了工程图纸原点这一参照。",
+          "example_quote": "status = swAnnotation.SetPosition2(-0.002501468059071, 0.0826874163970699, 0);",
+          "example_file": "Get_Corresponding_Objects_in_Assembly_Component_Example_CSharp.md"
+        },
+        {
+          "what": "该示例定位前显式把 LockPosition 置 false，成员页同样未提这个开关。",
+          "example_quote": "swNote.LockPosition = false;",
+          "example_file": "Get_Corresponding_Objects_in_Assembly_Component_Example_CSharp.md"
+        }
+      ],
+      "note": "两侧一致，无冲突。零件文档下的参照系页面没写，示例补上了。"
+    }
+  ]
+}

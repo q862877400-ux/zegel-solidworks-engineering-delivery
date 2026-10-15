@@ -1,0 +1,91 @@
+{
+  "idx": 519,
+  "results": [
+    {
+      "member": "VPeriodicity",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks 段（只有 Returns）⇒ 按纪律跳过，未读示例。"
+    },
+    {
+      "member": "VProperties",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks 段（只有 Returns）⇒ 按纪律跳过，未读示例。"
+    },
+    {
+      "member": "VPropertyNumber",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks 段（只有 Returns）⇒ 按纪律跳过，未读示例。"
+    },
+    {
+      "member": "Value",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页仅 10 行占位：只有标题，无 Returns / Remarks / Examples ⇒ 跳过。"
+    },
+    {
+      "member": "ValueInactive",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页仅 10 行占位：只有标题，无 Returns / Remarks / Examples ⇒ 跳过。"
+    },
+    {
+      "member": "ValuePrecision",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks 段 ⇒ 跳过；页内 NOTE「get-only」与签名 {get; set;} 不一致。"
+    },
+    {
+      "member": "VariableName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md",
+        "Get_and_Set_Hole_Callout_Variables_Example_VB.md",
+        "Get_and_Set_Hole_Callout_Variables_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出调用序：先从选区取 DisplayDimension，再 GetHoleCalloutVariables()，逐个转成 CalloutVariable 后才读 VariableName；成员页只给签名与 Returns。",
+          "example_quote": "swDisplayDimension = (DisplayDimension)swSelMgr.GetSelectedObject6(1, -1);\n            holeVariables = (object[])swDisplayDimension.GetHoleCalloutVariables();",
+          "example_file": "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md"
+        },
+        {
+          "what": "给出前置：须打开含孔标注的工程图并选中该孔标注；成员页未写任何前置。",
+          "example_quote": "// 1. Open a drawing document containing a hole callout.\n// 2. Select the hole callout.",
+          "example_file": "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md"
+        },
+        {
+          "what": "示例在按 Type 分派之前就已构建 str1，故 length/angle/string 三类变量都读 VariableName，不限某一类型。",
+          "example_quote": "str1 = \"  Callout variable name = \" + swCalloutVariable.VariableName;\n                str2 = \"  Callout variable name as it appears in Dimension PropertyManager page = \" + swCalloutVariable.UserReadableVariableName;\n                vType = swCalloutVariable.Type;",
+          "example_file": "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md"
+        },
+        {
+          "what": "示例只对 UserReadableVariableName 贴「as it appears in Dimension PropertyManager page」定语，VariableName 的打印标签更短，未带该定语。",
+          "example_quote": "str1 = \" Callout variable name = \" & swCalloutVariable.VariableName",
+          "example_file": "Get_and_Set_Hole_Callout_Variables_Example_VB.md"
+        },
+        {
+          "what": "题为 Get and Set，但被写的成员是 ToleranceType 等；VariableName 全程只读，与签名 {get;} 一致。",
+          "example_quote": "swCalloutVariable.ToleranceType = (int)swTolType_e.swTolBILAT;",
+          "example_file": "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只区分两个取名成员，未给调用序与前置 ⇒ 二者均由示例补上；未见矛盾。"
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "idx": 109,
+  "results": [
+    {
+      "member": "EnableBackgroundProcessing",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Fire_Notification_for_Background_Processing_Events_Example_VB.md",
+        "Fire_Notification_for_Background_Processing_Events_Example_VBNET.md",
+        "Fire_Notification_for_Background_Processing_Events_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页第7步只说「open 结束后置 false」，示例把它写进 BackgroundProcessingEndNotify 事件处理函数体内（VB/VB.NET 同样）",
+          "example_quote": "swApp.EnableBackgroundProcessing = false;",
+          "example_file": "Fire_Notification_for_Background_Processing_Events_Example_CSharp.md"
+        }
+      ],
+      "note": "备注7步示例基本照走；VBA 用字面量 2 = swBackgroundProcessing_DeferToApplication，已对枚举页确认，不算冲突"
+    },
+    {
+      "member": "EnableCellDropdownLists",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_VB.md",
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_VBNET.md",
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 EditFeature 之前多出一步 EditTable2(False) 取 Excel worksheet；成员页前置只列 EditFeature / UpdateFeature 两步",
+          "example_quote": "Set myWorksheet = swDesignTable.EditTable2(False)",
+          "example_file": "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_VB.md"
+        }
+      ],
+      "note": "三语言示例调用序一致：EditTable2→EditFeature→置值→UpdateFeature→UpdateTable，与备注完全相容"
+    },
+    {
+      "member": "EnableContourSelection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Linear_Pattern_Example_CSharp.md",
+        "Change_Linear_Pattern_Example_VB.md",
+        "Change_Linear_Pattern_Example_VBNET.md",
+        "Create_Body_From_Selected_Faces_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "按点逐个选面前先置 False 关掉轮廓选，否则会一次选中整块轮廓；成员页只说该属性干什么，没说什么时候置",
+          "example_quote": "swSelMgr.EnableContourSelection = false;",
+          "example_file": "Create_Body_From_Selected_Faces_Example_CSharp.md"
+        }
+      ],
+      "note": "Change_Linear_Pattern 三语言各置 False 三次（每次 FeatureExtrusion3 前）；成员页自带示例是另一组，本批只命中以上四份"
+    },
+    {
+      "member": "EnableDraft",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Rib_Feature_Data_Example_CSharp.md",
+        "Get_Rib_Feature_Data_Example_VB.md",
+        "Get_Rib_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 DraftAngle / DraftOutward 的读取关进 if(EnableDraft) 分支；成员页只说二者用于附加拔模控制，未给这个前提",
+          "example_quote": "if (swRibFeat.EnableDraft)",
+          "example_file": "Get_Rib_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例只读不写，也未调 ModifyDefinition，故与备注的「改值须 ModifyDefinition」无从冲突"
+    },
+    {
+      "member": "EnableFeatureTree",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Only_Show_Selected_Components_Example_VB.md",
+        "Turn_Lights_On_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在重新置 True 之后额外调 UpdateFeatureTree 把可能已过期的树刷回来；成员页只警告会 out of date，未给补救调用",
+          "example_quote": "swFeatMgr.UpdateFeatureTree",
+          "example_file": "Turn_Lights_On_Example_VB.md"
+        }
+      ],
+      "note": "Set_All_Assembly_Components_Lightweight_or_Resolved_Example_VB.md 通读未见此成员，按「名字撞上不用」剔除"
+    },
+    {
+      "member": "EnableMultiBodyConsume",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Multibody_Macro_Feature_Example_CSharp.md",
+        "Create_Multibody_Macro_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在返回输出体前对每个体的每条边/面调 SetEdgeUserId / SetFaceUserId；成员页只要求置 true，没提用户 ID 赋值",
+          "example_quote": "swMacroFeatData.SetEdgeUserId((Edge)vEdges[j], j, 0);",
+          "example_file": "Create_Multibody_Macro_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例都在 Regenerate 里紧跟 GetDefinition 置 true，与备注「always set true in rebuild」一致"
+    },
+    {
+      "member": "EnablePartialEdgeParameters",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Partial_Chamfer_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先置 true 再 GetPartialEdgeFilletData 取每条边的 PartialEdgeFilletData；成员页整页无 Remarks，未给这个先后",
+          "example_quote": "swFilletData.EnablePartialEdgeParameters = true;",
+          "example_file": "Create_Partial_Chamfer_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页 Returns 之后直接是 See Also，无 ## Remarks 段，按纪律跳过冲突判定"
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "idx": 33,
+  "results": [
+    {
+      "member": "BlindDepth",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IAdvancedHoleFeatureData::UseBaselineDimensions]] is set to false, [[IAdvancedHoleElementData::EndCondition]] is set to [[swEndConditions_e]].swEndCondBlind, and the hole element's corresponding override property is set to true:",
+          "example_quote": "            swAdvHole_Near_3.Diameter = ConvFactorLength * 0.266;\n            swAdvHole_Near_2.BlindDepth = 0.205 * ConvFactorLength;\n            swAdvHole_Near_3.EndCondition = (int)swEndConditions_e.swEndCondBlind;",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md",
+          "why": "示例把 BlindDepth 写到 swAdvHole_Near_2，而其 EndCondition 在第110行已设为 swEndCondUpToNext；本块的 EndCondition=Blind 只给了 Near_3。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IAdvancedHoleFeatureData::UseBaselineDimensions]] is set to false, [[IAdvancedHoleElementData::EndCondition]] is set to [[swEndConditions_e]].swEndCondBlind, and the hole element's corresponding override property is set to true:",
+          "example_quote": "swAdvHole_Far_2 = (AdvancedHoleElementData)swModel.Extension.CreateAdvancedHoleElementData((int)swAdvWzdGeneralHoleTypes_e.swAdvWzdStraight);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md",
+          "why": "Remarks 只列 Counterbore/Countersink/TaperedTap 三个 EndConditionOverride；IStraightElementData 无此属性，示例却给直孔元素写 BlindDepth。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把该值当米：写入用 25.4/1000 的英寸→米系数，读回打印为 \"Blind depth in m\"；成员页未写单位。",
+          "example_quote": "Debug.Print(\"   Blind depth in m: \" + ((AdvancedHoleElementData)swCounterSinkNear).BlindDepth);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        },
+        {
+          "what": "示例用 AdvancedHole2 第 3 个实参 false 来满足 Remarks 的 UseBaselineDimensions=false 前置，而不是去写 featdata 属性。",
+          "example_quote": "feat = swFeatureMgr.AdvancedHole2(dispArray, dispArray2, false, true, false, out ResultArray);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "Traverse_All_Cosmetic_Threads 里的 BlindDepth 属 ICosmeticThread，同名不同成员，已排除。"
+    },
+    {
+      "member": "BlockToleranceDecimalPlaces",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只在 DimensionType=BlockToleranceNoNominal 且 blockTols.Type=ASMEInch 分支里读它；角度类型改输出文本而不读该成员。",
+          "example_quote": "                If isAngleType Then\n                    strs.Add (\"Angular Block Tolerance\")\n                Else\n                    strs.Add (\"Block Tolerance Decimal Places: \" + Format(annotation.BlockToleranceDecimalPlaces, \"##,##0\"))\n                End If",
+          "example_file": "Get_DimXpert_Tolerance1_Example_VB.md"
+        }
+      ],
+      "note": "页面无 Remarks；示例以 Format(x,\"##,##0\") 读它，返回值可直接当数值格式化。"
+    },
+    {
+      "member": "BlockToleranceDecimalPlacesIntraFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它挂在 Select Case annotation.DimensionTypeIntraFeature 分支下（页面未说是哪个判据）；同一子过程的 pattern-locating 分支用的是非 Intra 版成员。",
+          "example_quote": "            strs.Add (\"Feature locating Dimension Type: Block Tolerance No Nominal\")\n            strs.Add (\"  Block Tolerance Decimal Places: \" + Format(annotation.BlockToleranceDecimalPlacesIntraFeature, \"##,##0\"))",
+          "example_file": "Get_DimXpert_Tolerance1_Example_VB.md"
+        }
+      ],
+      "note": "成员页只列 Tolerance2 两例，但 Datum/Tolerance1 四个示例同样调用它。"
+    },
+    {
+      "member": "BloomEnabled",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Render_Model_Example_CSharp.md",
+        "Render_Model_Example_VB.md",
+        "Render_Model_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 BloomEnabled=false 之后仍继续写 Threshold=70 与 Radius=4，说明三者互相独立、可读可写。",
+          "example_quote": "            swRayTraceRenderOptions.BloomEnabled = false;\n            Debug.Print(\"  Bloom enabled? \" + swRayTraceRenderOptions.BloomEnabled);\n            swRayTraceRenderOptions.BloomThreshold = 70;\n            Debug.Print(\"  Bloom threshold = \" + swRayTraceRenderOptions.BloomThreshold);\n            swRayTraceRenderOptions.BloomRadius = 4;",
+          "example_file": "Render_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 称仅最终渲染可见；示例把 DisplayPreviewWindow 与 InvokeFinalRender 都注释掉、改用 RenderToFile，未见相反说法，不判冲突。"
+    },
+    {
+      "member": "BloomRadius",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Render_Model_Example_CSharp.md",
+        "Render_Model_Example_VB.md",
+        "Render_Model_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 Radius 的实参 4（int 赋值），页面 Returns 未给取值范围。",
+          "example_quote": "            swRayTraceRenderOptions.BloomRadius = 4;",
+          "example_file": "Render_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 称仅最终渲染可见；示例把预览与最终渲染两个调用都注释掉，改用 RenderToFile，未见相反说法，不判冲突。"
+    },
+    {
+      "member": "BloomThreshold",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Render_Model_Example_CSharp.md",
+        "Render_Model_Example_VB.md",
+        "Render_Model_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 Threshold 的实参 70 并在设为 false 的 BloomEnabled 之后单独赋值，读回时用字符串拼接。",
+          "example_quote": "            swRayTraceRenderOptions.BloomThreshold = 70;\n            Debug.Print(\"  Bloom threshold = \" + swRayTraceRenderOptions.BloomThreshold);",
+          "example_file": "Render_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 称仅最终渲染可见；示例把预览与最终渲染两个调用都注释掉，改用 RenderToFile，未见相反说法，不判冲突。"
+    },
+    {
+      "member": "BlurLength",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md",
+        "swmotionstudyapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先设 MotionBlur=True 再写 BlurLength=10；页面无 Remarks 说明这一先后依赖，Returns 只给 0~100、默认 50。",
+          "example_quote": "            swSaveAVIData.MotionBlur = true;\n            swSaveAVIData.BlurLength = 10;",
+          "example_file": "swmotionstudyapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+        }
+      ],
+      "note": "页面无 Remarks；另注：示例 RendererType 取 Solidworks_Screen，而 Returns 限定 ray-trace，按规则不判冲突。"
+    }
+  ]
+}

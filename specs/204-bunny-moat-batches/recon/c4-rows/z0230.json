@@ -1,0 +1,143 @@
+{
+  "idx": 230,
+  "results": [
+    {
+      "member": "GetPLMID",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 与 See Also，无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "GetPMIData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "[[IPMIDatumData]], [[IPMIDimensionData]], [[IPMIGtolData]]; null or Nothing if the model is a drawing or no PMI data is associated with this annotation (see **Remarks**)",
+          "example_quote": "swPMIDatumData = (PMIDatumData)swAnnotation.GetPMIData();\nDebug.Print(\"PMI datum data\");\nif (swPMIDatumData.GetDatumType() == (int)swPMIDatumType_e.swPMIDatumType_DatumFeature)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md",
+          "why": "Returns 明说可返回 null/Nothing；示例 datum 分支取回后立即解引用 GetDatumType() 而不判空，同文件另两分支却有 != null 判，两侧对同一返回形状不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：必须打开本身就含 PMI 注释的 Step 242 文件；页只说“this STEP 242 annotation”，未要求文件里已有 PMI。",
+          "example_quote": "1. Open a Step 242 file that contains PMI annotations.",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例把返回对象与 PMI 类型值一一对应（2→PMIDatumData、1→PMIDimensionData、3→PMIGtolData）；页只列三种接口名。",
+          "example_quote": "swPMIDataDim = (PMIDimensionData)swAnnotation.GetPMIData();\nif (swPMIDataDim != null)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例说明 PMI 类型值 0 时才是“无 PMI 数据”分支；页未给这个取值的含义。",
+          "example_quote": "else if (IAnnoPMIType == 0)\n{\nif (swPMIDataDim == null)\nDebug.Print(\"   No PMI data\");",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 仅两句（不适用于工程图 / 用 GetPMIType 判返回对象）；冲突出在示例 datum 分支不判空。"
+    },
+    {
+      "member": "GetPMIType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This API does not yet support note annotations.",
+          "example_quote": "IAnnoType = swAnnotation.GetType();\nIAnnoPMIType = swAnnotation.GetPMIType();\nswitch (IAnnoType)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md",
+          "why": "Remarks 排除 note 注释；示例在 switch 之前对每个注释无条件调用，且同一 switch 里就有 case 6 的 Note 分支，两侧对同一输入的前提不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例前置：打开含 PMI 注释的 Step 242 文件；页只说“this STEP 242 annotation”。",
+          "example_quote": "1. Open a Step 242 file that contains PMI annotations.",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 PMI 类型值与注释类型对应：Datum Tag 取 2、Display Dimension 取 1、Gtol 取 3；页只说 as defined in swPMIType_e。",
+          "example_quote": "if (IAnnoPMIType == 2)\n{\nswPMIDatumData = (PMIDatumData)swAnnotation.GetPMIData();",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例说明返回 0 表示该注释没有 PMI 数据；页未给 0 的含义。",
+          "example_quote": "else if (IAnnoPMIType == 0)\n{\nif (swPMIDatumData == null)\nDebug.Print(\"   No PMI data\");",
+          "example_file": "Get_PMI_Data_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只有一句排除 note 注释；示例在类型 switch 之前对全部注释调用。"
+    },
+    {
+      "member": "GetPTZHeight2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_GTol_Example_CSharp.md",
+        "Insert_GTol_Example_VB.md",
+        "Insert_GTol_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "is valid only if this Gtol was created in a version of SOLIDWORKS earlier than 2022.",
+          "example_quote": "swGtol = (Gtol)swModel.InsertGtol();",
+          "example_file": "Insert_GTol_Example_CSharp.md",
+          "why": "页以“GTol 由 2022 之前的版本创建”为条件；示例的 GTol 是运行中的当前版本 InsertGtol() 新建的，只有宿主图纸来自 2018 样例文件，两侧对同一对象的前提不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把宿主图纸固定为 SOLIDWORKS 2018 样例文件，比页的“2022 之前版本”具体得多。",
+          "example_quote": "fileName = \"C:\\Users\\Public\\Documents\\SOLIDWORKS\\SOLIDWORKS 2018\\samples\\tutorial\\advdrawings\\foodprocessor.slddrw\"",
+          "example_file": "Insert_GTol_Example_VB.md"
+        },
+        {
+          "what": "示例给出具体帧号/公差号：先 SetPTZHeight2(1,1,True,\"50\") 写入，再用 frameNbr=1、tolNbr=1 读回；页只写 Frame number / Tolerance number。",
+          "example_quote": "frameNbr = 1;\ntolNbr = 1;\nheight = \"\";\nstatus = swGtol.GetPTZHeight2(frameNbr, tolNbr, out display, out height);",
+          "example_file": "Insert_GTol_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示返回值当作字符串直接拼进输出、未做数值换算，与 Remarks 的“返回字符串”一致但更具体（写出前后都是 \"50\"）。",
+          "example_quote": "status = swGtol.SetPTZHeight2(1, 1, true, \"50\");",
+          "example_file": "Insert_GTol_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 两条：版本前置 + 返回字符串；三份示例一致，冲突只在 GTol 是运行中新建。"
+    },
+    {
+      "member": "GetPackAndGo",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns / Examples / See Also，无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "GetParabolaCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 与 See Also，无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "GetParagraphs",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns / Examples / See Also，无 ## Remarks 段，按纪律跳过。"
+    }
+  ]
+}

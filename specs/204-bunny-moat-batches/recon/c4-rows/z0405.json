@@ -1,0 +1,119 @@
+{
+  "idx": 405,
+  "results": [
+    {
+      "member": "RelativeComponent",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Linear_Motor_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律跳过；示例确有 swMotorFeat.RelativeComponent = RelObj 赋值。"
+    },
+    {
+      "member": "RelaxSpline",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Spline_Tangency_and_Curvature_Controls_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按硬纪律跳过；示例先 SelectByID2 选中 Spline1 再调 RelaxSpline。"
+    },
+    {
+      "member": "ReleaseSelectionAccess",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份候选调的是 ExtrudeFeatureData2、CornerTreatmentFeatureData(VB/C#)、RipFeatureData 的同名方法，均非本接口；成员页也无 Examples 段。"
+    },
+    {
+      "member": "ReliefDepth",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Base_Flange_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- [[IBaseFlangeFeatureData::UseReliefRatio]] returns false,",
+          "example_quote": "Call swBaseFlangeFeat.Initialize(False, False, cba, False, swSheetMetalReliefTypes_e.swSheetMetalReliefRectangular, True, 0.8, 0#, 0#)",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md",
+          "why": "示例 Initialize 第 6 位传 True 即 UseReliefRatio=True，却紧接着读 ReliefDepth；Remarks 声明该属性只在 UseReliefRatio 为 false 时有效。两条不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例显示 ReliefDepth 是 Initialize 的末位实参（0#），且在 SHFeat.GetDefinition() 后回读打印；Remarks 只说初始化时设定。",
+          "example_quote": "Call swBaseFlangeFeat.Initialize(False, False, cba, False, swSheetMetalReliefTypes_e.swSheetMetalReliefRectangular, True, 0.8, 0#, 0#)",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "唯一候选示例确实用到 BaseFlangeFeatureData.ReliefDepth，且读它的时刻 UseReliefRatio 为 True。"
+    },
+    {
+      "member": "ReliefRatio",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Base_Flange_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ReliefRatio 是 Initialize 第 7 个实参（0.8），CreateFeature 后经 GetDefinition 回读；Remarks 只说初始化时设定、不可改。",
+          "example_quote": "Call swBaseFlangeFeat.Initialize(False, False, cba, False, swSheetMetalReliefTypes_e.swSheetMetalReliefRectangular, True, 0.8, 0#, 0#)",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        },
+        {
+          "what": "示例里被改成 0.7 的 ReliefRatio 落在父特征的 SheetMetalFeatureData 上，不是本只读接口。",
+          "example_quote": "smFeatData.ReliefRatio = 0.7",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "4 份候选中只有 BaseFlange 那份真用本接口；ConvertSolid 两份与 EdgeFlange 用的是别的接口的同名成员。"
+    },
+    {
+      "member": "ReliefTearType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Edge_Flange_Example_CSharp.md",
+        "Create_Edge_Flange_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "The default value of this property is swReliefTearType_e.swReliefTearTypeRip.",
+          "example_quote": "FeatData.ReliefTearType = (int)swReliefTearTypes_e.swReliefTearTypeRip;",
+          "example_file": "Create_Edge_Flange_Example_CSharp.md",
+          "why": "成员页把该枚举写成 swReliefTearType_e（单数 Type），两份示例都写成 swReliefTearTypes_e（复数 Types）；同一枚举不可能有两个真名。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出赋值次序：先 UseDefaultBendRelief=False，再 AutoReliefType=Tear，最后才赋 ReliefTearType；Remarks 只列条件不给顺序。",
+          "example_quote": "FeatData.UseDefaultBendRelief = false;\nFeatData.UseReliefRatio = true;\nFeatData.ReliefRatio = 0.5;\nFeatData.AutoReliefType = (int)swSheetMetalReliefTypes_e.swSheetMetalReliefTear;\nFeatData.ReliefTearType = (int)swReliefTearTypes_e.swReliefTearTypeRip;",
+          "example_file": "Create_Edge_Flange_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例都真用 EdgeFlangeFeatureData.ReliefTearType，且都先满足 Remarks 的两个前置条件，未见语义冲突。"
+    },
+    {
+      "member": "ReliefType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Base_Flange_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示 ReliefType 是 Initialize 第 5 个实参（Rectangular），CreateFeature 后经 GetDefinition 回读；Remarks 只说初始化时设定。",
+          "example_quote": "Call swBaseFlangeFeat.Initialize(False, False, cba, False, swSheetMetalReliefTypes_e.swSheetMetalReliefRectangular, True, 0.8, 0#, 0#)",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "ConvertSolid 两份用 ConvertSolidFeatureData.ReliefType、CornerRelief 用 SMCornerReliefData.ReliefType，均非本接口成员。"
+    }
+  ]
+}

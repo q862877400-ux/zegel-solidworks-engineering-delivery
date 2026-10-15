@@ -1,0 +1,133 @@
+{
+  "idx": 209,
+  "results": [
+    {
+      "member": "GetKnotPoints",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Spline_Example_VB.md",
+        "Get_Each_Splines_Parameters_Example_CSharp.md",
+        "Get_Each_Splines_Parameters_Example_VB.md",
+        "Get_Each_Splines_Parameters_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 示例把 out 拿到的 object 强转成一维 double[] 再按下标遍历；成员页只写 out object 与 Array of double values。",
+          "example_quote": "knotPoints = (double[])varKnotPoints;",
+          "example_file": "Get_Each_Splines_Parameters_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例都先读 KnotPointsCount 再调用，符合 Remarks 的前置，未见矛盾。"
+    },
+    {
+      "member": "GetLabel",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例均同名不同对象：DetailCircle.GetLabel（三份）与 DrSection.GetLabel，故不采用。"
+    },
+    {
+      "member": "GetLabelPosition",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Detail_Circle_and_Detail_View_Example_CSharp.md",
+        "Create_Detail_Circle_and_Detail_View_Example_VB.md",
+        "Create_Detail_Circle_and_Detail_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：须先 CreateDetailViewAt4 建视图，再用 swView.GetDetail 取到 DetailCircle 才能调本方法；成员页无任何前置说明。",
+          "example_quote": "swDetailCircle = (DetailCircle)swView.GetDetail();",
+          "example_file": "Create_Detail_Circle_and_Detail_View_Example_CSharp.md"
+        }
+      ],
+      "note": "本页无 Remarks，按纪律跳过冲突判定；示例签名与页面 out double 一致。"
+    },
+    {
+      "member": "GetLastFeatureAdded",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Limit_Angle_Mate_Example_CSharp.md",
+        "Create_Limit_Distance_Mate_Example_CSharp.md",
+        "Create_Limit_Distance_Mate_Example_VB.md",
+        "Create_Linear_Coupler_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示返回值可直接 GetDefinition() 拿到对应的高级配合 MateFeatureData 子类，再用 TypeName 区分配合类型；成员页只讲返回的子特征名。",
+          "example_quote": "swMateData = (MateFeatureData)feat.GetDefinition();",
+          "example_file": "Create_Limit_Angle_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "示例取到的是配合子特征而非 MateGroup，与 Remarks 一致；无矛盾。"
+    },
+    {
+      "member": "GetLastSaveError",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Last_Save_Error_Example_CSharp.md",
+        "Get_Last_Save_Error_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 ErrorCode 的 0 当作「本会话没发生过保存错误」来分支；成员页 Parameters 未给这个 0 的含义。",
+          "example_quote": "If Not varError = 0 Then",
+          "example_file": "Get_Last_Save_Error_Example_VB.md"
+        },
+        {
+          "what": "C# 示例先判 ErrorCode 是否为 null 才判 0，说明该 out 可能回 null；成员页只说它是错误码。",
+          "example_quote": "(!(varError == null))",
+          "example_file": "Get_Last_Save_Error_Example_CSharp.md"
+        }
+      ],
+      "note": "本页无 Remarks，跳过冲突判定；C#/VBA 两个示例对参数类型的写法差异属各语言 out 传法。"
+    },
+    {
+      "member": "GetLatestSupportedFileVersion",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Version_History_of_Future_Version_Document_Example_CSharp.md",
+        "Get_Version_History_of_Future_Version_Document_Example_VB.md",
+        "Get_Version_History_of_Future_Version_Document_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把这个整数当字符串打印并标为 Format version，同名变量也用于解析 VersionHistory 条目首字段；成员页称其为 File version number。",
+          "example_quote": "Debug.Print(\"Format version = \" + strFormatVersion);",
+          "example_file": "Get_Version_History_of_Future_Version_Document_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 讲的是旧版本文档被升级，示例讲的是未来版本文档可加载，两者互补不冲突。"
+    },
+    {
+      "member": "GetLayer",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Determine_if_Layer_is_Visible_Example_VB.md",
+        "Get_Layers_Example_CSharp.md",
+        "Get_Layers_Example_VB.md",
+        "Get_Layers_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 示例须对 GetLayerList 的元素先调 .ToString() 才能当 NameIn(string) 传；Remarks 只说该列表是 layer names。",
+          "example_quote": "swLayer = (Layer)swLayerMgr.GetLayer(vLayer.ToString());",
+          "example_file": "Get_Layers_Example_CSharp.md"
+        },
+        {
+          "what": "示例用 DrawingDoc::CreateLayer2 建的层也能被本方法按同名取回；Remarks 只列了 ILayerMgr::AddLayer 这条建层途径。",
+          "example_quote": "Set swLayer = swLayerMgr.GetLayer(\"Layer1\")",
+          "example_file": "Determine_if_Layer_is_Visible_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都先建好图层再按名取，与 Remarks 列的三条取名途径都不冲突。"
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "idx": 172,
+  "results": [
+    {
+      "member": "GetD2ModifiedSpacingValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Vary_Linear_Pattern_Instances_Example_CSharp.md",
+        "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显式落实 Remarks 第 1 步前置：D2PatternSeedOnly 置 false",
+          "example_quote": "swFeatData.D2PatternSeedOnly = false;",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出具体阵列参数：双向、每向 2 实例，故 n2=2，实例号 3 即 (2,2)",
+          "example_quote": "swFeatData.D2TotalInstances = 2;",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+        },
+        {
+          "what": "示例读实例 3 的 D2 间距，其注释标注 (2,2)，与 Remarks 公式一致",
+          "example_quote": "Debug.Print(\"Current D2 modified spacing value for instance #3 is \" + swInstOpts.GetD2ModifiedSpacingValue(3));",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+        }
+      ],
+      "note": "两例（C#/VB.NET）代码等价，均满足 D2PatternSeedOnly=false；实例号公式与示例一致，无冲突。"
+    },
+    {
+      "member": "GetDatumFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例逐字照做 Remarks 的 GetDatumType 判定，命中后才取 IPMIDatumFeature",
+          "example_quote": "if (swPMIDatumData.GetDatumType() == (int)swPMIDatumType_e.swPMIDatumType_DatumFeature)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出上游前置链：先筛注释 GetType()==2 且 GetPMIType()==2 才取 GetPMIData",
+          "example_quote": "if (IAnnoPMIType == 2)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "C# 与 VBA 两例都用 GetDatumType=swPMIDatumType_DatumFeature 精确守卫，与 Remarks 一致。"
+    },
+    {
+      "member": "GetDatumReferenceLabel",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_and_Modify_Datum_Target_Symbol_Example_CSharp.md",
+        "Insert_and_Modify_Datum_Target_Symbol_Example_VB.md",
+        "Insert_and_Modify_Datum_Target_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页无 Remarks；示例演示 WhichOne=0 的读-改-再读往返",
+          "example_quote": "Debug.Print(\"Current reference label: \" + swDatumTargetSym.GetDatumReferenceLabel(0));",
+          "example_file": "Insert_and_Modify_Datum_Target_Symbol_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示配套写入口同用索引 0（SetDatumReferenceLabel(0, \"b\")）",
+          "example_quote": "status = swDatumTargetSym.SetDatumReferenceLabel(0, \"b\");",
+          "example_file": "Insert_and_Modify_Datum_Target_Symbol_Example_CSharp.md"
+        }
+      ],
+      "note": "该页只有 Returns/Examples/See Also，无 Remarks 段，按规则跳过冲突判定。"
+    },
+    {
+      "member": "GetDatumTagCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 说是为 IGetDatumTags 定数组长度；示例把它当 count>0 闸门后取对象版",
+          "example_quote": "count = (int)swView.GetDatumTagCount();",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 版把返回值直接赋给 Long 变量，同样只当存在性判据用",
+          "example_quote": "count = swView.GetDatumTagCount",
+          "example_file": "Get_Annotations_Array_Example_VB.md"
+        }
+      ],
+      "note": "三例都按 Remarks 先计数再取数组；差别只在用 IGet 还是对象版，不构成矛盾。"
+    },
+    {
+      "member": "GetDatumTags",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例走 Remarks 推荐的一次性取数组路线，不用 GetFirstDatumTag/GetNext 链",
+          "example_quote": "Object[] Annotations = (Object[])swView.GetDatumTags();",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出元素形状：逐项转 DatumTag，再经 GetAnnotation().GetName() 取显示名",
+          "example_quote": "dTag = (DatumTag)Annotations[j];",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        }
+      ],
+      "note": "三例均一次取数组后循环，与 Remarks 的 all-at-once 建议完全吻合。"
+    },
+    {
+      "member": "GetDatumTarget",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例逐字照做 Remarks 的 GetDatumType 判定，命中后才取 IPMIDatumTarget",
+          "example_quote": "if (swPMIDatumData.GetDatumType() == (int)swPMIDatumType_e.swPMIDatumType_DatumTarget)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 版同一守卫改用 Select If 写法，仍以 DatumTarget 枚举为条件",
+          "example_quote": "Set swPMIDatumTarget = swPMIDatumData.GetDatumTarget",
+          "example_file": "Get_PMI_Data_Example_VB.md"
+        }
+      ],
+      "note": "与 GetDatumFeature 同结构；两例都用 GetDatumType 精确守卫，无冲突。"
+    },
+    {
+      "member": "GetDatumTargetSymCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 说是为 IGetDatumTargetSyms 定长度；示例只当 count>0 闸门用",
+          "example_quote": "count = swView.GetDatumTargetSymCount();",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        },
+        {
+          "what": "示例随后取的是对象版数组 GetDatumTargetSyms，而非 Remarks 所指的 IGet 版",
+          "example_quote": "Object[] Annotations = (Object[])swView.GetDatumTargetSyms();",
+          "example_file": "Get_Annotations_Arrays_Example_CSharp.md"
+        }
+      ],
+      "note": "三例均先计数后取数组；Remarks 的用途描述与示例用法不互斥，不判冲突。"
+    }
+  ]
+}

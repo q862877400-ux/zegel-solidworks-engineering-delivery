@@ -1,0 +1,97 @@
+{
+  "idx": 385,
+  "results": [
+    {
+      "member": "PasteAppearance",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "PasteSheet",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Copy_and_Paste_Drawing_Sheet_Example_CSharp.md",
+        "Copy_and_Paste_Drawing_Sheet_Example_VB.md",
+        "Copy_and_Paste_Drawing_Sheet_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出选图页的具体选法：类型串 SHEET、mark=0；成员页只说 Select a sheet",
+          "example_quote": "boolstatus = swModel.Extension.SelectByID2(\"Sheet1\", \"SHEET\", 0.09205356547875, 0.10872368523, 0, false, 0, null, 0);",
+          "example_file": "Copy_and_Paste_Drawing_Sheet_Example_CSharp.md"
+        },
+        {
+          "what": "RenameOption 传 No(=2)，后置条件仍显示图页被自动改名 Sheet1(2)",
+          "example_quote": "// 2. Copy and pastes Sheet1 as Sheet1(2) and activates Sheet1(2).",
+          "example_file": "Copy_and_Paste_Drawing_Sheet_Example_CSharp.md"
+        },
+        {
+          "what": "EditCopy 调在 swModel(ModelDoc2)，PasteSheet 调在 Part(DrawingDoc)，对象不同",
+          "example_quote": "swModel.EditCopy();",
+          "example_file": "Copy_and_Paste_Drawing_Sheet_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例调用序与 Remarks 两步前置一致，未见冲突"
+    },
+    {
+      "member": "Path",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "所列 4 份示例均未用本接口 Path，用的是 SweepFeatureData/SweptFlangeFeatureData.Path"
+    },
+    {
+      "member": "PathAlignmentType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Properties_of_Sweep_Feature_Example_VB.md",
+        "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md",
+        "Insert_Sweep_Cut_Feature_Example_CSharp.md",
+        "Insert_Sweep_Cut_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例直接写整数 0 并注明属 swTangencyType_e；成员页未给数值对应",
+          "example_quote": "swSweep.PathAlignmentType = 0",
+          "example_file": "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例先 AccessSelections 再读该属性，给出成员页没有的调用序",
+          "example_quote": "bRet = swSweep.AccessSelections(swModel, Nothing)",
+          "example_file": "Get_Properties_of_Sweep_Feature_Example_VB.md"
+        }
+      ],
+      "note": "示例只用 0(swTangencyNone)，在 Returns 三值内；Returns 未列 swMinimumTwist 但 Remarks 表里有"
+    },
+    {
+      "member": "PathName",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "Pattern",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "PatternBodyArray",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "所列 3 份示例的 PatternBodyArray 属 MirrorSolidFeatureData，非本接口"
+    }
+  ]
+}

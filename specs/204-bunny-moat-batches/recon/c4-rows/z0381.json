@@ -1,0 +1,119 @@
+{
+  "idx": 381,
+  "results": [
+    {
+      "member": "OuterRadius",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Fill_Pattern_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if both are true:\n\n- [[IFillPatternFeatureData::FeaturesToPatternType]] = [[swFeaturesToPatternType_e]].swFeaturesToPatternCreateSeedCut\n\n- [[IFillPatternFeatureData::CreateSeedCutType]] = [[swCreateSeedCutType_e]].swCreateSeedCutPolygon",
+          "example_quote": "swFeatData.CreateSeedCutType = 0;\nswFeatData.FeaturesToPatternType = 0;\nswFeatData.OuterRadius = 0.004;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+          "why": "Remarks 要求两开关为 CreateSeedCut(1) 与 Polygon(4)；示例把两者都写 0（=SelectedFeatures / None）却照样写 OuterRadius，前提不成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例同段还写了 CreateSeedCutPolygonSides 与 InnerRadius，成员页只讲 OuterRadius 的两个开关。",
+          "example_quote": "swFeatData.CreateSeedCutPolygonSides = 0;\nswFeatData.InnerRadius = 0.00380422606518061;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "取值依据 swFeaturesToPatternType_e 与 swCreateSeedCutType_e 两张枚举页。"
+    },
+    {
+      "member": "OuterToleranceValue",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过对比；四份示例均引用该属性名。"
+    },
+    {
+      "member": "OutputType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Create_Motion_Studies_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过对比；四份示例均在 AVIParameter 对象上设置。"
+    },
+    {
+      "member": "OverflowType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Partial_Chamfer_Example_CSharp.md",
+        "Get_Data_for_Simple_Fillet_Example_CSharp.md",
+        "Get_Data_for_Simple_Fillet_Example_VB.md",
+        "Get_Data_for_Simple_Fillet_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；四份示例变量均声明为 SimpleFilletFeatureData2。"
+    },
+    {
+      "member": "OverlapUnderlapRatio",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Modify_Closed_Corner_Feature_Example_CSharp.md",
+        "Create_and_Modify_Closed_Corner_Feature_Example_VB.md",
+        "Create_and_Modify_Closed_Corner_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；三份示例均读写该属性（设为 0.5）。"
+    },
+    {
+      "member": "OverrideDefaultSheetMetalParameters",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Base_Flange_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「非钣金零件」这条前置落到用 Part.prtdot 新建普通零件上。",
+          "example_quote": "Part = swApp.NewDocument(\"C:\\ProgramData\\SolidWorks\\SOLIDWORKS 2022\\templates\\Part.prtdot\", 0, swSheetWidth, swSheetHeight)",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        },
+        {
+          "what": "示例给出赋值顺序：先置 True，紧接着才写 Thickness。",
+          "example_quote": "swBaseFlangeFeat.OverrideDefaultSheetMetalParameters = True\nswBaseFlangeFeat.Thickness = 0.035",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "两个 Create_Swept_Flange 示例设的是 ISweptFlangeFeatureData 的同名成员，非本成员。"
+    },
+    {
+      "member": "OverrideDimension",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Library_Feature_Data_Example_CSharp.md",
+        "Get_Library_Feature_Data_Example_VB.md",
+        "Get_Library_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都把读该属性夹在 AccessSelections 与 ReleaseSelectionAccess 之间，比 Remarks 的指针具体。",
+          "example_quote": "boolstatus = LibraryFeatureData.AccessSelections(ModelDoc2, null);\nbOverrideDimVal = LibraryFeatureData.OverrideDimension;\nLibraryFeatureData.ReleaseSelectionAccess();",
+          "example_file": "Get_Library_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只指向 Selections that Define Features 文档，与示例三步一致，无冲突。"
+    }
+  ]
+}

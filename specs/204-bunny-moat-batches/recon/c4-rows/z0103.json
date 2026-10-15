@@ -1,0 +1,72 @@
+{"idx":103,"results":[
+{"member":"EdgeFilletRadius","remarks_empty":false,
+"examples_actually_used":["Create_Sheet_Metal_Gusset_Example_CSharp.md","Create_Sheet_Metal_Gusset_Example_VBNET.md"],
+"conflicts":[
+{"kind":"precondition_diff",
+"remarks_quote":"This property is valid only if [[ISMGussetFeatureData::FilletGussetEdges]] is true and [[ISMGussetFeatureData::GussetType]] is set to 1.",
+"example_quote":"swFeatData.FilletGussetEdges = false;",
+"example_file":"Create_Sheet_Metal_Gusset_Example_CSharp.md",
+"why":"Remarks 要求 FilletGussetEdges 为 true；示例在写 EdgeFilletRadius 上一行把它设成 false，前置不成立。"},
+{"kind":"precondition_diff",
+"remarks_quote":"This property is valid only if [[ISMGussetFeatureData::FilletGussetEdges]] is true and [[ISMGussetFeatureData::GussetType]] is set to 1.",
+"example_quote":"swFeatData.GussetType = (int)swSheetMetalRibGussetType_e.swSheetMetalRibGussetType_Rounded;",
+"example_file":"Create_Sheet_Metal_Gusset_Example_CSharp.md",
+"why":"Remarks 要求 GussetType=1；GussetType 成员页指向 swSheetMetalRibGussetType_e，该枚举 Flat=1、Rounded=0，示例写的是 Rounded。"}],
+"example_more_specific":[],
+"note":"VB.NET 同形；示例后半把 GussetType 改成 _Flat，却始终没把 FilletGussetEdges 打开。"},
+
+{"member":"EdgeLengthTolerance","remarks_empty":true,
+"examples_actually_used":["Get_Heal_Edges_Feature_Data_Example_CSharp.md","Get_Heal_Edges_Feature_Data_Example_VBNET.md"],
+"conflicts":[],"example_more_specific":[],
+"note":"成员页没有 ## Remarks 段（只有 Returns/Examples/See Also），按纪律跳过冲突判定。"},
+
+{"member":"Edges","remarks_empty":false,
+"examples_actually_used":[],
+"conflicts":[],"example_more_specific":[],
+"note":"给的 4 份都是 RipFeatureData / EdgeFlangeFeatureData 的同名 Edges，不是 IChamferFeatureData2。"},
+
+{"member":"Edit","remarks_empty":false,
+"examples_actually_used":["Edit_Mate_Reference_Example_CSharp.md","Edit_Mate_Reference_Example_VB.md","Edit_Mate_Reference_Example_VBNET.md"],
+"conflicts":[
+{"kind":"other_conflict",
+"remarks_quote":"This method applies the parameters to the actual features. After calling this method, call [[IModelDoc2::EditRebuild]] to rebuild the model, and then call [[IModelDocExtension::NeedsRebuild]] to determine if the rebuild was successful.",
+"example_quote":"swModel.EditRebuild3();",
+"example_file":"Edit_Mate_Reference_Example_CSharp.md",
+"why":"Remarks 规定收尾两步 EditRebuild 再 NeedsRebuild；示例只调 EditRebuild3，全文无 NeedsRebuild，成员名也不同。"}],
+"example_more_specific":[
+{"what":"给出「传 Nothing 清空第三参考」的 9 参实参写法，Nothing 落在第 8 位。",
+"example_quote":"swMateReferenceAlignment_Any, Nothing, swMateReferenceType_default, swMateReferenceAlignment_Any)",
+"example_file":"Edit_Mate_Reference_Example_VB.md"}],
+"note":"C#/VB.NET/VBA 三份形状一致，该冲突在三份里同时成立。"},
+
+{"member":"EditAssembly","remarks_empty":false,
+"examples_actually_used":["Create_Auto_Route_Example_CSharp.md","Create_Auto_Route_Example_VBNET.md","Create_Plane_Thru_3_Points_In-context_Example_VB.md","Insert_Cavity_Example_CSharp.md"],
+"conflicts":[
+{"kind":"precondition_diff",
+"remarks_quote":"This method is used with [[IAssemblyDoc::EditPart2]], which allows you to edit a part within the context of an assembly.",
+"example_quote":"swTopLevelAssembly.EditAssembly()",
+"example_file":"Create_Auto_Route_Example_VBNET.md",
+"why":"Auto Route 示例全文无 EditPart2，也未进入零件上下文，仍调 EditAssembly，与「配 EditPart2 使用」不符。"}],
+"example_more_specific":[
+{"what":"给出配对的具体调用序 EditPart2 → 上下文内建模 → EditAssembly，并回读 EditPart2 返回码。",
+"example_quote":"nRetVal = swAssy.EditPart2(True, False, nInfo)",
+"example_file":"Create_Plane_Thru_3_Points_In-context_Example_VB.md"}],
+"note":"Insert Cavity 与 Plane thru 3 Points 都成对用 EditPart2；只有两份 Auto Route 不成对。"},
+
+{"member":"EditBalloonOption","remarks_empty":true,
+"examples_actually_used":["Add_Autoballoon_to_Face_Example_CSharp.md","Add_Autoballoon_to_Face_Example_VB.md","Add_Autoballoon_to_Face_Example_VBNET.md"],
+"conflicts":[],"example_more_specific":[],
+"note":"无 ## Remarks 段（前提写在 Returns 里），跳过判定；三例均先开 EditBalloons 再赋本属性。"},
+
+{"member":"EditBalloonProperties2","remarks_empty":false,
+"examples_actually_used":["Edit_Balloon_Example_CSharp.md","Edit_Balloon_Example_VB.md","Edit_Balloon_Example_VBNET.md"],
+"conflicts":[],
+"example_more_specific":[
+{"what":"示例前置写「Select the balloon in the drawing」，代码用取选中对象把它落实。",
+"example_quote":"swNote = (Note)swSelMgr.GetSelectedObject6(1, -1);",
+"example_file":"Edit_Balloon_Example_CSharp.md"},
+{"what":"给出 Style 为 SplitCirc 时 LowerTextStyle/LowerText 一并生效的 11 参完整实参写法。",
+"example_quote":"Set swNote = swModelDocExt.EditBalloonProperties2(swBS_SplitCirc, swBF_5Chars, swBalloonTextCustom, \"Upper\", swBalloonTextCustom, \"Lower\", 0, True, 1, \"X\", 0.0355)",
+"example_file":"Edit_Balloon_Example_VB.md"}],
+"note":"三例都是先选中气泡再调用，与 Remarks 唯一的前置一致，未找到能并列的说法。"}
+]}

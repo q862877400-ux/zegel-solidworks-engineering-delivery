@@ -1,0 +1,143 @@
+{
+  "role": "V1",
+  "sampled": 12,
+  "sample_findings": [
+    {
+      "key": "(IView, Crop.md)",
+      "field": "signature",
+      "A": "System.int Crop()",
+      "B": "`System.int Crop()`",
+      "truth": "System.int Crop()",
+      "who_is_right": "A",
+      "why": "页面第14行为 **Signature**: `System.int Crop()`；反引号是 md 代码跨度、非签名本身，B 多抄了定界符。"
+    },
+    {
+      "key": "(IView, DisplayState.md)",
+      "field": "signature",
+      "A": "`System.string DisplayState {get; set;}`",
+      "B": "System.string DisplayState {get; set;}",
+      "truth": "System.string DisplayState {get; set;}",
+      "who_is_right": "B",
+      "why": "第14行 `System.string DisplayState {get; set;}`；A 多带反引号。与 Crop 方向相反 ⇒ 带不带反引号并不一致。"
+    },
+    {
+      "key": "(ISheet, TitleBlock.md)",
+      "field": "signature",
+      "A": "TitleBlock TitleBlock {get;}",
+      "B": "`TitleBlock TitleBlock {get;}`",
+      "truth": "TitleBlock TitleBlock {get;}",
+      "who_is_right": "A",
+      "why": "第14行 `TitleBlock TitleBlock {get;}`；{get;} 为只读属性 ⇒ zero 归「是（无括号）」（三方一致），不是空括号。"
+    },
+    {
+      "key": "(IDrawingDoc, GetLineFontName2.md)",
+      "field": "signature",
+      "A": "System.string GetLineFontName2( System.int Index )",
+      "B": "`System.string GetLineFontName2( System.int Index )`",
+      "truth": "System.string GetLineFontName2( System.int Index )",
+      "who_is_right": "A",
+      "why": "第14行 `System.string GetLineFontName2( System.int Index )`；B 多带反引号，其余逐字一致。"
+    },
+    {
+      "key": "(IView, GetEllipses.md)",
+      "field": "obsolete",
+      "A": true,
+      "B": true,
+      "truth": {
+        "strict": true,
+        "loose": true
+      },
+      "who_is_right": "truth",
+      "why": "第12行「Obsolete. Superseded by …」带句点 ⇒ strict 与 loose 同判 True，三方一致。"
+    },
+    {
+      "key": "(IDrawingDoc, CreateCompoundNote.md)",
+      "field": "obsolete",
+      "A": true,
+      "B": true,
+      "truth": {
+        "strict": false,
+        "loose": true
+      },
+      "who_is_right": "A",
+      "why": "第12行 Obsolete…2016 and later. Superseded by…，确属废弃；truth_strict 因缺句点而误判。"
+    },
+    {
+      "key": "(IDrawingDoc, ICreateCompoundNote.md)",
+      "field": "obsolete",
+      "A": true,
+      "B": true,
+      "truth": {
+        "strict": false,
+        "loose": true
+      },
+      "who_is_right": "A",
+      "why": "第12行首词即 Obsolete（版本限定式），与上一条同族；truth_strict 同样误判未废弃。"
+    },
+    {
+      "key": "(IView, IGetSFSymbols.md)",
+      "field": "pointer",
+      "A": true,
+      "B": true,
+      "truth": true,
+      "who_is_right": "truth",
+      "why": "第20行逐字含小写「in-process, unmanaged C++」且无拼误 ⇒ 三方一致 True，是本判据的正例。"
+    },
+    {
+      "key": "(IDrawingDoc, IGetPenInfo.md)",
+      "field": "pointer",
+      "A": true,
+      "B": true,
+      "truth": true,
+      "who_is_right": "truth",
+      "why": "第17行官方原文拼成「- in-porcess, unmanaged C++: …」；按题目字面判据会得 False —— 三方 True 才对。"
+    },
+    {
+      "key": "(IView, RootDrawingComponent2.md)",
+      "field": "zero",
+      "A": "查不到",
+      "B": "查不到",
+      "truth": "查不到",
+      "who_is_right": "truth",
+      "why": "全文仅10行、无 Signature 与正文 ⇒ 查不到正确；我方独立解析同值。"
+    },
+    {
+      "key": "(IDrawingDoc, Create3rdAngleViews2.md)",
+      "field": "zero",
+      "A": "否（有形参）",
+      "B": "否（有形号）",
+      "truth": "否（有形参）",
+      "who_is_right": "A",
+      "why": "第14行签名有一个形参 ModelName ⇒ 否（有形参）；B 写成「形号」，越出标签集，精确比对即错。"
+    },
+    {
+      "key": "(ISheet, TableAnchor.md)",
+      "field": "zero",
+      "A": "查不到",
+      "B": "查不到",
+      "truth": "查不到",
+      "who_is_right": "truth",
+      "why": "空壳页（仅10行、无正文、无 Signature）⇒ 查不到；与另一条同因，说明查不到实为『缺数据』而非零参的一态。"
+    }
+  ],
+  "criterion_defects": [
+    "obsolete 给了 strict/loose 两栏却没说用哪栏；二者只差 2 条（两条 CompoundNote），而「100%」只在取 loose 时成立，取 strict 则 A=3150/3152。",
+    "strict 只认行首带句点的「Obsolete.」，于是「Obsolete for documents…2016 and later.」这类版本限定式废弃被漏判；二元值也表达不了这第三态。",
+    "pointer 题面判据（## Returns 含 in-process, unmanaged C++）与标准答案不同：truth 用不分大小写的「unmanaged C++」（我复算 51/51 命中），字面判据只 47，漏 4 条。",
+    "漏的 4 条里有 1 条是官方原文自己拼错（IDrawingDoc/IGetPenInfo.md 第17行「in-porcess」），另 3 条是「In-process」大写开头。字面字符串判据对源文拼误与大小写零容忍，必然漏。",
+    "zero 四值不是同一根轴：空括号/有形参判方法元数，「是（无括号）」判成员种类（属性），「查不到」判页面缺正文；实测 method 只出前两者、property 只出后两者。",
+    "zero 不区分 {get;}（12 条）与 {get; set;}（33 条），两者都归「是（无括号）」⇒ 只读/可写信息丢失；这也正是把 {get;} 误读成「空括号」的成因。",
+    "signature 写「签名原文」，但源文是 **Signature**: `…`，判据未定义代码跨度反引号算不算原文；仅此一点就占 A/B 原始不一致 152 格中的 144 格（A 带 130、B 带 92、truth 带 0）。",
+    "四条判据混了两种任务：signature 是逐字抄录，obsolete/pointer/zero 是分类判断，却用同一套精确比对计分 ⇒ 格式噪声与语义错同权，这也是 95.18% 被写成 99.75% 的根源。"
+  ],
+  "typo_claim_verified": true,
+  "typo_note": "剥反引号后 A/B 只差 8 格，均在 zero 栏：否（有形参）→否（有形号）；参/号 在 788 页各 0 次 ⇒ 语义未变，非抄错原文。另有 2 处其他差异：144 格反引号、2 格 CompoundNote 的 obsolete。",
+  "counts_i_dispute": [
+    "「A vs B 原始一致 3144/3152 = 99.75%」的「原始」不成立：完全不做归一化的原始一致是 3000/3152 = 95.18%，3144 必须先剥掉 md 反引号才得到。",
+    "「A 对标准答案 100%」依赖两个未声明前提：signature 剥反引号 + obsolete 取 loose 栏；取同文件的 obsolete_strict 则为 3150/3152（差在两条 CompoundNote）。",
+    "「B 对标准答案 3144/3152 = 99.75%，8 处错」同样依赖那两个前提；且「8 处」只在剥反引号之后成立 —— B 另有 92 格 signature 带反引号，与 truth 逐字全不相等。",
+    "「归一后 3152/3152 = 100%」仍依赖剥反引号 + loose。未归一化时 A 的 signature 只有 658/788 匹配（130 格带反引号），所以「100%」不对应任何未归一化的读数。",
+    "truth.json 里两个 obsolete 栏在同一批数据上给出相反答案，而报告只报一个总数、未声明用的是哪栏 —— 这不是算术错，是口径未声明的错，且 3152 这个分母对 strict 口径并不成立。",
+    "「8 处错全是把 参 写成 号」的定性需补一句：参、号 两字在全部 788 个官方页里出现 0 次，所以这不是抄错原文，而是越出了判据自定的封闭标签集。"
+  ]
+}

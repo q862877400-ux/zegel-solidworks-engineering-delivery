@@ -1,0 +1,131 @@
+{
+  "idx": 250,
+  "results": [
+    {
+      "member": "GetSegmentsCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读其示例。"
+    },
+    {
+      "member": "GetSelectByIDString",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读其示例。"
+    },
+    {
+      "member": "GetSelectByIdSpecification",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读其示例。"
+    },
+    {
+      "member": "GetSelectedFaceCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Selected_Faces_on_Process_Body_Example_CSharp.md",
+        "Get_Selected_Faces_on_Process_Body_Example_VB.md",
+        "Get_Selected_Faces_on_Process_Body_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Do not use this method for general selection handling. If you want to handle items selected by the user or items selected with [[IModelDocExtension::SelectByID2]], use [[ISelectionMgr::GetSelectedObjectCount2]].",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", -0.0258707587273648, -0.00453920675113295, -0.00750000000022055, false, 0, null, 0);",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_CSharp.md",
+          "why": "Remarks 规定凡 SelectByID2 选中的项一律改用 GetSelectedObjectCount2；示例用 SelectByID2 选面后正是调本成员，全程未出现 GetSelectedObjectCount2。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "If you want to handle items selected by the user or items selected with [[IModelDocExtension::SelectByID2]], use [[ISelectionMgr::GetSelectedObjectCount2]].",
+          "example_quote": "swSelFaceCount = swProcBody.GetSelectedFaceCount();",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_CSharp.md",
+          "why": "示例把这个成员当作「数一数被选中的面」的计数来源，官方示例正是 Remarks 所禁止的用法示范。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：须先取 GetSelectedFaces 的返回并判非空，才调本成员。",
+          "example_quote": "swSelFaceVar = (object[])swProcBody.GetSelectedFaces();\nif ((swSelFaceVar != null))",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_CSharp.md"
+        },
+        {
+          "what": "示例明确本成员要调在 GetProcessedBodyWithSelFace 返回的新体上，不是被选中的原体。",
+          "example_quote": "swProcBody = (Body2)swBody.GetProcessedBodyWithSelFace();\nswSelFaceCount = swProcBody.GetSelectedFaceCount();",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 版对同一返回用 IsEmpty 判空，VB.NET 用 IsNothing、C# 用 == null。",
+          "example_quote": "If Not IsEmpty(swSelFaceVar) Then",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 与示例在同一场景互斥；示例自始至终未用其指定的替代成员。"
+    },
+    {
+      "member": "GetSelectedFaces",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Selected_Faces_on_Process_Body_Example_CSharp.md",
+        "Get_Selected_Faces_on_Process_Body_Example_VB.md",
+        "Get_Selected_Faces_on_Process_Body_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Do not use this method for general selection handling. If you want to handle items selected by the user or items selected with [[IModelDocExtension::SelectByID2]], use [[ISelectionMgr::GetSelectedObject6]].",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", -0.0258707587273648, -0.00453920675113295, -0.00750000000022055, false, 0, null, 0);",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_CSharp.md",
+          "why": "Remarks 明写「用 SelectByID2 选中的项」改走 GetSelectedObject6；示例恰恰用 SelectByID2 选面后调本成员取回，未出现 GetSelectedObject6。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "If you want to handle items selected by the user or items selected with [[IModelDocExtension::SelectByID2]], use [[ISelectionMgr::GetSelectedObject6]].",
+          "example_quote": "swSelFaceVar = (object[])swProcBody.GetSelectedFaces();",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_CSharp.md",
+          "why": "示例本意就是取回 SelectByID2 选中的面，正是 Remarks 所指的场景，官方示例与 Remarks 互斥。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序：先 GetProcessedBodyWithSelFace 得新体，再在其上取面。",
+          "example_quote": "swProcBody = (Body2)swBody.GetProcessedBodyWithSelFace();\nswSelFaceVar = (object[])swProcBody.GetSelectedFaces();",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_CSharp.md"
+        },
+        {
+          "what": "示例明确返回可为 null，须判空；成员页只写「Array of selected faces」。",
+          "example_quote": "if ((swSelFaceVar != null))\n{\n    swSelFaceCount = swProcBody.GetSelectedFaceCount();",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 版对同一返回用 IsEmpty 判空，VB.NET 用 IsNothing、C# 用 == null。",
+          "example_quote": "swSelFaceVar = swProcBody.GetSelectedFaces\nIf Not IsEmpty(swSelFaceVar) Then",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_VB.md"
+        }
+      ],
+      "note": "同型冲突；另其兄弟页 GetSelectedFaceCount 指向 GetSelectedObjectCount2，与本页指向 GetSelectedObject6 不同。"
+    },
+    {
+      "member": "GetSelectedObject",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（仅 Obsolete 提一句），按纪律跳过，未读其示例。"
+    },
+    {
+      "member": "GetSelectedObject2",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（仅 Obsolete 提一句），按纪律跳过，未读其示例。"
+    }
+  ]
+}

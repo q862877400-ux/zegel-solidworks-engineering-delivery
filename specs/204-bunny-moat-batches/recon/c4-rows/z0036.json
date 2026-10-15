@@ -1,0 +1,172 @@
+{
+  "idx": 36,
+  "results": [
+    {
+      "member": "BreakLinksToOriginalPart",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md",
+        "Mirror_Components_II_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没写的赋值顺序：CreateDerivedConfigurations 先置 False，再置本属性，两行都在 CreateFeature 之前。",
+          "example_quote": "swMirroCompFeatData.CreateDerivedConfigurations = false;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        },
+        {
+          "what": "示例指出 Remarks 里「opposite-hand version」具体指哪个列表：OppositeHandComponents（CTMOH）。",
+          "example_quote": "swMirroCompFeatData.OppositeHandComponents = CTMOH;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        }
+      ],
+      "note": "示例满足前置（CreateDerivedConfigurations=False），无冲突。"
+    },
+    {
+      "member": "BreakRadius",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Cross_Break_Feature_Data_in_Sheet_Metal_Part_Example_CSharp.md",
+        "Get_Cross_Break_Feature_Data_in_Sheet_Metal_Part_Example_VB.md",
+        "Get_Cross_Break_Feature_Data_in_Sheet_Metal_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把读取夹在 AccessSelections 与 ReleaseSelectionAccess 之间；成员页无任何调用序。",
+          "example_quote": "swCrossBreakFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Get_Cross_Break_Feature_Data_in_Sheet_Metal_Part_Example_CSharp.md"
+        },
+        {
+          "what": "示例里 InsertCrossBreak 第 2 实参写作 0.000635（米制字面量），即该半径；成员页只写 Radius、无单位。",
+          "example_quote": "swFeature = (Feature)swFeatureManager.InsertCrossBreak(1.5707963267949, 0.000635);",
+          "example_file": "Get_Cross_Break_Feature_Data_in_Sheet_Metal_Part_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "BreakView",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Broken_View_Example_CSharp.md",
+        "Create_Broken_View_Example_VB.md",
+        "Create_Broken_View_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Use [[IDrawingDoc::InsertBreakHorizontal]] or [[IDrawingDoc::InsertBreakVertical]] to insert break lines to a drawing view.",
+          "example_quote": "swBreakLine = (BreakLine)swView.InsertBreak(0, -0.0291950859897372, 0.0198236302285804, 1);",
+          "example_file": "Create_Broken_View_Example_CSharp.md",
+          "why": "Remarks 点名的两个成员在 C:\\swapi\\types 下无任何页；三份示例一律用 IView::InsertBreak 插断裂线。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说「拖动」重定位；示例给出程序化对应调用 IBreakLine::SetPosition。",
+          "example_quote": "status = swBreakLine.SetPosition(-0.03, 0.05);",
+          "example_file": "Create_Broken_View_Example_CSharp.md"
+        },
+        {
+          "what": "示例确认零参无返回，且随后用 UnBreakView 成对撤销。",
+          "example_quote": "swDrawingDoc.BreakView()",
+          "example_file": "Create_Broken_View_Example_VBNET.md"
+        }
+      ],
+      "note": "一条冲突：插断裂线的官方推荐成员与示例实际调用不同。"
+    },
+    {
+      "member": "BufferSize",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_OLE_Object_Data_Example_CSharp.md",
+        "Get_OLE_Object_Data_Example_VB.md",
+        "Get_OLE_Object_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取得 ISwOLEObject 实例的路径：从当前选区 GetSelectedObject6(1, 0)；成员页只讲 IGetBuffer 的前置顺序。",
+          "example_quote": "swOleObj = (SwOLEObject)swSelMgr.GetSelectedObject6(1, 0);",
+          "example_file": "Get_OLE_Object_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例只打印 BufferSize，从不调用 IGetBuffer，不构成对 Remarks 的反证。"
+    },
+    {
+      "member": "BumpTextureFilename",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Surface-finish_Image_Path_and_Filename_Example_CSharp.md",
+        "Get_Surface-finish_Image_Path_and_Filename_Example_VB.md",
+        "Get_Surface-finish_Image_Path_and_Filename_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出写入时机：在 CreateRenderMaterial + AddEntity 之后、AddDisplayStateSpecificRenderMaterial 之前直接赋完整 jpg 路径。",
+          "example_quote": "swRenderMaterial.BumpTextureFilename = fileName;",
+          "example_file": "Get_Surface-finish_Image_Path_and_Filename_Example_CSharp.md"
+        },
+        {
+          "what": "示例演示同一对象上再读回该路径；Remarks 只讲 UI 上「From File」的对应关系。",
+          "example_quote": "Debug.Print(\"  Surface finish's file name: \" + swRenderMaterial.BumpTextureFilename);",
+          "example_file": "Get_Surface-finish_Image_Path_and_Filename_Example_CSharp.md"
+        }
+      ],
+      "note": "页面首行标 Obsolete（后继 SurfaceFinishFile），但三份示例仍用它；该句不在 Remarks 段内。"
+    },
+    {
+      "member": "ButtonCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Flyouts_in_the_CommandManager_Example_CSharp.md",
+        "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取 IFlyoutGroup 的路径：CreateFlyoutGroup2 建好后用 iCmdMgr.GetFlyoutGroup 按用户 ID 取，即可读 ButtonCount。",
+          "example_quote": "Debug.Print(\"  Button count: \" + fogrp.ButtonCount);",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "Calculate",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只传 null，完全依赖前面 SelectByID2 建立的选区；成员页虽写 if NULL 但没给配套选区做法。",
+          "example_quote": "status = swMeasure.Calculate(null);",
+          "example_file": "Measure_Selected_Entities_Example_CSharp.md"
+        },
+        {
+          "what": "示例用 == -1 作为「该量不适用」的哨兵，逐项守卫后才打印；成员页与 Returns 都没提 -1。",
+          "example_quote": "if ((!(swMeasure.Length == -1)))",
+          "example_file": "Measure_Selected_Entities_Example_CSharp.md"
+        },
+        {
+          "what": "返回 false 时官方给出的失败文案是「实体组合无效」；Returns 只写 false if not。",
+          "example_quote": "Debug.Print(\"Invalid combination of selected entities.\");",
+          "example_file": "Measure_Selected_Entities_Example_CSharp.md"
+        },
+        {
+          "what": "示例在 Calculate 之前显式设 ArcOption（0=中心到中心）。",
+          "example_quote": "swMeasure.ArcOption = 0;",
+          "example_file": "Measure_Selected_Entities_Example_CSharp.md"
+        }
+      ],
+      "note": "Get_Motion_Study_Example_VB.md 虽含 Calculate，但调的是 IMotionStudy::Calculate，已排除。"
+    }
+  ]
+}

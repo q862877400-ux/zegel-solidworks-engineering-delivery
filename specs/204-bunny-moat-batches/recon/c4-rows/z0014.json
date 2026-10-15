@@ -1,0 +1,160 @@
+{
+  "idx": 14,
+  "results": [
+    {
+      "member": "AddRebuildSaveMark",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Save_Configuration_Data_Example_CSharp.md",
+        "Save_Configuration_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "版本门槛：SW2013 及以后才有这种标记配置的用法",
+          "example_quote": "// * In SOLIDWORKS 2013 and later, to mark each configuration",
+          "example_file": "Save_Configuration_Data_Example_CSharp.md"
+        },
+        {
+          "what": "前置：必须先激活该配置再写这个属性",
+          "example_quote": "//   1. Activate each configuration and set",
+          "example_file": "Save_Configuration_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Work_with_Configurations 调的是 ConfigMgr.AddRebuildSaveMark，属 ConfigurationManager 的方法，不是本成员，故不用。"
+    },
+    {
+      "member": "AddRevision",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Drawing_Sheet_Zones_Example_CSharp.md",
+        "Create_Drawing_Sheet_Zones_Example_VB.md",
+        "Create_Drawing_Sheet_Zones_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Revision 实参是单个字母（示例传 \"A\"），返回值被当作新版本号打印",
+          "example_quote": "Debug.Print(\"  New revision: \" + revTableAnno.AddRevision(\"A\"));",
+          "example_file": "Create_Drawing_Sheet_Zones_Example_CSharp.md"
+        },
+        {
+          "what": "前置：须先由 Sheet.InsertRevisionTable2 建表拿到该注解，成员页未写",
+          "example_quote": "// Insert a revision table and add a revision row",
+          "example_file": "Create_Drawing_Sheet_Zones_Example_CSharp.md"
+        }
+      ],
+      "note": "页面无 Remarks 段，按纪律跳过冲突判定；三份示例都调 revTableAnno.AddRevision(\"A\")。"
+    },
+    {
+      "member": "AddRow",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Row_to_Design_Table_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Do not use [[IDesignTable::Attach]] or [[IDesignTable::Detach]] with this method. Instead, use [[IDesignTable::EditTable2]] and [[IDesignTable::UpdateTable]].",
+          "example_quote": "swDesignTable.EditTable",
+          "example_file": "Add_Row_to_Design_Table_Example_VB.md",
+          "why": "Remarks 指名用 EditTable2；示例改调 EditTable，其官方页标 Obsolete、被 EditTable2 取代，第一步不能两者同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "CellValues 第 0 格是新行的配置名（示例赋 \"190\"），第 1 格才是列数据",
+          "example_quote": "' Name of configuration for newly created row",
+          "example_file": "Add_Row_to_Design_Table_Example_VB.md"
+        }
+      ],
+      "note": "示例末尾仍调 UpdateTable，与 Remarks 后半句一致；分歧只在 EditTable 与 EditTable2。"
+    },
+    {
+      "member": "AddSelectionListObject",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md",
+        "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "SelectData 实参可传 null/Nothing，示例全程不调 CreateSelectData",
+          "example_quote": "retval = swSelectionManager.AddSelectionListObject(swSketchPoint, null);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        },
+        {
+          "what": "Object 也可为 TearEdges 里的 Edge；参数说明 \"(see Remarks)\" 未列可用类型",
+          "example_quote": "status = swSelMgr.AddSelectionListObject(swEdge, null);",
+          "example_file": "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的挂起/恢复四步，四个示例都直接调用本成员；属流程粒度差异，未当硬矛盾。"
+    },
+    {
+      "member": "AddSelectionListObjects",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Objects_to_Selection_List_Example_CSharp.md",
+        "Add_Objects_to_Selection_List_Example_VB.md",
+        "Add_Objects_to_Selection_List_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "For VB.NET and C# applications, specify Objects as an array of System.Runtime.InteropServices.DispatchWrappers.",
+          "example_quote": "numAdded = selMgr.AddSelectionListObjects((selObjs), selData);",
+          "example_file": "Add_Objects_to_Selection_List_Example_CSharp.md",
+          "why": "C# 示例声明并逐个填了 DispatchWrapper[] arrObjIn，实参却传 Feature[] selObjs，与 Remarks 要求的参数形态相反。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "4. Call [[ISelectionMgr::ResumeSelectionList]] to reinstate the suspended selection list.",
+          "example_quote": "selMgr.ResumeSelectionList2(true);",
+          "example_file": "Add_Objects_to_Selection_List_Example_CSharp.md",
+          "why": "Remarks 第 4 步点名 ResumeSelectionList，其官方页标 Obsolete、被 ResumeSelectionList2 取代；示例调的是后者。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "VB.NET 示例把 Objects 声明成 Object() 数组（6 个 sketch 特征），非 Remarks 要求的 DispatchWrapper",
+          "example_quote": "Dim selObjs() As Object",
+          "example_file": "Add_Objects_to_Selection_List_Example_VBNET.md"
+        }
+      ],
+      "note": "VB.NET 传 Object()、C# 传 Feature[]，两份都未用 Remarks 要求的 DispatchWrapper[]；VBA 例不受该句约束。"
+    },
+    {
+      "member": "AddSeparator",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例都在 Activate 之后传 ToolbarId，与 Remarks 一致；返回的新 CommandTabBox 一律未接收。"
+    },
+    {
+      "member": "AddSketchConstraints",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Import_DXF_File_into_Part_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "它是带字符串索引的布尔属性：可读 AddSketchConstraints(\"\") 也可写回 True",
+          "example_quote": "importData.AddSketchConstraints(\"\") = True",
+          "example_file": "Import_DXF_File_into_Part_Sketch_Example_VB.md"
+        }
+      ],
+      "note": "成员页只有 YAML 头与标题，无 Signature/Returns/Remarks；形状信息只能从示例取。"
+    }
+  ]
+}

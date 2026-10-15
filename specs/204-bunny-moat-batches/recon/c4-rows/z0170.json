@@ -1,0 +1,136 @@
+{
+  "idx": 170,
+  "results": [
+    {
+      "member": "GetCurveParams",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Determine_Type_of_Face_Example_VB.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_CSharp.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_VB.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显式分支处理 startParam > endParam 的情形；页面只标 retval[6]/[7] 为 start/end，对二者大小关系无任何约束。",
+          "example_quote": "If varParams(6) > varParams(7) Then",
+          "example_file": "Determine_Type_of_Face_Example_VB.md"
+        }
+      ],
+      "note": "页面说 10 个 double，示例只读 0..7，未见形状冲突。"
+    },
+    {
+      "member": "GetCurveParams2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Dimension_Edge_in_Drawing_Example_VB.md",
+        "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+        "Get_Intersecting_Face_and_Edge_Example_VB.md",
+        "Get_Length_of_Edge_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 (6)(7) 原样当 u 参数区间用并 ×1000 打印 mm，说明该数组按米计量；页面全文未给单位。",
+          "example_quote": "Debug.Print \"CurveLength = \" & swCurve.GetLength2(vCurveParam(6), vCurveParam(7)) * 1000# & \" mm\"",
+          "example_file": "Get_Length_of_Edge_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都先调 GetCurve，与页面前置一致；示例未做换向纠正，与 start<end 一致。"
+    },
+    {
+      "member": "GetCurveParams3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Edge_Curve_Parameterization_Example_CSharp.md",
+        "Get_Edge_Curve_Parameterization_Example_VB.md",
+        "Get_Edge_Curve_Parameterization_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例列出返回对象 CurveParamData 的具体成员 CurveTag/CurveType/Sense/UMaxValue/UMinValue/StartPoint/EndPoint；页面 Returns 只写一个 ICurveParamData。",
+          "example_quote": "Debug.Print(\"The maximum U parameter value is: \" + swCurveParaData.UMaxValue);",
+          "example_file": "Get_Edge_Curve_Parameterization_Example_CSharp.md"
+        }
+      ],
+      "note": "示例先调 swEdge.GetCurve() 再调本方法，与前置一致。"
+    },
+    {
+      "member": "GetCurvesCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Boundary_Feature_Example_CSharp.md",
+        "Insert_Boundary_Feature_Example_VB.md",
+        "Insert_Boundary_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在调用前先 AccessSelections(swModel, null)；本页无 Remarks 段，未写这一前置。",
+          "example_quote": "status = swBoundaryBossFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "页面无 Remarks 段，按规则 3 跳过冲突判定。"
+    },
+    {
+      "member": "GetCustomBendAllowance",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Base_Flange_Feature_Example_CSharp.md",
+        "Create_Base_Flange_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method is valid only if [[IBaseFlangeFeatureData::UseDefaultBendAllowance]] is false.",
+          "example_quote": "cba = (CustomBendAllowance)swBaseFlangeFeat.GetCustomBendAllowance();",
+          "example_file": "Create_Base_Flange_Feature_Example_CSharp.md",
+          "why": "示例在 CreateDefinition 之后立即调用本方法，而 UseDefaultBendAllowance=False 是稍后 Initialize 的第 2 个实参；调用点上该前置尚未被置为 false。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例展示返回对象可写成员 Type/BendAllowance 及枚举 swBendAllowanceDirect；页面 Returns 只写 Custom bend allowance。",
+          "example_quote": "cba.Type = (int)swBendAllowanceTypes_e.swBendAllowanceDirect;",
+          "example_file": "Create_Base_Flange_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "另两份示例调的是 SketchedBendFeatureData / ConvertSolid 的同名成员，按指示不用。"
+    },
+    {
+      "member": "GetCustomInfoNames2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "List_Custom_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例说明 Configuration 传入各配置名并额外追加空串以取非配置特定属性；页面 Parameters 写 No description。",
+          "example_quote": "Add a blank string for the nonconfiguration-specific custom properties",
+          "example_file": "List_Custom_Properties_Example_VB.md"
+        }
+      ],
+      "note": "页面无 Remarks 段，按规则 3 跳过冲突判定。"
+    },
+    {
+      "member": "GetCustomInfoType3",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "List_Custom_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按 (配置名, 属性名) 调用并把返回值当类型码打印；页面两个 Parameters 均写 No description。",
+          "example_quote": "Debug.Print \" Type = \" & swModel.GetCustomInfoType3(vConfigName, vCustInfoName)",
+          "example_file": "List_Custom_Properties_Example_VB.md"
+        }
+      ],
+      "note": "页面无 Remarks 段，按规则 3 跳过冲突判定。"
+    }
+  ]
+}

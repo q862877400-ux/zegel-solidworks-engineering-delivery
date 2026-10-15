@@ -1,0 +1,117 @@
+{
+  "idx": 417,
+  "results": [
+    {
+      "member": "RotateAboutCenter",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Wrap_Feature_Face_Example_CSharp.md",
+        "Change_Wrap_Feature_Face_Example_VB.md",
+        "Change_Wrap_Feature_Face_Example_VBNET.md",
+        "Create_Corner_Relief_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 故跳过。附带观察（不算冲突）：CornerRelief 传 45，Wrap 三例传 0.00565… 量级。"
+    },
+    {
+      "member": "RotateAboutEachComponentOrigin",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Explode_Step_Example_VB.md",
+        "Edit_Radial_Explode_Step_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IExplodeStep::ExplodeStepType]] is set to [[swAssemblyExplodeStepType_e]].swAssemblyExplodeStepType_Translate.",
+          "example_quote": "    explStep.RotateAboutEachComponentOrigin = Not explStep.RotateAboutEachComponentOrigin",
+          "example_file": "Edit_Radial_Explode_Step_Example_VB.md",
+          "why": "同一步上示例还改 DivergeFromAxis/DivergeDirection，二者成员页写明仅 Radial 有效；本属性页却写仅 Translate 有效，两说不能同时成立。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "Add_Explode_Step 例只读取不设置；冲突来自 Edit_Radial 例。"
+    },
+    {
+      "member": "RotateOrCopy",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Rotate_Scale_Copy_Sketch_Example_CSharp.md",
+        "Rotate_Scale_Copy_Sketch_Example_VB.md",
+        "Rotate_Scale_Copy_Sketch_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Angle 实参 0.78539816339745 即 π/4 ⇒ 弧度；成员页对该参数未写单位。",
+          "example_quote": "swModelDocExt.RotateOrCopy(false, 2, false, -0.164430975316075, 0.063635716435882, 0, 0, 0, 1, 0.78539816339745);",
+          "example_file": "Rotate_Scale_Copy_Sketch_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出 BaseX/BaseY 的具体米制值（-0.164…、0.0636…），把 Remarks 的「典型传法」落成实参。",
+          "example_quote": "swModelDocExt.RotateOrCopy(false, 2, false, -0.164430975316075, 0.063635716435882, 0, 0, 0, 1, 0.78539816339745);",
+          "example_file": "Rotate_Scale_Copy_Sketch_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的 0,0,1/BaseZ=0 与示例实参一致，未构成冲突；三语言版实参相同。"
+    },
+    {
+      "member": "RotateOrCopy3DAboutVector",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rotate_and_Copy_3D_Sketch_About_Vector_Example_CSharp.md",
+        "Rotate_and_Copy_3D_Sketch_About_Vector_Example_VB.md",
+        "Rotate_and_Copy_3D_Sketch_About_Vector_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；未核对示例实参。"
+    },
+    {
+      "member": "RotateOrCopy3DAboutXYZ",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_CSharp.md",
+        "Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_VB.md",
+        "Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；与 AboutVector 两族示例互不混用。"
+    },
+    {
+      "member": "Rotation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Fill_Pattern_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- [[IFillPatternFeatureData::FeaturesToPatternType]] = [[swFeaturesToPatternType_e]].swFeaturesToPatternCreateSeedCut",
+          "example_quote": "swFeatData.FeaturesToPatternType = 0;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+          "why": "swFeaturesToPatternType_e.md：SelectedFeatures=0、CreateSeedCut=1。示例写 0 即 SelectedFeatures，违反该前置。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- [[IFillPatternFeatureData::CreateSeedCutType]] is set to one of the following:",
+          "example_quote": "swFeatData.CreateSeedCutType = 0;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+          "why": "swCreateSeedCutType_e.md：None=0，Diamond/Polygon/Square=3/4/2。示例写 0 即 None，不在允许集合内。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "示例在两条前置都不成立时仍写 Rotation=0 并 CreateFeature；两条前置各记一次。"
+    },
+    {
+      "member": "RotationAngle",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks。四份候选均非本接口：ExplodeStep/LibFormTool/ThreadFeatureData 的同名成员。"
+    }
+  ]
+}

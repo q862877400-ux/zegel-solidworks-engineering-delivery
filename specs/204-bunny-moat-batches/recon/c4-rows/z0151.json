@@ -1,0 +1,141 @@
+{
+ "idx": 151,
+ "results": [
+  {
+   "member": "GetBendState",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Flatten_Sheet_Metal_Part_Example_VB.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "A part with bend information is being edited in context of the assembly (see [[IAssemblyDoc::EditPart2]])\n\nThe bend state for that part is returned.\n\nThis method is run on a part without bend information or directly on an assembly\n\nswSMBendStateNone is returned, and the return status is S_false (COM only).",
+     "example_quote": "    nBendState = swModel.GetBendState\n    Debug.Print \"File = \" & swModel.GetPathName\n    Debug.Print \" Original bend state = \" & nBendState\n    If nBendState <> swSMBendStateFlattened Then",
+     "example_file": "Flatten_Sheet_Metal_Part_Example_VB.md",
+     "why": "Remarks 只列了「在装配体上下文编辑」与「无折弯信息或直接在装配体上」两种情形；示例的前置是直接打开钣金件，两种都不覆盖，却按能取到真实弯折状态使用。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例还要求改完 bend state 后调用 EditRebuild3 才能看到变化",
+     "example_quote": "        ' Rebuild to see changes\n        bRet = swModel.EditRebuild3: Debug.Assert bRet",
+     "example_file": "Flatten_Sheet_Metal_Part_Example_VB.md"
+    }
+   ],
+   "note": "Remarks 是二选一的 If/Then 表，未列「直接打开的钣金件」这一情形。"
+  },
+  {
+   "member": "GetBentLeader",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例把返回值当布尔用：真取 3 个引线点，假取 2 个",
+     "example_quote": "                If True = swAnn.GetBentLeader Then\n                    nNumPts = 3\n                Else\n                    nNumPts = 2\n                End If",
+     "example_file": "Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md"
+    }
+   ],
+   "note": "成员页无 Remarks（只有 Obsolete 与后继链接），按纪律跳过冲突判定。"
+  },
+  {
+   "member": "GetBlockTolerances",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_DimXpert_Block_Tolerance_Example_VB.md",
+    "Get_DimXpert_Block_Tolerance_Example_VBNET.md",
+    "Get_DimXpert_Datum_Example_VB.md",
+    "Get_DimXpert_Datum_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例显示返回对象可能为 Nothing，且带 Type 与 GetToleranceValues",
+     "example_quote": "    Set blockTols = dimXpertPart.GetBlockTolerances()\n    If Not blockTols Is Nothing Then\n        Select Case blockTols.Type",
+     "example_file": "Get_DimXpert_Block_Tolerance_Example_VB.md"
+    }
+   ],
+   "note": "成员页无 Remarks，跳过冲突判定；页面 Returns 写接口名、Signature 写 DimXpertBlockTolerances。"
+  },
+  {
+   "member": "GetBlockingState",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_Blocking_State_Example_VB.md",
+    "Get_Version_History_of_Future_Version_Document_Example_CSharp.md",
+    "Get_Version_History_of_Future_Version_Document_Example_VB.md",
+    "Get_Version_History_of_Future_Version_Document_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例把 swBlockingStates_e 的取值逐一写死为 0-4",
+     "example_quote": "Public Enum swBlockingStates_e\nswNoBlock\n= &H0\nswFullBlock\n= &H1\nswModifyBlock\n= &H2\nswPartialModifyBlock\n= &H3\nswEditorBlock\n= &H4\nEnd Enum",
+     "example_file": "Get_Blocking_State_Example_VB.md"
+    }
+   ],
+   "note": "成员页无 Remarks。⚠两份官方示例对该枚举给出 5 项与 8 项两套互斥定义。"
+  },
+  {
+   "member": "GetBodies",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Check_Interference_Among_Bodies_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例先 GetBodyCount 再取，且先判空提示",
+     "example_quote": "    Set swBodyFolder = swFeature.GetSpecificFeature2\n    Dim count As Long\n    count = swBodyFolder.GetBodyCount\n    If (count < 1) Then\n        MsgBox (\"There are no bodies. Create a body in the folder.\")\n    Else\n        bodyList = swBodyFolder.GetBodies\n    End If",
+     "example_file": "Check_Interference_Among_Bodies_Example_VB.md"
+    },
+    {
+     "what": "示例靠 GetFirstSubFeature 手工下钻子文件夹",
+     "example_quote": "        If (Name = \"SolidBodyFolder\") Then\n            contLoop = False\n            GetVariantOfBody swFeature, targetBodyList\n            Set swFeature = swFeature.GetFirstSubFeature\n            GetVariantOfBody swFeature, toolBodyList",
+     "example_file": "Check_Interference_Among_Bodies_Example_VB.md"
+    }
+   ],
+   "note": "4 份候选示例中只有这份调 IBodyFolder；其余是 IPartExplodeStep / CostPart 的同名成员。"
+  },
+  {
+   "member": "GetBodies2",
+   "remarks_empty": false,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "4 份候选示例调的是 PartDoc.GetBodies2(BodyType, VisibleOnly)，非本成员，故无可用示例。"
+  },
+  {
+   "member": "GetBodies3",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Bodies_in_Components_Example_CPlusPlus_COM.md",
+    "Get_Bodies_in_Components_Example_CSharp.md",
+    "Get_Bodies_in_Components_Example_VB.md",
+    "Get_Bodies_in_Components_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "C++ COM 示例把返回值作为第三个尾参数传出",
+     "example_quote": "          pComp->GetBodies3(0,&vBodyInfo,&vBodyArr);",
+     "example_file": "Get_Bodies_in_Components_Example_CPlusPlus_COM.md"
+    },
+    {
+     "what": "示例把 BodiesInfo 转成 int[] 再按 0=用户体 / 1=普通体解读",
+     "example_quote": "                vBodies = (object[])oneComponent.GetBodies3((int)swBodyType_e.swSolidBody, out (object)vBodyInfo);\n                BodiesInfo = (int[])vBodyInfo;",
+     "example_file": "Get_Bodies_in_Components_Example_CSharp.md"
+    },
+    {
+     "what": "示例把 BodiesInfo 逐个判 0=user / 1=normal",
+     "example_quote": "                Select Case vBodyInfo(j)\n                Case 0\n                  Debug.Print \" Body type: user\"\n                Case 1\n                  Debug.Print \" Body type: normal\"\n            End Select",
+     "example_file": "Get_Bodies_in_Components_Example_VB.md"
+    }
+   ],
+   "note": "4 份示例都调 IComponent2.GetBodies3；C# 示例打印体数用 Length+1，与同文件循环写法不一致。"
+  }
+ ]
+}

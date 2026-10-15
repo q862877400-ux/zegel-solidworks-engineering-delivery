@@ -1,0 +1,140 @@
+{
+  "idx": 367,
+  "results": [
+    {
+      "member": "MirrorComponents3",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Mirror_Components_Example_CSharp.md",
+        "Mirror_Components_Example_VB.md",
+        "Mirror_Components_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 MirrorPlane 实参具体化为按树名取到的 Feature（PLANE4），页只写「Reference plane or planar face」",
+          "example_quote": "mirrorPlane = (Feature)swAssem.FeatureByName(\"PLANE4\");",
+          "example_file": "Mirror_Components_Example_CSharp.md"
+        }
+      ],
+      "note": "页无 Remarks 段。示例 filenames=Nothing 仍设 Suffix+_TestMirror，与参数 valid-only 条款相抵"
+    },
+    {
+      "member": "MirrorComponentsFolderLocation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md",
+        "Mirror_Components_II_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「目标文件夹必须已存在」列为编号前置条件，页只说 existing folder",
+          "example_quote": "// 2. Ensure that c:\\API\\MirrorComps exists.",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        },
+        {
+          "what": "示例固定赋值顺序：先 PlaceFilesInOneFolder=true，再写本属性；页只给 valid only if",
+          "example_quote": "swMirroCompFeatData.PlaceFilesInOneFolder = true;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        }
+      ],
+      "note": "C# 与 VB.NET 示例都先置 PlaceFilesInOneFolder=True，valid-only 条款成立，无矛盾"
+    },
+    {
+      "member": "MirrorFaceArray",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mirror_Feature_Data_Example_VB.md",
+        "Get_Mirror_Pattern_Feature_Data_Example_CSharp.md",
+        "Get_Mirror_Pattern_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整三步：AccessSelections 后读本属性，收尾 ReleaseSelectionAccess；页只指向另一篇文档",
+          "example_quote": "faceArray = (object[])swMirrorPatternFeatureData.MirrorFaceArray;",
+          "example_file": "Get_Mirror_Pattern_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "页仅转引 Selections that Define Features；三份示例都先 AccessSelections 再读，无矛盾"
+    },
+    {
+      "member": "MirrorPart2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mirror_Part_Information_Example_CSharp.md",
+        "Get_Mirror_Part_Information_Example_VB.md",
+        "Get_Mirror_Part_Information_Example_VBNET.md",
+        "Mirror_Sheet-metal_Part_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Feature MirrorPart2( System.bool BreakLink, System.int Options, out ModelDoc2 ResultPart )",
+          "example_quote": "mirrorFeature = swPart.MirrorPart2(False, mirrorOptions, resultPart)",
+          "example_file": "Get_Mirror_Part_Information_Example_VBNET.md",
+          "why": "签名第3参为 out，VB.NET 必须写 Out 关键字，而该示例未写；同族 C# 示例写的是 out resultPart，两侧不能同时成立"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把「选平面」具体化为在 FeatureManager 特征树里选中",
+          "example_quote": "// 2. Select the reference plane in the FeatureManager design tree.",
+          "example_file": "Get_Mirror_Part_Information_Example_CSharp.md"
+        },
+        {
+          "what": "示例在调用前加选择类型白名单守卫（DATUMPLANES 或 FACES），页 Remarks 只说必须选",
+          "example_quote": "if (!(selType == swSelectType_e.swSelDATUMPLANES | selType == swSelectType_e.swSelFACES))",
+          "example_file": "Get_Mirror_Part_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "选面前置两侧一致；唯一分歧在 out 形参写法（VBA 无 Out 关键字属语言本身，不计）"
+    },
+    {
+      "member": "MirrorPlane",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无 Remarks 段；Returns 写 IFace2 或 IRefPlane，示例赋的是 FeatureByName「PLANE4」得到的 Feature"
+    },
+    {
+      "member": "MirrorProfile",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Structural_Weldment_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 InsertStructuralWeldment4 之前于 StructuralMemberGroup 上赋值，建完后再回读同一属性",
+          "example_quote": "Group1.MirrorProfile = true;",
+          "example_file": "Insert_Structural_Weldment_Example_CSharp.md"
+        }
+      ],
+      "note": "Create_a_Thread_Feature_* 用的是 IThreadFeatureData.MirrorProfile，不属本成员，故不算"
+    },
+    {
+      "member": "MirrorProfileAxis",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Structural_Weldment_Example_CSharp.md",
+        "Insert_Structural_Weldment_Example_VB.md",
+        "Insert_Structural_Weldment_Example_VBNET.md",
+        "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体枚举取值 Vertical；页 Returns 只写 as defined in swMirrorProfileOrAlignmentAxis_e",
+          "example_quote": "Group1.MirrorProfileAxis = (int)swMirrorProfileOrAlignmentAxis_e.swMirrorProfileOrAlignmentAxis_Vertical;",
+          "example_file": "Insert_Structural_Weldment_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例均真用本成员；页无 Remarks 段，按纪律不判冲突"
+    }
+  ]
+}

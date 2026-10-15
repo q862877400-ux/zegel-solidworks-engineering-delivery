@@ -1,0 +1,144 @@
+{
+  "idx": 493,
+  "results": [
+    {
+      "member": "TextureTranslationU",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "取值链：AddDecal+Rebuild 后重选面→GetDecalsCount>0→GetAllDecalProperties→转 FaceDecalProperties；成员页无前置",
+          "example_quote": "swFaceDecalPropertiesArray = (object[])swFace.GetAllDecalProperties();",
+          "example_file": "Add_Decal_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；示例仅打印读数，未给单位。"
+    },
+    {
+      "member": "TextureTranslationV",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "取值链：AddDecal+Rebuild 后重选面→GetDecalsCount>0→GetAllDecalProperties→转 FaceDecalProperties；成员页无前置",
+          "example_quote": "swFaceDecalPropertiesArray = (object[])swFace.GetAllDecalProperties();",
+          "example_file": "Add_Decal_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；示例仅打印读数，未给单位。"
+    },
+    {
+      "member": "TextureTranslationX",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "取值链：AddDecal+Rebuild 后重选面→GetDecalsCount>0→GetAllDecalProperties→转 FaceDecalProperties；成员页无前置",
+          "example_quote": "swFaceDecalPropertiesArray = (object[])swFace.GetAllDecalProperties();",
+          "example_file": "Add_Decal_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；示例仅打印读数，未给单位。"
+    },
+    {
+      "member": "TextureTranslationY",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "取值链：AddDecal+Rebuild 后重选面→GetDecalsCount>0→GetAllDecalProperties→转 FaceDecalProperties；成员页无前置",
+          "example_quote": "swFaceDecalPropertiesArray = (object[])swFace.GetAllDecalProperties();",
+          "example_file": "Add_Decal_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；示例仅打印读数，未给单位。"
+    },
+    {
+      "member": "TextureUScale",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "取值链：AddDecal+Rebuild 后重选面→GetDecalsCount>0→GetAllDecalProperties→转 FaceDecalProperties；成员页无前置",
+          "example_quote": "swFaceDecalPropertiesArray = (object[])swFace.GetAllDecalProperties();",
+          "example_file": "Add_Decal_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；示例仅打印读数，未给单位。"
+    },
+    {
+      "member": "TextureVScale",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "取值链：AddDecal+Rebuild 后重选面→GetDecalsCount>0→GetAllDecalProperties→转 FaceDecalProperties；成员页无前置",
+          "example_quote": "swFaceDecalPropertiesArray = (object[])swFace.GetAllDecalProperties();",
+          "example_file": "Add_Decal_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；示例仅打印读数，未给单位。"
+    },
+    {
+      "member": "ThemeName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md",
+        "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "You can also get or set the SOLIDWORKS MBD 3D PDF path for a theme using:\n\n- SOLIDWORKS API. Call:\n\n  - [[ISldWorks::GetUserPreferenceStringValue]](swUserPreferenceStringValue_e.swFileLocationsThemeFolder) or\n\n  - [[ISldWorks::SetUserPreferenceStringValue]](swUserPreferenceStringValue_e.swFileLocationsThemeFolder, alue*>)\n\n- SOLIDWORKS Design user interface. Click **Tools > System Options > File Locations > 3D PDF Themes** in **Show folders for**.",
+          "example_quote": "swMBDPdfData.ThemeName = \"C:\\\\Program Files\\\\SolidWorks Corp\\\\SOLIDWORKS\\\\data\\\\themes\\\\simple part (a4, portrait)\\\\theme.xml\";",
+          "example_file": "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md",
+          "why": "Remarks 说可用「主题文件夹」偏好与「Show folders for」文件夹选择器取得该路径；示例里却是每个主题子目录下的具体 theme.xml，文件夹级设定无法区分二者。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "取值形态：data\\themes\\<主题子目录>\\theme.xml 的完整文件路径；成员页只说「path and file name」",
+          "example_quote": "swMBDPdfData.ThemeName = \"c:\\\\program files\\\\solidworks corp\\\\solidworks\\\\data\\\\themes\\\\simple assembly (a4, landscape)\\\\theme.xml\";",
+          "example_file": "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md"
+        },
+        {
+          "what": "调用序：GetMBD3DPdfData() 取对象→设 ThemeName→PublishTo3DPDF；成员页 Remarks 未给序",
+          "example_quote": "swMBDPdfData = (MBD3DPdfData)swModelDocExt.GetMBD3DPdfData();",
+          "example_file": "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md"
+        }
+      ],
+      "note": "所读示例值形态一致（theme.xml 全路径），无示例间矛盾；VB/VBNET 版为同句翻译。"
+    }
+  ]
+}

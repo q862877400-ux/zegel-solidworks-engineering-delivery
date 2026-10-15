@@ -1,0 +1,149 @@
+{
+  "idx": 396,
+  "results": [
+    {
+      "member": "ProfileLengthDim",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[ISMGussetFeatureData::ProfileDimensionScheme]] is set to 1.",
+          "example_quote": "swFeatData.ProfileDimensionScheme = (int)swSheetMetalGussetProfileDimType_e.swSheetMetalGussetProfileDimType_IndentDepth;\nswFeatData.IndentDepth = 0.01;\nswFeatData.ProfileLengthDim = 0.0;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+          "why": "Remarks 要求 scheme=1 才有效；枚举 IndentDepth=0、ProfileDimensions=1（enums 页与 enum_values 反射两源一致），示例设 0 后仍写该属性。VB.NET 版逐字同构。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先取 CreateDefinition(swFmSMGusset)，按 UseOffset→OffsetDistance→ProfileDimensionScheme→IndentDepth→ProfileLengthDim 顺序赋值，再 CreateFeature",
+          "example_quote": "swFeatData = (SMGussetFeatureData)Part.FeatureManager.CreateDefinition((int)swFeatureNameID_e.swFmSMGusset);\nswFeatData.UseOffset = true;\nswFeatData.OffsetDistance = 0.05;\nswFeatData.FlipOffset = false;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+        },
+        {
+          "what": "同族长度在示例中取米制量级（IndentDepth 0.01、GussetThickness 0.003），而 Remarks 只写「Length of d1 leg」未给单位",
+          "example_quote": "swFeatData.ProfileLengthDim = 0.0;\nswFeatData.UseAngleDimForProfile = false;\nswFeatData.ProfileHeightDim = 0.0;\nswFeatData.ProfileAngleDim = 0.0;\nswFeatData.IndentWidth = 0.01;\nswFeatData.GussetThickness = 0.003;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+        }
+      ],
+      "note": "VB.NET 版第 47 行 ProfileLengthDim = 0# 与 C# 逐字同构，同一处冲突。"
+    },
+    {
+      "member": "ProfileOffsetDistance",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gusset_Feature_Data_Example_CSharp.md",
+        "Get_Gusset_Feature_Data_Example_VB.md",
+        "Get_Gusset_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的前置落成运行期读门：先 AccessSelections，再 if(OffsetUsed==true) 才读，否则走 else 分支",
+          "example_quote": "swGussetFeatureData.AccessSelections(swModel, null);\nif (swGussetFeatureData.OffsetUsed == true)\n{\nDebug.Print(\"Profile offset distance: \" + swGussetFeatureData.ProfileOffsetDistance);\n}\nelse\n{\nDebug.Print(\"No profile offset used.\");\n}",
+          "example_file": "Get_Gusset_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例（C#/VBA/VB.NET）门控写法一致，与 Remarks 无冲突。"
+    },
+    {
+      "member": "ProfileSize",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "**Signature**: `System.string ProfileSize {get;}`",
+          "example_quote": "profDef.ProfileSize = \"ROUND BAR 23\";",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md",
+          "why": "本页声明为只读 {get;}，四份示例却都对同名成员赋值；示例的 profDef 实为 MemberProfile（IStructureSystemMemberProfile），其页为 {get; set;}——同名不同接口。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "赋值发生在 structMemDef.MemberProfile 上，即 Remarks 点名的 override 对象，而非 IProfileGroupFolder 本身",
+          "example_quote": "profDef = (StructureSystemMemberProfile)structMemDef.MemberProfile;\nprofDef.ProfileStandard = \"GB\";\nprofDef.ProfileType = \"round-rods\";\nprofDef.ProfileSize = \"ROUND BAR 23\";",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+        },
+        {
+          "what": "示例给出 Remarks 未写的赋值顺序 standard→type→size，正好满足「valid only if a ProfileType is set」",
+          "example_quote": "profDef.ProfileStandard = \"ansi inch\";\nprofDef.ProfileType = \"c channel\";\nprofDef.ProfileSize = \"3 x 5\";",
+          "example_file": "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例全部赋在 IStructureSystemMemberProfile 上；本页 {get;} 与之不兼容。"
+    },
+    {
+      "member": "ProfileStandard",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "**Signature**: `System.string ProfileStandard {get;}`",
+          "example_quote": "profDef.ProfileStandard = \"GB\";",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md",
+          "why": "本页声明为只读 {get;}，四份示例却都对同名成员赋值；示例的 profDef 实为 MemberProfile（IStructureSystemMemberProfile），其页为 {get; set;}——同名不同接口。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例赋在 MemberProfile 上，即 Remarks 所述 overrides IProfileGroupFolder::ProfileStandard 的那个成员级对象",
+          "example_quote": "profDef = (StructureSystemMemberProfile)structMemDef.MemberProfile;\nprofDef.ProfileStandard = \"GB\";",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+        },
+        {
+          "what": "示例后置条件把三个字符串写成 <标准><类型><尺寸> 三元组，对应 GB / round-rods / ROUND BAR 23",
+          "example_quote": "// 2. Configures its weldment profile to have <GB><round-rods><ROUND BAR 23>.",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md"
+        }
+      ],
+      "note": "本页 ProfileStandard 无任何前置条件（不像 ProfileSize 依赖 ProfileType），示例顺序仍先设它。"
+    },
+    {
+      "member": "ProfileType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Gusset_Feature_Data_Example_CSharp.md",
+        "Get_Gusset_Feature_Data_Example_VB.md",
+        "Get_Gusset_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。job 给的 4 份示例用的是 IStructureSystemMemberProfile::ProfileType（string），非本成员（int / swGussetProfileType_e）。"
+    },
+    {
+      "member": "Projection",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。-1 无效语义写在 Returns，示例先判 == -1 再读，与 Returns 自洽。"
+    },
+    {
+      "member": "PropagateFeatureToParts",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，跳过。且全库无示例用到本接口的同名成员：3 份 Fillet 示例的 swFillet 是 SimpleFilletFeatureData2，Swept-cut 示例是 sweep。"
+    }
+  ]
+}

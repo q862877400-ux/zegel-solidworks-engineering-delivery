@@ -1,0 +1,142 @@
+{
+ "idx": 49,
+ "results": [
+  {
+   "name": "sketch_offset_on_surface",
+   "level": "verified",
+   "members_found": [
+    "SketchOffsetOnSurface",
+    "SelectByID2",
+    "ClearSelection2",
+    "Select4",
+    "SetSelectedObjectMark",
+    "GetSelectedObjectCount2",
+    "CreateCornerRectangle",
+    "FeatureExtrusion3",
+    "InsertSketch",
+    "GetActiveSketch2",
+    "Is3D",
+    "GetSketchSegments",
+    "FirstFeature",
+    "GetNextFeature"
+   ],
+   "examples_used": [
+    "Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方 Remarks：调用前对每条要偏移的边调 SelectByID2，Append=true、Mark=1",
+     "from": "IModelDocExtension/SketchOffsetOnSurface.md ## Remarks 2 + Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "按对象选 4 条边（补设 mark=1）"
+    },
+    {
+     "text": "官方 Remarks：调用后调 ISketchManager::InsertSketch 用 3D 草图重建模型",
+     "from": "IModelDocExtension/SketchOffsetOnSurface.md ## Remarks 3 + Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "★ **故那一步是必需的**（★ 与官方 Remarks 第 ③ 条完全对应）✓"
+    },
+    {
+     "text": "官方参数表：UseFront「Although not currently used, must be set to true」",
+     "from": "IModelDocExtension/SketchOffsetOnSurface.md ## Parameters",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方 Remarks：要测地线偏移须改用 GeodesicSketchOffset（本成员只做欧氏偏移）",
+     "from": "IModelDocExtension/SketchOffsetOnSurface.md ## Remarks 1",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方例子调用序：先 SelectByID2(mark=0) 选一遍 → ClearSelection2 → 再 SelectByID2(mark=1) 选第二遍",
+     "from": "Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "tools 为空；实现是 tools/prove_offset_on_surface_per_example.py。UseFront 与 Geodesic 两条只写在 limitations，未进 evidence。"
+  },
+  {
+   "name": "coverage_gap_batch1",
+   "level": "verified",
+   "members_found": [
+    "InsertRevolvedRefSurface",
+    "SelectByID2",
+    "ClearSelection2",
+    "GetBodies2",
+    "CreateCenterLine",
+    "CreateCornerRectangle",
+    "FeatureExtrusion3",
+    "GetSelectedObjectCount2",
+    "SelectByRay",
+    "HoleWizard5",
+    "GetActiveSketch2",
+    "ActiveSketch",
+    "GetConstrainedStatus",
+    "GetSketchSegments",
+    "Select4",
+    "AddRelation",
+    "FirstFeature",
+    "GetNextFeature"
+   ],
+   "examples_used": [
+    "Create_Hole_Wizard_Hole_Example_VB.md",
+    "Autodimension_All_Sketches_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方 Remarks：孔位要对每个位置调 SelectByRay 且 Mark = 0",
+     "from": "IFeatureManager/HoleWizard5.md ## Remarks + Create_Hole_Wizard_Hole_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方 Remarks：FastenerTypeIndex 必须与 standard 匹配且对该孔型合法，否则报错",
+     "from": "IFeatureManager/HoleWizard5.md ## Remarks",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方 Remarks：SSize 必须是该紧固件类型的合法规格，否则报错",
+     "from": "IFeatureManager/HoleWizard5.md ## Remarks",
+     "state": "covered",
+     "evidence_quote": "② **孔向导** ⇒ 树新增 **`异型孔向导`**（`M8`）"
+    },
+    {
+     "text": "官方 Remarks：用参考平面建孔前须按材料在平面哪一侧确定 RevDir",
+     "from": "IFeatureManager/HoleWizard5.md ## Remarks",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方 Remarks：调用前须用 SelectByID2 选好轮廓（旋转曲面）",
+     "from": "IFeatureManager/InsertRevolvedRefSurface.md ## Remarks（官方索引里该成员无示例）",
+     "state": "covered",
+     "evidence_quote": "① **旋转曲面** ⇒ 树新增 **`曲面-旋转1`** · **曲面体 0→1** · 选中轮廓 1"
+    },
+    {
+     "text": "官方 Remarks：旋转曲面不支持 3D 草图",
+     "from": "IFeatureManager/InsertRevolvedRefSurface.md ## Remarks（官方索引里该成员无示例）",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "该成员在官方示例索引与 C:\\swapi\\examples 中均无示例 ⇒ 示例揭示的前置无从核对",
+     "from": "b3-4-merged.json by_member 无命中 + examples 目录 grep 无命中",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例前置：GetConstrainedStatus 的 ISketch 须由树里 ProfileFeature 经 GetSpecificFeature2 取，且草图已 InsertSketch 收尾",
+     "from": "Autodimension_All_Sketches_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "三条成员分别落在 sw_surface_ref_ops、sw_hole_features、sw_sketch_status；证据只报「树增量/回 int」，未交代选位与取草图对象的前置。"
+  }
+ ]
+}

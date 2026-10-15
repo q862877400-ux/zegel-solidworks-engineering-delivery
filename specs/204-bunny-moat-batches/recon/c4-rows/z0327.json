@@ -1,0 +1,169 @@
+{
+  "idx": 327,
+  "results": [
+    {
+      "member": "InsertWeldmentFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Structural_Member_Group_Example_CSharp.md",
+        "Create_Structural_Member_Group_Example_VB.md",
+        "Create_Structural_Member_Group_Example_VBNET.md",
+        "Insert_Structural_Weldment_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；四份示例均实测调用该成员。"
+    },
+    {
+      "member": "InsertWeldmentTable",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weldment_Cut_List_Table_Example_CSharp.md",
+        "Insert_Weldment_Cut_List_Table_Example_VB.md",
+        "Insert_Weldment_Cut_List_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "UseAnchorPoint=False 时实参 X=0.1996662889191、Y=0.1013905859662，页面 Parameters 未写单位",
+          "example_quote": "  Set WMTable = swView.InsertWeldmentTable(False, 0.1996662889191, 0.1013905859662, swBOMConfigurationAnchor_TopLeft, \"Default<As Welded>\", WeldmentTableTemplate)",
+          "example_file": "Insert_Weldment_Cut_List_Table_Example_VB.md"
+        },
+        {
+          "what": "Configuration 实参为 \"Default<As Welded>\"，比页面的 \"As Welded\" 配置名更具体",
+          "example_quote": "            WMTable = swView.InsertWeldmentTable(false, 0.1996662889191, 0.1013905859662, (int)swBOMConfigurationAnchorType_e.swBOMConfigurationAnchor_TopLeft, \"Default<As Welded>\", WeldmentTableTemplate);",
+          "example_file": "Insert_Weldment_Cut_List_Table_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 的 <language> 占位被示例实例化为 english，并给出完整字面路径",
+          "example_quote": "Const WeldmentTableTemplate As String = \"C:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\lang\\english\\cut list.sldwldtbt\"",
+          "example_file": "Insert_Weldment_Cut_List_Table_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只有模板路径一句，与三份示例一致；无冲突。"
+    },
+    {
+      "member": "InsertWeldmentTrimFeature2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weldment_Features_Example_CSharp.md",
+        "Insert_Weldment_Features_Example_VB.md",
+        "Insert_Weldment_Features_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "mark_diff",
+          "remarks_quote": "- 1 = Body or bodies to trim\n\n- 2 = Trimming boundaries (body or face)",
+          "example_quote": "= Part.Extension.SelectByID2(\"Structural Member1[2]\", \"SOLIDBODY\",\n0, 0, 0, true, 2, null, 0);\nboolstatus\n= Part.Extension.SelectByID2(\"Structural Member1[1]\", \"SOLIDBODY\",\n0, 0, 0, true, 1, null, 0);\nlong\nCount = 0;\nCount\n= selMgr.GetSelectedObjectCount();\nif\n(Count == 2)\n{\nobj1[0]\n= (Body2)selMgr.GetSelectedObject2(1);\nv1\n= obj1;\nobj2[0]\n= (Body2)selMgr.GetSelectedObject2(2);\nv2\n= obj2;",
+          "example_file": "Insert_Weldment_Features_Example_CSharp.md",
+          "why": "先选者标 mark2 落 v1=BodiesToTrim，后选标 mark1 落 v2=BodiesOrFaces，与 Remarks 的 1=待裁、2=裁边正好相反。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Options 含 WeldGap 时 GapValue 实传 0.01；页面只写了「传 0 即无焊缝」的写法",
+          "example_quote": "myFeature\n= fm.InsertWeldmentTrimFeature2(1,\n(int)Options, 0.01, v1, v2);",
+          "example_file": "Insert_Weldment_Features_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例（VB/VB.NET/C#）该段逐字相同，冲突稳定可复现。"
+    },
+    {
+      "member": "InsertWrapFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Wrap_Feature_Face_Example_CSharp.md",
+        "Change_Wrap_Feature_Face_Example_VB.md",
+        "Change_Wrap_Feature_Face_Example_VBNET.md",
+        "Insert_Wrap_Feature_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- 2 = Pull direction if Type is swWrapSketchType_e.swWrapSketchType_Emboss or swWrapSketchType_e.swWrapSketchType_Engrave",
+          "example_quote": "    ' Mark the sketch to use for wrap feature as 4\n    boolstatus = swModelDocExt.SelectByID2(\"Sketch2\", \"SKETCH\", 0, 0, 0, True, 4, Nothing, swSelectOptionDefault)\n    ' Mark the nonplanar face on which to place wrap feature as 1\n    boolstatus = swModelDocExt.SelectByID2(\"\", \"FACE\", -2.01300616999447E-02, 2.48040612188447E-02, 5.80282618765864E-02, True, 1, Nothing, 0)\n    Set swFeatMgr = swModel.FeatureManager\n    ' Create a wrap feature of type emboss\n    swFeatMgr.InsertWrapFeature 0, 0.005, False",
+          "example_file": "Insert_Wrap_Feature_Example_VB.md",
+          "why": "Type=0 即 Emboss，Remarks 要标 mark2 给拉伸方向；示例只标 1/4 且建成。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Type 传 2（swWrapSketchType_Scribe）时不标 mark2，只标 mark1 面与 mark4 草图",
+          "example_quote": "    Set swFeature = swFeatureManager.InsertWrapFeature(2, 0.001, False)",
+          "example_file": "Change_Wrap_Feature_Face_Example_VB.md"
+        }
+      ],
+      "note": "该页已标 Obsolete（被 InsertWrapFeature2 取代），但示例仍在用它。"
+    },
+    {
+      "member": "InsertWrapFeature2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md",
+        "Create_Wrap_Feature_on_Multiple_Faces_Example_VB.md",
+        "Create_Wrap_Feature_on_Multiple_Faces_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例注释把 Remarks「不选拉伸方向」的前提具体化为 Type=Scribe 时无需 mark2",
+          "example_quote": "            //Because the type of wrap feature to create Scribe, no pull direction entity is selected",
+          "example_file": "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md"
+        },
+        {
+          "what": "「一个或多个面」= 6 次 SelectByRay，Mark 位全为 1，实体名一律为空串（按射线取面）",
+          "example_quote": "            status = swModelDocExt.SelectByID2(\"Sketch30\", \"SKETCH\", 0, 0, 0, false, 4, null, 0);\n            status = swModelDocExt.SelectByRay(-0.103709743982563, 0.00466186411857746, 0.0465727951450701, 1, 0, 0, 0.000421383417784414, 2, true, 1, 0);",
+          "example_file": "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md"
+        },
+        {
+          "what": "Method 取 SplineSurface、MeshFactor 取 5、Thickness 取 0.00254，均给出实值",
+          "example_quote": "            swFeature = (Feature)swFeatureManager.InsertWrapFeature2((int)swWrapSketchType_e.swWrapSketchType_Scribe, 0.00254, false, (int)swWrapMethods_e.swWrapMethods_SplineSurface, 5);",
+          "example_file": "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例 marks 与 Remarks 完全一致，无冲突。"
+    },
+    {
+      "member": "InsertionPoint",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Blocks_Data_in_Any_Document_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回值当 MathPoint 用，先经 insPt.ArrayData 取回再显示（页面对分量与读法未展开）",
+          "example_quote": "insPt = pBlock.InsertionPoint\nvInstPt\n= insPt.ArrayData",
+          "example_file": "Get_and_Set_Blocks_Data_in_Any_Document_Example_VB.md"
+        },
+        {
+          "what": "三个分量各 ×1000 后打印 ⇒ ArrayData 为米制；页面只说返回 (0,0,0) 未给单位",
+          "example_quote": "point: x = \" + CStr(vInstPt(0) * 1000) + \" , y = \" + CStr(vInstPt(1)\n* 1000) + \" , z = \" + CStr(vInstPt(2) * 1000)",
+          "example_file": "Get_and_Set_Blocks_Data_in_Any_Document_Example_VB.md"
+        }
+      ],
+      "note": "示例只演示 get 侧，Remarks 里 set 后 get 返回 (0,0,0) 一条无示例对应。"
+    },
+    {
+      "member": "InspectCurvature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_or_Remove_Curvature_Combs_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面摘要只说「the selected sketch segment」，示例前置收窄为曲线的样条段",
+          "example_quote": "' Preconditions: Curved sketch segment is selected.",
+          "example_file": "Add_or_Remove_Curvature_Combs_Example_VB.md"
+        },
+        {
+          "what": "Remarks 的交叉引用在示例里落成配对的零参调用 RemoveInspectCurvature",
+          "example_quote": "swModel.RemoveInspectCurvature",
+          "example_file": "Add_or_Remove_Curvature_Combs_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 仅一句 See 交叉引用，与示例零参调用形态一致。"
+    }
+  ]
+}

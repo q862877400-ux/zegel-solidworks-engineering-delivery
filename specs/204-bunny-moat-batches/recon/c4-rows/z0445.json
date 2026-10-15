@@ -1,0 +1,148 @@
+{
+  "idx": 445,
+  "results": [
+    {
+      "member": "SetFrameToleranceType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "TolType may be one of only swGtolGeomCharSymbol_e.:\n\n- swGcsANG\n\n- swGcsPARALLEL\n\n- swGcsPERP\n\n- swGcsCIRCRUNOUT\n\n- swGcsSYMMETRY",
+          "example_quote": "boolstatus = swGtolFrame.SetFrameToleranceType((int)swGtolGeomCharSymbol_e.swGcsROUND);",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md",
+          "why": "Remarks 用「only」把取值域封死为 5 个，C# 例却传 swGcsROUND（不在表内）；同一例第184-185行自称支持集恰是那 5 个。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "TolType may be one of only swGtolGeomCharSymbol_e.:\n\n- swGcsANG\n\n- swGcsPARALLEL\n\n- swGcsPERP\n\n- swGcsCIRCRUNOUT\n\n- swGcsSYMMETRY",
+          "example_quote": "boolstatus = swGtolFrame.SetFrameToleranceType(swGtolGeomCharSymbol_e.swGcsROUND)",
+          "example_file": "Get_Gtol_Frame_Information_Example_VBNET.md",
+          "why": "VB.NET 例同样传 swGcsROUND；两语言例一致，故不是笔误，而是 Remarks 取值表与官方例的稳定分歧。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出可回读的验证序列：Get→Set→Get，Remarks 只说「成功则 True」。",
+          "example_quote": "boolstatus = swGtolFrame.GetFrameToleranceType(out\nswTolType);",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "返回 bool 两侧一致；无单位、无 mark 差异。冲突只在取值域（swGcsROUND）。"
+    },
+    {
+      "member": "SetFrameValues2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_GTol_Example_CSharp.md",
+        "Insert_GTol_Example_VB.md",
+        "Insert_GTol_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method is valid only if this Gtol was created in a version of SOLIDWORKS earlier than 2022.",
+          "example_quote": "swGtol = (Gtol)swModel.InsertGtol();",
+          "example_file": "Insert_GTol_Example_CSharp.md",
+          "why": "Remarks 把「Gtol 由 2022 之前版本创建」列为唯一有效条件；示例前置只写「图纸存在」，Gtol 由运行版 InsertGtol 新建，2018 路径只是那张图纸。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出基准串可带材料条件修饰，Remarks 的自带样例只有裸基准名。",
+          "example_quote": "swGtol.SetFrameValues2(1, \"0.2\", \"\", \"B-A-C<MOD-MMC>\", \"B<MOD-MMC>-C<MOD-LMC>\", \"C<MOD-MMC>-A\");",
+          "example_file": "Insert_GTol_Example_CSharp.md"
+        }
+      ],
+      "note": "三例都先调 SetFrameSymbols2，与 Remarks 的调用序一致；VBA 用 0.4、C#/VBNET 用 0.2，非矛盾。"
+    },
+    {
+      "member": "SetFromPoint",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Secondary_SSMembers_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出去顶点的具体取得法：先多选 Member1 顶点，再取选区第 1 项。",
+          "example_quote": "Debugger.Break(); //Multi-select a Member1 vertex in the graphics area and",
+          "example_file": "Create_Secondary_SSMembers_Example_CSharp.md"
+        }
+      ],
+      "note": "示例先设 MemberPointParametersType=FromPoint，与 Remarks 前置完全一致；传的是顶点，落在 IVertex 内。"
+    },
+    {
+      "member": "SetFromPointMembers",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Secondary_SSMembers_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Array of [[IStructureSystemMemberFeatureData]]s",
+          "example_quote": "Members[0] = swSelMgr.GetSelectedObject6(2, 0);",
+          "example_file": "Create_Secondary_SSMembers_Example_CSharp.md",
+          "why": "Remarks 要求元素是特征数据对象；示例把选区第 2 项（树中选中的 Member2 特征）直接塞入，是特征而非数据对象。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "前置条件与 Remarks 一致；分歧只在参数元素的对象类别，非 mark 或单位问题。"
+    },
+    {
+      "member": "SetFromToText",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把启用开关当第一个入参显式传 true，Remarks 只描述结果不讲开关。",
+          "example_quote": "boolstatus = swGtol.SetFromToText(true, swFromText,",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "两侧对「在框架下方、表示从一点到另一点」无冲突；示例注释期望 ToMe 却传入 ToYou，是示例内部矛盾，不计入。"
+    },
+    {
+      "member": "SetGaugeTableParameters",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md",
+        "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出次序：先置 UseGaugeTable=true，再取对象，最后原样回填同一对象。",
+          "example_quote": "swSweptFlangeFeatureData.SetGaugeTableParameters(smGaugeTableParam);",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "前置（UseGaugeTable）与取参来源（GetGaugeTableParameters）都与 Remarks 吻合，无矛盾。"
+    },
+    {
+      "member": "SetGaugeTablePath",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md",
+        "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整绝对路径与具体表文件名，并示范先读后写的守卫写法。",
+          "example_quote": "smGaugeTableParam.SetGaugeTablePath(@\"E:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\LANG\\ENGLISH\\SHEET METAL GAUGE TABLES\\BEND ALLOWANCE MM SAMPLE.XLS\");",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "示例路径正落在 Remarks 指定的 install_dir\\lang\\english\\Sheet Metal Gauge Tables 目录内。"
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "idx": 406,
+  "results": [
+    {
+      "member": "ReliefWidth",
+      "remarks_empty": false,
+      "examples_actually_used": ["Create_Base_Flange_Feature_Example_VBNET.md"],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid when:\n\n- [[IBaseFlangeFeatureData::UseReliefRatio]] returns false,",
+          "example_quote": "Call swBaseFlangeFeat.Initialize(False, False, cba, False, swSheetMetalReliefTypes_e.swSheetMetalReliefRectangular, True, 0.8, 0#, 0#)",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md",
+          "why": "Initialize 第7参即 UseReliefRatio=True（该行上方注释写 'UseReliefRatio=True'）；紧接着第93行 Debug.Print(\"Relief width: \" & baseFlangeFeatData.ReliefWidth) 就读该属性 —— 正是 Remarks 判为无效的状态。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例的 Initialize 注释逐位给出参数序：ReliefWidth 是第9参、ReliefDepth 第10参，本例两者都传 0#；成员页只说「初始化时设定」。",
+          "example_quote": "'UseReliefRatio=True,\n'ReliefRatio=0.8m,\n'ReliefWidth,\n'ReliefDepth)",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        },
+        {
+          "what": "示例显示 ReliefRatio 是在父级 SheetMetalFeatureData 上改的，不在基体法兰对象上。",
+          "example_quote": "smFeatData.ReliefRatio = 0.7",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "成员页 Returns 只写「Bend relief width」无单位；示例把 ReliefWidth 传 0，未给出单位证据，故不判 unit_diff。"
+    },
+    {
+      "member": "ReloadOrReplace",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "本页无 ## Examples 段；全 examples 目录里唯一提到 ReloadOrReplace 的是 Reload_Model_Example_VB.md，但它调的是后继 swModel.Extension.ReloadOrReplace（4 参）。本页 3 参成员未被任何示例用到，故不判冲突。"
+    },
+    {
+      "member": "ReloadTemplate",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_CSharp.md",
+        "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_VB.md",
+        "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_VBNET.md",
+        "Modify_and_Reload_Sheet_Format_Template_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例跑 KeepNoteChanges=false 分支（活动页），而成员页 Remarks 只逐条展开了 true 分支的三条效果。",
+          "example_quote": "reloadResult = (swReloadTemplateResult_e)activeSheet.ReloadTemplate(false);",
+          "example_file": "Modify_and_Reload_Sheet_Format_Template_Example_CSharp.md"
+        },
+        {
+          "what": "示例先 SaveFormat 把改动写回模板，再对其它页 ReloadTemplate(true)，给出成员页没写的操作顺序。",
+          "example_quote": "activeSheet.SaveFormat(templateName);",
+          "example_file": "Modify_and_Reload_Sheet_Format_Template_Example_CSharp.md"
+        },
+        {
+          "what": "另一份示例用 swDwgTemplateCustom 建的自定义图纸调用，且完全不读返回值。",
+          "example_quote": "swSheet.ReloadTemplate(true);",
+          "example_file": "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的三条效果与示例注释、返回值枚举均自洽，未找到不能同时成立的说法。"
+    },
+    {
+      "member": "RemoveAllCommandItems",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Flyouts_in_the_CommandManager_Example_CSharp.md",
+        "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有签名与 Examples），按纪律跳过。"
+    },
+    {
+      "member": "RemoveAllDisplayStates",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Clear_Display_States_Example_CSharp.md",
+        "Clear_Display_States_Example_VB.md",
+        "Clear_Display_States_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置比 Remarks 更具体：零件须含 appearances / linked display states / hidden features 之一才验证得出来。",
+          "example_quote": "' Preconditions: Open a part document that has any of the following:\n' * appearances\n' * linked display states\n' * hidden features",
+          "example_file": "Clear_Display_States_Example_VB.md"
+        }
+      ],
+      "note": "三份示例代码一致（只写 boolstatus 不检查），与 Returns、Remarks 四条效果自洽；Remarks 的「except the active display state」与示例的「from all configurations」说的是不同轴，未判为冲突。"
+    },
+    {
+      "member": "RemoveCallback",
+      "remarks_empty": true,
+      "examples_actually_used": ["Create_TaskPaneView_Add-in_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；示例在 DisconnectFromSW 里用 ConnectToSW 拿到的 cookie 调用。"
+    },
+    {
+      "member": "RemoveCommandGroup",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "This method removes CommandGroups created using [[ICommandManager::AddContextMenu]] and [[ICommandManager::CreateCommandGroup]].",
+          "example_quote": "cmdGroup = iCmdMgr.CreateCommandGroup2(mainCmdGroupID, Title, ToolTip, \"\", -1, ignorePrevious, ref cmdGroupErr);",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md",
+          "why": "该示例用 CreateCommandGroup2 建组、随后 RemoveCommandGroup(mainCmdGroupID) 删它；Remarks 枚举的两个建组入口不含 CreateCommandGroup2，而 CreateCommandGroup 本身已标 Obsolete 并被 CreateCommandGroup2 取代。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "另两份示例确实用 Remarks 点名的 CreateCommandGroup 建组，与 Remarks 相符；只有 Flyouts 示例用 CreateCommandGroup2。",
+          "example_quote": "cmdGroup = iCmdMgr.CreateCommandGroup(1, Title, ToolTip, \"\", -1);",
+          "example_file": "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 RemoveCommandGroup 与 RemoveFlyoutGroup 成对调用，且不读 bool 返回值。",
+          "example_quote": "iCmdMgr.RemoveCommandGroup(mainCmdGroupID);\n            iCmdMgr.RemoveFlyoutGroup(flyoutGroupID);",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        }
+      ],
+      "note": "4 份示例中 2 份建组入口与 Remarks 一致，1 份（Flyouts C#）落在 Remarks 枚举之外。"
+    }
+  ]
+}

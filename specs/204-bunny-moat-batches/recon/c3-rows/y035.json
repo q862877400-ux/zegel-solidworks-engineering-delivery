@@ -1,0 +1,176 @@
+{
+  "idx": 35,
+  "results": [
+    {
+      "name": "sketch_primitives_b1",
+      "level": "verified",
+      "members_found": [
+        "SketchManager",
+        "Create3PointCornerRectangle",
+        "Create3PointCenterRectangle",
+        "CreateParallelogram",
+        "CreateTangentArc",
+        "Create3PointArc",
+        "CreateEllipticalArc",
+        "CreateParabola",
+        "CreateConic",
+        "PerimeterCircle"
+      ],
+      "examples_used": [
+        "Create_Tangent_Arc_Example_CSharp.md",
+        "Create_3_Point_Arc_Example_CSharp.md",
+        "Create_Parabola_Example_CSharp.md",
+        "Insert_Conic_Curve_Example_CSharp.md",
+        "Translate_Sketch_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "官方示例先 CreateLine 建一条线段并 ClearSelection2(true)，才调 CreateTangentArc（弧需有可相切的既有段）",
+          "from": "Create_Tangent_Arc_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "示例调用序：InsertSketch(true)→SelectByID2 选基准面→ClearSelection2(true)→Create3PointArc",
+          "from": "Create_3_Point_Arc_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "CreateParabola 示例：先用 CreatePoint 建焦点/顶点/起点/终点四点，再调 CreateParabola（点数不足官方直接报错）",
+          "from": "Create_Parabola_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "CreateParabola 示例断言必须 2D 草图（四点 Z 须为 0），否则提示 Need a 2D sketch.",
+          "from": "Create_Parabola_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "CreateParabola 示例断言活动文档须为零件（GetType==swDocPART），且须先选中一个 RefPlane 才 InsertSketch",
+          "from": "Translate_Sketch_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "CreateConic 示例头部唯一前置：指定零件模板须存在（Preconditions 一句）",
+          "from": "Insert_Conic_Curve_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方示例库 by_member 查不到 Create3PointCornerRectangle，无示例可读出其前置",
+          "from": "(无对应示例)",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方示例库 by_member 查不到 Create3PointCenterRectangle，无示例可读出其前置",
+          "from": "(无对应示例)",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方示例库 by_member 查不到 CreateParallelogram，无示例可读出其前置",
+          "from": "(无对应示例)",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方示例库 by_member 查不到 CreateEllipticalArc，无示例可读出其前置",
+          "from": "(无对应示例)",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方示例库 by_member 查不到 PerimeterCircle，无示例可读出其前置",
+          "from": "(无对应示例)",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "evidence 数组只有一个产物路径；示例揭示的前置（既有相切段、四点、2D 草图、零件文档）在 evidence 里无任何逐字提及。"
+    },
+    {
+      "name": "sketch_edit_ops_b3",
+      "level": "verified",
+      "members_found": [
+        "SketchManager",
+        "ActiveSketch",
+        "SelectionManager",
+        "Select4",
+        "GetSelectedObjectCount2",
+        "SketchTrim",
+        "SketchExtend",
+        "SketchOffset2",
+        "CreateFillet",
+        "CreateLinearSketchStepAndRepeat",
+        "CreateCircularSketchStepAndRepeat",
+        "IntersectCurves"
+      ],
+      "examples_used": [
+        "Trim_Sketch_Entities_Example_CSharp.md",
+        "Extend_Sketch_Entity_Example_CSharp.md",
+        "Sketch_Offset_Example_CSharp.md",
+        "Create_and_Edit_Linear_Sketch_Pattern_Example_CSharp.md",
+        "Create_and_Edit_Circular_Sketch_Pattern_Example_CSharp.md",
+        "Edit_Radial_Dimension_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "Trim 示例：先用 SelectByID2 以 SKETCHSEGMENT 选中两条线，才调 SketchTrim(swSketchTrimCorner,0,0,0)",
+          "from": "Trim_Sketch_Entities_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Trim/Offset 示例：均先 InsertSketch(true) 建草图并清选区，之后才调编辑或阵列成员（草图处于编辑态）",
+          "from": "Sketch_Offset_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Extend 示例调用序：InsertSketch(false)→CreateLine 两条非平行线→SetPickMode()→选中 Line1→SketchExtend",
+          "from": "Extend_Sketch_Entity_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Offset 示例：要用 SelectByID2 以 SKETCHSEGMENT、mark=1 选中 Line3，才调 SketchOffset2",
+          "from": "Sketch_Offset_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Linear Pattern 示例：先 CreateCornerRectangle 建矩形作种子，并在拉伸特征前视面开的草图内才调阵列",
+          "from": "Create_and_Edit_Linear_Sketch_Pattern_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Circular Pattern 示例：先 CreateCircle + CreateCornerRectangle 作种子；ArcRadius/ArcAngle 按弧度传",
+          "from": "Create_and_Edit_Circular_Sketch_Pattern_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "唯一含 CreateFillet 的示例是 Edit_Radial_Dimension，主题为半径尺寸且只选了 SKETCHPOINT，不讲草图圆角前置",
+          "from": "Edit_Radial_Dimension_Example_CSharp.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方示例库 by_member 查不到 IntersectCurves，无示例可读出其前置",
+          "from": "(无对应示例)",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "evidence 数组只有产物路径；SketchOffset2 需 mark=1 选段、Trim 需两条段等官方前置在 evidence 里无逐字提及。"
+    }
+  ]
+}

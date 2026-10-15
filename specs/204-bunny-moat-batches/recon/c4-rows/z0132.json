@@ -1,0 +1,100 @@
+{
+  "idx": 132,
+  "results": [
+    {
+      "member": "FlatPatternView",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Move_Annotations_to_First_Annotation_View_Example_VB.md",
+        "Move_Annotations_to_First_Annotation_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples，无 Remarks 段，按纪律跳过冲突判定；两份示例确实读 swAnnView.FlatPatternView。"
+    },
+    {
+      "member": "FlattenAlongPath",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Example_CSharp.md",
+        "Create_Swept_Flange_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only when not creating the swept flange on an existing sheet metal feature.",
+          "example_quote": "myFeature = Part.FeatureManager.InsertSheetMetalBaseFlange2(0.0007366, false, 0.0007366, 0.02, 0.01, false, 0, 0, 1, customBendAllowanceData, false, 0, 0.0001, 0.0001, 0.5, true, false, true, true);",
+          "example_file": "Create_Swept_Flange_Example_CSharp.md",
+          "why": "示例先建基体法兰(Base-Flange1)，随后仍设 FlattenAlongPath=false 并建成 Swept Flange1，与「仅在非既有钣金特征上创建时有效」不能同时成立。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "VB.NET 版逐字同构；Remarks 另说 true 时才可设 MaterialInside，示例在 false 下设了，但未写成排他条件，不判冲突。"
+    },
+    {
+      "member": "FlattenFloor",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先写 BackgroundType=swBackgroundType_UseEnvironment 再写 FlattenFloor=true，给出成员页未点明的先后顺序",
+          "example_quote": "Scene.BackgroundType = (int)swSceneBackgroundType_e.swBackgroundType_UseEnvironment;",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例写法一致且满足 Remarks 的 BackgroundType 前置，不构成冲突。"
+    },
+    {
+      "member": "FlattenToSingleFolder",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Pack_and_Go_an_Assembly_Example_CSharp.md",
+        "Pack_and_Go_an_Assembly_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples/See Also，无 Remarks 段，跳过冲突判定。"
+    },
+    {
+      "member": "Flip",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例的 Flip 全是 SurfaceRadiateFeatureData.Flip（该对象声明可逐行核到），同名不同对象，按纪律不采用。"
+    },
+    {
+      "member": "FlipDimSides",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例走 IndentDepth 方案并把 FlipDimSides 设为 false；成员页只给了 ProfileDimensions 方案下的 d1/d2 映射",
+          "example_quote": "swFeatData.ProfileDimensionScheme = (int)swSheetMetalGussetProfileDimType_e.swSheetMetalGussetProfileDimType_IndentDepth;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+        }
+      ],
+      "note": "接口 Remarks 的「FlipDimSides = true」表格仅列 ProfileDimensions 方案，示例用 IndentDepth，不构成冲突。"
+    },
+    {
+      "member": "FlipDimension",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Limit_Angle_Mate_Example_CSharp.md",
+        "Create_Limit_Angle_Mate_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段；两份 Limit_Distance 示例调的是 DistanceMateFeatureData.FlipDimension，同名不同对象，不采用。"
+    }
+  ]
+}

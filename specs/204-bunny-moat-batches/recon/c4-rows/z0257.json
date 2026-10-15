@@ -1,0 +1,129 @@
+{
+  "idx": 257,
+  "results": [
+    {
+      "member": "GetSketchPaths",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Sketch_Path_Example_CSharp.md",
+        "Create_Sketch_Path_Example_VB.md",
+        "Create_Sketch_Path_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；三份示例均在 swSketch 上调用 GetSketchPaths"
+    },
+    {
+      "member": "GetSketchPointCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Sketch_Points_in_Wizard_Hole_Example_CSharp.md",
+        "Get_Sketch_Points_in_Wizard_Hole_Example_VB.md",
+        "Get_Sketch_Points_in_Wizard_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都把 count 只用于 Debug.Print，点数组由 GetSketchPoints 直接整体返回，未走 Remarks 说的 IGetSketchPoints 路线",
+          "example_quote": "count = swWizardHoleFeatureData.GetSketchPointCount();\n            Debug.Print(\" Number of sketch points in original Hole Wizard Feature = \" + count);",
+          "example_file": "Get_Sketch_Points_in_Wizard_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只规定调用序（先于 IGetSketchPoints），示例未违反该序，故不判冲突"
+    },
+    {
+      "member": "GetSketchPoints",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Hole_Series_Information_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；另三份 Create_Holes_* 调的是 ISketch.GetSketchPoints（接收者是 Sketch），非本接口成员"
+    },
+    {
+      "member": "GetSketchPoints2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Autodimension_All_Sketches_Example_CSharp.md",
+        "Autodimension_All_Sketches_Example_VB.md",
+        "Autodimension_All_Sketches_Example_VBNET.md",
+        "Create_Advanced_Hole_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例对返回的 object[] 不做任何过滤，直接下标取 [0] 并强转 SketchPoint 当基准点用",
+          "example_quote": "vSketchPtArr = (object[])swSketch.GetSketchPoints2();\n                // Use first point\n                swSketchPt = (SketchPoint)vSketchPtArr[0];",
+          "example_file": "Autodimension_All_Sketches_Example_CSharp.md"
+        },
+        {
+          "what": "异型孔示例用 GetUpperBound(0) 遍历全部点，逐个选中后 EditSketch 删除，再新建点补位",
+          "example_quote": "swSketchPointArray = (object[])swSketch.GetSketchPoints2();\n            swMaxPointNumber = swSketchPointArray.GetUpperBound(0);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 关于「不含内部点」的说法，示例侧只体现为不再自行筛选，未出现相反陈述"
+    },
+    {
+      "member": "GetSketchPointsCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Hole_Series_Information_Example_CSharp.md",
+        "Get_Hole_Series_Information_Example_VB.md",
+        "Get_Hole_Series_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把该计数当作 GetSketchPoints 返回数组的遍历上界（for i < ncount），Remarks 只提到给 IGetSketchPoints 定尺寸",
+          "example_quote": "for (i = 0; i < ncount; i++)",
+          "example_file": "Get_Hole_Series_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "调用序（先取计数后取数组）在两侧一致；Remarks 引的是 IHoleSeriesFeatureData（v1）而示例用 v2，属页面内交叉引用，非示例冲突"
+    },
+    {
+      "member": "GetSketchPointsCount2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Properties_of_Sketch-Pattern_Feature_Example_CSharp.md",
+        "Get_Properties_of_Sketch-Pattern_Feature_Example_VB.md",
+        "Get_Properties_of_Sketch-Pattern_Feature_Example_VBNET.md",
+        "Get_Spline_Points_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "样条示例用该计数给 GetSplinesInterpolate 的 VARIANT 算遍历长度（1+点数×3），不是给 IGetSketchPoints2 定尺寸",
+          "example_quote": "long splineArraySize = 1\n + (nbrSketchPoints * 3);",
+          "example_file": "Get_Spline_Points_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "草图阵列示例把计数当 SeedPoint 下标传给 SketchPatternFeatureData.GetTransform(i)，同样非 IGetSketchPoints2",
+          "example_quote": "i = swSketch.GetSketchPointsCount2();\n            swPatternTransform = swSketchPatt.GetTransform(i);",
+          "example_file": "Get_Properties_of_Sketch-Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "两处消费方都不否定 Remarks 的「先调用」约定，只是用途不同，故归入 more_specific"
+    },
+    {
+      "member": "GetSketchRegionCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Sketch_Regions_Example_CSharp.md",
+        "Get_Sketch_Regions_Example_VB.md",
+        "Get_Sketch_Regions_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把计数只用于打印，遍历边界取自 GetSketchRegions 返回数组的 GetUpperBound(0)，未用计数定尺寸",
+          "example_quote": "vSkRegions = (object[])mySketch.GetSketchRegions();\n\t                for (i = vSkRegions.GetLowerBound(0); i <= vSkRegions.GetUpperBound(0); i++)",
+          "example_file": "Get_Sketch_Regions_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的「先调用 IGetSketchRegions」在示例里未被违反（示例走迟绑定 Get 版），不构成矛盾"
+    }
+  ]
+}

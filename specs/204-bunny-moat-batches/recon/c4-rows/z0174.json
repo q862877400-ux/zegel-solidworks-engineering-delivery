@@ -1,0 +1,120 @@
+{
+  "idx": 174,
+  "results": [
+    {
+      "member": "GetDeletedFacesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_and_Change_DeleteFace_Feature_Example_CSharp.md",
+        "Insert_and_Change_DeleteFace_Feature_Example_VB.md",
+        "Insert_and_Change_DeleteFace_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在调用本方法前先 AccessSelections(swModel, null)，页未把该步写成前置",
+          "example_quote": "            boolstatus = swDeleteFaceFeature.AccessSelections(swModel, null);\n            Debug.Print(\" Number of deleted faces: \" + swDeleteFaceFeature.GetDeletedFacesCount());",
+          "example_file": "Insert_and_Change_DeleteFace_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只约束与 IGetDeletedFaces 的先后；三份示例都未调 IGetDeletedFaces，无反证。"
+    },
+    {
+      "member": "GetDependencies2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Active_Document_Dependents_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "If AddReadOnlyInfo is set to True, then a string of True or false is added to the list of strings. If Part1 is read-only, then the resulting set of strings would be:",
+          "example_quote": "vDepend\n= swModel.GetDependencies2(True,\nTrue, True)\nDebug.Print\nswModel.GetPathName\nFor\ni = 0 To (UBound(vDepend) - 1) / 2",
+          "example_file": "Get_Active_Document_Dependents_Example_VB.md",
+          "why": "Remarks：AddReadOnlyInfo=True 时每个依赖多一个 True/false 串 ⇒ 每文档 3 个。示例正是用 True 调用，却按 (UBound-1)/2 与 2i/2i+1 按每文档 2 个配对。两说不能同时成立。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "页正文已 Obsolete（后继 IModelDocExtension::GetDependencies）；冲突只涉及返回值形状，不涉前置。"
+    },
+    {
+      "member": "GetDepth",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份 Insert_Extruded_Reference_Surface 示例调的是 SurfExtrudeFeatureData.GetDepth，非 IExtrudeFeatureData2，名字撞车故不采用。"
+    },
+    {
+      "member": "GetDesignTable",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Row_to_Design_Table_Example_VB.md",
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_CSharp.md",
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_VB.md",
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例都在零件文档上零参调用，与 Remarks 的工程图返回空一条一致，无冲突。"
+    },
+    {
+      "member": "GetDetail",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Detail_Circle_and_Detail_View_Example_CSharp.md",
+        "Create_Detail_Circle_and_Detail_View_Example_VB.md",
+        "Create_Detail_Circle_and_Detail_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序：CreateDetailViewAt4 建视图后先 ActivateView，再对返回的 swView 调 GetDetail",
+          "example_quote": "            // Activate detail view\n            status = swDrawing.ActivateView(\"Drawing View5\");\n            // Get and set some properties of detail circle and detail view\n            swDetailCircle = (DetailCircle)swView.GetDetail();",
+          "example_file": "Create_Detail_Circle_and_Detail_View_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 ## Remarks 段，按纪律跳过冲突判定，只记示例的具体性。"
+    },
+    {
+      "member": "GetDetailCircleCount2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Detail_Circle_Information_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Call this method before calling [[IView::GetDetailCircles]] to get the size of the array for that method.",
+          "example_quote": "vDetCirc\n= swView.GetDetailCircleInfo2\nnNumDetCirc\n= swView.GetDetailCircleCount2(nSize)\nDebug.Assert\nnNumDetCirc = vDetCirc(0)\nDebug.Assert\nnSize = UBound(vDetCirc) + 1",
+          "example_file": "Get_Detail_Circle_Information_Example_VB.md",
+          "why": "Remarks 说 Size 是 GetDetailCircles 的数组尺寸，参数段说每局部圆一个 double；示例却断言 Size 等于 GetDetailCircleInfo2 全部 double 数（按其 Remarks 为 1+16n+9A）。两值一般不等。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给前置：带局部圆的视图必须先被选中，视图对象由选区第 1 项取出（页未写）",
+          "example_quote": "swSelMgr = swModel.SelectionManager\nSet\nswView = swSelMgr.GetSelectedObject5(1)",
+          "example_file": "Get_Detail_Circle_Information_Example_VB.md"
+        }
+      ],
+      "note": "示例的调用序是先 GetDetailCircleInfo2 后本方法，与 Remarks 只谈 GetDetailCircles 的先后不直接矛盾。"
+    },
+    {
+      "member": "GetDetailCircleInfo2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Detail_Circle_Information_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把抽象布局落成偏移：textHeight 在 index+14 并 ×1000 转 mm，numArrows 在 index+15",
+          "example_quote": "\" & vDetCirc(index + 14) * 1000# & \" mm\"\nnNumArrow\n= vDetCirc(index + 15)",
+          "example_file": "Get_Detail_Circle_Information_Example_VB.md"
+        }
+      ],
+      "note": "16 个/圆 + 9 个/箭头的步长与 Remarks 的字段表逐项吻合，单位换算（米→mm）也与 textHeight 一致。"
+    }
+  ]
+}

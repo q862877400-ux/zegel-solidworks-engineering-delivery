@@ -1,0 +1,233 @@
+{
+  "idx": 71,
+  "results": [
+    {
+      "member": "CreateSketchPlane",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_3D_Sketch_Plane_Example_CSharp.md",
+        "Create_3D_Sketch_Plane_Example_VB.md",
+        "Create_3D_Sketch_Plane_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在选实体之前先 Insert3DSketch(True) 进入 3D 草图编辑态；成员页只讲从选择列表取项，未写这一状态前置。",
+          "example_quote": "swSketchManager.Insert3DSketch True",
+          "example_file": "Create_3D_Sketch_Plane_Example_VB.md"
+        },
+        {
+          "what": "示例只用 2 个选择项却传 3 个关系值（Relation3=0），并给出 9 这个 swConstraintType_e 实际取值。",
+          "example_quote": "status = swSketchManager.CreateSketchPlane(9, 9, 0)",
+          "example_file": "Create_3D_Sketch_Plane_Example_VB.md"
+        },
+        {
+          "what": "示例把选中的实体写作 EXTSKETCHSEGMENT 与 EXTSKETCHPOINT 两类；成员页未指明可选的实体类型。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Point2@Sketch1\", \"EXTSKETCHPOINT\", -5.64010297276809E-02, 5.98490302365917E-03, 0, True, 0, Nothing, 0)",
+          "example_file": "Create_3D_Sketch_Plane_Example_VB.md"
+        },
+        {
+          "what": "示例说明产物是名为 Plane1、类型 SKETCHSURFACES 的实体，要再 SelectByID2 + ActivateSelectedFeature 才能用。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Plane1\", \"SKETCHSURFACES\", 0, 0, 0, False, 0, Nothing, 0)",
+          "example_file": "Create_3D_Sketch_Plane_Example_VB.md"
+        }
+      ],
+      "note": "三份示例内容一致。Remarks 的『少于三项只用前两个』与示例的 2 项+第三值 0 相符，无冲突。"
+    },
+    {
+      "member": "CreateSketchSlot",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_CSharp.md",
+        "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_VB.md",
+        "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_VBNET.md",
+        "Insert_and_Resize_Sketch_Slot_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例调用前先选前视基准面再 InsertSketch 进入草图编辑态；成员页整页无 Remarks，未写此前置。",
+          "example_quote": "skManager.InsertSketch(true);",
+          "example_file": "Insert_and_Resize_Sketch_Slot_Example_CSharp.md"
+        },
+        {
+          "what": "示例固定用 line 型 + CenterCenter 长度型，且第三点 X3/Y3/Z3 全传 0；成员页未给推荐组合。",
+          "example_quote": "swSketchSlot = swSketchManager.CreateSketchSlot(swSketchSlotCreationType_e.swSketchSlotCreationType_line, swSketchSlotLengthType_e.swSketchSlotLengthType_CenterCenter, 0.05, -0.05, 0, 0, 0.05, 0, 0, 0, 0, 0, 1, False)",
+          "example_file": "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_VB.md"
+        },
+        {
+          "what": "示例给出 Width=0.05、端点 X=-0.05 与 0.05 的实参组合；成员页参数表对 Width 与各坐标完全没写单位。",
+          "example_quote": "0.05, -0.05, 0, 0, 0.05, 0, 0, 0, 0, 0, 1, false",
+          "example_file": "Insert_and_Resize_Sketch_Slot_Example_CSharp.md"
+        },
+        {
+          "what": "示例返回 SketchSlot 后立刻读 Length/Width/LengthType 并把 Width 改写为两倍；成员页 Returns 只写『Sketch slot』。",
+          "example_quote": "swSketchSlot.Width = swSketchSlot.Width * 2.0;",
+          "example_file": "Insert_and_Resize_Sketch_Slot_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定；四份示例都确实调用该成员。"
+    },
+    {
+      "member": "CreateSmartComponent",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Make_Smart_Component_with__Mate_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按选择顺序用 GetSelectedObject6(1..4) 取出 组件/组件/组件/面 来填四个参数；成员页只释义不给取法。",
+          "example_quote": "Set pMateRef = swSelectionMgr.GetSelectedObject6(4, 0)",
+          "example_file": "Make_Smart_Component_with__Mate_Example_VB.md"
+        },
+        {
+          "what": "示例声明 relfeat 与 boundval 为 Variant 却从未赋值（Empty）就传入，即这两个数组可以传空。",
+          "example_quote": "status = swAssembly.CreateSmartComponent(pCompSmart, (relcomp), (relfeat), True, pMateRef, boundval)",
+          "example_file": "Make_Smart_Component_with__Mate_Example_VB.md"
+        },
+        {
+          "what": "示例用空名字 + 坐标按 FACE 选取来拿 LpMateReference，正是成员页说的『圆柱面或轴』那一个。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", 7.12645683466917E-03, 5.00071834983373E-03, 6.55080647294426E-03, True, 0, Nothing, 0)",
+          "example_file": "Make_Smart_Component_with__Mate_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只举例 BoundingValues=[9,11,12,14,19,21]，示例传空，二者不冲突也不构成矛盾。"
+    },
+    {
+      "member": "CreateSpeedPak",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_SpeedPak_for_Subassemblies_Example_CSharp.md",
+        "Create_SpeedPak_for_Subassemblies_Example_VB.md",
+        "Create_SpeedPak_for_Subassemblies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例调用前先选中并删掉 Coordinate System1 特征，注释明说是『to avoid errors』；成员页没写这个规避。",
+          "example_quote": "//Select and delete Coordinate System1 to avoid errors",
+          "example_file": "Create_SpeedPak_for_Subassemblies_Example_CSharp.md"
+        },
+        {
+          "what": "示例先用 IsSpeedPak 逐个预检再决定是否调用；Remarks 只说重复调用不会再建，没提可先查属性。",
+          "example_quote": "speedPakExists = swComponent.IsSpeedPak;",
+          "example_file": "Create_SpeedPak_for_Subassemblies_Example_CSharp.md"
+        },
+        {
+          "what": "示例对两个子装配同时选中后只调一次 CreateSpeedPak(2) 批量处理；成员页未说一次调用可否覆盖多个选择。",
+          "example_quote": "status = swAssembly.CreateSpeedPak(2);",
+          "example_file": "Create_SpeedPak_for_Subassemblies_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 讲的是重复调用语义，示例走的是预检路径，两侧说法可以同时成立。"
+    },
+    {
+      "member": "CreateSphericalSurface2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Spherical_Surface_Trimmed_Sheet_and_Feature_From_Body_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体实参 Center=(0,0,0)、Axis=(0,0,1)、RefDir=(1,0,0)，印证 RefDir 过球心且与轴垂直。",
+          "example_quote": "swModeler.CreateSphericalSurface2(dCenter, dAxis, dRef, RADIUS)",
+          "example_file": "Create_Spherical_Surface_Trimmed_Sheet_and_Feature_From_Body_Example_VB.md"
+        },
+        {
+          "what": "成员页把下一步写成 ISurface::CreateTrimmedSheet，示例实际调的是 CreateTrimmedSheet5，并在 Curves 数组里放一个 Nothing。",
+          "example_quote": "swSurf.CreateTrimmedSheet5(ZeroTrimmingCurves,",
+          "example_file": "Create_Spherical_Surface_Trimmed_Sheet_and_Feature_From_Body_Example_VB.md"
+        },
+        {
+          "what": "示例用 Const 把半径固定为 0.01 并写明『No trimming curves are required』；成员页参数表未给单位。",
+          "example_quote": "Const RADIUS As Double = 0.01",
+          "example_file": "Create_Spherical_Surface_Trimmed_Sheet_and_Feature_From_Body_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 对 axis / refDir 的定义与示例实参完全自洽，未发现不能同时成立的说法。"
+    },
+    {
+      "member": "CreateSpline",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_3D_Spline_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method creates a spline in the active 2D sketch.",
+          "example_quote": "This example shows how to create a 3D spline.",
+          "example_file": "Create_3D_Spline_Example_VB.md",
+          "why": "Remarks 限定建在活动的 2D 草图里；本页唯一示例却在 3D 草图(Insert3DSketch2)里建样条并给非零 Z，两侧说法不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例在调用前先 Insert3DSketch2(True) 进 3D 草图；成员页的『没活动草图就新建一个』只描述 2D 情形。",
+          "example_quote": "swModel.Insert3DSketch2 True",
+          "example_file": "Create_3D_Spline_Example_VB.md"
+        },
+        {
+          "what": "示例用 Dim nPtData(11) As Double 再转 Variant 传入 12 个双精度（4 个点），属 Remarks 说的 OLE 自动定长度那条路。",
+          "example_quote": "Dim nPtData(11) As Double",
+          "example_file": "Create_3D_Spline_Example_VB.md"
+        },
+        {
+          "what": "示例把 Z 依次取 0/0.1/0.2/0.3 递增值，说明 3D 草图下 Z 是真正被使用的。",
+          "example_quote": "nPtData(6) = -0.03568716302953: nPtData(7) = 0.01004261874198: nPtData(8) = 0.2",
+          "example_file": "Create_3D_Spline_Example_VB.md"
+        },
+        {
+          "what": "示例对返回值只做 Debug.Assert 非空判断，没有再用 QueryInterface 取 ISketchSpline；成员页给了更细的取法说明。",
+          "example_quote": "Debug.Assert Not swSketchSeg Is Nothing",
+          "example_file": "Create_3D_Spline_Example_VB.md"
+        }
+      ],
+      "note": "另三份 Change_Sketch_of_Plane 示例调的是 SketchManager.CreateSpline，不是 IModelDoc2.CreateSpline，已排除。"
+    },
+    {
+      "member": "CreateSpline2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_CSharp.md",
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_VBNET.md",
+        "Add_Along_Y_Dimension_To_3D_Sketch_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method creates a spline in the active 2D sketch.",
+          "example_quote": "Part.SketchManager.Insert3DSketch True",
+          "example_file": "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+          "why": "Remarks 限定建在活动的 2D 草图里；四份示例都先 Insert3DSketch 进 3D 草图并给真 Z 值建样条，两侧说法不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例固定把 SimulateNaturalEnds 传 True；成员页只解释 True/False 的含义，未给推荐默认值。",
+          "example_quote": "Set skSegment = Part.SketchManager.CreateSpline2((pointArray), True)",
+          "example_file": "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md"
+        },
+        {
+          "what": "示例用 ReDim points(0 To 11) As Double 组 12 个双精度（4 个点）再转 Variant；成员页只写『至少两组 X,Y,Z』。",
+          "example_quote": "ReDim points(0 To 11) As Double",
+          "example_file": "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md"
+        },
+        {
+          "what": "示例给 Z 填 0.046/0.005/-0.043/-0.094 等真值，说明 3D 草图下 Z 被采用而非忽略。",
+          "example_quote": "points(2) = 0.04608246573503",
+          "example_file": "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md"
+        },
+        {
+          "what": "成员页 Examples 段只列了 Insert a Composite Curve 一族，这四份 Add_Along_* 示例并未被该页列出。",
+          "example_quote": "skSegment = (SketchSegment)Part.SketchManager.CreateSpline2((pointArray), true);",
+          "example_file": "Add_Along_Y_Dimension_To_3D_Sketch_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例都进 3D 草图；除 2D/3D 这一条外，未再找到其它不能同时成立的说法。"
+    }
+  ]
+}

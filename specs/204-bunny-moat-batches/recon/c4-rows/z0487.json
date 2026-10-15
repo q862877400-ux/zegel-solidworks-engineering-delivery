@@ -1,0 +1,104 @@
+{
+  "idx": 487,
+  "results": [
+    {
+      "member": "Symbol",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 get-only 的 NOTE），按纪律跳过。"
+    },
+    {
+      "member": "SymbolStyle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 get-only 的 NOTE），按纪律跳过。"
+    },
+    {
+      "member": "Symmetric",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Bidirectional_Circular_Pattern_Feature_Example_CSharp.md",
+        "Create_Bidirectional_Circular_Pattern_Feature_Example_VB.md",
+        "Create_Bidirectional_Circular_Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出满足 Remarks 门控的可执行形态：先判 Direction2 为真，再在同一个块里连同 EqualSpacing2/Spacing2/TotalInstances2 一起读 Symmetric；三份示例一致，无相互矛盾。",
+          "example_quote": "if (swCircularPatternFeatureData.Direction2 == true)",
+          "example_file": "Create_Bidirectional_Circular_Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都按 Direction2 门控读 Symmetric，与 Remarks 一致；无冲突。"
+    },
+    {
+      "member": "SymmetryPlane",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Symmetric_Mate_Example_CSharp.md",
+        "Create_Symmetric_Mate_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Returns 与 See Also），按纪律跳过。"
+    },
+    {
+      "member": "SyncFlexibleSubAssemblies",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md",
+        "Mirror_Components_II_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Returns 与 See Also），按纪律跳过。"
+    },
+    {
+      "member": "SynchronizeFlexibleComponents",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Local_Linear_Pattern_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "If this property is set to true, then when you move components in the seed flexible subassembly, components in the patterned instances move, and vice versa.",
+          "example_quote": "swLocalLinearPatternFD = (LocalLinearPatternFeatureData)swFeatureManager.CreateDefinition((int)swFeatureNameID_e.swFmLocalLPattern);",
+          "example_file": "Create_Local_Linear_Pattern_Example_CSharp.md",
+          "why": "成员页把适用对象写成「this circular component pattern feature」里的柔性子装配组件；官方示例却把它写在 LocalLinearPatternFeatureData（swFmLocalLPattern 线性阵列）上，种子是普通子装配 mount base-1，从未标柔性。圆形+柔性 与 线性+非柔性 两种适用范围不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例比成员页多给出写入时机：属性在 CreateFeature 之前、紧跟 D1/D2 各参数之后写入 FeatureData，然后才建特征。",
+          "example_quote": "swLocalLinearPatternFD.SynchronizeFlexibleComponents = false;",
+          "example_file": "Create_Local_Linear_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "示例写的是线性阵列 + 非柔性子装配且置 false，Remarks 只描述 true 的语义。"
+    },
+    {
+      "member": "SystemValue",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Dimension_Example_CSharp.md",
+        "Change_Dimension_Example_VB.md",
+        "Change_Dimension_Example_VBNET.md",
+        "Isolate_Changed_Dimension_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Obsolete 提示与 See Also），按纪律跳过。"
+    }
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "idx": 140,
+  "results": [
+    {
+      "member": "GapWithinGroup",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Structural_Weldment_Example_CSharp.md",
+        "Insert_Structural_Weldment_Example_VB.md",
+        "Insert_Structural_Weldment_Example_VBNET.md",
+        "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 InsertStructuralWeldment4 调用前设值，并把单位标在字面量上确认 meters 口径，给出具体值 0.0127",
+          "example_quote": "Group1.GapWithinGroup = 0.0127 'meters",
+          "example_file": "Insert_Structural_Weldment_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；三份同源例设值+回读，Custom_Profile 例只读"
+    },
+    {
+      "member": "GaugeTablePath",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例规定赋值顺序：UseGaugeTable 必须先于 GaugeTablePath 设定，且依赖前值",
+          "example_quote": "' All of the following values depend on the previous values;",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        },
+        {
+          "what": "示例把路径写成 .xls 量规表文件，并用 GetTableThicknesses() 返回 IsEmpty 判定路径无效",
+          "example_quote": "MsgBox \"Invalid path to sheet metal gauge table file.\"",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；仅此一例真用到该成员"
+    },
+    {
+      "member": "GearRatioDenominator",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Gear_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把分子分母设成同值 0.012954（即 1:1），说明二者是配对比值项；成员页 Returns 未给单位也未说明二者关系",
+          "example_quote": "MateData.GearRatioDenominator = 0.012954;",
+          "example_file": "Create_Gear_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；Returns 只写 Gear ratio denominator"
+    },
+    {
+      "member": "GearRatioNumerator",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Gear_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先经 CreateMateData(10) 取得 GearMateFeatureData 才设该属性，成员页未说明取得途径",
+          "example_quote": "GearMateFeatureData MateData = (GearMateFeatureData)swAssembly.CreateMateData(10);",
+          "example_file": "Create_Gear_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出分子分母同值 0.012954 的具体写法，成员页未给单位",
+          "example_quote": "MateData.GearRatioNumerator = 0.012954;",
+          "example_file": "Create_Gear_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；与 GearRatioDenominator 同一例"
+    },
+    {
+      "member": "GeneralToleranceTableFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_General_Tolerance_Table_Example_CSharp.md",
+        "Insert_General_Tolerance_Table_Example_VB.md",
+        "Insert_General_Tolerance_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回的接口还不是 Feature：示例在其上再调 GetFeature() 才拿到有 Name 的 Feature；成员页只说取到该 feature",
+          "example_quote": "feat = gttFeat.GetFeature();",
+          "example_file": "Insert_General_Tolerance_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；三例均为同一句读取后 GetFeature()"
+    },
+    {
+      "member": "GeneralTopology",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VB.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "If you set this property to True, then set it back to false as soon as your intended operations complete.",
+          "example_quote": "swModeler.GeneralTopology = true;",
+          "example_file": "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md",
+          "why": "紧邻上一行的注释把这句读作「switch it back to false」，而该行赋值为 true；成员页规定复位在操作完成之后，两种读法不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 false→true→false 的三步顺序，且在 tessellate 之前已复位为 false，并额外设 NeedFaceFacetMap（成员页未提）",
+          "example_quote": "tess.NeedFaceFacetMap = true;",
+          "example_file": "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出成员页所述 MatchType 的具体枚举字面量，成员页只写属性名与设置要求",
+          "example_quote": "tess.MatchType = (int)swTesselationMatchType_e.swTesselationMatchFacetGeometry;",
+          "example_file": "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md"
+        }
+      ],
+      "note": "本批唯一有 Remarks 的成员；三语言例的 false→true→false 顺序一致"
+    },
+    {
+      "member": "GenerateViewPaletteViews",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_CSharp.md",
+        "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_VB.md",
+        "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "实参是 .sldprt 零件路径而非工程图，且必须先调本方法再 DropDrawingViewFromPalette2 才取得到视图",
+          "example_quote": "swView = (View)swDrawing.DropDrawingViewFromPalette2(\"*Left\", 0.580930433566434, 0.431525272727273, 0);",
+          "example_file": "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；三例同一句调用，实参均为 sldprt"
+    }
+  ]
+}

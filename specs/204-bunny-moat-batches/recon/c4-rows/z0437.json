@@ -1,0 +1,126 @@
+{
+  "idx": 437,
+  "results": [
+    {
+      "member": "SetBoundingBoxDirection2",
+      "remarks_empty": false,
+      "examples_actually_used": ["Slice_a_Model_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置强制切 MKS，值以米计（0.1397 m）；成员页 0.0<右操纵器<500.0 未写单位",
+          "example_quote": "// 2. Change units to MKS.",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "示例从不检查 bool 返回（赋给 boolstatus 后未判断），不能据此判 setter 成功"
+    },
+    {
+      "member": "SetBoundingBoxDirection3",
+      "remarks_empty": false,
+      "examples_actually_used": ["Slice_a_Model_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置切 MKS，值以米计（-0.1397 m）；成员页 -500.0<左操纵器<0.0 未写单位",
+          "example_quote": "boolstatus = sliceData.SetBoundingBoxDirection3(-0.1397);",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "示例未设 PlaneReferences，但 GetSlicingData 页要求预选参考实体、示例已选 Front Plane"
+    },
+    {
+      "member": "SetBoundingBoxDirection4",
+      "remarks_empty": false,
+      "examples_actually_used": ["Slice_a_Model_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置切 MKS，值以米计（-0.1397 m）；成员页 -500.0<下操纵器<0 未写单位",
+          "example_quote": "boolstatus = sliceData.SetBoundingBoxDirection4(-0.1397);",
+          "example_file": "Slice_a_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "示例从不检查 bool 返回（赋给 boolstatus 后未判断），不能据此判 setter 成功"
+    },
+    {
+      "member": "SetButtonState",
+      "remarks_empty": true,
+      "examples_actually_used": ["Add_Buttons_to_Task_Pane_Example_CSharp.md", "Add_Buttons_to_Task_Pane_Example_VBNET.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Parameters/Examples/See Also），按纪律跳过"
+    },
+    {
+      "member": "SetCameraByName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Turn_Cameras_On_and_Off_Example_VB.md",
+        "Turn_Cameras_On_and_Off_Example_CSharp.md",
+        "Turn_Cameras_On_and_Off_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "A nonexistent camera when another camera view is active",
+          "example_quote": "swModelView.Camera = Nothing; ... bValue = swModelView.SetCameraByName(aCameras(lCameraId).Name)",
+          "example_file": "Turn_Cameras_On_and_Off_Example_VB.md",
+          "why": "Remarks 两行均以「another camera view is active」为条件，摘要句亦称 if in camera view mode；示例先把 Camera 置 Nothing 关掉相机视图再调用，并在 True 时打印「Model view set to use camera」，即无活动相机视图时也生效。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "入参名取自 Camera 强转 Feature 后的 .Name，示例注释点明「相机就是一个特征」",
+          "example_quote": "' A camera is a feature",
+          "example_file": "Turn_Cameras_On_and_Off_Example_VB.md"
+        },
+        {
+          "what": "关闭相机视图走 Camera = Nothing 属性，不是靠传空串（成员页那一行示例未覆盖）",
+          "example_quote": "' Turn off camera view",
+          "example_file": "Turn_Cameras_On_and_Off_Example_VB.md"
+        }
+      ],
+      "note": "三份示例逻辑相同：先关相机视图，逐个按名设置，再置 Nothing"
+    },
+    {
+      "member": "SetCellEquation",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Equation 是 A1 记法、1 基、带前导 =；而 Row/Column 形参是 0 基（成员页只写 Equation）",
+          "example_quote": "longstatus = theTableAnnotation.SetCellEquation(4, 2, True, \"=SUM(C2:C4)\")",
+          "example_file": "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md"
+        }
+      ],
+      "note": "示例后置注释写 SUM(C1:C3)，代码实际传 \"=SUM(C2:C4)\"，示例自身不一致"
+    },
+    {
+      "member": "SetColumnType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Part_Number_Column_in_BOM_Table_Example_CSharp.md",
+        "Insert_Part_Number_Column_in_BOM_Table_Example_VB.md",
+        "Insert_Part_Number_Column_in_BOM_Table_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "This method is consistent with the user interface and should return a failure; that is, a value < 0.",
+          "example_quote": "boolstatus = theTableAnnotation.SetColumnType(theTableAnnotation.ColumnCount - 1, swTableColumnTypes_e.swBomTableColumnType_PartNumber)",
+          "example_file": "Insert_Part_Number_Column_in_BOM_Table_Example_VB.md",
+          "why": "Remarks 说失败返回「小于 0 的数值」；三份示例都把它赋给 Dim boolstatus As Boolean / bool 并当 true/false 用，bool 不可能为负。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "须先 InsertColumn 再以 ColumnCount - 1 作索引；示例全程不检查 boolstatus",
+          "example_quote": "boolstatus = theTableAnnotation.InsertColumn(swTableItemInsertPosition_e.swTableItemInsertPosition_Last, 0, \"New Column\")",
+          "example_file": "Insert_Part_Number_Column_in_BOM_Table_Example_VB.md"
+        }
+      ],
+      "note": "签名与 Returns 均写 bool、示例亦用 Boolean 接收；Remarks 的 value<0 是孤证"
+    }
+  ]
+}

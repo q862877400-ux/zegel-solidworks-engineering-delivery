@@ -1,0 +1,110 @@
+{
+  "idx": 44,
+  "pages_read": 13,
+  "rows": [
+    {
+      "iface": "IView",
+      "file": "GetBreakOutSections.md",
+      "signature": "`System.object GetBreakOutSections()`",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetDimensionString2.md",
+      "signature": "`System.object GetDimensionString2()`",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetKeepLinkedToBOM.md",
+      "signature": "`System.bool GetKeepLinkedToBOM()`",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetSplines2.md",
+      "signature": "`System.object GetSplines2()`",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetDimensionDisplayInfo3.md",
+      "signature": "`System.double IGetDimensionDisplayInfo3()`",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetPolylines.md",
+      "signature": "`System.double IGetPolylines()`",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "IScaleRatio.md",
+      "signature": "`System.double IScaleRatio {get; set;}`",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（无括号）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "ActiveDrawingView.md",
+      "signature": "`System.object ActiveDrawingView {get;}`",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（无括号）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "CreateLayer.md",
+      "signature": "`System.bool CreateLayer( System.string Layername, System.string LayerDesc, System.int LayerColor, System.int LayerStyle, System.int LayerWidth, System.bool BOn )`",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "GetLineFontInfo2.md",
+      "signature": "`System.object GetLineFontInfo2( System.int Index )`",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "InsertBlock.md",
+      "signature": "`BlockInstance InsertBlock( System.string FileName, System.double X, System.double Y, System.double Angle, System.double Scale )`",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "SaveLineStyles.md",
+      "signature": "`System.bool SaveLineStyles( System.string StyleFiles, System.object StyleNameList, System.bool ReplaceExisting )`",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "ISheet",
+      "file": "InsertFamilyTable.md",
+      "signature": "`System.object InsertFamilyTable( System.bool AttachToAnchorPoint, System.double X, System.double Y, System.string ModelName, System.string TableTemplateName, System.int DimColumnType, System.bool UseAllConfigs, System.object ConfigArray, System.int ItemNumberStart, System.int ItemNumberIncrement, System.bool FollowConfigTreeOrder )`",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    }
+  ]
+}

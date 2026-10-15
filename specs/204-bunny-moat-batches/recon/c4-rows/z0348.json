@@ -1,0 +1,131 @@
+{
+  "idx": 348,
+  "results": [
+    {
+      "member": "LargeDesignReviewTransparencyLevel",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Transparency_of_Components_LDR_Mode_Example_CSharp.md",
+        "Set_Transparency_of_Components_LDR_Mode_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体取值 0.75 与写入序 Dynamic→Enabled→Level，成员页只把 Enabled=true 写成前置",
+          "example_quote": "swAssemblyDoc.LargeDesignReviewTransparencyLevelDynamic = true;\n            swAssemblyDoc.LargeDesignReviewTransparencyLevelEnabled = true;\n            swAssemblyDoc.LargeDesignReviewTransparencyLevel = 0.75;",
+          "example_file": "Set_Transparency_of_Components_LDR_Mode_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出满足「组件已被修改」这一前置的具体做法：打开子件改尺寸 D3 后存盘",
+          "example_quote": "swDimension.SystemValue = 0.025;",
+          "example_file": "Set_Transparency_of_Components_LDR_Mode_Example_CSharp.md"
+        }
+      ],
+      "note": "三条前置在示例里都成立，未见冲突。"
+    },
+    {
+      "member": "LargeDesignReviewTransparencyLevelDynamic",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Transparency_of_Components_LDR_Mode_Example_CSharp.md",
+        "Set_Transparency_of_Components_LDR_Mode_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例说明「已开 LDR 且有组件被改」可由 ViewOnly 打开装配 + 改子件实现",
+          "example_quote": "swModel = (ModelDoc2)swApp.OpenDoc6(fileName, (int)swDocumentTypes_e.swDocASSEMBLY, (int)swOpenDocOptions_e.swOpenDocOptions_ViewOnly, \"\", ref errors, ref warnings);",
+          "example_file": "Set_Transparency_of_Components_LDR_Mode_Example_CSharp.md"
+        }
+      ],
+      "note": "示例把该属性置 true，与成员页语义一致，无冲突。"
+    },
+    {
+      "member": "LargeDesignReviewTransparencyLevelEnabled",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Transparency_of_Components_LDR_Mode_Example_CSharp.md",
+        "Set_Transparency_of_Components_LDR_Mode_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Enabled 排在 Level 之前置位，具体化成员页的第三条前置",
+          "example_quote": "swAssemblyDoc.LargeDesignReviewTransparencyLevelEnabled = true;\n            swAssemblyDoc.LargeDesignReviewTransparencyLevel = 0.75;",
+          "example_file": "Set_Transparency_of_Components_LDR_Mode_Example_CSharp.md"
+        }
+      ],
+      "note": "与 Level、Dynamic 三者语义自洽，未见冲突。"
+    },
+    {
+      "member": "LargeIconList",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示它设在 CreateCommandGroup 返回的顶层组上、且在 AddCommandItem2 之前",
+          "example_quote": "cmdGroup = iCmdMgr.CreateCommandGroup(1, Title, ToolTip, \"\", -1);\n            cmdGroup.LargeIconList = iBmp.CreateFileFromResourceBitmap(\"test.ToolbarLarge.bmp\", thisAssembly);",
+          "example_file": "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md"
+        }
+      ],
+      "note": "页首标 Obsolete、后继 IconList，但官方示例仍调用它；不构成逻辑矛盾。"
+    },
+    {
+      "member": "LargeMainIcon",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 AddCommandItem2 之前设置主图标，成员页未给调用序",
+          "example_quote": "cmdGroup.LargeMainIcon = iBmp.CreateFileFromResourceBitmap(\"test.MainIconLarge.bmp\", thisAssembly);\n            cmdIndex0 = cmdGroup.AddCommandItem2(",
+          "example_file": "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md"
+        }
+      ],
+      "note": "示例未给 24x24/256 色依据，与成员页不冲突。"
+    },
+    {
+      "member": "Layer",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "In Drawing documents, annotations can be created on a specific layer. This property allows you to get or set the layer used by this annotation.",
+          "example_quote": "Debug.Print (\" Orientation: \" & swBreakLine.Layer)",
+          "example_file": "Create_Broken_View_Example_VB.md",
+          "why": "成员页说返回的是该注释所在图层的名称；示例把同名调用当 Orientation 打印，且对象是 BreakLine 而非 Annotation。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "示例调的是 ISketchHatch/IBreakLine 同名成员，无一用到 IAnnotation。"
+    },
+    {
+      "member": "LayerOverride",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "When you get this property, the returned bit value indicates which property or properties have been overridden.",
+          "example_quote": "Debug.Print(\"      Layer override? \" + swSketchHatch.LayerOverride);",
+          "example_file": "Get_Area_Hatch_Data_Example_CSharp.md",
+          "why": "成员页规定读回 swLayerOverride_e 位掩码（color 0x1 / style 0x2 / width 0x4）；示例按布尔问句打印，且对象是 SketchHatch。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "示例调 ISketchHatch/ISplineParamData 同名成员；本页无 Examples 段。"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "idx": 222,
+  "results": [
+    {
+      "member": "GetMultipleThicknessFacesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Shell_Feature_Example_CSharp.md",
+        "Create_Shell_Feature_Example_VBNET.md",
+        "Get_Shell_Feature_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例读厚度面数组前先 AccessSelections、读完 ReleaseSelectionAccess；Remarks 只说计数，完全没提这对前置/收尾。",
+          "example_quote": "bRet = swShell.AccessSelections(swModel, Nothing)",
+          "example_file": "Get_Shell_Feature_Data_Example_VB.md"
+        },
+        {
+          "what": "示例取的是托管属性 MultipleThicknessFaces，不是 Remarks 指向的 IGetMultipleThicknessFaces。",
+          "example_quote": "vMultiFaceArr = swShell.MultipleThicknessFaces",
+          "example_file": "Get_Shell_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只约束与 IGet… 的先后；三份示例走托管属性 + AccessSelections，未见矛盾。"
+    },
+    {
+      "member": "GetName",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律 3 跳过，未读示例。"
+    },
+    {
+      "member": "GetName2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Activate_Each_View_on_Current_Sheet_Example_VB.md",
+        "Create_and_Flip_Flat-Pattern_View_of_Sheet_Metal_Part_Example_VB.md",
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示 GetFirstView 返回的第一个「视图」是图纸伪视图，其 GetName2 等于图纸名，ActivateView 对它回 false；Remarks 只警告剖面视图不唯一，未提这一处同名情形。",
+          "example_quote": "        bRet = swDraw.ActivateView(swView.GetName2):\n        If False = bRet Then\n            Debug.Assert swSheet.GetName = swView.GetName2\n            bRet = swDraw.ActivateSheet(swView.GetName2)",
+          "example_file": "Activate_Each_View_on_Current_Sheet_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只警告剖面视图取不到唯一名；四份示例均未涉及剖面视图。"
+    },
+    {
+      "member": "GetNameAtIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律 3 跳过，未读示例。"
+    },
+    {
+      "member": "GetNameCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Display_State_Settings_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例取的是托管属性 Names，不是 Remarks 指向的 IGetNames。",
+          "example_quote": "dsNames = swDSS.Names",
+          "example_file": "Get_Display_State_Settings_Example_VB.md"
+        },
+        {
+          "what": "示例给出下标规则：0 到 count-1；Remarks 只说「取数组大小」，未给下标口径。",
+          "example_quote": "For namectr = 0 To dsNameCount - 1",
+          "example_file": "Get_Display_State_Settings_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只约束与 IGetNames 的先后；示例走 Names 属性，未见矛盾。"
+    },
+    {
+      "member": "GetNameForSelection",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律 3 跳过，未读示例。"
+    },
+    {
+      "member": "GetNamedEntitiesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Named_Entities_Example_CPlusPlus_COM.md",
+        "Get_Named_Entities_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "**Signature**: `System.int GetNamedEntitiesCount()`",
+          "example_quote": "hr\n= pPart->GetNamedEntitiesCount\n(&nEntCount);",
+          "example_file": "Get_Named_Entities_Example_CPlusPlus_COM.md",
+          "why": "成员页（Interop 形态）是一个无参返回 int；C++ 官方示例是填 long* 出参、回 HRESULT。同一次调用不可能同时是这两种形态。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把「count == 0」当必须先判的分支再分配/索引；Remarks 未提零计数。",
+          "example_quote": "If swPart.GetNamedEntitiesCount = 0 Then",
+          "example_file": "Get_Named_Entities_Example_VB.md"
+        },
+        {
+          "what": "C++ 示例须先由 IModelDoc2 QI 出 IPartDoc 才调本成员，即活动文档必须是零件；Remarks 未写该前置。",
+          "example_quote": "pPart\n= pModel;\nASSERT(pPart);",
+          "example_file": "Get_Named_Entities_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "C++ 走原始 COM 出参、成员页走 Interop 返回值 —— 同一成员两种调用形态。"
+    }
+  ]
+}

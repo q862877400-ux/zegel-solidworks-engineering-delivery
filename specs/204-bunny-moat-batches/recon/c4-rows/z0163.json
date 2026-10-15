@@ -1,0 +1,139 @@
+{
+  "idx": 163,
+  "results": [
+    {
+      "member": "GetConfigurationByName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Derived_Configurations_Example_CSharp.md",
+        "Add_Derived_Configurations_Example_VB.md",
+        "Add_Derived_Configurations_Example_VBNET.md",
+        "Add_Multibody_Part_Explode_Step_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 Name 实参来源：先取 GetConfigurationNames 数组再逐项传入；返回对象只读 .Name 这类存储数据，不做组件遍历。",
+          "example_quote": "swConf = (Configuration)swModel.GetConfigurationByName(vConfigNameArr[i]);",
+          "example_file": "Add_Derived_Configurations_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例都只读存储型数据，与 Remarks 的「无需激活即可取存储信息」一致，未见矛盾。"
+    },
+    {
+      "member": "GetConfigurationCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Model_Path_Names_in_BOM_Table_Example_CSharp.md",
+        "Get_Model_Path_Names_in_BOM_Table_Example_VB.md",
+        "Get_Model_Path_Names_in_BOM_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三例均以变量 bGetVisible=False 调用（取总数），且紧接在 GetConfigurations 之前；计数值只用于打印，未用来定数组长度。",
+          "example_quote": "Debug.Print(\"# configurations = \" + swBomFeature.GetConfigurationCount(bGetVisible));",
+          "example_file": "Get_Model_Path_Names_in_BOM_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "Work_with_Configurations_Example_VB.md 调的是 ISldWorks.GetConfigurationCount，名字撞车，未采用。"
+    },
+    {
+      "member": "GetConfigurationManagerTabIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Active_Tab_in_Manager_Pane_Example_CSharp.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VB.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先调 HideFeatureManager(false) 确保 Manager Pane 可见，再读该索引，使 Returns 里「2 if in the Manager Pane」有前提。",
+          "example_quote": "swModelDocExtension.HideFeatureManager(false);",
+          "example_file": "Change_Active_Tab_in_Manager_Pane_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetConfigurationNames",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks。四份候选示例调的都是 IModelDoc2.GetConfigurationNames，不是 IComponent2 的同名成员，全部弃用。"
+    },
+    {
+      "member": "GetConfigurationParams",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Extract_Configuration-Specific_Parameters_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例声明参数名与值一律以字符串返回、须由应用自行解释与换算；页面只警告无设计表时数值不准，未谈类型。",
+          "example_quote": "All parameters and their values are returned as strings.",
+          "example_file": "Extract_Configuration-Specific_Parameters_Example_VB.md"
+        }
+      ],
+      "note": "页面的设计表警告与示例的字符串说明可并存，返回 bool 也被示例 Debug.Assert 收下，无矛盾。"
+    },
+    {
+      "member": "GetConfigurationParamsCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Configuration_Parameters_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Number of parameters in this configuration",
+          "example_quote": "hr\n= pCfgMgr->GetConfigurationParamsCount(sCfgName,\n&NumParams);",
+          "example_file": "Get_Configuration_Parameters_Example_CPlusPlus_COM.md",
+          "why": "页面 Returns 说返回参数个数(int)，示例却把返回值赋给 HRESULT hr，真正的个数改从第二个出参 NumParams 读。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "System.int GetConfigurationParamsCount( System.string ConfigName )",
+          "example_quote": "hr\n= pCfgMgr->GetConfigurationParamsCount(sCfgName,\n&NumParams);",
+          "example_file": "Get_Configuration_Parameters_Example_CPlusPlus_COM.md",
+          "why": "页面签名只列 1 个形参 ConfigName；示例传 2 个实参，第二参 &NumParams 是 long* 出参。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出该前置的用途：NumParams 直接当作 IGetConfigurationParams 的数组长度传下去。",
+          "example_quote": "= pCfgMgr->IGetConfigurationParams(sCfgName,\nNumParams, vNames, vValues, &bret);",
+          "example_file": "Get_Configuration_Parameters_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "Remarks 要求先调本方法再调 IGetConfigurationParams，示例照做；冲突只落在签名与返回形状。quote 内换行沿用该例原文的折行（磁盘为 CRLF，按文本读为 LF）。"
+    },
+    {
+      "member": "GetConfigurations",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Components_in_Each_BOM_Table_Row_Example_CSharp.md",
+        "Get_Components_in_Each_BOM_Table_Row_Example_VBNET.md",
+        "Get_Model_Path_Names_in_BOM_Table_Example_CSharp.md",
+        "Get_Model_Path_Names_in_BOM_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "OnlyVisible=True 时 Visible 出参：C# 版传 null、VB.NET 版传 True，示范了 Remarks 那两行允许的两种写法。",
+          "example_quote": "vConfigArray = swBomFeat.GetConfigurations(True, True)",
+          "example_file": "Get_Components_in_Each_BOM_Table_Row_Example_VBNET.md"
+        },
+        {
+          "what": "OnlyVisible=False 时示例仍把 Visible 初始化为 null 并丢弃其内容，说明该出参可以完全不取用。",
+          "example_quote": "Object vVisibility = null;",
+          "example_file": "Get_Model_Path_Names_in_BOM_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "页面说取个数用 GetConfigurationCount，但这四例只 foreach 遍历数组、不取个数，未构成违背。"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "idx": 90,
+  "results": [
+    {
+      "member": "DeleteItem",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Use_Advanced_Component_Selection_Example_CSharp.md",
+        "Use_Advanced_Component_Selection_Example_VB.md",
+        "Use_Advanced_Component_Selection_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例直接传字面量 0 去删「第一个准则」，说明 Index 是 0 基；成员页只说取值须由 GetItemCount 得到",
+          "example_quote": "DeleteStatus = AdvancedSelectionCriteria.DeleteItem(0);",
+          "example_file": "Use_Advanced_Component_Selection_Example_CSharp.md"
+        }
+      ],
+      "note": "不冲突：示例删除前经 ReportAllValues 调过 GetItemCount，两侧可同时成立。"
+    },
+    {
+      "member": "DeleteLineStyle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Manage_Drawing_Document_Line_Styles_Example_CSharp.md",
+        "Manage_Drawing_Document_Line_Styles_Example_VB.md",
+        "Manage_Drawing_Document_Line_Styles_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「不可删除清单」里的 STITCH 用作 ReplaceName，被删的是 NewOne，说明禁令只约束 StyleName",
+          "example_quote": "boolstatus = Part.DeleteLineStyle(\"NewOne\", \"STITCH\");",
+          "example_file": "Manage_Drawing_Document_Line_Styles_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都未删除清单内样式，与 Remarks 一致，故记 0 条冲突。"
+    },
+    {
+      "member": "DeleteMotionStudy",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Create_Motion_Studies_Example_VB.md",
+        "swmotionstudyapi__Create_Motion_Studies_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例删不存在的 Motion Study 4 并断言回 False，比 Returns 段的「false if not」更具体",
+          "example_quote": "boolstatus = swMotionMgr.DeleteMotionStudy(\"Motion Study 4\")",
+          "example_file": "sldworksapi__Create_Motion_Studies_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "DeleteOriginalFace",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Extruded_Reference_Surface_Example_CSharp.md",
+        "Insert_Extruded_Reference_Surface_Example_VB.md",
+        "Insert_Extruded_Reference_Surface_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is only available if [[ISurfExtrudeFeatureData::BothDirections]] = false.",
+          "example_quote": "' Create a blind surface extrude\n    ' in two directions from the selected sketch",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_VB.md",
+          "why": "示例建的是双向拉伸（首参 Sd=false，故 BothDirections=true），同一示例紧接着读 DeleteOriginalFace，与「仅 BothDirections=false 可用」不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例在 AccessSelections 之后、ReleaseSelectionAccess 之前读该属性",
+          "example_quote": "Debug.Print \" Delete original face? \" & swSurfExtrudeFeature.DeleteOriginalFace",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_VB.md"
+        }
+      ],
+      "note": "佐证：FeatureExtruRefSurface3 页写其同名形参「valid only if Sd = true」，与 Remarks 同向、与示例相左。"
+    },
+    {
+      "member": "DeleteRecord",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_VB.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Indices 实为单元素 Long 数组，索引取 PitchCount（区域表 1 基，即最后一条）",
+          "example_quote": "Dim helixRegionArray(0) As Long",
+          "example_file": "Create_and_Modify_Variable-pitch_Helix_Example_VB.md"
+        }
+      ],
+      "note": "示例删的是最后一条（索引=PitchCount），与「不能删第一条」不冲突。"
+    },
+    {
+      "member": "DeleteSelection2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Extruded_Thin_Feature_Example_VB.md",
+        "Delete_Selected_Feature_Example_VB.md",
+        "Undo_Feature_and_Fire_Undo_Post-Notify_Event_Example_CSharp.md",
+        "Undo_Feature_and_Fire_Undo_Post-Notify_Event_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例写明 DeleteOption = 0 表示 absorbed 与 children 都保留，成员页只指向枚举",
+          "example_quote": "'DeleteOption = 0",
+          "example_file": "Delete_Selected_Feature_Example_VB.md"
+        },
+        {
+          "what": "传 swDelete_Children 后草图保留、可再次选中",
+          "example_quote": "' The sketch remains, so that you can select it again",
+          "example_file": "Create_Extruded_Thin_Feature_Example_VB.md"
+        }
+      ],
+      "note": "四份示例调用前后均无确认弹窗，与「does not ask the user to confirm」一致。"
+    },
+    {
+      "member": "DeleteSelections",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Delete_Subassemblies_Example_CSharp.md",
+        "Delete_Subassemblies_Example_VB.md",
+        "Delete_Subassemblies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例传 swDelete_SubAssembly，成员页只说「见 swAssemblyDeleteOptions_e」",
+          "example_quote": "status = swAssembly.DeleteSelections(swAssemblyDeleteOptions_e.swDelete_SubAssembly)",
+          "example_file": "Delete_Subassemblies_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定。"
+    }
+  ]
+}

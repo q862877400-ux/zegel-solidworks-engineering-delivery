@@ -1,0 +1,144 @@
+{
+  "idx": 387,
+  "results": [
+    {
+      "member": "PatternedTransforms",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在第 89 行 ReleaseSelectionAccess 之后才读本属性（已释放选区访问权），成员页未提任何选区前置。",
+          "example_quote": "        vPatternedXform = thisCThread.PatternedTransforms()\n        If Not IsEmpty(vPatternedXform) Then",
+          "example_file": "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md"
+        },
+        {
+          "what": "示例把数组元素当 SldWorks.MathTransform 用（乘到基点算实例坐标），比页面「Array of the transforms」具体。",
+          "example_quote": "                Set transform = vPatternedXform(i)\n                Set mTransPt = mBasePt.MultiplyTransform(transform)",
+          "example_file": "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md"
+        }
+      ],
+      "note": "另三份候选示例作用在 SldWorks.CThread（ICThread::PatternedTransforms，注解接口），不是本成员；本页 Examples 段也只列了 VB 那一份。"
+    },
+    {
+      "member": "Penetration",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_3DContact_Feature_Example_VB.md",
+        "Create_3D_Contact_Feature_Example_CSharp.md",
+        "Create_3D_Contact_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Available only when [[ISimulation3DContactFeatureData::UseRestitutionCoefficient]] and [[ISimulation3DContactFeatureData::SpecifyMaterial]] are both false.",
+          "example_quote": "        If swContFeat.UseRestitutionCoefficient Then\n            Debug.Print \"  Use coefficient of restitution:\"\n            Debug.Print \"    Coefficient of restitution: \" & swContFeat.RestitutionCoefficient\n        Else\n            Debug.Print \"  Use impact force:\"\n            Debug.Print \"    Exponent of exponential force: \" & swContFeat.Exponent\n            Debug.Print \"    Maximum damping coefficient: \" & swContFeat.MaxDamping\n            Debug.Print \"    Penetration at which maximum damping is applied: \" & swContFeat.Penetration",
+          "example_file": "Create_3DContact_Feature_Example_VB.md",
+          "why": "该 Else 分支只以 UseRestitutionCoefficient 为条件；SpecifyMaterial 是第 89 行另起的独立 If，不参与守卫，故它为真时示例仍读 Penetration，与 Remarks 要求两开关皆 false 才可用不能同时成立。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Available only when [[ISimulation3DContactFeatureData::UseRestitutionCoefficient]] and [[ISimulation3DContactFeatureData::SpecifyMaterial]] are both false.",
+          "example_quote": "                if (swContFeat.UseRestitutionCoefficient)\n                {\n                    Debug.Print(\"  Use coefficient of restitution:\");\n                    Debug.Print(\"    Coefficient of restitution: \" + swContFeat.RestitutionCoefficient);\n                }\n                else\n                {\n                    Debug.Print(\"  Use impact force:\");\n                    Debug.Print(\"    Exponent of exponential force: \" + swContFeat.Exponent);\n                    Debug.Print(\"    Maximum damping coefficient: \" + swContFeat.MaxDamping);\n                    Debug.Print(\"    Penetration at which maximum damping is applied: \" + swContFeat.Penetration);\n                }",
+          "example_file": "Create_3D_Contact_Feature_Example_CSharp.md",
+          "why": "读 Penetration 的 else 分支只判 UseRestitutionCoefficient；SpecifyMaterial 的判断在第 110 行另起一个 if，不嵌套、不守卫，故它为真时示例照样读 Penetration，与 Remarks 的双开关条件相抵触。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Available only when [[ISimulation3DContactFeatureData::UseRestitutionCoefficient]] and [[ISimulation3DContactFeatureData::SpecifyMaterial]] are both false.",
+          "example_quote": "            If swContFeat.UseRestitutionCoefficient Then\n                Debug.Print(\"  Use coefficient of restitution:\")\n                Debug.Print(\"    Coefficient of restitution: \" & swContFeat.RestitutionCoefficient)\n            Else\n                Debug.Print(\"  Use impact force:\")\n                Debug.Print(\"    Exponent of exponential force: \" & swContFeat.Exponent)\n                Debug.Print(\"    Maximum damping coefficient: \" & swContFeat.MaxDamping)\n                Debug.Print(\"    Penetration at which maximum damping is applied: \" & swContFeat.Penetration)\n            End If",
+          "example_file": "Create_3D_Contact_Feature_Example_VBNET.md",
+          "why": "同上：Else 只以 UseRestitutionCoefficient 为门槛，SpecifyMaterial 的 If 在第 93 行独立出现；因此 SpecifyMaterial 为真时示例仍打印 Penetration，Remarks 却说此时不可用。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先把算例 StudyType 设为物理仿真、再 CreateDefinition 取该属性；成员页未提算例类型这一前置。",
+          "example_quote": "    swMotionStudy1.StudyType = swMotionStudyType_e.swMotionStudyTypePhysicalSimulation",
+          "example_file": "Create_3DContact_Feature_Example_VB.md"
+        }
+      ],
+      "note": "三份示例同构（同一缺陷的 VBA/C#/VB.NET 三个语言版）；该成员页自身没有 Examples 段。"
+    },
+    {
+      "member": "PercentDistanceFromEnd",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Width_Mate_Example_CSharp.md",
+        "Create_Width_Mate_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先把 ConstraintType 设成 swMateWidth_Percent 再写本属性；页面只说 valid only if，未给写入顺序。",
+          "example_quote": "                swWidthMateData.ConstraintType = (int)swMateWidthOptions_e.swMateWidth_Percent;\n                swWidthMateData.PercentDistanceFromEnd = 47;",
+          "example_file": "Create_Width_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "示例只在编辑阶段写本属性（GetLastFeatureAdded→GetDefinition 改类型后再写，然后 ModifyDefinition）；创建阶段用的是 Dimension 型。",
+          "example_quote": "    If (swMateData.TypeName = SwConst.swMateType_e.swMateWIDTH) Then\n        Set swWidthMateData = swMateData\n        Debug.Print \"Width mate constraint type is \" & swWidthMateData.ConstraintType\n        swWidthMateData.ConstraintType = SwConst.swMateWidthOptions_e.swMateWidth_Percent\n        swWidthMateData.PercentDistanceFromEnd = 47",
+          "example_file": "Create_Width_Mate_Example_VB.md"
+        }
+      ],
+      "note": "两份示例同构；同族的 DistanceFromEnd 传米（0.04975511004）而本属性传百分数 47，与页面口径一致，无冲突。"
+    },
+    {
+      "member": "Perimeter",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Summary/Signature/Returns，无 Remarks 段 ⇒ 按纪律跳过；三份示例都读 swMeasure.Perimeter 并用 = -1 判哨兵。"
+    },
+    {
+      "member": "Periodic",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Spline_Example_VB.md",
+        "Get_BCurve_Spline_Points_Example_CSharp.md",
+        "Get_BCurve_Spline_Points_Example_VB.md",
+        "Get_BCurve_Spline_Points_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Periodic 与 Order、ControlPointsCount、KnotPointsCount 同批读出（第 51-54 行），说明 Remarks 的结点数公式对的是 KnotPointsCount。",
+          "example_quote": "\t            Debug.Print(\"The periodicity is: \" + swSplineParaData.Periodic);\n\t            Debug.Print(\"The control point count is: \" + swSplineParaData.ControlPointsCount);\n\t            Debug.Print(\"The knot point count is: \" + swSplineParaData.KnotPointsCount);",
+          "example_file": "Get_BCurve_Spline_Points_Example_CSharp.md"
+        },
+        {
+          "what": "Edit_Spline 用 GetBCurveParams5(False, False, False, False) 取同一组数据，与 BCurve 三份的 (false,false,true,true) 标志组不同；页面未说明标志对 Periodic 的影响。",
+          "example_quote": "        Set swSplineParamData = swCurve.GetBCurveParams5(False, False, False, False)",
+          "example_file": "Edit_Spline_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 把这个属性称作「this method」；四份示例都只读取、未按结点数公式对照，故无冲突。"
+    },
+    {
+      "member": "Perspective",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Camera_Example_CSharp.md",
+        "Insert_Camera_Example_VB.md",
+        "Insert_Camera_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无 Remarks 段（只有 Signature 前的 NOTE）⇒ 跳过；NOTE 称 get-only 而签名是 {get; set;}，属页内自相矛盾。三份示例只读不写。"
+    },
+    {
+      "member": "PickPoints",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "两份候选示例都作用在 LoftFeatureData（ILoftFeatureData::PickPoints），与本成员无关；本成员页也没有 Examples 段。"
+    }
+  ]
+}

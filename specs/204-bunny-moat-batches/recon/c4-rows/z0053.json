@@ -1,0 +1,81 @@
+{"idx":53,"results":[
+{
+"member":"CopyWithMates2",
+"remarks_empty":true,
+"examples_actually_used":["Copy_Component_With_Profile_Center_Mate_Example_CSharp.md","Copy_Component_With_Profile_Center_Mate_Example_VB.md","Copy_Component_With_Profile_Center_Mate_Example_VBNET.md"],
+"conflicts":[],
+"example_more_specific":[
+{"what":"示例在 repeatArray 全为 True 时仍给 mateReferences 数组填一个 null 的 DispatchWrapper，而不是省略","example_quote":"dispWrapperMateReferencesArray[0] = new DispatchWrapper(null);","example_file":"Copy_Component_With_Profile_Center_Mate_Example_CSharp.md"}
+],
+"note":"本页无 Remarks 段，不判冲突。Parameters 称 Values 用米，示例传 0.05，存疑未判。"
+},
+{
+"member":"CoreCavitySplit",
+"remarks_empty":true,
+"examples_actually_used":["Get_and_Set_Parting_Line_Feature_Data_Example_CSharp.md","Get_and_Set_Parting_Line_Feature_Data_Example_VB.md","Get_and_Set_Parting_Line_Feature_Data_Example_VBNET.md","Set_Split_Faces_Option_for_Parting_Line_Example_VB.md"],
+"conflicts":[],
+"example_more_specific":[
+{"what":"示例把写入放在 AccessSelections 之后，并以 ModifyDefinition 收尾；页面未提这道回滚","example_quote":"bRet = swPartingLine.AccessSelections(swModel, Nothing): Debug.Assert bRet","example_file":"Set_Split_Faces_Option_for_Parting_Line_Example_VB.md"}
+],
+"note":"无 Remarks，不判冲突。同一示例读在 AccessSelections 前、写在其后，时机前后不一致。"
+},
+{
+"member":"CoreSurfaces",
+"remarks_empty":false,
+"examples_actually_used":["Get_Tooling_Split_Feature_Data_Example_CSharp.md","Get_Tooling_Split_Feature_Data_Example_VB.md","Get_Tooling_Split_Feature_Data_Example_VBNET.md"],
+"conflicts":[],
+"example_more_specific":[
+{"what":"三份示例都在读 CoreSurfaces 之前先 AccessSelections，读完再 ReleaseSelectionAccess","example_quote":"bRet = swToolingSplitFeatData.AccessSelections(swModel, Nothing)","example_file":"Get_Tooling_Split_Feature_Data_Example_VB.md"},
+{"what":"示例先取 GetCoreSurfacesCount 再按它上界索引数组，页面只说返回数组","example_quote":"For i = 0 To swToolingSplitFeatData.GetCoreSurfacesCount - 1","example_file":"Get_Tooling_Split_Feature_Data_Example_VB.md"}
+],
+"note":"Remarks 只是一条指向 Selections that Define Features 的链接，与示例不矛盾。"
+},
+{
+"member":"CornerDefaults",
+"remarks_empty":true,
+"examples_actually_used":["Create_ConvertSolid_Feature_Example_CSharp.md","Create_ConvertSolid_Feature_Example_VBNET.md"],
+"conflicts":[],
+"example_more_specific":[
+{"what":"示例把它标为 Overlap type，并在 AccessSelections 之前就读（页面称 sheet metal corner type）","example_quote":"Debug.Print(\"Overlap type : \" + FeatData.CornerDefaults);","example_file":"Create_ConvertSolid_Feature_Example_CSharp.md"}
+],
+"note":"本页无 Remarks 段，不判冲突。两份示例都只读不写该属性。"
+},
+{
+"member":"CornerFilletDiameter",
+"remarks_empty":false,
+"examples_actually_used":["Create_SM_Corner_Relief_Feature_Example_CSharp.md","Create_SM_Corner_Relief_Feature_Example_VBNET.md"],
+"conflicts":[
+{"kind":"precondition_diff",
+"remarks_quote":"This property is valid only if:\n\n- [[ISMCornerReliefData::AddFilletedCorners]] is true,\n\n    - And -\n\n- [[ISMCornerReliefData::ReliefType]] is set to [[swCornerReliefType_e]].swCornerRectangularRelief.",
+"example_quote":"cornerItr.ReliefType = (int)swCornerReliefType_e.swCornerCircularRelief;",
+"example_file":"Create_SM_Corner_Relief_Feature_Example_CSharp.md",
+"why":"示例在该分支随即调用 PrintReliefData，其内部 Debug.Print 读 CornerFilletDiameter；此时 ReliefType 已非 Rectangular，Remarks 的有效条件不成立。"}
+],
+"example_more_specific":[
+{"what":"示例给出的具体量级：0.00025（米制即 0.25 mm），且与 CenterOnBendLines/TangentToBend 一起设","example_quote":"cornerItr.CornerFilletDiameter = 0.00025d;","example_file":"Create_SM_Corner_Relief_Feature_Example_CSharp.md"}
+],
+"note":"首个循环里先赋 CornerFilletDiameter、后设 ReliefType=Rectangular，赋值时机与 Remarks 条件顺序相反；第三个循环改为 ConstantWidth 后仍读该属性。"
+},
+{
+"member":"CornerPoints",
+"remarks_empty":true,
+"examples_actually_used":["Get_Corner_Points_of_Reference_Plane_Example_CSharp.md","Get_Corner_Points_of_Reference_Plane_Example_VB.md"],
+"conflicts":[],
+"example_more_specific":[
+{"what":"示例注明恒返回四个 MathPoint，页面只说 Array of four (4) IMathpoint objects","example_quote":"//Four (4) MathPoint objects are always returned","example_file":"Get_Corner_Points_of_Reference_Plane_Example_CSharp.md"},
+{"what":"示例用 IMathPoint.ArrayData 逐点取 x/y/z，页面未提取值路径","example_quote":"vArrayData = vMathPoints[i].ArrayData","example_file":"Get_Corner_Points_of_Reference_Plane_Example_CSharp.md"}
+],
+"note":"无 Remarks，不判冲突。示例只把角点写进 3D 草图，不改动基准面。"
+},
+{
+"member":"CornerTreatmentTrimType",
+"remarks_empty":false,
+"examples_actually_used":["Access_Structure_System_Corner_Treatments_Example_VB.md","Access_Structure_System_Corner_Treatments__Example_CSharp.md"],
+"conflicts":[],
+"example_more_specific":[
+{"what":"示例只在 CornerType = 0（simple）分支读本成员，并在 AccessSelections 之后","example_quote":"swCornerTreatmentTrimType_e: \" & simpleCrnr.CornerTreatmentTrimType","example_file":"Access_Structure_System_Corner_Treatments_Example_VB.md"},
+{"what":"同名属性在示例里属两接口：twoMbrCrnr 那处是双构件接口，不是本成员（其值 1 即 Body trim）","example_quote":"twoMbrCrnr.CornerTreatmentTrimType = 1 'Body trim","example_file":"Access_Structure_System_Corner_Treatments_Example_VB.md"}
+],
+"note":"示例只读不写本成员，Remarks 限定 Body/Planar trim 未被违反，故不判冲突。"
+}
+]}

@@ -1,0 +1,177 @@
+{
+  "idx": 8,
+  "results": [
+    {
+      "name": "configurations_and_design_tables",
+      "level": "verified",
+      "members_found": [
+        "GetConfigurationNames",
+        "ConfigurationManager",
+        "ActiveConfiguration",
+        "Name",
+        "ShowConfiguration2",
+        "EditRebuild3",
+        "AddConfiguration3",
+        "Parameter",
+        "GetSystemValue3",
+        "SetSystemValue3",
+        "GetUnits",
+        "CustomPropertyManager",
+        "Get6",
+        "Add3"
+      ],
+      "examples_used": [
+        "Add_Derived_Configurations_Example_CSharp.md",
+        "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_CSharp.md",
+        "Are_the_Assembly_Configurations_Loaded_Example_CSharp.md",
+        "Change_Dimension_Example_CSharp.md",
+        "Get_Custom_Properties_for_Configuration_Example_CSharp.md",
+        "Change_Dimensions_of_Gear_Mate_Example_VB.md",
+        "Add_and_Get_Custom_Properties_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "读配置清单/活动配置的前置：先打开一个零件或装配体文档，经 ConfigurationManager 取 ActiveConfiguration、用 GetConfigurationNames 遍历。",
+          "from": "Add_Derived_Configurations_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "AddConfiguration3 的官方示例前置：指定的装配体文档必须存在；且该文档别处在用，关闭时不要保存改动。",
+          "from": "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "ShowConfiguration2 的官方示例前置：要打开的装配体文档必须存在；示例用活动配置回读来判定是否切成功。",
+          "from": "Are_the_Assembly_Configurations_Loaded_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "改尺寸的前置：先 SelectByID2 按名字选到特征，再 swFeature.Parameter(\"D3\")；示例的装配体文档须存在。",
+          "from": "Change_Dimension_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方注明 API 多以米为单位喂尺寸值，要按模型实际单位换算（IModelDoc2::LengthUnit）。",
+          "from": "Change_Dimension_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "自定义属性的前置：先打开一个零件文档，取活动配置的 CustomPropertyManager，再 Add3（DeleteAndAdd）后 Get6 回读。",
+          "from": "Get_Custom_Properties_for_Configuration_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetSystemValue3 的另一官方示例讲的是齿轮配合尺寸（配合维度），其装配体+选面+加配合的前置是否适用于本能力说不清。",
+          "from": "Change_Dimensions_of_Gear_Mate_Example_VB.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "evidence 只有一条 pytest，7 条前置里 6 条未被提及；官方属性示例走 config.CustomPropertyManager，本实现走 model.Extension.CustomPropertyManager(配置名)。"
+    },
+    {
+      "name": "sheet_metal",
+      "level": "verified",
+      "members_found": [
+        "SelectByID2",
+        "CreateDefinition",
+        "CreateFeature",
+        "CreateCustomBendAllowance",
+        "Initialize",
+        "Thickness",
+        "BendRadius",
+        "KFactor",
+        "D1EndConditionType",
+        "D1EndConditionDistance",
+        "D2EndConditionType",
+        "D2EndConditionDistance",
+        "OverrideDefaultSheetMetalParameters",
+        "ReverseDirection",
+        "ReverseThickness",
+        "UseDefaultBendRadius",
+        "UseDefaultBendAllowance",
+        "BendAngle",
+        "Angle",
+        "ProfileDimensionScheme",
+        "GussetThickness",
+        "UseAngleDimForProfile",
+        "ProfileLengthDim",
+        "ProfileHeightDim",
+        "ProfileAngleDim",
+        "UseOffset",
+        "OffsetDistance",
+        "EndOffset",
+        "StartOffset",
+        "FlangePosition",
+        "FlattenAlongPath",
+        "TrimSideBends",
+        "UseDefaultBendRelief",
+        "UseGaugeTable",
+        "UseMaterialSheetMetalParameters",
+        "Path",
+        "Profile",
+        "GetErrorCode",
+        "GetDefinition",
+        "GetTypeName2",
+        "Name",
+        "FirstFeature",
+        "GetNextFeature",
+        "GetBodies2",
+        "IsSheetMetal"
+      ],
+      "examples_used": [
+        "Create_Base_Flange_Feature_Example_CSharp.md",
+        "Create_Edge_Flange_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Swept_Flange_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "基体法兰的前置：零件模板须存在；先在基准面上画闭合轮廓草图并结束草图、选中该草图，再 CreateDefinition/CreateFeature。",
+          "from": "Create_Base_Flange_Feature_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "★ **闭轮廓**真机建成：特征树出现「钣金6 / 基体-法兰1 / 平展型式6」"
+        },
+        {
+          "text": "基体法兰还须先建 CustomBendAllowance 并设 Type/KFactor，再 Initialize(...) 后才 CreateFeature。",
+          "from": "Create_Base_Flange_Feature_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "边线法兰的前置：先打开 cover.sldprt 选中边，且必须调 FeatData.AddEdges(边数组, 草图数组) 把边与草图喂进 FeatureData。",
+          "from": "Create_Edge_Flange_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "钣金加强筋的前置：先打开 SMGussetAPI.sldprt，创建前必须先选中该折弯的两个支撑面，再用 ISMGussetFeatureData 的三件套。",
+          "from": "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "放样折弯的前置：零件模板须存在，且必须先用 InsertSheetMetalBaseFlange2 建出基体法兰，再把 Path/Profile 对象赋进数据。",
+          "from": "Create_Swept_Flange_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "钣金拔模（create_draft）没有对应的官方创建示例，相关前置无从查证。",
+          "from": "",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "只有「闭轮廓」这条前置被 evidence 逐字点到；边线法兰的 AddEdges、加强筋的两个支撑面、放样折弯的先有基体法兰均未提；拔模无官方示例。"
+    }
+  ]
+}

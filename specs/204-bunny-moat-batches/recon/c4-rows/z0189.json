@@ -1,0 +1,156 @@
+{
+  "idx": 189,
+  "results": [
+    {
+      "member": "GetFaceFacets",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VB.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在调 GetFaceFacets 前还设 MatchType 并先跑一次 Tessellate()，成员页只写 NeedFaceFacetMap",
+          "example_quote": "            tess.NeedFaceFacetMap = true;\n            tess.MatchType = (int)swTesselationMatchType_e.swTesselationMatchFacetGeometry;\n            boolstatus = tess.Tessellate();",
+          "example_file": "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只列 NeedFaceFacetMap；示例三份都满足它，故不判冲突。"
+    },
+    {
+      "member": "GetFaceHatchCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Crosshatches_on_View_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它当 0/非0 门禁：=0 就跳到下一视图，否则取 GetFaceHatches",
+          "example_quote": "currentView.GetFaceHatchCount = 0 Then",
+          "example_file": "Get_Crosshatches_on_View_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 指的是 IGetFaceHatches，示例配对的是对象版 GetFaceHatches；计数两者相同，不判冲突。"
+    },
+    {
+      "member": "GetFaceHatches",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Crosshatches_on_View_Example_VB.md",
+        "Get_Face_Hatch_Data_Example_CSharp.md",
+        "Get_Face_Hatch_Data_Example_VB.md",
+        "Get_Face_Hatch_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置是从特征树选中 Section View A-A，再取该视图",
+          "example_quote": "// 2. Select Section View A-A in the FeatureManager design tree.",
+          "example_file": "Get_Face_Hatch_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例把返回值转 object[] 后先判空，再逐个读 FaceHatch 属性",
+          "example_quote": "            vFaceHatch = (object[])swView.GetFaceHatches();",
+          "example_file": "Get_Face_Hatch_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 排除的是 detail/broken/crop 里的 solid hatch，本成员取 face hatch，两者可并存。"
+    },
+    {
+      "member": "GetFaceId",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_ConvertSolid_Feature_Example_CSharp.md",
+        "Create_ConvertSolid_Feature_Example_VBNET.md",
+        "Set_New_End_Condition_for_Simple_Hole_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在原生钣金固定面上取面 ID，而成员页把面 ID 说成导入体（IGES）的机制",
+          "example_quote": "face = (Face2)FeatData.GetFixedFace();",
+          "example_file": "Create_ConvertSolid_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "另一示例直接对简单孔的终止条件面取面 ID，全程无导入步骤",
+          "example_quote": "\t            Debug.Print(\"End condition face ID: \" + SimpleHoleEndCondition.GetFaceId());",
+          "example_file": "Set_New_End_Condition_for_Simple_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 那句只说 SOLIDWORKS「用」面 ID 跟踪导入体，未禁 native 面，故不判冲突。"
+    },
+    {
+      "member": "GetFaceTangentTo",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Shut-Off_Surface_Data_Example_CSharp.md",
+        "Get_Shut-Off_Surface_Data_Example_VB.md",
+        "Get_Shut-Off_Surface_Data_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "- **Index**: Index for the loop where to create the patch",
+          "example_quote": "\t            @params = (object[])swFeatData.Edges;\n\t            for (i = 0; i <= @params.GetUpperBound(0); i++)\n\t            {\n\t                swEnt = (Entity)@params[i];\n\t                boolstatus = swEnt.Select4(false, null);\n\t                swEnt = (Entity)swFeatData.GetFaceTangentTo(i);",
+          "example_file": "Get_Shut-Off_Surface_Data_Example_CSharp.md",
+          "why": "成员页 Parameters 说 Index 是 loop 序号；示例三份都拿 Edges 数组的序号传进去，同一参数不可能既是 loop 序又是 edge 序。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例前置把补丁类型写死成 swPatchTypeTangent = 2",
+          "example_quote": "// Preconditions: Open a model that contains a Shut-Off Surface1 feature with\n// the patch type of swShutOffSurfacePatchType_e.swPatchTypeTangent = 2.",
+          "example_file": "Get_Shut-Off_Surface_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出前置的具体调用形态：先对特征数据 AccessSelections",
+          "example_quote": "\t            boolstatus = swFeatData.AccessSelections(swModel, null);",
+          "example_file": "Get_Shut-Off_Surface_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "冲突点不在 Remarks 段，而在同页 Parameters 段对 Index 的定义。"
+    },
+    {
+      "member": "GetFaces",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Multibody_Macro_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值直接转 object[]，再按 0..UBound 逐面喂给 SetFaceUserId",
+          "example_quote": "                vFaces = (object[])swBody.GetFaces();",
+          "example_file": "Create_Multibody_Macro_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "另 3 份 Add Attribute 示例调的是 swFeature.GetFaces，属 IFeature::GetFaces，非本成员，已排除。"
+    },
+    {
+      "member": "GetFacesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Heal_Edges_Feature_Data_Example_CSharp.md",
+        "Get_Heal_Edges_Feature_Data_Example_VB.md",
+        "Get_Heal_Edges_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例调用前先对特征数据 AccessSelections，成员页没写这条前置",
+          "example_quote": "            swHealEdgesFeature.AccessSelections(swModel, null);",
+          "example_file": "Get_Heal_Edges_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例只取计数去打印，从不调用 Remarks 点名的 IGetFaces",
+          "example_quote": "            Debug.Print(\"Number of faces in this heal edges feature: \" + swHealEdgesFeature.GetFacesCount());",
+          "example_file": "Get_Heal_Edges_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Insert_Mate_Load_Reference 那份是 IMateLoadReference::GetFacesCount（带 WhichOne），非本成员，已排除。"
+    }
+  ]
+}

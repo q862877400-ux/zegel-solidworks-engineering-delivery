@@ -1,0 +1,130 @@
+{
+  "idx": 4,
+  "results": [
+    {
+      "name": "custom_properties_and_bom",
+      "level": "verified",
+      "members_found": [
+        "Extension",
+        "CustomPropertyManager",
+        "Count",
+        "GetNames",
+        "Get6",
+        "GetType2",
+        "IsCustomPropertyEditable",
+        "GetType",
+        "GetComponents",
+        "GetExcludeFromBOM2",
+        "GetPathName",
+        "ReferencedConfiguration",
+        "Name2",
+        "GetModelDoc2"
+      ],
+      "examples_used": [
+        "Add_and_Get_Custom_Properties_Example_VB.md",
+        "Get_Custom_Properties_for_Configuration_Example_CSharp.md",
+        "Get_Custom_Properties_of_Referenced_Part_Example_VB.md",
+        "Get_Paths_and_Titles_of_Parents_of_Virtual_Component_Example_VBNET.md",
+        "Get_Whether_Components_Are_Loaded_Example_CSharp.md",
+        "Get_Components_in_Each_BOM_Table_Row_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "先打开一个零件文档作活动文档，取其活动配置后再由配置拿 CustomPropertyManager",
+          "from": "Get_Custom_Properties_for_Configuration_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "先打开含被引用零件的零件，再打开被引用零件，然后切回第 1 步的零件；配置串传空 \"\"",
+          "from": "Get_Custom_Properties_of_Referenced_Part_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "文档类型必须是 swDocASSEMBLY，否则示例立即退出（对应实现里 GetType != 2 直接抛错）",
+          "from": "Get_Paths_and_Titles_of_Parents_of_Virtual_Component_Example_VBNET.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "每个组件文档必须已加载，GetModelDoc2 不得返回 Nothing",
+          "from": "Get_Paths_and_Titles_of_Parents_of_Virtual_Component_Example_VBNET.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "指定的装配体文档必须存在；组件的加载/压缩状态（LightWeight、Selective 打开）影响枚举",
+          "from": "Get_Whether_Components_Are_Loaded_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "先由装配体生成工程图并插入 BOM 表：Bom Type 选 Parts only，同零件不同配置须分组",
+          "from": "Get_Components_in_Each_BOM_Table_Row_Example_CSharp.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "两条 evidence 只证 set/read_custom_property 三条属性往返；未提活动配置、装配体文档类型、组件已加载。BOM 表前置不适用：本实现走 IAssemblyDoc.GetComponents，不读 BOM 表，故记 cannot_tell。Add_and_Get_Custom_Properties 走 IFeature 级管理器，前置未计入。"
+    },
+    {
+      "name": "pack_and_go",
+      "level": "verified",
+      "members_found": [
+        "GetPathName",
+        "Extension",
+        "GetDependencies",
+        "GetPackAndGo",
+        "GetDocumentNamesCount",
+        "SetSaveToName2",
+        "IncludeDrawings",
+        "IncludeSimulationResults",
+        "IncludeToolboxComponents",
+        "IncludeSuppressed",
+        "FlattenToSingleFolder",
+        "SavePackAndGo"
+      ],
+      "examples_used": [
+        "Pack_and_Go_an_Assembly_Example_CSharp.md",
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md",
+        "Pack_and_Go_Part_and_Linked_Equation_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "指定的装配体必须存在，并以 swDocASSEMBLY 静默打开（OpenDoc6 … swOpenDocOptions_Silent）",
+          "from": "Pack_and_Go_an_Assembly_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "目标文件夹必须事先存在（示例用 c:\\temp）",
+          "from": "Pack_and_Go_an_Assembly_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调用序：先 SetSaveToName，再设 FlattenToSingleFolder / AddPrefix / AddSuffix",
+          "from": "Pack_and_Go_an_Assembly_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "目标目录须先创建，且 SaveToName 路径带尾部反斜杠 \"c:\\PackAndGo\\\"",
+          "from": "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "指定的零件与其链接方程文档必须存在于磁盘，目标 c:\\temp 须存在",
+          "from": "Pack_and_Go_Part_and_Linked_Equation_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "两条 evidence 皆为 pytest 名，未提源文档已存盘、目标目录存在，也未提 SetSaveToName 先于 Flatten 的调用序（本实现顺序相反）。"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "idx": 122,
+  "results": [
+    {
+      "member": "FeatureBossThicken",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Thicken_Feature_Example_VB.md",
+        "Fill_Holes_in_Part_Example_CSharp.md",
+        "Fill_Holes_in_Part_Example_VB.md",
+        "Fill_Holes_in_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 IFeature::Select2(..., 1) 选中待加厚曲面，而 Remarks 只指向 SelectByID2",
+          "example_quote": "bRet = swKnitFeat.Select2(False, 1)",
+          "example_file": "Fill_Holes_in_Part_Example_VB.md"
+        }
+      ],
+      "note": "两例 FillVolume=False、UseAutoSelect=True、参考面标记均为 1，与 Remarks 三句相容"
+    },
+    {
+      "member": "FeatureByName",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "该页无 Remarks；4 份示例都在 PartDoc 上调 swPart.FeatureByName，非 IAssemblyDoc 成员，按纪律不采用"
+    },
+    {
+      "member": "FeatureByPositionReverse",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Fill_Holes_in_Part_Example_CSharp.md",
+        "Fill_Holes_in_Part_Example_VB.md",
+        "Fill_Holes_in_Part_Example_VBNET.md",
+        "Get_Features_in_Reverse_Order_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "However, IModelDoc2::GetFeatureCount does not recognize Sheet-Metal and Flat-Pattern folders as features in the FeatureManager design tree.",
+          "example_quote": "for (i = 0; i <= swModel.GetFeatureCount() - 1; i++)",
+          "example_file": "Get_Features_in_Reverse_Order_Example_CSharp.md",
+          "why": "Remarks 说 GetFeatureCount 不计钣金/展开文件夹；示例却拿它当倒序遍历的精确上界，钣金件会漏掉树中特征"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例用 FeatureByPositionReverse(0) 取刚生成的缝合特征；Remarks 的范例却说要传 1",
+          "example_quote": "Set swKnitFeat = swNewModel.FeatureByPositionReverse(0)",
+          "example_file": "Fill_Holes_in_Part_Example_VB.md"
+        }
+      ],
+      "note": "倒序索引口径本身无矛盾；0=最后一个与 Parameters 一致，差异只在 Remarks 的 1 号范例"
+    },
+    {
+      "member": "FeatureCircularPattern4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Circular_Pattern_Example_CSharp.md",
+        "Create_Circular_Pattern_Example_VB.md",
+        "Create_Circular_Pattern_Example_VBNET.md",
+        "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "unit_diff",
+          "remarks_quote": "Spacing between each instance of the circular pattern; total angle in radians if EqualSpacing is true",
+          "example_quote": "myModel.FeatureManager.FeatureCircularPattern4 3, 1.25663706143592, True, \"NULL\", False, False, False",
+          "example_file": "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+          "why": "成员页把弧度口径限定在 EqualSpacing=true；示例 EqualSpacing=False 仍传 1.25663706143592（=72°弧度），两侧不能同时成立"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例额外用一个 mark 128 选面，Remarks 的标记表只列 1/2/4",
+          "example_quote": "boolstatus = myModel.Extension.SelectByID2(\"\", \"FACE\", -5.25693542039818E-02, -7.07674502874625E-02, 0, True, 128, Nothing, 0)",
+          "example_file": "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 里的 1=方向轴、4=待阵列特征与两例一致；DName 三例都传字面量 \"NULL\"，仅记录不判冲突"
+    },
+    {
+      "member": "FeatureCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_CSharp.md",
+        "Get_Part's_Feature_Statistics_Example_VB.md",
+        "Get_Part's_Feature_Statistics_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "该页无 Remarks，按纪律跳过判定；三例都先调 swFeatStat.Refresh() 再读，属性为 {get} 只读"
+    },
+    {
+      "member": "FeatureCut",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Undo_Feature_and_Fire_Undo_Post-Notify_Event_Example_CSharp.md",
+        "Undo_Feature_and_Fire_Undo_Post-Notify_Event_Example_VB.md",
+        "Undo_Feature_and_Fire_Undo_Post-Notify_Event_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Dang1/Dang2 成员页未给单位，示例用弧度（0.01745329251994 ≈ 1°）",
+          "example_quote": "false, 0.01745329251994, 0.01745329251994, false, false, false, false, false, true, true",
+          "example_file": "Undo_Feature_and_Fire_Undo_Post-Notify_Event_Example_CSharp.md"
+        }
+      ],
+      "note": "Dir=false 用默认反向、UseAutoSelect=true 未选体，与 Remarks 的方向与选体两句相容"
+    },
+    {
+      "member": "FeatureCut3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Multiple_Undo_Command_Example_CSharp.md",
+        "Create_Multiple_Undo_Command_Example_VB.md",
+        "Create_Multiple_Undo_Command_Example_VBNET.md",
+        "Create_and_Access_Curve-driven_Pattern_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Dang1/Dang2 成员页未给单位，示例用弧度（0.0174532925199433 = 1°）",
+          "example_quote": "false, 0.0174532925199433, 0.0174532925199433, false, false, false, false, false, true, true,",
+          "example_file": "Create_Multiple_Undo_Command_Example_CSharp.md"
+        }
+      ],
+      "note": "26 个实参与签名一一对上；Dir 取 true/false 都与 Remarks 的默认方向句不冲突"
+    }
+  ]
+}

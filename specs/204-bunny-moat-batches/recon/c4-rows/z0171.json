@@ -1,0 +1,160 @@
+{
+ "idx": 171,
+ "results": [
+  {
+   "member": "GetCustomInfoValue",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "List_Custom_Properties_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "页面 Parameters 两项都写 No description；示例给出真实调用序：先取配置名，再按配置取属性名，最后逐名取值。",
+     "example_quote": "vCustInfoNameArr = swModel.GetCustomInfoNames2(vConfigName)",
+     "example_file": "List_Custom_Properties_Example_VB.md"
+    },
+    {
+     "what": "示例补充：配置名数组对工程图为空，须补空串占位（代表非配置专属属性）。",
+     "example_quote": "Is empty if a drawing because configurations not supported in drawings",
+     "example_file": "List_Custom_Properties_Example_VB.md"
+    }
+   ],
+   "note": "成员页只有 Obsolete 行与签名，无 ## Remarks，故跳过冲突判定。"
+  },
+  {
+   "member": "GetCustomProperties",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_Custom_Properties_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "页面无 Returns 段；示例把返回值当属性个数，并用 0..nNumProp-1 索引三个 out 数组。",
+     "example_quote": "j = 0 To nNumProp - 1",
+     "example_file": "Get_Custom_Properties_Example_VB.md"
+    },
+    {
+     "what": "页面参数三项全 No description；示例说明必须先按名取 Configuration 才能调。",
+     "example_quote": "swConfig = swModel.GetConfigurationByName(vConfName(i))",
+     "example_file": "Get_Custom_Properties_Example_VB.md"
+    }
+   ],
+   "note": "同为 Obsolete 成员，页面无 ## Remarks，未判冲突。"
+  },
+  {
+   "member": "GetCutListSortOptions",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_Features_of_Multibody_Sheet_Metal_Part_Example_CSharp.md",
+    "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VB.md",
+    "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "Returns 写「GetAutomaticCutList 为 false 时返回 Null」；示例先 SetAutomaticCutList(True) 才取，才拿到非空对象。",
+     "example_quote": "swBodyFolder.SetAutomaticCutList True",
+     "example_file": "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VB.md"
+    },
+    {
+     "what": "页面没说怎么拿到 BodyFolder；示例给出按名字 Solid Bodies、类型 BDYFOLDER 选中后取具体特征。",
+     "example_quote": "Set swBodyFolder = swFeat.GetSpecificFeature2",
+     "example_file": "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VB.md"
+    }
+   ],
+   "note": "页面无 ## Remarks（只有 Returns/ See Also），故跳过冲突判定。"
+  },
+  {
+   "member": "GetCutListType",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_Features_of_Multibody_Sheet_Metal_Part_Example_CSharp.md",
+    "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VB.md",
+    "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "页面只给枚举名；示例给出完整可跑路径：选 BDYFOLDER → GetSpecificFeature2 → 先开自动切割清单 → 再读。",
+     "example_quote": "boolstatus = swModel.Extension.SelectByID2(\"Solid Bodies\", \"BDYFOLDER\", 0, 0, 0, False, 0, Nothing, 0)",
+     "example_file": "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VB.md"
+    },
+    {
+     "what": "页面未提先决条件；示例把读取放在 SetAutomaticCutList(True) 与 SetAutomaticUpdate(False) 之后。",
+     "example_quote": "Debug.Print \" Cut list type: \" & swBodyFolder.GetCutListType",
+     "example_file": "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VB.md"
+    }
+   ],
+   "note": "页面无 ## Remarks；三份示例对该成员说法一致，未见矛盾。"
+  },
+  {
+   "member": "GetCutSweepOption",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_Sweep_Cut_Feature_Example_CSharp.md",
+    "Insert_Sweep_Cut_Feature_Example_VBNET.md",
+    "Insert_Swept-cut_Feature_Using_Tool_Body_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "Remarks 只给一篇交叉引用链接、没给调用序；三份示例都把该调用夹在 AccessSelections 之后。",
+     "example_quote": "status = swSweepFeatureData.AccessSelections(swModel, Nothing)",
+     "example_file": "Insert_Swept-cut_Feature_Using_Tool_Body_Example_VB.md"
+    },
+    {
+     "what": "示例末尾成对调用 ReleaseSelectionAccess 才结束，成员页没提这对开/关调用。",
+     "example_quote": "swSweepFeatureData.ReleaseSelectionAccess",
+     "example_file": "Insert_Swept-cut_Feature_Using_Tool_Body_Example_VB.md"
+    }
+   ],
+   "note": "Remarks 仅为一句交叉引用，无可核对的断言；三份示例说法一致，无冲突。"
+  },
+  {
+   "member": "GetD1IncrementDimensions",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Vary_Linear_Pattern_Instances_Example_CSharp.md",
+    "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "页面只写「维度数组 / 增量数组」；示例给出维度名完整格式（含 @草图名），两数组等长并行。",
+     "example_quote": "vIncr1Dims[0] = \"Near C'Sink Dia.@Sketch2\";",
+     "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+    },
+    {
+     "what": "页面未写前置链；示例须先建双向阵列、开 InstancesToVary、AccessSelections 后取选项对象。",
+     "example_quote": "swInstOpts = (InstanceToVaryOptions)LPFeatData.GetInstanceToVaryOptions();",
+     "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+    }
+   ],
+   "note": "页面无 ## Remarks（只有 Parameters / See Also），故跳过冲突判定。"
+  },
+  {
+   "member": "GetD1ModifiedSpacingValue",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Vary_Linear_Pattern_Instances_Example_CSharp.md",
+    "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "Remarks 给 I 的公式；示例代入具体值 n2=2、(i,j)=(2,2) 算出 I=3，直接传字面量 3。",
+     "example_quote": "swInstOpts.GetD1ModifiedSpacingValue(3)",
+     "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+    },
+    {
+     "what": "Remarks 步骤 1 要求 D2PatternSeedOnly=false；示例在建阵列时显式赋 false。",
+     "example_quote": "swFeatData.D2PatternSeedOnly = false;",
+     "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+    }
+   ],
+   "note": "Remarks 公式与示例的 n2=2、(2,2)→I=3 一致；示例未走 GetModifiedInstances 但非矛盾。"
+  }
+ ]
+}

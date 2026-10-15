@@ -1,0 +1,116 @@
+{
+  "idx": 433,
+  "results": [
+    {
+      "member": "SeparateRequirement",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例加了成员页没有的版本前置：Gtol 必须由 SW2021 或 2022/2022+ 创建。",
+          "example_quote": "1. Open a drawing that contains a GTol created with either SolidWorks 2021 or SolidWorks 2022/2022+.",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出取对象的实际路径：先在图形区选中，再由 SelectionManager 取，成员页未写前置。",
+          "example_quote": "swGtol = (Gtol)swSelMgr.GetSelectedObject6(1, -1);",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只说标签在 Gtol frame 下方，示例未涉位置；无冲突。"
+    },
+    {
+      "member": "SeparatorCharacter",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_User_Units_Example_CSharp.md",
+        "Get_and_Set_User_Units_Example_VB.md",
+        "Get_and_Set_User_Units_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "SequenceStartNumber",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Weldment_Cut-list_Feature_and_Annotations_Example_CSharp.md",
+        "Get_Weldment_Cut-list_Feature_and_Annotations_Example_VB.md",
+        "Get_Weldment_Cut-list_Feature_and_Annotations_Example_VBNET.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "Set2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Custom_Properties_for_Configuration_Example_CSharp.md",
+        "Get_Custom_Properties_for_Configuration_Example_VB.md",
+        "Get_Custom_Properties_for_Configuration_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "SetActive",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Activate_OLE_Object_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "SetAddToDB",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Calculate_Closest_Distance_Between_Faces_Example_VB.md",
+        "Calculate_Closest_Distance_Between_Model_Components_Example_VB.md",
+        "Check_Interference_Between_Two_Bodies_Example_VB.md",
+        "Check_Interference_using_Modeler_CheckInterference_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把开关套在整个 3D 草图会话外侧：先置 True 再 Insert3DSketch2 False 进草图；成员页只说「草图实体创建期间」。",
+          "example_quote": "swModel.SetAddToDB True",
+          "example_file": "Check_Interference_using_Modeler_CheckInterference_Example_VB.md"
+        },
+        {
+          "what": "此例先恢复 False、之后才关闭草图。",
+          "example_quote": "    swModel.SetAddToDB False\n    swModel.Insert3DSketch2 True",
+          "example_file": "Calculate_Closest_Distance_Between_Faces_Example_VB.md"
+        },
+        {
+          "what": "同一成员页的另一官方示例顺序相反：先关闭草图、再恢复 False；成员页只说「必须置回」，未定时机。",
+          "example_quote": "        swModel.Insert3DSketch2 True\n        swModel.SetAddToDB False",
+          "example_file": "Check_Interference_using_Modeler_CheckInterference_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都成对置 True/False，未违 Remarks 的「必须置回 false」；无冲突。"
+    },
+    {
+      "member": "SetAddinCallbackInfo",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 已跳过；仅记录事实：四例的首参 ModuleHandle 一律传 0。"
+    }
+  ]
+}

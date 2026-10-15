@@ -1,0 +1,185 @@
+{
+  "idx": 181,
+  "results": [
+    {
+      "member": "GetDraftAngleReverseDirection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Boundary_Feature_Example_CSharp.md",
+        "Insert_Boundary_Feature_Example_VB.md",
+        "Insert_Boundary_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整调用序：SelectByID2 选中 Boundary1 的 BODYFEATURE → GetDefinition → AccessSelections(model)，成员页只要求先调 GetCurvesCount。",
+          "example_quote": "status = swBoundaryBossFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 Direction 与 GuideIndex 取成具体值 First + 0（对应 curve 1 / Direction 1），并以 ModifyDefinition 收尾释放。",
+          "example_quote": "status = swFeature.ModifyDefinition(swBoundaryBossFeatureData, swModel, null);",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只约束 GuideIndex 合法范围；三份示例都先调 GetCurvesCount，与 Remarks 相容，未见冲突。"
+    },
+    {
+      "member": "GetDraftedEntities",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Faces_Affected_by_Draft_Feature_Example_CSharp.md",
+        "Get_Faces_Affected_by_Draft_Feature_Example_VB.md",
+        "Get_Faces_Affected_by_Draft_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "See [Accessing Selections that Define Features](<../../docs/Programming with the SOLIDWORKS API/Selections that Define Features.md>) for additional details on using this method.",
+          "example_quote": "// No need to roll back to get affected faces",
+          "example_file": "Get_Faces_Affected_by_Draft_Feature_Example_CSharp.md",
+          "why": "Remarks 指向的那篇第 1 步要求先调 AccessSelections 再调本方法；示例却明写无需回滚，三份示例全程未调 AccessSelections。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例说明为何需要本方法：拔模/缩放只影响已有面、不新建面，IFeature::GetFaces 对这类返回空数组。",
+          "example_quote": "draft and scale features. For these features, IFeature::GetFaces\nreturns an empty array (no faces).",
+          "example_file": "Get_Faces_Affected_by_Draft_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例前置是「先选中拔模特征」，再 GetDefinition、ClearSelection2，然后才调本方法并 Select4 选回这些面。",
+          "example_quote": "// 3. Select a draft feature.",
+          "example_file": "Get_Faces_Affected_by_Draft_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例代码体一致；唯一分歧是 Remarks 转引的 AccessSelections 前置与示例注释相反。"
+    },
+    {
+      "member": "GetDraftingStandardNames",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Drafting_Standard_to_Custom_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例两处注释：只返回 SOLIDWORKS 附带的标准，自定义 .sldstd 不在返回里；成员页 Returns 却写「all currently available」。",
+          "example_quote": " ' Only the SOLIDWORKS-supplied drafting standards\n ' are returned; any custom drafting standards are\n ' not returned",
+          "example_file": "Change_Drafting_Standard_to_Custom_Example_VB.md"
+        },
+        {
+          "what": "示例前置：模型文档已打开且已设置好一个 SOLIDWORKS 附带标准，成员页未给前置。",
+          "example_quote": " ' Preconditions: Model document is open and a\n '                SOLIDWORKS-supplied drafting standard is set.",
+          "example_file": "Change_Drafting_Standard_to_Custom_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；范围差异只记入 more_specific。"
+    },
+    {
+      "member": "GetDragOperator",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rotate_Assembly_Component_on_Axis_Example2_CSharp.md",
+        "Rotate_Assembly_Component_on_Axis_Example2_VB.md",
+        "Rotate_Assembly_Component_on_Axis_Example2_VBNET.md",
+        "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置：必须先 SelectByID2 按 COMPONENT 选中要转的组件，成员页 Returns 未给任何前置。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Part3^Assem2-1@assem2\", \"COMPONENT\", 0, 0, 0, false, 0, null, 0);",
+          "example_file": "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+        },
+        {
+          "what": "返回对象在示例里被转成 DragOperator（IDragOperator）后才调 AddComponent/TransformType/DragMode/DragAsUI，成员页只写「Object」。",
+          "example_quote": "swDragOp = (DragOperator)swAssy.GetDragOperator();",
+          "example_file": "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+        },
+        {
+          "what": "Example2 需要预先选中两个组件（GetSelectedObjectsComponent(1) 与 (2)），单组件示例只选一个。",
+          "example_quote": "bRet = swDragOp.AddComponent(swComp[0], false);",
+          "example_file": "Rotate_Assembly_Component_on_Axis_Example2_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定；四份示例都真用到本成员。"
+    },
+    {
+      "member": "GetDrawingPaletteViewNames",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Relative_Drawing_View_Example_CSharp.md",
+        "Create_Relative_Drawing_View_Example_VB.md",
+        "Create_Relative_Drawing_View_Example_VBNET.md",
+        "Drop_Drawing_Views_from_View_Palette_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回的名字带星号前缀，示例按 \"*Current\"/\"*Isometric\"/\"*Front\" 逐字比对后才能 DropDrawingViewFromPalette2；成员页 Returns 未提前缀。",
+          "example_quote": "If (strViewName = \"*Current\") Then",
+          "example_file": "Drop_Drawing_Views_from_View_Palette_Example_VB.md"
+        },
+        {
+          "what": "落位坐标由调用方按图纸宽高分数另算，本方法只给名字、不含位置。",
+          "example_quote": "Set swView = swDrawing.DropDrawingViewFromPalette2(strViewName, dWidth / 5#, dHeight / 5#, 0#)",
+          "example_file": "Drop_Drawing_Views_from_View_Palette_Example_VB.md"
+        },
+        {
+          "what": "C# 示例按 null 判空并用 GetUpperBound/GetLowerBound 算个数，与 Remarks 说的「空数组」是两种判法。",
+          "example_quote": "if (!((viewNames == null)))",
+          "example_file": "Create_Relative_Drawing_View_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例都只调一次取名后再 Drop，与 Remarks「移走后下次不再含该名」不冲突；未见矛盾。"
+    },
+    {
+      "member": "GetDrawingZone",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Name_of_Drawing_Zone_Example_CSharp.md",
+        "Get_Name_of_Drawing_Zone_Example_VB.md",
+        "Get_Name_of_Drawing_Zone_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "X/Y 是米制图纸坐标（示例 0.2017 / 0.0243，对应 A 号纸约 210×297 mm），成员页 Parameters 只写 x/y coordinate 未给单位。",
+          "example_quote": "x = 0.201705822198041",
+          "example_file": "Get_Name_of_Drawing_Zone_Example_VB.md"
+        },
+        {
+          "what": "示例先用 NewSheet4 建出名为 Test 的 2×2 分区图纸（四个边距参数给 0.5），再 ForceRebuild3 并取回 GetCurrentSheet，才可查分区名。",
+          "example_quote": "status = swDraw.NewSheet4(\"Test\", swDwgPaperSizes_e.swDwgPaperAsize, swDwgTemplates_e.swDwgTemplateAsize, 1, 1, True, \"\", 0, 0, \"\", 0.5, 0.5, 0.5, 0.5, 2, 2)",
+          "example_file": "Get_Name_of_Drawing_Zone_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定；三份示例数值一致，仅记单位与前置这两处更具体的信息。"
+    },
+    {
+      "member": "GetDuration",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Motion_Study_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把本方法与 SetDuration 成对使用：先 SetDuration(15)，再 GetDuration 读回同一算例的时长。",
+          "example_quote": "swMotionStudy1.SetDuration(15);",
+          "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+        },
+        {
+          "what": "示例前置：必须先经 ModelDocExtension.GetMotionStudyManager() 按名取到具体算例，且先 Activate 再读。",
+          "example_quote": "Set swMotionStudy1 = swMotionMgr.GetMotionStudy(\"PhysSim\")",
+          "example_file": "Get_Motion_Study_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定；秒为单位的口径在 Returns 与示例里一致，无单位冲突。"
+    }
+  ]
+}

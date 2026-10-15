@@ -1,0 +1,138 @@
+{
+  "idx": 99,
+  "results": [
+    {
+      "member": "DistanceMember2",
+      "remarks_empty": false,
+      "examples_actually_used": ["Create_Secondary_SSMembers_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先写 SecondaryMemberOffsetType = 0，再写 DistanceMember1/2 = 0.5/0.4d；成员页只给枚举符号，未给字面量与次序。",
+          "example_quote": "memBetweenPointsSecDef.SecondaryMemberOffsetType = 0;\nmemBetweenPointsSecDef.DistanceMember1 = 0.5d;\nmemBetweenPointsSecDef.DistanceMember2 = 0.4d;",
+          "example_file": "Create_Secondary_SSMembers_Example_CSharp.md"
+        }
+      ],
+      "note": "枚举页确认 0 即 Distance，与 Remarks 一致。"
+    },
+    {
+      "member": "DistanceSecondArcCondition",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Edit_Distance_Mate_Example_CSharp.md",
+        "Add_and_Edit_Distance_Mate_Example_VB.md",
+        "Add_and_Edit_Distance_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 SelectByRay 的 EntityType 实参 2 取面（swSelFACES=2），正落在 Remarks 的两圆柱面分支；成员页不写选择方式。",
+          "example_quote": "boolstatus = Part.Extension.SelectByRay(0.0679787981690652, -0.00725673614920197, -0.0758574895979791, -0.400036026779312, -0.515038074910024, -0.758094294050284, 0.000636203082166533, 2, true, 1,",
+          "example_file": "Add_and_Edit_Distance_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "示例紧接 AddDistanceMate 之后读回 First/Second ArcCondition；成员页只有 Returns 描述，未给任何调用序。",
+          "example_quote": "Debug.Print(\"Second arc condition as defined in swDistanceMateArcConditions_e: \" + swMate.DistanceSecondArcCondition);",
+          "example_file": "Add_and_Edit_Distance_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "三份语言版本代码同构，均只读该属性，与 get-only 签名一致。"
+    },
+    {
+      "member": "DivergeDirection",
+      "remarks_empty": false,
+      "examples_actually_used": ["Edit_Radial_Explode_Step_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取法：SelectByID2 选 Axis4 时 mark 传 64，再 GetSelectedObject6(2,-1) 取第二个对象；成员页只列种类，不提 mark。",
+          "example_quote": "boolstatus = swMdl.Extension.SelectByID2(\"Axis4\", \"AXIS\", 0, 0, 0, True, 64, Nothing, 0) ' Diverge direction entity",
+          "example_file": "Edit_Radial_Explode_Step_Example_VB.md"
+        },
+        {
+          "what": "示例把 DivergeDirection 的赋值排在 SetExplodeDirection 之后；成员页未规定这两者的先后。",
+          "example_quote": "explStep.DivergeDirection = sel4",
+          "example_file": "Edit_Radial_Explode_Step_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 说设实体会自动把 DivergeFromAxis 置 true，与示例第 90 行相容，未见冲突。"
+    },
+    {
+      "member": "DivergeFromAxis",
+      "remarks_empty": false,
+      "examples_actually_used": ["Edit_Radial_Explode_Step_Example_VB.md"],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "If you want to set this property to true, then you must first set IExplodeStep::DivergeDirection to a valid diverge direction entity.",
+          "example_quote": "explStep.DivergeFromAxis = Not explStep.DivergeFromAxis",
+          "example_file": "Edit_Radial_Explode_Step_Example_VB.md",
+          "why": "示例第 71 行先改 DivergeFromAxis，第 90 行才赋 DivergeDirection，次序与 Remarks 相反。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "示例用 Not 翻转、依赖运行期初值，未固定初值，故只报次序冲突，不推测取值。"
+    },
+    {
+      "member": "DoNotChangeItemNumber",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Sort_Table_Example_CSharp.md",
+        "Sort_Table_Example_VB.md",
+        "Sort_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它设在 Sort 与 SaveCurrentSortParameters 之前，并加注释「排序后不重新编号」；成员页无 Remarks，也无次序说法。",
+          "example_quote": "// After sorting, do not re-number the items\n            swSortData.DoNotChangeItemNumber = true;",
+          "example_file": "Sort_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页只有摘要与 Returns，无 ## Remarks；按规则跳过冲突判定。"
+    },
+    {
+      "member": "DocumentType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Whether_Components_Are_Loaded_Example_CSharp.md",
+        "Get_Whether_Components_Are_Loaded_Example_VBNET.md",
+        "Open_Advanced_Dialog_On_Open_Example_CSharp.md",
+        "Open_Advanced_Dialog_On_Open_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 DocumentType 设在 GetOpenDocSpec 之后、OpenDoc7 之前，由枚举转 int；成员页 Remarks 只讲 3DEX 限制。",
+          "example_quote": "swDocSpecification.DocumentType = (int)swDocumentTypes_e.swDocASSEMBLY;",
+          "example_file": "Get_Whether_Components_Are_Loaded_Example_CSharp.md"
+        },
+        {
+          "what": "VB 版本直接赋枚举不转 int；C# 版本必须显式转 int 才匹配 System.int 签名。",
+          "example_quote": "swDocSpecification.DocumentType = swDocumentTypes_e.swDocASSEMBLY",
+          "example_file": "Get_Whether_Components_Are_Loaded_Example_VBNET.md"
+        }
+      ],
+      "note": "四例都开本地 .sldasm，不触 Remarks 的 3DEXPERIENCE 限制，无冲突。"
+    },
+    {
+      "member": "Done",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Detect_Interferences_Using_a_Transform_Example_CSharp.md",
+        "Detect_Interferences_Using_a_Transform_Example_VB.md",
+        "Detect_Interferences_Using_a_Transform_Example_VBNET.md",
+        "Set_Components_and_Transforms_for_Interference_Detection_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 Done() 之后立刻 VerifyFinishingPositions() 检查组件是否回到初始位置，还带复位语义；成员页只说停止检测。",
+          "example_quote": "swInfrMgr.Done();",
+          "example_file": "Set_Components_and_Transforms_for_Interference_Detection_Example_CSharp.md"
+        }
+      ],
+      "note": "各语言注释不一：C# 写 finished，VB/VBNET 写 stopped；remarks_empty，不判冲突。"
+    }
+  ]
+}

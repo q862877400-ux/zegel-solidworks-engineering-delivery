@@ -1,0 +1,110 @@
+{
+  "idx": 27,
+  "pages_read": 13,
+  "rows": [
+    {
+      "iface": "IView",
+      "file": "GetArcs.md",
+      "signature": "System.object GetArcs()",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetDimensionDisplayString.md",
+      "signature": "System.object GetDimensionDisplayString()",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetFirstDisplayDimension6.md",
+      "signature": "System.object GetFirstDisplayDimension6()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetSectionLineCount.md",
+      "signature": "System.int GetSectionLineCount( out System.int Size )",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetCenterMarkInfo.md",
+      "signature": "System.double IGetCenterMarkInfo()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetFirstGTOL.md",
+      "signature": "Gtol IGetFirstGTOL()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "InsertBomTable3.md",
+      "signature": "BomTableAnnotation InsertBomTable3( System.bool UseAnchorPoint, System.double X, System.double Y, System.int AnchorType, System.int BomType, System.string Configuration, System.string TableTemplate, System.bool Hidden )",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IView",
+      "file": "SetName2.md",
+      "signature": "System.bool SetName2( System.string Name )",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "CreateConstructionGeometry.md",
+      "signature": "void CreateConstructionGeometry()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "FeatureByName.md",
+      "signature": "System.object FeatureByName( System.string Name )",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "IEditSelectedGtol.md",
+      "signature": "Gtol IEditSelectedGtol()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "MakeCustomSymbol.md",
+      "signature": "void MakeCustomSymbol()",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "ISheet",
+      "file": "GetOLEObjectSettings.md",
+      "signature": "System.object GetOLEObjectSettings( System.int Index, out System.int ByteCount, out System.int Aspect )",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    }
+  ]
+}

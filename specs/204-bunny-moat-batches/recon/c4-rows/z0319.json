@@ -1,0 +1,164 @@
+{
+  "idx": 319,
+  "results": [
+    {
+      "member": "InsertPlanarRefSurface",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Planar_Surface_Feature_Example_CSharp.md",
+        "Create_Planar_Surface_Feature_Example_VB.md",
+        "Create_Planar_Surface_Feature_Example_VBNET.md",
+        "Create_Surface_Knit_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Knit 示例直接选整张 SKETCH 当边界（mark=1），成员页只说「边界实体」并把有效性推给 Help",
+          "example_quote": "boolstatus = swModelDocExt.SelectByID2(\"Sketch1\", \"SKETCH\", 0, 0, 0, true, 1, null, 0);",
+          "example_file": "Create_Surface_Knit_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "三份 Planar 示例都是逐条选 4 条 EDGE（mark=1），而非一次选整张草图",
+          "example_quote": "boolStatus = Part.Extension.SelectByID2(\"\", \"EDGE\", -0.0150796523155918, 0.0330635737250304, 0.0277193529692568, false, 1, null, 0);",
+          "example_file": "Create_Planar_Surface_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "页面 mark=1 与四份示例逐条一致，未见矛盾；Knit 例只多给了实体种类。"
+    },
+    {
+      "member": "InsertPlotFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读其示例。"
+    },
+    {
+      "member": "InsertProjectedSketch2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Curve_Segments_Example_VB.md",
+        "Get_Projected_Curve_Feature_Data_Example_CSharp.md",
+        "Get_Projected_Curve_Feature_Data_Example_VB.md",
+        "Get_Projected_Curve_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没写的前置：先按 mark=0 依次选中样条草图与目标面（Append=True），再调用本方法",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Sketch2\", \"SKETCH\", 0, 0, 0, true, 0, null, 0);",
+          "example_file": "Get_Projected_Curve_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例还给出调用后回读的形态：结果是名为 Curve1 的 REFCURVE，须按名选中再 GetDefinition",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Curve1\", \"REFCURVE\", 0, 0, 0, false, 0, null, 0);",
+          "example_file": "Get_Projected_Curve_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只谈 Reverse 方向语义；四份示例一致传 Reverse=1 且都补了前置选择。"
+    },
+    {
+      "member": "InsertProtrusionBlend2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+        "Get_Guide_Curves_in_Loft_Feature_Example_VB.md",
+        "Get_Guide_Curves_in_Loft_Feature_Example_VBNET.md",
+        "Insert_Fill-surface_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "mark_diff",
+          "remarks_quote": "- 2 = guide curve selections",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Sketch3\", \"SKETCH\", 0, 0, 0, true, 4098, null, 0);",
+          "example_file": "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+          "why": "Remarks 只列 mark=2 作引导曲线；示例传 4098（=4096+2），4096 位在官方 mark 表与 swSelectOption_e（仅 0/1）中无出处。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "薄壁示例把 Thickness1/Thickness2 传 0.000254（米）＝0.254mm，成员页只写「Thickness value」不给单位",
+          "example_quote": "true, 0.000254, 0.000254, 0, true, true, true, (int)swGuideCurveInfluence_e.swGuideCurveInfluenceNextEdge);",
+          "example_file": "Insert_Fill-surface_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "三份 loft 示例一致用同一组合：两个轮廓 mark=1 且 Append，引导曲线改用 4098",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Sketch2\", \"SKETCH\", 0, 0, -0.0324150959148675, true, 1, null, 0);",
+          "example_file": "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "唯一硬冲突是引导曲线 mark 4098 vs 页面 2；其余参数序与页面 18 参签名逐位对齐。"
+    },
+    {
+      "member": "InsertProtrusionSwept4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Guide_Curves_in_Sweep_Feature_Example_CSharp.md",
+        "Get_Guide_Curves_in_Sweep_Feature_Example_VB.md",
+        "Get_Guide_Curves_in_Sweep_Feature_Example_VBNET.md",
+        "Select_Multiple_Paths_for_Sweep_Path_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "路径段用「Line1@Sketch2」+类型 EXTSKETCHSEGMENT 逐条选中，不是选整张草图",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Line1@Sketch2\", \"EXTSKETCHSEGMENT\", 0.0379259971310087, 0.0152983890733924, 0, true, 4, null, 0);",
+          "example_file": "Select_Multiple_Paths_for_Sweep_Path_Example_CSharp.md"
+        },
+        {
+          "what": "多段路径先并成 SELOBJGROUP 再以 mark=4 选中，成员页只写「4 = Sweep path」未提可分组",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Unknown\", \"SELOBJGROUP\", 0, 0, 0, true, 4, null, 0);",
+          "example_file": "Select_Multiple_Paths_for_Sweep_Path_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例的 mark 1/2/4 与 Remarks 表逐条相符，无矛盾。"
+    },
+    {
+      "member": "InsertPunchTable",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Punch_Table_Example_CSharp.md",
+        "Insert_Punch_Table_Example_VB.md",
+        "Insert_Punch_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 GetSelectedObjectsDrawingView(1) 从当前选区反查 IView；成员页未说视图怎么取",
+          "example_quote": "myView = ((SelectionMgr)(Part.SelectionManager)).GetSelectedObjectsDrawingView(1);",
+          "example_file": "Insert_Punch_Table_Example_CSharp.md"
+        },
+        {
+          "what": "X/Y 传 0.2178779310824 / 0.2022819591903（米），且模板落在 lang\\english 下，成员页未给单位",
+          "example_quote": "myTableAnn = myView.InsertPunchTable(false, 0.2178779310824, 0.2022819591903, 1, \"A\", \"C:\\\\Program Files\\\\SOLIDWORKS Corp\\\\SOLIDWORKS\\\\lang\\\\english\\\\punchtable-standard.sldpuntbt\");",
+          "example_file": "Insert_Punch_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例的 VERTEX=1、FACE=2 与 Remarks 表一致；4/8 两个方向参考示例未用。"
+    },
+    {
+      "member": "InsertRadiateSurface",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Planar_Surface_Feature_Example_CSharp.md",
+        "Create_Planar_Surface_Feature_Example_VB.md",
+        "Create_Planar_Surface_Feature_Example_VBNET.md",
+        "Create_Radiate_Surface_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Distance 的单位是米：传 0.0254 回读时按 *1000.0 打成 mm，成员页只写「Distance to extend」",
+          "example_quote": "Debug.Print(\"    Distance: \" + swRadiate.Distance * 1000.0 + \" mm\");",
+          "example_file": "Create_Radiate_Surface_Example_CSharp.md"
+        },
+        {
+          "what": "「Reference direction」具体用一个 FACE（mark=1）来给；四条 EDGE 用 mark=2 作辐射实体",
+          "example_quote": "boolStatus = Part.Extension.SelectByID2(\"\", \"FACE\", 0.0478203409524554, -0.00305747564971171, 0.000546558985774936, true, 1, null, 0);",
+          "example_file": "Create_Radiate_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例的 mark 1=参考方向 / mark 2=辐射实体与 Remarks 逐条相符；返回 void，示例当语句调用。"
+    }
+  ]
+}

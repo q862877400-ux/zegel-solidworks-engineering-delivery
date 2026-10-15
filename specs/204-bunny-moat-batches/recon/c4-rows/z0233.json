@@ -1,0 +1,77 @@
+{
+  "idx": 233,
+  "results": [
+    {
+      "member": "GetPatternBodyCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns / See Also，无 ## Remarks 段，按硬纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetPatternComponentCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns / Examples / See Also，无 ## Remarks 段，按硬纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetPatternFaceCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns / See Also，无 ## Remarks 段，按硬纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetPatternFeatureCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns / See Also，无 ## Remarks 段，按硬纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetPatternedTransformsCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+        "Get_Patterned_Cosmetic_Thread_Annotations_Data_Example_CSharp.md",
+        "Get_Patterned_Cosmetic_Thread_Annotations_Data_Example_VB.md",
+        "Get_Patterned_Cosmetic_Thread_Annotations_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "4 份示例都只把计数打印出来，真正取数组走自带长度的 PatternedTransforms 属性，从不把 count 当数组长度传下去；而 Remarks 让它专门用来给 IGetPatternedTransforms 定长度。",
+          "example_quote": "vPatternedXform = aCThread.PatternedTransforms()",
+          "example_file": "Get_Patterned_Cosmetic_Thread_Annotations_Data_Example_VB.md"
+        },
+        {
+          "what": "零件示例显示调用计数前已 ReleaseSelectionAccess，即该计数不需要先 AccessSelections；成员页对此只字未提。",
+          "example_quote": "' Retrieve information about any patterns made from this cosmetic thread\n        patternedCount = thisCThread.GetPatternedTransformsCount()",
+          "example_file": "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的语义（不含种子、未参与阵列返回 0）4 例均未违反；示例改用属性取数属路径不同、非矛盾，故冲突留空。"
+    },
+    {
+      "member": "GetPerUnitArea",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Parameters / Returns / Examples / See Also，无 ## Remarks 段，按硬纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetPerUnitLength",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Parameters / Returns / Examples / See Also，无 ## Remarks 段，按硬纪律跳过，未读示例。"
+    }
+  ]
+}

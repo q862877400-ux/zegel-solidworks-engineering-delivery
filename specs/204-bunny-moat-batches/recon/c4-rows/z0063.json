@@ -1,0 +1,173 @@
+{
+  "idx": 63,
+  "results": [
+    {
+      "member": "CreateFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例全部调 swMotionStudy1.CreateFeature（MotionStudy 对象），非 IFeatureManager ⇒ 一份都没用上；成员页自列的 Examples 是 Create a Thread Feature。"
+    },
+    {
+      "member": "CreateFeatureFromBody3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Combine_Assembly_Components_into_Part_Example_VB.md",
+        "Create_Body_From_Selected_Faces_Example_CSharp.md",
+        "Create_Body_From_Selected_Faces_Example_VB.md",
+        "Create_Body_From_Selected_Faces_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例固定 MakeRefSurface=False，并把 Check+Simplify 显式 OR（Remarks 只说 Simplify 蕴含 Check）",
+          "example_quote": "Set swFeat = swNewPart.CreateFeatureFromBody3(swNewBody, False, swCreateFeatureBodyOpts_e.swCreateFeatureBodyCheck + swCreateFeatureBodyOpts_e.swCreateFeatureBodySimplify)",
+          "example_file": "Create_Body_From_Selected_Faces_Example_VB.md"
+        },
+        {
+          "what": "先布尔加融合，再对结果数组里的每个体各建一次导入特征",
+          "example_quote": "vBodyResArr = swBody1Copy.Operations2(SWBODYADD, swBody2Copy, nRetval)",
+          "example_file": "Combine_Assembly_Components_into_Part_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 与四份示例一致：返回值判 Nothing、Options=0 才关闭检查，示例都传了非零 Options。"
+    },
+    {
+      "member": "CreateFeatureMgrControl2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_ActiveX_Tabs_to_FeatureManager_Design_Tree_Example_CSharp.md",
+        "Add_ActiveX_Tabs_to_FeatureManager_Design_Tree_Example_VB.md",
+        "Add_ActiveX_Tabs_to_FeatureManager_Design_Tree_Example_VBNET.md",
+        "Split_FeatureManager_Design_Tree_and_Position_Splitter_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "To add a tab to a FeatureManager design tree that has been split, specify swFeatMgrPane_e.swFeatMgrPaneTop and swFeatMgrPane_e.swFeatMgrPaneBottom, respectively, for WhichPane.",
+          "example_quote": "swFeatMgrTabTop = swModViewMgr.CreateFeatureMgrControl2(iconSmall, \"activex_control_CLSID_or_ProgID\", \"\", \"Top tab ToolTip\", swFeatMgrPane_e.swFeatMgrPaneBottom)",
+          "example_file": "Add_ActiveX_Tabs_to_FeatureManager_Design_Tree_Example_VBNET.md",
+          "why": "Remarks 规定顶栏用 swFeatMgrPaneTop；该示例建 Top 变量却传 Bottom。同题 VBA/C# 两版都传 Top，只有 VB.NET 相反。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先设 FeatureManagerSplitterPosition=0.5 再建页签，Remarks 未提调用顺序",
+          "example_quote": "swModel.FeatureManagerSplitterPosition = 0.5",
+          "example_file": "Add_ActiveX_Tabs_to_FeatureManager_Design_Tree_Example_VBNET.md"
+        },
+        {
+          "what": "Class 传占位串 activex_control_CLSID_or_ProgID、LicKey 传空串（Remarks 未给具体形态）",
+          "example_quote": "swModViewMgr.CreateFeatureMgrControl2(iconSmall, \"activex_control_CLSID_or_ProgID\", \"\", \"Top tab ToolTip\", swFeatMgrPaneTop)",
+          "example_file": "Add_ActiveX_Tabs_to_FeatureManager_Design_Tree_Example_VB.md"
+        }
+      ],
+      "note": "页面正文标 Obsolete（被 CreateFeatureMgrControl3 取代），但四份示例仍调 Control2；Remarks 段本身未提这一点。"
+    },
+    {
+      "member": "CreateFeatureMgrControl4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_ActiveX_Tab_to_FeatureManager_Design_Tree_Example_VB.md",
+        "Add_ActiveX_Tab_to_FeatureManager_Design_Tree_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Add a tab to the FeatureManager design tree, specify WhichPane with swFeatMgrPane_e.FeatMgrPaneBottom.",
+          "example_quote": "' NOTE: To add a tab to the FeatureManager tree,\n' you must set IModelViewManager::CreateFeatureMgrControl2's\n' WhichPane parameter to swFeatMgrPane_e.swFeatMgrPaneBottom.",
+          "example_file": "Add_ActiveX_Tab_to_FeatureManager_Design_Tree_Example_VBNET.md",
+          "why": "示例正文把该要求归给 CreateFeatureMgrControl2，代码却调 Control4；Control2 页已标 Obsolete。同题 VBA 版写的是 Control4。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "给出三个 20/32/40 像素图标路径，对应 small/medium/large（Remarks 只说三个位图）",
+          "example_quote": "BitmapFileNames(0) = \"C:\\Users\\J4M\\Desktop\\icons\\mainicon_20.png\"",
+          "example_file": "Add_ActiveX_Tab_to_FeatureManager_Design_Tree_Example_VBNET.md"
+        },
+        {
+          "what": "给出具体 ProgID 与空 LicKey 的实参写法，Remarks 只说从注册表查",
+          "example_quote": "swModelViewMgr.CreateFeatureMgrControl4(BitmapFileNames, \"GTSWRICHEDITCTRL.RichEditCtrlCtrl.1\", \"\", \"Tab ToolTip\", swFeatMgrPane_e.swFeatMgrPaneBottom)",
+          "example_file": "Add_ActiveX_Tab_to_FeatureManager_Design_Tree_Example_VBNET.md"
+        }
+      ],
+      "note": "WhichPane 取值与 Remarks 一致（Bottom）；分歧只在 VB.NET 版注释把方法名写成 Control2。"
+    },
+    {
+      "member": "CreateFeatureMgrWindowFromHandlex64",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Fully qualified path to the bitmap file that you want to use for the control",
+          "example_quote": "public_documents\\\\samples\\\\tutorial\\\\api\\\\addin\\\\pm_extruded_block.bmp",
+          "example_file": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+          "why": "Remarks 要求全限定路径；C# 与 VB.NET 两份示例都传相对路径（无盘符），与该前置相反。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "先建页签（pane=Top）再设 FeatureManagerSplitterPosition=0.5，最后 ActivateView",
+          "example_quote": "pDoc.FeatureManagerSplitterPosition = 0.5",
+          "example_file": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md"
+        },
+        {
+          "what": "以 Add-in 的 WinFormInFeatureMgr 回调示范，句柄用 Control.Handle.ToInt64()",
+          "example_quote": "FeatureMgrControl.Handle.ToInt64(), \".NET Windows Form Control\", swFeatMgrPane_e.swFeatMgrPaneTop)",
+          "example_file": "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md"
+        }
+      ],
+      "note": "Remarks 只讲「仅早绑定 + 64 位」；两份示例都是早绑定接口调用，与该句不冲突。"
+    },
+    {
+      "member": "CreateFillet",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Radial_Dimension_Example_CSharp.md",
+        "Edit_Radial_Dimension_Example_VB.md",
+        "Edit_Radial_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "只选中一个 SKETCHPOINT（Point1）即调用，不是两条线段；成员页正文写 selected sketch entities",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Point1\", \"SKETCHPOINT\", -8.11067833265636E-02, 3.89478433654258E-02, 0, False, 0, Nothing, 0)",
+          "example_file": "Edit_Radial_Dimension_Example_VB.md"
+        },
+        {
+          "what": "Radius 传 0.01，与 Remarks 的 in meters 吻合（=10 mm），非违反",
+          "example_quote": "Set swSketchSegment = swSketchManager.CreateFillet(0.01, swConstrainedCornerAction_e.swConstrainedCornerDeleteGeometry)",
+          "example_file": "Edit_Radial_Dimension_Example_VB.md"
+        }
+      ],
+      "note": "三份示例口径一致：先 SelectByID2 草图再 EditSketch，进入编辑态后建圆角并退出。"
+    },
+    {
+      "member": "CreateFlatPatternViewFromModelView3",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Flip_Flat-Pattern_View_of_Sheet_Metal_Part_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "ModelName 传 GetPathName 全路径、ConfigName 传空串（成员页只写 Name of model）",
+          "example_quote": "swModel.GetPathName, \"\",",
+          "example_file": "Create_and_Flip_Flat-Pattern_View_of_Sheet_Metal_Part_Example_VB.md"
+        },
+        {
+          "what": "LocX/LocY 取图纸宽高一半，常数按米（0.841/0.594）；HideBendLines 与 FlipView 同传 True",
+          "example_quote": "PaperWidth / 2, PaperHeight / 2, 0#, True, True)",
+          "example_file": "Create_and_Flip_Flat-Pattern_View_of_Sheet_Metal_Part_Example_VB.md"
+        }
+      ],
+      "note": "成员页没有 ## Remarks 段（remarks_empty=true）⇒ 按规则跳过冲突判定，不编。"
+    }
+  ]
+}

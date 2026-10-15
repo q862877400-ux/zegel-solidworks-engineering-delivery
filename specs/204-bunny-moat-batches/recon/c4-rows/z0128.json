@@ -1,0 +1,142 @@
+{
+  "idx": 128,
+  "results": [
+    {
+      "member": "FilletInnerCorners",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_CSharp.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "After setting this property, set [[ISMGussetFeatureData::InnerCornerFilletRadius]].",
+          "example_quote": "swFeatData.FilletInnerCorners = false; //no inner corner fillet",
+          "example_file": "Insert_Sheet_Metal_Gusset_Feature_Example_CSharp.md",
+          "why": "Remarks 把「设完本属性还要设 InnerCornerFilletRadius」写成无条件要求；官方示例在关掉内圆角的分支里设了该属性却从未再写半径。按字面两侧不能同时成立，差别只出在置 false 这条路径上。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出确切取值与紧邻配对：FilletInnerCorners 置 true 的下一行就是设半径 0.002（米制裸值）。",
+          "example_quote": "swFeatData.InnerCornerFilletRadius = 0.002;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+        }
+      ],
+      "note": "Create 两份严格照 Remarks 配对；Insert 两份只在置 true 时才写半径。"
+    },
+    {
+      "member": "FilletItemsCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Data_for_Simple_Fillet_Example_CSharp.md",
+        "Get_Data_for_Simple_Fillet_Example_VB.md",
+        "Get_Data_for_Simple_Fillet_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补出成员页没写的前置：须先在界面选中简单圆角特征，再 GetDefinition 取 ISimpleFilletFeatureData2 读该计数。",
+          "example_quote": "2. Select the simple fillet feature.",
+          "example_file": "Get_Data_for_Simple_Fillet_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例代码同构，只把该计数与 IsMultipleRadius 并排打印，未对 -1 另作说法。"
+    },
+    {
+      "member": "FilletOuterCorners",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_CSharp.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "After setting this property, set [[ISMGussetFeatureData::OuterCornerFilletRadius]].",
+          "example_quote": "swFeatData.FilletOuterCorners = false; //no outer corner fillet",
+          "example_file": "Insert_Sheet_Metal_Gusset_Feature_Example_CSharp.md",
+          "why": "Remarks 把「设完本属性还要设 OuterCornerFilletRadius」写成无条件要求；官方示例关掉外圆角时只设属性、不写半径，VB 版同样如此。两侧按字面不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出确切取值与紧邻配对：FilletOuterCorners 置 true 的下一行就是设半径 0.001（米制裸值）。",
+          "example_quote": "swFeatData.OuterCornerFilletRadius = 0.001;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+        }
+      ],
+      "note": "与 FilletInnerCorners 同一形态：Create 配对、Insert 只置 false。"
+    },
+    {
+      "member": "FinalRenderQuality",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Render_Model_Example_CSharp.md",
+        "Render_Model_Example_VB.md",
+        "Render_Model_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补出前置：SOLIDWORKS Design 里须已加载光线追踪渲染引擎，且需 Premium 许可。",
+          "example_quote": "a ray-trace rendering engine is loaded in SOLIDWORKS Design.",
+          "example_file": "Render_Model_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出具体枚举写入形式：显式转 int 后赋 swRayTraceRenderQuality_e 的 Best 档。",
+          "example_quote": "swRayTraceRenderOptions.FinalRenderQuality = (int)swRayTraceRenderQuality_e.swRenderQuality_Best;",
+          "example_file": "Render_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段（只有 Returns / Examples / See Also），按纪律跳过冲突判定。"
+    },
+    {
+      "member": "Finalize",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Revision_Cloud_into_Drawing_Example_CSharp.md",
+        "Insert_Revision_Cloud_into_Drawing_Example_VB.md",
+        "Insert_Revision_Cloud_into_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体时序：路径点用 SetPathPointAtIndex 的 -1 追加，紧接着一行调 Finalize。",
+          "example_quote": "boolstatus = RevCloud.SetPathPointAtIndex(-1, 0.378419710263212, 0.511051398694144, 0);",
+          "example_file": "Insert_Revision_Cloud_into_Drawing_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都是加一个路径点后 Finalize，与 Remarks「所有点加完后再调」一致。"
+    },
+    {
+      "member": "FindAttribute",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例全部在 Entity 上调用（swEnt 是 Face2 转型来的），那是 IEntity::FindAttribute，不是 IBody2::FindAttribute ⇒ 一份都不用。"
+    },
+    {
+      "member": "FindMinimumRadius",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Find_Minimum_Radius_of_Curve_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 Bound 的取法：先用 GetEndParams 取曲线自身两端参数，再原样作为 Bound 传入（等价于搜整条曲线）。",
+          "example_quote": "retPar = swCurve.GetEndParams(param(0), param(1), isClose, isPeriodic)\nBoundSuf = param",
+          "example_file": "Find_Minimum_Radius_of_Curve_Example_VB.md"
+        }
+      ],
+      "note": "Surface 那份调的是 Surface::FindMinimumRadius（5 个 bound 参数），与 ICurve 成员不同对象，按纪律不采用。"
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "idx": 404,
+  "results": [
+    {
+      "member": "ReferencesArray",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Rename_Component_and_Update_References_Example_CSharp.md",
+        "Rename_Component_and_Update_References_Example_VB.md",
+        "Rename_Component_and_Update_References_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都先置 UpdateWhereUsedReferences=true、IncludeFileLocations=true，再 GetSearchPath()、Search()，才取数组；且整体跑在 RenamedDocumentNotify 回调里，对象由 ref object swObj 传入。",
+          "example_quote": "swRenamedDocumentReferences.Search();\n            pathNames = (object[])swRenamedDocumentReferences.ReferencesArray();",
+          "example_file": "Rename_Component_and_Update_References_Example_CSharp.md"
+        }
+      ],
+      "note": "页面只说前置为 UpdateWhereUsedReferences=true；三份示例均遵守，无冲突。"
+    },
+    {
+      "member": "Refresh",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_CSharp.md",
+        "Get_Part's_Feature_Statistics_Example_VB.md",
+        "Get_Part's_Feature_Statistics_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "Refresh3DViews",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Capture_3DView_Example_CSharp.md",
+        "Capture_3DView_Example_VB.md",
+        "Capture_3DView_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method requires that the SOLDWORKS MBD add-in be loaded. ([[ISldWorks::LoadAddIn]])",
+          "example_quote": "swModelExt.Refresh3DViews();",
+          "example_file": "Capture_3DView_Example_CSharp.md",
+          "why": "示例整段直接调用；全文（含 VB/VBNET）grep 不到 LoadAddIn/AddIn 任何一处，成员页声明的前置在示例里不存在。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "唯一一处硬冲突：MBD 加载项前置在示例中完全缺席。"
+    },
+    {
+      "member": "Register",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Attribute_to_Feature_and_Include_In_Library_Feature_Example_VB.md",
+        "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_CSharp.md",
+        "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_VBNET.md",
+        "Create_Attribute_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Create Attribute (VBA) 显示 Register 成功后 CreateInstance5 仍可能返回 Nothing，示例用 While 循环换唯一名重试；成员页未提这一步。",
+          "example_quote": "bRet = swAttDef.Register\n    While swAtt Is Nothing\n        ' Get a unique attribute name\n        i = i + 1\n        AttName = AttRootName + Str(i)\n        Set swAtt = swAttDef.CreateInstance5(swModel, swEnt, AttName, CreateVisible, swThisConfiguration)\n    Wend",
+          "example_file": "Create_Attribute_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都是 DefineAttribute→AddParameter→Register，与 Remarks 完全一致。"
+    },
+    {
+      "member": "RegisterThirdPartyPopupMenu",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Button_to_Context-sensitive_Menu_Example_CSharp.md",
+        "Add_Button_to_Context-sensitive_Menu_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序与上下件：须先 frame.AddMenuPopupIcon3(...) 挂钩，再 Register，返回的 int 作为 registerID 传给 AddItemToThirdPartyPopupMenu2 与 ShowThirdPartyPopupMenu。",
+          "example_quote": "registerID = SwApp.RegisterThirdPartyPopupMenu();",
+          "example_file": "Add_Button_to_Context-sensitive_Menu_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只是一句文档指引（Read about Add-in Shortcut Menus），无可比对断言；返回 int 与示例 int registerID 一致。"
+    },
+    {
+      "member": "RegisterTrackingDefinition",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Set_And_Remove_Tracking_IDs_On_Body_Example_VB.md",
+        "Get_Set_And_Remove_Tracking_IDs_On_Edge_Example_VB.md",
+        "Get_Set_And_Remove_Tracking_IDs_On_Face_Example_VB.md",
+        "Get_Set_And_Remove_Tracking_IDs_On_Vertex_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "四份示例都用同一个前缀 \"Tracking_API\" 注册，实跑覆盖了「已注册则返回同一 cookie」那句；并按 GetTrackingIDsCount 是否为 0 决定是写入还是读回。",
+          "example_quote": "Cookies = swApp.RegisterTrackingDefinition(\"Tracking_API\")\n    If (Cookies = -1) Then\n        End  ' No valid cookies found\n    End If",
+          "example_file": "Get_Set_And_Remove_Tracking_IDs_On_Body_Example_VB.md"
+        }
+      ],
+      "note": "示例用 Long 存 cookie 并显式判 -1，与 Returns 的哨兵约定一致；调用点在 main 开头，符合「启动时调用」。"
+    },
+    {
+      "member": "RelationManager",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_All_Sketch_Relations_and_Their_Types_Example_VB.md",
+        "Get_Sketch_Relations_Example_CSharp.md",
+        "Get_Sketch_Relations_Example_VB.md",
+        "Get_Sketch_Relations_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取法：须由已选特征 swFeat.GetSpecificFeature2() 得草图对象再读属性；返回的 GetRelations 需传过滤枚举，数组可能为 null（C# 判空，VB 直接 UBound）。",
+          "example_quote": "swSketch = (Sketch)swFeat.GetSpecificFeature2();\n\t        swSkRelMgr = swSketch.RelationManager;",
+          "example_file": "Get_Sketch_Relations_Example_CSharp.md"
+        }
+      ],
+      "note": "页面无 ## Remarks 标题，可比对条文取签名前的 NOTE（get-only / Set is not implemented）；四份示例只读不写，一致。"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "idx": 354,
+  "results": [
+    {
+      "member": "ListExternalFileReferencesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_External_References_Example_VB.md",
+        "Get_External_References_Example_VBNET.md",
+        "Get_External_References_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Call this method before calling [[IComponent2::IListExternalFileReferences2]] to get the number of external references of the component.",
+          "example_quote": "nRefCount = swComp.ListExternalFileReferencesCount\nswComp.ListExternalFileReferences2 vModelPathName, vComponentPathName, vFeature, vDataType, vStatus, vRefEntity, vFeatComp, nConfigOpt, sConfigName",
+          "example_file": "Get_External_References_Example_VB.md",
+          "why": "Remarks 指定接 IListExternalFileReferences2；三份示例都改调 ListExternalFileReferences2，而该 I 变体页对 VBA/VB.NET/C# 全标 Not supported。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例按选区类型分三条宿主路径：组件 / 特征 / 文档；成员页只讲组件。",
+          "example_quote": "nRefCount = swModDocExt.ListExternalFileReferencesCount",
+          "example_file": "Get_External_References_Example_VB.md"
+        },
+        {
+          "what": "C# 示例按 nRefCount-1 建数组却循环到 nRefCount-1；成员页未给消费形状。",
+          "example_quote": "object[] ModelPathName = new object[nRefCount - 1];",
+          "example_file": "Get_External_References_Example_CSharp.md"
+        }
+      ],
+      "note": "唯一冲突在 Remarks 点名的后继成员；三份示例形态完全一致。"
+    },
+    {
+      "member": "LoadAddIn",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Load_and_Unload_Add-in_Example_VB.md",
+        "Load_and_Unload_Add-in_Example_VBNET.md",
+        "Load_and_Unload_Add-in_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都只传完整 .dll 路径并把返回值当 int 状态打印；Remarks 的 MBD 特例无对应演示。",
+          "example_quote": "status = swApp.LoadAddIn(sAddinName)",
+          "example_file": "Load_and_Unload_Add-in_Example_VB.md"
+        }
+      ],
+      "note": "示例与 Remarks 不冲突；示例只覆盖常规路径，未演示 LoadAddIn('MBD')。"
+    },
+    {
+      "member": "LoadCriteria",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Select_Assembly_Components_Using_Advanced_Selection_Criteria_Example_CSharp.md",
+        "Select_Assembly_Components_Using_Advanced_Selection_Criteria_Example_VBNET.md",
+        "Use_Advanced_Component_Selection_Example_CSharp.md",
+        "Use_Advanced_Component_Selection_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整 XML 骨架与属性名，而 Remarks 第 1 步的元素名被剥空。",
+          "example_quote": "<Boolean Name=\"And\" Category=\"In Context Relations\" SubCategory=\"Has mate to part\" Condition=\"=\" Value=\"base plate-1@98food processor\"/>",
+          "example_file": "Select_Assembly_Components_Using_Advanced_Selection_Criteria_Example_CSharp.md"
+        },
+        {
+          "what": "legacy .sqy 路线要求先有活动装配文档并 ClearSelection2，且走 Load→Select→AddItem→DeleteItem→SaveCriteria→再 Load 往返。",
+          "example_quote": "LoadSuccess = AdvancedSelectionCriteria.LoadCriteria(CriteriaFileName);",
+          "example_file": "Use_Advanced_Component_Selection_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例分别演示 .xml 与 legacy .sqy，与 Remarks 的两种格式一致，无冲突。"
+    },
+    {
+      "member": "LoadDraftingStandard",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Drafting_Standard_to_Custom_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对；示例仅一处调用已核实。"
+    },
+    {
+      "member": "LoadFile2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Imported_File_Associated_with_an_Imported_Feature_Example_VB.md",
+        "Inspect_Facets_Example_CSharp.md",
+        "Inspect_Facets_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Obsolete 行与两个 No description 参数，无 ## Remarks 段，跳过。"
+    },
+    {
+      "member": "LoadFile4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Import_DXF_File_into_Part_Sketch_Example_VB.md",
+        "Import_DXF_File_to_Drawing_Example_VB.md",
+        "Import_IGES_File_Example_VB.md",
+        "Import_Models_as_Solids_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Before calling this method, turn on 3D Interconnect by setting **Tools > Options > System Options > Import > Enable 3D Interconnect** or calling [[ISldWorks::SetUserPreferenceToggle]]([[swUserPreferenceToggle_e]].swMultiCAD_Enable3DInterconnect, True).",
+          "example_quote": "Set newDoc = swApp.LoadFile4(filename, \"\", importData, longerrors)",
+          "example_file": "Import_DXF_File_into_Part_Sketch_Example_VB.md",
+          "why": "Remarks 要求先开 3D Interconnect；两个 DXF 示例取 GetImportFileData 得非空 importData 并传空 ArgString，全程未开 Interconnect，两侧前提不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "IGES 示例把 ImportData 声明为 ImportIgesData 却从不 Set（实际传 Nothing），并用 ArgString \"r\"；这正是 Remarks 的「Interconnect 未启用时为 null」。",
+          "example_quote": "Set swModel = swApp.LoadFile4(\"C:\\Users\\Public\\Documents\\SOLIDWORKS\\SOLIDWORKS 2018\\samples\\tutorial\\importexport\\gasket.igs\", \"r\", swImportData, Err)",
+          "example_file": "Import_IGES_File_Example_VB.md"
+        },
+        {
+          "what": "Import_Models_as_Solids 要求先设 swImportUseBrep 与 swCreateBodyFromSurfacesOption 两个用户首选项，Remarks 未提这一步。",
+          "example_quote": "rtn = swApp.SetUserPreferenceIntegerValue(swImportUseBrep, 1)",
+          "example_file": "Import_Models_as_Solids_Example_VB.md"
+        }
+      ],
+      "note": "冲突只在 3D Interconnect 前提上；ArgString 与 ImportData 两条参数说明方向相反。"
+    },
+    {
+      "member": "LoadLineStyles",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Manage_Drawing_Document_Line_Styles_Example_CSharp.md",
+        "Manage_Drawing_Document_Line_Styles_Example_VB.md",
+        "Manage_Drawing_Document_Line_Styles_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；三份示例调用已 grep 核实。"
+    }
+  ]
+}

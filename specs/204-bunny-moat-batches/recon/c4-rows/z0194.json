@@ -1,0 +1,193 @@
+{
+  "idx": 194,
+  "results": [
+    {
+      "member": "GetFirstCenterMark2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "List_Center_Marks_in_Drawing_Example_VB.md",
+        "Select_All_Center_Marks_Example_CSharp.md",
+        "Select_All_Center_Marks_Example_VB.md",
+        "Select_All_Center_Marks_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "中心线分 feature 与 annotation 两类，本成员只给注释型；feature 型须另走特征树遍历。",
+          "example_quote": "In the SOLIDWORKS API, center marks can be features or annotations.",
+          "example_file": "Select_All_Center_Marks_Example_CSharp.md"
+        },
+        {
+          "what": "代码注释标明本成员取的是注释中心线链，链尾用 CenterMark.GetNext 推进。",
+          "example_quote": "// Traverse over annotation center marks",
+          "example_file": "Select_All_Center_Marks_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只讲取代旧成员以支持非激活图纸；示例未触及该点，也无相反说法。"
+    },
+    {
+      "member": "GetFirstCenterOfMass",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Centers_of_Mass_in_Drawing_Views_Example_CSharp.md",
+        "Get_Centers_of_Mass_in_Drawing_Views_Example_VB.md",
+        "Get_Centers_of_Mass_in_Drawing_Views_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回的 CenterOfMass 的 GetAnnotation() 可能为 Nothing，示例显式判空后才取名。",
+          "example_quote": "If Not swAnnotation Is Nothing Then",
+          "example_file": "Get_Centers_of_Mass_in_Drawing_Views_Example_VB.md"
+        },
+        {
+          "what": "视图数组从下标 1 起遍历（下标 0 是图纸页本身），逐个视图各调本成员一次。",
+          "example_quote": "For viewCount = 1 To UBound(vv)",
+          "example_file": "Get_Centers_of_Mass_in_Drawing_Views_Example_VB.md"
+        }
+      ],
+      "note": "成员页没有 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetFirstChild",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_CSharp.md",
+        "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_VBNET.md",
+        "Get_Objects_in_Selection_Set_Example_CSharp.md",
+        "Get_Objects_in_Selection_Set_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "起点必须取自 FeatureManager 的设计树根节点，再逐层 GetFirstChild/GetNext 递归。",
+          "example_quote": "rootNode = featureMgr.GetFeatureTreeRootItem2((int)swFeatMgrPane_e.swFeatMgrPaneBottom);",
+          "example_file": "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_CSharp.md"
+        },
+        {
+          "what": "无子节点时返回 null，示例用 while(childNode != null) 收尾。",
+          "example_quote": "while ((childNode != null))",
+          "example_file": "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks，跳过冲突判定；四份示例都确实用本成员。"
+    },
+    {
+      "member": "GetFirstCoEdge",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Determine_Type_of_Face_Example_VB.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_CSharp.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_VB.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只在非外环（内环）上取第一个 coedge，用它中点切向与两面法向叉积比对判孔。",
+          "example_quote": "Set swThisCoEdge = swThisLoop.GetFirstCoEdge",
+          "example_file": "Select_Edges_of_All_Holes_on_Face_Example_VB.md"
+        },
+        {
+          "what": "示例用 GetPartner 取配对 coedge，比较两面中点法向是否相等来判相切面。",
+          "example_quote": "Set swPartnerCoEdge = swThisCoEdge.GetPartner",
+          "example_file": "Select_Edges_of_All_Holes_on_Face_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的 CW/CCW 与「coedge 方向随 loop」在示例里既未违反也未反驳。"
+    },
+    {
+      "member": "GetFirstDatumTag",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Text_in_Datum_Tags_and_GTols_Example_CSharp.md",
+        "Set_Text_in_Datum_Tags_and_GTols_Example_VB.md",
+        "Set_Text_in_Datum_Tags_and_GTols_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 GetFirstView 拿到图纸页，再 GetNextView 跳到真实视图，然后才调本成员。",
+          "example_quote": "Set swView = swDraw.GetFirstView 'sheet",
+          "example_file": "Set_Text_in_Datum_Tags_and_GTols_Example_VB.md"
+        },
+        {
+          "what": "返回对象直接 SetText，示例对 Nothing 不做判断（前置已保证存在基准符号）。",
+          "example_quote": "Set swDatumTag = swView.GetFirstDatumTag",
+          "example_file": "Set_Text_in_Datum_Tags_and_GTols_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，跳过冲突判定。"
+    },
+    {
+      "member": "GetFirstDisplayDimension",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Dimension_of_Distance_Mate_Example_VB.md",
+        "Get_Linked_Dimensions_Example_VB.md",
+        "Iterate_Through_Dimensions_in_Model_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Before you can get a feature's IDisplayDimension, use [[IModelDoc2::SetUserPreferenceToggle]] and swDisplayFeatureDimensions to display them.",
+          "example_quote": "' Preconditions:\n' 1. Open public_documents\\samples\\tutorial\\lesson2\\tutor1.sldprt.\n' 2. Open the Immediate window.",
+          "example_file": "Iterate_Through_Dimensions_in_Model_Example_VB.md",
+          "why": "成员页把 swDisplayFeatureDimensions 列为取尺寸前必需步骤；该示例前置只有打开零件与立即窗口，代码也无 SetUserPreferenceToggle。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Before you can get a feature's IDisplayDimension, use [[IModelDoc2::SetUserPreferenceToggle]] and swDisplayFeatureDimensions to display them.",
+          "example_quote": "' Preconditions:\n' 1. Open public_documents\\samples\\tutorial\\advdrawings\\motor casing and switch top plate.sldasm.\n' 2. Expand MateGroup1 and select Distance8.",
+          "example_file": "Get_Dimension_of_Distance_Mate_Example_VB.md",
+          "why": "该示例前置只有打开装配并选中 Distance8，同样没开 swDisplayFeatureDimensions 就取显示尺寸。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "子特征要各自单独调本成员；示例对子特征与顶层特征各起一条链。",
+          "example_quote": "Set swDispDim = swSubFeat.GetFirstDisplayDimension",
+          "example_file": "Iterate_Through_Dimensions_in_Model_Example_VB.md"
+        },
+        {
+          "what": "另一份示例用界面菜单达成同一前提，不走 SetUserPreferenceToggle。",
+          "example_quote": "' 2. Right-click Annotations and click Show Feature Dimensions.",
+          "example_file": "Get_Linked_Dimensions_Example_VB.md"
+        }
+      ],
+      "note": "Get_Display_Dimension_Properties_Example_VB.md 调的是 IView 同名成员（swDrawingView1 是 View），已剔除。"
+    },
+    {
+      "member": "GetFirstDisplayDimension5",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Dimension_Values_in_Drawing_Example_CSharp.md",
+        "Get_Dimension_Values_in_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Call [[IDisplayDimension::GetNext5]] to get the next display dimension on this drawing sheet.",
+          "example_quote": "swDispDim = (DisplayDimension)swDispDim.GetNext3();",
+          "example_file": "Get_Dimension_Values_in_Drawing_Example_CSharp.md",
+          "why": "成员页指定用 GetNext5 接下一个显示尺寸，C# 示例却改调 GetNext3 推进链。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Call [[IDisplayDimension::GetNext5]] to get the next display dimension on this drawing sheet.",
+          "example_quote": "swDispDim = swDispDim.GetNext3",
+          "example_file": "Get_Dimension_Values_in_Drawing_Example_VBNET.md",
+          "why": "VB.NET 示例同样用 GetNext3 而非成员页点名的 GetNext5，两侧说法不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例从 GetFirstView 起对每个视图（含图纸页本身）各调一次本成员重取链首。",
+          "example_quote": "swView = (View)swDraw.GetFirstView();",
+          "example_file": "Get_Dimension_Values_in_Drawing_Example_CSharp.md"
+        }
+      ],
+      "note": "示例仍在用页首标注 Obsolete 的本成员（Superseded by GetFirstDisplayDimension6）。"
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "idx": 158,
+  "results": [
+    {
+      "member": "GetCoEdgesAtGap",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Fill_Gaps_in_Body_Example_CSharp.md",
+        "Get_and_Fill_Gaps_in_Body_Example_VB.md",
+        "Get_and_Fill_Gaps_in_Body_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "索引是 0 基：示例循环 i=1..nNumGap，实际传入 i-1（页未说基）",
+          "example_quote": "vCoEdgeArr = (object[])swDiagnose.GetCoEdgesAtGap(i - 1);",
+          "example_file": "Get_and_Fill_Gaps_in_Body_Example_CSharp.md"
+        }
+      ],
+      "note": "示例先调 GetGapsCount 再循环，与 Remarks 一致，无冲突"
+    },
+    {
+      "member": "GetCoincidenceTransform2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Calculate_Transformations_in_Part_Example_CSharp.md",
+        "Calculate_Transformations_in_Part_Example_VB.md",
+        "Calculate_Transformations_in_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ArrayData 排布：0-8 旋转、9-11 平移、12 缩放（页只说指针）",
+          "example_quote": "Debug.Print(\"\\n\" + \"  Scaling: \" + vXfm[12]);",
+          "example_file": "Calculate_Transformations_in_Part_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 ## Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetCollisionDetectionManager",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Manage_Collision_Detection_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例取到管理器后立即 SetAssembly(swDoc)，且活动文档须为装配体",
+          "example_quote": "longstatus = cdm.SetAssembly(swDoc);",
+          "example_file": "Manage_Collision_Detection_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 ## Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetCollisions",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Manage_Collision_Detection_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Use [[ICollisionDetectionManager::IsCollisionPresent]] to determine whether to run this method.",
+          "example_quote": "numCollisions = cdm.GetCollisions(true, out var1);",
+          "example_file": "Manage_Collision_Detection_Example_CSharp.md",
+          "why": "Remarks 说靠 IsCollisionPresent 判断是否调用；示例上一行把它存进 longstatus 后从不读取，无条件调用本方法。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "out 参数按 object[] 解包，而非直接当 ICollision 数组",
+          "example_quote": "collisions = (object[])var1;",
+          "example_file": "Manage_Collision_Detection_Example_CSharp.md"
+        },
+        {
+          "what": "先判返回值 > 0 再遍历，页未提这个门控",
+          "example_quote": "if (numCollisions > 0)",
+          "example_file": "Manage_Collision_Detection_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 第二句（重复计算、比 IsCollisionPresent 慢）与示例行为不冲突"
+    },
+    {
+      "member": "GetColorRefAtIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_COLORREF_Values_of_Standard_User-interface_Elements_Example_CSharp.md",
+        "Get_COLORREF_Values_of_Standard_User-interface_Elements_Example_VB.md",
+        "Get_COLORREF_Values_of_Standard_User-interface_Elements_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "索引 0 基，上界由 GetStandardCount 给出（0 到 count-1）",
+          "example_quote": "For count = 0 To (standardCount - 1)",
+          "example_file": "Get_COLORREF_Values_of_Standard_User-interface_Elements_Example_VB.md"
+        },
+        {
+          "what": "同索引 GetNameAtIndex 为空串时跳过，不读 COLORREF",
+          "example_quote": "If colorName <> \"\" Then",
+          "example_file": "Get_COLORREF_Values_of_Standard_User-interface_Elements_Example_VB.md"
+        }
+      ],
+      "note": "该页无 ## Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetColorTable",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三个示例调的是 swApp.GetColorTable（ISldWorks 成员），与 IModelDoc2 同名不同接口，故不采用"
+    },
+    {
+      "member": "GetColumnCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三例调的是 swDesTable.GetColumnCount（IDesignTable），与 IBomTable 同名不同接口"
+    }
+  ]
+}

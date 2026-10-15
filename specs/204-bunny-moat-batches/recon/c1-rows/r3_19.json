@@ -1,0 +1,110 @@
+{
+ "idx": 19,
+ "pages_read": 13,
+ "rows": [
+  {
+   "iface": "IView",
+   "file": "EnumSectionLines2.md",
+   "signature": "EnumDrSections EnumSectionLines2( System.bool IgnoreSuppressed )",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "否（有形参）"
+  },
+  {
+   "iface": "IView",
+   "file": "GetDimensionCount4.md",
+   "signature": "System.int GetDimensionCount4()",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "IView",
+   "file": "GetFirstDatumOrigin.md",
+   "signature": "DatumOrigin GetFirstDatumOrigin()",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "IView",
+   "file": "GetProjectionLineCount.md",
+   "signature": "System.int GetProjectionLineCount()",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "IView",
+   "file": "IGetBendLines.md",
+   "signature": "SketchSegment IGetBendLines( System.int NumberOfBendLine )",
+   "obsolete": false,
+   "pointer": true,
+   "zero": "否（有形参）"
+  },
+  {
+   "iface": "IView",
+   "file": "IGetFirstCThread.md",
+   "signature": "CThread IGetFirstCThread()",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "IView",
+   "file": "IGetWitnessGeomInfo.md",
+   "signature": "System.double IGetWitnessGeomInfo( System.int ArraySize )",
+   "obsolete": false,
+   "pointer": true,
+   "zero": "否（有形参）"
+  },
+  {
+   "iface": "IView",
+   "file": "SetDisplayMode2.md",
+   "signature": "System.bool SetDisplayMode2( System.int Mode, System.bool Facetted, System.bool Edges )",
+   "obsolete": true,
+   "pointer": false,
+   "zero": "否（有形参）"
+  },
+  {
+   "iface": "IDrawingDoc",
+   "file": "CreateAngDim3.md",
+   "signature": "System.object CreateAngDim3( System.object VP0, System.object VP1, System.object VP2, System.object VP3, System.object VP4, System.object VP5, System.object VP6, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot, System.object VTextPoint )",
+   "obsolete": true,
+   "pointer": false,
+   "zero": "否（有形参）"
+  },
+  {
+   "iface": "IDrawingDoc",
+   "file": "EditSelectedGtol.md",
+   "signature": "System.object EditSelectedGtol()",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "IDrawingDoc",
+   "file": "ICreateOrdinateDim2.md",
+   "signature": "void ICreateOrdinateDim2( ref System.double P0, ref System.double P1, ref System.double P2, ref System.double P3, ref System.double P4, System.double Angle, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot, ref System.double P5 )",
+   "obsolete": true,
+   "pointer": false,
+   "zero": "否（有形参）"
+  },
+  {
+   "iface": "IDrawingDoc",
+   "file": "InsertThreadCallout.md",
+   "signature": "void InsertThreadCallout()",
+   "obsolete": false,
+   "pointer": false,
+   "zero": "是（空括号）"
+  },
+  {
+   "iface": "ISheet",
+   "file": "GetBomTable.md",
+   "signature": "System.object GetBomTable()",
+   "obsolete": true,
+   "pointer": false,
+   "zero": "是（空括号）"
+  }
+ ]
+}

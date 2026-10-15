@@ -1,0 +1,115 @@
+{
+  "idx": 97,
+  "results": [
+    {
+      "member": "DisplayMode",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Display_State_Settings_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示它带 DisplayStateSetting 形参、返回每实体 6 个状态的数组（与 Transparency/Visibility 并列读）；成员页为空壳。",
+          "example_quote": "varStatus = swExt.DisplayMode(swDSS)",
+          "example_file": "Get_Display_State_Settings_Example_VB.md"
+        }
+      ],
+      "note": "成员页只有 YAML+标题。Capture_3DView 三份用的是 IView3D.DisplayMode，按规则排除。"
+    },
+    {
+      "member": "DisplayState",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "候选 4 份都不碰本成员：3 份是 IView3D.DisplayState，1 份是工程图 View.DisplayState。"
+    },
+    {
+      "member": "DisplayStateSpecMaterialPropertyValues",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Color_of_Component_in_Specific_Display_State_Example_VB.md",
+        "Change_Color_of_Component_in_Specific_Display_State_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取参路径：先 GetDisplayStateSetting(swAllDisplayState)，再设 Entities/Option/Names/PartLevel，最后传入该对象；成员页无签名。",
+          "example_quote": "Set swDisplayStateSetting = swModelDocExt.GetDisplayStateSetting(swAllDisplayState)",
+          "example_file": "Change_Color_of_Component_in_Specific_Display_State_Example_VB.md"
+        }
+      ],
+      "note": "成员页为 10 行空壳；两份示例均命中 ModelDocExtension 上的同名成员。"
+    },
+    {
+      "member": "DisplaySurfaceBodies",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VB.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取得 IDrSection 的路径：先 CreateSectionViewAt5，再 (DrSection)swView.GetSection()，然后设置；页只说是否显示曲面体。",
+          "example_quote": "swSectionView.DisplaySurfaceBodies = true;",
+          "example_file": "Create_Section_View_and_Get_Some_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页有签名与 Returns 但无 Remarks 段，按规则跳过冲突判定。"
+    },
+    {
+      "member": "DisplayWindowFromHandlex64",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出实际调用点：WinForms UserControl 传 SplitWindow=false、WPF ElementHost 传 true；页只有参数释义。",
+          "example_quote": "swModelViewMgr.DisplayWindowFromHandlex64(\".NET User Control1\", ModelView1Control.Handle.ToInt64(), false);",
+          "example_file": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的早期绑定 / 64 位两条限制两份示例都未违反，故无冲突。"
+    },
+    {
+      "member": "DisplayedText2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Table_Annotation_and_Contents_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示它按 (行,列,True) 三参逐格取值并返回显示文本；成员页为空壳，无签名。",
+          "example_quote": "sRowStr = sRowStr & swTable.DisplayedText2(i, j, True) & \",\"",
+          "example_file": "Get_Table_Annotation_and_Contents_Example_VB.md"
+        }
+      ],
+      "note": "swTable 声明为 SldWorks.TableAnnotation，确认命中本成员而非同名他族。"
+    },
+    {
+      "member": "Dissolve",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Dissolve_Subassembly_in_a_BOM_Table_Example_CSharp.md",
+        "Dissolve_Subassembly_in_a_BOM_Table_Example_VB.md",
+        "Dissolve_Subassembly_in_a_BOM_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出行号 8 对应 blade shaft 子装配，且 BOM 注解须由 InsertBomTable6 取得后才有行可溶解。",
+          "example_quote": "boolstatus = swBOMAnnotation.Dissolve(8);",
+          "example_file": "Dissolve_Subassembly_in_a_BOM_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；三份示例的 swBOMAnnotation 均为 BomTableAnnotation。"
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "idx": 366,
+  "results": [
+    {
+      "member": "MinValueForGapRange",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Surface_Knit_Feature_Example_CSharp.md",
+        "Create_Surface_Knit_Feature_Example_VB6.md",
+        "Create_Surface_Knit_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例乘 1000 后标 mm，说明返回米制；成员页 Returns 只给 0.0001–0.01mm 有效区间，未说属性本身单位",
+          "example_quote": "Debug.Print(\"  Minimum value for gap range: \" + swSurfaceKnitFeature.MinValueForGapRange * 1000 + \" mm\");",
+          "example_file": "Create_Surface_Knit_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例靠 InsertSewRefSurface 第 1 参传 True 才满足 UseGapFilters 前置；该建特征 API 无 MinValueForGapRange 入参，只能读",
+          "example_quote": "swFeature = (Feature)swFeatureManager.InsertSewRefSurface(true, false, false, 0.0001, 0.0001);",
+          "example_file": "Create_Surface_Knit_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "查过 InsertSewRefSurface：第 1 参即 UseGapFilters，示例传了 True，故该前置成立、无冲突。"
+    },
+    {
+      "member": "MinVariation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它标为 Minimum tolerance，并把单位挂在同条目的 Unit 属性上一并打印；成员页未提单位来源",
+          "example_quote": "Debug.Print(\"    Units: \" + swPMIDataDimItem.Unit);\nDebug.Print(\"    Minimum tolerance: \" + swPMIDataDimItem.MinVariation);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "页内自相矛盾：NOTE 写 get-only / Set is not implemented，签名却是 {get; set;}；两侧示例只用 get。"
+    },
+    {
+      "member": "MinimumAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Limit_Angle_Mate_Example_CSharp.md",
+        "Create_Limit_Angle_Mate_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IAngleMateFeatureData::IsAdvancedMate]] is set to true.",
+          "example_quote": "swAngleMateData.MinimumAngle = 0.506145;",
+          "example_file": "Create_Limit_Angle_Mate_Example_CSharp.md",
+          "why": "Remarks 要求先置 IsAdvancedMate=true；两份示例在 CreateMateData(6) 后直接写 MinimumAngle，全文未出现 IsAdvancedMate。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体弧度值 Angle/Max=0.523599、Min=0.506145，并在 ModifyDefinition 后打印回读",
+          "example_quote": "Debug.Print(\"Minimum angle: \" + swAngleMateData.MinimumAngle);",
+          "example_file": "Create_Limit_Angle_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例（C#/VB）逐字同构，均未设 IsAdvancedMate。"
+    },
+    {
+      "member": "MinimumDistance",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Limit_Distance_Mate_Example_CSharp.md",
+        "Create_Limit_Distance_Mate_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IDistanceMateFeatureData::IsAdvancedMate]] is set to true.",
+          "example_quote": "swDistMateData.MinimumDistance = 0.01;",
+          "example_file": "Create_Limit_Distance_Mate_Example_CSharp.md",
+          "why": "Remarks 要求先置 IsAdvancedMate=true；两份示例在 CreateMateData(5) 后直接写 MinimumDistance，全文未出现 IsAdvancedMate。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例取 Distance/Max=0.0254、Min=0.01，与同文件米制 SelectByRay 坐标同量级；成员页 Returns 未给单位",
+          "example_quote": "swDistMateData.MinimumDistance = 0.01;",
+          "example_file": "Create_Limit_Distance_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例（C#/VB）逐字同构，均未设 IsAdvancedMate。"
+    },
+    {
+      "member": "MinimumRadius",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Minimum_Radius_of_Bodies_Example_CSharp.md",
+        "Get_Minimum_Radius_of_Bodies_Example_VB.md",
+        "Get_Minimum_Radius_of_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页没有 ## Remarks 段，按纪律整条跳过。"
+    },
+    {
+      "member": "MinimumVariation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Mate_Example_CSharp.md",
+        "Edit_Mate_Example_VB.md",
+        "Edit_Mate_Example_VBNET.md",
+        "Get_Mate_Definition_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "For distance and angle mates:\n\n*Minimum_variation* =  *minimum_value - dimension_value*",
+          "example_quote": "bRet = swAssy.EditMate3(swMate.Type, nNewMateAlign, true, nMateDist, swMate.MaximumVariation, swMate.MinimumVariation, 0.0, 0.0, nMateDist, swMate.MaximumVariation,",
+          "example_file": "Edit_Mate_Example_CSharp.md",
+          "why": "Remarks 称其为「最小值−尺寸值」的差值，示例却把它直送 EditMate3 的 DistanceAbsLowerLimit（该参官方称绝对下限）。差值与绝对下限不可两立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的有效性条件写成代码守卫：仅当 Type 为 swMateANGLE 或 swMateDISTANCE 才读 MinVar",
+          "example_quote": "If swMateANGLE = swMate.Type Or swMateDISTANCE = swMate.Type Then",
+          "example_file": "Edit_Mate_Example_VB.md"
+        },
+        {
+          "what": "示例按 mate 类型给出换算系数：swMateANGLE ×57.3→deg、swMateDISTANCE ×1000→mm",
+          "example_quote": "Case swMateANGLE\n    sVarType = \" deg\"\n    ' 1 radian = 180º/p = 57.295779513º or approximately 57.3º\n    nVarFactor = 57.3\nCase swMateDISTANCE\n    sVarType = \" mm\"\n    nVarFactor = 1000#",
+          "example_file": "Edit_Mate_Example_VB.md"
+        }
+      ],
+      "note": "四份示例写法一致；C# 版守卫处把 || 写成位或 |，属示例自身缺陷，与成员页无冲突。"
+    },
+    {
+      "member": "MinorDiameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for swTapered and swTaperedDrilled holes.",
+          "example_quote": "swFeat = swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore, (int)swWzdHoleStandards_e.swStandardISO, (int)swWzdHoleStandardFastenerTypes_e.swStandardISOHexCapScrew, \"M6\", (int)swWzdHoleThreadEndCondition_e.swEndThreadTypeBLIND, 0.0066, 0.02, 0.014547, 0.004, 0.0,",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "Remarks 只对 swTapered/swTaperedDrilled 有效；示例建的是 swWzdCounterBore（非 Tapered 类），仍读 MinorDiameter。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 MinorDiameter 乘 1000 后标 mm，说明返回米制；成员页 Returns 未给单位",
+          "example_quote": "Debug.Print(\"  MinorDiameter                = \" + swWizHole.MinorDiameter * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "swWzdGeneralHoleTypes_e 九个成员无 Tapered；swTapered/swTaperedDrilled 属 swWzdHoleTypes_e（值 1、6）。"
+    }
+  ]
+}

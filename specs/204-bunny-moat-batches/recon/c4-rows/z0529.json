@@ -1,0 +1,127 @@
+{
+  "idx": 529,
+  "results": [
+    {
+      "member": "component",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Get_Components_Properties_in_Drawing_View_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "The associated [[IComponent2]] object should have the same properties as the referenced configuration. For example, if the component is suppressed in the reference configuration, then the returned component should also be suppressed.",
+          "example_quote": "' Returns empty strings for root component",
+          "example_file": "C:\\swapi\\examples\\Get_Components_Properties_in_Drawing_View_Example_VB.md",
+          "why": "Remarks 说返回的 IComponent2 属性与被引用配置一致；示例注释说根组件下这些属性返回空串，二者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：装配体工程图已打开，且必须先选中一个图视图（从图视图取 RootDrawingComponent）。",
+          "example_quote": "Drawing document of an assembly is open.",
+          "example_file": "C:\\swapi\\examples\\Get_Components_Properties_in_Drawing_View_Example_VB.md"
+        },
+        {
+          "what": "示例用 GetChildren 递归遍历子组件，成员页只字未提层级关系。",
+          "example_quote": "vDrawCompChildArr = swDrawComp.GetChildren",
+          "example_file": "C:\\swapi\\examples\\Get_Components_Properties_in_Drawing_View_Example_VB.md"
+        }
+      ],
+      "note": "成员页称属性与被引用配置一致，示例注释称根组件返回空串。"
+    },
+    {
+      "member": "contours",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Create_Extrude_Feature_Using_Sketch_Contours_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例明确先调 AccessSelections(swModel, Nothing) 才能读 contours，读完再 ReleaseSelectionAccess。",
+          "example_quote": "swExtrudeFeatureData.AccessSelections swModel, Nothing",
+          "example_file": "C:\\swapi\\examples\\Create_Extrude_Feature_Using_Sketch_Contours_Example_VB.md"
+        },
+        {
+          "what": "示例要求先置 EnableContourSelection=True，并把 SKETCHCONTOUR 按 mark=4 选中；成员页未提 mark。",
+          "example_quote": "swSelectionMgr.EnableContourSelection = True",
+          "example_file": "C:\\swapi\\examples\\Create_Extrude_Feature_Using_Sketch_Contours_Example_VB.md"
+        },
+        {
+          "what": "示例只把数组元素当 ISketchContour 用（Dim 为 SketchContour），未演示 Remarks 说的 ISketchRegion 分支。",
+          "example_quote": "Dim skcontour As SldWorks.SketchContour",
+          "example_file": "C:\\swapi\\examples\\Create_Extrude_Feature_Using_Sketch_Contours_Example_VB.md"
+        }
+      ],
+      "note": "无矛盾。示例补充了 AccessSelections 前置、EnableContourSelection 与 mark=4。"
+    },
+    {
+      "member": "count",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页有 Remarks；但两份 Get_and_Set_Paragraph_Properties 示例全文无 BalloonStack/Count 调用，按纪律不采用。"
+    },
+    {
+      "member": "d1Curves",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Insert_Boundary_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先调 AccessSelections(swModel, Nothing) 才读 d1Curves；成员页只给了外链指引。",
+          "example_quote": "status = swBoundaryBossFeatureData.AccessSelections(swModel, Nothing)",
+          "example_file": "C:\\swapi\\examples\\Insert_Boundary_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例用 mark 8193/16385 分别选两面作为 Direction 1/2 曲线源；成员页完全没提选择 mark。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", -8.31962633037051E-02, -7.43092842242277E-04, 3.42529447572133E-02, False, 8193, Nothing, 0)",
+          "example_file": "C:\\swapi\\examples\\Insert_Boundary_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例先用 GetCurvesCount(swBoundaryBossDirection_First) 定长再遍历 d1Curves，并加 If nbrCurves >= 0 守卫。",
+          "example_quote": "nbrCurves = swBoundaryBossFeatureData.GetCurvesCount(swBoundaryBossDirection_e.swBoundaryBossDirection_First)",
+          "example_file": "C:\\swapi\\examples\\Insert_Boundary_Feature_Example_VB.md"
+        }
+      ],
+      "note": "无矛盾。示例补充 AccessSelections 前置与 8193/16385 两个选择 mark。"
+    },
+    {
+      "member": "dimXpertPart",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Get_DimXpert_Block_Tolerance_Example_VB.md",
+        "C:\\swapi\\examples\\Get_DimXpert_Datum_Example_VB.md",
+        "C:\\swapi\\examples\\Get_DimXpert_Tolerance1_Example_VB.md",
+        "C:\\swapi\\examples\\Get_DimXpert_Tolerance2_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页没有 ## Remarks 段（remarks_empty=true），按硬纪律 3 跳过。"
+    },
+    {
+      "member": "dot",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Get_Angle_Between_Plane_and_Line_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页没有 ## Remarks 段，按硬纪律 3 跳过；示例确有用 curveVec.dot(normVec)。"
+    },
+    {
+      "member": "error",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "C:\\swapi\\examples\\Open_Assembly_Document_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页没有 ## Remarks 段，按硬纪律 3 跳过；示例确有 errors = swDocSpecification.error。"
+    }
+  ]
+}

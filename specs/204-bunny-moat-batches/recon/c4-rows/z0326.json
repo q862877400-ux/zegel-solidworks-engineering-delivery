@@ -1,0 +1,206 @@
+{
+  "idx": 326,
+  "results": [
+    {
+      "member": "InsertTitleBlockTable",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Title_Block_Tables_Example_CSharp.md",
+        "Get_Title_Block_Tables_Example_VB6.md",
+        "Get_Title_Block_Tables_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回值被直接当 TitleBlockTableAnnotation 用并立刻取 .TitleBlockTableFeature，页面 Returns 只给了类型链接",
+          "example_quote": "feat = tbtAnno.TitleBlockTableFeature;",
+          "example_file": "Get_Title_Block_Tables_Example_CSharp.md"
+        },
+        {
+          "what": "坐标按整数 500,500 原样传入（未换算），页面 Parameters 只说 x/y coordinate 未给单位",
+          "example_quote": "tbtAnno = Part.Extension.InsertTitleBlockTable(\"C:\\\\Program Files\\\\SOLIDWORKS Corp\\\\SOLIDWORKS\\\\lang\\\\english\\\\connector-table.sldtbt\", 500, 500);",
+          "example_file": "Get_Title_Block_Tables_Example_CSharp.md"
+        },
+        {
+          "what": "前置条件（模板须存在、零件不含任何注解）在页面 Remarks 里没有对应说法",
+          "example_quote": "// 2. Verify that the specified table template exists.",
+          "example_file": "Get_Title_Block_Tables_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只规定 .sldtbt 后缀；三份示例的 connector-table.sldtbt 与之相符，无冲突。"
+    },
+    {
+      "member": "InsertVariablePitchHelix",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Variable_Pitch_Helix_Example_CSharp.md",
+        "Create_Variable_Pitch_Helix_Example_VBNET.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "2. [[IFeatureManager::AddVariablePitchHelixFirstPitchAndDiamenter]] to add the first segment.",
+          "example_quote": "status = swFeatureManager.AddVariablePitchHelixFirstPitchAndDiameter(0.053, 0.05382625271268);",
+          "example_file": "Create_Variable_Pitch_Helix_Example_CSharp.md",
+          "why": "Remarks 第 2 步点名的成员名拼作 Diamenter；四份示例都调 Diameter，且 C:\\swapi\\types\\IFeatureManager 下只有 AddVariablePitchHelixFirstPitchAndDiameter.md，无 Diamenter 页，两名不能同时对。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Startangle 传 4.712388980385（＝3π/2）即弧度；页面 Parameters 只写 Angle at which to start，未给单位",
+          "example_quote": "status = swFeatureManager.InsertVariablePitchHelix(false, true, 1, 4.712388980385);",
+          "example_file": "Create_Variable_Pitch_Helix_Example_CSharp.md"
+        },
+        {
+          "what": "Helixdef 用字面量 1，等于枚举 swHelixDefinedByHeightAndRevolution；另两份示例直接写枚举名",
+          "example_quote": "status = swFeatureMgr.InsertVariablePitchHelix(false, true, (int)swHelixDefinedBy_e.swHelixDefinedByHeightAndRevolution, 4.712388980385);",
+          "example_file": "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md"
+        },
+        {
+          "what": "示例用整圆起螺旋（页面摘要写 sketch containing an arc，整圆含弧，非硬矛盾）",
+          "example_quote": "// Sketch a circle",
+          "example_file": "Create_Variable_Pitch_Helix_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 四步调用序与示例一致；唯一冲突是第 2 步的成员名拼写 Diamenter/Diameter。"
+    },
+    {
+      "member": "InsertVaryInstanceIncrement",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Circular_Pattern_Example_CSharp.md",
+        "Create_Circular_Pattern_Example_VB.md",
+        "Create_Circular_Pattern_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "  \"Spacing Increment\"",
+          "example_quote": "boolstatus = swFeatureMgr.InsertVaryInstanceIncrement(\"Space Increment\", 4, 2, 0, 0.0349065850398866);",
+          "example_file": "Create_Circular_Pattern_Example_CSharp.md",
+          "why": "参数表规定 IncrementType=2 时 DName 取 \"Spacing Increment\"，三份示例一律传 \"Space Increment\"，两种字面量不能同时被接受。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "间距增量传 0.0349065850398866（＝2° 的弧度值），页面 Parameters 未写 IncrementValue 单位",
+          "example_quote": "boolstatus = swFeatureMgr.InsertVaryInstanceIncrement(\"Space Increment\", 4, 2, 0, 0.0349065850398866);",
+          "example_file": "Create_Circular_Pattern_Example_CSharp.md"
+        },
+        {
+          "what": "尺寸增量按 D1@<特征>@<零件>.SLDPRT 全限定名传，页面只说 Name of the pattern instance dimension",
+          "example_quote": "boolstatus = swFeatureMgr.InsertVaryInstanceIncrement(\"D1@Sketch2@varyInstance.SLDPRT\", 4, 1, 0, 0.003);",
+          "example_file": "Create_Circular_Pattern_Example_VB.md"
+        }
+      ],
+      "note": "PatternType=4、IncrementType=1/2、Direction=0 与页面表一致；仅 DName 字面量对不上。"
+    },
+    {
+      "member": "InsertVaryInstanceOverride",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Circular_Pattern_Example_CSharp.md",
+        "Create_Circular_Pattern_Example_VB.md",
+        "Create_Circular_Pattern_Example_VBNET.md",
+        "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "  If OverrideType is ...\n  Then set Direction to ...\n\n  2\n\n  - 0 = direction 1\n\n  - 1 = direction 2\n\n  1\n  -1",
+          "example_quote": "status = swFeatureManager.InsertVaryInstanceOverride(\"D1@Sketch2@cstick.SLDPRT\", 256, 1, 0, 1, 0, 0.085);",
+          "example_file": "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md",
+          "why": "参数表规定 OverrideType=1 时 Direction 只能取 -1；该示例六次调用全传 0，而三份环形阵列示例同组合传 -1，官方两侧互斥。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "  \"Spacing Increment\"",
+          "example_quote": "boolstatus = swFeatureMgr.InsertVaryInstanceOverride(\"Space Increment\", 4, 2, 0, 5, -1, 1.30899693899575);",
+          "example_file": "Create_Circular_Pattern_Example_CSharp.md",
+          "why": "参数表规定 OverrideType=2 时 DName 取 \"Spacing Increment\"，示例传 \"Space Increment\"，两种字面量不能同时被接受。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "页面称 InstanceColumnIndex 只对 PatternType=2 有效，示例却在 256 档传列索引 0，未给「不适用」哨兵",
+          "example_quote": "- **InstanceColumnIndex**: 0 < column index of the instance to modify < number of instances per column; valid only for PatternType = 2",
+          "example_file": "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "一个实例可被多个控制尺寸各覆盖一次，须按行列多次调用；页面未说明调用次数与维度的关系",
+          "example_quote": "status = swFeatureManager.InsertVaryInstanceOverride(\"D3@Sketch2@cstick.SLDPRT\", 256, 1, 0, 1, 0, 0.04);",
+          "example_file": "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "PatternType 4/256、RowIndex 5/3、InstanceColumnIndex=-1 与页面不冲突；Direction 与 DName 两处冲突。"
+    },
+    {
+      "member": "InsertViewAsBlock",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Convert_Drawing_Views_to_Sketches_Example_CSharp.md",
+        "Convert_Drawing_Views_to_Sketches_Example_VB.md",
+        "Convert_Drawing_Views_to_Sketches_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（Returns 后直接是 Examples），按纪律跳过；页首摘要不在 Remarks 段内故未据以比冲突。"
+    },
+    {
+      "member": "InsertWeldSymbol3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weld_Symbol_Example_CSharp.md",
+        "Insert_Weld_Symbol_Example_VB.md",
+        "Insert_Weld_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "前置必须先选中面/边/草图线段，页面 Remarks 与 Parameters 均未提任何选区要求",
+          "example_quote": "// 2. Select a face, edge, or sketch segment for Weld Symbol insertion.",
+          "example_file": "Insert_Weld_Symbol_Example_CSharp.md"
+        },
+        {
+          "what": "返回对象立即转 WeldSymbol 并连调 SetText 等；示例用的 BUTT 属 Remarks 列出的 ISO 名单（一致）",
+          "example_quote": "swWeldSymbol.SetText(true, \"Left\", \"BUTT\", \"Right\", \"Stagger\", (int)swWeldSymbolContourTypes_e.swWeldContourNone);",
+          "example_file": "Insert_Weld_Symbol_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 gtol.sym 名单与三份示例一致（只用到 BUTT），无冲突；选区前置只出现在示例。"
+    },
+    {
+      "member": "InsertWeldTable",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weld_Table_Example_CSharp.md",
+        "Insert_Weld_Table_Example_VB.md",
+        "Insert_Weld_Table_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "- **AnchorType**: Anchor type as defined by [[swBomConfigurationAnchorType_e]]",
+          "example_quote": "boolResult = swActiveView.InsertWeldTable(false, true, true, 0, 0, (int)swBOMConfigurationAnchorType_e.swBOMConfigurationAnchor_BottomLeft, \"Default\", WeldTableTemplate);",
+          "example_file": "Insert_Weld_Table_Example_CSharp.md",
+          "why": "参数表写 swBomConfigurationAnchorType_e（om 小写），三份示例与 C:\\swapi\\enums\\swBOMConfigurationAnchorType_e.md 都用大写 BOM，两名不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只给占位路径，示例给出 install_dir 实值 C:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS",
+          "example_quote": "Const WeldTableTemplate As String = \"C:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\lang\\english\\weldtable-standard.sldwldtbt\"",
+          "example_file": "Insert_Weld_Table_Example_VB.md"
+        },
+        {
+          "what": "UseAnchorPoint=False 时示例把米制 X/Y 置 0，落位实际交给 AnchorType（页面未说二者可这样组合）",
+          "example_quote": "boolResult = swActiveView.InsertWeldTable(False, True, False, 0#, 0#, swBOMConfigurationAnchorType_e.swBOMConfigurationAnchor_BottomLeft, \"Default\", WeldTableTemplate)",
+          "example_file": "Insert_Weld_Table_Example_VBNET.md"
+        }
+      ],
+      "note": "模板名与 Remarks 的 weldtable-standard.sldwldtbt 一致；冲突只在锚点枚举名拼写。"
+    }
+  ]
+}

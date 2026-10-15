@@ -1,0 +1,130 @@
+{
+  "idx": 84,
+  "results": [
+    {
+      "member": "D2ReverseOffset",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出写入次序：与 D1ReverseOffset 成对写，且在 OffsetDirections 与 UseGaugeTable 之前；页面无任何次序说明",
+          "example_quote": "    featDef.D2ReverseOffset = True",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段；示例用的是 IBaseFlangeFeatureData（本成员名仅此一接口有）"
+    },
+    {
+      "member": "D2ReverseTwistDir",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的前置 Direction=swSweepBidirectional 具体化为数值字面量 1",
+          "example_quote": "    swSweep.Direction = 1 ' Bidirectional sweep",
+          "example_file": "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例把前置 TwistControlType=swTwistControlConstantTwistAlongPath 具体化为数值 8，且在本成员之前赋值",
+          "example_quote": "    swSweep.TwistControlType = 8",
+          "example_file": "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md"
+        }
+      ],
+      "note": "两条前置在示例中均以数值给出且与枚举页一致，故不构成冲突"
+    },
+    {
+      "member": "D2Spacing",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "所列四份示例的 D2Spacing 落在 Linear/LocalCurve 接口上，非本接口；已按规则全部剔除"
+    },
+    {
+      "member": "D2SpacingIncrement",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Vary_Linear_Pattern_Instances_Example_CSharp.md",
+        "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例固定取对象路径：AccessSelections 后 GetInstanceToVaryOptions 取得本对象再写；页面未说明",
+          "example_quote": "swInstOpts.D2SpacingIncrement = 0.05;",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+        }
+      ],
+      "note": "本成员名仅 IInstanceToVaryOptions 有；示例声明类型为 InstanceToVaryOptions，确认同一对象"
+    },
+    {
+      "member": "D2TotalInstances",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Bidir_Linear_Pattern_Example_CSharp.md",
+        "Create_Derived_Pattern_Feature_Example_CSharp.md",
+        "Create_Derived_Pattern_Feature_Example_VB.md",
+        "Create_Derived_Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 允许的前置具体化为 D2EndCondition = 0，即 swPatternEndCondition_SpacingAndInstances",
+          "example_quote": "swLinearPatternFeatureData.D2EndCondition = 0;",
+          "example_file": "Create_Bidir_Linear_Pattern_Example_CSharp.md"
+        },
+        {
+          "what": "示例在 Derived 特征中只读取本属性并与 D1 相乘，说明 Remarks 的门槛只约束写、不约束读",
+          "example_quote": "(swLinearPatternFeatureData.D1TotalInstances* swLinearPatternFeatureData.D2TotalInstances)",
+          "example_file": "Create_Derived_Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "写用示例的前置落在 Remarks 允许集合内，故无冲突"
+    },
+    {
+      "member": "DateCode",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Version_History_of_Future_Version_Document_Example_CSharp.md",
+        "Get_Version_History_of_Future_Version_Document_Example_VB.md",
+        "Get_Version_History_of_Future_Version_Document_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面连 ## Returns 段都没有；示例显示返回值当 int 用并赋给整型变量",
+          "example_quote": "lDateCode = swApp.DateCode();",
+          "example_file": "Get_Version_History_of_Future_Version_Document_Example_CSharp.md"
+        },
+        {
+          "what": "示例把已被取代的 DateCode 与其取代者 RevisionNumber 并排调用并分别打印",
+          "example_quote": "strRevisionNumber = swApp.RevisionNumber();",
+          "example_file": "Get_Version_History_of_Future_Version_Document_Example_CSharp.md"
+        }
+      ],
+      "note": "页面仅有 Obsolete 正文、无 ## Remarks，按 remarks_empty=true 处理并跳过冲突判定"
+    },
+    {
+      "member": "DateCreated",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例经 FeatureStatistics 的 Features 数组批量取 Feature 再读本属性，该批量路径页面未提",
+          "example_quote": "((Feature)features[iter]).DateCreated",
+          "example_file": "Get_Part's_Feature_Statistics_Example_CSharp.md"
+        }
+      ],
+      "note": "本成员名仅 IFeature 有；示例在 IFeature 对象上读取，确认同一对象"
+    }
+  ]
+}

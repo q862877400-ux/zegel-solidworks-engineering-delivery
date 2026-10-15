@@ -1,0 +1,149 @@
+{
+  "idx": 76,
+  "results": [
+    {
+      "member": "CropViewJaggedShapeIntensity",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Crop_Drawing_View_Using_Jagged_Outline_Example_CSharp.md",
+        "Crop_Drawing_View_Using_Jagged_Outline_Example_VB.md",
+        "Crop_Drawing_View_Using_Jagged_Outline_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把两条可用性前提写成显式嵌套：先判 NoOutline 为假，再判 JaggedOutline 为真，才读本属性；成员页只给散文条件。",
+          "example_quote": "    If swView.CropViewNoOutline Then\n        Debug.Print \"No outline.\"\n    Else\n        If swView.CropViewJaggedOutline Then\n            Debug.Print \"Jagged outline with shape intensity (1=most to 5=least): \" & swView.CropViewJaggedShapeIntensity",
+          "example_file": "Crop_Drawing_View_Using_Jagged_Outline_Example_VB.md"
+        },
+        {
+          "what": "示例在读之前只用 Crop2(True, False, 5) 建出裁剪视图，成员页未说明该强度值从哪条路径写入。",
+          "example_quote": "    errors = swView.Crop2(True, False, 5)",
+          "example_file": "Crop_Drawing_View_Using_Jagged_Outline_Example_VB.md"
+        }
+      ],
+      "note": "无冲突：两条前提在示例中均被满足，5=最弱也与 Returns 的 1(most)–5(least) 一致。"
+    },
+    {
+      "member": "CropViewNoOutline",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Crop_Drawing_View_Using_Jagged_Outline_Example_CSharp.md",
+        "Crop_Drawing_View_Using_Jagged_Outline_Example_VB.md",
+        "Crop_Drawing_View_Using_Jagged_Outline_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 CropViewNoOutline 当外层门、CropViewJaggedOutline 嵌在其 Else 分支；本成员页 Remarks 完全没提 JaggedOutline（只在 See Also 出现）。",
+          "example_quote": "    If swView.CropViewNoOutline Then\n        Debug.Print \"No outline.\"\n    Else\n        If swView.CropViewJaggedOutline Then\n            Debug.Print \"Jagged outline with shape intensity (1=most to 5=least): \" & swView.CropViewJaggedShapeIntensity",
+          "example_file": "Crop_Drawing_View_Using_Jagged_Outline_Example_VB.md"
+        }
+      ],
+      "note": "无冲突：Returns 的「True=不显示轮廓」与示例 If 分支及打印文本 \"No outline.\" 一致。"
+    },
+    {
+      "member": "Cross",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Ellipse_Example_CSharp.md",
+        "Create_Ellipse_Example_VBNET.md",
+        "Get_Angle_Between_Plane_and_Line_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示 Cross 是实例方法：接收者是左操作数、实参是右操作数，返回值是可直接再调 GetLength() 的新向量；成员页没说清左右角色。",
+          "example_quote": "    Set crossVec = curveVec.Cross(normVec)",
+          "example_file": "Get_Angle_Between_Plane_and_Line_Example_VB.md"
+        },
+        {
+          "what": "另一份示例把两个操作数的角色对调使用，说明返回值与接收者不是同一对象。",
+          "example_quote": "\t            MinVecunit = (MathVector)normVec.Cross(MajVecunit);",
+          "example_file": "Create_Ellipse_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段 ⇒ 按纪律跳过冲突判定。页内 Examples 只列 VBA 一份，另两份也真调用了 Cross。"
+    },
+    {
+      "member": "CurrentParagraph",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Paragraph_Properties_Example_CSharp.md",
+        "Get_and_Set_Paragraph_Properties_Example_VB.md",
+        "Get_and_Set_Paragraph_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出可写范围 0..Count-1，且每次设完立刻调用 GetText 等方法；成员页只说「0-based index」没给上界。",
+          "example_quote": "        For paragraphIndex = 0 To numParagraphs - 1\n            paragraphs.CurrentParagraph = paragraphIndex\n            Debug.Print \"paragraph(\" & paragraphIndex & \"): \"; paragraphs.GetText(True)",
+          "example_file": "Get_and_Set_Paragraph_Properties_Example_VB.md"
+        }
+      ],
+      "note": "无冲突：示例先用 paragraphs.count 定界再按 0..Count-1 赋值，与 Remarks 两条完全对上。"
+    },
+    {
+      "member": "CurrentRevision",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Drawing_Sheet_Zones_Example_CSharp.md",
+        "Create_Drawing_Sheet_Zones_Example_VB.md",
+        "Create_Drawing_Sheet_Zones_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例表明 CurrentRevision 读到的就是 AddRevision 刚加进去的那个 ID 串，且必须紧跟在其后读；成员页只说「Latest revision」。",
+          "example_quote": "    Debug.Print \"  New revision: \" & revTableAnno.AddRevision(\"A\")\n    Debug.Print \"  Current revision: \" & revTableAnno.CurrentRevision",
+          "example_file": "Create_Drawing_Sheet_Zones_Example_VB.md"
+        }
+      ],
+      "note": "无冲突：先 AddRevision 再读，与 Remarks「用 AddRevision 加版本并取其 ID」一致；签名 {get;} string 也与 & 拼接一致。"
+    },
+    {
+      "member": "CurrentSheet",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 AddPrintRange 1, 1 之后读它，并与 SheetCount 同列打印 ⇒ 是可与总张数对照的表序索引；成员页未给索引基数。",
+          "example_quote": "    Debug.Print \"  Current sheet: \" & printSpec.CurrentSheet",
+          "example_file": "Print_Drawing_as_High_Quality_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段 ⇒ 按纪律跳过冲突判定；Returns 只写「Index of current sheet」，未声明 0/1 基。"
+    },
+    {
+      "member": "Curvature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Spline_Handles_Example_CSharp.md",
+        "Get_and_Set_Spline_Handles_Example_VB.md",
+        "Get_and_Set_Spline_Handles_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Curvature control must be enabled for this property to have an effect. Use [[ISplineHandle::CurvatureControlled]] to see if curvature control is enabled or to set curvature control for this spline handle.",
+          "example_quote": "        Debug.Print \" Curvature: \" & swSplineHandle(i).Curvature",
+          "example_file": "Get_and_Set_Spline_Handles_Example_VB.md",
+          "why": "Remarks 说必须先开曲率控制；三份示例里 CurvatureControlled 出现 0 次，仍把它当有效读数打印。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例在 0..UBound 循环里对每个句柄都读 Curvature，而同段的 RadiusOfCurvature 还被写入；Remarks 只把 Curvature 限定在加了曲率控制的点。",
+          "example_quote": "        Debug.Print \" Curvature: \" & swSplineHandle(i).Curvature\n        Debug.Print \" Radius of curvature: \" & swSplineHandle(i).RadiusOfCurvature\n        If (i = 3) Then\n            swSplineHandle(i).RadiusOfCurvature = swSplineHandle(i).RadiusOfCurvature / 2",
+          "example_file": "Get_and_Set_Spline_Handles_Example_VB.md"
+        }
+      ],
+      "note": "唯一实质冲突：曲率控制前置未被示例建立；其余无冲突。"
+    }
+  ]
+}

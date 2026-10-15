@@ -1,5 +1,5 @@
 {
- "at": "2026-10-03 23:28:45",
+ "at": "2026-10-09 23:03:23",
  "scanned_pages": 12123,
  "obsolete_count": 1671,
  "entries": [
@@ -3254,7 +3254,7 @@
   {
    "interface": "IFeature",
    "member": "GetBody",
-   "successor": "IFeatures::GetFaces",
+   "successor": "IFace2::GetBody",
    "obsolete_line": "Obsolete. Superseded by [[IFeatures::GetFaces]], [[IFeatures::IGetFaces2]], [[IFace2::GetBody]], and [[IFace2::IGetBody]].",
    "page": "C:\\swapi\\types\\IFeature\\GetBody.md"
   },
@@ -3282,7 +3282,7 @@
   {
    "interface": "IFeature",
    "member": "IGetBody",
-   "successor": "IFeatures::GetFaces",
+   "successor": "IFace2::IGetBody",
    "obsolete_line": "Obsolete. Superseded by [[IFeatures::GetFaces]], [[IFeatures::IGetFaces2]], [[IFace2::GetBody]], and [[IFace2::IGetBody]].",
    "page": "C:\\swapi\\types\\IFeature\\IGetBody.md"
   },
@@ -6964,7 +6964,7 @@
   {
    "interface": "IModelDoc2",
    "member": "SketchTrim",
-   "successor": "ISketchManager::SketchExtend",
+   "successor": "ISketchManager::SketchTrim",
    "obsolete_line": "Obsolete. Superseded by [[ISketchManager::SketchExtend]] and [[ISketchManager::SketchTrim]].",
    "page": "C:\\swapi\\types\\IModelDoc2\\SketchTrim.md"
   },
@@ -7860,7 +7860,7 @@
   {
    "interface": "INote",
    "member": "IGetTextFormat",
-   "successor": "IAnnotation::GetTextFormat",
+   "successor": "IAnnotation::IGetTextFormat",
    "obsolete_line": "Obsolete. Superseded by [[IAnnotation::GetTextFormat]] and [[IAnnotation::IGetTextFormat]].",
    "page": "C:\\swapi\\types\\INote\\IGetTextFormat.md"
   },
@@ -7902,7 +7902,7 @@
   {
    "interface": "INote",
    "member": "ISetTextFormat",
-   "successor": "IAnnotation::SetTextFormat",
+   "successor": "IAnnotation::ISetTextFormat",
    "obsolete_line": "Obsolete. Superseded by [[IAnnotation::SetTextFormat]] and [[IAnnotation::ISetTextFormat]].",
    "page": "C:\\swapi\\types\\INote\\ISetTextFormat.md"
   },
@@ -8917,7 +8917,7 @@
   {
    "interface": "ISheet",
    "member": "ICreateOLEObject",
-   "successor": "IModelDocExtension::CreateOLEObject",
+   "successor": "IModelDocExtension::ICreateOLEObject",
    "obsolete_line": "Obsolete. Superseded by [[IModelDocExtension::CreateOLEObject]] and [[IModelDocExtension::ICreateOLEObject]].",
    "page": "C:\\swapi\\types\\ISheet\\ICreateOLEObject.md"
   },

@@ -1,0 +1,150 @@
+{
+  "idx": 176,
+  "results": [
+    {
+      "member": "GetDimensionItemCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把该计数当作 GetDimensionItemAtIndex 的 0 基上界循环，成员页只说「number of dimension items」。",
+          "example_quote": "For k = 0 To swPMIDataDim.GetDimensionItemCount - 1",
+          "example_file": "Get_PMI_Data_Example_VB.md"
+        },
+        {
+          "what": "C# 版同义写法：k <= count-1，并逐项 GetDimensionItemAtIndex(k)。",
+          "example_quote": "for (k = 0; k <= swPMIDataDim.GetDimensionItemCount() - 1; k++)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定；两份示例都真调用该成员。"
+    },
+    {
+      "member": "GetDimensions",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Library_Feature_Data_Example_CSharp.md",
+        "Get_Library_Feature_Data_Example_VB.md",
+        "Get_Library_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只指向「Accessing Selections」那篇文档；示例给出实际次序：先 AccessSelections。",
+          "example_quote": "boolstatus = LibraryFeatureData.AccessSelections(ModelDoc2, null);",
+          "example_file": "Get_Library_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例收尾调用 ReleaseSelectionAccess，与上面的 AccessSelections 成对。",
+          "example_quote": "LibraryFeatureData.ReleaseSelectionAccess();",
+          "example_file": "Get_Library_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "成员页只说返回 System.object；示例具体化：值是 double[]、DimName 是 String[]。",
+          "example_quote": "vLocDimVal = (double[])LibraryFeatureData.GetDimensions(0, out vLocDimName);",
+          "example_file": "Get_Library_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 与示例一致（示例满足 AccessSelections 前置），无冲突。"
+    },
+    {
+      "member": "GetDimensionsCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Library_Feature_Data_Example_CSharp.md",
+        "Get_Library_Feature_Data_Example_VB.md",
+        "Get_Library_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例注释给出 Type=0 的具体含义（定位尺寸），成员页只给枚举名。",
+          "example_quote": "// Get the number of locating dimensions",
+          "example_file": "Get_Library_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例把计数用在晚绑定 GetDimensions 之前；Remarks 写的前置对象是 IGetDimensions，二者可并存。",
+          "example_quote": "SizeDimensionsCount = LibraryFeatureData.GetDimensionsCount(1);",
+          "example_file": "Get_Library_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "紧接计数之后的取值调用，证明 Count 与 GetDimensions 成对使用。",
+          "example_quote": "vSizDimVal = (double[])LibraryFeatureData.GetDimensions(1, out vSizDimName);",
+          "example_file": "Get_Library_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 提 IGetDimensions、示例用 GetDimensions，非互斥，不计冲突。"
+    },
+    {
+      "member": "GetDirection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_and_Release_Access_to_Edges_Example_CSharp.md",
+        "Access_and_Release_Access_to_Edges_Example_VB.md",
+        "Access_and_Release_Access_to_Edges_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 指向「Accessing Selections」文档；示例先 AccessSelections 再逐边调本成员。",
+          "example_quote": "bRet = swRip.AccessSelections(swModel, null);",
+          "example_file": "Access_and_Release_Access_to_Edges_Example_CSharp.md"
+        },
+        {
+          "what": "示例注释把 0/1/2 写成 current/other/both，成员页写 this/other/both —— 同义，非冲突。",
+          "example_quote": "Debug.Print(\"Direction of rip for edge (0=current, 1=other, 2=both): \" + swRip.GetDirection(swEdge));",
+          "example_file": "Access_and_Release_Access_to_Edges_Example_CSharp.md"
+        },
+        {
+          "what": "示例末尾 ReleaseSelectionAccess，说明该成员落在选择访问区间内。",
+          "example_quote": "swRip.ReleaseSelectionAccess();",
+          "example_file": "Access_and_Release_Access_to_Edges_Example_CSharp.md"
+        }
+      ],
+      "note": "示例满足 Remarks 指向的访问前置，三份语言版本一致，无冲突。"
+    },
+    {
+      "member": "GetDirectionReference",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "指定示例调的是 MoveFaceFeatureData 的同名成员，非本接口成员，按纪律不采用。"
+    },
+    {
+      "member": "GetDirectionVector",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份 DimXpert 示例里 GetDirectionVector 是 DimXpert 注释对象的三出参方法，非本成员。"
+    },
+    {
+      "member": "GetDisabledEquationCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Disable_Equation_Example_CSharp.md",
+        "Disable_Equation_Example_VB.md",
+        "Disable_Equation_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在禁用任何方程之前先读一次，说明是随模型状态变的计数。",
+          "example_quote": "Debug.Print(\"Number of disabled equations in part before running macro = \" + disabledCount);",
+          "example_file": "Disable_Equation_Example_CSharp.md"
+        },
+        {
+          "what": "set_Disabled 之后复读同一计数，是成员页 Returns 未提的读回校验用法。",
+          "example_quote": "Debug.Print(\"Number of disabled equations in part after running macro = \" + disabledCount);",
+          "example_file": "Disable_Equation_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，跳过冲突判定；三份示例都真调用该成员。"
+    }
+  ]
+}

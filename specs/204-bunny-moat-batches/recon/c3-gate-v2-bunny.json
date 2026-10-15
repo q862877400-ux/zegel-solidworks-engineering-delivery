@@ -1,0 +1,108 @@
+{
+  "role": "V2",
+  "attacked": 86,
+  "counterexamples": [
+    {
+      "capability": "costing",
+      "precondition": "必须先打开一个零件文档（machined_part.sldprt / sheet_metal_part.sldprt）",
+      "why": "被引示例只出现 machined_part.sldprt；sheet_metal_part.sldprt 全文 208 行零命中，属编造的第二个文件名。",
+      "evidence": "Create_Machining_Costing_Analyses_Example_CSharp.md L12-14 逐字：'// Preconditions:' '// 1. Open:' '//    C:\\Users\\Public\\Documents\\SOLIDWORKS\\SOLIDWORKS 2018\\samples\\tutorial\\costing\\machined_part.sldprt'"
+    },
+    {
+      "capability": "chamfer_fillet_on_selection",
+      "precondition": "零件 block.sldprt / block20.sldprt 必须存在并已打开",
+      "why": "被引示例的前置只有 block.sldprt 一条；block20.sldprt 全文零命中，第二个文件名是编的。",
+      "evidence": "Create_Asymmetric_Elliptic_Fillets_Example_VBNET.md L12-14 逐字：\"' Preconditions:\" / \"' 1. Open public_documents\\samples\\tutorial\\api\\block.sldprt.\" / \"' 2. Open an Immediate window.\""
+    },
+    {
+      "capability": "pattern_and_mirror",
+      "precondition": "官方前置：先打开含种子特征的零件文档（varyinstance.sldprt / holecube.sldprt）",
+      "why": "被引示例 81 行只打开 varyInstance.sldprt；holecube.sldprt 零命中，第二个文件名是编的。",
+      "evidence": "Create_Circular_Pattern_Example_CSharp.md L13 逐字：'// Preconditions: Open public_documents\\samples\\tutorial\\api\\varyinstance.sldprt'；L34 ActivateDoc3(\"varyInstance.sldprt\", ...)"
+    },
+    {
+      "capability": "part_and_features",
+      "precondition": "包覆用的草图必须是 2D，官方原话 3D sketches are invalid",
+      "why": "标成「官方原话」的那串字不在被引示例里：该示例全文只谈选基准面-画圆-选草图选面-InsertWrapFeature2，从未提 2D/3D。该原话出自 InsertWrapFeature2 的 Remarks。",
+      "evidence": "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md 全文 77 行，grep 'invalid' / '3D' 均 0 命中；被归给的 from 与「原话」来源不符"
+    },
+    {
+      "capability": "parameter_updates",
+      "precondition": "SetSystemValue3 之后必须调 EditRebuild3 才生效（示例两处均在设值后重建）",
+      "why": "「两处」是编的计数：示例里 SetSystemValue3 与 EditRebuild3 各只出现 1 次。",
+      "evidence": "Change_Dimension_Example_CSharp.md L58-59 逐字：'errors = swDim.SetSystemValue3(4.72, ...);' / 'swModel.EditRebuild3();' —— 全文件计数 SetSystemValue3=1、EditRebuild3=1"
+    },
+    {
+      "capability": "costing_readback",
+      "precondition": "GetBodyCount() > 0 才有实体可列，否则官方示例打印 No bodies 后退出",
+      "why": "示例的退出判据是 isBody（有没有「加工体」），由 GetBodyType()==Machined 分支里置位，与 GetBodyCount>0 是两个条件；有体但非加工体照样会走 No bodies 分支。",
+      "evidence": "Create_Machining_Costing_Analyses_Example_CSharp.md L118 'If ((nbrCostingBodies > 0))'；L131 'isBody = true;' 只在 L129 'If ((swCostingBody.GetBodyType() == (int)swcBodyType_e.swcBodyType_Machined))' 内；L158 'If (!isBody )' 才打印 No bodies"
+    },
+    {
+      "capability": "part_and_features",
+      "precondition": "该示例另设两条：装配体须完全解算；边若无法转成工程图视图则不建尺寸",
+      "why": "内容本身属实，但 from 字段是 GBK 乱码拼串、不是可解析路径；且串尾标「（1）」而这两条其实是示例的前置(2)与 NOTE，标注错位。",
+      "evidence": "from 原值 = 'Dimension_Edge_in_Drawing_Example_VB.md\\ufffd\\ufffdPreconditions \\ufffd\\ufffd (1) \\ufffd\\ufffd\\ufffd\\ufffd'；实体在 Dimension_Edge_in_Drawing_Example_VB.md L33-34 \"' (2) If an assembly, it is fully resolved.\" 与 L46-49 \"' NOTE: The dimension is not created if the edge cannot be converted in a drawing view.\""
+    }
+  ],
+  "covered_does_not_cover": [
+    {
+      "capability": "sketch_chamfer",
+      "quote": "选中两条（选区计数 2）",
+      "why": "这条前置的主张是「该成员在两索引与 examples 内 0 份示例」——是关于示例语料「缺失」的事实；quote 只证明选了 2 条线，完全无法佐证缺失。且 from 本身是 API 文档页、不是示例。"
+    },
+    {
+      "capability": "weldments",
+      "quote": "工具不读选区也不依赖选中状态：它自己按草图名取线段",
+      "why": "前置要求「须先 SelectByID2 选中再赋值」，而 quote 明说本工具不依赖选中状态。引用句是在否认该前置，不是覆盖它——按此证据该前置属未验证而非已覆盖。"
+    },
+    {
+      "capability": "export_delivery",
+      "quote": "★ 另记前置条件：零件路径要求「钣金件 + 必须先保存」",
+      "why": "quote 是把前置原样复述一遍（自述式），不是任何一次真机读数。用被检验的主张去证明自己，属循环取证，不构成覆盖。"
+    },
+    {
+      "capability": "weldments",
+      "quote": "下有 111 个 .sldlfp",
+      "why": "前置是两个合取项：轮廓库特征(.sldlfp) 存在 且 零件模板存在。quote 只覆盖前一半，对「零件模板」一字未提，合取项未整体覆盖。"
+    },
+    {
+      "capability": "export_delivery",
+      "quote": "export_to_bmp(model, path, 800, 600) 建成",
+      "why": "前置指名官方示例要先打开 cstick.sldprt 设为活动文档；quote 里的 model 是泛指、未指名任何文档，也未显示活动文档身份，只证明「导出成功」。"
+    },
+    {
+      "capability": "part_and_features",
+      "quote": "唯一差别是本轮每次选之前都 ClearSelection2(True)",
+      "why": "前置是「AddDimension2 调用前实体处于选中态」；quote 描述的是清空选区的做法差异，既没证明调用时刻有选中实体，也没证明那条线由 CreateLine 现画后直接标注。"
+    }
+  ],
+  "misclassified": [
+    {
+      "capability": "declarative_hole_creation",
+      "kind": "not_covered 实为 covered",
+      "detail": "与 selection_helpers 完全同一条前置（GetSelectionPoint2 / Open a part or assembly and select a face / 同一个 from 文件 Create_Drag_Arrow_Manipulator_Example_VB.md）：selection_helpers 判 covered 且引「对面有效…对顶点 6 种组合全回 None」，本条判 not_covered 且 evidence_quote 为空。同一成员同一示例两种判，必有一错；按那句 evidence，本条应为 covered。"
+    },
+    {
+      "capability": "selection_helpers",
+      "kind": "not_covered 实为 covered",
+      "detail": "「GetBodies2 前置：Open a part or assembly.」（from=Select_Bodies_Example_VB.md）判 not_covered、quote 空；而 declarative_hole_creation 里同族前置（GetBodies2/GetEdges，from 同为 Select_Bodies_Example_VB.md 与 Check_Edges_for_Faults_Example_VB.md）判 covered 并引「5 个孔型全部在全新文档里建成」。后者已证明有文档在场，前者同条件同证据面判 not_covered 属重复计一次未覆盖。"
+    },
+    {
+      "capability": "preview_and_review_report",
+      "kind": "not_covered 实为 covered（系统性）",
+      "detail": "6 条 not_covered 里 6 条都是「须有已打开的模型文档」类（Model document is open / Open a part / Verify that the specified part exists），而本能力 evidence 是「ok=true / 20 个特征 / 4 个非空 BMP」——出得了 20 个特征与非空 BMP 即已证文档在场。对照组 feature_readback_criterion 把同款「Model document is active」判 covered。这一族 6 条属过度严格。"
+    },
+    {
+      "capability": "custom_properties_and_bom",
+      "kind": "cannot_tell 应为「不适用」",
+      "detail": "note 自述「BOM 表前置不适用：本实现走 IAssemblyDoc.GetComponents，不读 BOM 表，故记 cannot_tell」。既然实现根本不碰 BOM 表，这条前置不是「说不清」而是与本能力无关，混进 81 条 cannot_tell 会污染能力级 cannot_tell 计数。"
+    },
+    {
+      "capability": "(数据面)",
+      "kind": "from 字段不可解析",
+      "detail": "not_covered 的 from 里有 8 个根本不是示例文件：6 个是 API 文档页（如 'IFeatureManager/HoleWizard5.md ## Remarks'、'IModelDocExtension/SketchOffsetOnSurface.md ## Remarks'）、1 个 .txt（_raw/chm_cosworks/…）、1 个是 GBK 乱码串。这类行既不在「官方示例」口径内，也不参与 examples 逐字核对，属统计口径外的混装。"
+    }
+  ],
+  "conclusion": "找到 7 条反例（其中 5 条硬反例：3 处编造示例文件名 sheet_metal_part.sldprt / block20.sldprt / holecube.sldprt，1 处把「3D sketches are invalid」这条官方原话安到不含它的示例上，1 处编造「示例两处」的计数；另 2 条为口径错：No bodies 退出判据与 GetBodyCount 混同、from 字段乱码不可解析）；另攻 6 条 covered 全部不成立或只覆盖一半（其中 sketch_chamfer 那条以「选区计数 2」去证明「示例语料缺失」、weldments 那条引用的原文在否认前置本身）；另查出 5 组分类偏低，其中 3 组为 not_covered 实应 covered（declarative_hole_creation / selection_helpers 的 GetSelectionPoint2 与 GetBodies2 两条同成员同示例同前置被判成两种状态，preview_and_review_report 的 6 条「须有已打开文档」被 evidence 的 20 特征+4 非空 BMP 反证已覆盖），2 组为 cannot_tell 应改「不适用」/from 不可解析。总体判定：C3 主体结论方向成立但计数偏高，80 条 has_uncovered 里至少 2 条能力因自身矛盾判据而被虚增，covered 那 131 条的逐字闸只验了「引得到」，没验「覆盖的是那条前置」。"
+}

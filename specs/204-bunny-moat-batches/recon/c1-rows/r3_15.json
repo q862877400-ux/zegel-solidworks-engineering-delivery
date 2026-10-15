@@ -1,0 +1,110 @@
+{
+  "idx": 15,
+  "pages_read": 13,
+  "rows": [
+    {
+      "iface": "IView",
+      "file": "EmphasizeOutline.md",
+      "signature": "System.bool EmphasizeOutline {get; set;}",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（无括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetDetailCircleStrings.md",
+      "signature": "System.object GetDetailCircleStrings()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetFirstCenterMark2.md",
+      "signature": "System.object GetFirstCenterMark2()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetPolylines7.md",
+      "signature": "System.object GetPolylines7( System.short CrossHatchOption, out System.object Polylines )",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetArcs2.md",
+      "signature": "System.double IGetArcs2()",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetFaceHatches.md",
+      "signature": "FaceHatch IGetFaceHatches( System.int NumFacesHatches )",
+      "obsolete": false,
+      "pointer": true,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetVisibleEntities.md",
+      "signature": "Entity IGetVisibleEntities( Component2 LpViewComponent, System.int EntityType, System.int ViewEntityCount )",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IView",
+      "file": "ScaleRatio.md",
+      "signature": "System.object ScaleRatio {get; set;}",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（无括号）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "Create3rdAngleViews.md",
+      "signature": "System.bool Create3rdAngleViews( System.string ModelName )",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "DropDrawingViewFromPalette2.md",
+      "signature": "View DropDrawingViewFromPalette2( System.string PaletteViewName, System.double X, System.double Y, System.double Z )",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "ICreateLinearDim2.md",
+      "signature": "void ICreateLinearDim2( ref System.double P0, ref System.double P1, ref System.double P2, ref System.double P3, ref System.double P4, System.double Val, System.int PrimPrec, System.string Text, ref System.double TextPoint, System.double Angle, System.double TextHeight, System.string Prefix, System.string Suffix, System.string Callout1, System.string Callout2, System.int TolType, System.string TolMin, System.string TolMax, System.int TolPrec, System.double ArrowSize, System.int ArrowStyle, System.int ArrowDir, System.double WitnessGap, System.double WitnessOvershoot, System.bool DualDisplay, System.int DualPrecision )",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "InsertRevisionSymbol.md",
+      "signature": "Note InsertRevisionSymbol( System.double X, System.double Y )",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "ViewTangentEdges.md",
+      "signature": "void ViewTangentEdges()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    }
+  ]
+}

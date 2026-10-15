@@ -1,0 +1,128 @@
+{
+  "idx": 125,
+  "results": [
+    {
+      "member": "FeatureManagerSplitterPosition",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+        "Add_ActiveX_Tabs_to_FeatureManager_Design_Tree_Example_CSharp.md",
+        "Add_ActiveX_Tabs_to_FeatureManager_Design_Tree_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 0.5 这一档注明「原树显示在副本下方」；Remarks 只说两格各占 50%，未说哪一格是原树。",
+          "example_quote": "the original is displayed below the copy",
+          "example_file": "Add_ActiveX_Tabs_to_FeatureManager_Design_Tree_Example_VB.md"
+        }
+      ],
+      "note": "4 份所引示例全传 0.5，与 Remarks 的 0.5 用法自洽；0 与 1 两档未被这些示例演示。"
+    },
+    {
+      "member": "FeatureNames",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_CSharp.md",
+        "Get_Part's_Feature_Statistics_Example_VB.md",
+        "Get_Part's_Feature_Statistics_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页没有 ## Remarks 段，按纪律跳过冲突判定；3 份示例都取自 FeatureStatistics。"
+    },
+    {
+      "member": "FeatureReferenceCurve",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Reference_Curve_Example_CSharp.md",
+        "Create_Reference_Curve_Example_VB.md",
+        "Create_Reference_Curve_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页没有 ## Remarks 段，跳过冲突判定；示例走 ModelDoc2.FeatureReferenceCurve(1, curves, true, \"\", out err)。"
+    },
+    {
+      "member": "FeatureRevolve2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_360-degree_Revolve_Feature_Example_CSharp.md",
+        "Create_360-degree_Revolve_Feature_Example_VB.md",
+        "Create_360-degree_Revolve_Feature_Example_VBNET.md",
+        "Create_Cut-sweep_Feature_Using_Tool_Body_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- the sketch to revolve, using Mark = 0.",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Line2\", \"SKETCHSEGMENT\", -0.0264169576805983, -0.0449999999999998, 0.0293457016154969, false, 16, null, 0);",
+          "example_file": "Create_Cut-sweep_Feature_Using_Tool_Body_Example_CSharp.md",
+          "why": "该示例 ClearSelection2 后只按 mark=16 选了旋转轴，未按 Remarks 用 mark=0 选轮廓草图，仍建成旋转特征；另两份示例则同时选了草图与轴。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "360° 示例给 Dir1Angle 传 6.2831853071796，落在 swEndCondBlind(=0) 上，实证 Dir1Angle 口径是弧度。",
+          "example_quote": "swFeat = swFeatMgr.FeatureRevolve2(True, True, False, False, False, False, 0, 0, 6.2831853071796, 0, False, False, 0.01, 0.01, 0, 0, 0, True, True, True)",
+          "example_file": "Create_360-degree_Revolve_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 允许轴用 mark 4 或 16；四份示例都用 16，无 mark 冲突。冲突只在「是否必须选草图」这一条上。"
+    },
+    {
+      "member": "FeatureRevolveCut",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Revolve_Features_Example_CSharp.md",
+        "Create_Revolve_Features_Example_VB.md",
+        "Create_Revolve_Features_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Options 传 0，而 Remarks 只点名支持 swAutoCloseSketch（其值为 1）；示例给出 0 的实际可行取法。",
+          "example_quote": "swFeatMgr.FeatureRevolveCut(6.26573201466, false, 0, 0, 0, true, true);",
+          "example_file": "Create_Revolve_Features_Example_CSharp.md"
+        }
+      ],
+      "note": "示例 UseAutoSelect=true 且未另选体，与 Remarks「UseAutoSelect 为 false 时才须选体」自洽；三份示例取值完全一致。"
+    },
+    {
+      "member": "FeatureScope",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份所引示例无一真用本成员：两份调 SweepFeatureData.FeatureScope，两份调 SurfCutFeatureData.FeatureScope，均属同名不同接口。"
+    },
+    {
+      "member": "FeatureSelectorOptions",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Datum_Example_CSharp.md",
+        "Get_and_Set_Datum_Example_VB.md",
+        "Get_and_Set_Datum_Example_VBNET.md",
+        "Get_and_Set_Pattern_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Array of long values as defined in [[swDimXpertFeatureSelectorOption_e]]; however, only the first element in the array is used; all of the other elements, if any, in the array are ignored",
+          "example_quote": "int[] dimarray = new int[1];",
+          "example_file": "Get_and_Set_Datum_Example_CSharp.md",
+          "why": "页面说数组元素是 long；C# 示例声明 int[]（32 位）后整数组直接赋值。同期 VB 示例写的是 As Long，与页面一致，故只在 C# 这一侧对不上。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例只给 1 元素数组，与「只取首元素、其余忽略」吻合；Pattern 示例把首元素设为 -1 并注为 default。",
+          "example_quote": "dimarray[0] = -1;",
+          "example_file": "Get_and_Set_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "swapi 的 enums 目录下没有 swDimXpertFeatureSelectorOption_e 页，故 -1、0 的枚举名查不到，不作断言。"
+    }
+  ]
+}

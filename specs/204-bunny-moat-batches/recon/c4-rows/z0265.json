@@ -1,0 +1,187 @@
+{
+  "idx": 265,
+  "results": [
+    {
+      "member": "GetSuppression2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Component_s_Suppression_State_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给前置与取件路径（先选组件再取），成员页整段没有前置。",
+          "example_quote": "' 2. Select a component.",
+          "example_file": "Get_and_Set_Component_s_Suppression_State_Example_VB.md"
+        },
+        {
+          "what": "示例把返回值直接当 swComponentSuppressionState_e 用，未处理成员页说的错误码 5。",
+          "example_quote": "Debug.Print \" Suppression state as defined in swComponentSuppressionState_e = \" & swComp.GetSuppression2",
+          "example_file": "Get_and_Set_Component_s_Suppression_State_Example_VB.md"
+        }
+      ],
+      "note": "成员页讲错误码 5 与轻量化语义，示例与之相容，无冲突。"
+    },
+    {
+      "member": "GetSurface",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Calculate_Closest_Distance_Between_Faces_Example_VB.md",
+        "Create_On-surface_Spline_Example_CSharp.md",
+        "Create_On-surface_Spline_Example_VB.md",
+        "Create_On-surface_Spline_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；四份示例确实都调用 GetSurface。"
+    },
+    {
+      "member": "GetSustainability",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Calculate_Environmental_Impact_of_Assembly_Example_CSharp.md",
+        "Calculate_Environmental_Impact_of_Assembly_Example_VB.md",
+        "Calculate_Environmental_Impact_of_Assembly_Example_VBNET.md",
+        "Calculate_Environmental_Impact_of_Part_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "[[ISustainabilityApp]]",
+          "example_quote": "sustain = (swgsustainabilityApp)PDoc.Extension.GetSustainability();",
+          "example_file": "Calculate_Environmental_Impact_of_Part_Example_CSharp.md",
+          "why": "成员页 Returns 写 ISustainabilityApp，示例强转到 swgsustainabilityApp，两个接口名不同。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "C#/VB.NET 前置要求从 install_dir\\api\\redist 引用 sustainability 互操作程序集，成员页未提。",
+          "example_quote": "navigate to the install_dir\\api\\redist folder and",
+          "example_file": "Calculate_Environmental_Impact_of_Assembly_Example_CSharp.md"
+        },
+        {
+          "what": "示例要求等 Sustainability 任务窗格结果刷新完才读，成员页未写这一前置。",
+          "example_quote": "finish updating in the Sustainability Task Pane.",
+          "example_file": "Calculate_Environmental_Impact_of_Assembly_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 版用后期绑定的 sustainabilityLib.swgsustainabilityApp，不做强制转换。",
+          "example_quote": "Dim sustain As sustainabilityLib.swgsustainabilityApp",
+          "example_file": "Calculate_Environmental_Impact_of_Assembly_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只说 Professional/Premium 版限制；返回接口名才是真冲突点。"
+    },
+    {
+      "member": "GetSymArcs2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_CSharp.md",
+        "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VB.md",
+        "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回强转为一维 double 数组线性遍历；成员页只说「每弧的数组」未定元素类型。",
+          "example_quote": "arcInfo = (double[])swEnvironment.GetSymArcs2(\"<GTOL-SPROF>\");",
+          "example_file": "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_CSharp.md"
+        },
+        {
+          "what": "示例说明末尾两个是否标志以 1/0 数值给出，成员页只写 whether。",
+          "example_quote": "whether the arc is filled (1 = true, 0 = false),",
+          "example_file": "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VB.md"
+        },
+        {
+          "what": "成员页 NOTE 的举例是空的，示例给出实际可用的 SymId 写法。",
+          "example_quote": "arcInfo = swEnvironment.GetSymArcs2(\"<GTOL-SPROF>\")",
+          "example_file": "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VB.md"
+        },
+        {
+          "what": "示例把弧数取自 GetSymEdgeCounts 的下标 1，与成员页指引一致。",
+          "example_quote": "Debug.Print (\"Number of arcs: \" & nbrSymbols(1))",
+          "example_file": "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VB.md"
+        }
+      ],
+      "note": "成员页对「数组大小取决于弧数」措辞含糊，但与示例不构成硬冲突，故留空。"
+    },
+    {
+      "member": "GetSymEdgeCounts",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_CSharp.md",
+        "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VB.md",
+        "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 示例强转 short[]，坐实成员页写的 short 元素类型。",
+          "example_quote": "nbrSymbols = (short[])swEnvironment.GetSymEdgeCounts(\"<GTOL-SPROF>\");",
+          "example_file": "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_CSharp.md"
+        },
+        {
+          "what": "示例把下标 0 的行数直接拿去当 GetSymLines 的坐标基数，给出具体用法。",
+          "example_quote": "Debug.Print (\"Number of lines: \" & nbrSymbols(0))",
+          "example_file": "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VB.md"
+        },
+        {
+          "what": "成员页 NOTE 的举例为空，示例给出实际可用的 SymId 写法。",
+          "example_quote": "nbrSymbols = swEnvironment.GetSymEdgeCounts(\"<GTOL-SPROF>\")",
+          "example_file": "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VB.md"
+        }
+      ],
+      "note": "五个下标与 short 类型两侧完全一致，无冲突。"
+    },
+    {
+      "member": "GetSymLines",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_CSharp.md",
+        "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VB.md",
+        "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例强转 double[]，与成员页的「array of doubles」一致并给出类型。",
+          "example_quote": "lineSymbols = (double[])swEnvironment.GetSymLines(\"<GTOL-SPROF>\");",
+          "example_file": "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_CSharp.md"
+        },
+        {
+          "what": "示例用 UBound+1 当坐标总数，成员页只给 6*i 下标表没给算式。",
+          "example_quote": "nbrLineCoordinates = lineSymbols.GetUpperBound(0);",
+          "example_file": "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_CSharp.md"
+        },
+        {
+          "what": "示例把首尾两点的 x,y,z 串成一行打印，成员页只列下标名。",
+          "example_quote": "Debug.Print (\"       (Line 1's x,y,z coordinates for first and second points,\")",
+          "example_file": "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VB.md"
+        }
+      ],
+      "note": "6*i 下标表与示例的线性遍历互洽，无冲突。"
+    },
+    {
+      "member": "GetSymbolXml",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置允许 2021 格式 Gtol，但先 ConvertFormat 转 2022 再读 XML，成员页只写限制。",
+          "example_quote": "If the selected Gtol can be converted from 2021, it",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        },
+        {
+          "what": "示例指出转换后 XML 里公差字面量是 .01 而非 0.01，成员页未提。",
+          "example_quote": "// Note: converted Gtol has",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "示例已在体内完成格式转换，与「仅 2022 格式有效」相容，故不判冲突。"
+    }
+  ]
+}

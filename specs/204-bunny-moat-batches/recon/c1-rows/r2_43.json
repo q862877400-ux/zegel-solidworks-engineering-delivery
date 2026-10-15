@@ -1,0 +1,15 @@
+{"idx":43,"pages_read":13,"rows":[
+{"iface":"IView","file":"GetBreakOutSectionCount.md","signature":"System.int GetBreakOutSectionCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetDimensionString.md","signature":"System.object GetDimensionString()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetHiddenComponents.md","signature":"System.object GetHiddenComponents()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetSplines.md","signature":"System.object GetSplines()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetDimensionDisplayInfo2.md","signature":"System.double IGetDimensionDisplayInfo2()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetParabolas2.md","signature":"System.double IGetParabolas2()","obsolete":false,"pointer":true,"zero":"是（空括号）"},
+{"iface":"IView","file":"IsBroken.md","signature":"System.bool IsBroken()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"ActivateView.md","signature":"System.bool ActivateView( System.string ViewName )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"CreateFlatPatternViewFromModelView3.md","signature":"View CreateFlatPatternViewFromModelView3( System.string ModelName, System.string ConfigName, System.double LocX, System.double LocY, System.double LocZ, System.bool HideBendLines, System.bool FlipView )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"GetLineFontInfo.md","signature":"System.object GetLineFontInfo( System.int Index )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"InsertBaseDim.md","signature":"void InsertBaseDim()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"SaveBlock.md","signature":"System.bool SaveBlock( System.string FileName )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"ISheet","file":"IGetProperties.md","signature":"System.double IGetProperties()","obsolete":true,"pointer":true,"zero":"是（空括号）"}
+]}

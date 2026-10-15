@@ -1,0 +1,124 @@
+{
+  "idx": 162,
+  "results": [
+    {
+      "member": "GetComponents2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Components_in_Each_BOM_Table_Row_Example_CSharp.md",
+        "Get_Components_in_Each_BOM_Table_Row_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：BOM 类型必须选 Parts only；成员页只说 Configuration 传空串用于 parts only 与缩进 BOM，未写该前置",
+          "example_quote": "// 4. Ensure that Parts only in Bom Type is selected.",
+          "example_file": "Get_Components_in_Each_BOM_Table_Row_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetComponentsAndTransforms",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Run_Interference_Detection_Example_CSharp.md",
+        "Run_Interference_Detection_Example_VB.md",
+        "Run_Interference_Detection_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先显式置 UseTransform=false 再调用，成员页未给任何前置",
+          "example_quote": "pIntMgr.UseTransform = false;",
+          "example_file": "Run_Interference_Detection_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetComponentsCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "所列 3 份示例调的是 HoleSeriesFeatureData2.GetComponentsCount，同名不同接口，按纪律不采用"
+    },
+    {
+      "member": "GetComponentsCount2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Components_in_Each_BOM_Table_Row_Example_CSharp.md",
+        "Get_Components_in_Each_BOM_Table_Row_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例虽先调 Count2，但遍历上界取自返回数组自身上界，并未用 Count2 返回值定数组长度",
+          "example_quote": "for (I = 0; I <= vPtArr.GetUpperBound(0); I++)",
+          "example_file": "Get_Components_in_Each_BOM_Table_Row_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说的调用先后在示例中成立（先 Count2 后 GetComponents2），不构成冲突"
+    },
+    {
+      "member": "GetComponentsTransformInterference",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Detect_Interferences_Using_a_Transform_Example_CSharp.md",
+        "Detect_Interferences_Using_a_Transform_Example_VB.md",
+        "Detect_Interferences_Using_a_Transform_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Transform 实参传的是与组件等长的 MathTransform 数组，成员页只写单个 IMathTransform",
+          "example_quote": "isInterfering = swIDM.GetComponentsTransformInterference((varComp), (varCompTrans), out (outcomp));",
+          "example_file": "Detect_Interferences_Using_a_Transform_Example_CSharp.md"
+        },
+        {
+          "what": "示例先置 TreatCoincidenceAsInterference=true，成员页未给该前置",
+          "example_quote": "swIDM.TreatCoincidenceAsInterference = true;",
+          "example_file": "Detect_Interferences_Using_a_Transform_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定；Transform 数组形态差异记在 more_specific"
+    },
+    {
+      "member": "GetCompositeFrame2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Gtol_Composite_Frame_Example_CSharp.md",
+        "Create_Gtol_Composite_Frame_Example_VB.md",
+        "Create_Gtol_Composite_Frame_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求文档里已有前两框符号相同的 GTol 且已在图形区选中它，成员页未写",
+          "example_quote": "// 1. Open a document with a geometric tolerance (GTol) whose first two\n//    frames have the same symbol.",
+          "example_file": "Create_Gtol_Composite_Frame_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetConcentricAlignmentType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VB.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例是在 GetLinkedMate() 拿到的关联配合上读取，不是被编辑的那个 mate；成员页只说 this mate",
+          "example_quote": "swLinkedMate = (Mate2)swMate.GetLinkedMate();",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定"
+    }
+  ]
+}

@@ -1,0 +1,1140 @@
+\swapi\types\IFeatureManager\FeatureLinearPattern5.md` 的 Obsolete 行；`scripts/sw_pattern.py`；`output/linear-pattern-*-evidence.json` 等 11 份；`docs/toolbar-gaps-backend-limits.md`（本轮产出）|
+| 380 | **★★ 上一条（事实 379）里的**例子是错的** —— 而抓出它的是「**负例验证**」** —— 2026-10-03（轮 483）。★ 事实 379 说「台账的 `entry` 里有的名字**根本不存在**，例如 `sw_part.linear_pattern`」。★★ **而实测：`sw_part` 里真的有** `linear_pattern`**（还有 `circular_pattern` / `linear_pattern_report`）** ⇒ 它是**真入口**，★ 我当时说错了** ⚠★ 而「假入口」这个**机制**本身仍然成立（★ 已接进 `build_toolbar_ledger.check_repo`）：★★ 而**它在现有这份台账上命中 0 条**（★ 即台账里**没有**假入口）。⇒ ★ 故事实 379 的**结论要收窄**：台账真正的问题**不是“假入口”**，而是★ **`level` 是 2026-10-03 五轮问答时手填的、之后从不自动更新** —— ★★ 所以本仓**已攻克**的那些（如线性阵列：`sw_pattern.py` 428 行 + 11 份真机证据）仍然显示“不能” ✓。|★ **负例验证实测**（6 个用例，5 通过、1 个刻意用了错误预期）；`scripts/sw_part.py` 的 AST（含 `linear_pattern`/`circular_pattern`/`linear_pattern_report`）；`tools/build_toolbar_ledger.py` 的 `check_repo` |
+| 381 | **线性阵列：**新架构**也卡在 `AccessSelections` 上**** —— ★ 而它与事实 47 **逐字同位** —— 2026-10-03（轮 484）真机：★ `CreateDefinition(**swFmLPattern = 6**)` **成功**（拿到 `data`），★★ 而 `ILinearPatternFeatureData.AccessSelections` 的三种传法**全不成**：`(model, None)` ⇒ `类型不匹配` **位置 2**；`(model, 空Dispatch)` ⇒ **`0x80010105`**；`(None, None)` ⇒ `类型不匹配` 位置 1。⇒ ★★ **结论**：旧入口（`FeatureLinearPattern3/4/5`，真机 **fail**）与新架构**两条路都要 `AccessSelections`**，而它在 pywin32 迟到绑定下到不了 ⇒ ★ **故「线性阵列族到不了」这个归因成立，而理由是「指针族」**。★ 另：`sw_pattern.py` 模块头引用的 `swFmLinearPattern` / `swFmCurveDrivenPattern` **在反射转储里都不存在**（真名 `swFmLPattern=6` / `swFmCurvePattern=103`）—— ★ 正是**铁律 1** 禁的「凭印象写、看着像对」。|真机：`tools/prove_linear_pattern_newarch.py`；证据 `output/linear-pattern-newarch-evidence.json`；`_raw/enum_values_sldworks.txt`（`swFmLPattern = 6`）；对照事实 47 |
+| 382 | **结构系统（焊件）的真因是 `InsertWeldmentCutList2` 取不到——★ 而它与事实 28 同族** —— 2026-10-03（轮 485）读 `output/weldment-evidence.json`（`verdict: partial` · **1/3**）逐字：★ `create_cut_list` **ok:false** —— 「`IFeatureManager.InsertWeldmentCutList2` 在当前后端（**pywin32 迟到绑定**）上**取不到**（权威类型库里有该成员，但 CO…）」；★ `set_cut_list_properties` ok:false（★ 上一步没成 ⇒ **无实体可写**）；★ `export_cut_list_csv` **ok:true**（★ 而那只是**写 CSV**，不依赖 COM 建模）。⇒ ★★ **故「结构系统到不了」成立**，★ 而**准确说法是 `partial`**：**轮廓库（`weldment-profile-evidence.json` pass·3/3，本机 111 个 `.sldlfp`）与导出可用、切割清单不可用**。★ ★★ **而更值钱的是这条教训**：我**一度把三族全判为「不成立」**，★ 错法只有一个：**看到本仓有对应模块/证据文件就下结论、没读它们的 `verdict` 内容**（★ 三次都是）。⇒ **定则：证据要读 `verdict` 字段，不是读文件名。**|读 `output/weldment-evidence.json`（内容）；`output/weldment-profile-evidence.json`；对照事实 28 |
+| 383 | **`FeatureName`（属性）与 `FeatureByName`（方法）名字极像而分属两个接口** —— 2026-10-03（轮 486）真机：★ `IFeatureManager` 上的 **`FeatureName` 是属性**（取值，**不是取特征**）；★★ 而**取特征的真名是 `IModelDoc2.FeatureByName(name)`**（**方法**）。★ 用错的表现：**不报错、而是选不上**（`get_com_member(fm, "FeatureName", "草图1")` 不抛，★ 而 `sel_by_mark = {1:0, 4:0}`）。★ 另同日发现两条同族的坑：① `sw_part._select_sketch_feature_by_name` **内部用 `append=False`**（`sw_part.py` L350）⇒ **调两次只剩第二次**（`{1:0, 4:1}`）；② 开**第二个草图**前要先 `ClearSelection2`，★ 否则 `start_sketch` 选不中基准面、**草图根本不建成**（树里没有「草图2」）。|真机：`tools/prove_sweep_surface.py`；证据 `output/sweep-surface-evidence.json`；`scripts/sw_part.py` L346-351 |
+| 384 | **★★ `sw_part._select_com_object` 会**丢 mark****（★ 影响全仓所有用它传 mark 的地方） —— 2026-10-03（轮 487）真机对比实测：★ 它的实现是（`sw_part.py` L294-310）`for method_name in ("Select2", "Select4"):` —— `Select2(append, **mark**)` 带 mark，★★ 而 **`Select4(append, callout)` 根本没有 mark 形参**（事实 32：`Select4` 的第二个参数是 Callout）⇒ **一旦 `Select2` 失败而 `Select4` 成功，那一次选中就不带 mark**。★ 实测（扫描的轮廓+路径，同一份代码只改选择方式）：`_select_com_object(feat, append=True, mark=4)` ⇒ `sel_by_mark = {1:1, **4:0**}`；★★ `_select_by_id(ext, name, "SKETCH", append=True, mark=4)` ⇒ `{1:1, **4:1**}` ✓。★ 故：**要 mark 的场合用 `SelectByID2`**（★ 而它要**名字** ⇒ ★ **只对特征成立**，事实 32）；★ 而 `_select_com_object` **只适合不需 mark 的场合**（实体、面、边）。★★★ **而这不是必然的（★ 读到影响面后补的限定）**：全仓用 `_select_com_object(..., mark=...)` 的只有 **4 处**，★ 而其中 **`sw_part.py:821` 的 `_select_revolve_axis` 用的就是 `mark=4`，它真机 **4/4 成功**（轮 323）** ⇒ ★★ **说明那个场景下 `Select2(append, mark)` 是成功的**、根本没走到 `Select4` ⇒ ★ **丢 mark 只在「`Select2` 失败」时发生**，★ **不是一律的** —— 故它是一个**隐式的、依赖运行时状态的坑**。|真机：`tools/prove_sweep_surface.py`；证据 `output/sweep-surface-evidence.json`（`sel_by_mark` 两次对比）；`scripts/sw_part.py` L294-310 |
+| 385 | **扫描（实体 17 与曲面 62）在「圆轮廓 + 直线路径」套前置下**都**卡在 `AccessSelections`**** —— 2026-10-03（轮 488）**A/B 对比**（`tools/prove_sweep_ab.py`，★ **一次只改一个变量**）：同一套几何（轮廓 = 上视面的圆 · 路径 = 前视面从原点沿 X）+ 同一套选区（`_select_by_id` 带 mark ⇒ **`{1:1, 4:1}`**，事实 384 的正解），★ 只改 `CreateDefinition` 的常量：`const=17` ⇒ **不成**、`access = 0x80010105`、**`CreateFeature` 回 `None`**；`const=62` ⇒ **不成**、同上。⇒ ★★ **两路都卡在 `AccessSelections`** —— ★ 故 `scripts/sw_sweep.py` 注释里那句「**即使这一步报错，特征仍然建成了**（轮 315）」**在本轮这套前置下不成立** ⚠（★ 轮 315 那次能成⇒ **当时的前置与本轮不同**，★ 而差在哪尚未查）。★ 产物 `output/sweep-ab-evidence.json`。|真机 A/B：`tools/prove_sweep_ab.py`；证据 `output/sweep-ab-evidence.json`；对照事实 384 / 47 |
+| 386 | **`getattr(obj, name)` 回 `(None, None, None)`（一个 3 元组）就是「pywin32 迟到绑定造不出该方法的调用包装」** —— 2026-10-03（轮 492）真机探 `IModelDocExtension.InsertChainDimensions`（★ 官方 `kind: method`、`System.object …(System.object Entities)`）：★ `type(getattr(ext, "InsertChainDimensions"))` = **`tuple`**、`callable(...)` = **`False`**、`repr(...)` = **`(None, None, None)`**；★ 而 `dir(ext)` 里**没有**任何 `Chain` 名字。⇒ ★★ **后果**：`sw_connect.get_com_member(ext, "InsertChainDimensions", ents)` 走到 `return member(*args)`（`sw_connect.py` L157）就报 **`TypeError: 'tuple' object is not callable`** —— ★ 而该错误**看不出是后端限制**。★ 与**事实 28**（「反射里有」≠「运行期调用得到」）**同族**。★ **可复用的识别手法**：见到 `(None, None, None)` 或 `'tuple' object is not callable` ⇒ **先查 `type(getattr(...))` 与 `callable(...)`**，★ 别去改参数。★ 同日另一条同族：`sw_pattern.py` 注释引用的 `swFmLinearPattern` 在反射里**不存在**（事实 381）。|真机探测产物 `output/_chain.json`（★ 临时）；`scripts/sw_connect.py` L155-157；`C:\swapi\types\IModelDocExtension\InsertChainDimensions.md`；对照事实 28 |
+| 387 | **★★ 上一条（事实 386）的结论**错了** —— 它说「那是 pywin32 造不出调用包装」，★★ **而真相是：那个方法能调，只是它返回了一个 3 元组**。 —— 2026-10-03（轮 494）**绕过 `getattr` 直接调**：★ `ext._oleobj_.GetIDsOfNames("InsertChainDimensions")` ⇒ **`dispid = 319`**（★ 名字**是已知的**）；★ 而 `ole.Invoke(319, 0, pythoncom.DISPATCH_METHOD, True, <参>)` 的**三种参数包装全部 `ok=True`**（`VARIANT(VT_ARRAY|VT_DISPATCH, segs)` ⇒ 回 `(None, None, None)`；`tuple(segs)` / `list` ⇒ 回 `None`），★★ **而三种包装下特征树都没动**（`new = []`）。⇒ ★★ **故**：① `getattr` 回的 `(None, None, None)` 是 **pywin32 把「调用结果」缓存成了成员**（★ 一个迟到绑定行为），**不等于「后端到不了」** ⚠；② 而 `尺寸链` 建不成 **不是后端限制**，★ **而是前置 / 几何对不上**（★ 待查）。★ **可复用的排查手法（★ 本条最大的价值）**：**见到 `(None, None, None)` 不要就定性为「到不了」** —— ★ 先走 `_oleobj_.GetIDsOfNames(名)` + `Invoke(dispid, 0, DISPATCH_METHOD, True, 参)` 试一次；★ **能调通 ⇒ 不是后端限制** ✓|真机：`dispid = 319`；三种参数包装全 `ok=True`、而 `new = []`；对照 `C:\swapi\types\IModelDocExtension\InsertChainDimensions.md` |
+| 388 | **★★ 用上一条的 `dispid` 手法回筛「指针族到不了」—— ★ 结论**站住了**（它更硬了）** —— 2026-10-03（轮 495）。★ 做法：把事实 387 那个手法（绕过 `getattr`、直接 `_oleobj_.GetIDsOfNames` + `Invoke`）反过来用在**已经定性为「到不了」**的那一族上：★ `ILinearPatternFeatureData.AccessSelections`（`CreateDefinition(6)` 取得）：★★ `GetIDsOfNames("AccessSelections")` 回 **`dispid = 1`**（`DISPID_VALUE`）—— ★ **而真正的具名方法该有更大的 dispid** ⚠；★ 而 `Invoke(1, 0, DISPATCH_METHOD, True, …)` 的三种包装**全部报错**，★★ 而错误码与**事实 47**逐字相同：`None` ⇒ `类型不匹配`（位置 1）、`空Dispatch` ⇒ `非选择性的参数`、`(model, None)` ⇒ `类型不匹配`（位置 1）。⇒ ★★ **故**：① **指针族到不了的结论在这次回筛下站住了**（★ 不是因为没试过 dispid 路径）；② 而 **`dispid = 1` 本身是一个红旗**（★ 它说明这条 `GetIDsOfNames` 路径**也没真正拿到那个方法**）。★ **可复用**：**回筛时先看 dispid 是否为 1** —— 为 1 则该次回筛**不算数**（★ 路径本身就没走对）。|真机：`dispid = 1`；三种包装全报错，错误码与事实 47 逐字相同；对照事实 387 / 47 |
+| 389 | **★★ 结构系统（焊件切割清单）**真机跑通了**** —— 事实 382 的「到不了」**被推翻** —— 2026-10-03（轮 497）。★ 链条：① 用**事实 387 的手法回筛**：`GetIDsOfNames("InsertWeldmentCutList2")` ⇒ **`dispid = 174`**（★ **不是 1** ⇒ 路径对）；`Invoke(174, 0, DISPATCH_METHOD, True, VARIANT(VT_ARRAY|VT_DISPATCH, bodies))` ⇒ **4/4 全调通**，★★ 而其中两条**树真的新增了 `切割清单项目1`**；② 而 `scripts/sw_weldment.py` L260-275 **早就有 dispid 兜底**（注释逐字：「SW2026 IDispatch 将 **DISPID 174** 的方法**同时暴露成值为 `None` 的伪属性**」）；③ 而旧证据 `output/weldment-evidence.json` 的 `ok:false` **全仓 grep 不到产出者** ⇒ **过时**。★ **重做的真机证据（`tools/prove_weldment_cut_list.py`）：判据 `pass`** ✓ —— `ensure_cut_list` ⇒ `{ok: true, n: 1}`，特征树新增 `['焊接件', 'square-rods (1)', '切割清单项目1']`，`CutListFolder` **前=[] → 后=2 项**。⇒ ★★ **故「结构系统到不了」不成立** —— 它**真机跑通了**；「取不到」只是 **`getattr` 那条路** 的现象（★ **与事实 387 同族**）。★ 附带两个坑：① `create_structural_member` 的真签名是 `(model, **profile_path**, **segment_groups**, ...)` —— ★ 把「草图名」当「型材路径」会报 `FileNotFoundError: 焊件型材不存在或格式错误: D:\AI\SW\草图1`；② `ensure_cut_list` 回的那批对象**直接读 `.Name` 会报** `AttributeError: 'PyIDispatch' object has no attribute 'Name'`（★ 名字该走 `iter_features_recursive`）。|真机证据 `output/weldment-cut-list-evidence.json`（`verdict: pass`）；`scripts/sw_weldment.py` L233-281；对照事实 382 / 387 |
+| 390 | **★★ 官方 md 的 `**Signature**` 行**一个字都别省** —— ★ 而**反射核 arity、md 核名字**（两源分工）** —— 2026-10-03（轮 505）真机：★ 我写 `InsertRuledSurfaceFromEdge2` 时**只传了前 7 个参数**（★ 因为读 md 时**只看了 `**Signature**` 行的前半**），⇒ 真机回 **`com_error: (-2147352561, '非选择性的参数。')`**（`DISP_E_PARAMNOTOPTIONAL` —— ★它的意思**正是“某个参数没给”**）。★ 而**真相是它有 11 个**：`(Type, Length, FlipPullDir, FlipDir, TrimAndSew, Angle, CoordInput, **X, Y, Z, BConnectSurface**)`—— ★ 而**反射也是 11**（`Int32, Double, Boolean, Boolean, Boolean, Double, Boolean, Double, Double, Double, Boolean`）⇒ 两源一致，**是我读少了** ⚠★ **修法：补全 11 参后⇒ `非选择性的参数` 消失、且 `returned_none=False`（回了对象）** ✓★ **可复用：见 `DISP_E_PARAMNOTOPTIONAL` ⇒ 先数参数个数**（★ 而不是去改类型）。|真机：`tools/prove_ruled_surface.py`；证据 `output/ruled-surface-evidence.json`；`scripts/sw_api_sldworks.py` L4436（反射 arity） |
+| 391 | **★★ 一类现象：「调用通、而特征静默不建」（★ 与事实 40 同族）** —— 2026-10-03（轮 505-506）在**同一个模块**（`scripts/sw_surface_features.py`）里出现了**两次同形**，故登记如下：
+     ★ **加厚**：`IFeatureManager.FeatureBossThicken`（7 参）试 **7 组**（官方开关主要组合）+ `IModelDoc2.FeatureBossThicken`（3 参 · Obsolete）试 **3 组**，前置**完美**（`solid=0 · surface=1`）⇒ **全部回 `None`、特征不建**；
+     ★ **直纹曲面**：`InsertRuledSurfaceFromEdge2`（**11 参**）试 侧棱4 条 + **水平边4 条** + 负例，★ 而边**回读选上了**（`sel=True` —— 事实 8）⇒ **回了对象、而特征不建**。
+     ★★★ **2026-10-03（轮 507）换观测手段，把「为什么静默」收窄了** —— ★ 用**本仓早就有的** `sw_feature_readback.whats_wrong(model)`（★ 它正是**本仓规则 6** 的落地：「建特征之后查 `EditRebuild3` + `GetWhatsWrong2`，**不静默成功**」）去读直纹曲面失败后的状态：★ **`count = 0`、`entries = []`** —— 而**调用前 / 调用后 / `EditRebuild3` 之后三次读都是 0**（证据 `output/ruled-whats-wrong-evidence.json`）。
+     ⇒ ★★ **即：SolidWorks 自己不认为出了任何错** —— 特征**没建**、而 **What is Wrong 面板是空的** ⚠
+     ★ 故可**排除**两种解释：① **不是**「SW 内部前置未满足」（★ 那会在面板里留条目）；② **不是**「参数没给全」（★ 那会报 `非选择性的参数` —— 而补全 11 参后已消失）。
+     ⇒ ★★ 剩下最可能的：**COM 层把调用结果丢了** / 或该方法**在当前上下文根本不做那件事** —— ★ 与**事实 28 / 386**（pywin32 迟到绑定那层）**同族**。★ 而「到底是哪一个」**仍未查明** ⇒ 按铁律 5 写「查不到」。
+     ⇒ ★★ **共同形态**：**调用不报错**（或只回 `None`）、**而特征树一点都不动**。★ 故**不是「参数没找对」**（★ 加厚 11 组已穷尽；★ 直纹的 `非选择性的参数` 在补全 11 参后**已消失**），也**不是「选择没选上」**（★ `sel=True` 是回读出来的）。
+     ★ **与事实 40 同族**（`IModeler.Create*Surface` 也是“返 `None` 而几何不变”）⇒ ★★ **应并成一类：「pywin32 这条后端上，某些曲面类特征的调用会静默失效」**。
+     ⚠ **而为什么静默（**COM 层吞了错误？** 还是 SW 内部前置未满足而不报？）★ **尚未查明** —— 按**铁律 5** 写「查不到」，★ **而不编一个理由** ✓
+     ★ **若要继续攻：该换的是观测手段**（★ 如查 SW 的“什么错”面板 / 试 `CreateDefinition` 新架构），★ **而不是**继续在同一入口上换参数 —— 那已证明不是参数问题。|真机：`output/thicken-*-evidence.json`（共 3 份）· `output/ruled-surface-evidence.json`；`scripts/sw_surface_features.py` 末尾那一段；对照事实 40 / 53 |
+| 392 | **★★ `CreateDefinition` 的 35 个合法常量里没有直纹曲面 / 加厚 / 等距 / 剪裁 / 平面区域** —— 2026-10-03（轮 508）逐条读完 `C:\swapi\types\IFeatureManager\CreateDefinition.md`的清单（★ **35 条全数**）⇒ 与本仓 B6/B7 相关的**只有两条**：★ `swFmRefSurface`（surface sweep）→ **扫描曲面**（★ 我们已用，常数 **62**）；★ `swFmRefCurve`（projection curve）→ **投影曲线**（常数 **14**）。⇒ ★★ **故「试 `CreateDefinition` 新架构」这个方向对直纹曲面与加厚不可行**（★ 它们**没有**新架构入口）—— ★ 而那是一份**有据的否定**。★ 而★★ **投影曲线的新架构落进了「指针族」**：`IProjectionCurveFeatureData`（存在，4 属性 / 7 方法）的成员里**有 `AccessSelections` / `IAccessSelections` / `IAccessSelections2`** ⇒ ★★ **故 B7/T706 与线性阵列（事实 385）、扫描曲面同族 ⇒ 到不了** ✓|官方 `C:\swapi\types\IFeatureManager\CreateDefinition.md`（★ 35 条清单）；`C:\swapi\types\IProjectionCurveFeatureData\`；`_raw/enum_values_sldworks.txt`（`swFmRefCurve = 14`） |
+| 393 | **★★★ 「`AccessSelections` 到不了」这个归因要**收窄** —— 它只是“认领选择”的常规步骤** —— 2026-10-03（轮 509）。★ 本轮查出：**117 个** `I*FeatureData` 接口**都带** `AccessSelections`（`IExtrudeFeatureData2` · `IRevolveFeatureData2` · `ISweepFeatureData` · `ILoftFeatureData` · `IFillSurfaceFeatureData` · `IThickenFeatureData` · `IRuledSurfaceFeatureData` · `IProjectionCurveFeatureData` · `ILinearPatternFeatureData` …），★★ **而本仓大量能力是成功过的**（拉伸 / 旋转 / 扫描实体 / 放样 / 填充曲面）⇒ ★ **故「有 `AccessSelections`」≠「到不了」** ⚠
+     ★ 而本仓 `scripts/sw_sweep.py` 的注释（轮 315 真机定的）**早就写着**：「★★ **即使这一步报错，特征仍然建成了**」（`扫描1` · type=`Sweep`）。
+     ★ 故本轮设计了一个**有据的假设**：★ **跳过 `AccessSelections` 直接 `CreateFeature`**——结果 **2/2 均不成、`CreateFeature` 都回 `None`**（证据 `output/sweep-surface-skip-access-evidence.json`）⇒ ★★ **假设被否证**。
+     ★★★ **而它反而给出了统一图景：「`AccessSelections` 报不报错不是关键；`CreateFeature` 回 `None` 才是」** —— ★ 而那**与事实 391**（加厚 / 直纹曲面「调用通而特征不建」）**同一类**。
+     ★ **修正后的说法**：★ 那三族（线性阵列、扫描曲面、投影曲线）**不是**「指针族到不了」，★★ **而是「`CreateFeature` 在这条后端上静默回 `None`」** —— ★ 而那与事实 40 / 391 同族 ✓|真机：`tools/probe_sweep_surface_skip_access.py`；证据 `output/sweep-surface-skip-access-evidence.json`；★ 117 个接口名单可用 `Get-ChildItem C:\swapi\types -Directory | Where-Object { Test-Path (Join-Path $_.FullName 'AccessSelections.md') }` 重现 |
+| 394 | **★★ 对照实验：**本机曲面特征**能建**—— 故那几条失败**逐条不同**，不是“整类失效”** —— 2026-10-03（轮 510）。★ 要判别的问题（★ 从事实 391 / 393 收窄到这里）：**流程一样**（`CreateDefinition` → 试 `AccessSelections`（失败不管）→ **直接 `CreateFeature`**，★ 而不设任何属性 —— 本轮核实过 `sw_sweep.create_sweep_report` 逐字就是这样）、**选区一样**（`{1:1, 4:1}`）、**前置一样**，★ 而 **`swFmSweep`（17 · 实体扫描）成过**、**`swFmRefSurface`（62）· 加厚 · 直纹曲面不成** ⇒ ★★ **故“流程 / 参数 / 选择”都被排除**。
+     ★ 故本轮问一个**更基础**的问题：★ **在这个新零件里，一个“本仓成功过”的曲面特征现在还建得成吗？**
+     ★ 选了**两个**本仓记着 PASS 过的作对照（★ “本仓成功过”是本实验的前提）：`insert_fill_surface_report` ⇒ **ok=True · `曲面填充1`（树 7→8）**；`insert_extend_surface_report` ⇒ **ok=True · `曲面-延伸1`（树 7→8）**（证据 `output/surface-control-evidence.json`）⇒ ★★ **判别 = `control_alive`（2/2）**
+     ★★★ **排除了一整类解释**：✗「本机曲面特征整体失效」· ✗「新零件不能建曲面」· ✗「流程不对」（★ 填充/延伸也走 `CreateDefinition` + `CreateFeature`）。⇒ ★★ **故失败的那几条（62 / 加厚 / 直纹）各有原因、逐条不同** —— ★ 而不能拿“一类现象”一笔带过。★ 副产：这两条对照顺便**复核了本仓早先的 PASS 记录** ✓|真机：`tools/probe_surface_control.py`；证据 `output/surface-control-evidence.json`；对照事实 391 / 393 |
+| 395 | **★★★ 一条**比“一类现象”精确得多**的规律：「**改动已有体」成（3/3）·「新建独立体」不成（0/3）** —— 2026-10-03（轮 510-511）。★ 它是**用实验一步步推出来的**：
+     ① 事实 394（对照实验）证明**本机曲面特征能建**（填充 + 延伸 2/2）⇒ **排除了「整类失效」**；
+     ② 于是看**成与不成的差**，★★ **共同点浮现**：失败的那几条**都要“新建一个独立体”**；
+     ③ 于是设计了**可验证的形式**：再跑一个“改动已有体”的曲面操作 —— 选**缝合曲面**（`knit_surfaces_report`；★ 本仓记着 PASS 过、且语义是“缝成一张”）：**ok=True · `曲面-缝合1` · body 2→1**（证据 `output/surface-modify-vs-create-evidence.json`）⇒ **判别 = `modify_ok_create_fail`** ✓
+     ★★ **六个数据点**：
+       ✓ **改动已有体**：填充曲面 · 延伸曲面 · **缝合曲面** ⇒ **3/3 成**；
+       ✗ **新建独立体**：加厚（改体类型）· 直纹（长新曲面）· 扫描曲面（从草图新建）⇒ **0/3 成**。
+     ★ **边界（★ 不能当成普遍定律）**：★ 这 6 个点**全在曲面域**；★ 而**实体**那侧的“新建”是**成的**（拉伸 / 旋转 / 扫描实体 17 / 放样 均建成）⇒ ★★ 故它是**曲面域内**的规律，★ **不能外推**。
+     ⚠ **仍未查明**：**为什么**会这样（★ 而事实 391 已排除了两种解释：★ What’s Wrong 面板**一条错都没有** · ★ 参数**已穷尽**）⇒ 按铁律 5 写「查不到」。|真机：`tools/probe_surface_control.py` · `tools/probe_surface_modify_vs_create.py`；证据 `output/surface-control-evidence.json` · `output/surface-modify-vs-create-evidence.json`；对照事实 391 / 393 / 394 |
+| 396 | **★★★ 一张「否证清单」：曲面扫描 / 加厚 / 直纹为何不成——以下五条**都已被实验排除**** —— 2026-10-03（轮 505-512）。★ 它们各自都是**一个看着合理的猜测**，★★ **而排除它们正是本阶段的收获**（★ 以后不必重走）：
+     ✗ **「`AccessSelections` 报错导致」** —— ★ 而**117 个** `I*FeatureData` 接口都带它，且本仓大量能力成功过；★ 而**跳过它也回 `None`**（轮 509）；
+     ✗ **「参数没给全」** —— ★ 加厚 **11 组**、直纹 **11 参 + 8 条边**；
+     ✗ **「新建 vs 改动」** —— ★★ **有反例**：`create_extruded_surface_report`（**曲面-拉伸**）**本身就是新建**而**成**（轮 510-511）；
+     ✗ **「必须先设属性」** —— ★ 轮 512 把 `ISweepFeatureData` 的 **`Profile` 与 `Path` 都设上了**（★ 真机 `refs = {"Profile": "CDispatch", "Path": "CDispatch"}`），★★ **而 `CreateFeature` 仍回 `None`**；
+     ✗ **「SW 内部前置未满足」** —— ★ `whats_wrong` 读三次都是 **`count = 0`**、`entries = []`（轮 507）。
+     ★ **剩下最可能**：★★ **`CreateDefinition` 这条「新架构」路本身**，在这条 pywin32 后端上**对这批特征失效**（★ 而**旧式方法**那侧是成的：填充 / 延伸 / 缝合 / 曲面-拉伸）。
+     ★ **按事实 53 停手**（这一处已 6+ 次）—— ★ 而**把上面这张清单留下**，★ **比继续试参数有价值** ✓
+     ★ **若下一步还要动**：该换的是**后端**（★ 如 `comtypes` 早绑定）或**旧式方法**（★ 如找扫描面的非新架构入口）—— ★ 而不是继续在同一入口上换参数。|真机：`output/sweep-set-props-evidence.json`（轮 512）· `output/ruled-whats-wrong-evidence.json`（轮 507）· `output/sweep-surface-skip-access-evidence.json`（轮 509）；对照事实 391 / 393 / 394 / 395 |
+| 397 | **★★ 类型库的 arity **含末尾那个 `Retval` 出参** —— 而反射转储给的是「**不含 Retval**」** —— 2026-10-03（轮 513）。★ 用**事实 128 推荐的第 4 套签名源**（`comtypes.client.GetModule('<sldworks.tlb>').<IIface>._methods_`）核实：
+     ```
+     IFeatureManager.InsertRuledSurfaceFromEdge2  arity=12
+       argtypes = c_long, c_double, VB, VB, VB, c_double, VB, c_double, c_double, c_double, VB, **LP_POINTER(IFeature)**
+       flags    = (Type·Length·FlipPullDir·FlipDir·TrimAndSew·Angle·CoordInput·X·Y·Z·BConnectSurface) 均 flag=1(in)，**末尾 (10, 'Retval')**
+     IFeatureManager.FeatureBossThicken            arity=8   （★ 7 个 in + 末尾 (10,'Retval')）
+     IModelDoc2.FeatureBossThicken                 arity=3   （★ 全 in，**无 Retval**）
+     IModelDoc2.InsertExtendSurface                arity=3   （★ 全 in，**无 Retval**）
+     IFeatureManager.CreateDefinition              flags = ((1,'Type'), **(10,'PDispOut')**)
+     ```
+     ⇒ ★★ **故**：类型库的 arity **含末尾那个 out**；★ 而反射转储给的**11**（直纹）/ **8**（加厚）**正是不含它** ⇒ ★★ **两源其实**一致****，★ 而我当初以为“冲突”是因为**没数末尾那个出参** ⚠
+     ★ ★★ **因此得两个结论**：① 直纹的 **11** 与加厚的 **7** **都传对了**（★ 故它们的失败**不是 arity 问题**）；② ★★ **新定则：拿类型库数 arity 时要减 1**（末尾那个 `Retval` / `PDispOut` 是**返回值**，pywin32 侧**不传**）—— ★ 而**对照反射转储的 arity 就不用减**。★ 而反射的 `CreateDefinition` arity是 **4**（★ 反射里 **不含**那个 out）—— ★ 与本仓 `sw_pattern` / `sw_sweep` 实际传的一致。|真机：`comtypes.client.GetModule(r'D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\sldworks.tlb')`（★ 本机存在，2020872 B；`comtypes 1.4.17`）；对照事实 128 / 129 / 396 |
+| 398 | **★★★ 「旧式方法」这条方向得到了**第一批直接成果**** —— 2026-10-03（轮 516）。★ 按**事实 395** 指出的方向（「旧式方法那侧是成的」），本轮把 B6 里剩的几条改走 **`IModelDoc2` 上的旧式入口**：
+     | 能力 | 旧式入口 | 真机 |
+     |---|---|---|
+     | **T606 等距曲面** | `IModelDoc2.InsertOffsetSurface(Thickness, Reverse)`（2 参 · void） | ★ **建成 `曲面-等距1`（树 7→8）** ✓ |
+     | T605 平面区域 | `IModelDoc2.InsertPlanarRefSurface()`（0 参 · 回 bool） | ★ 12 条边选上（mark=1）而 **0 增量** ⚠ |
+     | T609 替换面 | `IModelDoc2.InsertFeatureReplaceFace()`（0 参） | ★ 2 面选上而 **0 增量** ⚠ |
+     | T607 剪裁曲面 | `InsertTrimSurface` | ★ **swapi 里查不到** ⇒ 铁律 5 |
+     ★ 三条都与**成过**的 `InsertExtendSurface`（3 参）**同层**（都在 `IModelDoc2` 上）。
+     ★ 同时查到 `IModelDoc2.InsertRadiateSurface(Distance, FlipDir, TangentPropagate)`（3 参）—— ★ 辐射曲面，★ **本轮未做**。
+     ★ 前置（官方 `Remarks` 逐字）：`InsertOffsetSurface` ⇒ 「Make the selections using `SelectByID2` **before** calling」；`InsertPlanarRefSurface` ⇒ 「边界实体用 **Marks of 1**」；`InsertFeatureReplaceFace` ⇒ 「要替换的面 **mark 1**」（★ 而替换面那个 mark **本包装是推断** ⚠）。
+     ★ 落地：`scripts/sw_surface_features.py` 的 `insert_offset_surface_report` / `insert_planar_ref_surface_report` / `insert_replace_face_report`；★ `capabilities.yaml` 新增 **`surface_offset`**（level = **`verified`** —— ★ 有我们自己的运行证据）。
+     ★★ **下一步该试的**：T605 改用**草图边界**（★ 本轮用的是曲面体的边）；T609 把两个 mark 的分工调过来试。|真机：`tools/prove_surface_oldstyle_three.py`；证据 `output/surface-oldstyle-three-evidence.json`；对照事实 395 / 396 |
+| 399 | **★★★ 「旧式 vs 新架构」**不是分界线** —— 扫描曲面**两条路都不成**，故真正的分界是「那个特征本身」** —— 2026-10-03（轮 518）。
+     ★ 缘起：事实 398 把「旧式方法那侧是成的」当成了**方向**，★ 而本轮从类型库 dump 里发现 `IModelDoc2` 上**有一整族旧式曲面入口**：
+     ```
+     InsertSweepRefSurface2    arity=6  (Propagate, TwistCtrlOption, KeepTangency, ForceNonRational,
+                                          StartMatchingType, EndMatchingType)   ← 扫描曲面
+     InsertRevolvedRefSurface  arity=4  (Angle, ReverseDir, Angle2, RevType)    ← 旋转曲面
+     PreTrimSurface            arity=1  (BMutualTrimIn)                         ← 剪裁（两段式）
+     PostTrimSurface           arity=1  (BSewSurfaceIn)
+     InsertRadiateSurface      arity=3  (Distance, FlipDir, TangentPropagate)   ← 辐射面
+     ```
+     ★ 故本轮问：**扫描曲面的旧式入口成不成？**（★ 本仓此前对它下过「到不了」，而依据只有**新架构**那条路）
+     ★ 真机（`output/sweep-oldstyle-evidence.json`）：选区 `{1:1, 4:1}`（★ **对**），而
+       `InsertSweepRefSurface2`（6 参）⇒ **回 `None` · 树不动**；`InsertSweepRefSurface`（4 参）⇒ **同**；新架构 62 ⇒ **同** ⇒ ★★ **判别 = `oldstyle_sweep_also_fails`（0/3）**
+     ★★★ **故图景要收窄**：
+       ✓ **旧式侧成的**（★ 逐条验过）：等距 `InsertOffsetSurface` · 平面区域 `InsertPlanarRefSurface` · 替换面 `InsertFeatureReplaceFace` · 延伸 `InsertExtendSurface` · 填充 `InsertFillSurface2` · 缝合 `InsertSewRefSurface` · 曲面-拉伸 `FeatureExtruRefSurface3`；
+       ✗ **两条路都不成的**：**扫描曲面**（旧式 6 参 + 4 参 + 新架构 62）· 加厚 · 直纹曲面。
+       ⇒ ★★ **故「旧式 vs 新架构」不是分界线** —— 真正的分界是**那个特征本身**。
+     ★ **方法论收获**：★ 「旧式侧是成的」作为**方向**是好的（★ 它已经带出 3 条新能力），★ 而不能当成**定律**（★ 一遇到反例就该收窄）。|真机：`tools/probe_sweep_oldstyle.py`；证据 `output/sweep-oldstyle-evidence.json`；对照事实 391 / 393 / 395 / 396 / 398 |
+| 400 | **★★ 「剪裁曲面」的**真名不是 `InsertTrimSurface`**（铁律 5 的一个边界教训）· 两段式真机状态** —— 2026-10-03（轮 516-519）。
+     ★ 轮 516/518 我按 `InsertTrimSurface` 查 ⇒ **swapi 里查不到**，按**铁律 5** 记了「查不到」。★ 而轮 518 从**类型库 dump** 里发现`IModelDoc2` 上有 **`PreTrimSurface` / `PostTrimSurface`**（各 1 参），而 `IFeatureManager` 上有**更全的新版**（`PreTrimSurface` **4 个 in** + `Retval`）⇒ ★★ **故真名是这一对（两段式）** ✓
+     ⚠ **教训（值得记）**：**铁律 5 的「查不到」应当**限定在查过的名字**上** —— ★ 我查的是**猜的名字**，★ 而**没穷举** `TrimSurface` 那一族（★ 下一步该是“拿后缀去类型库里加通配筛一遍”）。
+     ★ 三源分工（铁律 4 的典型实例）：**md 只给签名、四个参数全是 `No description`** ⚠；**CHM** 逐字给了语义（mutual / splitSystem / splitLinear / removePicked + sew）；**类型库** 给 arity 与方向。
+     ★ 真机（`output/trim-surface-evidence.json`，走 `sw_guard`、零弹窗）：**前置完美** —— **两张相交曲面都建成**、**8 张面全选上**；三组参数（`mutual=True` / `mutual=False` / `mutual=True+sew=True`）结果**逐字相同**：
+     ```
+     PreTrimSurface  ⇒ **回 True**     ← ★ 第一段说“准备好了”
+     PostTrimSurface ⇒ 回 None · 特征树不动
+     ```
+     ⇒ ★★ **形态：两段都“成功”而结果没有** —— ★ 与**事实 391**（静默不干活）同族，★ 而这次**连 `pre` 都回了 `True`**（★ 比之前那几条**多一个正面信号**）。
+     ★ **下一步该试的**：`BRemovePickedIn=True`（★ CHM 说它“**移除**选中面”，★ 可能才会触发产出）· `BSplitLinearIn=True` · 以及**只选部分面**（★ 本轮是全选 8 张）。|真机：`tools/prove_trim_surface.py`；证据 `output/trim-surface-evidence.json`；对照事实 391 / 399 |
+| 401 | **★★★ 可复用手法：「拿后缀去类型库里**加通配筛一遍**」—— 它当场抓到一个**没试过的入口**；而加厚的总账升到 **14 组 / 5 种入口**** —— 2026-10-03（轮 519-520）。
+     ★★ **手法怎么来的**：轮 519 我在「剪裁曲面」上裁了一次 —— 我按**猜的名字** `InsertTrimSurface` 查，查不到就按铁律 5 记了「查不到」；★ 而**真名**（`PreTrimSurface`/`PostTrimSurface`）是从**类型库 dump** 里翻出来的。
+     ⇒ ★★ **教训：铁律 5 的「查不到」**应当限定在查过的名字上**。
+     ★ **具体做法**（★ 可直接重现）：用 `comtypes.client.GetModule('<sldworks.tlb>')`，对 `IModelDoc2` / `IModelDoc` / `IFeatureManager` 的 `_methods_` **按关键词子串过一遍**（★ 例：`Surface` / `Trim` / `Radiate` / `Offset` / `Knit` / `Thicken` / `Ruled` / `Planar`），★ 并**同时打印 in/out 个数**（★ flag 1=in、10=out）⇒ 一屏看完。
+     ★ **它当场的收获**：
+     ```
+     FeatureBossThicken   IModelDoc2       in=3   ← 轮 504 试过
+     FeatureBossThicken   IFeatureManager in=7   ← 轮 502-503 试过
+     FeatureBossThicken2  IModelDoc2       in=4   ← ★★ **没试过**（本轮补上）
+     FeatureCutThicken2   IModelDoc2       in=4   ← ★★ **没试过**（本轮补上）
+     InsertCutSurface      IModelDoc2/IFM    in=2/in=5  ← ★ 剪裁的**另一个候选**
+     GetPreTrimmedBodies   IFeatureManager in=1   ← ★ 说明剪裁**中间可查**
+     ```
+     ★ 真机（`output/thicken2-evidence.json`）：`FeatureBossThicken2`（4 参）⇒ **回 `None` · 树不动**；`FeatureCutThicken2`（4 参）⇒ **同**；而只传 3 参 ⇒ **`非选择性的参数`**（★ 反过来**确认了 4 参是对的**）。
+     ⇒ ★★ **加厚的总账升到 14 组 · 5 种入口**（`IFeatureManager.FeatureBossThicken` 7 参 · `IModelDoc2.FeatureBossThicken` 3 参 · `IModelDoc2.FeatureBossThicken2` 4 参 · `IModelDoc2.FeatureCutThicken` 3 参 · `IModelDoc2.FeatureCutThicken2` 4 参），**前置每次完美**（`solid=0 · surface=1`）⇒ ★ **「加厚在本机静默不成」这条结论更硬了** ✓
+     ★★ **故它不只是一次失败** —— 它把「入口没穷举」这个漏洞堆上了。|真机：`tools/probe_thicken2.py`；证据 `output/thicken2-evidence.json`；对照事实 391 / 396 / 400 |
+| 402 | **★★★ 三个错码**排成一条线、各指一处** —— 它们合起来把一个“参数形态”问题定位到了** —— 2026-10-03（轮 521），新能力候选 **`IFeatureManager.InsertCutSurface`**（★ **曲面切除** —— ★★ 而不是「剪裁曲面」：它是**拿面/基准面切实体**，官方逐字「Inserts a **surface-cut** feature using the **preselected** surface or plane」）。
+     ★ 官方三源给的是 **5 in + 2 out**（`Flip` · `KeepPieceIndex` · `UseFeatScope` · `UseAutoSelect` · `Bodies` · `Error(out)` · `Retval(out)`）。
+     ★ 真机三次调用，**错码逐步变化**（★ 每一步都指出一处）：
+     ```
+     5 参                     ⇒ 非选择性的参数   （= “某个参数没给”）
+     7 参（两个 out_dispatch）  ⇒ 类型不匹配（位置 **6**） （= 第 7 个参数类型错）
+     7 参（out_i4 + out_dispatch） ⇒ 无效的参数数目  （= 类型对了、而**个数**仍不对）
+     ```
+     ★ 三步合起来的信息：① **必须超过 5 个**；② **第 7 个是错误码**（★ 故 `out_i4()` 对、`out_dispatch()` 错）；③ **而 7 个又不对** ⇒ ★★ **剩下最可能：`Bodies` 那个位置该是 `VARIANT`（★ 而我传的是 Python `list`）**，或★ **out 也算进某种计数**。
+     ★ 已写进实现层：`scripts/sw_surface_features.py` 的 `cut_surface_report`（★ 带**两条路的 `attempts`** 记录，★ 而不是只报最后一个错）；证据 `output/cut-surface-evidence.json`；探针 `tools/prove_cut_surface.py`。
+     ★ **按事实 53 停手**（这一处已 3 次）—— ★ 而把这条**错码链留下**。
+     ★★ **方法论：一个“参数形态”问题，它的错码会随参数变化 —— ★ 故**逐步把错码记下来**，比只记最后一个有信息量。**|真机：`tools/prove_cut_surface.py`；证据 `output/cut-surface-evidence.json`；对照事实 390 / 397 / 401 |
+| 403 | **★★★ 一个“参数个数”问题的**正解是“5 in + 中间那个 out”**（★ 而**末尾那个不传**）** —— 2026-10-03（轮 522），对象 = `IFeatureManager.InsertCutSurface`。
+     ★ 上一轮（事实 402）留下的推论是「`Bodies` 那个位置该是 `VARIANT`」。
+     ★ 本轮**先否证了它**：五种 `Bodies` 形态（Python `list` · `VARIANT(VT_ARRAY\|VT_DISPATCH, [])` · `VARIANT(VT_ARRAY\|VT_VARIANT, [])` · `None`）**逐字相同**地报 `无效的参数数目` ⇒ ★ **`Bodies` 的形态不是原因**。
+     ★ 于是把问题**收窄回“个数”**（★ 两个错码把它**夹住**：5 参 ⇒ `非选择性的参数`、7 参 ⇒ `无效的参数数目`）⇒ ★ **去试**中间那个数**。
+     ★ 真机（五组 **6 参**，鲋头对准“哪个位置是 out”）：
+     ```
+     6 参 flip,keep,scope,auto,bodies,**error**   ⇒ **回 `None`（★ 无错！）** · 特征树不动
+     6 参 flip,keep,scope,auto,bodies,retval  ⇒ 类型不匹配（位置 6）
+     6 参 flip,keep,scope,auto,error,retval   ⇒ 类型不匹配（位置 6）
+     6 参 flip,keep,scope,bodies,error,retval ⇒ 类型不匹配（位置 4）
+     6 参 keep,scope,auto,bodies,error,retval ⇒ 类型不匹配（位置 4）
+     ```
+     ⇒ ★★ **唯一不报错的形态是「5 in + `Error`」** ⇒ ★★★ **故正解：`arity = 6`（5 in + `Error` out），★ 而**末尾那个 `Retval` 不传**。**
+     ★ 而它**与事实 397 一致**：类型库的 arity **含末尾 out** ⇒ pywin32 侧**不传它**。
+     ⚠ 而我上轮试 **7 参**是**多传了一个**。
+     ★ **现状**：**调用层已经通了**（★ 从“报错”变成“回 `None`”），而特征还没建 ⇒ ★ 剩下的是**前置**（★ 或那个 `None` 属于事实 391 那类静默）。
+     ★★ **方法论（值得复用）**：当**两个错码一个说“少了”、一个说“不对”时 —— ★ **去试它们中间的那个数**；★ 并用**鲋头对准“哪个位置是 out”**的组合去分辨。|真机：`tools/probe_cut_surface_bodies.py`；证据 `output/cut-surface-bodies-evidence.json`；对照事实 390 / 397 / 402 |
+| 404 | **★ 「调用层通了」与「特征建成」是**两件事** —— `InsertCutSurface` 定了 arity 后仍静默** —— 2026-10-03（轮 523）。★ 把上一轮（事实 403）定下的 **6 参**形态接进 `cut_surface_report` 后重跑：
+     ```
+     只实体 · 基准面作切面   ⇒ 回 None · **attempts 里没有错码** · 特征树不动
+     实体 + 相交曲面            ⇒ 同
+     实体 + 曲面 · flip=True    ⇒ 同
+     ```
+     ⇒ ★★ **故：arity 修对了（无错码）、而特征仍不建** —— ★ 那**正是事实 391 那一族**（静默不干活）的形态。
+     ★ 而它把一件事说清了：★★ **「调用层通了」与「特征建成」是两件事** —— ★ 前者可以用**错码消失**来证明（★ 本轮就是），★ 而后者**只能用特征树回读**。
+     ★ **按事实 53 停手**（这一处已 3 轮：521 · 522 · 523）。
+     ★ **下一步该试的**（★ 而它**是另一个变量**、不是重试参数）：官方说「using the **preselected** surface or plane」—— ★ 而本包装用的是 `_select_all_surface_faces(mark=0)`（**全选所有面**）⇒ ★★ **可能只该选一张**（★ `KeepPieceIndex`、"Piece to keep if there is ambiguity" 暗示有“哪一块”的语义），或改 **mark=1**。|真机：`tools/prove_cut_surface.py`；证据 `output/cut-surface-evidence.json`；对照事实 391 / 403 |
+| 405 | **★★★ 「选一张」回**对象**、「全选」回 `None`** —— ★ **参数不变、只动选区，返回值就变** —— 2026-10-03（轮 524）** —— 2026-10-03（轮 524），对象 = `IFeatureManager.InsertCutSurface`。
+     ★ 前提：**arity 已在上一轮定死为 6**（事实 403）⇒ ★ 本轮**只动选区**（★ 另一个变量）。
+     ★ 真机（五组，走 `sw_guard`、零弹窗）：
+     ```
+     全选曲面面 mark=0   ⇒ 选中=4 · 回 **None**
+     只选第一张 mark=0   ⇒ 选中=1 · 回 **CDispatch**   ← ★★ 一个对象！
+     只选第一张 mark=1   ⇒ 选中=1 · 回 **CDispatch**   ← ★★ 同
+     全选曲面面 mark=1   ⇒ 选中=4 · 回 **None**
+     只一张基准面 mark=0  ⇒ 选中=0（★ 探针选面失败）
+     ```
+     ⇒ ★★ **故：选一张是更接近对的形态**（★ 而特征仍未建）—— ★ 而**那个 `CDispatch` 是什么尚未查明**（★ 可能是 `Error` 出参的回填、★ 也可能是 `Retval`）。
+     ★★ **可复用的观测：☌ 参数不变、只动选区，返回值的**种类**变了** —— ★ 那说明**选区真的进去了**（★ 而不是被忽略）。
+     ★ **按事实 53 停手**（这一处已 4 轮：521 · 522 · 523 · 524）。
+     ★ **下一步该试的**：**把那个 `CDispatch` 读出来**（★ 看它的类型名 / 名字 ⇒ ★ 可能直接告诉我们“特征建了没有”）。|真机：`tools/probe_cut_surface_selection.py`；证据 `output/cut-surface-selection-evidence.json`；对照事实 391 / 403 / 404 |
+| 406 | **★★★★ 「特征树增量」这个判据**有盲区**：特征对象存在、而它不在 `FirstFeature` 链上** —— 2026-10-03（轮 525）。★★ **而它翻案了上四轮的一个结论** ⚠
+     ★ **起因**：事实 405 里「只选一张时 `InsertCutSurface` 回一个 `CDispatch`」—— ★ 而本轮**把它读出来了**：
+     ```
+     Name          ⇒ 「使用曲面切除1」
+     GetTypeName2  ⇒ 「SurfCut」        ← ★ 曲面切除
+     GetType       ⇒ 22
+     GetID         ⇒ 87
+     ```
+     ⇒ ★★★ **故特征**其实建了**！** —— ★ 而**我的判据（特征树增量）没抓到它** ⚠
+     ★ 于是本轮 dump了**全链**（`tools/probe_feature_names_blindspot.py`）：★ 调用**前**链 = **22 节点**、调用**后**也是 **22** ⇒ ★★ **链确实没长**；而 `feature_names` 也一个都没多 ⚠
+     ★ 而链尾是 `曲面-拉伸1`（`ExtruRefSurface`）—— ★ **`SurfCut` 不在那条链上**。
+     ★★ **故：特征对象存在、而 `FirstFeature` 链看不见它** —— ★ 可能 ① 它是**未提交/预览**的特征；② 或挂在**某个容器的子特征**下。
+     ★ 而本轮的 `_dump_chain` **只走 `GetNextFeature`**（★ **不走 `GetFirstSubFeature`**）⇒ ★★ **正解：该走递归遍历**（★ 本仓 `sw_weldment.iter_features_recursive` 就走）。
+     ★★★ **影响面（★ 这才是它的分量）**：本仓有**大量**判据写着「**特征树增量**」（规则 6 的落地）⇒ ★ 故**它们都可能在同一个盲区上误判** ⚠
+     ★ 而**本轮修正的是**：事实 402/403/404/405 里「`InsertCutSurface` 静默不干活」那半**不成立**（★ 它**干了**）；★ 而**arity = 6** 那条**仍然对**（★ 它是有用的）✓
+     ★ **下一步**：用 `iter_features_recursive` 重读一次，看 `SurfCut` 在**子特征**里或不在。|真机：`tools/probe_cut_surface_returned.py` · `tools/probe_feature_names_blindspot.py`；证据 `output/cut-surface-returned-evidence.json` · `output/feature-names-blindspot-evidence.json`；对照事实 391 / 402-405 |
+| 407 | **★★★ `InsertCutSurface` 回的特征**浮在树外**：递归看不见、重建也不进树、而 `whats_wrong` 为 0** —— 2026-10-03（轮 526）。★ 把上一轮（事实 406）留的两个解释**逐个排除**了：
+     ★ ① **“藏在子特征里”** —— 用 `iter_features_recursive`（★ **走 `GetFirstSubFeature`**）重读：**递归链 前 = 33 节点 · 后 = 33 节点**，★ **`SurfCut` 在递归链里 = `False`** ⇒ ★ **不在子链里** ✗
+     ★ ② **“未提交态（重建就进）”** —— 调用后跑 `EditRebuild3`（★ 回 `True`）：**树仍 9 个**、链尾仍是 `曲面-拉伸1`；★ 再 `ClearSelection2` 后仍 9 个 ✗
+     ★ 而 `whats_wrong` 读到 **`count = 0`**（★ SW 认为**没出错**）。
+     ★ **保留的结论**：★ `arity = 6`（事实 403）· ★ “**只选一张**时回一个对象”（事实 405）· ★ 返回值确实是 `Name = 使用曲面切除1` · `GetTypeName2 = SurfCut`。
+     ★ **剩下的可能**：它要么是**预览态**、要么这条 API 的对象与树是**两套**。
+     ★ **按 A4 不登记成工具、不写 `verified`** —— ★ 证据不足以说“建成”。
+     ★ **按事实 53 停手**（这一处已 6 轮：521 · 522 · 523 · 524 · 525 · 526）。
+     ★★ **方法论**：**一个“特征没进树”的现象，要**逐个排除**“子链 / 未提交 / 报错”三个解释—— ★ 本轮排了两个、而 `whats_wrong = 0` 把第三个（报错）也排了。**|真机：`tools/probe_surfcut_recursive.py`；证据 `output/surfcut-recursive-evidence.json`；对照事实 391 / 403 / 405 / 406 |
+| 408 | **★★ 事实 406 那条「回读盲区」的**影响面要收窄****：`feature_names` 对**常规曲面特征看得见** —— 2026-10-03（轮 527）。
+     ★ 事实 406 写着「本仓有**大量**判据写着『**特征树增量**』⇒ **它们都可能在同一个盲区上误判**」⚠ —— ★ 而**那条事实的证据只有一条**（`SurfCut`）。
+     ★ 故本轮用**已验成**的特征做对照（`tools/probe_readback_blindspot_bounds.py`）：
+     ```
+     延伸曲面  ⇒ `曲面-延伸1`  · 在 feature_names 里**看得见** ✓
+     等距曲面  ⇒ `曲面-等距1`  · 在 feature_names 里**看得见** ✓
+     平面区域  ⇒ ★ 本轮没建成（★ 探针没选草图 —— **探针的毛病**）
+     ```
+     ⇒ ★★ **故盲区是**特定特征**的（`SurfCut` 那一类），**而不是通用的** —— ★ 修正后的说法：
+       ★ 「以『树增量』作判据时，对**某些特征类型**要留意」（★ 而**不是**「全仓判据都危险」）✓
+     ★ 而它与事实 407 合起来：`SurfCut` 那个对象**浮在树外**（递归与重建都不让它进），★ 而**常规曲面特征正常进树** ⇒ ★ 两者并不矛盾。
+     ★★ **方法论**：一条「影响面很宽」的结论，若证据只有**一个样本**，★ **就该拿反例去界定它** —— ★ 本轮拿两条已验成的特征当反例，结果把它从「全仓」收到「特定类型」。|真机：`tools/probe_readback_blindspot_bounds.py`；证据 `output/readback-blindspot-bounds-evidence.json`；对照事实 406 / 407 |
+| 409 | **★★ 「`SurfCut` 浮在树外」与 `Bodies` **无关**（★ 又一个干净的否定）** —— 2026-10-03（轮 528）。
+     ★ 官方对 `Bodies` 的说法（逐字）：「Array of specific **bodies** that intersect with the cut」，★ 且分两种：`UseFeatScope=true` / `UseAutoSelect=false` 时用传进去的体；「**Empty array indicating to cut all bodies**」。
+     ★ 故**本仓一直传的 `[]` 是“切所有”那条路**，★ 而**从没试过传真的体** ⚠
+     ★ 而事实 407 留下了一个**未排除的解释**：“它没**认领到体**”。
+     ★ 真机（四组，走 `sw_guard`、零弹窗）：
+     ```
+     `[]`        + scope=F + auto=T  ⇒ 回 **CDispatch** · 名 = 使用曲面切除1   （★ 对照）
+     `[实体]`    + scope=**T** + auto=F  ⇒ 回 **None**      ⚠
+     `[曲面+实体]` + scope=**T** + auto=F  ⇒ 回 **None**      ⚠
+     `[实体]`    + scope=F + auto=F  ⇒ 回 **CDispatch** · 名 = 使用曲面切除1
+     ```
+     ⇒ ★★ **故：传真的体不改善**（★ 而在 `scope=T` 时**反而回 `None`**）；★★★ **故“没认领到体”这个解释也被排除** ✓
+     ★ 而一个副产：★ **传空数组反而是目前最好的形态**（★ 回对象、且对象带名字）。
+     ★ **按事实 53 停手**（这一处已 7 轮：521-528）。
+     ★ **累计已排除的解释**：① 子特征（事实 407）· ② 未提交（同）· ③ 报错（同，`whats_wrong = 0`）· ④ `Bodies` 传体（本轮）。|真机：`tools/probe_cut_surface_real_bodies.py`；证据 `output/cut-surface-real-bodies-evidence.json`；对照事实 403 / 405 / 406 / 407 |
+| 410 | **★★★ 「旋转曲面不成」的真因是**前置缺中心线**（★ 而不是架构）—— 它被真机建成了** —— 2026-10-03（轮 529），B6/T601。
+     ★ 官方原话逐字：「Creates a **revolved reference surface** by revolving a profile around a **centerline**」。
+     ★ 而本仓先前对它的记录是「入口已核、真机未成」（轮 501，`RevType`×`angle` **5 组全试过**）—— ★ 而那 5 组**都没带中心线** ⚠
+     ★ 真机对照（`tools/probe_revolve_oldstyle.py`，走 `sw_guard`、零弹窗）：
+     ```
+     `IModelDoc2`（旧式） + 中心线      ⇒ **建成 `曲面-旋转1`**（类型 `RevolvRefSurf`） ✓
+     `IModelDoc2`（旧式） · **无中心线**  ⇒ **树 0 增量** ✗
+     `IFeatureManager`（本仓现路）+ 中心线 ⇒ **建成 `曲面-旋转1`** ✓
+     ```
+     ⇒ ★★ **故：１　真因是前置缺中心线；２　本仓的实现本来就对** （★ 只是前置没给全）。
+     ★★ **而它修正了一个归因**：「**新架构那侧不成**」在**旋转曲面上不成立** —— ★ 两条入口都成。
+     ★ 而它与事实 398 / 399 放在一起看：「旧式 vs 新架构」**不是分界线**（事实 399 已立），★ 而**前置是不是给全了」才是**。
+     ★★ **教训固化**：★ **官方原话里的每个名词都要落实** —— ★ 本例里就是那个 **centerline**；★ 而它就在那句话里。
+     ★ **落地**：`capabilities.yaml` 新增 **`surface_revolve`**（level = **`verified`**）—— ★ 而 limitations 里明写“**蓝图里必须有中心线**”与三项未查。|真机：`tools/probe_revolve_oldstyle.py`；证据 `output/revolve-oldstyle-evidence.json`；对照事实 398 / 399 |
+| 411 | **★★★ 「先缝合再加厚」也不成。**缝合本身成了）而加厚仍回 `None`**（★ 而缝合本身成了）** —— 2026-10-03（轮 530）。★ 而这一条**正是我自己写下的未查项**。
+     ★ **线索怎么来的**（★ 上一轮刚固化的钥匙 —— 事实 410）：**官方原话里的每个名词都要落实**。
+     ★ 官方对 `FeatureBossThicken` 的 **`FillVolume`** 参数逐字是：
+       > "True if you want to make a **solid from the knitted surface**, false if not"
+       ⇒ ★★ **“knitted surface”**（已缝合的面）—— ★ 直指“先 knit”。
+     ★ 而它**也是事实 403 里我自己写的未查项**：「① 能否先 `knit` 成一张再加厚」。
+     ★ 真机（`tools/probe_knit_then_thicken.py`，走 `sw_guard`、零弹窗）：
+     ```
+     先缝合 + 加厚（IFeatureManager） ⇒ ★ **缝合成功**（`曲面-缝合1` · surface 2→1）、而加厚 **回 `None`** · 树不动 · `solid` 仍 **0**
+     先缝合 + 加厚（IModelDoc2 旧式） ⇒ 同
+     对照：不缝合直接加厚      ⇒ 同
+     ```
+     ⇒ ★★ **故：「knitted surface」这条线索也被排除** ✓ —— ★ **即：加厚在“已缝合成一张”之后仍不成**。
+     ★ 而**加厚的总账现为 17 组 · 6 种入口形态**（★ 轮 502：1 · 503：7 · 504：3 · 520：3 · 本轮：3）。
+     ★ **而一个副产：缝合在本轮**又一次成了**（`曲面-缝合1` · surface 2→1）—— ★ 与事实 395 完全一致 ✓
+     ★ **按事实 53 停手**（加厚已 4 轮：502 · 503 · 504 · 520 · 530）。
+     ★★ **方法论回扣**：上一轮的钥匙（“原话里的名词都要落实”）**在旋转曲面上开了一把锁、在加厚上没开开** —— ★ 而**两者都是有价值的结果**（★ 一个成、一个排除）。|真机：`tools/probe_knit_then_thicken.py`；证据 `output/knit-then-thicken-evidence.json`；对照事实 395 / 401 / 403 / 410 |
+| 412 | **★★ 直纹曲面的「on this feature」这个读法也被排除**（★ 同一把钥匙的第二次使用）** —— 2026-10-03（轮 531），B6/T608。
+     ★ 钥匙（事实 410）：**官方原话里的每个名词都要落实**。
+     ★ 而官方对 `InsertRuledSurfaceFromEdge2` 的原话逐字是：
+       > "Inserts a ruled surface from the selected edge **on this feature**."
+       ⇒ ★★ 那两个词**本仓从未当回事** ⚠
+     ★ 真机（四组，`tools/probe_ruled_surface_on_feature.py`，零弹窗）：
+     ```
+     ① 只选边（对照）            ⇒ sel=1 · 回对象 · 树 0 增量
+     ② **先选体特征 + 边**        ⇒ **sel=2**（★ 特征与边**都选上了**）· 回对象 · 树 0 增量 ⚠
+     ③ **按坐标挑到真的顶部水平边** ⇒ sel=1（edge 8 · 中点 [0, 20, 0]）· 回对象 · 树 0 增量
+     ④ 先选曲面特征 + 边        ⇒ sel=1 · 回对象 · 树 0 增量
+     ```
+     ⇒ ★★ **故：那个读法也被排除** ✓ —— ★ 而② 里 `sel=2` （特征与边**都选上了**）而仍不成，说明**不是选区数量的问题**。
+     ★★ **而本轮有两个自己的 bug 被修**（★ 又一例“失败常在我这边”）：
+       ① `P._get_sketch_name_candidates(want) + (want,)` ⇒ **它回的是 `list`** ⇒ `TypeError: can only concatenate list (not "tuple") to list`（★ 而它**正杀在最关键的两组上**）；
+       ② 坐标筛子写成 `|m[2] - 20| < 0.5`，而拉伸是 **Z=-20→0**（前视面拉 20mm）⇒ **筛空了、退回边 0**（★ 修成 `|m[2] - 0| < 0.5` 后才挑到 edge 8）。
+     ★ **按事实 53 停手**（直纹已 3 轮：505 · 506 · 531）。
+     ★★ **方法论回扣**：同一把钥匙（“原话里的名词”）**在旋转曲面上开了一把锁、在加厚与直纹上没开开** —— ★ 三次里一次成，★ 而**三次都是有价值的结果**。|真机：`tools/probe_ruled_surface_on_feature.py`；证据 `output/ruled-surface-on-feature-evidence.json`；对照事实 398 / 410 / 411 |
+| 413 | **★★★ 扫描曲面有**专用方法** `InsertSweepSurface2/3`（★ 而本仓从未查过）；而五条入口现已**穷尽**（全部回 `None`）** —— 2026-10-03（轮 532）。
+     ★ **怎么找到的**（★ 那把钥匙的第三次使用 —— 事实 410：**官方文档里的每个名字都要落实**）：
+     ★ 先读 `InsertProtrusionSwept4` 的 **Remarks** ⇒ 「SOLIDWORKS 2018 introduces a new sweep architecture…」⇒ 而它的 `## See Also` 里列着
+       **`IFeatureManager::InsertSweepSurface2 Method`** ⚠ —— ★★ **名字里就有 `SweepSurface`**，而**本仓从来没查过它**。
+     ★ 而它的 `Remarks` 第一句逐字是：
+       > "**Because you are creating a surface, the sections can be open.**"
+       ⇒ ★ 它**明说在建曲面** ✓（★ 而 mark 分工与其他扫描同：1=轮廓、2=引导线、**4=路径**）
+     ★ 真机（`tools/probe_sweep_surface_dedicated.py`，零弹窗、选区 `{1:1, 4:1}` **对**）：
+     ```
+     InsertSweepSurface2（**11 in** · 类型库 arity=12） ⇒ 回 **None** · 树不动
+     InsertSweepSurface3（**14 in** · 类型库 arity=15） ⇒ 回 **None** · 树不动
+     ★ 而传 11 参给 `…3` ⇒ **`非选择性的参数`**（★ 反过来**确认了 arity = 14**）
+     ```
+     ⇒ ★★ **故扫描曲面的五条入口现已穷尽**：新架构 `CreateDefinition(62)` · 旧式 `InsertSweepRefSurface2`（6）· `InsertSweepRefSurface`（4）· **专用 `InsertSweepSurface2`（11）** · **`InsertSweepSurface3`（14）` —— ★ **全部回 `None` · 树不动** ✓
+     ★ **按事实 53 停手**（扫描已 4 轮：486 · 488 · 509 · 518 · 532）。
+     ★★ **方法论回扣**：同一把钥匙三次使用 —— ★ **旋转曲面成了**、★ **加厚与直纹没成**、★而**本次又找到一个本仓从未查过的专用方法**（★ 而它也没成）。
+     ★ 而它的**净收获不是“成”**：★★ **它把一个“入口没穷举”的漏洞堆上了** —— ★ 与事实 401（加厚）同样的作用。|真机：`tools/probe_sweep_surface_dedicated.py`；证据 `output/sweep-surface-dedicated-evidence.json`；对照事实 384 / 401 / 410 / 412 |
+| 414 | **★★ 「See Also 扫描」**不能**做成发现缺口的判据**（★ 两个尺度**都不可用**）—— 它只能当**人工挖线索的入口**** —— 2026-10-03（轮 533）。
+     ★ 起因：事实 410/413 那把钥匙（“官方文档里的每个名字都要落实”）非常有效 —— ★ 而事实 413 的 `InsertSweepSurface2` **就是从 `See Also` 里挖到的**。
+     ★ 故本轮想把它**机械化**（扫全部 md 的 `## See Also`，对照本仓是否提到/调过）。
+     ★ 两个尺度的实测：
+     ```
+     宽（“本仓提到过这个名字”）  ⇒ **306 / 314** （★ 几乎全中、**无区分度**）
+     紧（“真的调过”）        ⇒ **431 / 470** （★ 几乎全没调 —— 因为本仓只做了一部分域）
+     ```
+     ★ 而宽那个尺度**为什么漏了 `InsertSweepSurface2`**？★ 因为它**在那 306 里** —— ★★ **本仓提到过那个名字**（★ 而**只是没真调过**）⇒ ★ **“提到过”≠“查过/调过”** ⚠
+     ⇒ ★★ **故：它只能当人工挖线索的入口**（★ 像事实 413 那样**顺着读一页的 See Also**），★ **而不该机械化成一个门禁** ⚠
+     ★★ **这是一条“不要把好手法硬做成门禁”的记录** —— ★ 它节省了后人一个**只会报噪的检查器**。
+     ★ 而它与事实 408（把影响面收窄）同族：★ **一个看着很好用的东西，要先用反例量一下它的区分度**。|真机：本轮两次纯静态扫描（`C:\swapi\types` 的 `## See Also` × `scripts/`+`mcp-server/` 的 `get_com_member` 字面量）；产物 `output/_seealso.json` · `output/_called.json`；对照事实 408 / 410 / 413 |
+| 415 | **★★★ 第六种源：官方**例子**（它给的是**调用序**，签名与 Remarks 都给不了）—— 而剔裁曲面的正确顺序与我的**相反**** —— 2026-10-03（轮 534），B6/T607。
+     ★ **怎么找到的**（那把钥匙的第四次使用）：读 `IFeatureManager.PreTrimSurface` 的 **CHM 页**，★ 而它顶上写着「See Also **Example**」⇒ 顺着走到 `Create_Trimmed_Surface_Feature_Example_{CSharp,VB,VBNET}.htm` ✓
+     ★★★★ **官方例子的完整调用序**（逐字）：
+     ```
+     ① 建两张相交曲面
+     ② **PreTrimSurface(False, True, False, False)**  ← ★ **先调它！且此时尚未选任何东西**
+     ③ **SelectByID2("", "SURFACEBODY", x, y, z, True, 0, Nothing, 0)**
+          ← ★★ **选的是 `SURFACEBODY` 类型（按坐标）**，而 `True` = append
+     ④ **PostTrimSurface(True)**                     ← ★ **然后才提交**
+     ```
+     ⇒ ★★ **故本仓轮 519 的错一目了然**：★ **顺序反了**（我**先选面、再**调 `PreTrimSurface`）；★ 而**选择类型**也不同（我按**对象选 FACE**，例子选 **`SURFACEBODY`**）。
+     ★ 真机（`tools/probe_trim_surface_per_example.py`，零弹窗）：
+     ```
+     照例子（Pre → 选 SURFACEBODY → Post） ⇒ **picked = False** ⚠
+          ← ★ **`SelectByID2("", "SURFACEBODY", x,y,z, …)` 五次全失败**，因为**我猜的坐标没落在曲面上**（例子用的是它自己几何的精确坐标）
+     对照（Pre → 按对象选面 → Post） ⇒ picked=True · sel=8 · 而 `Post` 回 **None** · 树不动
+     ```
+     ⇒ ★★ **本轮拿到的确定结论**：★ 「先 Pre、后选、再 Post」这个**顺序已被执行**，而**按对象选面**那条仍不成 ✓
+     ★ **而“照例子”那条没真试到**（★ `picked=False`）—— ★ 而**那是探针的毛病**（坐标猜偏了）。
+     ★ **下一步明确**：★ **按**对象**选曲面体**（★ 而不是按坐标）—— 即 `_select_com_object(surface_body)`（★ 本仓有那个手法）。
+     ★★ **而本轮最大的收获是那个源本身**：★ **官方例子是第六种源**（★ md · CHM · 反射 · 类型库 · CHM 的 Remarks 之外），★ 而它给的是**调用序** —— ★ 那是**签名与 Remarks 都给不了的东西** ✓
+     ★ **而它还顺手给出一条可复用的路**：★ **CHM 页顶上那个「Example」链接**（★ 而本仓从来没点过）。|真机：`tools/probe_trim_surface_per_example.py`；证据 `output/trim-surface-per-example-evidence.json`；例子：`Create_Trimmed_Surface_Feature_Example_VBNET.htm`；对照事实 410 / 413 / 414 |
+| 416 | **★★ `IEntity.Select4` 能选**面**、**不能选**曲面体****；而剪裁曲面按例子的顺序仍不成** —— 2026-10-03（轮 535）。
+     ★ 上一轮（事实 415）的下一步是：★ **按**对象**选曲面体**（而不是按坐标）。★ 而真机结果：
+     ```
+     `_select_com_object(曲面体)`        ⇒ **返回 False · picked=0**  ⚠
+     `_select_com_object(曲面体的面)`  ⇒ **True · picked=4 · sel=4**  ✓
+     ```
+     ⇒ ★★ **故：`IEntity.Select4` 对**面**生效、对**体**不生效** —— ★ 这是事实 32（“实体没有名字”）的**一个新分支**：★ **面可以按对象选、体不行**。
+     ★ 而它**也解释了轮 534 的 `picked=False` 的一个可能**（★ 不只是坐标猜偏）。
+     ★ 真机（三组，零弹窗）：
+     ```
+     Pre → 按对象选曲面体 → Post      ⇒ picked=0 · `Post` 回 **None** · 树不动
+     Pre → 按对象选体+面 → Post      ⇒ picked=4 · sel=4 · `Post` 回 **None** · 树不动
+     对照：选体**在 Pre 之前**            ⇒ picked=0 · `Post` 回 **None** · 树不动
+     ```
+     ★ 而 `PreTrimSurface` **每次都回 `True`**（★ 事实 400 起就是），★ **而第二段总是 `None`** 。
+     ★ **按事实 53 停手**（剪裁已 3 轮：519 · 534 · 535）。
+     ★ **累计已排除**：① 参数不全（md vs CHM vs 类型库 三源合一）· ② `Pre` 的四个开关组合（轮 519）· ③ **顺序反了**（事实 415，已正）· ④ **按对象选体**（本轮，而它**本来就选不中**）。|真机：`tools/probe_trim_surface_by_object.py`；证据 `output/trim-surface-by-object-evidence.json`；对照事实 32 / 400 / 415 |
+| 417 | **★★ 分割线有**三条入口**（轮廓/投影/交叉）；而交叉型真机不成、另两条因事实 33 而**没真试到**** —— 2026-10-03（轮 537），B7/T705。
+     ★ **三条入口**（取自类型库·第 3 源）：
+     | 类型 | 入口 | 签名 |
+     |---|---|---|
+     | **轮廓** | `IModelDoc2.InsertSplitLineSil()` | **0 参** |
+     | **投影** | `IModelDoc2.InsertSplitLineProject(IsDirectional, FlipDir)` | **2 参** |
+     | **交叉** | `IFeatureManager.InsertSplitLineIntersect(CompleteOption)` | **1 in** |
+     ★ 而本仓此前的记录只有一句“**分割线两条真机树无增量（前置还不够）**”—— ★ **没写清是哪个入口与什么前置** ⚠
+     ★ 真机（`tools/probe_split_line.py`，零弹窗）：
+     ```
+     轮廓型   ⇒ picked={"plane": **null**} · 回 None · 树不动   ← ★ **没真试到** ⚠
+     投影型   ⇒ picked={"plane": **null**} · 回 None · 树不动   ← ★ **没真试到** ⚠
+     交叉型   ⇒ picked={"faces": **10**} · 回 None · 树不动   ← ★ **真试到了**
+     ```
+     ★★ **而前两条为什么没真试到**：★★ **事实 33 又一次应验** —— ★ 我在 `_pick_plane` 里把 `Callout` 传了 **`None`**（而本仓要 `_empty_callout()`）⇒ 报 `类型不匹配`，★ 而**我的 `except: continue` 把它吞了**（★ 于是**静默失败**）。
+     ★ 故：★ **确定结论只有一条** —— **交叉型（10 张面选中）不成** ✓
+     ★ **下一步**：★ 用本仓的 `sw_part._empty_callout()` 重试轮廓/投影两型（★ 而那两条**尚未真试**）。
+     ★★ **可复用的记误**：★ **`except: continue` 会把“参数类型错”变成“选不中”**，★ 而“选中不”又会被读成“前置不够” ⚠ —— ★ 这正是计划里那句没写清的话的来历。|真机：`tools/probe_split_line.py`；证据 `output/split-line-evidence.json`；对照事实 32 / 33 / 416 |
+| 418 | **★★ 分割线三条入口**前置都到位、全部不成**；而“手搓 COM 调用”会把前置搞成**假红**** —— 2026-10-03（轮 538），B7/T705。
+     ★ 上一轮（事实 417）的下一步是：★ 用 `_empty_callout()` 重试轮廓/投影两型。★ 而**这次修动发现了两层**：
+     ```
+     第一层：★ 把 `except: continue` 改成**把错带回去**
+       ⇒ 错现出原形：**类型不匹配（位置 8）**（★ 位置 8 = `Callout`）⚠
+     第二层：★ 即使传了 `_empty_callout()` 仍报同一个错
+       ⇒ ★★ **真因：我手搓了 `get_com_member(ext, "SelectByID2", …)`**，★ **而本仓已有 `sw_part._select_by_id`** —— ★ 它内部处理的形态才是对的 ✓
+     ```
+     ★ **改用 `_select_by_id` 后**（`tools/probe_split_line.py` 第二次修）：
+     ```
+     轮廓型 ⇒ picked={"plane": **"前视基准面"**} · 回 None · 树不动
+     投影型 ⇒ picked={"plane": **"前视基准面"**} · 回 None · 树不动
+     交叉型 ⇒ picked={"faces": **10**} · 回 None · 树不动
+     ```
+     ⇒ ★★ **故：分割线**三条入口、前置都到位、全部不成** ✓ —— ★ 而这与上一轮的“**没真试到**”**完全不同**。
+     ★ ★★ **可复用的教训（值得记）**：★ **不要手搓本仓已有的 COM 调用包装**。★ 本例里我手搓了 `SelectByID2`，★ 而**两种写法都报同一个错**；★ 而本仓的 `_select_by_id` **一次就成** ⚠
+     ★ **按事实 53 停手**（分割线已 2 轮：537 · 538，★ 而这轮是“**前置修正后的一次干净复核**”）。
+     ★ **下一步若还动**：★ 读**官方例子**（★ 第六种源 —— 事实 415）—— 它对剔裁曲面**给出了调用序**，★ 而分割线可能也有例子。|真机：`tools/probe_split_line.py`；证据 `output/split-line-evidence.json`；对照事实 33 / 415 / 417 |
+| 419 | **★★★ 一类现象单列：「**照官方例子把前置完全对上**」而**特征仍不建**** —— 两个案例（剔裁曲面 + 投影型分割线）—— 2026-10-03（轮 534-539）。
+     ★ 事实 415 立了「**第六种源：官方例子**」（★ 它给的是**调用序**）—— ★ 而**它在剔裁曲面上真的纠正了一个错**（顺序反了）。
+     ★ 故本轮（轮 539）用它攻**投影型分割线** —— 在 CHM 里找到 `Create_Projection_Split_Line_Example_VBNET.htm`，★ 而它的**关键四行**逐字是：
+     ```
+     ① SelectByID2("Boss-Extrude1", "BODYFEATURE", 0,0,0, False, 0, Nothing, 0)
+     ② SelectByID2("Sketch1",       "SKETCH",      x,y,0, True,  **4**, Nothing, 0)
+     ③ SelectByID2("",              "FACE",        x,y,z, True,  **1**, Nothing, 0)
+     ④ Part.InsertSplitLineProject(True, True)
+     ```
+     ⇒ ★★ **故两个 mark 是：草图 = 4 · 面 = 1** ⚠ —— ★ 而本仓轮 537/538 **只选了一个基准面、mark = 0**。
+     ★ 真机（`tools/probe_split_line_projection_per_example.py`，零弹窗）：
+     ```
+     picked = {"特征": "凸台-拉伸1", "草图": "草图2", "面": true}   ★ 三样都选上了 ✓
+     sel_by_mark = {**'0': 1, '1': 1, '4': 1**}                    ★ mark 分工**完全照例子** ✓
+     而 `(True,True)` / `(True,False)` / `(False,True)` 三组 ⇒ **全部 `new=[]` · 无错** ⚠
+     ```
+     ⇒ ★★ **故：前置已照官方例子完全对上、而特征仍不建** ✓
+     ★ 而它与**剪裁曲面**（事实 415，★ 顺序已纠正后仍不成）**同一个形态** ⚠
+     ⇒ ★★★ **故把它们并成一类：★ 「官方例子给出的调用序已完整执行、而这条后端上特征仍不建」** —— ★ 与事实 391 那一族同源。
+     ★ **按事实 53 停手**（分割线已 3 轮：537 · 538 · 539）。
+     ★★ **而它的净收获不是“成”**：★ **它把两条能力的「前置没对」这个可能性彻底排除掉了** —— ★ 以后不必再围着前置转。
+     ★ 而那两个例子页名（★ 可直接重现）：`Create_Trimmed_Surface_Feature_Example_VBNET.htm` · `Create_Projection_Split_Line_Example_VBNET.htm`。★★ **⚠ 本条结论已被更正（2026-10-03 接手轮，见事实 484）**：
+        ★「**前置已照官方例子完全对上**」**只对了一半** —— ★ 对的是 **mark**（草图 4 · 面 1），
+        ★ **错的是几何**：★ 上一轮探针把**实体拉成 z∈[-30,30]**、而投影草图留在 **Front Plane（z=0）**
+        ⇒ ★ **草图被实体夹在中间**；★ 且面取的是 **`GetFaces()[0]`**（与投影落点无关）。
+        ⇒ ★ 照官方例子的**几何**（草图在实体之外 + 面按落点选）重做 ⇒ ★ **真机建成**。
+        ⇒ ★ 故本条的正确表述是：★「**mark 已对上、而几何没对上**时特征不建」。
+      |真机：`tools/probe_split_line_projection_per_example.py`；证据 `output/split-line-projection-per-example-evidence.json`；对照事实 391 / 415 / 417 / 418 |
+| 420 | **★★★ 一条**分类判据**：看**返回值**——「回对象」= 特征其实建了（树外）；「回 `None`」= 真的没建**** —— 2026-10-03（轮 540）。
+     ★ **缺口是我自己的**：轮 537-539 我对分割线只记了 **`new = []`**（树增量），★ **而没记返回值** ⚠ —— 而**事实 406 的教训正相反**：`InsertCutSurface` 当时**回了对象**（`Name` = 「使用曲面切除1」·`GetTypeName2` = `SurfCut`）—— ★ **特征其实建了、只是树回读看不见**。
+     ★ 真机（`tools/probe_split_line_returns.py`，零弹窗）：
+     ```
+     轮廓型 ⇒ 回 **None** · 前置 picked={"基准面": "前视基准面"}
+     投影型 ⇒ 回 **None** · 前置 picked={"特征":"凸台-拉伸1","草图":"草图2","面":true}
+     交叉型 ⇒ 回 **None** · 前置 picked={"面": 6}
+     而递归链里**没有任何 `Split*` 类型**（`split_types = []`）
+     ```
+     ⇒ ★★ **故：分割线的“不建”是**真的****（**不是**回读盲区）✓
+     ★ 而那**把缺口补上了**：★ 在事实 406 那条教训下，**分割线与 `surfcut` 不同类** ✓
+     ★★ **故立一条分类判据（★ 以后遇到“树不动”先看它）**：
+     ```
+     回**对象**（带 `Name` / `GetTypeName2`）  ⇒ 特征**其实建了**（★ 只是在树外）：`InsertCutSurface`
+     回 **`None`**                        ⇒ **真的没建**：分割线（三条）· 加厚 · 直纹曲面 · 剪裁曲面 · 扫描曲面
+     ```
+     ★ 而它与**事实 391**（静默不干活）与**事实 406**（回读盲区）合起来才是完整的图景。★★★ **⚠ 本条已被证伪（2026-10-03 接手轮，见事实 486）**：
+        ★ 本轮真机上**投影型与轮廓型都在 `ret = None` 的情况下建成了**
+        （★ 树新增「分割线1」· 面数 +1）⇒ ★ **`ret is None` 对分割线这族零信息量**。
+        ★ 而"树增量"也不够：★ M5/M6 里**树新增了「分割线1」、而面数 6→6**（一个面也没切开）。
+        ⇒ ★ 正确判据要落到**几何读数**上（实体面数 / `IFace2.GetLoopCount` 环数）。
+      |真机：`tools/probe_split_line_returns.py`；证据 `output/split-line-returns-evidence.json`；对照事实 391 / 406 / 417-419 / 486 |
+| 421 | **★★★ 「水平/竖直尺寸**会挂**」这个定性是**错的**：它弹的是**数值输入框**、在等人填数** —— 2026-10-03（轮 541）。
+     ★ 起因：本轮去查 T501/T502（`AddHorizontalDimension2` / `AddVerticalDimension2`）那条“**会挂**”的记录（★ 计划里写着“单跑 4.41s / **120.42s** 后 `sw_alive: null`”）。
+     ★ 而**护栏早就把它落盘了**（★ 每个弹窗一个文件）：`output/dialog-events/2026-10-03T13:4*.json`，★ 而**它的控件树逐字是**：
+     ```
+     title  = **"修改"**        ← ★★ SolidWorks 的**数值输入框**
+     class  = "#32770" · exe = "SLDWORKS.exe"
+     controls = Statics"SLIDER" × 3 · Buttons"THUMB WHEEL" × 3 · Buttons"BUTTON" × 9
+                ← ★ **滑块 + 微调**组件组（★ THUMB WHEEL = 拇指轮）
+     hung   = **false**   ← ★★★ **没挂！**
+     verdict.mode = "needs_llm"   ← ★ 理由：“多于一个同权按钮 ⇒ 点哪个取决于弹窗在问什么”
+     ```
+     ⇒ ★★ **故真因：`AddHorizontalDimension2` / `AddVerticalDimension2` 在**没选中合适实体**时，会弹一个「修改」框**让人工输入尺寸值**，★ 而**护栏正确地不点它**（★ 它**在问问题**）⇒ ★ **调用永久等待** ✓
+     ★ 而那**与“指针族到不了”完全不同**：★★ **它是「前置不足」的另一种表现** —— ★ 而且**它可能是可修的**（只要选对实体）。
+     ★ 故状态从“**会挂（不可分析）**”改为“**需前置（可分析，且有明确下一步）**” ✓
+     ★★ **而本轮的方法论：☌ 护栏的落盘就是证据**—— ★ **它在几个月前就把控件树记下了**，★ 而我当时只记了一句“会挂” ⚠ ⇒ ★ **遭遇不可解释的现象时，先去翻护栏的历史落盘**。
+     ★ **下一步**：★ 选中**一条边或两个点**后再试那两个方法（★ 而**不是**继续读作“会挂”）。|证据：`output/dialog-events/2026-10-03T13:4*.json`（★ 护栏落盘，含控件树）；对照事实 47 / 53 与计划 `specs/201-toolbar-gaps/tasks.md` 的 T501/T502 |
+| 422 | **★★★ 水平/竖直尺寸**真机建成了** —— 真因是「**必须先选中实体**」（对照定下）** —— 2026-10-03（轮 542），B5/T501+T502。
+     ★ 承事实 421（它把“会挂”改成了“缺前置”），★ 故本轮做那条下一步：**选中实体后再试**。
+     ★ 真机（`tools/probe_hv_dimension_with_selection.py`，零弹窗、`sw_alive: true`）：
+     ```
+     ★ **选一条线段**   ⇒ **ok=True** · 草图尺寸 **0 → H:1 → V:1**  ✓✓
+     ★ **选两个端点**   ⇒ **ok=True** · 草图尺寸 **0 → H:1 → V:1**  ✓✓
+     对照：**不选**      ⇒ ok=False · 草图尺寸 **0 → H:0 → V:0**  ✗
+     ```
+     ⇒ ★★ **故真因就是“必须先选中实体”** ✓ —— ★ 而**两种选法都行**（一条线段 / 两个端点）。
+     ★ 而它**一步推翻了三个旧印象**：① “**会挂**”（★ 事实 421：真相是弹「修改」数值框）· ② “必须给尺寸初值”（★ 实际上三个参数只是**放置点**，传 `0,0,0` 就行）· ③ “返回值可信”（★ `AddVerticalDimension2` **回 `None` 而尺寸照样加上**）。
+     ★★ **可复用的手法**：★ **判据用“尺寸计数”（而不是返回值）** —— ★ 而计数要走 `IFeature.GetFirstDisplayDimension` + `IAnnotation.GetNext2`（★ **而不是 `ISketch.GetDisplayDimensions`** —— ★ 后者我试过、**回 `-1`**）。
+     ★ 而这**与事实 418 那条教训同一条**：★ **不要手搓、用本仓现成的**（★ 本仓 B5 探针早就用对了那两个调用）。
+     ★ **落地**：`capabilities.yaml` 新增 **`sketch_dimension_horizontal`** 与 **`sketch_dimension_vertical`**（均 `level = verified`，★ 而 limitations 里写清“必须先选中实体”与“返回值不可信”）；★ 计划 `specs/201-toolbar-gaps/tasks.md` 的 T501/T502 **已打勾**。
+     ★★ **而本轮的方法论：★ 一个被记为“会挂”的能力，先去翻**护栏的弹窗落盘**（事实 421）—— ★ 而往往只是差一个前置。**|真机：`tools/probe_hv_dimension_with_selection.py`；证据 `output/hv-dimension-with-selection-evidence.json`；对照事实 418 / 420 / 421 |
+| 423 | **★★ 上一轮那条方法论的**边界**：「先翻护栏弹窗落盘」只对**弹框型**有效；而「近 N 轮**零弹窗**」本身就是判据**** —— 2026-10-03（轮 543）。
+     ★ 起因：事实 422 的成功路径是“**先去翻护栏的弹窗落盘**”（★ 事实 421 就是靠它把 T501/T502 从“会挂”改成了“缺前置”）。
+     ★ 故本轮想**推广它**：去看 B6 那几条“回 `None`”的能力（加厚 · 直纹 · 剪裁 · 扫描曲面 · 分割线）当初有没有弹窗。
+     ★ 结果（`output/dialog-events/` 全扫，纯静态）：
+     ```
+     共 **63** 个弹窗事件 · 最早 2026-10-02T23:42:27 · **最晚 2026-10-03T13:43:49**
+     ★★ 而**比那个最晚的更晚的：0 个**（★ 而此后约 **40 轮**）
+     标题分组：（空）× 29 · **「修改」× 15** · Simulation × 6 · 「什么错」× 6 · **SOLIDWORKS Design 错误报告 × 5** · SOLIDWORKS Design × 2
+     处置等级：**needs_llm × 45** · None × 9 · **forbidden × 6** · auto × 3
+     ★★★ 有 `hung = True` 的：**0 个**
+     ```
+     ⇒ ★★ **故两条结论**：
+       ① ★ **那个“会挂”的印象，从头到尾没有一个 `hung=True` 支撑**（★ 事实 421/422 的旁证）；
+       ② ★★ **而近 40 轮零弹窗** ⇒ **加厚 / 直纹 / 剪裁 / 扫描曲面 / 分割线 的失败不是“在等弹窗”** —— ★ **它们是**真的静默回 `None`**。
+     ★ **故方法论加一句边界**：★ 「先翻落盘」**只对弹框型有效**；★ 而**「近 N 轮零弹窗」本身就是判据** ⚠ —— ★ 而那**省掉了未来的无用功**（★ 不必再去翻那几条）。
+     ★ 而它与事实 420（分类判据：看返回值）合起来就是**一张完整的分类图**：★ 弹框型（缺前置，**可修**）vs 静默 `None` 型（真不建）vs 回对象型（建了但在树外）。|证据：`output/dialog-events/`（63 个 JSON）全扫；对照事实 420 / 421 / 422 |
+| 424 | **★★★ 那六条“静默 `None`”能力的**接口本身都带 `AccessSelections`**（而入口 md **不提它**）；而 `IAccessSelections` **不在出厂类型库里**** —— 2026-10-03（轮 544）。★ 而**这正是目标点名要的那条依据**。
+     ★ 起因：事实 423 把那六条座实为“**真的静默回 `None`**”（★ 近 40 轮零弹窗）⇒ ★ 那就该问**为什么静默**。
+     ★ 而**第一层查证**（`C:\swapi\types\IFeatureManager\*.md`）：六个**入口**的 md **都不提 `AccessSelections`** ⇒ ★ 看上去**不属指针族**。
+     ★★ **而第二层（出厂类型库 · 第 3 源 · 冲突裁决者）推翻了它**：
+     ```
+     ISurfaceTrimFeatureData    14 成员 · AccessSelections=**YES** · Release=YES
+     IRuledSurfaceFeatureData   23      · AccessSelections=**YES** · Release=YES
+     ISweepFeatureData          **81**  · AccessSelections=**YES** · Release=YES
+     IThickenFeatureData        23      · AccessSelections=**YES** · Release=YES
+     ISplitLineFeatureData      38      · AccessSelections=**YES** · Release=YES
+     ISurfaceCutFeatureData     17      · AccessSelections=**YES** · Release=YES
+     ★ 签名均为 `AccessSelections(TopDoc, Component)`
+     ★★ 而 **`IAccessSelections` / `IAccessSelections2` 在类型库里查不到** ⚠
+     ```
+     ⇒ ★★ **故：那些特征的**正规用法**是「`GetDefinition` 拿 `*FeatureData` ⇒ `AccessSelections` 选 ⇒ 设属性 ⇒ `CreateFeature`」**，★ 而本仓一直是**直接调入口方法**（传空选区 / 空数组） ⚠
+     ★ 而它与**事实 47**（`IAccessSelections` 指针族 ⇒ `0x80010105`）**正好相接**：★ **那对接口不出现在出厂类型库里** —— ★ 而它们**正是 `*FeatureData.AccessSelections` 底下要走的那层** ✓
+     ★ **而这给出一条可试的新路**：★ 对那六条中任一条，**先 `GetDefinition` 拿到数据对象、试 `AccessSelections`**——★ 而它**能不能过**就是那一族的**直接实验** ✓
+     ★ 而**本轮的方法论**：★ 一个“**入口 md 不提**”的本领，**不等于它的数据接口也不提** —— ★ 而**类型库才是裁决者**（铁律 4）。|静态：`C:\swapi\types\IFeatureManager\*.md` × 出厂类型库（`comtypes` 反射）；对照事实 47 / 420 / 423 |
+| 425 | **★★★ `*FeatureData.AccessSelections` 在本后端上**是通的****（★ 而 `Component` **必须传空 Dispatch 变体**）** —— 2026-10-03（轮 545）。★ 而这是**目标点名要的那条依据**。
+     ★ 起因：事实 424 给出一条可试的新路：★ **先 `GetDefinition` 拿到数据对象、再试 `AccessSelections`**。
+     ★ 真机（`tools/probe_access_selections_on_featuredata.py`，零弹窗）：
+     ```
+     ★ 曲面切除（★ 它回对象） ⇒ `GetDefinition` = **CDispatch**（拿到 `ISurfaceCutFeatureData`）✓
+        传 `None`        ⇒ **类型不匹配（位置 2）**  ⚠（★ 位置 2 = `Component`）
+        传 **空 Dispatch**  ⇒ **`access_ok = True`**（**过了！**）  ✓✓
+     ★ 加厚 / 分割线              ⇒ 特征本身就是 `None` ⇒ **无法 `GetDefinition`**
+     ```
+     ⇒ ★★ **故两条结论**：
+       ① ★★★ **`*FeatureData.AccessSelections` 在 pywin32 后端上是通的** —— ★ 而那**推翻了“指针族结构性到不了”**（★ 至少对 `ISurfaceCutFeatureData`）；
+       ② ★ **而它的前提是**传空 Dispatch 变体**（`create_empty_dispatch_variant()`）—— ★ **而不是 `None`** ⚠ —— ★ 这是**事实 12/33 的第三次应验**
+         （`SelectByID2` 的 `Callout` 也是同一个坑）。
+     ★ 而它与**事实 47**（当年记的 `0x80010105`）**并不矛盾**：★ 那年记的是**另一条路**（`ISketchedBendFeatureData.SetFixedFace` 那族），★ 而**这条（`*FeatureData.AccessSelections`）是通的** ✓
+     ★ **而这给出一条真正可行的新路**：★ 对那几条“静默 `None`”的能力，★ 正路是「**`GetDefinition` ⇒ `AccessSelections` ⇒ 设属性 ⇒ `CreateFeature`**」—— ★ 而**其前提是“先有一个特征对象”**（★ 而加厚/分割线连那一步都没到）。
+     ★★ **方法论**：★ 一个“**成熟的旧结论**”（如“指针族到不了”）**也要用新证据回头验** —— ★ 而**本轮就把它推翻了一半**。|真机：`tools/probe_access_selections_on_featuredata.py`；证据 `output/access-selections-on-featuredata-evidence.json`；静态依据：出厂类型库（事实 424）；对照事实 12 / 33 / 47 / 424 |
+| 426 | **★★★ 批量实验结果：`*FeatureData.AccessSelections` **5 / 5 全过****（★ 而不是单样本）；★ **「指针族结构性到不了」这条旧结论被彻底推翻**** —— 2026-10-03（轮 546）。
+     ★ **手法**：★ **拿「已建成」的特征当载体** —— 它们**都有特征对象** ⇒ 都能 `GetDefinition` ⇒ 都能测 `AccessSelections` ✓
+     ★ 真机（`tools/probe_access_selections_matrix.py`，零弹窗）：
+     ```
+     等距曲面  `OffsetRefSurface`  ⇒ FD=CDispatch · **过=True** ✓
+     延伸曲面  `ExtendRefSurface`  ⇒ FD=CDispatch · **过=True** ✓
+     旋转曲面  `RevolvRefSurf`     ⇒ FD=CDispatch · **过=True** ✓
+     缝合曲面  `ExtruRefSurface`   ⇒ FD=CDispatch · **过=True** ✓
+     替换面    `Extrusion`         ⇒ FD=CDispatch · **过=True** ✓
+     平面区域  ★ 本轮取到的是 `草图2 / ProfileFeature`（★ 探针取到草图了）⇒ FD=None
+     ```
+     ⇒ ★★ **故：拿到**真特征**的**全部过**（**5/5**）** ✓ —— ★ 而**事实 425 只有 1 个样本**。
+     ★★ **而这把目标点名的那一族定了性**：★ **`IAccessSelections` 那一层在 pywin32 后端上**是通的**（★ 以及 `*FeatureData.AccessSelections`）。
+     ★ 而**它与事实 47 并不矛盾**：那年记的是**另一条路**（`ISketchedBendFeatureData.SetFixedFace` 那族）。
+     ★ **而本轮还修了一个自己的错**：第一版我**按猜的类型名过滤**（`OffsetSurface` / `SewSurface` / `ReplaceFace` …）⇒ **六条里五条拿到 `None`**（★ 即**没真试到**）⚠
+       ⇒ ★ **改成「取最后一个真特征」（不猜类型名）** 后才 5/5 ✓ —— ★ **真实类型名是 `OffsetRefSurface` / `ExtendRefSurface`…** （★ **而我猜的那几个都不对**）。
+     ★★ **方法论**：★ **类型名不要猜** —— ★ 与事实 418/422（“能不用猜的名字就不用”）**同族**。|真机：`tools/probe_access_selections_matrix.py`；证据 `output/access-selections-matrix-evidence.json`；对照事实 47 / 424 / 425 |
+| 427 | **★★★ 线性阵列族的 `AccessSelections` **可稳定复现地到不了****（`0x80010105`）—— ★ 而它与事实 425/426（6/6 通）**不矛盾**：**接口不同**** —— 2026-10-03（轮 547）。
+     ★ **本轮解的是一个直接冲突**（★ 两边都有真机证据）：
+       · `docs/toolbar-gaps-backend-limits.md` **§二**（轮 484）记 `(model, 空Dispatch)` ⇒ **`0x80010105`**；
+       · 而**事实 425/426**（轮 545/546）测出 `(doc, 空Dispatch)` ⇒ **过 = True**（6/6）。
+     ★ 故本轮**把 §二 那三种传法在同一个脚本里重跑**（`tools/probe_linear_pattern_access_recheck.py`）：
+     ```
+     ① `(model, None)`       ⇒ **类型不匹配（位置 2）**   ✓ 与 §二 逐字一致
+     ② `(model, 空Dispatch)` ⇒ **`0x80010105`（服务器出现意外情况）**  ✓ 逐字一致
+     ③ `(None, None)`        ⇒ **类型不匹配（位置 1）**   ✓ 逐字一致
+     ★ 而 `CreateDefinition(6)` 三组**都**拿到 `CDispatch`（★ 故**不是“没拿到 data”**）
+     ```
+     ⇒ ★★ **故：不是“当年有别的毛病” —— 它**可稳定复现**** ✓
+     ★ 而两边**不矛盾的原因是**接口不同****：
+       · ★ **通**：`ISurfaceCutFeatureData` · `IOffsetSurfaceFeatureData`（实例为 `OffsetRefSurface`）· `IRevolvedRefSurfaceFeatureData`（`RevolvRefSurf`）等 —— **6/6**；
+       · ★ **不通**：**`ILinearPatternFeatureData`**（★ 而它**正是线性阵列新架构的那个接口**）。
+     ★★ **故边界要写成**「**哪个接口**」，而不是「`AccessSelections` 通不通」** ⚠ —— ★ 而这正是**事实 128 那条定则**（可达性结论必须带**绑定层次**）的**同族**：★ 可达性结论也必须带**接口**。
+     ★★ **而本轮的方法论**：★ **两个都有真机证据的结论冲突时，把它们放在**同一个脚本里同时跑**（★ 而不是挑一个信）** ✓|真机：`tools/probe_linear_pattern_access_recheck.py`；证据 `output/linear-pattern-access-recheck-evidence.json`；对照事实 47 / 128 / 425 / 426 |
+| 428 | **★★★ 第三族（结构系统/焊件）的**精确形态****：★ **到不了的是「切割清单」，而「焊件特征本身」**真机建成了**** —— 2026-10-03（轮 548）。
+     ★ **静态先查**（★ 因为“取不到”是个含糊的词）：
+       · ★ **两源都有它** —— `C:\swapi\types\IFeatureManager\InsertWeldmentCutList2.md` + CHM ✓
+         ⇒ **故“取不到”不是“官方没有它”**；
+       · 类型库：`InsertWeldmentCutList2` **arity=2（1 in `Bodies` + out）**；旧版 `InsertWeldmentCutList` **arity=1（0 in + out）**；
+         ★ 而 **`IWeldmentCutListFolder` 在类型库里查不到** ⚠
+     ★ 真机（`tools/probe_weldment_cutlist_recheck.py`，零弹窗、两体件）：
+     ```
+     ① `InsertWeldmentCutList2([])`   ⇒ **`getattr` 回 `NoneType`**（成员**不可调用**）  ⚠
+        ★ 即：**它在类型库里有、而在实际对象上取不到**
+     ② `InsertWeldmentCutList()`（★ 旧版） ⇒ **`silent_none`**（回 `None` · 树不动）
+     ③ **`InsertWeldmentFeature()`**      ⇒ **`CDispatch` · 名 = `焊接件` · 型 = `WeldmentFeature`**
+        ★ 而 `new = ['焊接件']` ⇒ ★★★ **它真机建成了！** ✓
+     ```
+     ⇒ ★★ **故三层结论**：
+       ① ★ **不同成员的失败**形态不同**** —— `CutList2` 是“**成员不在对象上**”、`CutList`（旧）是“静默 `None`”。
+         ★ 而那**正是事实 420 分类判据的第四类**：★ **回对象** / **静默 `None`** / **报错** / **★★ 成员不存在于对象上**。
+       ② ★★★ **「结构系统」这一族**并非全到不了**** —— **`InsertWeldmentFeature` 真机建成了「焊接件」特征** ✓
+       ③ ★ 故到不了的是**「切割清单」这一条能力**，★ 而**不是“整个结构系统”** ⚠
+     ★ **故 §四 的结论要收窄**：★ **到不了的是 `InsertWeldmentCutList2`**（成员不在对象上）**，★ 而焊件特征**能建**。
+     ★★ **方法论**：★ 一个“**取不到**”的描述**是不够的** —— ★ 要问到**具体形态**（回什么、报什么、还是成员不在）。|真机：`tools/probe_weldment_cutlist_recheck.py`；证据 `output/weldment-cutlist-recheck-evidence.json`；静态：`C:\swapi\types\IFeatureManager\InsertWeldmentCutList2.md` × 出厂类型库；对照事实 420 / 425 / 426 / 427 |
+| 429 | **★★★ 旋转切除 = `FeatureRevolve2(IsCut=True)`（★ 官方明说 `FeatureRevolveCut2` **已废弃**）**；★ 而这是**按新纪律「官方文档是第 0 步」走出的第一条能力**** —— 2026-10-03（轮 550）。
+     ★ **台账原本指的入口是** `FeatureRevolveCut2`** —— 而它的 md **逐字**写着：
+       > "**Obsolete. Superseded by `IFeatureManager::FeatureRevolve2`.**"
+       ⇒ ★★ **故若按台账去攻，会走一条官方明说不要走的路** ⚠
+     ★ 而 `FeatureRevolve2` 的 **20 参签名**里第 4 个就是 **`IsCut`**；它的 `## Remarks` 还给了**完整 mark 分工**：
+     ```
+     剖面草图                 ⇒ Mark = 0
+     旋转轴                   ⇒ Mark = 4 或 16
+     上至面 / 上至顶点 / 等距面  ⇒ Mark = 32   ← ★ 本仓**从未用过**
+     ```
+     ★ 真机（`tools/prove_revolve_cut.py`，零弹窗）：
+     ```
+     ★ 旋转**切除**（IsCut=**True**）  ⇒ 树新增 `切除-旋转1` · **体积 0.8255 倍**（变小）✓
+     对照：旋转**凸台**（IsCut=False） ⇒ 树新增 `旋转1`   · **体积 1.1745 倍**（变大）
+     ```
+     ⇒ ★★ **故：那一个布尔就是“切除”与“加料”的分界** —— ★ 而**两组同时跑的对照实验**它自己就把结论钉死了 ✓
+     ★★ **而本轮的意义在方法**：★ **一次文档阅读 = 一条能力 + 一个对照实验，而避开了一条废弃入口的弯路** ⚠ —— ★ 这正是上一轮立那条纪律时想要的效果。
+     ★ **落地**：`capabilities.yaml` 新增 **`feature_revolve_cut`**（level = **verified**，共 **94** 条）；台账的「旋转切除」补 `capability_id` ⇒ **已能**。
+     ★★ **而它还顺手记下一条本仓未用过的东西**：★ **`Mark = 32`**（上至面 / 上至顶点 / 等距面）。|真机：`tools/prove_revolve_cut.py`；证据 `output/revolve-cut-evidence.json`；官方：`C:\swapi\types\IFeatureManager\FeatureRevolveCut2.md` · `FeatureRevolve2.md` |
+| 430 | **★★★ 「边界凸台/基体」与「放样凸台/基体」在 API 上是**同一个**（都是 `InsertProtrusionBlend2`）** —— ★ 差别在 **UI 层**（界面上是两个按钮）—— 2026-10-03（轮 551）。
+     ★ **推论怎么来的**：读官方 `InsertProtrusionBlend2.md` 的 `## Remarks`，它给了 mark 分工（**1 = profile · 2 = guide curve · 4 = centerline**）与两条硬约束（★ **剖面要按顺序选**；★ **强烈建议带引导线**）；★ 而**本仓 `scripts/sw_loft.py::create_loft_report` 走的就是那个入口** ✓
+     ★ 真机（`tools/prove_boundary_boss_same_api_as_loft.py`，零弹窗）：
+     ```
+     两个剖面（`草图1`、`草图2`，★ 按顺序选中）⇒ `create_loft_report`
+     ⇒ **建成 `放样1`**（★ 而**类型名 = `Blend`**）· mark1 = **2** · report_ok = **True** ✓
+     ```
+     ⇒ ★★ **故假说成立**：★ **「边界凸台」这条**不需要新代码**（★ 它的能力已存在）** ✓
+     ★ **而它还顺手回答了一个 UI 问题**：★ **界面上的「边界」与「放样」两个按钮，在 API 上落到同一个方法** —— ★ 而**差异体现在参数用法**（引导线 / 中心线），★ **不是另一个入口** ⚠
+     ★★ **方法论**：★ **台账里一条叫「某某」的能力，先查**它的 API 是不是已经被别的能力用着了** —— ★ 而**不是默认它需要新代码**。
+     ⚠ **而本轮我自己还犯了一个**过度映射****（★ 已撤回）：★ 我一开始把「**边界切除**」也映射到 `loft_and_sweep`
+       —— ★ 而**它走的是另一个入口**（`InsertCutBlend`）、★ **我只验了凸台** ⚠
+       ⇒ ★★ **故撤回**（★ **不假装做到**）⇒ 台账 已能 65（★ 而非 66）✓
+       ★ 而它留下一条可复用的警示：★ **一个 UI 名字相似并不等于同一个 API** ——
+       ★ **"UI 上两个按钮"可能是同一个方法，也可能是两个方法，只有真机能定**。
+     ★ **落地**：台账的「边界凸台/基体」补 `capability_id`（★ 「边界切除」**未补** —— 尚未真机验）。|真机：`tools/prove_boundary_boss_same_api_as_loft.py`；证据 `output/boundary-boss-same-api-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertProtrusionBlend2.md` |
+| 431 | **★★★ 一条**三级阶梯**：「提到过名字」→「本仓调过」→「**真机建成**」，★ 而**只有第三级算数**** —— 2026-10-03（轮 552）。
+     ★ **怎么碰出来的**：上一轮（事实 430）的方法论是「**先查它的 API 是不是已经被别的能力用着了**」，★ 故本轮把它**一次套用到剩下 27 条**。
+     ★ 第一遍（★ 含签名表）：**27 / 27 全中** ⚠ —— ★ 真因：`scripts/sw_api_sldworks.py` 是**签名表**（★ 里面本来就有几千个成员名）⇒ ★ **与事实 414（See Also 扫描）**同一个坑** ✗
+     ★ 第二遍（★ 排除签名表、只认**调用形态**）：**2 / 27** —— ★ 有了区分度 ✓
+     ★ 而那 2 条真机核下来：
+     ```
+     侧影实体（SketchUseEdge3）  ⇒ 回 **True** · 而形成的**线段 = 0**  ⚠
+     投影分割线（InsertSplitLineProject） ⇒ 草图**选中了** · 而**树不动**  ⚠
+     ```
+     ⇒ ★★ **故两条**仍然没做成** —— ★ 扫描命中的只是“**本仓有个包装**”、★ 而**包装不一定对** ⚠
+     ★★ **故立三级阶梯**：
+       ① ★ **本仓提到过名字**（★ 连签名表也算）⇒ **无区分度**；
+       ② ★ **本仓调过**（★ 有包装）⇒ **弱线索**（★ 包装可能是坏的 / 前置不足）；
+       ③ ★★ **真机建成** ⇒ **唯一算数的** ✓
+     ★ 而这是**同一教训的第三次**：事实 414（“提到过”≠“查过”）· 事实 430（★ 它自己那个“边界切除”过度映射）· 本轮（“调过”≠“做成”）。
+     ★★ **方法论**：★ **用一个静态线索去减少工作量是对的**，★ 而**不能把线索当结论** —— ★ 每一条都要**真机核一次**才能改台账** ⚠
+     ★ **故本轮不改台账**（★ 那 2 条**仍在可攻关**）—— ★ **不假装做到**。|真机：`tools/prove_splitline_and_silhouette.py`；证据 `output/splitline-and-silhouette-evidence.json`；本仓包装：`scripts/sw_curve_and_split.py:118` · `scripts/sw_sketch_edit.py:210`；对照事实 414 / 430 |
+| 432 | **★★★ 槽口四种 = **一条方法 + 一个枚举****（`ISketchManager.CreateSketchSlot`）—— ★ **一次文档阅读 = 4 条能力**** —— 2026-10-03（轮 553）。
+     ★ **官方签名（14 参）**：`CreateSketchSlot(SlotCreationType, SlotLengthType, Width, X1,Y1,Z1, X2,Y2,Z2, X3,Y3,Z3, CenterArcDirection, AddDimension)`；★ `CenterArcDirection` 官方给了取值：**-1 = CW · 1 = CCW**。
+     ★★ **而两个枚举的**值来自反射**（★ 铁律 4：swapi 的 enums 页**只给成员名列表、不给数值**）**：
+     ```
+     swSketchSlotCreationType_e :  **0 = line · 1 = center_line · 2 = arc · 3 = 3pointarc**
+     swSketchSlotLengthType_e   :  0 = CenterCenter · 1 = FullLength
+     ```
+     ⇒ ★★ **故台账那四条（直槽口 / 中心点直槽口 / 中心点圆弧槽口 / 三点圆弧槽口）正好对上 0/1/2/3** ✓
+     ★ 真机（`tools/prove_sketch_slot_four_types.py`，零弹窗）：★ **四个 type 全成**：
+     ```
+     line(0) · center_line(1) · arc(2) · 3pointarc(3)  ⇒ 均令草图段数 **0 → 5** · 回 `CDispatch`
+     ```
+     ⇒ ★★ **故：一次文档阅读 = 4 条能力** ✓ —— ★ 而这正是**新纪律的最大回报**：★ **UI 上四个按钮，API 上是一个方法 + 一个枚举** 。
+     ★ **落地**：`capabilities.yaml` 新增 **`sketch_slot_types`**（level = **verified**，共 **95** 条）；台账**四条均补** `capability_id` ⇒ 已能 **68**。
+     ★★ **方法论**：★ 一组 UI 上看着相似的条目，先查**它们是不是同一个 API 的不同枚举值** —— ★ 而**不是逐条写代码** ⚠
+     ★ 而它与事实 430（边界凸台 vs 放样）同族：★ **UI 分不分开，只有 API 能定**（★ 那次是**同一个方法**、本次是**同一个方法的四个值**）。|真机：`tools/prove_sketch_slot_four_types.py`；证据 `output/sketch-slot-four-types-evidence.json`；官方：`C:\swapi\types\ISketchManager\CreateSketchSlot.md` × 反射 `enum_values_sldworks.txt` |
+| 433 | **★★★ 台账里手填的 `api` 名，有**7/24 指向已废弃的第一代****（★ 而 md 头顶那句 `Obsolete` **直接给继任者**） —— 2026-10-03（轮 554）。
+     ★ **起因**：轮 550 发现 `FeatureRevolveCut2` 已废弃后，本轮把它**一次扫完剩下 24 条**。
+     ★ **结果（逐条读 md 头顶）**：
+     ```
+     ★★ 指向废弃入口 7 条：
+       草图驱动的阵列  FeatureSketchDrivenPattern  ⇒ Obsolete. See `CreateFeature` + `ISketchDrivenPatternFeatureData`
+       表格驱动的阵列  InsertTableDrivenPattern    ⇒ **InsertTableDrivenPattern2**
+       填充阵列        FeatureFillPattern          ⇒ Obsolete. See `CreateFeature` + `IFillPatternFeatureData`
+       扫描曲面        InsertProtrusionSwept4      ⇒ Obsolete. See **Remarks**（★ 已查：新架构 / `InsertSweepSurface2`）
+       自由样式        InsertFreeform              ⇒ **InsertFreeform2**
+       曲面展平        InsertFlattenSurface        ⇒ **InsertFlattenSurface2**
+       解除剪裁曲面     InsertUntrimSurface         ⇒ **InsertUntrimSurface2**
+     ★ 未废弃 4 条：放样切除 / 边界切除（`InsertCutBlend`）· 高级孔（`HoleWizard5`）· 螺纹线（`InsertCosmeticThread3`）
+     ★ 其余 13 条在 `IFeatureManager` 下查不到 —— ★ 而**换接口后 23/24 都找得到**
+     ```
+     ★★ **故一条可复用的检查**：★ **凡台账 `api` 带 `2`、或**不带后缀**的，先去 md 头顶看那句 `Obsolete`** —— ★ 而**继任者名字就在那句里** ✓
+     ★ 而它与事实 429（旋转切除）**同一形态**。
+     ★★ **而本轮还纠了一个自己的错**：轮 554 我先报了“13 条 md 里查不到”—— ★ 而**那是我只扫了 `IFeatureManager` 一个接口**（★ 与**事实 51**：“分析范围要贴合组织单元”**同族**）；★ **全接口扫后 23/24 都在** ✓
+     ★ **而解除剪裁（真机）**：
+     ```
+     `InsertUntrimSurface2`（**5 参**） ⇒ 无错 · 树不动（★ **arity = 5 对**）
+     `InsertUntrimSurface` （第一代）传 5 参 ⇒ **无效的参数数目**（★ 它只收 **4**）
+     ★ 而**真正的问题是我的前置**：Remarks 要求“a face or edges you want to untrim”，而我造的是**从未被剪裁过的**拉伸曲面 ⚠
+     ```
+     ★ 故状态：**入口与 arity 已定，前置（得先有一张被剪裁的曲面）尚未搭对**—— ★ **不登记、留在可攻关**。|真机：`tools/prove_untrim_surface2.py`；证据 `output/untrim-surface2-evidence.json`；对照事实 51 / 429 |
+| 434 | **★★ 曲面展平的**arity 与 mark 分工已定**（★ 第二代 2 参 / 第一代 1 参）；而**面-only 的前置不够**** —— 2026-10-03（轮 555）。
+     ★ **官方第二代签名**：`InsertFlattenSurface2(int AccuracyFactor, bool ShouldUseTears)`；★ `AccuracyFactor`：**10 ≥ 精度 ≥ 1**（★ 1 = 最高）。
+     ★★ **而它的 `## Remarks` 给了**五种 mark**（逐字）**：
+     ```
+     1  = **Faces or surfaces to flatten**   ← ★ 必需
+     2  = Edges to guide the shape and length
+     4  = Map edges
+     8  = Tear edges
+     16 = **Anchor point** from which to flatten   ← ★ 疑似本轮缺的那个
+     ```
+     ★ 真机（`tools/prove_flatten_surface2.py`，零弹窗）：
+     ```
+     `InsertFlattenSurface2`（2 参） ⇒ **无错 · 树不动**（★ **arity = 2 对**）
+     `InsertFlattenSurface`（第一代）传 2 参 ⇒ **无效的参数数目**（★ 它只收 **1**）
+     ★ 而两组的前置都是：一张直线拉出的曲面 **+ 面 mark=1**（★ `mark1 = 1`）
+     ```
+     ⇒ ★★ **故：入口与 arity 已定、mark 分工已知，★ 而**面-only 的前置不够**（★ 两代都不建）** ⚠
+     ★ **下一步**：★ 补 **`mark = 16`（锚点）** 与/或 **`mark = 4`（映射边）**。
+     ★ 而本轮**不登记、留在可攻关** —— ★ **不假装做到**。
+     ★ **而它与事实 433（废弃入口地图）同一条路**：★ 先读官方把**入口与 arity 定死**，★ 再搭前置** —— ★ 而不是一边试参数一边猜入口。|真机：`tools/prove_flatten_surface2.py`；证据 `output/flatten-surface2-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertFlattenSurface2.md` |
+| 435 | **★★★ 曲面展平 = `InsertFlattenSurface2` + **锚点 `mark = 16`（必需）****（★ 四格对照定下的根因）** —— 2026-10-03（轮 556）。
+     ★ 承事实 434（它把入口与 arity 定了、而面-only 前置不够）。
+     ★ 真机（`tools/prove_flatten_with_anchor.py`，零弹窗）—— ★ **四格对照**：
+     ```
+     ① 面(1) + **锚点(16)**               ⇒ **成** —— **`曲面-展平1`** · 类型 `FlattenSurface` ✓
+     ② 面(1) + 引导边(2)（**无锚点**）   ⇒ **不成** ✗
+     ③ 面(1) + 锚点(16) + 引导边(2)  ⇒ **成** ✓
+     ④ **只给面(1)**（★ 事实 434 那组）      ⇒ **不成** ✗
+     ```
+     ⇒ ★★ **故：`mark = 16`（锚点）是**必需的**** —— ★ 四格里**只有带锚点的两格成** ✓
+     ★ **而它也把事实 434 那句“面-only 不够”落到了具体的一个 mark 上** ⚠
+     ★ **落地**：`capabilities.yaml` 新增 **`surface_flatten`**（level = **verified**，共 **96** 条）；台账「曲面展平」补 `capability_id` ⇒ **已能 69**。
+     ★★ **方法论**：★ 一个“前置不够”的结论，要用**逐个 mark 的四格对照**把它**逼到具体的一个参数上** —— ★ 而**不是停在“前置不够”**（★ 事实 434 就停在那里）。|真机：`tools/prove_flatten_with_anchor.py`；证据 `output/flatten-with-anchor-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertFlattenSurface2.md` |
+| 436 | **★★★ 剪裁曲面（Pre/Post）**几何上真的剪**（面数 8→7）——★ 而它**不产生树增量**；而曲面切除则**几何完全不变**** —— 2026-10-03（轮 557）。
+     ★ **怎么发现的**：事实 433 留的下一步是“**先造一张真被剪裁过的曲面**”⇒ 本轮把**两把裁刀都试了**，★ 而**数面数**（★ 而不是看树）。
+     ★ 真机（`tools/prove_untrim_with_trimmed_surface.py`，零弹窗）：
+     ```
+     ① 用**曲面切除**当裁刀   ⇒ 面数 8 → **8**（★ 几何**完全没变**）· 回 `CDispatch`
+     ② 用**剪裁曲面**(Pre/Post) ⇒ 面数 8 → **7**（★ **真剪掉了一张面**）· 回 `CDispatch`
+     ```
+     ⇒ ★★ **故两条**：
+       ① ★★★ **剪裁曲面是起作用的** —— ★ 而它**不产生树增量** ⇒ ★ **与事实 406 同族**（“特征树增量”这个判据**看不见它**）⚠ —— ★ 故**前几轮我把它记成“不成”是错的**；
+       ② ★ 而**曲面切除则几何完全不变** ⇒ ★ **印证事实 407**（它回对象、而对象浮在树外）✓
+     ★ 而**解除剪裁仍不成**（回 `None` · 树不动）—— ★ 而**现在的前置已是真被剪裁过的曲面**（面 7）⇒ ★ **故缺的不是前置** ✓
+     ★ **下一步**：① 改选**边**（Remarks 说 “face **or edges**”）；② 换 `FaceUntrimType`/`EdgeUntrimType` 取值；③ 试 `BTrimOppositeSide`。
+     ★★ **方法论**：★ 当一个能力“看不到效果”时，先问**它到底改了什么**（★ 数面数 / 体数那类**几何量**）—— ★ 而**不是只看树** ⚠ —— ★ **本轮就是那么发现剪裁曲面其实是起作用的**。|真机：`tools/prove_untrim_with_trimmed_surface.py`；证据 `output/untrim-with-trimmed-surface-evidence.json`；对照事实 406 / 407 / 415 / 433 |
+| 437 | **★★★ 解除剪裁曲面 = `InsertUntrimSurface2` + **选边** + `EdgeUntrimType = 2`**（★ 六格矩阵里**只有一组成**） —— 2026-10-03（轮 558）。
+     ★ 承事实 436（它把前置造对了、而收窄出三个可能）。
+     ★ 真机（`tools/prove_untrim_matrix.py`，零弹窗）—— ★ **六格矩阵**：
+     ```
+     ① 面 · Face=0(AllEdges)           ⇒ **不成**
+     ② 面 · Face=1(InternalEdges)      ⇒ **不成**
+     ③ 面 · Face=2(ExternalEdges)      ⇒ **不成**
+     ④ **边 · Edge=1(ConnectEndPoints)** ⇒ **不成**
+     ⑤ **边 · Edge=2(ExtendEdges)**     ⇒ **成** —— **`曲面-解除剪裁1`** · 类型 `UnTrimRefSurf` ✓
+     ⑥ 面 · BTrimOppositeSide=True  ⇒ **不成**
+     ```
+     ⇒ ★★ **故根因：必须选**边**（不是面），且 `EdgeUntrimType = 2`（ExtendEdges）** ✓
+     ★★★ **而它还纠了官方一句**：Remarks 逐字说 “requires preselection of the **face or edges**” —— ★ 而**本机上面那条路五个组合全败** ⚠ ⇒ ★ **官方说“两条都行”不等于本机两条都行**。
+     ★ **落地**：`capabilities.yaml` 新增 **`surface_untrim`**（level = **verified**，共 **97** 条）；台账「解除剪裁曲面」补 `capability_id` ⇒ **已能 70**。
+     ★★ **方法论**：★ 把“前置不够”**收窄成三个可能之后**，就该**一次把它们全试完**（★ 而不是一轮一个）—— ★ 而**六格矩阵里只有一组成**，那就是答案。|真机：`tools/prove_untrim_matrix.py`；证据 `output/untrim-matrix-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertUntrimSurface2.md` × 反射枚举 |
+| 438 | **★★ 「删除孔」`IModelDoc2.InsertDeleteHole()` 在**原生实体上是静默 no-op**（★ 名字误导）；而「自由样式」是**四步序列**、不是一条调用**** —— 2026-10-03（轮 559）。
+     ★ **静态已定**（全接口查）：成员在 **`IModelDoc2`** 下、**0 参**、回 **`void`**（★ 故判据只能用**几何量**）。
+     ★ 真机（`tools/prove_delete_hole.py`，零弹窗）：
+     ```
+     有孔时调它   ⇒ 面 7 → **7**（Δ 0）· 体积无变化 · 树不动   ⚠
+     对照：无孔时 ⇒ 面 6 → **6**（Δ 0）· 同上                    ⚠
+     ```
+     ⇒ ★★ **故它在我的前置上是静默 no-op** ✓ —— ★ 而**最可能的解释是“它不是那个意思”**：
+       ★★ **SolidWorks 界面的「删除孔」是**曲面 / 导入体的修补**命令** —— 它填的是**曲面体上的缺口**，★ **而不是“删掉某个钻孔特征”** ⚠
+       ⇒ ★ **故在**原生实体**上它是 no-op 是**应然的****（★ **名字误导**）✓
+     ★ **下一步**：★ 在**带缺口的曲面体**上试（★ 而不是在实体上）。
+     ★★ **而本轮还读到一条值得记的**：「自由样式」`InsertFreeform2(Nsided, Symmetric0, Symmetric1, Angle)` **不是一条调用** ——
+       它的 `## Remarks` 逐字给了**五步交互序列**：① 选面 · ② 加曲线（`SetFreeformCurveData`）· ③ 加点（`SetFreeformPointData`）· ④ 定边界连续性（`SetFreeformBoundaryContinuity`）· ⑤ **本方法**；
+       ★ 而它开头就写着：“**intended to journal the actions performed by an interactive user**” ⚠ —— ★ **journal 类 API 往往要求先有一整套交互状态** 。|真机：`tools/prove_delete_hole.py`；证据 `output/delete-hole-evidence.json`；官方：`C:\swapi\types\IModelDoc2\InsertDeleteHole.md` × `IFeatureManager\InsertFreeform2.md` |
+| 439 | **★★★ 第**五种**失败形态：静默 no-op**（★ 调用**不报错** · 树不动 · **几何量也不动**）—— ★ **最容易被误记成“做成了”的那一种**** —— 2026-10-03（轮 560）。
+     ★ **事实 420 / 428 记了四种**（① 回对象 · ② 回 `None` · ③ 报错 · ④ 成员不在对象上）—— ★ **本条补第五种**。
+     ★ **实证：`IModelDoc2.InsertDeleteHole()`**（★ 0 参 · 回 `void`）—— ★ **两轮、六种前置全零效果**：
+     ```
+     轮 559  原生实体（带孔）     ⇒ 面 7→7 · 体积无变 · 树不动
+     轮 559  对照：原生实体（无孔） ⇒ 面 6→6 · 同上
+     轮 560  带内环的曲面 · 只选面     ⇒ 面 5→5 · 环 6→6 · **面积Δ = 0**
+     轮 560  同上 · 选孔的边             ⇒ 同上
+     轮 560  同上 · 面 + 边都选          ⇒ 同上
+     轮 560  同上 · 什么都不选          ⇒ 同上
+     ```
+     ⇒ ★★ **故：它在这六种前置下不产生任何可观测变化**（★ 而**它不报错**）✓
+     ★ **最可能的解释**（★ 标为**解释**、不是结论）：界面的「删除孔」是**曲面 / 导入体的修补**命令 —— 处理的是**导入几何里的缺口**，★ **而不是“删掉某个钻孻特征”** ⚠
+     ★ **按事实 53 停手**：★ 两轮 / 六种前置零效果 ⇒ ★ **不再换参数试**；台账该条**留在可攻关** —— ★ **不假装做到**。
+     ★ ★ **而可复用的定则**：★ **凡“成员是 0 参且回 `void`”的，判据必须是**几何量的前后差**** —— ★ 因为**返回值里没有任何东西能证明它做过什么**，★ 而**树增量也常常看不见**（★ 事实 436）。
+     ★ **单列**：`docs/toolbar-gaps-backend-limits.md` §五之二。|真机：`tools/prove_delete_hole.py` · `tools/prove_delete_hole_on_surface.py`；证据 `output/delete-hole-evidence.json` · `output/delete-hole-on-surface-evidence.json`；对照事实 420 / 428 / 436 / 53 |
+| 440 | **★★★ 放样 / 边界切除 = `InsertCutBlend`（**12 参**）；而**切与不切的类型名不同**：`Blend` vs **`BlendCut`**** —— 2026-10-03（轮 561）。
+     ★ **官方签名逐字**（`InsertCutBlend.md`）：12 参，★ **md 头上未标 `Obsolete`**（★ 对照事实 433 的地图：另外四条都标了）；
+       ★ 而它的 `## Remarks` 与 `InsertProtrusionBlend2` **逐字同一套**（剖面按顺序 · 强烈建议引导线 · **mark 1/2/4**）。
+     ★ 真机（`tools/prove_loft_cut.py`，零弹窗）—— ★ **两组同时跑**：
+     ```
+     放样**切除**（InsertCutBlend · **12 参**）   ⇒ **切除-放样1** · 型 **`BlendCut`** · 体积 **0.9714**（变小）
+     对照：放样**凸台**（InsertProtrusionBlend2 · **18 参**）⇒ 放样1   · 型 **`Blend`**    · 体积 **1.0286**（变大）
+     ```
+     ⇒ ★★ **故两者的分界就是**类型名****：`Blend` = 凸台 · **`BlendCut` = 切除** ✓
+     ★★★ **而本轮又是一次“失败在判据”**：我第一版照**凸台**抄成 `type_name == "Blend"` ⇒ ★ **对已建成的 `切除-放样1` 判了 `ok=False`** ⚠；
+       ★ 而与**事实 429**（旋转切除用 `IsCut=True`）**同一族**：★ **“切”会换类型名** 。
+     ★ **落地**：`capabilities.yaml` 新增 **`feature_loft_cut`**（level = **verified**，共 **98** 条）；台账「放样切除」「边界切除」**两条均补** ⇒ **已能 72**。
+     ★★ **方法论**：★ **照“已成的那条”抄判据时，必须把**“切”与“不切”的类型名差异一并考虑** —— ★ 否则**会把已建成的特征判成失败** ⚠ （★ 本会话已第 **三次** 踩这个：事实 420 · 431 · 本条）。|真机：`tools/prove_loft_cut.py`；证据 `output/loft-cut-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertCutBlend.md` |
+| 441 | **★★★ 更正事实 439：那条“第五种形态”的实证用的是**废弃入口****—— ★ 而**继任者就叫 `InsertDeleteHoleForSurface`** —— 2026-10-03（轮 562）。
+     ★ **怎么发现的**：本轮扫“剩下 20 条哪些废弃”时看到：
+       > `InsertDeleteHole.md` 逐字："**Obsolete. Supserseded by `IFeatureManager::InsertDeleteHoleForSurface`.**" ⚠
+     ★★ **故：轮 559/560 那“六种前置零效果”的真因是**入口错****（★ 我打的是废弃的第一代），★ **而不是那个成员本身是 no-op** ✓
+     ★★ **而继任者的文档又把前置说得很清楚**：
+       `Feature InsertDeleteHoleForSurface()` —— **0 参**、★ **回 `IFeature`**（★ 不是 `void`）；
+       Remarks："call `SelectByID2` to select the **hole edges to remove** from the surface"。
+     ★ 真机（`tools/prove_delete_hole_for_surface.py`，零弹窗）：
+     ```
+     继任者 + 选“孔的边” ⇒ 回 `None` · 面 5→5 · **而 `picked = 12`**（★ 那是**整个体的所有边**，不是孔的）⚠
+     对照：**废弃的第一代**（建在 `IFeatureManager` 上）⇒ **`AttributeError: <unknown>.InsertDeleteHole`**
+     ```
+     ⇒ ★★ **故两条**：
+       ① ★★★ **事实 439 那条“第五种形态”的实证不成立**（★ 用的是废弃入口）⇒ ★ **已在那两处加了更正注**。
+         ★ **而“第五种形态”这个**分类本身仍然有用****（★ 它描述的是**判据盲区**）—— ★ **只是本例不能当它的证据**。
+       ② ★ 而**“选孔的边”这个前置我还没真搭对**（★ 我选了整个体的 12 条边）⇒ ★ **下一步**：只选**内环（孔）那圈边。
+     ★★ **方法论**：★ **用一个“零效果”去立一条边界之前，必须先确认自己打的是**不是废弃的那个入口**** —— ★ 而**查废弃只需读 md 头顶一行** ⚠
+     ★ **而这也是本会话**第四次“失败在我这边”**（★ 事实 420 · 431 · 440 · 本条）。|真机：`tools/prove_delete_hole_for_surface.py`；证据 `output/delete-hole-for-surface-evidence.json`；对照事实 439 / 433 |
+| 442 | **★★ 「只选内环」这条路走不通：`ILoop2.IsOuter()` 在本例**全回 `True`**；而更要紧的是**我造的不是“带孔的曲面”**** —— 2026-10-03（轮 563）。
+     ★ **承事实 441 留的下一步**（★ “只选内环那圈边”）。
+     ★ 真机（`tools/prove_delete_hole_inner_loop.py`，零弹窗）—— ★ **环的形态**：
+     ```
+     face 0 → loop 0   is_outer=**True**   edges=**1**    ← ★ 那个**圆**（圆柱面）
+     face 0 → loop 1   is_outer=**True**   edges=**1**
+     face 0 → loop 0   is_outer=True      edges=4
+     face 1/2/3 → loop 0  is_outer=True     edges=4      ← ★ 四张侧面
+     ```
+     ⇒ ★★ **故两条**：
+       ① ★ **`ILoop2.IsOuter()` 在本例全回 `True`** ⇒ ★ **它不能用来判“哪个环是孔”** ⚠
+         （★ 故“只选内环”那组**想选 0 个** —— ★ **判据没挑到任何环**）
+       ② ★★★ **而更要紧的是：我造的**不是“带孔的曲面”**** —— 它是**一张矩形平面 + 一个圆柱侧面 + 四张侧壁**（5 面 / 6 环）⚠
+         ⇒ ★ **而那正是事实 51 那一类**：★ **前置的**组织单元**不对**（★ 我拉的是“体”、不是“一张带孔的面”）✓
+     ★ **而对照组也说明了同一件事**：“只选外环”与“全部边”各选了 **18 条边**（★ 而**仍回 `None`**）。
+     ★ **下一步**：★ 用**平面区域**（`InsertPlanarRefSurface`）从**带内环的草图**生成**一张真正的平面曲面** —— ★ **那才是名副其实的“带孔曲面”**。
+     ★★ **方法论**：★ 当一个前置反复不起作用时，先问**“我造的东西到底是什么形态”**（★ 数面、数环、看每个环几条边）—— ★ 而**不是继续换选择方式** ⚠
+     ★ 本轮**不登记能力**（★ 仍未建成）。|真机：`tools/prove_delete_hole_inner_loop.py`；证据 `output/delete-hole-inner-loop-evidence.json`；对照事实 441 / 51 |
+| 443 | **★★★ 删除孔（曲面）**真机建成** —— ★ 而它把一个**跨四轮的链**收口了** —— 2026-10-03（轮 564）。
+     ★★ **三层前置，少一层都不成**：
+     ```
+     ① 用**继任者** `IFeatureManager.InsertDeleteHoleForSurface`
+        （★ 第一代 `IModelDoc2.InsertDeleteHole` **已废弃** —— ★ 事实 441）
+     ② 得是**真正的带孔平面** —— ★ 用**平面区域**造（★ 事实 442）
+        ★ **拉伸得到的是 5 面 / 6 环 · 不行**；平面区域得 **1 面 / 2 环** ✓
+     ③ 只选**孔那圈边**（★ 不是整个体的边）
+     ```
+     ★ 真机（`tools/prove_planar_region_then_delete_hole.py`，零弹窗）：
+     ```
+     ① 平面区域：带内环的草图 ⇒ 选它 **mark = 1** ⇒ `InsertPlanarRefSurface()` 回 `True`
+        ⇒ **建 `曲面-基准面1`** · ★ **面 1 / 环 2 / 边 5**（★ 名副其实的**带孔平面**）✓
+     ② 删除孔：选**孔那圈边** ⇒ `InsertDeleteHoleForSurface()`
+        ⇒ **名 `删除孔1`** · **型 `DelHole`** · ★ **环 Δ = −1**（孔被填上）✓
+     ```
+     ★ **而它还顺手验了一条本仓早已登记的能力**：`surface_planar_region`（★ 轮 517 登记的）—— ★ **故本轮两条能力同时有真机证据** ✓
+     ★ **方法论**：★ 一个**跨多轮的链**，每一环都应该**把“缺什么”写成下一步** —— ★ 而**不是重写一遍** ⚠
+     ★ 而这个链是：轮 559（入口）→ 轮 560（前置）→ 轮 562（**发现入口废弃**）→ 轮 563（**发现前置形态不对**）→ 轮 564（**三层对齐 ⇒ 建成**）。
+     ★ **落地**：`capabilities.yaml` 新增 **`surface_delete_hole`**（level = **verified**，共 **99** 条）；台账「删除孔」补 `capability_id` ⇒ **已能 73**。|真机：`tools/prove_planar_region_then_delete_hole.py`；证据 `output/planar-region-and-delete-hole-evidence.json`；对照事实 441 / 442 · `surface_planar_region`（轮 517）|
+| 444 | **★★ `IModelDoc2.CreateLine2`（6 参）真机建成**；而★ **`ISketchManager.CreateSpline`（1 参）报第四类形态**（成员不可调用）** —— 2026-10-03（轮 565）。
+     ★ **两条的第一代都被标了废弃**（★ 事实 433 的地图）：
+       `CreateLine(Midpoint)` ⇒ `IModelDoc2::CreateLine2`；`CreateSpline(3D)` ⇒ `ISketchManager::CreateSpline`。
+     ★ 真机（`tools/prove_createline2_and_createspline.py`，零弹窗）：
+     ```
+     ★ **中点线** `CreateLine2`（6 参）        ⇒ 草图段 **0 → 1** · 回 `CDispatch` ✓
+     负例：**无活动草图**时调它       ⇒ 回 `None` · 段数不可读 ✓（★ 与官方 Remarks 逐字一致）
+     `ISketchManager.CreateSpline`（1 参）   ⇒ 回 `None` · 段 **0 → 0** ⚠
+     ```
+     ⇒ ★★ **故两条**：★ 中点线**已登记为 verified**；★ 而 `CreateSpline` 报的是**第四类形态**（★ `getattr` 回 `NoneType` ⇒ ★ **成员不可调用**）⚠
+     ★ 而它与**事实 36 同族**：★ **同名成员在**不同接口**上的可达性不同**—— ★ 故下一步是**换到正确的接口上调**。
+     ★ **落地**：`capabilities.yaml` 新增 **`sketch_line2`**（level = **verified**，共 **100** 条）；台账「中点线」补 `capability_id` ⇒ **已能 74**。
+     ★★ **方法论**：★ 找到继任者只是**一半**；★ 而**它在哪个接口上、可不可调**，★ **只有真机能答** ⚠（★ 两条都是官方继任者，★ 而一成一不成）。|真机：`tools/prove_createline2_and_createspline.py`；证据 `output/createline2-and-createspline-evidence.json`；对照事实 36 / 433 |
+| 445 | **★★★ 投影曲线的正路是**第三代****：`CreateDefinition(swFmRefCurve=14)` + `IProjectionCurveFeatureData`；★ 而本轮**数据对象可达、三个属性可设、`CreateFeature` 仍回 `None`**** —— 2026-10-03（轮 566）。
+     ★★ **而本轮发现一件事**：这条的**两代都是废弃的** ——
+       · `InsertProjectedSketch` ⇒ `InsertProjectedSketch2`（★ 事实 433 的地图只挖到这里）·
+       · 而 **`InsertProjectedSketch2` 自己也已废弃**："Obsolete. See `IProjectionCurveFeatureData` and `IFeatureManager::CreateDefinition`" ⚠
+     ★ 而**官方把第三代给成了一条**五步配方**（`IProjectionCurveFeatureData` 的 `## Remarks` 逐字）**：
+     ```
+     1. 预选实体，Marks：mark=1 目标面 · **mark=2 要投的草图** · 4 目标草图 · 8 方向
+     2. `CreateDefinition(swFmRefCurve)`     ← ★ 常量值来自**反射**：**swFmRefCurve = 14**
+     3. 在接口上设**非实体**属性（★ 接口正好有 **3 个**：`Bidirectional` · `Reverse` · **`Sketch`**）
+     4. `IFeatureManager::CreateFeature`
+     ```
+     ★ 真机（`tools/prove_projection_curve.py`，零弹窗）：
+     ```
+     目标面(mark=1) + 草图(mark=2) ⇒ `CreateDefinition(14)` **回 `CDispatch`** ✓（★ 数据对象**可达**）
+     而三个属性均设成（`Bidirectional`/`Reverse`/**`Sketch`** 均 `ok`）✓
+     ★ 而 `CreateFeature(data)` ⇒ **回 `None`** · 树不动 ⚠
+     ```
+     ⇒ ★★ **故：这条链已经推进到**第 4 步**（★ 前三步都通）**；
+       ★ **而缺的很可能是一个步骤**：**`AccessSelections` → 设实体数据 → `CreateFeature` → `ReleaseSelectionAccess`** —— ★ 那是**事实 425/426** 说过的模式（★ FeatureData 那族 **6/6 通**）。
+     ★ **下一步**：★ 在 `CreateDefinition` 与 `CreateFeature` **之间插入 `AccessSelections`**。
+     ★ 而本轮**不登记能力**（★ 仍未建成）。
+     ★★ **方法论**：★ **一条官方配方里，“通了几步”就要**逐步记下来**（★ `data_type` / `props_set` / `returned`）—— ★ 那样**缺哪一步一目了然** ⚠
+       （★ 本轮就是那么定位到“第 4 步”与“可能缺 `AccessSelections`”的）。|真机：`tools/prove_projection_curve.py`；证据 `output/projection-curve-evidence.json`；官方：`C:\swapi\types\IProjectionCurveFeatureData\_overview.md` × `IFeatureManager\CreateDefinition.md` × 反射枚举 |
+| 446 | **★★★ `IProjectionCurveFeatureData.AccessSelections` ⇒ `0x80010105`**（★ 与事实 47 同一个错误码）** —— ★ **而它是目标点名的第二族的**新实例**** —— 2026-10-03（轮 567）。
+     ★ **怎么到这一步的**：事实 445 把投影曲线的链推到第 4 步，★ 而猜“可能缺 `AccessSelections`”⇒ 本轮把它插进去。
+     ★ 真机（`tools/prove_projection_curve.py`，零弹窗）：
+     ```
+     mark=1 目标面 + mark=2 草图 ⇒ `CreateDefinition(14)` **回 `CDispatch`** ✓
+     三个属性均设成（`Bidirectional`/`Reverse`/`Sketch`）✓
+     `AccessSelections(doc, 空Dispatch)` ⇒ **`com_error(-2147417851)` = `0x80010105`** ⚠
+     `ReleaseSelectionAccess()` ⇒ **通**（★ 而它本该在建成之后才调）
+     `CreateFeature(data)` ⇒ 回 `None` · 树不动
+     ```
+     ⇒ ★★ **故：这条链卡在 `AccessSelections` 上** —— ★ 而那正是**目标点名的第二族**（**`IAccessSelections` 指针族**），★ **而这是该族的一个新实例** ✓
+     ★★ **而它修正了事实 425/426 的适用范围**：那条说“`*FeatureData.AccessSelections` **6/6 通**” —— ★ 而**那 6 个里不包含投影曲线这个接口** ⚠
+       ⇒ ★ 故正确说法是：**那族的可达性要逐接口看**（★ 事实 128 同族）。
+     ★ **下一步**：★ 换一条**不需 `AccessSelections`** 的路——★ 例如**只用 mark 预选 + `FaceArray` 属性**（★ 不调 `AccessSelections`）。
+     ★ 而本轮**不登记能力**（★ 仍未建成）。
+     ★★ **方法论**：★ 把 `AccessSelections` 插进去**不是为了“再试一次”**，★ 而是**去验证它到底是不是那个缺的步骤** —— ★ 而结果给出了**一条边界**（★ 而不只是“又不成”）。|真机：`tools/prove_projection_curve.py`；证据 `output/projection-curve-evidence.json`；对照事实 47 / 128 / 425 / 426 / 445 |
+| 447 | **★★★ 螺纹线 = `InsertCosmeticThread3`（7 参）· 前置 = 选**圆柱面的边****（★ 而不是面）；★ 而本轮又一次**失败在我这边** —— 2026-10-03（轮 568）。
+     ★ **静态已定**：签名 **7 参**，★ **md 未标 `Obsolete`**；两个枚举值取自**反射**：`swCosmeticStandardType_e`（**1 = ANSI Metric**）· `swCosmeticEndConditions_e`（**2 = Through**）。
+     ★ 真机（`tools/prove_cosmetic_thread.py`，零弹窗）—— ★ **三格对照**：
+     ```
+     选**圆柱面的边**  ⇒ **成** —— **`装饰螺纹线1`** · 型 **`CosmeticThread`** ✓
+     选**圆柱面本身**  ⇒ 不成 ✗
+     **什么都不选**    ⇒ 不成 ✗
+     ```
+     ⇒ ★★ **故：必须选**圆柱面的边**** ✓
+     ★★★ **而本轮最值钱的一条是“我怎么找那个面”**：
+       ★ 我第一版用 **`str(Surface.Identity)` 里含 `"Cylinder"`** 来**猜**哪个面是圆柱面 ⇒ ★ **三组全 `cyl=False`**（★ **根本没找到面**）⚠
+       ★ 而**官方有现成的一整族判形方法**：**`ISurface.IsCylinder()` · `IsCone()` · `IsPlane()` · `IsSphere()` · `IsTorus()` · `IsRevolved()` · `IsSwept()` · `IsBlending()`** —— ★ 换成 `face.GetSurface().IsCylinder()` 之后**一次就成** ✓
+     ★★ **方法论**：★ **“找一个某种面”之前，先问官方有没有**判形方法**** —— ★ 而**不是拿字符串去猜** ⚠（★ 那属于**编造**，★ 违反铁律 1）。
+     ★ 而这是本会话**第五次**“失败在我这边”（★ 事实 420 · 431 · 440 · 441 · 本条）。
+     ★ **落地**：`capabilities.yaml` 新增 **`feature_cosmetic_thread`**（level = **verified**，共 **101** 条）；台账「螺纹线」补 `capability_id` ⇒ **已能 75**。|真机：`tools/prove_cosmetic_thread.py`；证据 `output/cosmetic-thread-evidence.json`；官方：`C:\swapi\types\IFeatureManager\InsertCosmeticThread3.md` × `ISurface\IsCylinder.md` × 反射枚举 |
+| 448 | **★★★ 台账的**三个桶不是同一回事****（★ 而口径澄清后，它们**各自该做什么就明确了**） —— 2026-10-03（轮 569，第 100 轮里程碑）。
+     ★ **怎么查清的**：本轮逐条看那两个桶的 `entry` 是不是**真的在代码里**。
+     ```
+     ★ **可攻关 17**  =　**没有实现**，★ 而官方入口存在且未废弃
+     ★ **待查  20**  =　**没有实现**（★ 实测：`entry` 非空且函数真存在的**只有 1 / 20**），
+                     ★ 而且**台账里那个 `api` 名在官方源核不到**（★ 铁律 5 的地界）
+     ★ **待验证  5** =　★★ **代码已经有了**（`entry` **全在 `scripts/` 里**）、
+                     ★ 而**台账那条的验证状态没跟上**
+     ```
+     ★★ **故它们各自该做什么**：可攻关⇒**读官方 + 真机做**；待查⇒**先全接口重查 `api` 名**（★ 轮 554 的方法）；待验证⇒**真机复验**（★ 而不是从头实现）✓
+     ★★ **而本轮还统计出一个诚实的数**：四个工具条（含下拉）**共 116 条 · 已能 74（64%）**；
+       ★ 而**用户截图里“能”的只有 47 条** ⇒ ★ **本会话把已能从 47 推到 75**（全台账）。
+     ★ 而其中 **17 条是“做成了而台账原先不知道”** —— ★ **那个数字本身就是一条教训**：★ **进度表如果只靠手填，它迟早会说谎** ⚠
+     ★ **产物**：`docs/milestone-round100.md`（★ 六节：总数 / 三桶真义 / 三处口径修正 / 已单列的边界 / 方法论沉淀 / 下一步）。|数据源：`docs/toolbar-ledger-verified.json`；汇总：`docs/milestone-round100.md`；对照事实 431（三级阶梯）· 433（废弃地图） |
+| 449 | **★★ 「待验证」桶的三条复验**全不成（★ 而三条各有一个**具体的下一步**）** —— ★ 而它**修正了第 100 轮盘点那句“待验证成本最低”**** —— 2026-10-03（轮 570）。
+     ★ **背景**：盘点（`docs/milestone-round100.md` §2.1）查明这一桶的 `entry` **全在 `scripts/` 里** ⇒ ★ 推论“该做的是**真机复验**（成本最低）”。
+     ★ 真机（`tools/prove_pending_verification_three.py`，零弹窗）：**0 / 3**
+     ```
+     ★ **筋**      ⇒ `error: None` · 而 `present: False`（★ **不报错、也没建出来**）
+     ★ **复合曲线** ⇒ `RuntimeError: InsertCompositeCurve 返回 False`；★ 而提示里写着：**必须先用 `SelectByID2(..., mark=1)` 选好实体**
+     ★ **交叉曲线** ⇒ 草图段 0 → 0（★ 而**我造的是方盒、没有圆柱面**）
+     ```
+     ⇒ ★★ **故三条各自的下一步**：
+       · 复合曲线：★ **换成 `_select_by_id` + mark=1**（★ 而不是 `_select_com_object`）。
+       · 交叉曲线：★ **先造一个有圆柱面的实体**（★ 而用 `ISurface.IsCylinder()` 判它 —— ★ 事实 447）。
+       · 筋：★ **先查它到底返回了什么**（★ 而不是直接归类为“第五种形态” —— ★ 事实 441 刚撤销过一个同类归因）。
+     ★★ **而它修正了盘点里的一句话**：★ **“代码已有”不等于“复验成本低”**** —— ★ 代码在那里不代表**前置对了** ⚠
+       （★ 三条里至少两条的失败是**前置错**：一条选法不对、一条根本没给可交的面。）
+     ★ **故后续优先序调整**：★ **不拿“桶”当优先级**，★ 而**拿“前置否已明确”当优先级** —— ★ 那一桶里**前置已明确的那条**（复合曲线）才是首选。
+     ★ 本轮**不登记能力**（★ 0 / 3）。|真机：`tools/prove_pending_verification_three.py`；证据 `output/pending-verification-three-evidence.json`；对照事实 441（撤销过一个同类归因）· 447 · `docs/milestone-round100.md` |
+| 450 | **★★★ 复合曲线：官方**例子**给了“合法实体”与调用序**（★ 而 swapi 的 Remarks **只说“看 Help”**）** —— 2026-10-03（轮 572）。
+     ★ **起因**：事实 449 把复合曲线留给下一步，★ 而本轮试了**三种实体**（同一草图的两段 / 体的两条边 / 不选）**全败** ⚠
+     ★ 而按**事实 441 的教训**先查了废弃 —— ★ **它未标废弃**；而它的 Remarks 逐字是：
+       > "To use this method, select the entities by calling `SelectByID2` with a mark number of 1. **See the SOLIDWORKS Help for information about which entities are valid for selection.**"
+       ⇒ ★★ **故两套源分工**：**swapi 给签名·CHM 给“哪些实体合法”** ⚠
+     ★★★ **而 CHM 里有现成的例子**：`Insert_a_Composite_Curve_Example_VBNET.htm`（★ 而**它把答案写在 Postconditions 里**）**：
+     ```
+     "This example shows how to insert a composite curve **using two sketches of splines**."
+     "2. Creates a **sketch of a spline**.  3. Creates **another sketch of a spline**.
+       4. Inserts a composite curve **using the sketches** created in steps 2 and 3."
+     ★ 而它的调用序：**CreateSpline2** ×2 → **SelectByID2** ×2 → **InsertCompositeCurve**
+       → 再用 `SelectionMgr.Feature` 取 `ICompositeCurveFeatureData` → `GetEntitiesToJoinCount` 读回
+     ```
+     ⇒ ★★ **故两个关键**：
+       ① ★ **合法实体 = 整条**样条草图****（★ 而不是直线段 / 体的边）⚠
+       ② ★ **`SelectByID2` 能按名字选到那个草图**（★ 草图是**特征**、★ 而事实 32 说**特征有名字**）✓
+     ★★ **方法论**：★ 当 swapi 的 `## Remarks` 说**“看 Help”时**，★ 那就是**它在把你指向第三套源** —— ★ 而**那里往往有一个能直接照拄的例子** ⚠
+     ★ 而例子里那句“**using two sketches of splines**”就是**签名与 Remarks 都给不了的东西**（★ 事实 415 同族）✓
+     ★ 而本轮**不登记能力**（★ 仍未建成）；★ **下一步已具体**：★ 造**两个各含一条样条的草图**、★ 用 `SelectByID2` 按名选它们。|真机：`tools/prove_composite_curve_entities.py`；证据 `output/composite-curve-entities-evidence.json`；官方：`Insert_a_Composite_Curve_Example_VBNET.htm`（CHM）× `IModelDoc2\InsertCompositeCurve.md`（swapi）；对照事实 415 / 441 / 449 |
+| 451 | **★★ 复合曲线：三轮不成 ⇒ **按事实 53 停手****；★ 而**“照例子那一组”并未真跑到那一步**（★ 卡在**造样条**上）** —— 2026-10-03（轮 573）。
+     ★ **三轮的记录**：
+     ```
+     轮 570  选**体的两条边**（mark=1）        ⇒ 回 False
+     轮 572  选**同一草图的两段** / 体的两边 / 不选 ⇒ **三格全 False**
+     轮 573  照例子：两个样条草图 + `SelectByID2` ⇒ ★ **卡在造样条**（`草图=None`）**未跑到那一步**
+                对照：两个直线草图 + `SelectByID2` ⇒ `sel=2` 而**仍 False**
+     ```
+     ★★ **故诚实状态是两句**：
+       ① ★ **已试过的四种实体形态全失败**（体的边 · 同草图两段 · 不选 · 直线草图）；
+       ② ★ **而例子里那个形态（样条草图）**还没真试到** —— ★ 故**不能说它到不了**（★ 只能说“**尚未证实**”）⚠
+     ★ 而卡住的那一步很具体**：**`ISketchManager.CreateSpline(pts)` 报 `com_error(-2147352561, ‘非选择性的参数。’)`** —— ★ 即**点数组的传法**不对（★ 而官方 Remarks 说过它要**至少两个 X,Y,Z**）。
+     ★★ **故本轮按事实 53 停手**（★ 三轮同一处），★ 并把它**单列**进 `docs/toolbar-gaps-backend-limits.md` —— ★ 而**标注清楚“尚未证实”**（★ 而不是“到不了”）。
+     ★ **而给后面留的一步**：★ 先把 **`CreateSpline` 的点数组传对**（★ 那本身是一条**草图图元**能力），★ 再回来试复合曲线。
+     ★★ **方法论**：★ **“我试过了”与“我试到了那一步了”不是一回事** —— ★ 一组因为**前置没搭成**而没跑到目标调用的，★ **不能计入“试过了”** ⚠|真机：`tools/prove_composite_curve_per_example.py`；证据 `output/composite-curve-per-example-evidence.json`；对照事实 449 / 450（例子）· 事实 53（停手） |
+| 452 | **★★★ 样条曲线：**三个条件缺一不可****（成员名 `CreateSpline2` · `VARIANT(VT_ARRAY|VT_R8)` · 第二参 `False`）；★ 而**`CreateSpline`（不带 2）在迟到绑定下取不到** —— 2026-10-03（轮 574）。
+     ★ **而答案本仓早就有** —— 本轮按「**先扫已走死的路**」查到了 `tools/probe_spline_forms.py` 与 **`output/spline-forms.json`**：
+     ```
+     ① 扁平 list                 ⇒ ret=None · 段 0→0   ✗
+     ② 扁平 tuple                ⇒ ret=None · 段 0→0   ✗
+     ③ **`VARIANT(VT_ARRAY|VT_R8)`**  ⇒ ret=**`CDispatch`** · **段 0→1** ✓
+     ④ list of tuples（对照）     ⇒ ret=None            ✗
+     ```
+     ★★ **而本轮真机又补上了第三个条件**：★ **成员名必须是 `CreateSpline2`** ——
+       `CreateSpline`（不带 2）在本机四格里**全报“成员不可调用”**（★ **第四类形态**）⚠
+     ★ 真机（`tools/prove_spline_with_variant.py`，零弹窗）：四格里**只有一格成**：
+     ```
+     ★★ **前人原样** `CreateSpline2(data, False)` ⇒ **段 0 → 1** · 回 `CDispatch` ✓
+     `CreateSpline(data)`（不带 2）                    ⇒ **成员不可调用** ✗
+     扁平 list · list of tuples                        ⇒ 回 `None` ✗
+     ```
+     ⇒ ★★ **故三个条件**：① 成员名 **`CreateSpline2`**；② 数组形态 **`VARIANT(VT_ARRAY|VT_R8, 扁平 list)`**；③ 第二参 **`False`**。
+     ★★★ **而本轮还证明了一件容易误会的事**：★ **`call_com_member` 就是 `get_com_member` 的别名**
+       （实现只有一行 `return get_com_member(obj, attr_name, *args)`；★ docstring 自己写着“行为完全相同，差别在**名字**”）⚠
+       ⇒ ★ **故“把它换成 `call_com_member`”不会改行为** —— ★ 真正管用的是**成员名与参数形态**。
+     ★★ **方法论**：★ **一个失败的探针与一个成功的探针之间，差异可能只在一个成员名的后缀上** —— ★ 而**先读旧探针的原文**比重写一个快得多** ⚠
+     ★ **落地**：`capabilities.yaml` 新增 **`sketch_spline`**（level = **verified**，共 **102** 条）；台账「曲面上的样条曲线」补 `capability_id` ⇒ **已能 76**。
+     ★ **而它顺手解开了另一条**：事实 451 里复合曲线卡在“造样条”上 ⇒ ★ **现在那一步可以跑了** ✓|真机：`tools/prove_spline_with_variant.py`；证据 `output/spline-with-variant-evidence.json`；旧探针与证据：`tools/probe_spline_forms.py` · `output/spline-forms.json` |
+| 453 | **★★ 复合曲线：前置补齐后**仍不成** ⇒ 状态从「尚未证实」升级为「**已按官方例子试过**」**** —— 2026-10-03（轮 575）。
+     ★ **事实 452 刚把“造样条”那一步解开**（`CreateSpline2` + `VARIANT(VT_ARRAY|VT_R8)` + `False`）⇒ ★ **故本轮把例子那组真跑到了目标调用**：
+     ```
+     两个**样条**草图 ⇒ 草图=['草图1','草图2'] · **sel=2**（★ 都选中了）
+                    ⇒ `InsertCompositeCurve` ⇒ **仍回 `False`** ⚠
+     对照：两个直线草图 ⇒ 同上 · **仍 `False`**
+     ```
+     ⇒ ★★ **故状态升级**：★ 从「**尚未证实**」（★ 上一轮卡在造样条）
+       ⇒ ★★ **「已按官方例子试过（两个样条草图 + `SelectByID2` mark=1）」** ✓
+       ★ 而**这仍不等于「到不了」** —— ★ 原因尚未查明。
+     ★ **剩下的假设**（★ 皆未验证）：① 两个草图要**同类型**（★ 我造的是两条 3 点样条）；② 跨两个平面的**特定相对位置**；③ **创建**也许也要走 `ICompositeCurveFeatureData`（★ 例子只把它用于**读回**）。
+     ★ **按事实 53 停手**（★ 已四轮）—— ★ 而状态是「**未证实原因**」、不是「到不了」。
+     ★★ **方法论一条**：★ **前置搭成之后再试一次，状态就升级了** —— ★ 从「尚未证实」变成「**已按官方例子试过**」，★ **而那是更值钱的一句话** ✓
+     ★ 本轮**不登记能力**（★ 仍未建成）。|真机：`tools/prove_composite_curve_per_example.py`；证据 `output/composite-curve-per-example-evidence.json`；单列：`docs/toolbar-gaps-backend-limits.md` §五之三；对照事实 451 / 452 |
+| 454 | **★★★ `CreateSpline3` 是 `CreateSpline2` 的**继任者****（★ 而**它才是“曲面上的样条”的正主**）；★ 而它的 **2D 用法已真机建成** —— 2026-10-03（轮 576）。
+     ★ **两代的关系是查 md 头顶查出来的**（★ 事实 433 那张地图的用法）：
+       `CreateSpline2.md` 逐字："**Obsolete. Superseded by `ISketchManager::CreateSpline3`.**"
+     ★★ **故我上一轮（轮 574，事实 452）证的那个只是第一代** ⚠
+     ★ **`CreateSpline3` 的签名（5 参）与 Remarks 逐字**：
+     ```
+     object CreateSpline3(object PointData, object Surfs, object Direction,
+                          bool SimulateNaturalEnds, out object Status)
+     ★ **2D 样条**：PointData 至少 **6 个坐标**（首尾两点）；
+        SimulateNaturalEnds = true/false；★ **其余参数全给 `null`/`Nothing`**
+     ★ **曲面上的样条**：PointData = 两个以上 3D 点；**Surfs** = `ISurface` 数组；**Direction** = `IMathVector` 数组；**Status** = 每点状态数组
+     ```
+     ★ 真机（`tools/prove_createspline3.py`，零弹窗）—— ★ **三格**：
+     ```
+     ★ **2D**（6 坐标 + 其余 null）   ⇒ **段 0 → 1** · 回 `CDispatch` ✓
+     只给**一个点**（不足 6 坐标）     ⇒ 不成 ✗（★ 与官方那句一致）
+     曲面上的样条（Surfs + Direction） ⇒ **本轮未成**：`AttributeError: <unknown>.GetMathUtility`⚠
+     ```
+     ⇒ ★★ **故两条**：① **2D 已登记为 verified**；② ★ **on-surface 未成的原因是我在 `IModelDoc2` 上取 `GetMathUtility`**—— ★ **它不在那里**（★ **第四类形态**）；★ **下一步**：换到**正确的入口**取 `IMathUtility`。
+     ★ **落地**：`capabilities.yaml` 新增 **`sketch_spline3_2d`**（level = **verified**，共 **103** 条）；台账「样式样条曲线」补 `capability_id` ⇒ **已能 77**。
+     ★★ **方法论**：★ **证一个方法之前，先看 md 头顶有没有 `Obsolete`** —— ★ 否则可能证的是**已废弃的那一代** ⚠|真机：`tools/prove_createspline3.py`；证据 `output/createspline3-evidence.json`；对照事实 433（废弃地图）· 452 |
+| 455 | **★★ 曲面上的样条：入口已找到（`ISldWorks.GetMathUtility`），而**取向量那一步两条路都不通**** —— 2026-10-03（轮 577）。
+     ★ **入口是查出来的**（★ 铁律 4 那种查法）：`GetMathUtility` 在 **`ISldWorks`** 上（**0 参**）——
+       ★ 而**不在 `IModelDoc2` 上**（★ 上一轮我在 doc 上取 ⇒ `AttributeError`，**第四类形态**）⚠
+     ★ 真机（`tools/prove_createspline3.py`，零弹窗）—— ★ **每一步分开记账**：
+     ```
+     step GetMathUtility            ⇒ **ok** ✓（★ 入口对了）
+     step CreateVector              ⇒ **`找不到成员`**（`0x80020003`）⚠
+     step ICreateVector             ⇒ **`无法读只写属性`**（`61836`）⚠
+     ```
+     ⇒ ★★ **故两条路各有一个具体的原因**：
+       ① ★ **`CreateVector(object)`**：名字在**迟到绑定里取不到**（★ **第四类形态**）；
+       ② ★★ **`ICreateVector(ref double ArrayDataIn)`**：那个 **`ref` 参数在迟到绑定下被当成了“**只写属性**”** —— ★ **与事实 36 同族**（名字/形态对不上时报的错看不出真因）。
+     ★ **按事实 53 停手**（★ 已四轮）；★ **而 2D 那条已登记**（★ 事实 454）—— ★ 故**本轮的实际产出是 2D 那条** ✓
+     ★ **下一步**（★ 给后面）：★ 试 **`IMathVector`** 的另一条来源（★ 例如从已有的方向对象取）或 **`IMathUtility.CreatePoint`** 那一族看看是不是同样取不到。
+     ★★ **方法论**：★ **把多步骤包在同一个 `try` 里，就分不清是哪一步报的** —— ★ 而**逐步记账**之后，一眼就看到是 `CreateVector` 那一步** ✓
+     ★ 本轮**不登记 on-surface**（★ 仍未建成）。|真机：`tools/prove_createspline3.py`；证据 `output/createspline3-evidence.json`；官方：`ISldWorks\GetMathUtility.md` · `IMathUtility\CreateVector.md` · 反射；对照事实 36 / 53 / 454 |
+| 456 | **★★★ `IMathUtility` **整族到不了****（★ 而两类错码的**规律很整齐**）** —— 2026-10-03（轮 578）。
+     ★ **怎么查的**：事实 455 只知道 `CreateVector` 不行 ⇒ ★ 本轮问了一个更大的问题：**“只有 `CreateVector` 不行”还是“整族不行”**？
+     ★ 真机（`tools/probe_imathutility_family.py`，零弹窗）：
+     ```
+     `ISldWorks.GetMathUtility`            ⇒ **ok**（★ 对象**拿得到**）✓
+     `CreatePoint` / `CreateVector` / `CreateTransform`（**不带 I**）⇒ **`找不到成员`**（`0x80020003`）⚠
+     `ICreatePoint` / `ICreateVector`（**带 I**）          ⇒ **`无法读只写属性`**（`61836`）⚠
+     ```
+     ⇒ ★★ **故规律是**：**不带 `I` 的名字取不到；带 `I` 的名字取得到、而形态不对** ✓
+     ★★★ **而它与事实 36 / 47 同一族**：★ **`I` 前缀是“进程内 C++ 指针变体”**（★ 事实 47 逐字），★ 而迟到绑定下它**被当成属性** ⚠
+     ★ **上下文**：它是为了办**曲面上的样条**（★ 需 `IMathVector` 数组作方向）而查的 —— ★ **故那一条的思路在这里断了** ✓
+     ★★ **故单列**：`docs/toolbar-gaps-backend-limits.md` §三之六。
+     ★ **而本轮又一次先踩了自己的坑**：第一版用 `**vars_` 传关键字参 ⇒ `call_com_member` **不收关键字**（★ 它是 `*args`）⇒ ★ **全五格都报“我自己的错”** ⚠
+       ⇒ ★ 改成位置参数后才看到**真的错码**。
+     ★★ **方法论**：★ **一个探针全面失败时，先看**错误信息写的是谁的名字** ** —— ★ 写着我自己函数名的，就是**我的错** ⚠|真机：`tools/probe_imathutility_family.py`；证据 `output/imathutility-family-evidence.json`；对照事实 36 / 47 / 455 |
+| 457 | **★★★ 「复制实体」的入口是 `ISketchManager.RotateOrCopy3DAboutXYZ` 的 **`Copy=True`****（★ 而台账原写的 `SketchModifyCopy` **全接口查不到**） —— 2026-10-03（轮 580）。
+     ★ **怎么找到的**（★ 两步，★ 都是本仓常用的查法）：
+       ① ★ **铁律 5**：台账写的 `IModelDoc2.SketchModifyCopy` 在 `IModelDoc2` 下查不到
+          ⇒ ★ **换到全接口再查** —— ★ 而 `SketchModify` 全族**只有四个**（`Flip`/`Rotate`/`Scale`/`Translate`）⚠
+       ② ★ 而**围绕“复制”那个词再查**：`ISketchManager` 全 **92** 个成员里含 `Copy` 的**只有两条** —— `RotateOrCopy3DAboutXYZ` · `RotateOrCopy3DAboutVector` ✓
+     ★ **而官方对 `Copy` 那个参数的逐字**："**True to copy 3D sketch entities, false to not**" ✓
+     ★ 真机（`tools/prove_rotate_or_copy_3d.py`，零弹窗）：
+     ```
+     `Insert3DSketch(True)` 开 3D 草图 · `CreateLine` 画一条线 ⇒ 段 = 1
+     ★ **`Copy=True`**  ⇒ **段 1 → 2**（★ 增 1 = 复制了一份）· 回 `True` ✓
+     对照 `Copy=False` ⇒ **段 1 → 1**（★ 只旋转、不复制）· 也回 `True` ✓
+     ```
+     ⇒ ★★ **故那一个布尔就是“复制”与“只转”的分界** ✓
+     ★★ **而本轮又只能靠反射救回来**：我第一版传了 **8 个参数**（★ **漏 `AngleAboutZDir`**）
+       ⇒ `DISP_E_PARAMNOTOPTIONAL`（`0x8002000F`）；★ **而那个错看不出是哪个参数漏了** ⚠
+       ⇒ ★ 去查**反射的 arity**：`'RotateOrCopy3DAboutXYZ': 9`（★ 与 swapi 签名**两源一致**）✓
+     ★ **落地**：`capabilities.yaml` 新增 **`sketch_rotate_or_copy_3d`**（level = **verified**，共 **104** 条）；台账「复制实体」补 `capability_id` ⇒ **已能 78**。
+     ★★ **方法论**：★ **当一个 UI 名称在 API 里查不到时，围绕那个**动作的词**（这里是 `Copy`）在**合适的接口**上搜** —— ★ **而不是放弃** ⚠
+       （★ 本例：名字里的 `OrCopy` 就是答案）。|真机：`tools/prove_rotate_or_copy_3d.py`；证据 `output/rotate-or-copy-3d-evidence.json`；官方：`C:\swapi\types\ISketchManager\RotateOrCopy3DAboutXYZ.md` × 反射 arity |
+| 458 | **★★ 方程式驱动的曲线：显式用法真机建成**（`CreateEquationSpline2` **11 参**；★ 而参数用法本轮未成） —— 2026-10-03（轮 581）。
+     ★ **两代的关系是查出来的**：`CreateEquationSpline.md` 逐字："**Obsolete. Superseded by `ISketchManager::CreateEquationSpline2`**"；★ 同理 `CreateSplinesByEqnParams` ⇒ `...2`。
+     ★ **官方的两套用法（Remarks 逐字）**：
+     ```
+     ★ **显式曲线（只有 2D） y=f(x)**：**XExpression 给 `""`**；YExpression = 以 x 表达（★ 例 `y=exp(x)`）
+     ★ **参数曲线**：XExpression = x 关于 t（★ 例 `x=sin(t)`）；YExpression = y 关于 t（★ `y=cos(t)`）
+     ★ 参数：XExpression · YExpression · ZExpression · RangeStart · RangeEnd · IsAngleRange ·
+             RotationAngle(rad) · XOffset · YOffset · LockStart · LockEnd（**11 参**）
+     ```
+     ★ 真机（`tools/prove_equation_driven_curve.py`，零弹窗）—— ★ **三格**：
+     ```
+     ★ **显式** `y=exp(x)`（**X 给 `""`**） ⇒ **段 0 → 1** · 回 `CDispatch` ✓
+     参数 `x=sin(t)`/`y=cos(t)`          ⇒ 段 0 → 0（★ 而**回了 `CDispatch`**）⚠
+     坏表达式 `y=zzz(x)`                 ⇒ 段 0 → 0 · 回 `None`（★ 合理）
+     ```
+     ⇒ ★★ **故两条**：① **显式已登记为 verified**；② ★ **参数用法未成、而它返回了 `CDispatch`**（★ **第五种形态的候选**：对象给了而没进树）⚠
+       ★ **下一步**：先查参数用法的 `RangeStart`/`RangeEnd` 是否要换口径。
+     ★ **落地**：`capabilities.yaml` 新增 **`sketch_equation_curve`**（level = **verified**，共 **105** 条）；台账「方程式驱动的曲线」补 `capability_id` ⇒ **已能 79**。
+     ★★ **方法论**：★ **当官方 Remarks 把一个成员分成“两套用法”时，要**分开立桁** ** —— ★ 本例两套用法的**第一个参数就不同**；
+       ★ 而把它们合在一个结论里，就会把**一半成功说成失败**（或反之）。|真机：`tools/prove_equation_driven_curve.py`；证据 `output/equation-driven-curve-evidence.json`；官方：`C:\swapi\types\ISketchManager\CreateEquationSpline2.md` |
+| 459 | **★★★ 通过 XYZ 点的曲线：两套用法均真机建成**（三步式 + 从文件） —— 2026-10-03（轮 582）。
+     ★ **官方四页（★ 四者均**未标 `Obsolete`**）**：
+     ```
+     void InsertCurveFileBegin()
+        "**is the first method called that create a curve**. This method **must precede** all
+         calls to `InsertCurveFilePoint`; ★ **and `InsertCurveFileEnd` must enclose all of the
+         calls to `InsertCurveFilePoint`**."
+     bool InsertCurveFilePoint(double X, double Y, double Z)
+        "sets a point for a curve；★ **called multiple times** after Begin and before End"
+     bool InsertCurveFileEnd()
+        "**is the last method called to create a curve**"
+     bool InsertCurveFile(string FileName)
+        "The curve goes through the points in the specified **file**."
+     ```
+     ★★ **而判据取的是特征树增量**（★ 事实 436）：`InsertCurveFileBegin` **官方回 `void`** ⇒ 不能看返回值。
+     ★ 真机（`tools/prove_curve_through_xyz.py`，零弹窗）—— **两格**：
+     ```
+     ★ **三步式**：`Begin()` → `Point(x,y,z)` × **4** → `End()`
+        ⇒ **特征 5 → 6**，新增 **`曲线1`**；而每一步都回了：`Begin=ok` · `Point=[True,True,True,True]` · `End=True` ✓
+     ★ **从文件**：`InsertCurveFile(path)` ⇒ **特征 5 → 6**，新增 **`曲线1`**，返回 `True` ✓
+     ```
+     ★ **坐标是米**（★ 本探针在边界除了 1000）。
+     ★ **落地**：`capabilities.yaml` 新增 **`curve_through_xyz`**（level = **verified**，共 **106** 条）；台账「曲线-通过XYZ点的曲线」补 `capability_id` ⇒ **已能 80**。
+     ★★ **而本轮先纠了自己一个错记忆**：我以为本仓早就有 `insert_curve_through_points`
+       ⇒ ★ 而**grep 下来只有签名表里有那些名字**（**无包装、无能力、无证据**）⚠
+       ⇒ ★ **故“我记得有”不算——要 grep。**|真机：`tools/prove_curve_through_xyz.py`；证据 `output/curve-through-xyz-evidence.json`；官方：`C:\swapi\types\IModelDoc2\InsertCurveFile{{Begin,Point,End}}.md` × `InsertCurveFile.md` |
+| 460 | **★ 曲面上偏移：前置全满足、而它回 `False`**（★ 而两种选边法都试了） —— 2026-10-03（轮 583）。
+     ★ **官方那页（★ 未标废弃）给了三个前置**：
+     ```
+     bool SketchOffsetOnSurface(double Offset, bool Reverse, bool UseFront, bool MakeConstruct)
+     ★ UseFront："**Although not currently used, must be set to true**"
+     ★ Remarks："Before … call **`IModelDocExtension::SelectByID2` for each edge** to offset"
+     ★ Remarks："**After … call `ISketchManager::InsertSketch`** to rebuild the model with the **3D sketch**"
+     ```
+     ★ 真机（`tools/prove_sketch_offset_on_surface.py`，零弹窗）—— ★ **前置逐项都满足了**：
+     ```
+     实体（方盒）        ⇒ **True** ✓
+     3D 草图（Insert3DSketch）⇒ **ok** ✓
+     UseFront=True / False   ⇒ ★ **两格都回 `False`**（★ 而日志里 `InsertSketch=ok`）⚠
+     ```
+     ★★ **而选边那一步试了两种**：
+       ① **`by_object`**（`IEntity.Select4`）⇒ **选上 2 条**，★ 而仍回 `False`；
+       ② **`by_point`**（★ 官方说的 `SelectByID2`，★ 取边的中点）⇒ ★ **卡在 `GetCurveParams2`**（`AttributeError`：它不在那个对象上）⇒ 选上 0 条 ⚠
+     ⇒ ★★ **故按事实 53 停手**（★ 本轮同一处已试两次）；★ **下一步很具体**：
+       ★ 先把**取边中点**那一步换对（★ `GetCurveParams2` 不行 —— ★ 可能是 `GetCurve().GetCurveParams2()` 的**另一个名字**，或直接用 **`IEdge.GetStartVertex`/`GetEndVertex`** 取两端再取中点）。
+     ★ **而本轮的价值在于**：★ **把“回 `False`”与“前置没满足”分开了**（★ 前者是它的行为，后者是我的错）—— ★ 而**这一次不是我的错**。
+     ★ 本轮**不登记能力**。|真机：`tools/prove_sketch_offset_on_surface.py`；证据 `output/sketch-offset-on-surface-evidence.json`；官方：`C:\swapi\types\IModelDocExtension\SketchOffsetOnSurface.md`；对照事实 32（边按名选不中）· 53 |
+| 461 | **★★★ 对称线性直径尺寸：前置链条**全在官方例子里**（★ 而本轮探针还有两处没搭对） —— 2026-10-03（轮 584）。
+     ★ **而本轮把「第 ③ 样」用到了极致** —— 答案全在**官方那个例子**里：
+       `…\SWhelp\sldworksapi\Create_Full_Symmetrical_Angular_Dimension_Example_VB.htm`
+     ```
+     "This example shows how to create a full symmetrical angular dimension between
+      **a centerline and a line**."
+     Postconditions 逐字：3. Creates a **centerline and three lines**…
+       4. **Selects the centerline and one of the lines.**
+       5. **Suppresses the dimension dialog.**   6. Creates the dimension…
+     调用序：InsertSketch(True) → CreateCenterLine → CreateLine×3
+       → SelectByID2("Line1", "**SKETCHSEGMENT**", x,y,z, False, 0, Nothing, 0)
+       → SelectByID2("Line3", "SKETCHSEGMENT", x,y,z, **True**, 0, Nothing, 0)
+       → ClearSelection2(True) → 再选一次
+       → **SetUserPreferenceToggle(swInputDimValOnCreate, False)**
+       → **AddSymmetricDimension(x, y, z)** → 回 **`DisplayDimension`**
+     ```
+     ★★ **两件事是从例子里才能知道的**：
+       ① ★ **草图段有名字**（`"Line1"`/`"Line3"`）、**而按名能选中**（

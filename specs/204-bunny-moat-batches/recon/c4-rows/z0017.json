@@ -1,0 +1,170 @@
+{
+  "idx": 17,
+  "results": [
+    {
+      "member": "AddTrimmingLoop",
+      "remarks_empty": true,
+      "examples_actually_used": ["Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页 8 个参数全写 No description、无 Returns；示例给出一次真实 8 参调用及一组可用取值（二阶、Dim=2、非周期、每段 4 节点 2 控制点）",
+          "example_quote": "swSurface.AddTrimmingLoop(nCurves,\nOrder, Dim, Periodic, nKnots, nCtrlPts, Knots, CtrlPts);",
+          "example_file": "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+        },
+        {
+          "what": "示例里承载该 trimming loop 的曲面由 ICreateExtrusionSurface 创建；成员页对本成员只字未提曲面来源（后继页 AddTrimmingLoop2 才限定 CreatePlanarSurface/CreateRevolutionSurface）",
+          "example_quote": "swSurface = swBody.ICreateExtrusionSurface((SldWorks.Curve)swCurve,",
+          "example_file": "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+        }
+      ],
+      "note": "该页只有 Obsolete 声明、无 Remarks 段，按规则跳过冲突判定。"
+    },
+    {
+      "member": "AddTrimmingLoop2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Body_using_Trimmed_Surfaces_Example_CSharp.md",
+        "Create_Body_using_Trimmed_Surfaces_Example_VB.md",
+        "Create_Body_using_Trimmed_Surfaces_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只给规则；三份示例给出可直接用的成套取值：4 条二阶非周期直线、每段 4 节点 2 控制点、Dimen=2，正好满足 NumKnots=NumCtrlPoints+Order",
+          "example_quote": "isGood = TmpSurf.AddTrimmingLoop2(NumCurves, Order, Dimen, Periodic, NumKnots, NumCtrlPoints, Knots, CtrlPointDbls, UVRange);",
+          "example_file": "Create_Body_using_Trimmed_Surfaces_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 只说「不指定 UV range 就传 null/Nothing」；示例给出一组实测值并按 U低/U高/V低/V高 摆放",
+          "example_quote": "UVRange(3) = 1",
+          "example_file": "Create_Body_using_Trimmed_Surfaces_Example_VBNET.md"
+        },
+        {
+          "what": "示例给出 Remarks 所说「前置曲面」的实际形态：先 CreatePlanarSurface(RootPoint, Normal) 拿到 ISurface 再调本方法",
+          "example_quote": "TmpSurf = (Surface)SurfaceBody.CreatePlanarSurface(RootPoint, Normal);",
+          "example_file": "Create_Body_using_Trimmed_Surfaces_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 Dim 规则、节点数与重数规则、UV 语义与三份示例取值全部自洽，未见冲突。"
+    },
+    {
+      "member": "AddVariablePitchHelixFirstPitchAndDiameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Variable_Pitch_Helix_Example_CSharp.md",
+        "Create_Variable_Pitch_Helix_Example_VBNET.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 第 1 步只写「调 InsertVariablePitchHelix」；示例显示必须先有一张草图圆，且第三实参要指明按「高+转数」定义",
+          "example_quote": "status = swFeatureMgr.InsertVariablePitchHelix(false, true, (int)swHelixDefinedBy_e.swHelixDefinedByHeightAndRevolution, 4.712388980385);",
+          "example_file": "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md"
+        },
+        {
+          "what": "示例先画圆（半径/圆心坐标都给死），才建可变节距螺旋；成员页未提前置草图圆",
+          "example_quote": "swSketchSegment = (SketchSegment)swSketchManager.CreateCircle(0.0, 0.0, 0.0, 0.045549, 0.013926, 0.0);",
+          "example_file": "Create_Variable_Pitch_Helix_Example_CSharp.md"
+        },
+        {
+          "what": "四份示例给出同一组实参 FirstPitch=0.053、FirstDiameter=0.05382625271268；成员页未给任何数值样例",
+          "example_quote": "status = swFeatureManager.AddVariablePitchHelixFirstPitchAndDiameter(0.053, 0.05382625271268);",
+          "example_file": "Create_Variable_Pitch_Helix_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 4 步调用序与 4 份示例一致；其第 2 步把成员名拼成 ...Diamenter（少一个 a），属官方笔误。"
+    },
+    {
+      "member": "AddVariablePitchHelixSegment",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Variable_Pitch_Helix_Example_CSharp.md",
+        "Create_Variable_Pitch_Helix_Example_VBNET.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 说「one or more times」但不给次数；示例固定用 4 次把剩余段加完（Height 0.0265/0.03975/0.046375/0.053 圈）",
+          "example_quote": "status = swFeatureManager.AddVariablePitchHelixSegment(0.0265, 0.05382625271268, 0.5);",
+          "example_file": "Create_Variable_Pitch_Helix_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出完整参数序列：直径全程保持 0.05382625271268 不变，只 Height（转数）与 Pitch 递增；成员页未给数值",
+          "example_quote": "status = swFeatureMgr.AddVariablePitchHelixSegment(0.03975, 0.05382625271268, 0.75);",
+          "example_file": "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 4 步调用序、Height「1.0 = 360 degrees」等与 4 份示例均无相斥说法。"
+    },
+    {
+      "member": "AddVector",
+      "remarks_empty": true,
+      "examples_actually_used": ["Locate_Apex_of_Conical_Face_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回的 MathPoint 的 ArrayData 三个分量原样交给 CreatePoint2 建 3D 草图点，未做任何换算",
+          "example_quote": "swApexPt = swModel.CreatePoint2(swApex.ArrayData(0), swApex.ArrayData(1),",
+          "example_file": "Locate_Apex_of_Conical_Face_Example_VB.md"
+        },
+        {
+          "what": "示例先 CreateVector 再 Scale，最后才 AddVector——实参是 MathVector 而非裸数组，成员页只写 object",
+          "example_quote": "swApex = swOrigin.AddVector(swAxis)",
+          "example_file": "Locate_Apex_of_Conical_Face_Example_VB.md"
+        }
+      ],
+      "note": "该页无 Remarks 段（只有一句摘要与 Returns），按规则跳过冲突判定。"
+    },
+    {
+      "member": "AddVerticalDimension2",
+      "remarks_empty": true,
+      "examples_actually_used": ["Dimension_Edge_in_Drawing_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例每次调用前先用 SelectEntity 把模型那条边在当前视图里选中（逐视图重新选中），成员页未写这一前置",
+          "example_quote": "= swView.SelectEntity(swEnt, False)",
+          "example_file": "Dimension_Edge_in_Drawing_Example_VB.md"
+        },
+        {
+          "what": "示例明确该视图里边转换不了就返回 NULL；成员页 Returns 只写「Newly created dimension」",
+          "example_quote": "NULL if cannot convert edge in this view",
+          "example_file": "Dimension_Edge_in_Drawing_Example_VB.md"
+        },
+        {
+          "what": "示例先按视图坐标判断边是竖直还是水平再选 AddVerticalDimension2 / AddHorizontalDimension2，说明「Vertical」指视图方向",
+          "example_quote": "Must be vertical",
+          "example_file": "Dimension_Edge_in_Drawing_Example_VB.md"
+        }
+      ],
+      "note": "该页无 Remarks 段，按规则跳过冲突判定；X/Y/Z 的米制与示例一致。"
+    },
+    {
+      "member": "AdditionalSymbol",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出拿到该属性的完整链路：注解 GetPMIData → GetDimensionItemAtIndex(k) → PMIDimensionItem；成员页没说宿主对象怎么来",
+          "example_quote": "swPMIDataDimItem = (PMIDimensionItem)swPMIDataDim.GetDimensionItemAtIndex(k);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例按 swToleranceZoneModifier_e 解读读数，且只读取不赋值，与成员页的 get-only 声明一致",
+          "example_quote": "Additional symbol as defined in swToleranceZoneModifier_e: \" & swPMIDataDimItem.AdditionalSymbol",
+          "example_file": "Get_PMI_Data_Example_VB.md"
+        }
+      ],
+      "note": "该页无 Remarks 段（只有 get-only 说明与 Returns），按规则跳过冲突判定。"
+    }
+  ]
+}

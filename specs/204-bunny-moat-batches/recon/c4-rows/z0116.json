@@ -1,0 +1,117 @@
+{
+ "idx": 116,
+ "results": [
+  {
+   "member": "ExcludedFaces",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Exclude_Faces_Before_Flattening_Example_CSharp.md",
+    "Exclude_Faces_Before_Flattening_Example_VB.md",
+    "Exclude_Faces_Before_Flattening_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出成员页没写的调用序：先 AccessSelections、按 mark=1 选面，再赋值 ExcludedFaces，最后 ModifyDefinition 提交。",
+     "example_quote": "\t\t                    object facesVar = null;\n\t\t                    facesVar = faces;\n\t\t                    swFlatPatternFeatureData.ExcludedFaces = facesVar;\n\t\t                    boolstatus = swFeature.ModifyDefinition(swFlatPatternFeatureData, Part, null);",
+     "example_file": "Exclude_Faces_Before_Flattening_Example_CSharp.md"
+    }
+   ],
+   "note": "Remarks 的 IGetExcludedFacesCount 只讲取值侧数组长度；示例用选区计数构造赋值数组，二者非冲突。"
+  },
+  {
+   "member": "ExitApp",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "SOLIDWORKS_Visible_or_BackGround_Example_VB.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "This method is not normally used with macros (*.swp) because it shuts down your SOLIDWORKS Design session.",
+     "example_quote": "Sub Macro1()\nDim\nswApp As Object\nSet\nswApp = CreateObject(\"SldWorks.Application\")\n' Close\nthe SOLIDWORKS Design application. If you do not perform this step, SOLIDWORKS\nDesign\n' continues to run. If SOLIDWORKS Design is running in the background, the user\nis\n' unaware that SOLIDWORKS Design is running and consuming their system resources.\nswApp.ExitApp",
+     "example_file": "SOLIDWORKS_Visible_or_BackGround_Example_VB.md",
+     "why": "成员页说宏(.swp)不该用它；该官方示例整篇是 Sub 宏，把 ExitApp 当常规收尾并写明不做就会残留进程。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例补了成员页没写的收尾序：先 CloseDoc 掉打开的文档，再 ExitApp。",
+     "example_quote": "swApp.CloseDoc \"Part1\"\nswApp.ExitApp",
+     "example_file": "SOLIDWORKS_Visible_or_BackGround_Example_VB.md"
+    }
+   ],
+   "note": "Remarks 另称 C++/VB 结束程序不保证关闭 SLDWORKS 进程，与示例不矛盾。"
+  },
+  {
+   "member": "ExitIsolate",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Isolate_Component_Example_CSharp.md",
+    "Isolate_Component_Example_VB.md",
+    "Isolate_Component_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出 ExitIsolate 前必须连做的三步：Isolate、SetIsolateVisibility、SaveIsolate。",
+     "example_quote": "            status = swAssembly.Isolate();\n            swAssembly.SetIsolateVisibility((int)swIsolateVisibility_e.swIsolateVisibility_WIREFRAME);\n            //Save the new display state as Test_Display_State\n            status = swAssembly.SaveIsolate(\"Test_Display_State\");\n            //Exit isolate\n            status = swAssembly.ExitIsolate();",
+     "example_file": "Isolate_Component_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页无 ## Remarks，按规则跳过冲突判定，仅登记示例调用。"
+  },
+  {
+   "member": "Expand",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Dissolve_Subassembly_in_a_BOM_Table_Example_CSharp.md",
+    "Dissolve_Subassembly_in_a_BOM_Table_Example_VB.md",
+    "Dissolve_Subassembly_in_a_BOM_Table_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例只演示按行展开单个子装配，Remarks 只讲 CutList 时整表批量展开。",
+     "example_quote": "\t            //Expand blade shaft subassembly\n\t            swBOMAnnotation.Expand(1, 8);",
+     "example_file": "Dissolve_Subassembly_in_a_BOM_Table_Example_CSharp.md"
+    }
+   ],
+   "note": "枚举页 RowIndex=1、CutList=2；示例 Expand(1,8) 属 RowIndex，与 Parameters 一致。"
+  },
+  {
+   "member": "ExpandFeature",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Expand_Component_in_Specified_FeatureManager_Design_Tree_Pane_Example_CSharp.md",
+    "Expand_Component_in_Specified_FeatureManager_Design_Tree_Pane_Example_VB.md",
+    "Expand_Component_in_Specified_FeatureManager_Design_Tree_Pane_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出两个对象参数的取法：组件取自选区，特征名取自 swComp.FeatureByName。",
+     "example_quote": "            swComp = (Component2)swSelMgr.GetSelectedObjectsComponent4(1, -1);\n            swFeat = (Feature)swAssy.FeatureByName(\"speaker_frame-1\");\n            swFeat = (Feature)swComp.FeatureByName(\"Cut-Extrude1\");\n            featName = swFeat.Name;",
+     "example_file": "Expand_Component_in_Specified_FeatureManager_Design_Tree_Pane_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页无 ## Remarks，按规则跳过冲突判定，仅登记示例调用。"
+  },
+  {
+   "member": "Expanded",
+   "remarks_empty": true,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "两份示例调的是 ITreeControlItem::Expanded（node 为 TreeControlItem），非本成员，按纪律不采用。"
+  },
+  {
+   "member": "SupplementaryAngle",
+   "remarks_empty": true,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "示例调的是同接口兄弟成员 ExplementaryAngle（两者签名各自独立），按纪律不采用。"
+  }
+ ]
+}

@@ -1,0 +1,133 @@
+{
+  "idx": 214,
+  "results": [
+    {
+      "member": "GetLoopEdgeCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Shut-Off_Surface_Data_Example_CSharp.md",
+        "Get_Shut-Off_Surface_Data_Example_VB.md",
+        "Get_Shut-Off_Surface_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 Index 的合法区间：0 到 GetLoopCount-1；成员页只说「loop 的编号」，未给基址",
+          "example_quote": "For i = 0 To swFeatData.GetLoopCount - 1",
+          "example_file": "Get_Shut-Off_Surface_Data_Example_VB.md"
+        },
+        {
+          "what": "示例紧接着用的是 LoopEdges(i) 属性取数组，不是 Remarks 点名的 IGetLoopsEdges 指针方法",
+          "example_quote": "params = swFeatData.LoopEdges(i)",
+          "example_file": "Get_Shut-Off_Surface_Data_Example_VB.md"
+        },
+        {
+          "what": "示例前置更硬：GetDefinition 之后必须先 AccessSelections 打开数据，结束再 ModifyDefinition",
+          "example_quote": "boolstatus = swFeatData.AccessSelections(swModel, Nothing)",
+          "example_file": "Get_Shut-Off_Surface_Data_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 点名 IGetLoopsEdges，同页 See Also 与本目录只有 IGetLoopEdges.md（无 s）——属成员页内部命名不一致，非与示例冲突。"
+    },
+    {
+      "member": "GetLowerText",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Chamfer_Display_Dimension_Example_CSharp.md",
+        "Get_Chamfer_Display_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；两份示例均先 SetLowerText 再 GetLowerText。"
+    },
+    {
+      "member": "GetMBD3DPdfData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md",
+        "Attach_Files_to_MBD_3D_PDF_Example_VB.md",
+        "Attach_Files_to_MBD_3D_PDF_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method requires that the SOLDWORKS MBD add-in be loaded. ([[ISldWorks::LoadAddIn]])",
+          "example_quote": "// 1. Verify that the specified SOLIDWORKS MBD 3D PDF theme,\n//    files to attach, and C:\\\\temp exist.\n// 2. Open public_documents\\\\samples\\\\tutorial\\\\api\\\\block.sldprt.\n// 3. Open the Immediate window.",
+          "example_file": "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md",
+          "why": "Remarks 说必须先 LoadAddIn 加载 MBD 插件；三份示例的前置只列主题/文件/block.sldprt/立即窗口，正文也无 LoadAddIn 调用，两侧前置集不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出实际调用序：Get 之后立刻设 FilePath，而 Remarks 把 FilePath 排在第 6 步、ThemeName 排在第 2 步",
+          "example_quote": "//Get MBD3DPdfData object\n            swMBDPdfData = (MBD3DPdfData)swModelDocExt.GetMBD3DPdfData();\n            //Set path and file name for SOLIDWORKS MBD 3D PDF\n            swMBDPdfData.FilePath = \"C:\\\\temp\\\\block.PDF\";",
+          "example_file": "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md"
+        },
+        {
+          "what": "示例还设 Accuracy / CompressLossyTessellation / CreateAttachSTEP242 / SetAttachments，Remarks 的 7 步清单完全未提",
+          "example_quote": "swMBDPdfData.Accuracy = (int)sw3DPDFAccuracy_e.swLow;",
+          "example_file": "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md"
+        }
+      ],
+      "note": "第 4 份 Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md 全文无 GetMBD3DPdfData，已剔除。"
+    },
+    {
+      "member": "GetMagneticLinesCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Magnetic_Line_Example_CSharp.md",
+        "Insert_Magnetic_Line_Example_VB.md",
+        "Insert_Magnetic_Line_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；三份示例都在 InsertMagneticLine 之后立即读该计数。"
+    },
+    {
+      "member": "GetMajorPoint2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Ellipse_Example_CSharp.md",
+        "Create_Ellipse_Example_VBNET.md",
+        "Get_All_Elements_of_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；三份示例都把返回值强转 SketchPoint。"
+    },
+    {
+      "member": "GetMassProperties",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_of_Assembly_Component_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「units are metric」落成具体换算：m→mm×1000、m³→mm³×1e9、m²→mm²×1e6；密度 kg/m^3、质量 kg、惯量 kg*m^2 不换算",
+          "example_quote": "Debug.Print \" Volume = \" & vMassProps(3) * 1000000000# & \" mm^3\"",
+          "example_file": "Get_Mass_Properties_of_Assembly_Component_Example_VB.md"
+        },
+        {
+          "what": "示例用组件自己的 ModelDoc2 取密度，Remarks 写的是 ISldWorks::GetUserPreferenceDoubleValue（接收者不同）",
+          "example_quote": "nDensity = swCompModel.GetUserPreferenceDoubleValue(swMaterialPropertyDensity)",
+          "example_file": "Get_Mass_Properties_of_Assembly_Component_Example_VB.md"
+        },
+        {
+          "what": "示例 NOTE 把 Remarks 的坐标系告警压成一行，且代码并不乘 Transform2，只打印组件原点下的原值",
+          "example_quote": "' NOTE: The mass property values are returned relative to\n' the component origin, not the assembly origin.",
+          "example_file": "Get_Mass_Properties_of_Assembly_Component_Example_VB.md"
+        }
+      ],
+      "note": "另 3 份 Visible_and_Hidden_Components 示例调的是 IModelDocExtension.GetMassProperties，非 IBody2，已剔除。"
+    },
+    {
+      "member": "GetMassProperties2",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（只有 Obsolete 行）；4 份示例都没调它：3 份是 IModelDocExtension.GetMassProperties2(3 参)，1 份是 ISldWorks::GetMassProperties2。"
+    }
+  ]
+}

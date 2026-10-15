@@ -1,0 +1,112 @@
+{
+  "idx": 286,
+  "results": [
+    {
+      "member": "HasFrozenUpdatePending",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Move_Freeze_Bar_Example_CSharp.md",
+        "Move_Freeze_Bar_Example_VB.md",
+        "Move_Freeze_Bar_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；示例均只作读取打印。"
+    },
+    {
+      "member": "HasMenu",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出赋值时机：HasMenu 须在 cmdGroup.Activate() 之前设置，成员页未给调用序",
+          "example_quote": "            cmdGroup.HasToolbar = true;\n            cmdGroup.HasMenu = true;\n            cmdGroup.Activate();",
+          "example_file": "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 称默认有菜单，示例显式置 true —— 与默认不矛盾，仅冗余。"
+    },
+    {
+      "member": "HasMultipleFonts",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Whether_Note_Contains_Rich-embedded_Text_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "HasRenamedDocuments",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rename_Components_and_Save_Assembly_Example_CSharp.md",
+        "Rename_Components_and_Save_Assembly_Example_VB.md",
+        "Rename_Components_and_Save_Assembly_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "HasToolbar",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出赋值时机：HasToolbar 须在 cmdGroup.Activate() 之前设置，成员页未给调用序",
+          "example_quote": "            cmdGroup.HasToolbar = true;\n            cmdGroup.HasMenu = true;\n            cmdGroup.Activate();",
+          "example_file": "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 称默认有工具栏，示例显式置 true —— 与默认不矛盾，仅冗余。"
+    },
+    {
+      "member": "HasUnloadedComponents",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Hidden_Components_Filenames_Example_CSharp.md",
+        "Get_Hidden_Components_Filenames_Example_VB.md",
+        "Get_Hidden_Components_Filenames_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "HeadClearance",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出单位口径：原始读数为米，须 ×1000.0 才得 mm；成员页 Returns 只写「Head clearance」",
+          "example_quote": "Debug.Print(\"  HeadClearance                = \" + swWizHole.HeadClearance * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 AccessSelections 的适用范围限定为三个几何成员，读 HeadClearance 时并未调用它",
+          "example_quote": "//    To access:\n//    * IWizardHoleFeatureData2::Face\n//    * IWizardHoleFeatureData2::Vertex\n//    * IWizardHoleFeatureData2::GetEndConditionReference\n//    the feature must be rolled back with a call to\n//    IWizardHoleFeatureData2::AccessSelections",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只是指向“Accessing Selections”文档，本身未作可与示例对立的断言。"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "idx": 15,
+  "results": [
+    {
+      "name": "standard_parts_toolbox",
+      "level": "verified",
+      "members_found": [],
+      "examples_used": [],
+      "preconditions": [],
+      "verdict": "cannot_tell",
+      "note": "实现 scripts/sw_toolbox_index.py 全 97 行只 import json/pathlib/typing，无一处 get_com_member ⇒ COM 成员为空；两索引与 C:\\swapi\\examples 内无对应示例 ⇒ 无前置可对账。"
+    },
+    {
+      "name": "sketch_chamfer",
+      "level": "verified",
+      "members_found": ["SketchManager", "CreateChamfer", "GetActiveSketch2", "ActiveSketch", "GetSketchSegments"],
+      "examples_used": [
+        "Offset_Selected_Edges_in_Active_Sketch_Example_VB.md",
+        "Dynamically_Mirror_Sketch_Entities_Example_VB.md",
+        "Constrain_Sketch_Example_VBNET.md",
+        "Autodimension_All_Sketches_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "必须在草图编辑态、活动草图存在（示例：ActiveSketch 为 Nothing 则报 No active sketch 直接 Exit Sub）",
+          "from": "Constrain_Sketch_Example_VBNET.md",
+          "state": "covered",
+          "evidence_quote": "新零件 → 进草图 → 两条相接直线 → 选中两条（选区计数 **2**）"
+        },
+        {
+          "text": "必须先选中草图实体（示例逐字：Select one or more edges in the part coincident to the plane）",
+          "from": "Offset_Selected_Edges_in_Active_Sketch_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "选中两条（选区计数 **2**）"
+        },
+        {
+          "text": "活动文档必须是零件文档（示例逐字：A part document must be open and the active document，GetType≠swDocPART 即 Exit Sub）",
+          "from": "Constrain_Sketch_Example_VBNET.md",
+          "state": "covered",
+          "evidence_quote": "新零件 → 进草图 → 两条相接直线"
+        },
+        {
+          "text": "须先开草图再选中实体（示例逐字：Select the top planar face on the part and open a sketch / Select an edge on the planar face）",
+          "from": "Dynamically_Mirror_Sketch_Entities_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "两条相接直线 → 选中两条（选区计数 **2**）"
+        },
+        {
+          "text": "ISketchManager.CreateChamfer 描述行逐字 Creates a chamfer between two selected sketch entities；该成员在两索引与 examples 内 0 份示例",
+          "from": "C:\\swapi\\types\\ISketchManager\\CreateChamfer.md（examples 内无该成员示例）",
+          "state": "covered",
+          "evidence_quote": "选中两条（选区计数 **2**）"
+        }
+      ],
+      "verdict": "all_covered",
+      "note": "CreateChamfer 本体无官方示例，前置取自三个同族草图操作示例；evidence 逐字命中「进草图」「选中两条（选区计数 2）」。"
+    }
+  ]
+}

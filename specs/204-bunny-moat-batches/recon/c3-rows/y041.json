@@ -1,0 +1,101 @@
+{
+  "idx": 41,
+  "results": [
+    {
+      "name": "sketch_dimension_vertical",
+      "level": "verified",
+      "members_found": [
+        "AddVerticalDimension2",
+        "AddHorizontalDimension2",
+        "Select4",
+        "GetFirstDisplayDimension",
+        "GetNext2"
+      ],
+      "examples_used": [
+        "Dimension_Edge_in_Drawing_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "调用前必须在图形区先选中一条直边（示例前置 3：A straight edge is selected）",
+          "from": "Dimension_Edge_in_Drawing_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "★ 故**前置就是“**必须先选中实体**”**"
+        },
+        {
+          "text": "被选实体须为直线段：示例对非直线直接 Exit Sub，并按水平/竖直分派不同的 Add*2",
+          "from": "Dimension_Edge_in_Drawing_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Part or assembly is open（示例前置 1）；草图语境下即须有打开的零件文档",
+          "from": "Dimension_Edge_in_Drawing_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "：在前视面画**一条水平线段**"
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "官方唯一示例是工程图语境（尺寸加在视图里的边）；前置 2「装配体需完全解析」不适用于本条故未计。evidence 未提直线/朝向要求，且竖直尺寸加在水平线上也成。"
+    },
+    {
+      "name": "feature_revolve_cut",
+      "level": "verified",
+      "members_found": [
+        "FeatureRevolve2",
+        "SelectByID2",
+        "Select4"
+      ],
+      "examples_used": [
+        "Create_Revolve_Features_Example_VB.md",
+        "Create_360-degree_Revolve_Feature_Example_VB.md",
+        "Create_Thin_Feature_Revolve_in_Two_Directions_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "Preconditions: Open a new part document",
+          "from": "Create_Revolve_Features_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "：实体盒 + 前视面上的**中心线 + 剖面**"
+        },
+        {
+          "text": "打开一个已含 Axis1 与 Sketch1 特征的零件文档",
+          "from": "Create_360-degree_Revolve_Feature_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "：实体盒 + 前视面上的**中心线 + 剖面**"
+        },
+        {
+          "text": "Sketch1 须是矩形，且 Axis1 须用矩形的一条边创建（InsertAxis2 那条路）",
+          "from": "Create_360-degree_Revolve_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调用前 SelectByID2：剖面草图 mark = 0、旋转轴 mark = 4 或 16（示例均按 mark 16 选轴）",
+          "from": "Create_360-degree_Revolve_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "选区顺序：示例是先选轮廓草图（append=False, mark 0），再追加轴（append=True, mark 16）",
+          "from": "Create_360-degree_Revolve_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "若用上至面/顶点/等距面作端条件，须再按 mark = 32 选中该实体（示例按 32 选面）",
+          "from": "Create_Thin_Feature_Revolve_in_Two_Directions_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "两向到同一实体时须 BothDirectionUpToSameEntity=True 且该实体只选一次，重复选会抵消、特征不建成",
+          "from": "Create_Thin_Feature_Revolve_in_Two_Directions_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "evidence 只覆盖「文档里已有轴+剖面」；mark 表、mark=32、同实体只选一次、选区顺序均未提。示例顺序与本仓「轴先于轮廓」相反。受影响体 mark=1 不适用（UseFeatScope/UseAutoSelect 均为 True）。"
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+ "idx": 167,
+ "results": [
+  {
+   "member": "GetCornerTreatments",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Access_Structure_System_Corner_Treatments_Example_VB.md",
+    "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例把返回数组长度与 GetCornerTreatmentCount 绑定，按 x=0..crnrCnt-1 遍历",
+     "example_quote": "crnrCnt = crnrGrpFolder.GetCornerTreatmentCount();\nDebug.Print(\"Number of corner treatments: \" + crnrCnt);\ncrnrArr = (object[])crnrGrpFolder.GetCornerTreatments();\nfor (x = 0; x <= crnrCnt - 1; x++)",
+     "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+    },
+    {
+     "what": "示例对每个返回的 IFeature 先调 GetDefinition，再按 CornerType 转具体接口",
+     "example_quote": "crnrArr = crnrGrpFolder.GetCornerTreatments\nFor x = 0 To crnrCnt - 1\nSet crnrFeat = crnrArr(x)\nDebug.Print crnrFeat.Name\nSet crnrFeat2 = crnrFeat.GetDefinition",
+     "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md"
+    }
+   ],
+   "note": "不冲突：Remarks 的 cast 或 GetDefinition 正好对应示例里的 GetDefinition。"
+  },
+  {
+   "member": "GetCorners",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_SM_Corner_Relief_Feature_Example_CSharp.md",
+    "Create_SM_Corner_Relief_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例在 GetCorners(-1) 之前必先 AccessSelections，成员页没写这个前置",
+     "example_quote": "           featModData.AccessSelections(swModel, null);\n           getCornerVar = (object[])featModData.GetCorners(-1);",
+     "example_file": "Create_SM_Corner_Relief_Feature_Example_CSharp.md"
+    },
+    {
+     "what": "VB.NET 版同样先 AccessSelections 再 GetCorners(-1)，两语言一致",
+     "example_quote": "       featModData.AccessSelections(swModel, Nothing)\n       getCornerVar = featModData.GetCorners(-1)",
+     "example_file": "Create_SM_Corner_Relief_Feature_Example_VBNET.md"
+    }
+   ],
+   "note": "两语言示例都只用 -1，与 Remarks 一致；差别仅是示例多了前置。"
+  },
+  {
+   "member": "GetCorresponding",
+   "remarks_empty": false,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "所列 4 份示例都没调它：三份调 IView::GetCorresponding，Note 例调组件零件文档 Extension 的 GetCorresponding。"
+  },
+  {
+   "member": "GetCorresponding2",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Corresponding_Entities_Between_Parts_and_Views_Example_CSharp.md",
+    "Get_Corresponding_Entities_Between_Parts_and_Views_Example_VB.md",
+    "Get_Corresponding_Entities_Between_Parts_and_Views_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例把接收者定为底层零件的 Extension，输入对象却取自工程图选区（方向 drawing→part）",
+     "example_quote": "                    inputObject = selMgr.GetSelectedObject6(2, -1);\n                    drComp = (DrawingComponent)selMgr.GetSelectedObjectsComponent4(2, -1);\n                    Debug.Print(\"Using IModelDocExtension::GetCorresponding2()\");\n                    outputObject = swModelPart.Extension.GetCorresponding2(inputObject);",
+     "example_file": "Get_Corresponding_Entities_Between_Parts_and_Views_Example_CSharp.md"
+    },
+    {
+     "what": "Returns 说找不到返回 null，示例把它写成显式判空分支",
+     "example_quote": "                    outputObject = swModelPart.Extension.GetCorresponding2(inputObject);\n                    if (outputObject == null)\n                    {\n                        Debug.Print(\"No corresponding object found in the part\");",
+     "example_file": "Get_Corresponding_Entities_Between_Parts_and_Views_Example_CSharp.md"
+    }
+   ],
+   "note": "示例只在非实体分支调用它；面/边/顶点走 GetCorrespondingEntity2，与 Remarks 交叉引用一致。"
+  },
+  {
+   "member": "GetCorrespondingEntity",
+   "remarks_empty": true,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "页面无 Remarks 段；示例也没调它，Get_Part… 例调零件文档 Extension 的同名成员，其余三份调 IView::GetCorrespondingEntity。"
+  },
+  {
+   "member": "GetCorrespondingEntity2",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Corresponding_Entities_Between_Parts_and_Views_Example_CSharp.md",
+    "Get_Corresponding_Entities_Between_Parts_and_Views_Example_VB.md",
+    "Get_Corresponding_Entities_Between_Parts_and_Views_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例把接收者定为零件的 Extension、输入实体取自工程图选区，并先取 drComp",
+     "example_quote": "                case (int)swSelectType_e.swSelEDGES:\n                case (int)swSelectType_e.swSelVERTICES:\n                    inputEntity = (Entity)selMgr.GetSelectedObject6(2, -1);\n                    drComp = (DrawingComponent)selMgr.GetSelectedObjectsComponent4(2, -1);\n                    Debug.Print(\"Using IModelDocExtension::GetCorrespondingEntity2()\");\n                    outputEntity = (Entity)swModelPart.Extension.GetCorrespondingEntity2(inputEntity);",
+     "example_file": "Get_Corresponding_Entities_Between_Parts_and_Views_Example_CSharp.md"
+    },
+    {
+     "what": "示例拿到对应实体后用 Select4(false,null) 在零件里选中，不只是判空",
+     "example_quote": "                    {\n                        Debug.Print(\"Corresponding entity found...selecting in part\");\n                        swApp.ActivateDoc3(swModelPart.GetTitle(), false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, lErr);\n                        bSelected = outputEntity.Select4(false, null);\n                    }",
+     "example_file": "Get_Corresponding_Entities_Between_Parts_and_Views_Example_CSharp.md"
+    }
+   ],
+   "note": "示例只在实体分支调用它，feature/annotation 走 GetCorresponding2，与 Remarks 交叉引用不冲突。"
+  },
+  {
+   "member": "GetCorrespondingItem",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Dispatch_Objects_for_Selection_Set_Items_Example_CSharp.md",
+    "Get_Dispatch_Objects_for_Selection_Set_Items_Example_VB.md",
+    "Get_Dispatch_Objects_for_Selection_Set_Items_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "Remarks 只说按类型数组转型，示例补出该数组来自 GetSelectionSetItemTypes 且与 items 同序",
+     "example_quote": "                        selectionSetItemArray = (object[])swSelectionSet.GetSelectionSetItems();\n                        selectionSetItemArrayTypes = (int[])swSelectionSet.GetSelectionSetItemTypes();",
+     "example_file": "Get_Dispatch_Objects_for_Selection_Set_Items_Example_CSharp.md"
+    },
+    {
+     "what": "返回值按类型分别转成 Face2 或 Edge，不存在统一接口类型",
+     "example_quote": "                                case (int)swSelectType_e.swSelFACES:\n                                    //Get the Dispatch object for the selection set item\n                                    swFace = (Face2)swSelectionSetItem.GetCorrespondingItem();\n                                    //Get the name of the body for the face\n                                    swBody = (Body2)swFace.GetBody();\n                                    Debug.Print(\"        Name of face[\" + j + \"]'s body: \" + swBody.Name);\n                                    break;",
+     "example_file": "Get_Dispatch_Objects_for_Selection_Set_Items_Example_CSharp.md"
+    }
+   ],
+   "note": "示例只演示 Remarks 第二条用途（按类型转型），没演示 AddSelectionListObject 那条。"
+  }
+ ]
+}

@@ -1,0 +1,171 @@
+{
+  "idx": 129,
+  "results": [
+    {
+      "member": "FinishCornerRelief",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Corner_Relief_Feature_Example_CSharp.md",
+        "Create_Corner_Relief_Feature_Example_VB.md",
+        "Create_Corner_Relief_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 Mark=0/Append=true 选完 SOLIDBODY 后，下一行立刻 ClearSelection2，把 Remarks 第 1 步的 body 选区清掉",
+          "example_quote": "bValue = swModel.Extension.SelectByID2(\"Edge-Flange1\", \"SOLIDBODY\", 0, 0, 0, True, 0, Nothing, 0)",
+          "example_file": "Create_Corner_Relief_Feature_Example_VB.md"
+        },
+        {
+          "what": "AddCornerReliefType 的角索引固定传 -1，真实索引由前一步 AddCornerReliefCorner 的返回值 myCorner 给出",
+          "example_quote": "myReliefType = swModel.FeatureManager.AddCornerReliefType(-1, swCornerSquareRelief, 0.0001, 0.0007366, 0.00018415, False, False, False, True, False)",
+          "example_file": "Create_Corner_Relief_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的 Mark=0/Append=true、Mark=4/Append=true 与三份示例逐字一致，无冲突；示例多出「选完 body 立即清选区」与角索引 -1 两处细节。"
+    },
+    {
+      "member": "FinishRecordingUndoObject2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Multiple_Undo_Command_Example_CSharp.md",
+        "Create_Multiple_Undo_Command_Example_VB.md",
+        "Create_Multiple_Undo_Command_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都只跑 MakeHidden=True 这一档，Remarks 另一档 MakeHidden=False 的可见对象没有任何示例",
+          "example_quote": "swModelDocExt.FinishRecordingUndoObject2 \"API Undo\", True",
+          "example_file": "Create_Multiple_Undo_Command_Example_VB.md"
+        },
+        {
+          "what": "示例显式给出撤销列表次序，把隐藏对象排在第二位，正面避开 Remarks 警告的「首项被丢弃」",
+          "example_quote": "//    b. (API Undo, hidden from view)",
+          "example_file": "Create_Multiple_Undo_Command_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例的调用点与 Remarks 两档语义一致，未见冲突；差异只在示例只覆盖隐藏档并给出列表次序。"
+    },
+    {
+      "member": "FirstColor",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_VBNET.md",
+        "Get_Section_View_Data_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Use [[ISectionViewData::ShowSectionCap]] to display the caps of section views and [[ISectionView::KeepCapColor]] to color them.",
+          "example_quote": "data.KeepCapColor = True",
+          "example_file": "Create_Section_View_in_Model_Example_VB.md",
+          "why": "Remarks 把端盖着色开关指向 ISectionView，示例却设在 SectionViewData 上。官方树只有 ISectionViewData/KeepCapColor.md，无 ISectionView 接口。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "端盖配色要三处同设：FirstColor 给 RGB 值、ShowSectionCap 显端盖、KeepCapColor 才让颜色生效",
+          "example_quote": "data.FirstColor = RGB(255, 0, 0)",
+          "example_file": "Create_Section_View_in_Model_Example_VB.md"
+        },
+        {
+          "what": "第二、三段用 SecondColor=RGB(0,255,0) / ThirdColor=RGB(0,0,255) 逐段独立设色",
+          "example_quote": "data.ThirdColor = RGB(0, 0, 255)",
+          "example_file": "Create_Section_View_in_Model_Example_VB.md"
+        }
+      ],
+      "note": "唯一冲突是 KeepCapColor 挂在哪个接口；RGB 值本身与 Returns「RGB value」不矛盾。"
+    },
+    {
+      "member": "FirstFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份候选示例调的都是别的对象：Add_Objects 三份用 swModel(ModelDoc2).FirstFeature，Autodimension 用 swPart(PartDoc).FirstFeature；本页也无 Remarks。"
+    },
+    {
+      "member": "FirstOffset",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_VBNET.md",
+        "Get_Section_View_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例直接写 -0.01（米制 API 口径），本页 Returns 只写「First offset distance」未给单位",
+          "example_quote": "data.FirstOffset = -0.01",
+          "example_file": "Create_Section_View_in_Model_Example_VB.md"
+        },
+        {
+          "what": "同一次调用里 First/Third 为 -0.01、Second 为 +0.01，说明该值带方向符号",
+          "example_quote": "data.SecondOffset = 0.01",
+          "example_file": "Create_Section_View_in_Model_Example_VB.md"
+        }
+      ],
+      "note": "本页无 Remarks，按纪律跳过冲突判定；只记示例给出的具体数值与符号约定。"
+    },
+    {
+      "member": "FirstPlane",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_VBNET.md",
+        "Get_Section_View_Data_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "[[Plane]] or [[planar face]]",
+          "example_quote": "p1 = (Feature)data.FirstPlane;",
+          "example_file": "Get_Section_View_Data_Example_CSharp.md",
+          "why": "该句出自页面 Returns 段，说取值是 Plane 或 planar face；读取示例却强转 Feature 并调 Feature.Select2，写入侧 Create 示例也把 Feature 塞回去。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Mark=1 与 Remarks 一致；读取示例改用 IFeature.Select2(Append,Mark) 以 1/2/4 重选三张剖切面",
+          "example_quote": "p1.Select2(true, 1);",
+          "example_file": "Get_Section_View_Data_Example_CSharp.md"
+        },
+        {
+          "what": "创建侧用 Mark=1/2/4 连选三个 PLANE，再 GetSelectedObject6(1/2/4, 0) 取回分别赋给 First/Second/ThirdPlane",
+          "example_quote": "Set plane1 = selMgr.GetSelectedObject6(1, 0)",
+          "example_file": "Create_Section_View_in_Model_Example_VB.md"
+        }
+      ],
+      "note": "Mark=1 三处一致；冲突只在取值类型：页面说 Plane/平面面，示例当 Feature 用并互相赋值。"
+    },
+    {
+      "member": "FirstReverseDirection",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_VBNET.md",
+        "Get_Section_View_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例同一次调用里 First/Second 为 False、Third 为 True，说明该开关逐段独立而非整体",
+          "example_quote": "data.ThirdReverseDirection = True",
+          "example_file": "Create_Section_View_in_Model_Example_VB.md"
+        },
+        {
+          "what": "读取示例把它当裸 bool 打印，不带单位与量纲",
+          "example_quote": "Debug.Print(\"Reverse direction: \" + data.FirstReverseDirection);",
+          "example_file": "Get_Section_View_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "本页无 Remarks，按纪律跳过冲突判定；只记示例给出的逐段取值与打印形态。"
+    }
+  ]
+}

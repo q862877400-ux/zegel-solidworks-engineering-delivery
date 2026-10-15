@@ -1,0 +1,121 @@
+{
+  "idx": 112,
+  "results": [
+    {
+      "member": "EndTangencyType",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无 Remarks。列出的4份示例都调 SweepFeatureData.EndTangencyType（swSweep 声明为 SweepFeatureData），与 ILoftFeatureData 同名不同接口，不能当本成员证据。"
+    },
+    {
+      "member": "EndVariablePitchHelix",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Variable_Pitch_Helix_Example_CSharp.md",
+        "Create_Variable_Pitch_Helix_Example_VBNET.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_CSharp.md",
+        "Create_and_Modify_Variable-pitch_Helix_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "2. [[IFeatureManager::AddVariablePitchHelixFirstPitchAndDiamenter]] to add the first segment.",
+          "example_quote": "status = swFeatureManager.AddVariablePitchHelixFirstPitchAndDiameter(0.053, 0.05382625271268)",
+          "example_file": "Create_Variable_Pitch_Helix_Example_VBNET.md",
+          "why": "Remarks 第2步写的成员名拼作 Diamenter；官方类型树该目录只有 AddVariablePitchHelixFirstPitchAndDiameter.md，无 Diamenter 页。四份示例一致用 Diameter，两个名字不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 InsertVariablePitchHelix 的四个实参（前两布尔、类型1、角4.712…），Remarks 只列调用序、不给参数。",
+          "example_quote": "status = swFeatureManager.InsertVariablePitchHelix(false, true, 1, 4.712388980385);",
+          "example_file": "Create_Variable_Pitch_Helix_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例的四步调用序与 Remarks 完全一致；冲突只在 Remarks 的成员名拼写。"
+    },
+    {
+      "member": "EngageBelt",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Belt_Chain_Feature_Example_CSharp.md",
+        "Create_Belt_Chain_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 CreateFeature 之前把它写成 false（对应 Returns 的 suppress belt mates），给出确切取值与赋值时机。",
+          "example_quote": "beltChainFeatData.EngageBelt = false;",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "页无 Remarks。示例取值与 Returns 的 false 语义一致，不构成冲突。"
+    },
+    {
+      "member": "Entities",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "列出的4份示例的 .Entities 都在 DisplayStateSetting（3份）与 SurfaceKnitFeatureData（1份）上，与钣金断角 IBreakCornerFeatureData 无关，同名不同接口。"
+    },
+    {
+      "member": "EntitiesToMate",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Limit_Angle_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取法：CreateMateData(6) 转 AngleMateFeatureData，EntitiesToMate 传两个 GetSelectedObject6 得到的 Face2 组成的数组。",
+          "example_quote": "swAngleMateData.EntitiesToMate = vFacesDist;",
+          "example_file": "Create_Limit_Angle_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "只有 Limit Angle 示例用的是 AngleMateFeatureData；Cam/Gear/Hinge 三份分别用 CamFollower/Gear/Hinge MateFeatureData，同名不同接口。两面正对上 Remarks 的 IFace2 行，无冲突。"
+    },
+    {
+      "member": "Entity",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无 Remarks。3份示例的 .Entity 都是 FaultEntity 上的（swFaultEnt As SldWorks.FaultEntity，返回 SldWorks.Entity），与 IEdgePoint 无关。"
+    },
+    {
+      "member": "EntityParams",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Mate_Example_CSharp.md",
+        "Edit_Mate_Example_VB.md",
+        "Edit_Mate_Example_VBNET.md",
+        "Get_Mate_Definition_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "To define the mate entity, the following information is returned based on the mate type.",
+          "example_quote": "Debug.Assert 7 = UBound(vEntParam)",
+          "example_file": "Get_Mate_Definition_Example_VB.md",
+          "why": "Remarks 表里 swMatePoint 只返回 pointX/Y/Z 三个量（数组长 3）；示例对任意配合实体一律断言 UBound=7（长 8）并读满 0..7，两种返回长度不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 pointX/Y/Z 与 radius1/radius2 乘 1000 后标 mm，即这些量以米返回；Remarks 只说坐标系，没给单位。",
+          "example_quote": "Debug.Print \" Location = (\" & vEntParam(0) * 1000# & \", \" & vEntParam(1) * 1000# & \", \" & vEntParam(2) * 1000# & \") mm\"",
+          "example_file": "Get_Mate_Definition_Example_VB.md"
+        },
+        {
+          "what": "示例对 vectorI/J/K 不作换算，说明这三个分量与坐标不同量纲、无长度单位；Remarks 未作区分。",
+          "example_quote": "Debug.Print \" (i, j, k) = (\" & vEntParam(3) & \", \" & vEntParam(4) & \", \" & vEntParam(5) & \")\"",
+          "example_file": "Get_Mate_Definition_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都用它。Edit_Mate 三份同样无长度检查地读 0..7，与上面冲突同源。"
+    }
+  ]
+}

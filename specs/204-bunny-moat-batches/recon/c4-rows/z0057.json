@@ -1,0 +1,149 @@
+{
+  "idx": 57,
+  "results": [
+    {
+      "member": "CreateArc2",
+      "remarks_empty": false,
+      "examples_actually_used": ["Create_Sketch_Line_with_Visual_Properties_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在图纸文档(DrawingDoc)上直接建弧；页面只说「活动 2D 草图」，未限定零件文档",
+          "example_quote": "Set pSketchSegment4 = pDrawing.CreateArc2(0.13, 0.1, 0, 0.09, 0.07, 0, 0.14, 0.051, 0, 1)",
+          "example_file": "Create_Sketch_Line_with_Visual_Properties_Example_VB.md"
+        }
+      ],
+      "note": "页面首行标 Obsolete 但示例仍在用；Direction 传 1、坐标 0.13(米) 与 Remarks 的单位/方向说明一致。"
+    },
+    {
+      "member": "CreateAttachSTEP242",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md",
+        "Attach_Files_to_MBD_3D_PDF_Example_VB.md",
+        "Attach_Files_to_MBD_3D_PDF_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把导出对象限定为「带 PMI 注释」的零件/装配；页面只说 SOLIDWORKS parts and assemblies",
+          "example_quote": "whether to export SOLIDWORKS Design parts and assemblies with PMI",
+          "example_file": "Attach_Files_to_MBD_3D_PDF_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 ## Remarks 段（remarks_empty=true），按纪律跳过冲突判定；example_more_specific 不受跳过限制。"
+    },
+    {
+      "member": "CreateAutoBalloonOptions",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Autoballoon_to_Face_Example_CSharp.md",
+        "Add_Autoballoon_to_Face_Example_VB.md",
+        "Add_Autoballoon_to_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先打开「已含 BOM 表」的图纸；Remarks 的 4 步没提 BOM 表这个前置",
+          "example_quote": "// Preconditions: Open a drawing with a bill of materials (BOM) table.",
+          "example_file": "Add_Autoballoon_to_Face_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 第 1 步只说「选中视图」，示例还先 ActivateView 才 SelectByID2",
+          "example_quote": "boolstatus = Draw.ActivateView(\"Drawing View1\");",
+          "example_file": "Add_Autoballoon_to_Face_Example_CSharp.md"
+        }
+      ],
+      "note": "VB/VB.NET 两份把变量声明为 SldWorks.ModelDoc2 仍直接调本成员（VBA 后期绑定）；返回后即传 AutoBalloon5，与 Remarks 第 4 步一致。"
+    },
+    {
+      "member": "CreateBalloonOptions",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_BOM_Balloon_Properties_Example_CSharp.md",
+        "Get_BOM_Balloon_Properties_Example_VB.md",
+        "Get_BOM_Balloon_Properties_Example_VBNET.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 第 1 步只说「选中一个 item」；该示例选的是用坐标点选的 FACE（名字传空串）",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", 0.0139294427590926, 0.059464184169542, 0.0082768338148469, false, 0, null, 0);",
+          "example_file": "Get_BOM_Balloon_Properties_Example_CSharp.md"
+        },
+        {
+          "what": "另一份示例选的却是 EDGE——「item」具体可选 FACE 或 EDGE 只在示例里看得到",
+          "example_quote": "boolstatus = swModelDocExt.SelectByID2(\"\", \"EDGE\", 0.1205506330468, 0.261655309417, -0.0004000000000133, false, 0, null, 0);",
+          "example_file": "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md"
+        }
+      ],
+      "note": "页面 ## Examples 只列 Insert and Show…，另三份 Get BOM Balloon Properties 也确实调用了本成员（已 grep 确认）。"
+    },
+    {
+      "member": "CreateBeltPart",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Belt_Chain_Feature_Example_CSharp.md",
+        "Create_Belt_Chain_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例后置条件说明：置 true 后建特征/改定义会弹「另存为」对话框；页面未提任何交互",
+          "example_quote": "//    If a Save As dialog appears, click Cancel.",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说置 true 后用 AccessBeltPart 取回带带草图的新零件，两份示例都只赋值、从未调用 AccessBeltPart（属遗漏，非矛盾）。"
+    },
+    {
+      "member": "CreateBodyFromBox",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_CSharp.md",
+        "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_VB.md",
+        "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "[[Body]]",
+          "example_quote": "swBoxBody = (Body2)swModeler.CreateBodyFromBox((vBoxArr));",
+          "example_file": "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_CSharp.md",
+          "why": "页面 Returns 指向 Body，示例却把返回值转成 Body2 并调 Check3/Operations2；本地类型树只有 IBody2，无 IBody。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例建体后用 Check3 取 FaultEntity.Count 做合格性校验；Remarks 只讲 9 元数组布局",
+          "example_quote": "swFaultEnt = (FaultEntity)swBoxBody.Check3;",
+          "example_file": "Create_Solid_Bodies_using_Geometry_and_Topology_APIs_Example_CSharp.md"
+        }
+      ],
+      "note": "冲突引文取自页面 ## Returns 段（Remarks 全文只描述数组布局，未提返回类型）。示例 boxAxis=(0,0,1)，正好命中 Remarks 的条件分支。"
+    },
+    {
+      "member": "CreateBodyFromBox3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Multibody_Macro_Feature_Example_CSharp.md",
+        "Create_Multibody_Macro_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例的 boxAxis 是 (1,0,0) 而非 (0,0,1)，Remarks 里「平行 X/Y 轴」那条分支在示例中并未适用",
+          "example_quote": "dblData[3] = 1;",
+          "example_file": "Create_Multibody_Macro_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例对同一个 9 元数组就地改 dblData[1] 后再调一次，说明入参数组不被保留",
+          "example_quote": "dblData[1] = 0.15;",
+          "example_file": "Create_Multibody_Macro_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "页面 ## Returns 写 [[Body]] 而同页 Signature 是 Body2，属页面内部不一致（示例按 Body2 用，与签名一致），故未计入冲突。"
+    }
+  ]
+}

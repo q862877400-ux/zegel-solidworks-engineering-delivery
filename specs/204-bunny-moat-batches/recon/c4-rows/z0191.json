@@ -1,0 +1,116 @@
+{
+  "idx": 191,
+  "results": [
+    {
+      "member": "GetFarSideElements",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md",
+        "Create_Advanced_Hole_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Array of far side hole elements",
+          "example_quote": "swCounterBoreFar = featdata.GetFarSideElements(0)",
+          "example_file": "Create_Advanced_Hole_Example_VBNET.md",
+          "why": "成员页签名是零参、返回整组远端元素数组；VB/VB.NET 示例却按下标传参并把返回值当单个元素赋值，两者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "C# 版先 AccessSelections，再把返回值转 object[] 后用 [0]/[1] 取元素，与成员页签名一致。",
+          "example_quote": "farSide = (object[])featdata.GetFarSideElements();",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "VB 版同为 GetFarSideElements(0)；三版官方示例在调用形状上互斥。"
+    },
+    {
+      "member": "GetFastenerTable",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Wizard_Hole_Standards_Data_Example_VB.md",
+        "Get_Wizard_Hole_Standards_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按 GetHoleStandards→GetFastenerTypes→GetFastenerTableTypes 逐级取参后才查表，成员页只写了「用某某取」。",
+          "example_quote": "ret = holeStandards.GetFastenerTable(standards(0), fastenerIDs(0), fastenerTableTypeIDs(j), fastenerData)",
+          "example_file": "Get_Wizard_Hole_Standards_Data_Example_VB.md"
+        }
+      ],
+      "note": "四参顺序与返回语义和示例一致，未见冲突。"
+    },
+    {
+      "member": "GetFastenerTableTypes",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Wizard_Hole_Standards_Data_Example_VB.md",
+        "Get_Wizard_Hole_Standards_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回的三个表类型 ID 按 j=0/1/2 分别当 size/thread/clearance 的 TableID 使用。",
+          "example_quote": "ret = holeStandards.GetFastenerTableTypes(standards(0), fastenerIDs(0), fastenerTableTypeIDs)",
+          "example_file": "Get_Wizard_Hole_Standards_Data_Example_VB.md"
+        }
+      ],
+      "note": "「数组三个」与示例 For j = 0 To 2 一致，无冲突。"
+    },
+    {
+      "member": "GetFastenerTypes",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Wizard_Hole_Standards_Data_Example_VB.md",
+        "Get_Wizard_Hole_Standards_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回的 FastenerIndexes 直接转 int[]，再把 [0] 当 FastenerID 传给后两个成员。",
+          "example_quote": "fastenerIDsArray = (int[])fastenerIDs;",
+          "example_file": "Get_Wizard_Hole_Standards_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "两个出参的次序与类型与示例一致，无冲突。"
+    },
+    {
+      "member": "GetFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；四个示例的 GetFeature 分别属 FeatureFolder、CornerTreatment 与 RevisionTableFeature，都不是 IBendTable。"
+    },
+    {
+      "member": "GetFeatureCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四个示例分别用 IFeatureManager.GetFeatureCount(bool) 与 IDimXpertPart.GetFeatureCount()，都不是 IBody2。"
+    },
+    {
+      "member": "GetFeatureManagerTabs",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Active_Tab_in_Manager_Pane_Example_CSharp.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VB.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 版把返回值转 object[]，用 GetLength(0) 取页数后逐个写 ActiveFeatureManagerTabIndex。",
+          "example_quote": "tabs = (object[])swModelViewManager.GetFeatureManagerTabs();",
+          "example_file": "Change_Active_Tab_in_Manager_Pane_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；三份示例都真用到该成员。"
+    }
+  ]
+}

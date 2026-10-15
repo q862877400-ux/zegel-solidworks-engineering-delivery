@@ -1,0 +1,136 @@
+{
+  "idx": 293,
+  "results": [
+    {
+      "member": "IGetConfigurationParams",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Configuration_Parameters_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 Remarks 没写的缓冲区规格：先 GetConfigurationParamsCount 得 NumParams，再为名字和值各 new BSTR[NumParams]。",
+          "example_quote": "new BSTR[NumParams]",
+          "example_file": "Get_Configuration_Parameters_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例把成功标志作为第 5 个 out 参数 bret 传出并 ASSERT(bret)，比成员页的 bool 返回更具体。",
+          "example_quote": "NumParams, vNames, vValues, &bret);",
+          "example_file": "Get_Configuration_Parameters_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "两段 Remarks 与示例均不冲突：先调 GetConfigurationParamsCount 的次序两侧一致。"
+    },
+    {
+      "member": "IGetConstraints",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "指定示例实际调用 ISketchSegment::IGetConstraints（零参、非本成员），无可比片段，故留空。"
+    },
+    {
+      "member": "IGetConstraintsCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Sketch_Segment_Constraints_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对；该示例确实调用本成员。"
+    },
+    {
+      "member": "IGetCurrentSheet",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Sheet_Properties_and_Insert_Object_Example_CPlusPlus_COM.md",
+        "Insert_Spline_in_Drawing_Example_CPlusPlus_COM.md",
+        "Set_View_Display_Mode_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回的 ISheet 用于锁定/解锁焦点，而非 Remarks 提到的访问 IBomTable。",
+          "example_quote": "pSheet->put_FocusLocked (TRUE);",
+          "example_file": "Insert_Spline_in_Drawing_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例用返回的 ISheet 读图纸属性数组并取第 6 个 double 作插入点 y。",
+          "example_quote": "pSheet->IGetProperties(pSheetProps);",
+          "example_file": "Get_Sheet_Properties_and_Insert_Object_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例取出当前图纸后仅 _ASSERT 非空即弃用，实际改用 IGetFirstView 取视图——成员页未说这一用法。",
+          "example_quote": "= pDraw->IGetCurrentSheet(&pSheet);",
+          "example_file": "Set_View_Display_Mode_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "Remarks 只说返回的 ISheet 可访问 IBomTable；三份示例都未碰 BOM，措辞为「includes methods」不构成矛盾。"
+    },
+    {
+      "member": "IGetCurve",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份示例调的是 IEdge::IGetCurve 或 ISketchSegment::IGetCurve，无一份调 ICoEdge::IGetCurve。"
+    },
+    {
+      "member": "IGetCurveParams2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Circular_Holes_In_Face_Example_CPlusPlus_COM.md",
+        "Get_Edge_Data_By_Name_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "The return value is the following array of 11 doubles:",
+          "example_quote": "edgeData[10]={NULL};",
+          "example_file": "Get_Edge_Data_By_Name_Example_CPlusPlus_COM.md",
+          "why": "Remarks 说返回 11 个 double 且末位是 PackDouble3/SenseFlag；示例只声明 edgeData[10]、最大下标读到 9，SenseFlag 未取，两者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例注明该成员返回数组，必须跑在进程内 DLL，并给出返回 VARIANT 的替代成员。",
+          "example_quote": "this code must be used in an in-process DLL.",
+          "example_file": "Get_Edge_Data_By_Name_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "另一示例改用固定 100 个 double 的堆缓冲，而非 Remarks 规定的恰好 11 个。",
+          "example_quote": "pEdgeData = new double[100];",
+          "example_file": "Get_Circular_Holes_In_Face_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "「必须先调 IGetCurve」这条前置两侧一致：两份示例都先取曲线再取参数。"
+    },
+    {
+      "member": "IGetDependencies2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Model_Dependencies_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先用 IGetNumDependencies 取字符串总数并据此 new BSTR[n]，Remarks 未写这个定长步骤。",
+          "example_quote": "new BSTR[nNumDepend]",
+          "example_file": "Get_Model_Dependencies_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例按 i < nNumDepend / 2 遍历、每次取两个字符串，落实 Remarks「每文档两个字符串」的形态。",
+          "example_quote": "i < nNumDepend / 2",
+          "example_file": "Get_Model_Dependencies_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例第三个实参传 VARIANT_FALSE，即只演示不加只读串的形态，不覆盖 Remarks 的 True 分支。",
+          "example_quote": "VARIANT_TRUE, VARIANT_FALSE, psDepends);",
+          "example_file": "Get_Model_Dependencies_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "AddReadOnlyInfo=False 时示例与 Remarks 的两串一文档形态一致，未见矛盾。"
+    }
+  ]
+}

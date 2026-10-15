@@ -1,0 +1,96 @@
+{
+  "idx": 300,
+  "results": [
+    {
+      "member": "IgnoreValue",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "ICallout/IgnoreValue.md 全页仅 10 行标题，无签名、无 ## Remarks，按纪律跳过。"
+    },
+    {
+      "member": "ImageFormat",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IRayTraceRendererOptions/ImageFormat.md 无 ## Remarks 段（只有 Returns/Examples），按纪律跳过。"
+    },
+    {
+      "member": "ImageHeight",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Render_Model_Example_CSharp.md",
+        "Render_Model_Example_VB.md",
+        "Render_Model_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在设过 ImageHeight=567/ImageWidth=678 后，RenderToFile 的 Width/Height 传 0,0，即 0 表示不覆盖、改用选项值。",
+          "example_quote": "status = swRayTraceRenderer.RenderToFile(\"c:\\temp\\Filter_1\", 0, 0)",
+          "example_file": "Render_Model_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只说可在 RenderToFile 覆盖，未给 0 的含义；示例给出不覆盖的传法，非矛盾。"
+    },
+    {
+      "member": "ImageWidth",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Render_Model_Example_CSharp.md",
+        "Render_Model_Example_VB.md",
+        "Render_Model_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例同样在设过宽高后给 RenderToFile 传 0,0，示范 Width/Height 传 0 时沿用 ImageWidth 属性值。",
+          "example_quote": "status = swRayTraceRenderer.RenderToFile(\"c:\\temp\\Filter_2\", 0, 0)",
+          "example_file": "Render_Model_Example_VB.md"
+        }
+      ],
+      "note": "与 ImageHeight 的 Remarks 对称一致，无冲突；示例仅补 0 的传法。"
+    },
+    {
+      "member": "ImportAbsorbedSketches",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IDerivedPartFeatureData/ImportAbsorbedSketches.md 无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "ImportDiagnosis",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Import_STEP_File_Example_CSharp.md",
+        "Import_STEP_File_Example_VB.md",
+        "Import_STEP_File_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序：先用 LoadFile4 导入 STEP 拿到 PartDoc，再在其上调本方法；Remarks 未提顺序。",
+          "example_quote": "Set swPart = swApp.LoadFile4(stepFileName, \"r\", swImportStepData, errors)",
+          "example_file": "Import_STEP_File_Example_VB.md"
+        },
+        {
+          "what": "示例给出实参组合 True/False/True/0；成员页只逐项说明含义，未给推荐组合。",
+          "example_quote": "errors = swPart.ImportDiagnosis(True, False, True, 0)",
+          "example_file": "Import_STEP_File_Example_VB.md"
+        }
+      ],
+      "note": "三份示例返回值都存进 int 变量，与 Returns 的 int 及 -1 错误码不冲突；Options 传 0 与「Not used」一致。"
+    },
+    {
+      "member": "ImportDimensions",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IImportDxfDwgData/ImportDimensions.md 全页仅 10 行标题，无 ## Remarks，按纪律跳过。"
+    }
+  ]
+}

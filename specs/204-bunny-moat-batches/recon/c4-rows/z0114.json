@@ -1,0 +1,143 @@
+{
+ "idx": 114,
+ "results": [
+  {
+   "member": "EqualSegment",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Divide_Sketch_Segment_Example_CSharp.md",
+    "Divide_Sketch_Segment_Example_VB.md",
+    "Divide_Sketch_Segment_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出取对象的两步：按 SKETCHSEGMENT 用 SelectByID2 选中，再 GetSelectedObject6(1,-1) 取，成员页未写。",
+     "example_quote": "\t            boolstatus = Part.Extension.SelectByID2(\"Line1\", \"SKETCHSEGMENT\", 0.0058451006543539, 0.017433416397686, -0.0149283857579217, false, 0, null, 0);\n\t            SkSeg = (SketchSegment)((SelectionMgr)Part.SelectionManager).GetSelectedObject6(1, -1);",
+     "example_file": "Divide_Sketch_Segment_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页无 Remarks 段，按纪律跳过冲突判定。"
+  },
+  {
+   "member": "EqualSpacing",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Bidirectional_Circular_Pattern_Feature_Example_CSharp.md",
+    "Create_Bidirectional_Circular_Pattern_Feature_Example_VB.md",
+    "Create_Bidirectional_Circular_Pattern_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "Remarks 只把选择细节转给通用文档；示例给出 Direction1 的具体选择：待阵列特征 mark=4、方向边经 SelectByRay 取 mark=1。",
+     "example_quote": "            status = swModelDocExt.SelectByID2(\"Boss-Extrude2\", \"BODYFEATURE\", -0.0000568552547690615, 0.0336059294503599, 0.0699999999999932, false, 4, null, 0);\n            status = swModelDocExt.SelectByRay(0.0289184346104037, 0.0205122863998071, 0.0598787397922251, 0.342497149434059, -0.159204982974168, -0.925931679998983, 0.000912809005339891, 1, true, 1, 0);",
+     "example_file": "Create_Bidirectional_Circular_Pattern_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "Create_Local_Circular_Pattern 例用的是 LocalCircularPatternFeatureData，接口不同，未采信。"
+  },
+  {
+   "member": "EqualSpacing2",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Bidirectional_Circular_Pattern_Feature_Example_CSharp.md",
+    "Create_Bidirectional_Circular_Pattern_Feature_Example_VB.md",
+    "Create_Bidirectional_Circular_Pattern_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "This property is only available when:\n\n- [[ICircularPatternFeatureData::Direction2]] is true and\n\n- [[ICircularPatternFeatureData::Symmetric]] is false.\nSee [Accessing Selections that Define Features](<../../docs/Programming with the SOLIDWORKS API/Selections that Define Features.md>) for additional details on using this property.",
+     "example_quote": "            if (swCircularPatternFeatureData.Direction2 == true)\n            {\n                Debug.Print(\"Direction 2:\");\n                Debug.Print(\"  Symmetric: \" + swCircularPatternFeatureData.Symmetric);\n                Debug.Print(\"  Equal spacing: \" + swCircularPatternFeatureData.EqualSpacing2);",
+     "example_file": "Create_Bidirectional_Circular_Pattern_Feature_Example_CSharp.md",
+     "why": "Remarks 要求 Direction2 为 true 且 Symmetric 为 false 才可用；示例只判 Direction2 就读 EqualSpacing2，缺第二个条件。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例给出取数时机：必须先 CreateFeature、再 GetDefinition() 重新取到特征数据对象，才读得到这些属性。",
+     "example_quote": "            swCircularPatternFeatureData = (CircularPatternFeatureData)swFeature.GetDefinition();",
+     "example_file": "Create_Bidirectional_Circular_Pattern_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "VB 与 VB.NET 两版守卫与 C# 完全相同，同样只判 Direction2。"
+  },
+  {
+   "member": "Equation",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Disable_Equation_Example_VB.md",
+    "Disable_Equation_Example_VBNET.md",
+    "Get_Equation_Values_Example_VB.md",
+    "Get_Equation_Values_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "成员页只有标题、无签名；示例显示它是带索引的取值器，按 0..GetCount-1 逐条取。",
+     "example_quote": "    For i = 0 To count - 1\n        Debug.Print \" Eqn(\" & i & \") = \" & swEqnMgr.Equation(i)",
+     "example_file": "Disable_Equation_Example_VB.md"
+    }
+   ],
+   "note": "成员页正文为空（只有 front matter 与标题），无 Remarks 可比。"
+  },
+  {
+   "member": "Error",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_Whether_Components_Are_Loaded_Example_CSharp.md",
+    "Get_Whether_Components_Are_Loaded_Example_VBNET.md",
+    "Open_Assembly_Document_Example_CSharp.md",
+    "Open_Assembly_Document_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出读取时机：Error 只能在 OpenDoc7 返回之后才读，且与 Warning 成对读取。",
+     "example_quote": "            swModel = (ModelDoc2)swApp.OpenDoc7(swDocSpecification);\n            errors = swDocSpecification.Error;",
+     "example_file": "Open_Assembly_Document_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页无 Remarks 段。两例的 Error 均取自 DocumentSpecification，未撞名。"
+  },
+  {
+   "member": "ErrorCode",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Check_Bodies_for_Faults_Example_VB.md",
+    "Check_Edges_for_Faults_Example_VB.md",
+    "Check_Edges_for_Faults_Example_VBNET.md",
+    "Check_Faces_for_Faults_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "成员页正文为空；示例显示它是按 0..Count-1 索引的取值器，与同索引的 Entity(i) 一一对应。",
+     "example_quote": "    For i = 0 To nCount - 1\n        Set swEnt = swFaultEnt.Entity(i)\n        If Not swEnt Is Nothing Then\n            bRet = swEnt.Select4(True, Nothing): Debug.Assert bRet\n        End If\n        Debug.Print \" Fault[\" & i & \"] = \" & swFaultEnt.ErrorCode(i)\n    Next i",
+     "example_file": "Check_Bodies_for_Faults_Example_VB.md"
+    }
+   ],
+   "note": "四个例子都经 FaultEntity 取值，确属同一接口，未撞名。"
+  },
+  {
+   "member": "Escapement",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md",
+    "Create_a_Callout_Independent_of_a_Selection_Example_VB.md",
+    "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md",
+    "Get_All_Elements_of_Sketch_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出取得途径：承载 Escapement 的 TextFormat 需由宿主经 GetTextFormat / Callout.TextFormat 取得。",
+     "example_quote": "    ProcessTextFormat swApp, swModel, swSkText.GetTextFormat",
+     "example_file": "Get_All_Elements_of_Sketch_Example_VB.md"
+    }
+   ],
+   "note": "成员页无 Remarks 段，示例只读取未赋值，未见单位口径分歧。"
+  }
+ ]
+}

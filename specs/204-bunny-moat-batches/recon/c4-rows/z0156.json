@@ -1,0 +1,113 @@
+{
+  "idx": 156,
+  "results": [
+    {
+      "member": "GetCameraCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Turn_Cameras_On_and_Off_Example_CSharp.md",
+        "Turn_Cameras_On_and_Off_Example_VB.md",
+        "Turn_Cameras_On_and_Off_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出相机 ID 的合法区间（0 到计数减 1），成员页只说返回数量",
+          "example_quote": "0 <= ID <= (ModelDocExtension::GetCameraCount - 1)",
+          "example_file": "Turn_Cameras_On_and_Off_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出删除相机后 ID 会重新分配这一规则，成员页未提",
+          "example_quote": "IDs are reassigned if a camera is deleted",
+          "example_file": "Turn_Cameras_On_and_Off_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；三份示例都确实调 swModel.Extension.GetCameraCount。"
+    },
+    {
+      "member": "GetCavitySurfacesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Tooling_Split_Feature_Data_Example_CSharp.md",
+        "Get_Tooling_Split_Feature_Data_Example_VB.md",
+        "Get_Tooling_Split_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call this method before calling [[IToolingSplitFeatureData::IGetCavitySurfaces]] to get the size of the array for that method.",
+          "example_quote": "    cavSurf = swToolingSplitFeatData.CavitySurfaces\n    For i = 0 To swToolingSplitFeatData.GetCavitySurfacesCount - 1",
+          "example_file": "Get_Tooling_Split_Feature_Data_Example_VB.md",
+          "why": "Remarks 要先计数后取数组，示例先取属性再计数，顺序相反；IGetCavitySurfaces 页写明 VBA/VB.NET/C# Not supported。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例在读任何计数与数组之前先调 AccessSelections，Remarks 未提这条前置",
+          "example_quote": "    bRet = swToolingSplitFeatData.AccessSelections(swModel, Nothing)",
+          "example_file": "Get_Tooling_Split_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "三份示例都真的调 GetCavitySurfacesCount（C# / VBA / VB.NET 各一份），用同一份逻辑互证。"
+    },
+    {
+      "member": "GetCellData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Wizard_Hole_Standards_Data_Example_CSharp.md",
+        "Get_Wizard_Hole_Standards_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "示例按 Remarks 用 GetColumnNames 取列名；但 RowIndex 硬编码 0、从不调 GetRowCount，不构成矛盾。"
+    },
+    {
+      "member": "GetCellEquation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先插入并重建 BOM 表、且表类型必须是 swTableAnnotation_BillOfMaterials，成员页无任何前置",
+          "example_quote": "    If TableAnnotationType <> swTableAnnotation_BillOfMaterials Then",
+          "example_file": "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，跳过冲突判定；示例对 cell(4,2) 传 Row=4、Column=2、IncludeHidden=True。"
+    },
+    {
+      "member": "GetCellRange",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份示例调的是 ITableAnnotation.GetCellRange，非 ISelectData 同名成员，撞名不可用。"
+    },
+    {
+      "member": "GetCenterPoint",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks。唯一列出的示例调的是 ISketchSlot.GetCenterPoint，撞名不可用。"
+    },
+    {
+      "member": "GetCenterPoint2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先 CreateRenderMaterial 再把外观赋给实体，才读该成员的三个坐标出参，成员页未写前置",
+          "example_quote": "    status = swRenderMaterial.AddEntity(swEntity)",
+          "example_file": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md"
+        }
+      ],
+      "note": "另三份示例（Create_Ellipse、Get_All_Elements_of_Sketch）调的是草图对象同名成员，撞名不可用。"
+    }
+  ]
+}

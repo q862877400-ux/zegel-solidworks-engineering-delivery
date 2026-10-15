@@ -1,0 +1,102 @@
+{
+  "idx": 295,
+  "results": [
+    {
+      "member": "IGetFirstView",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Spline_in_Drawing_Example_CPlusPlus_COM.md",
+        "Set_View_Display_Mode_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的「首返回图纸、下一个才是真视图」写成可执行序列：取 first 后立刻取 next 再进循环",
+          "example_quote": "= pDraw->IGetFirstView(&pSheetView);\n_ASSERT(pSheetView);\nhr\n= pSheetView->IGetNextView(&pView);",
+          "example_file": "Set_View_Display_Mode_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "两个示例的遍历序列与 Remarks 一致，未见冲突"
+    },
+    {
+      "member": "IGetMathUtility",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Block_Definition_and_Insert_Block_Instance_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有签名与 Returns、无 Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "IGetNamedEntities",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Named_Entities_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的「先调 GetNamedEntitiesCount 取 Count」写成具体三步，并给出 Returns 所述的裸指针数组形态",
+          "example_quote": "= pPart->GetNamedEntitiesCount\n(&nEntCount);\nASSERT(nEntCount\n> 0);\nppEntity\n= new LPENTITY[nEntCount];",
+          "example_file": "Get_Named_Entities_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "示例是 C++ in-process，与 Returns 的语言限制一致，无冲突"
+    },
+    {
+      "member": "IGetNext",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Circular_Holes_In_Face_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Obsolete 句与签名、无 Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "IGetNextFace",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Traverse_Bodies_Example_CPlusPlusCLI.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有签名与 Returns、无 Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "IGetNextFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Assembly_Example_CPlusPlus_COM.md",
+        "Get_Names_of_Creators_of_Features_Examples_CPlusCPlus_COM.md",
+        "Get_Sketches_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的「用类型名与 SpecificFeature 识别、别只靠 Name」落成可执行判据，用的是上一代成员名",
+          "example_quote": "hres = pSubFeat->GetTypeName(&bFeatureTypeName);",
+          "example_file": "Get_Sketches_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "三示例遍历均与 Remarks 一致；Access_Assembly 的 bracket-1 是声明的前置，非硬编码假设"
+    },
+    {
+      "member": "IGetNextSubFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Sketches_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的「无子特征则返回 NULL」落成循环终止条件：赋值后交给 while(pSubFeat) 判定",
+          "example_quote": "LPFEATURE pNextSubFeature;\n// Get next subfeature\nhres = pSubFeat->IGetNextSubFeature( & pNextSubFeature);\npSubFeat->Release();\npSubFeat = pNextSubFeature;",
+          "example_file": "Get_Sketches_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "示例的 NULL 终止循环与 Remarks 完全一致，无冲突"
+    }
+  ]
+}

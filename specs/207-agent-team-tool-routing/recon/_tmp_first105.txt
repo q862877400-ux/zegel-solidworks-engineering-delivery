@@ -1,0 +1,105 @@
+1. mcp__solidworks__solidworks_part_insert_dome :: Add a dome on the selected face and return a READ-BACK report (★ rule 6). ⚠ The official Remarks require the face to be selected BEFORE the call. ⚠ Do
+2. mcp__solidworks__solidworks_sketch_spline :: ★ **草图样条曲线**：`ISketchManager.CreateSpline2(data, False)`。★★★ **本条修掉了一个真 bug（★ 且是一处「被误记成架构限制」的假阴性）**：能力层 `scripts/sw_part.sketch_spline` **此前每次都抛**，其 d
+3. mcp__solidworks__solidworks_add_component :: Add an existing part/subassembly to the active assembly, optionally fixing it.
+4. mcp__solidworks__solidworks_drawing_create_revision_table :: ★ **修订表**：**`ISheet.InsertRevisionTable2`（7 参、未废弃）**。★★ 同孔表：`InsertTableAnnotation` **建不出修订表**（它没有"表类型"参数）⇒ 走**真入口**。★★ 官方 Returns 逐字：**已有修订表时回 `null`
+5. mcp__solidworks__cadstudio_prepare_fea :: Generate a versioned CalculiX .inp file from a structured FEA 1.0 request.
+6. mcp__solidworks__solidworks_part_insert_composite_curve :: Join the selected entities into a composite curve and return a READ-BACK report (★ rule 6). The capability layer already raises when the official call
+7. mcp__solidworks__solidworks_surface_knit :: ★ **把曲面缝成一张** —— 走 `IFeatureManager.InsertSewRefSurface`（官方 **5 参**）。★ 官方 Remarks：选中项要 **selection mark = 1**，而**缝合容差的有效范围是 0.0001 ～ 0.1 mm**。★★ 判据（规则
+8. mcp__solidworks__solidworks_slot_semicircular_by_selection :: Create a semicircular-end slot spanning two declaratively selected points (★ rule 3: **both** endpoints come from selections, not coordinates).
+9. mcp__solidworks__solidworks_insert_replace_face :: ★ 替换面：`IModelDoc2.InsertFeatureReplaceFace()`（**零参数**，回 `void`）。⚠ 官方 Remarks 逐字：调用前要**选中面** —— 要被替换的面 **mark=1**、替换面 **mark=2**。★ 真机：树 7→8，新增 `替换面1`（★
+10. mcp__solidworks__solidworks_simulation_configure_buckling_solver :: Configure the buckling solver options of the injected study. ⚠ Only the non-None options are applied.
+11. mcp__solidworks__solidworks_equation_evaluate :: Solve the global equations and return the result. ⚠ Does NOT save the document.
+12. mcp__solidworks__solidworks_insert_planar_surface :: ★ 平面区域：`IModelDoc2.InsertPlanarRefSurface()`（**零参数**，回 `bool`）。★ 官方语义：用**当前选中的封闭边界**（草图 / 边）生成一张平面曲面 ⇒ ★ **调用前要选好边界**。★ 真机：树 6→7，新增 `曲面-基准面1`。
+13. mcp__solidworks__solidworks_collect_model_summary :: Summarise the model: title, type, feature tree (name + type), save path.
+14. mcp__solidworks__solidworks_export_stl :: Export to STL and return a READ-BACK report (file exists and is non-empty). ★ The criterion is the FILE.
+15. mcp__solidworks__solidworks_sketch_add_ellipse :: ★ **在当前草图里画一个整椭圆**（官方 `ISketchManager.CreateEllipse`）。★ 官方那族另有**椭圆弧**（`CreateEllipticalArc`）—— 本工具只画整椭圆。⚠ Sketch geometry MUST be given as in-plane co
+16. mcp__solidworks__solidworks_sketch_flip_entities :: ★ 镜像/翻转：`IModelDoc2.SketchModifyFlip(AxisFlag)`。★ 真机验证：`axis_flag=1` ⇒ 3×3 旋转矩阵首行从 `[1,0,0]` 变成 **`[-1,0,0]`**（X 符号翻转）。⚠ `AxisFlag` 的取值表**官方未给** ⇒ 按铁律
+17. mcp__solidworks__solidworks_automation_explain_hresult :: Turn an HRESULT into plain words using THIS REPO's table. ★★ Its own docstring states the discipline: when the code is not in the table it says so — i
+18. mcp__solidworks__solidworks_mesh_restore_import_preferences :: ★ 官方签名（逐字，来自 SetUserPreferenceIntegerValue.md）：`System.bool SetUserPreferenceIntegerValue( System.int UserPreferenceValue, System.int Value )`。★ 本仓库函数
+19. mcp__solidworks__solidworks_drawing_insert_center_marks :: ★ **中心符号线**（批量）：`AutoInsertCenterMarks2`。⚠⚠ **真机阴性已知**：单点入口 `InsertCenterMark3` 两格都**不成**，且其中**一格前置是成立的**（证据 JSON 的 A8 格）⇒ ★ 本工具走的是**批量**那条路，★ **尚未单独真
+20. mcp__solidworks__solidworks_undo :: ★ **撤销** —— 走 `IModelDoc2.EditUndo2`（官方 **1 参** · ★★ **返回 `void`**）。★★ 判据（规则 6）：**特征树真的退回了**（真机：7 → 6 · 撤掉 `凸台-拉伸1`）。★ 负例 `steps = 0` ⇒ 显式拒绝。⚠ **调用纪律*
+21. mcp__solidworks__solidworks_gear_create_spur :: Create an external spur gear body. ★ The criterion is that the FEATURE TREE changes (rule 6 — never a silent success). ⚠ Does NOT save the document.
+22. mcp__solidworks__solidworks_assembly_list_mates :: List the MateGroup and mate features of the active assembly (name, type, tree depth). ★ Use it to check that real mates were actually written into the
+23. mcp__solidworks__solidworks_macro_validate_vba_code :: Check a VBA macro against the minimum this repo requires before it may be handed to SolidWorks. ★ Pure function: a static pre-flight, not an execution
+24. mcp__solidworks__solidworks_extrude_midplane :: Extrude a sketch symmetrically about its plane. ⚠ The parameter is the TOTAL depth, not the per-side depth.
+25. mcp__solidworks__solidworks_list_render_materials :: List the render materials available in the active document.
+26. mcp__solidworks__solidworks_chamfer :: Chamfer the selected edge(s). ★ The edge comes from `selection` (declarative), because the API takes no edge object — it acts on the current selection
+27. mcp__solidworks__solidworks_weldment_insert_end_cap :: ★ **焊件顶端盖**：`IFeatureManager.InsertEndCapFeature3(10 参)` → `IFeature`。★★★ **官方前置（Remarks 逐字）**："Before calling this method, **select one or more end f
+28. mcp__solidworks__solidworks_costing_list_templates :: Return the Costing template names available for a category. ★ Read-only.
+29. mcp__solidworks__cadstudio_check_routing :: Review neutral routing topology, bend radius, clearance, supports, and BOM evidence.
+30. mcp__solidworks__solidworks_mold_undercut_detect :: Detect mold undercuts along a direction. ⚠ The underlying IFeatureManager.MoldUndercutDetect is marked Obsolete by SOLIDWORKS (successor: MoldUndercut
+31. mcp__solidworks__solidworks_config_set_custom_properties :: Set several custom properties and return the read-back list. ⚠ Does NOT save the document.
+32. mcp__solidworks__solidworks_simulation_collect_evidence :: Return a JSON-able summary of every study in the active document: per-study `name / type / state / entity_count / analysis_type / mesh_type / configur
+33. mcp__solidworks__solidworks_costing_read_analysis :: Read every readable field of the part's cost analysis as a dict. ★ Use it to discover the valid cost-method names. ★ Read-only.
+34. mcp__solidworks__solidworks_simulation_apply_force :: Add a **FORCE / MOMENT** to the selected face(s) and return a READ-BACK report. ★ `force_type` 是官方的种类枚举（★ 默认 1）。⚠★ 本包装**显式补 `ref_geom`**（空 Dispatch）——
+35. mcp__solidworks__solidworks_feature_suppress :: Suppress one FEATURE via the successor entry point `IModelDoc2.EditSuppress2()` (0 params). ★ It acts on the CURRENT SELECTION, so the capability laye
+36. mcp__solidworks__solidworks_sketch_add_polygon :: ★ **在当前草图里画正多边形**（**内切圆**方式 —— 官方 `CreatePolygon` 的口径）。⚠ Sketch geometry MUST be given as in-plane coordinates — this is the documented exception in r
+37. mcp__solidworks__solidworks_sketch_mirror :: Mirror the selected sketch entities about the selected centerline. ★ The criterion is that the sketch entity count changes.
+38. mcp__solidworks__solidworks_insert_ruled_surface :: ★ 直纹曲面：`IFeatureManager.InsertRuledSurfaceFromEdge2(…)`（**11 参**，回 `Feature`）。⚠ 官方 Remarks 逐字：「If you select an edge with a **selection mark of 4**, t
+39. mcp__solidworks__solidworks_session_busy_status :: Report whether SolidWorks is busy, with the evidence that decided it. ★★ The judgement is deliberately strict (fact 526): a progress window counts onl
+40. mcp__solidworks__solidworks_simulation_apply_fixed_restraint :: Apply a FIXED restraint (fixture) to the selected face(s) of a static study and return the ICWRestraint. ★ The faces come from `selection` (declarativ
+41. mcp__solidworks__solidworks_revolve_boss :: Revolve a profile sketch into a boss feature. ⚠ This call is routed through a closed-source COM backend — see docs/known-facts.md.
+42. mcp__solidworks__solidworks_hole_counterbore_by_selection :: Create a counterbore hole at a declaratively selected point (★ rule 3).
+43. mcp__solidworks__solidworks_simulation_apply_temperature :: Apply a **TEMPERATURE** load to the selected face(s) and return a READ-BACK report. ★ `ok` 的判据是**回读**：载荷/约束计数**恰好 +1**，★ **不是**返回值。⚠ 需要 Simulation 加载项
+44. mcp__solidworks__solidworks_hole_blind_by_selection :: Create a blind circular hole at a declaratively selected point (★ rule 3). Returns the read-back evidence plus the point used.
+45. mcp__solidworks__solidworks_drawing_sheet_scale :: ★ **读工程图图纸的比例** —— 走官方 Remarks 指定的 `ISheet.GetProperties`，取其中两个数作为比例的分子/分母 ⇒ 回 `ratio_text`（如 `1:5`）。⚠ 顺序是真机定的：`GetProperties` 的第 4 个元素是 Denominator、第
+46. mcp__solidworks__solidworks_create_hole_feature :: Create a constrained blind/through/compound hole or semicircular slot on the active part.
+47. mcp__solidworks__solidworks_pattern_params :: ★ **读线性阵列特征的一组参数**（★ 两向实例数/间距 + 若干开关 + 计数）。★★★ **单位口径**：★ `D1Spacing` / `D2Spacing` ★ **官方逐字 `in meters`** ⇒ ★ **写死米**（★ 与 `GetDepth` 的「随文档」**不同**）。★ 
+48. mcp__solidworks__solidworks_sketch_add_tangent_arc :: Draw an arc TANGENT to the last sketch segment. ⚠ The sketch must already contain a segment to be tangent to. ★ 草图图元按官方文档属**规则 3 的书面例外**（图元没有可选的具名实体）⇒
+49. mcp__solidworks__solidworks_sketch_add_3point_arc :: Draw a 3-point arc (start / end / a point on the arc).  ★ 草图图元按官方文档属**规则 3 的书面例外**（图元没有可选的具名实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_sketch_s
+50. mcp__solidworks__solidworks_topology_options_report :: Return a JSON-able report about the topology study options: whether the options object exists and its type. ★ The COM object itself is never returned.
+51. mcp__solidworks__solidworks_simulation_default_elem_cb3269210f2a :: Get the suggested element size and tolerance (millimetre-scale when units=-1).
+52. mcp__solidworks__solidworks_simulation_list_studies :: List every simulation study in the active document as `[{index, name}, …]`. ★ Returns names only, never COM objects. ★ A study whose name cannot be re
+53. mcp__solidworks__solidworks_resolve_entity :: ★ **解析声明式选择器并回报结果**（★ 只回 JSON —— 把 COM 对象挡在里面）。★ `resolve_entity` 本身**返回 COM 对象** ⇒ MCP 层过不去 ⇒ 本工具换成可核对的描述。★ 回 `{ok, selector, kind, count, resolved}`
+54. mcp__solidworks__solidworks_feature_delete :: Delete one FEATURE via `IModelDoc2.EditDelete()` (0 params, NOT deprecated). ★ It acts on the CURRENT SELECTION, so the capability layer selects the n
+55. mcp__solidworks__solidworks_simulation_get_loads_manager :: ★ 官方签名（逐字，来自 sw_simulation_study.py）：`查不到 —— C:\swapi\types\ 下 566 个接口目录里没有任何 cosworks 接口（无 ICWStudy / ICWLoadsAndRestraintsManager 目录），故 ICWStudy 的成员
+56. mcp__solidworks__solidworks_custom_property_names :: Return the custom property names as a list. ★ Read-only.
+57. mcp__solidworks__cadstudio_create_ocp_loft :: Create and reopen a real parameterized OCP loft without arbitrary geometry code execution.
+58. mcp__solidworks__solidworks_session_solver_processes :: List the solver kernels currently running (the COSMOS/M family, enumerated via the Toolhelp32 snapshot — no `tasklist` parsing). ★ Use it to tell 'sti
+59. mcp__solidworks__solidworks_macro_run :: Run a macro from a project file (official `System.bool RunMacro2(String FilePathName, String ModuleName, String ProcedureName, Int32 Options, out Int3
+60. mcp__solidworks__solidworks_topology_create_symmetry_control :: Create a symmetry control for a topology study. The caller must first select the symmetry plane(s).
+61. mcp__solidworks__solidworks_read_sensors :: ★ **列出文档里的传感器并读它们当前的值** —— 走 `ISensor`（10 个成员）。★ 官方入口现状：★ **能读不能建**（反射里没有 `AddXxxSensor`）· ★ **也没有「列出所有传感器」的成员** ⇒ ★ 本工具走**特征树遍历 + `GetSpecificFeature
+62. mcp__solidworks__solidworks_sketch_add_perimeter_circle :: Draw a 3-point PERIMETER circle. ⚠ Official signature has NO Z argument (6 doubles only) — unlike its siblings. ★ 草图图元按官方文档属**规则 3 的书面例外**（图元没有可选的具名实体
+63. mcp__solidworks__solidworks_flatten_surface :: ★ **曲面展平**：`IFeatureManager.InsertFlattenSurface2(AccuracyFactor, ShouldUseTears)`（**2 参**）。★★★ **官方前置（台账逐字）**：必须选中 **面（mark = 1）** 与 **锚点（mark = 16）*
+64. mcp__solidworks__solidworks_automation_set_flag :: Set a preference switch on `ISldWorks`. ★ Use it to mute the dialogs a given operation would otherwise raise. ⚠ This repo's non-invasiveness contract 
+65. mcp__solidworks__solidworks_drawing_set_sheet_format :: ★ **图纸格式/模板**：**`ISheet.SetTemplateName(String NameIn)`**（官方 **`void`、未废弃**）。★★ **为什么不是 `SetupSheet6`**（★ 本 doc 原先写的是它，2026-10-03 更正）：`ISheet.SetTempl
+66. mcp__solidworks__solidworks_gear_calculate_spur :: Compute the external involute spur gear geometry from a spec dict. ★ Pure calculation — no SolidWorks call. ★ Verify against the analytic formulas (pi
+67. mcp__solidworks__solidworks_drawing_create_auxiliary_view :: ★ **辅助视图**：`IDrawingDoc.CreateAuxiliaryViewAt2(7 参)`。★★★ **官方前置（摘要逐字）**：「Creates an auxiliary view **based on a selected edge in a drawing view**」⇒ ★★
+68. mcp__solidworks__solidworks_drawing_view_annotations :: ★ **读当前图纸**每个视图上的注释 / 显示尺寸 / 弧数****（★ **工程图读侧第一批**）✓★★★★★★ **为什么做它**：★ 本仓有 `add_note`（**能写注释**）★ 而**读不回来** ⇒★★ **⇒ 又是「能写不能读」**（★ 本会话**第 6 次同型**：`shell
+69. mcp__solidworks__solidworks_health_check :: Check Python dependencies, SolidWorks COM registration, optional live connection, and Motion typelib.
+70. mcp__solidworks__solidworks_assembly_add_parallel_mate :: ★ 官方签名（逐字，来自 sw_assembly.py）：`def add_mate_parallel(asm_model, face1_name, face2_name):`。查不到同名官方成员（source_kind=repo_original）—— 本函数不是 SolidWorks API 成
+71. mcp__solidworks__solidworks_generate_drawing :: 按 DrawingSpec v1 创建工程图、PDF、预览和机器审视报告。
+72. mcp__solidworks__solidworks_mold_evidence :: ★ **当前这条在真机上**读不到东西**、★ 如实说明** —— 处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #9`）：★ 原 doc 逐字写「Read back the mold state of the active part: parting-line/su
+73. mcp__solidworks__solidworks_sketch_fillet :: Create a SKETCH fillet on two selected, intersecting sketch segments.
+74. mcp__solidworks__solidworks_automation_exit_command_lock :: Release the lock set by `solidworks_automation_enter_command_lock`. ⚠ The wrapped function's own docstring warns: forgetting this call leaves SolidWor
+75. mcp__solidworks__solidworks_inspect_drawing :: 只读读取工程图页、视图、尺寸、注释和表格结构，并生成预览证据。
+76. mcp__solidworks__solidworks_set_standard_view :: Switch the model to a named standard view (e.g. isometric, front, top).
+77. mcp__solidworks__solidworks_sketch_add_rectangle :: Draw a RECTANGLE in the open sketch, given TWO OPPOSITE CORNERS. ⚠ Not the same as a centre+size rectangle — this tool takes corners, which is unambig
+78. mcp__solidworks__solidworks_assembly_view_collapse :: Collapse the display back (official `void ViewCollapseAssembly()`, zero arguments). ★ The pair of `solidworks_assembly_view_explode` (official Remarks
+79. mcp__solidworks__solidworks_insert_offset_surface :: ★ 等距曲面：`IModelDoc2.InsertOffsetSurface(Thickness, Reverse)`（回 `void`）。★ 真机：树 7→8，新增 `曲面-等距1`。⚠ 官方回 `void` ⇒ 判据只能是**特征树增量**。
+80. mcp__solidworks__solidworks_get_costing_manager :: Get the SOLIDWORKS Costing manager object for the active document.
+81. mcp__solidworks__solidworks_mesh_configure_import_preferences :: ★ 官方签名（逐字，来自 SetUserPreferenceIntegerValue.md）：`System.bool SetUserPreferenceIntegerValue( System.int UserPreferenceValue, System.int Value )`。★ 本仓库函数
+82. mcp__solidworks__solidworks_weldment_create_sub_weld_folder :: Create a sub-weldment folder in the active weldment part.
+83. mcp__solidworks__solidworks_surface_extend :: ★ **延伸曲面** —— 走 `IModelDoc2.InsertExtendSurface`（官方 **3 参** · ★★ **返回 `void`**）。★★ 判据**不是返回值**，而是「**特征树真的多了**」（规则 6）。★ 真机证据：10 mm ⇒ 建成 `曲面-延伸1`（树 7→8）
+84. mcp__solidworks__solidworks_thicken :: ★ **加厚 / 加厚切除**：**`IFeatureManager.FeatureBossThicken`（7 参）** / **`IFeatureManager.FeatureCutThicken`（6 参）** —— ★★ **两个都未废弃**。★★★ **为什么是这两个成员**（★ 本条的来
+85. mcp__solidworks__solidworks_base_flange_params :: ★ **读钣金基体法兰特征的一组参数**（★ 厚度 / 折弯半径 / K 因子 / 释放槽 / 若干开关）。★★★ **单位口径（★ 第七族）**：★ 官方 `## Returns` **七个长度量全没写单位** ⇒★ 而**本仓 `BaseFlangeSpec` 的 docstring 逐字写着「
+86. mcp__solidworks__solidworks_config_inspect :: List the document's configurations and the active one as a JSON-able dict. ★ Read-only.
+87. mcp__solidworks__solidworks_simulation_get_results :: ★ 官方签名（逐字，来自 sw_simulation_study.py）：`查不到 —— C:\swapi\types\ 下无 ICWStudy 目录（C:\swapi 未收录 cosworks 任何接口），故没有 ICWStudy 成员页可抄。真源逐字（D:\AI\SW\_raw\reflect\
+88. mcp__solidworks__solidworks_topology_create_demold_control :: Create a de-mold (manufacturing) control for a topology study. The caller must first select the pull-direction face/edge/plane, then choose the direct
+89. mcp__solidworks__solidworks_read_document_units :: ★ **读文档单位**（★ 两条路：主源 + 对照源，★ 它们是**不同层次**、**允许不同**）。★ 主源 `IModelDoc2.GetUnits()`（**0 参**）—— 官方 Remarks 原话：返回 **5 个 short 的数组** `[LengthUnit, FractionBa
+90. mcp__solidworks__solidworks_view_zoom_to_fit :: ★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 铁律 5：C:\swapi\types\IModelDoc2\ 下无 ViewZoomtofit2.md（Get-ChildItem -Recurse -Filter '*oomtofit' 全 types 零命中；内容检索 Vi
+91. mcp__solidworks__solidworks_export_image :: ★ **把当前视图存成图片**（PNG / JPG，走官方 `IModelDocExtension.SaveAs3`）。★★ 判据**不是返回值**而是**文件**：`ok = 无异常 且 文件存在 且 size > 0`。★ 另回 `size_before` / `grew_or_created`
+92. mcp__solidworks__solidworks_weldment_create_profile_center_mate :: Create a profile-center mate between declaratively selected structural members.
+93. mcp__solidworks__solidworks_simulation_apply_pressure :: Apply a PRESSURE load to the selected face(s) of a static study and return a READ-BACK report (`count_before` / `count_after`), not a COM object. ★ `o
+94. mcp__solidworks__solidworks_activate_model_for_preview :: Activate the model for preview/review (prepares the document for capture). ⚠ May mark the document as modified (view/selection state changes count).
+95. mcp__solidworks__solidworks_sketch_add_circle :: Draw a CIRCLE in the open sketch. ⚠ Sketch geometry MUST be given as in-plane coordinates — this is the documented exception in rule 3 (a *drawing pri
+96. mcp__solidworks__solidworks_sketch_select_segment :: ★ 官方签名（逐字，来自 sw_sketch_edit_ops.py）：`查不到（本函数无同名官方成员 —— 官方 ISketchManager/ISketch/IEntity 里都没有叫 select_sketch_segment 的东西；★ 它是本仓自研的**编排**函数）。真源 = 仓库 sc
+97. mcp__solidworks__solidworks_sketch_add_arc :: ★ **在当前草图里画一段圆弧**（圆心 + 起点 + 终点）。⚠ Sketch geometry MUST be given as in-plane coordinates — this is the documented exception in rule 3 (a *drawing primi
+98. mcp__solidworks__solidworks_config_update_dimension :: Update an exact named dimension and return a read-back report (before/after). ⚠ Does NOT save the document.
+99. mcp__solidworks__solidworks_mold_parting_surface :: Insert the mold parting surface.
+100. mcp__solidworks__solidworks_weldment_export_cut_list_csv :: Write a cut-list evidence dict to CSV and return the path. ★ The criterion is the FILE (exists and non-empty), not the return value.
+101. mcp__solidworks__solidworks_part_axis :: ★ **从当前选中的几何建一条参考轴** —— 走 `IModelDoc2.InsertAxis2`（★ **注意入口在 `IModelDoc2` 上**，不在 `IFeatureManager` 上；★ 真机调后者报`AttributeError: <unknown>.InsertAxis2`）。
+102. mcp__solidworks__solidworks_assembly_edit_explode_parameters :: Call `IAssemblyDoc.EditExplodeParameters` (zero arguments). ⚠ The official page carries NO Remarks, so whether it opens an INTERACTIVE dialog is NOT d
+103. mcp__solidworks__solidworks_mold_draft_analysis :: Run mold draft analysis. Returns the official return code as-is: that code has NO published enum, so this tool does NOT judge success from it.
+104. mcp__solidworks__solidworks_assembly_suppress_component :: ★ 官方签名（逐字，来自 EditSuppress2.md）：``System.bool EditSuppress2()``。本函数的动作本体就是官方成员 IModelDoc2.EditSuppress2（零参、回 System.bool），源码 scripts\sw_assembly.py:755
+105. mcp__solidworks__solidworks_equation_add :: Add a global equation. ★ Verify by reading the equations back (the criterion the existing smoke uses). ⚠ Does NOT save the document.

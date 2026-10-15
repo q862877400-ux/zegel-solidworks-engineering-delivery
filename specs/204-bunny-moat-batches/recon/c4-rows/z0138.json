@@ -1,0 +1,140 @@
+{
+  "idx": 138,
+  "results": [
+    {
+      "member": "FromOffsetDistance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Extruded_Thin_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只在 FromType 为 swExtrudeFrom_Offset 的分支里读它，并给出米制偏移量（dStartOffset = 0.01，dThickness = 0.001）",
+          "example_quote": "                Debug.Print \"    distance = \" & swExtrusionData.FromOffsetDistance",
+          "example_file": "Create_Extruded_Thin_Feature_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；示例与页首条件一致。"
+    },
+    {
+      "member": "FromOffsetReverse",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Extruded_Thin_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在同一 swExtrudeFrom_Offset 分支里把该布尔量拼进字符串打印，页首只说「whether the offset is reverse」",
+          "example_quote": "                Debug.Print \"    reverse  = \" & swExtrusionData.FromOffsetReverse",
+          "example_file": "Create_Extruded_Thin_Feature_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "FromScale",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IPrintSpecification::ScaleMethod]] is set to [[swPrintSelectionScaleFactor_e]].swPrintSelection.",
+          "example_quote": "    printSpec.FromScale = 1.5\n    printSpec.ToScale = 0.5\n    printSpec.ScaleMethod = swPrintSelection",
+          "example_file": "Print_Drawing_as_High_Quality_Example_VB.md",
+          "why": "示例先赋 FromScale、后设 ScaleMethod，赋值那一刻前置尚未成立；C# 与 VB.NET 三份顺序相同。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 From:To 的具体数值对（1.5 与 0.5），比 Returns 里「From:To scale」更具体",
+          "example_quote": "    printSpec.FromScale = 1.5\n    printSpec.ToScale = 0.5",
+          "example_file": "Print_Drawing_as_High_Quality_Example_VB.md"
+        }
+      ],
+      "note": "两份示例均未检查 ScaleMethod 就直接赋值；三份语言版本顺序一致。"
+    },
+    {
+      "member": "FromToLength",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例打印出 Side 的枚举数值含义（1 = swCosmeticWeldBeadSide_selection），成员页只给符号名",
+          "example_quote": "    Debug.Print \" Weld sides as defined in swCosmeticWeldBeadSide_e (1 = swCosmeticWeldBeadSide_selection): \" & swCosmeticWeldBeadFeatureData.Side",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Example_VB.md"
+        },
+        {
+          "what": "示例给出启用写法：先判 false 再置 true，之后才读三个 FromTo* 属性",
+          "example_quote": "    If swCosmeticWeldBeadFeatureData.FromToLength = False Then\n        swCosmeticWeldBeadFeatureData.FromToLength = True\n    End If",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Example_VB.md"
+        }
+      ],
+      "note": "示例置 true 前未校验 TangentPropagation/Side，属不校验而非直接矛盾，故未计入冲突。"
+    },
+    {
+      "member": "FromToStartPoint",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把读取放进 If FromToLength = True Then 守卫块，比「valid only if」更具体到代码形态",
+          "example_quote": "    If swCosmeticWeldBeadFeatureData.FromToLength = True Then\n        Debug.Print \" Start weld at: \" & swCosmeticWeldBeadFeatureData.FromToStartPoint",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Example_VB.md"
+        }
+      ],
+      "note": "成员页与三份示例都未给单位；守卫与打印三份一致，无冲突。"
+    },
+    {
+      "member": "FromToWeldLength",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把读取放进 If FromToLength = True Then 守卫块，并打印为 \"Weld length\"，比「distance from FromToStartPoint」更具体",
+          "example_quote": "    If swCosmeticWeldBeadFeatureData.FromToLength = True Then\n        Debug.Print \" Start weld at: \" & swCosmeticWeldBeadFeatureData.FromToStartPoint\n        Debug.Print \" Weld length: \" & swCosmeticWeldBeadFeatureData.FromToWeldLength",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Example_VB.md"
+        }
+      ],
+      "note": "示例未设置本成员（只读），三份语言版本一致，无冲突。"
+    },
+    {
+      "member": "FromToReverse",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在同一守卫块内打印为 \"Reverse weld?\"，把成员页的布尔语义落到具体标签",
+          "example_quote": "        Debug.Print \" Reverse weld? \" & swCosmeticWeldBeadFeatureData.FromToReverse",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Example_VB.md"
+        }
+      ],
+      "note": "示例未设置本成员（只读）；与 Remarks 的 FromToLength 前置一致，无冲突。"
+    }
+  ]
+}

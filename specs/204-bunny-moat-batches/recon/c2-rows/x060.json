@@ -1,0 +1,31 @@
+{
+  "idx": 60,
+  "project": "andrewbartels1",
+  "files_read": 6,
+  "calls": [
+    {
+      "member": "CloseAllDocuments",
+      "file": "tests/scripts/sw_close_all_and_settle.py",
+      "argc": 1,
+      "has_out_variant": false,
+      "evidence": "adapter._attempt(\n                lambda: adapter.swApp.CloseAllDocuments(True), default=None",
+      "official_found": true,
+      "official_signature": "System.bool CloseAllDocuments( System.bool IncludeUnsaved )",
+      "official_argc": 1,
+      "verdict": "match",
+      "note": "实参 1 个 (True) 对官方 1 个形参，实参个数与官方签名相同；无空 Dispatch 包装"
+    },
+    {
+      "member": "RevisionNumber",
+      "file": "tests/scripts/sw_close_all_and_settle.py",
+      "argc": 0,
+      "has_out_variant": false,
+      "evidence": "rev = adapter._attempt(\n            lambda: adapter._get_attr_or_call(adapter.swApp, \"RevisionNumber\"),",
+      "official_found": true,
+      "official_signature": "System.string RevisionNumber()",
+      "official_argc": 0,
+      "verdict": "match",
+      "note": "经 _get_attr_or_call 以字符串名取属性；官方签名括号为空，COM 成员本身 0 实参"
+    }
+  ]
+}

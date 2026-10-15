@@ -1,0 +1,123 @@
+{
+  "idx": 378,
+  "results": [
+    {
+      "member": "OffsetType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Edge_Flange_Example_CSharp.md",
+        "Create_Edge_Flange_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 OffsetType 与 OffsetDistance、OffsetDimType 配对设置；成员页只列枚举取值。",
+          "example_quote": "                FeatData.OffsetType = (int)swFlangeOffsetTypes_e.swFlangeOffsetBlind;\n                FeatData.OffsetDistance = dLength;\n                FeatData.OffsetDimType = (int)swFlangeDimTypes_e.swFlangeDimTypeInnerVirtualSharp;",
+          "example_file": "Create_Edge_Flange_Example_CSharp.md"
+        }
+      ],
+      "note": "示例只用 swFlangeOffsetBlind，与 Remarks 的 default 一致；未找到冲突。"
+    },
+    {
+      "member": "OffsetUsed",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Gusset_Feature_Data_Example_CSharp.md",
+        "Get_Gusset_Feature_Data_Example_VB.md",
+        "Get_Gusset_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "OmitAttachedEdges",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Data_for_Simple_Fillet_Example_CSharp.md",
+        "Get_Data_for_Simple_Fillet_Example_VB.md",
+        "Get_Data_for_Simple_Fillet_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "OpaqueColor",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Create_Multi-row_Callouts_Example_VB.md",
+        "swpublishedapi__Create_Multi-row_Callouts_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例 TextColor 按 Label 下标逐行设，OpaqueColor 整个 callout 只设一次（无下标）。",
+          "example_quote": "        swCallout(i).TextColor(0) = swSystemColorsRefTriadX\n        swCallout(i).TextColor(1) = swSystemColorsRefTriadY\n        swCallout(i).TextColor(2) = swSystemColorsRefTriadZ\n        swCallout(i).TextColor(3) = swSystemColorsRefTriadX\n        swCallout(i).OpaqueColor = swSystemColorsSelectedItem4",
+          "example_file": "sldworksapi__Create_Multi-row_Callouts_Example_VB.md"
+        }
+      ],
+      "note": "两示例都用系统色常量，与 Remarks「不能用其他 RGB」一致；未找到冲突。"
+    },
+    {
+      "member": "OpenBendRegion",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Modify_Closed_Corner_Feature_Example_CSharp.md",
+        "Create_and_Modify_Closed_Corner_Feature_Example_VB.md",
+        "Create_and_Modify_Closed_Corner_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "OpenDoc6",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Assembly_Example_CPlusPlus_COM.md",
+        "Access_and_Release_Access_to_Edges_Example_CSharp.md",
+        "Access_and_Release_Access_to_Edges_Example_VB.md",
+        "Access_and_Release_Access_to_Edges_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C++ raw_interfaces_only 绑定把返回值挪到末位 out，示例按 7 个实参调用。",
+          "example_quote": "hres = swApp->OpenDoc6(sFileName, swDocASSEMBLY, swOpenDocOptions_Silent, sDefaultConfiguration, &fileerror, &filewarning, &swModelAssembly);",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例 OpenDoc6 之后立刻 ActivateDoc2，再从 ActiveDoc 重取指针（而非直接用返回值）。",
+          "example_quote": "    Set swModel = swApp.OpenDoc6(\"C:\\Users\\Public\\Documents\\SOLIDWORKS\\SOLIDWORKS 2018\\samples\\tutorial\\api\\box.sldprt\", 1, 0, \"\", longstatus, longwarnings)\n    swApp.ActivateDoc2 \"box\", False, longstatus\n    Set swModel = swApp.ActiveDoc",
+          "example_file": "Access_and_Release_Access_to_Edges_Example_VB.md"
+        }
+      ],
+      "note": "示例均用绝对路径 + Silent，与 Remarks 的 TIPS 一致；未找到冲突。"
+    },
+    {
+      "member": "OpenDoc7",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Deselect_Marked_Entity_Example_CSharp.md",
+        "Deselect_Marked_Entity_Example_VB.md",
+        "Deselect_Marked_Entity_Example_VBNET.md",
+        "Fire_Notification_for_Background_Processing_Events_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "形参不是自建：DocumentSpecification 由 GetOpenDocSpec 取；开超大图纸前置 Silent=true。",
+          "example_quote": "            docSpecification = (DocumentSpecification)swApp.GetOpenDocSpec(filePath);\n            docSpecification.Silent = true;\n            swModelDoc = (ModelDoc2)swApp.OpenDoc7(docSpecification);",
+          "example_file": "Fire_Notification_for_Background_Processing_Events_Example_CSharp.md"
+        },
+        {
+          "what": "示例先读 ActiveDoc，为 null 才调 OpenDoc7，避免重复打开。",
+          "example_quote": "            swModel = (ModelDoc2)swApp.ActiveDoc;\n            if (swModel == null)\n            {\n                swModel = (ModelDoc2)swApp.OpenDoc7(swDocSpecification);\n            }",
+          "example_file": "Deselect_Marked_Entity_Example_CSharp.md"
+        }
+      ],
+      "note": "未找到两侧不能同时成立的说法。"
+    }
+  ]
+}

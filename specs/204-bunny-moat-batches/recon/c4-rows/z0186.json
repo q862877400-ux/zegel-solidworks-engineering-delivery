@@ -1,0 +1,134 @@
+{
+  "idx": 186,
+  "results": [
+    {
+      "member": "GetEntityState",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Find_Attribute_Example_CSharp.md",
+        "Find_Attribute_Example_VB.md",
+        "Find_Attribute_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 swAssociatedEntityStates_e 四个成员全查一遍，且要求全部 false 才算属性正常；Remarks 只逐字解释了 swIsEntityInvalid 与 swIsEntitySuppressed 两个。",
+          "example_quote": "        If False = swAtt.GetEntityState(swIsEntityInvalid) And False = swAtt.GetEntityState(swIsEntitySuppressed) And False = swAtt.GetEntityState(swIsEntityAmbiguous) And False = swAtt.GetEntityState(swIsEntityDeleted) Then",
+          "example_file": "Find_Attribute_Example_VB.md"
+        }
+      ],
+      "note": "枚举共 4 个成员（Ambiguous/Deleted/Invalid/Suppressed），三份示例都实际调用本成员；两侧无矛盾。"
+    },
+    {
+      "member": "GetEntryText",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 Examples 段。三份 Get_Design_Table 示例操作的是 DesignTable(IDesignTable)，不是 IBomTable 遗留 BOM，故不算用到本成员。"
+    },
+    {
+      "member": "GetEnvironment",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_CSharp.md",
+        "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VB.md",
+        "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "unit_diff",
+          "remarks_quote": "All numeric values returned from the IEnvironment object are relative to a unit text height of 1.0.; i.e., if a symbol has a text height of 0.15, then multiply the numeric values returned by 0.15.",
+          "example_quote": "        Debug.Print (\"        \" & lineSymbols(i))",
+          "example_file": "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_VB.md",
+          "why": "Remarks 说所有数值按字高 1.0 归一、须再乘实际字高；示例把 GetSymLines 原值直接当坐标打印，未做任何缩放。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 COM 运行时类型名 SolidWorks.Interop.sldworks.Environment（无 I 前缀）并显式转型；页面只写抽象的 IEnvironment。",
+          "example_quote": "            swEnvironment = (SolidWorks.Interop.sldworks.Environment)swApp.GetEnvironment();",
+          "example_file": "Analyze_Text_and_Geometry_in_GTol_Flat_Symbol_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都在 swApp 上取该对象，再用其 GetSymEdgeCounts/GetSymLines/GetSymArcs2。"
+    },
+    {
+      "member": "GetEquationMgr",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Equation_And_Evaluate_All_Example_VB.md",
+        "Add_Equations_Example_CSharp.md",
+        "Add_Equations_Example_VB.md",
+        "Automatically_Solve_Equations_in_Sequence_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例对返回值判 Nothing 并报错「取不到方程管理器」；页面 Returns 只写「Equation manager」，未说可空。",
+          "example_quote": "    If swEquationMgr Is Nothing Then ErrorMsg SwApp, \"Failed to get the equation manager\"",
+          "example_file": "Add_Equations_Example_VB.md"
+        }
+      ],
+      "note": "四份示例均真调用；页面自己的 Examples 段反而不含 Add_Equations 两份。"
+    },
+    {
+      "member": "GetEquationParameters",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Equation-driven_Curve_Example_CSharp.md",
+        "Create_Equation-driven_Curve_Example_VB.md",
+        "Create_Equation-driven_Curve_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Obsolete. Superseded by [[ISketchSpline::GetEquationParameters2]].",
+          "example_quote": "    Call skSpline.GetEquationParameters(y, r1, r2, rad, ang, xOff, yOff, LockStart, LockEnd)",
+          "example_file": "Create_Equation-driven_Curve_Example_VB.md",
+          "why": "成员页判其已被 GetEquationParameters2 取代，官方示例却仍全篇调用这个被取代的旧成员，两者不能同时是现行入口。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把读出的 9 个量原样回灌给 SetEquationParameters 改成 cos(x)；页面未写这对读写配对用法。",
+          "example_quote": "    Call skSpline.SetEquationParameters(y, r1, r2, rad, ang, xOff, yOff, LockStart, LockEnd)",
+          "example_file": "Create_Equation-driven_Curve_Example_VB.md"
+        }
+      ],
+      "note": "三份示例都调用旧成员；同文件 CreateEquationSpline2 把 RangeStart/RangeEnd 定为 string，与本页「必须 double」相反。"
+    },
+    {
+      "member": "GetErrorCode",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Scale_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值的含义直接写成「0 = 无错误」并打印；页面 Returns 只说取值见 swFeatureError_e。",
+          "example_quote": "    Debug.Print \" Error (0 = no errors) = \" & swScaleFeat.GetErrorCode",
+          "example_file": "Insert_Scale_Feature_Example_VB.md"
+        }
+      ],
+      "note": "页面无 Examples 段，但该示例确实调用本成员；页面判 Obsolete，示例仍用它。"
+    },
+    {
+      "member": "GetErrorCode2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Error_Codes_for_Features_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出遍历入口：从 Model.FirstFeature 起步、用 feat.GetNextFeature() 逐个走；页面未说如何枚举特征。",
+          "example_quote": "        Set feat = feat.GetNextFeature() ' Get the next feature",
+          "example_file": "Get_Error_Codes_for_Features_Example_VB.md"
+        }
+      ],
+      "note": "示例注释「Only examine warnings if error codes are non-zero」与页面 NOTE 一致，无矛盾。"
+    }
+  ]
+}

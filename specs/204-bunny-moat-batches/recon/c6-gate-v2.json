@@ -1,0 +1,99 @@
+{
+  "role": "V2",
+  "attacked": 10,
+  "counterexamples": [
+    {
+      "group": "G2 共成员数N（IDrawingDoc 274 / IView 461 / ISheet 53）",
+      "why": "三个值分属三个不同接口，不是同一量。且用官方类型库仲裁，三个值全部正确：swapi types 目录 .md 数减 _overview.md = IDrawingDoc 275-1=274、IView 462-1=461、ISheet 54-1=53。摘录逐字无误，错的是把接口名当停用词剥掉后并话题。",
+      "evidence": "C:\\swapi\\types\\IDrawingDoc\\=275 md -1 _overview=274 | IView\\=462-1=461 | ISheet\\=54-1=53 ；三份 recon 文件同一行标签：drawingdoc-read-members.md:28 「| 共成员数 **N** | **274** |」/ iview-read-members.md:18 「**461**」/ isheet-read-members.md:28 「**53**」"
+    },
+    {
+      "group": "G11 非废弃且非指针M（drawingdoc 160 / iview 267）",
+      "why": "同 G2 性质：160 是 IDrawingDoc 的 M，267 是 IView 的 M，各自正确。★ 且聚类漏了第三个接口 ISheet 的 M=39（isheet-read-members.md:29 与 :50），漏报本身构成新问题。",
+      "evidence": "docs/recon/isheet-read-members.md:29 「| 非废弃且非指针 **M**（= 第二节行数） | **39** |」· :50 「## 二、主表 —— 非废弃且非指针的 39 个成员」——该 39 未出现在 G11/G18 任一变体中"
+    },
+    {
+      "group": "G13 空括号真零参方法（drawingdoc 73 / isheet 11）",
+      "why": "73 是 IDrawingDoc 的真·零参方法数、11 是 ISheet 的，各自正确、非冲突。两份文件用的是**完全相同**的表头行标签，故聚类无法分辨。摘录逐字无误。",
+      "evidence": "docs/recon/drawingdoc-read-members.md:31 「| —— 其中「空括号 `Name()`」**真·零参方法** | 73 |」· docs/recon/isheet-read-members.md:31 「**真·零参方法** | 11」"
+    },
+    {
+      "group": "G16 无## Returns段成员（drawingdoc 162 / isheet 14）",
+      "why": "162 是 IDrawingDoc、14 是 ISheet，各自正确。★ 聚类把 drawingdoc 同一篇的两个切片（:44 与 :360）当成两个独立变体，而漏掉 IView 的 133（iview-read-members.md:29）——分组既虚增变体又漏真变体。",
+      "evidence": "docs/recon/iview-read-members.md:29 「| 无 `## Returns` 段 | 133 |」未进入 G16 ；drawingdoc:44「| 无 `## Returns` 段 | 162 |」与 :360「### 5.3 无 `## Returns` 段的成员（162 个）」"
+    },
+    {
+      "group": "G17 无## Remarks段成员（drawingdoc 174 / isheet 29）",
+      "why": "同 G16：174 属 IDrawingDoc、29 属 ISheet，各自正确。★ IView 的 232 同样被漏（iview-read-members.md:30）。",
+      "evidence": "docs/recon/iview-read-members.md:30 「| 无 `## Remarks` 段 | 232 |」未进入 G17；drawingdoc:45「| 无 `## Remarks` 段 | 174 |」与 :529「### 5.4 无 `## Remarks` 段的成员（174 个）」"
+    },
+    {
+      "group": "G18 主表收录非废弃且非指针成员（160 / 267）",
+      "why": "与 G11 同源重复聚类（同量同因，第三次出现）。ISheet 的「39 个成员」第三次被漏。三条 G11/G16/G18 全是同一个缺陷的三次复发，说明根因未清。",
+      "evidence": "docs/recon/isheet-read-members.md:50 「## 二、主表 —— 非废弃且非指针的 39 个成员」未进入 G18"
+    },
+    {
+      "group": "G1 编进目录但从未直接调（291族/2324成员 vs 256族/2114成员）",
+      "why": "★ 证伪：256/2114 的两处都在**代码围栏内**，是「修法：把数字改为从台账生成」的**生成器提案输出**（含「按域 10 行 + 最大 10 族」后缀）；291/2324 才是 harvest-digest.md 的**生成物现值**。⇒ 提案 vs 现值，非矛盾。聚类把两条同源的提案当成两个独立佐证，把唯一的现值当异类。",
+      "evidence": "known-facts.md:238 「…```新增 §4.3 官方接口族的零调用缺口（从 docs/family-coverage.json 生成）：…⇒ **编进目录但从未直接调 = 256 族 / 2,114 成员**（按域 10 行 + 最大 10 族）」· ROADMAP.md:4777 同一段落在 ``` 围栏内 · 对照 harvest-digest.md:261 「| ⇒ **编进目录但从未直接调** | **291 族 / 2,324 成员** | 本节的清单 |」"
+    },
+    {
+      "group": "G4 drawing_workflow.py 行数（2033 / 2112）",
+      "why": "★ 双重大错：(a) 聚类漏了第三个值——known-facts 切片 03 写「2741 行 / 24 个公开函数」，与 53 函数也不是同一口径；(b) 真值磁盘实测 2729 行 ⇒ 2033 与 2112 **两个都是陈旧快照**，都不等于现值。这是「时序 + 两值皆腐」，不是二选一的真分歧。",
+      "evidence": "docs/known-facts.md（切片 03/19）claim「drawing_workflow.py 2741 行 / 24 个公开函数」未进入 G4；实测 D:\\AI\\SW\\subskills\\solidworks-engineering-drawing\\scripts\\drawing_workflow.py = 2729 行（LastWrite 2026-10-04 09:04）；signature-audit.md:97「（`drawing_workflow.py`，2112 行 / 53 函数）」vs usage-guide.md:27「（2033 行 / 53 函数）」"
+    },
+    {
+      "group": "G19 签名审计 711（696/2存疑/0查不到 vs 696/0存疑/0查不到）",
+      "why": "★ 证伪为未决分歧：聚类漏了第三份文档的**已调和口径**——harvest-report.md:346 写「696 通过 / 0 查不到 / 2 真缺陷已修 / 0 未裁定」，即那个「2」一直存在、只是标签从「存疑」变成「真缺陷已修」。final-audit.md:19 另给了逐字理由（comtypes 早绑定 vs pywin32 迟到绑定，类别错误）。⇒ 仓内早已调和，非未决真分歧。",
+      "evidence": "docs/harvest-report.md:346 「**711** 个调用点 arity 自动比对**（**696 通过 / 0 查不到 / 2 真缺陷已修 / 0 未裁定**）」未进入 G19 ；final-audit.md:19 「★ 原「2 存疑」是 `sw_delivery.py:635` `IGetDocumentNames` 与 `:884` `OpenDoc6` —— 两条都走 **comtypes 早绑定**…⇒ **拿前者判后者是类别错误**」"
+    },
+    {
+      "group": "G23 IView 零参可读候选（约200 vs 201）",
+      "why": "★ 证伪：HANDOFF.md 原文带**约数词「约」**，是四舍五入表述，与 201 是同一个数。非分歧——量词「约」本身就是不参与数值冲突的标记，聚类把近似值当冲突值。",
+      "evidence": "docs/HANDOFF.md:165 「★ **`IView` 的零参可读候选还有约 200 个**」· docs/final-report-24h.md:130 「★ **而 `IView` 的零参可读候选还有 201 个**」"
+    }
+  ],
+  "reclassify": [
+    {
+      "group": "G1 编进目录但从未直接调 291/2324 vs 256/2114",
+      "from": "真分歧",
+      "to": "假阳性（提案 vs 现值：两处 256 族在代码围栏内，是 gen_harvest_digest.py 的生成器规格；harvest-digest.md 是生成物现值）"
+    },
+    {
+      "group": "G4 drawing_workflow.py 2033 vs 2112 行",
+      "from": "真分歧",
+      "to": "时序更新（且两值皆陈旧：漏采 2741 行，实测真值 2729 行；应另立「文档数值落后于代码」问题）"
+    },
+    {
+      "group": "G19 签名审计 711 的 2 存疑",
+      "from": "真分歧",
+      "to": "假阳性（口径已调和：harvest-report.md:346 已有第三种分栏 696/0查不到/2真缺陷已修/0未裁定，final-audit.md:19 给了逐字理由）"
+    },
+    {
+      "group": "G23 IView 零参可读候选 约200 vs 201",
+      "from": "真分歧",
+      "to": "非分歧（原文带量词「约」，是同一数的四舍五入）"
+    },
+    {
+      "group": "G5 全量回归 1274 vs 1260",
+      "from": "时序更新",
+      "to": "假阳性（陈旧值复述，非单调时序：ROADMAP 按行序为 1257(L5165)→1261(L5377)→1262(L5432)→1260(L5476起连续5次)。1260 低于已报的 1262 且被逐字复制 5 次 ⇒ 后续轮次抄了旧值，不是新测量；漏采中间值 1261 / 1262）"
+    },
+    {
+      "group": "G2 / G3 / G11 / G12 / G13 / G14 / G15 / G16 / G17 / G18（recon 三文件族，共 10 组）",
+      "from": "假阳性（Lead 自评已认）",
+      "to": "假阳性（V2 用官方类型库独立复核确认，并给出更强的证法：这些不是「话题串了」，而是三份文件用的是**逐字相同**的表头行标签，只靠文本无法分辨；必须按接口名消歧。另 G11/G16/G17/G18 四组互相重复，同一缺陷四次复发）"
+    }
+  ],
+  "missed": [
+    "IWizardHoleFeatureData2 成员数 = 65 / 69 / 75 三个值散在 4 份文档；官方类型库为 75 ⇒ 65、69 皆错。23 组里没有这一组。",
+    "ISweepFeatureData 成员数 = 47 / 53 / 54 / 81 四个值散在 5 份文档；官方类型库为 53 ⇒ 47、54、81 皆错。23 组里没有这一组。",
+    "IView 成员数 = 327（family-coverage.md）对 461；官方类型库 461 ⇒ 327 错。聚类只做了跨接口配对，漏了同接口的真冲突。",
+    "drawing_workflow.py 还有一个 2741 行 / 24 个公开函数（known-facts 切片 03/19），G4 未采；与 53 函数也不是同一口径。",
+    "签名审计还有第三种分栏「696 通过 / 0 查不到 / 2 真缺陷已修 / 0 未裁定」（harvest-report.md:346），G19 未采。",
+    "全量回归中间值 1261 / 1262 未采；且 ROADMAP 内 1262→1260 是倒退，证明 1260 是复述旧值而非新测量。",
+    "ISheet 的 M=39 / 无Returns=14 / 无Remarks=29 在 G11、G16、G17、G18 四组里均被漏，只采了另两个接口。",
+    "IView 的 无Returns=133 / 无Remarks=232 被 G16、G17 漏掉；聚类把同一文件的两个切片当两个独立变体，虚增了变体数。"
+  ],
+  "conclusion": "攻了 10 组，10 组全部找到反例，无一需要维持原判。★ 最重的一击是 G1：256 族/2,114 成员那两处**逐字在代码围栏内**，是生成器提案的输出规格，而 291/2324 才是 harvest-digest.md 的生成物现值 ⇒ 这是「提案 vs 现值」的类别错误，被当成了未决真分歧；G19 同理，仓内 harvest-report.md:346 早已把「2」调和成「2 真缺陷已修」。★ 第二重的一击是给假阳性找了硬判据：C:\\swapi\\types\\<接口>\\ 的 .md 文件数减 _overview.md 即官方成员数，用它仲裁，IDrawingDoc=274、IView=461、ISheet=53、IWizardHoleFeatureData2=75、ISweepFeatureData=53 全部对上 ⇒ recon 那 10 组「分歧」全部是三个接口各说各的，不是矛盾。★ 同时该判据立刻反手抓到聚类漏掉的两条真冲突（IWizardHoleFeatureData2 65/69、ISweepFeatureData 47/54/81），说明假阳性的成因与漏报的成因是同一个：聚类只按行标签聚，没按接口名消歧。★ 另：G4 真值磁盘实测 2729 行，2033 与 2112 两个都腐；G5 在 ROADMAP 内呈 1257→1261→1262→1260，非单调，1260 被复制 5 次 ⇒ 是陈旧复述不是时序更新。★ 摘录质量本身没有问题：10 组引文逐字核对全部准确，问题全在分组前提与量词处理（「约」被当冲突值）。★ 结论方向：23 组的「真分歧 4」应当降为 0-1；假阳性 11 应上调，因为 V2 独立复核又追加了 10 组同型假阳性并发现 4 组内部重复。"
+}

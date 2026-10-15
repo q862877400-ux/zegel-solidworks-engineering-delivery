@@ -1,0 +1,142 @@
+{
+  "idx": 12,
+  "results": [
+    {
+      "name": "topology_optimization",
+      "level": "verified",
+      "members_found": [
+        "StudyManager",
+        "DeleteStudy",
+        "CreateNewStudy3",
+        "CreateNewStudy2",
+        "MeshAndRun",
+        "CreateMesh",
+        "RunAnalysis",
+        "Results",
+        "GetPlotCount",
+        "GetPlotNames",
+        "GetMaximumAvailableSteps"
+      ],
+      "examples_used": [
+        "Create_Topology_Study_Example_VBA.txt"
+      ],
+      "preconditions": [
+        {
+          "text": "必须先把 SOLIDWORKS Simulation 作为加载项启用（Tools > Add-ins > SOLIDWORKS Simulation > OK）",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "必须把 SOLIDWORKS Simulation 版本类型库加为引用（IDE Tools > References）",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "必须先打开一个零件文档（官方示例打开 public_documents\\samples\\Simulation Examples\\tutor1.sldprt）",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方调用序：先 DeleteStudy 同名研究，再 CreateNewStudy3(name, 13, 0, err)",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "MeshAndRun / CreateMesh+RunAnalysis 的官方示例前置：两个索引里这两个成员均无命中，说不清",
+          "from": "member-to-example-index.md + b3-4-merged.json",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "结果读数 GetPlotCount/GetPlotNames：GetPlotCount 只命中 COSMOSMotion 示例（讲 Motion 非拓扑），按规则排除",
+          "from": "b3-4-merged.json",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "evidence 三条只写了脚本名、证据文件缺失、契约测试；加载项、类型库、开文档、DeleteStudy 调用序一条都没提到。"
+    },
+    {
+      "name": "costing",
+      "level": "verified",
+      "members_found": [
+        "Extension",
+        "GetCostingManager",
+        "CostingModel",
+        "CostingDefaults",
+        "GetTemplatePathnames",
+        "GetTemplateName",
+        "GetCostingMethod",
+        "GetBodyCount",
+        "GetBodies",
+        "GetCostAnalysis",
+        "GetName",
+        "GetBodyType",
+        "BodyStatus",
+        "GetSWBody",
+        "CostingTemplateName",
+        "CostingType",
+        "GetMaterialCost",
+        "GetManufacturingCost",
+        "GetSetupCost",
+        "GetTotalCostToManufacture",
+        "GetTotalCostToCharge"
+      ],
+      "examples_used": [
+        "Create_Machining_Costing_Analyses_Example_CSharp.md",
+        "Create_Sheet_Metal_Costing_Analyses_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "必须先打开一个零件文档（machined_part.sldprt / sheet_metal_part.sldprt）",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "必须确认 Costing 模板存在（Options > System Options > File Locations > Costing templates）",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "必须引用 SolidWorks.Interop.sldcostingapi.dll（GetTemplatePathnames 等成员所在程序集）",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方调用序：GetCostingManager() 之后必须先 WaitForUIUpdate() 才读模板清单",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "读成本分析读数前必须先有成本分析（官方先 CreateCostAnalysis(模板路径)，GetCostAnalysis 只在已分析分支）",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "逐实体成本数据只对 GetBodyType()==swcBodyType_Machined 的实体成立（官方 if 判据）",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetBodyCount() 必须大于 0，否则官方示例 No bodies in part 直接 return，不读实体",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "evidence 只有一条（verify_costing_e2e.py 的 partial 5/6）；官方 Costing 示例的前置一条都没出现在里面。"
+    }
+  ]
+}

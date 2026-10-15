@@ -1,0 +1,109 @@
+{
+ "idx": 17,
+ "results": [
+  {
+   "name": "file_custom_property_read",
+   "level": "verified",
+   "members_found": [
+    "CustomPropertyManager",
+    "Get6",
+    "GetNames",
+    "GetType2",
+    "IsCustomPropertyEditable",
+    "Count"
+   ],
+   "examples_used": [
+    "Get_Custom_Properties_for_Configuration_Example_VB.md",
+    "Add_and_Get_Custom_Properties_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方 Preconditions 逐字：先打开一个零件文档（Open a part document）",
+     "from": "Get_Custom_Properties_for_Configuration_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "新建零件 ⇒ Add3 写一个属性（count 28→29）"
+    },
+    {
+     "text": "读可编辑性须先取活动配置、并把 config.Name 传给 IsCustomPropertyEditable（第二参）",
+     "from": "Get_Custom_Properties_for_Configuration_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "Add_and_Get 那份是焊件【特征】级属性，与文件级不同，未计其前置；示例的 Open the Immediate window 属 VBA 脚手架未计入。"
+  },
+  {
+   "name": "sketch_build",
+   "level": "verified",
+   "members_found": [
+    "InsertSketch",
+    "SelectByID2",
+    "ClearSelection2",
+    "CreateLine",
+    "CreateCornerRectangle",
+    "CreateCircleByRadius",
+    "CreateArc",
+    "CreatePolygon",
+    "CreateSketchSlot",
+    "CreateEllipse",
+    "CreateCenterLine",
+    "AutoDimension2",
+    "GetSketchSegments",
+    "GetStartPoint2",
+    "GetEndPoint2",
+    "Select3",
+    "Select4",
+    "GraphicsRedraw"
+   ],
+   "examples_used": [
+    "Autodimension_a_Sketch_Example_VB.md",
+    "Autodimension_All_Sketches_Example_VB.md",
+    "Insert_and_Resize_Sketch_Slot_Example_VB.md",
+    "Create_Polygon_Example_VB.md",
+    "Get_Sketch_Arc_Data_Example_VB.md",
+    "Create_Ellipse_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方 Preconditions 逐字：先打开一个零件文档（Open a part document）",
+     "from": "Create_Polygon_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "新建零件 → start（前视）→ 画线 → 画圆 → 画矩形 → end"
+    },
+    {
+     "text": "调用序：先 SelectByID2 选中基准面、再 InsertSketch 进草图，才能画图元",
+     "from": "Insert_and_Resize_Sketch_Slot_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "另记两条：不 start 就画线 = 静默 · 坏基准面名 = ValueError"
+    },
+    {
+     "text": "AutoDimension2 前须先按 mark 选出两条草图段（一条水平基准、一条垂直基准）",
+     "from": "Autodimension_a_Sketch_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "真机：有活动草图时 ⇒ **status=pass · status_code=0 · selected=2**"
+    },
+    {
+     "text": "草图须含水平线与垂直线，否则官方回 swAutodimStatusDatumLineNotHorizontal/NotVertical",
+     "from": "Autodimension_All_Sketches_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "须处于草图编辑态、有活动草图（官方逐字：an active sketch）",
+     "from": "Create_Ellipse_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "负例（**没有活动草图**）⇒ **status=blocked · error_code=SKETCH_NOT_ACTIVE**"
+    },
+    {
+     "text": "官方 CreateEllipse 示例要求草图内已有两个草图点；本工具直接传坐标，是否覆盖判不出",
+     "from": "Create_Ellipse_Example_CSharp.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "模板存在/Immediate window 属 VBA 脚手架未计入；CreateCenterLine 的官方示例只出现在 3D 草图与角度尺寸里，未计前置。"
+  }
+ ]
+}

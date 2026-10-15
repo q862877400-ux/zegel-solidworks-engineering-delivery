@@ -1,0 +1,162 @@
+{
+  "idx": 443,
+  "results": [
+    {
+      "member": "SetEquationAndConfigurationOption",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Equations_Example_CSharp.md",
+        "Add_Equations_Example_VB.md",
+        "Add_Equations_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用「返回值==期望索引」判成功（0/1），从不按页面 Returns 的 -1 哨兵判断",
+          "example_quote": "longEquation = swEquationMgr.SetEquationAndConfigurationOption(1, \"\\\"D1@Boss-Extrude1\\\" = 0.07in\", swAllConfiguration, Empty)\n    If longEquation <> 1 Then ErrorMsg SwApp, \"Failed to modify a dimension equation\"",
+          "example_file": "Add_Equations_Example_VB.md"
+        },
+        {
+          "what": "示例把返回值存进 64 位 long/Long 变量，而成员页签名写 System.int",
+          "example_quote": "long longEquation = 0;",
+          "example_file": "Add_Equations_Example_CSharp.md"
+        },
+        {
+          "what": "ConfigNames 在多配置场景传 null/Nothing/Empty，页面只写「仅 swSpecifyConfiguration 有效」",
+          "example_quote": "longEquation = swEquationMgr.SetEquationAndConfigurationOption(1, \"\\\"D1@Boss-Extrude1\\\" = 0.07in\", swInConfigurationOpts_e.swAllConfiguration, Nothing)",
+          "example_file": "Add_Equations_Example_VBNET.md"
+        }
+      ],
+      "note": "三份示例互相一致；页面 Remarks 的四条前置在示例中均未出现，无硬冲突。"
+    },
+    {
+      "member": "SetEquationParameters",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Equation-driven_Curve_Example_CSharp.md",
+        "Create_Equation-driven_Curve_Example_VB.md",
+        "Create_Equation-driven_Curve_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例展示 9 个实参按 GetEquationParameters 的 9 个 out 顺序原样回传，页面未说顺序须镜像 Get",
+          "example_quote": "y = \"cos(x)\"\n            skSpline.SetEquationParameters(y, r1, r2, rad, ang, xOff, yOff, LockStart, LockEnd);",
+          "example_file": "Create_Equation-driven_Curve_Example_CSharp.md"
+        },
+        {
+          "what": "建曲线端传字符串 \"0\"/\"6.28\"，回读成 double 再传给本成员——页面只声明本成员必须 double",
+          "example_quote": "skSegment = (SketchSegment)swModel.SketchManager.CreateEquationSpline2(\"\", \"sin(x)\", \"\", \"0\", \"6.28\", false, 0, 0, 0, true,\n            true);",
+          "example_file": "Create_Equation-driven_Curve_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 SetEquationParameters 的 bool 返回值当语句丢弃，不判成败；页面 Returns 明写 true/false",
+          "example_quote": "Call skSpline.SetEquationParameters(y, r1, r2, rad, ang, xOff, yOff, LockStart, LockEnd)",
+          "example_file": "Create_Equation-driven_Curve_Example_VB.md"
+        }
+      ],
+      "note": "页面「RangeStart/RangeEnd 不能给字符串」与示例不冲突：字符串只出现在 CreateEquationSpline2。"
+    },
+    {
+      "member": "SetExpanded",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过。归属示例调用的是 ConfigMgr（ConfigurationManager）上的同名成员，不是本成员。"
+    },
+    {
+      "member": "SetExplodeDirection",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Edit_Radial_Explode_Step_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过；示例确在 explStep(IExplodeStep) 上调用了本成员。"
+    },
+    {
+      "member": "SetExtendedLength",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Extend_Arms_of_Center_Mark_Examples_VB.md",
+        "Get_and_Set_Center_Marks_Set_Example_CSharp.md",
+        "Get_and_Set_Center_Marks_Set_Example_VBA.md",
+        "Get_and_Set_Center_Marks_Set_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "You can use a value from 0 to ICenterMark::GroupCount for the GroupID parameter.",
+          "example_quote": "nbrInGroup = swCenterMark.GroupCount;\n            Debug.Print(\" Number in set: \" + (nbrInGroup - 1));\n            for (i = 0; i <= nbrInGroup - 1; i++)",
+          "example_file": "Get_and_Set_Center_Marks_Set_Example_CSharp.md",
+          "why": "页面上界含 GroupCount，示例上界是 GroupCount-1 且把 GroupCount-1 称作组内个数，两者不能同时成立"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ExtendedLength 的具体量级 0.005 / 0.03 / 0.02，成员页对该参数完全不给单位",
+          "example_quote": "boolstatus = swCenterMark.SetExtendedLength(0, swCenterMarkHandle_Down, 0.03)",
+          "example_file": "Extend_Arms_of_Center_Mark_Examples_VB.md"
+        },
+        {
+          "what": "C#/VB.NET 需把枚举强转 (int) 才传入，VBA 直接传枚举名；页面未说是否要转换",
+          "example_quote": "status = swCenterMark.SetExtendedLength(i, (int)swCenterMarkHandle_e.swCenterMarkHandle_Right, 0.005);",
+          "example_file": "Get_and_Set_Center_Marks_Set_Example_CSharp.md"
+        },
+        {
+          "what": "示例用 GetExtendedLength 前后回读验证；页面只说 True/if set，不要求回读",
+          "example_quote": "dExt2 = swCenterMark.GetExtendedLength(0, swCenterMarkHandle_Down)\nDebug.Print \"Length of arms after extension: \" & dExt2 & \"; \" & dExt3",
+          "example_file": "Extend_Arms_of_Center_Mark_Examples_VB.md"
+        }
+      ],
+      "note": "GroupID 区间冲突在 C#/VB.NET/VBA 三份示例中同形；GroupCount 页自身也写「0 to the number of center marks」。"
+    },
+    {
+      "member": "SetFaceUserId",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Multibody_Macro_Feature_Example_CSharp.md",
+        "Create_Multibody_Macro_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "See [Accessing Selections that Define Features](<../../docs/Programming with the SOLIDWORKS API/Selections that Define Features.md>) for additional details on using this method.",
+          "example_quote": "swMacroFeatData = (MacroFeatureData)((Feature)feature).GetDefinition();\n            swMacroFeatData.EnableMultiBodyConsume = true;",
+          "example_file": "Create_Multibody_Macro_Feature_Example_CSharp.md",
+          "why": "Remarks 指向的官方文档要求先 AccessSelections 再调本方法并最后 Release；示例 GetDefinition 后直调，全文无这两步"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例对每个体的每个面以 j（每体从 0 重排）作 Id1、Id2 恒为 0，且从不读 bool 返回",
+          "example_quote": "for (j = 0; j <= Information.UBound(vFaces); j++)\n                {\n                    swMacroFeatData.SetFaceUserId((Face2)vFaces[j], j, 0);\n                }",
+          "example_file": "Create_Multibody_Macro_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例说明 Face2 取自 Modeler 新建体的 GetFaces()，而非来自界面选区的实体",
+          "example_quote": "vFaces = (object[])swBody.GetFaces();",
+          "example_file": "Create_Multibody_Macro_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "VB.NET 示例同形（GetDefinition 后直调，无 AccessSelections / ReleaseSelectionAccess）。"
+    },
+    {
+      "member": "SetFaces",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "See [Accessing Selections that Define Features](<../../docs/Programming with the SOLIDWORKS API/Selections that Define Features.md>) for additional details.",
+          "example_quote": "boolstatus = swWeldBead.SetFaces(swWeldBeadOtherSide, (f1), (f2))",
+          "example_file": "Change_Weld_Bead_Faces_Example_VB.md",
+          "why": "本成员签名是 void SetFaces(int, object)；示例对象是 WeldmentBeadFeatureData，调用回 bool 且传 3 参 ⇒ 属 IWeldmentBeadFeatureData::SetFaces，两签名不能同时成立"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "本成员页无 Examples 段；被归到的示例实际调的是焊缝族同名成员，非本成员。"
+    }
+  ]
+}

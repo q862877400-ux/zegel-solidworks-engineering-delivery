@@ -1,0 +1,132 @@
+{
+  "idx": 333,
+  "results": [
+    {
+      "member": "IsCustomProperty",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_VB.md",
+        "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页只给 true=自定义属性 / false=文本；示例给出取用分支：False 走纯文本，True 须先赋 CustomPropertyName 再读 Value。",
+          "example_quote": "If swTextAndCustomProperty.IsCustomProperty = False Then",
+          "example_file": "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只说对应哪种组框，与示例两分支一致，未见冲突。"
+    },
+    {
+      "member": "IsCustomPropertyEditable",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Custom_Properties_for_Configuration_Example_CSharp.md",
+        "Get_Custom_Properties_for_Configuration_Example_VB.md",
+        "Get_Custom_Properties_for_Configuration_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Use [[ICustomPropertyManager::GetNames]] to populate PropertyName.",
+          "example_quote": "bRet = cusPropMgr.IsCustomPropertyEditable(\"ADATE\", config.Name)",
+          "example_file": "Get_Custom_Properties_for_Configuration_Example_VB.md",
+          "why": "Remarks 说 PropertyName 须由 GetNames 填充；示例全篇未调 GetNames，直接传硬编码名。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把它当 Set2 的编辑闸门：返回 True 才调用 Set2 改值；配置名实参传 config.Name。",
+          "example_quote": "If bRet = True Then\n        Debug.Print \"    ADATE is editable.\"\n        lRetVal = cusPropMgr.Set2(\"ADATE\", \"4-13-89\")",
+          "example_file": "Get_Custom_Properties_for_Configuration_Example_VB.md"
+        }
+      ],
+      "note": "三种语言示例同形，差异只在 PropertyName 的来源。"
+    },
+    {
+      "member": "IsCylinder",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Calculate_Closest_Distance_Between_Faces_Example_VB.md",
+        "Get_Angle_of_Hole_Not_Normal_to_a_Face_Example_VB.md",
+        "Get_Parameters_of_Cylindrical_Surface_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；三份示例均以 If swSurf.IsCylinder 分支取参数。"
+    },
+    {
+      "member": "IsDeleted",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Center_Marks_Set_Example_CSharp.md",
+        "Get_and_Set_Center_Marks_Set_Example_VBA.md",
+        "Get_and_Set_Center_Marks_Set_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页把 Index 上界写成术语链接；示例给出换算：集合内标记数 = GroupCount - 1，故循环 0..GroupCount-1。",
+          "example_quote": "Debug.Print \" Number in set: \" & nbrInGroup - 1\n    For i = 0 To nbrInGroup - 1",
+          "example_file": "Get_and_Set_Center_Marks_Set_Example_VBA.md"
+        }
+      ],
+      "note": "术语链接未在本地解析，按不推测处理；示例与「0..标记数」可自洽。"
+    },
+    {
+      "member": "IsDerived",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Traverse_Hierarchy_of_Configurations_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "另三份 Create_Derived_or_Underived 调的是 ISketch::IsDerived（同名不同接口）；本成员无 Remarks，跳过。"
+    },
+    {
+      "member": "IsDetached",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Center_Marks_Set_Example_CSharp.md",
+        "Get_and_Set_Center_Marks_Set_Example_VBA.md",
+        "Get_and_Set_Center_Marks_Set_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- [[ICenterMark::GroupCount]] to get a valid value for Index for a center mark in a center mark set.",
+          "example_quote": "For i = 0 To nbrInGroup - 1",
+          "example_file": "Get_and_Set_Center_Marks_Set_Example_VBA.md",
+          "why": "Remarks 字面说 GroupCount 本身即可作合法 Index；示例只传到 GroupCount-1。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "示例先调 IsGrouped 与 GroupCount，再按 0..GroupCount-1 遍历。"
+    },
+    {
+      "member": "IsDimXpert",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VBNET.md",
+        "swdimxpertapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_CSharp.md",
+        "swdimxpertapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VB.md",
+        "swdimxpertapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 说用它判定是否 DimXpert 显示尺寸；示例先用 GetType 判定，再由 IDisplayDimension::IsDimXpert 打印结论，本成员只当 GetDimXpertFeature 的闸门。",
+          "example_quote": "If swAnnotation.IsDimXpert Then\n                    Dim DimXpertFeat As SwDimXpert.DimXpertFeature",
+          "example_file": "swdimxpertapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例加了成员页没提的前置：必须引用并加载 DimXpert 类型库。",
+          "example_quote": "'  1. Ensure that the SOLIDWORKS DimXpert type library is\n'     loaded in Tools > References in the IDE.",
+          "example_file": "swdimxpertapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VB.md"
+        }
+      ],
+      "note": "示例另调同名不同接口的 swDisplayDimension.IsDimXpert，非本成员。"
+    }
+  ]
+}

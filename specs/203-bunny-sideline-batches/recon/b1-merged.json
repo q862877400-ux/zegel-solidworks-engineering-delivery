@@ -1,0 +1,4889 @@
+[
+ {
+  "n": 1,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e001.json",
+  "id": "requirements_planning",
+  "level": "verified",
+  "verified_versions": [],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_engineering_orchestrator.py（需求阶段与阶段编目）",
+    "kind": "pytest_file",
+    "path": "tests/test_engineering_orchestrator.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "测试文件真实存在(8902B)；证据串无失败声明，未记通过数。"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 2,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e002.json",
+  "id": "solidworks_addin_host",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_cad_reliability.py（加载项宿主状态）",
+    "kind": "pytest_file",
+    "path": "tests/test_cad_reliability.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件真实存在（15963 字节），第72-73行断言该条目 level==verified"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 3,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e003.json",
+  "id": "part_and_features",
+  "level": "verified",
+  "verified_versions": [
+   "2024",
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 405）★ **PASS** —— 24h 计划 v2 段 3 收尾：`solidworks_add_dimension`（`sw_part.add_dimension_report`）。★★ 判据用了事实 53 的处方：**把猜测变成一张穷举表** —— 对盒体 12 条边的**两两共 66 对**（★ **那是计划数 = C(12,2)**）逐一试。真机（走 `sw_guard`，7.1 s 无弹窗）：★ **实跑 12 对就停**，其中成功的边对是 `[0,1] [0,2] [0,3] [0,4] [0,7] [0,8] [0,11] [1,2]`（★ **成功的 8 个**）⇒ ★ 证据 `output/dimension-edge-pairs-evidence.json` 逐字 `successes` 就是这 **8** 项 ✓。★★ 而轮 400 用**同样**的 `[0,1]` 却失败 —— 唯一差别是本轮**每次选之前都 `ClearSelection2(True)`** ⇒ ★ 真因是**探针选区不干净**，不是能力坏了。⚠ **已知限制（未隔离）**：同一包装在**板 + 凸台**的模型上失败（连试 3 次后按事实 53 停止隔离）；官方另注「only use on visible documents」且尺寸**按位置**放置。",
+    "kind": "json_artifact",
+    "path": "output/dimension-edge-pairs-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；无 passed/total 字段"
+   },
+   {
+    "raw": "⚠⚠⚠ **2026-10-04（接手轮）更正三处读数 —— 处置 `JUDGE-A_B.md` 的 A-features F1（🔴 立刻要改）** —— ★ 裁判逐字：「★ 条目说「66 对 / 8-8 / 含边 0 都成」，★ 而证据文件记的是 **试了 12 对**、★ 其中 **4 对含边 0 的明确失败**」✓。★★ **我实测复核**（★ 逐字读那份 JSON）：★ `tried: 12` · ★ `edge_count: 12` · ★ `successes = [[0,1],[0,2],[0,3],[0,4],[0,7],[0,8],[0,11],[1,2]]`（★ **正好 8 项**）· ★ `pairs` 全表 12 行里 **`created=True` 8 行 / `created=False` 4 行** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "更正记录：称实跑 12 对、成 8、失败 4（自述已复核 JSON）"
+   },
+   {
+    "raw": "⇒ ★★ **上一句里那三处要分开看**（★ 不是一句「夸大」就能说完）：<br>① ★ **「66 对」** = ★ **计划数 C(12,2) = 66**，★ 而**实跑 12 对**（★ 到上限就停）⇒ ★ 原文没说清「计划」与「实跑」的区别 ✓<br>② ★★ **「8/8」** = ★ **成功的 8 个**（★ 8 项 `successes`），★ **不是「8 对里 8 个成功」** —— ★ 12 对里成功 8、★ **失败 4** ✓<br>③ ★★★ **「含边 0 的组合都成」是**错的**** —— ★ 失败的 4 对逐字是 **`[0,5]` `[0,6]` `[0,9]` `[0,10]`**，★ **全部含边 0** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "推理说明：66 对是计划数，8/8 指 8 项 successes"
+   },
+   {
+    "raw": "★★★ **而真正的规律在证据的 `note` 里**（★ 原文逐字：「★ 盒体的 12 条边按 SolidWorks 惯例分组：**0-3 / 4-7 是上下两个面环、8-11 是竖边**」）⇒ ★★ 按分组看那 12 对：<br>· ★ **0↔1/2/3**（同一条面环内）**成** · ★ **0↔4/7**（对面环的对应边）**成** · ★ **0↔8/11**（竖边）**成**<br>· ★★ **0↔5/6**（对面环的**错位**边）**不成** · ★★ **0↔9/10**（★ 也是错位）**不成**<br>⇒ ★★★★ **所以规律是「边对属于哪一类」，★ 不是「含不含边 0」** —— ★ 后者是**从 8 个成功样本里看出来的错觉** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "推理说明：规律按边对类别，不是含不含边 0"
+   },
+   {
+    "raw": "★ **正确的一句话**：★ **同一面环内的边对、对面环的对应边、以及与竖边的组合能建成尺寸；而对面环上错位的边对不能。**★（★ 本结论只由那 12 对样本支撑，★ 未穷举 66 对 ⇒ ★ 不要外推）✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "结论陈述：只由那 12 对样本支撑，未穷举 66 对"
+   },
+   {
+    "raw": "python 真机（轮 395）★ **PASS** —— objective② 补真缺 `undo`：`scripts/sw_session.py` 新增 `undo_report`（官方 `IModelDoc2.EditUndo2(int Steps)`，**1 参**，回 `void` ⇒ 判据是**特征树退回**）。真机（走 `sw_guard`，5.88 s 无弹窗）：前置 `凸台-拉伸1`（树 **7**）· 负例 `steps=0` 被入口拒 · **`undo_report(doc, 1)` ⇒ 特征树 7 → 6 · `undone: true` · `removed_features: [\"凸台-拉伸1\"]`** ⇒ `verdict: pass`。证据 output/undo-evidence.json。MCP 工具 **`solidworks_undo`**。★ 意义：我们的工具会**改模型**，改错时没有撤销就只能重来（★ 而 `EditUndo2` 撤的是**会话里的动作**、不区分来源 ⇒ **只在我们自己的改动之后调用**）。",
+    "kind": "json_artifact",
+    "path": "output/undo-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；无 passed/total 字段"
+   },
+   {
+    "raw": "pytest tests/test_cad_reliability.py（零件与特征）",
+    "kind": "pytest_file",
+    "path": "tests/test_cad_reliability.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "文件在；只读核查未运行 pytest，无顶层读数"
+   },
+   {
+    "raw": "python tools/verify_bbox_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：80×60×50 mm 盒子 ⇒ `get_bounding_box` 得 `[80.0, 60.0, 50.0]`，**偏差 0.00e+00**，**8/8 通过**，证据落 output/bbox-smoke-evidence.json）",
+    "kind": "json_artifact",
+    "path": "output/bbox-smoke-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 8,
+    "total": 8,
+    "note": "顶层 verdict=pass，passed=8，total=8"
+   },
+   {
+    "raw": "python tools/verify_ellipse_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：半径 25 的圆 ⇒ 边界框跨度 **50 mm**（量准单位）；椭圆建成并 **`get_ellipses` 读回**，**11/11 通过**，证据落 output/ellipse-smoke-evidence.json）",
+    "kind": "json_artifact",
+    "path": "output/ellipse-smoke-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 11,
+    "total": 11,
+    "note": "顶层 verdict=pass，passed=11，total=11"
+   },
+   {
+    "raw": "python tools/verify_centerline_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：`sketch_centerline` 建成 → `get_sketch_segments` **读回 1 段**；**再测单位**：半径 25 的圆 ⇒ 边界框 **50 mm** ⇒ **官方文档的「in meters」是错的**；**8/8 通过**，证据落 output/centerline-smoke-evidence.json）",
+    "kind": "json_artifact",
+    "path": "output/centerline-smoke-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 8,
+    "total": 8,
+    "note": "顶层 verdict=pass，passed=8，total=8"
+   },
+   {
+    "raw": "python tools/probe_getlines_count.py（**真机**：画 **1/2/3** 条直线 ⇒ `get_lines` 读回 **12/24/36** 个 `float` ⇒ **每条 12 个**，元素类型是 `float`）",
+    "kind": "py_script",
+    "path": "tools/probe_getlines_count.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "脚本在；自述 get_lines 每条读回 12 个 float"
+   },
+   {
+    "raw": "python tools/probe_sketch_getter_shapes.py + probe_spline_creation.py + probe_spline_redraw.py（**真机**，SW 2026 SP4.1 / 34.4.1）：**按类型取法全是数值数组** （line/arc/ellipse = **12 / 16 / 22** 个 `float` 每实体，画 1/2 个 ⇒ 12/24 · 16/32 · 22/44）；★★ 并查出 **`sketch_spline` 是静默空操作** —— `CreateSpline2` 返回 `None`、段数 **0**，**重绘后仍是 0**（排除了官方 Remark 的「必须重绘」解释）⇒ 已改成**失败即抛**",
+    "kind": "py_script",
+    "path": "tools/probe_sketch_getter_shapes.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "三个脚本均在；自述 sketch_spline 静默空操作（阴性）"
+   },
+   {
+    "raw": "python tools/probe_slot_and_point_shapes.py（**真机**，SW 2026 SP4.1 / 34.4.1）：★ **推翻轮 141 的一概而论** —— `get_sketch_slots` 画 1/2 个 ⇒ **1/2** 个 `CDispatch`；`get_sketch_points` 画 1/2 条直线 ⇒ **2/4** 个（**每条线两个端点**）⇒ **这两条返回对象列表**，而 `get_lines`/`get_arcs`/`get_ellipses` 返回数值数组",
+    "kind": "py_script",
+    "path": "tools/probe_slot_and_point_shapes.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "脚本在；自述两种返回形状，推翻轮 141"
+   },
+   {
+    "raw": "python tools/verify_dome_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：`insert_dome(8)` 在 100x60x20 的板顶面建成 ⇒ 边界框**逐分量**变化 Z 20 → **34.2222**；特征树 19 → 20；**9/9**，其中两条**如实标注**为「未查明」与「不可达」）",
+    "kind": "py_script",
+    "path": "tools/verify_dome_smoke.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "脚本在；自述 9/9，两条标注未查明/不可达"
+   },
+   {
+    "raw": "python tools/audit_get_com_member_semantics.py（**结构审计**：471 个无实参 get_com_member 调用点 ⇒ **193** 处的成员在出厂反射里有**零参重载**（探测调用会执行），其中绝大多数是只读 getter；按「名字像改东西」缩清单得 **24** 处）+ tools/diag_insert_dome.py（真机定位）",
+    "kind": "py_script",
+    "path": "tools/audit_get_com_member_semantics.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "两脚本均在；自述 471 调用点/193 零参重载"
+   },
+   {
+    "raw": "python tools/probe_window_vs_graphics.py + `_list_sw_windows_all.py`（**真机**，轮 148）：SolidWorks PID 的顶层窗口 **49 个，其中可见的只有 1 个（159x27）** ⇒ `sw_connect.residual_dialogs` 的**两个口径对比**：默认扫到 **49** 个窗口、旧口径（`IsWindowVisible`）只扫到 **1** 个 ⇒ **漏检 48/49**",
+    "kind": "py_script",
+    "path": "tools/probe_window_vs_graphics.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "第一个在 tools/；第二个在仓库根 _list_sw_windows_all.py"
+   },
+   {
+    "raw": "python -m pytest tests/test_modal_dialogs_can_fire.py（**2 passed**）：起一个**真的 `#32770`**（`tools/fake_modal_dialog.py`，**故意不置 `WS_VISIBLE`**）作靶子 ⇒ ★ 新口径**抓得到**它、★ 旧口径（`only_visible=True`）**确实漏掉**它 ⇒ **「漏检」从说法变成了可复现的演示**",
+    "kind": "pytest_file",
+    "path": "tests/test_modal_dialogs_can_fire.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "文件在；自述 2 passed（只读核查未复跑）"
+   },
+   {
+    "raw": "python tools/verify_composite_curve_smoke.py（**真机**，轮 151）：**阴性结果** —— `IModelDoc2.InsertCompositeCurve()` 返回 **False**，**根因是前提没满足**（真机上两次 `start_sketch`+`end_sketch` **只留下 1 个草图** ⇒ 选不出 2 个草图给它合成）",
+    "kind": "py_script",
+    "path": "tools/verify_composite_curve_smoke.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "脚本在；自述阴性结果，InsertCompositeCurve 返回 False"
+   },
+   {
+    "raw": "python tools/probe_add_relation_forms.py（**真机**，轮 161，2 条直线的草图）：★ **找到 `AddRelation` 的可行调用形态** —— `list`/`tuple` 报 `com_error 0x80010105` 且计数不变；**`VARIANT(VT_ARRAY|VT_DISPATCH, [实体…])` ⇒ 无错、`GetRelationsCount` 3 → 4**。⇒ `sketch_relations.add_relation` 已按此修（它此前**从没在真机上跑通过**）。",
+    "kind": "py_script",
+    "path": "tools/probe_add_relation_forms.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "脚本在；自述找到可行形态，计数 3→4"
+   },
+   {
+    "raw": "python 真机（轮 323）★ **旋转轴的判据**（证据 output/revolve-axis-evidence.json · revolve-axis-fixed-evidence.json）：轴 = **草图里的线段**，类型名 **`EXTSKETCHSEGMENT`**（★ **不是** `SKETCHSEGMENT`），mark **4 或 16**（★ 两个都能建）⇒ 建成 **`旋转1`** · type=**`Revolution`**（★ 四种组合 4/4）；Є 同草图传轴 ⇒ 建成（★ 而修复前 `axis_sketch_name` 是**声明了却从未使用的死参数**）",
+    "kind": "json_artifact",
+    "path": "output/revolve-axis-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 4,
+    "total": "查不到",
+    "note": "顶层 pass/passed=4；同条所引 revolve-axis-fixed 顶层 verdict=partial"
+   },
+   {
+    "raw": "python 真机（轮 331）★ **包覆 PASS 3/3**：建成 **`包覆1`**·类型名 **`Emboss`**（★ 判据 = **读返回对象**的 Name 与 GetTypeName2；★ 而 `feature_names()` 前后 diff **是空的**）· 证据 output/wrap-evidence.json · wrap-returned-object.json",
+    "kind": "json_artifact",
+    "path": "output/wrap-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 3,
+    "total": "查不到",
+    "note": "顶层 verdict=pass，passed=3；无 total 字段（用 of）"
+   },
+   {
+    "raw": "python 真机（轮 338）★ **传感器读取 PASS 3/3**：空零件 / 有几何的零件 / 带外部参考的示例图 —— 三处 `ok=True` · `count=0` · `errors=[]`（★ 遍历不炸）· 证据 output/sensor-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/sensor-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 3,
+    "total": "查不到",
+    "note": "顶层 verdict=pass，passed=3；无 total 字段（用 of）"
+   },
+   {
+    "raw": "python 真机（轮 339）★ **文档单位 PASS 4/4**：`GetUnits()` ⇒ **`(0, 1, 8, 2, 0)`**（★ 与官方 Remarks 的 5 元组名对得上）⇒ `LengthUnit = 0` = **`swMM`** · `is_mm = true`；对照源 `ISldWorks.GetUserPreferenceIntegerValue(47)` ⇒ **0**；`doc_matches_system_default = true`· 证据 output/units-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/units-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 4,
+    "total": "查不到",
+    "note": "顶层 verdict=pass，passed=4；无 total 字段（用 of）"
+   }
+  ],
+  "limitations_n": 30,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "第20条引 output/revolve-axis-fixed-evidence.json 顶层 verdict=partial（passed=1 of=2）；第18条称阴性：InsertCompositeCurve 返回 False。"
+ },
+ {
+  "n": 4,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e004.json",
+  "id": "external_spur_gear_geometry",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_cad_reliability.py（外部直齿锥齿轮几何）",
+    "kind": "pytest_file",
+    "path": "tests/test_cad_reliability.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件真实存在(15963B)；只断言该条 level=verified 与版本 2026，无齿轮几何断言"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 5,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e005.json",
+  "id": "holes_and_finishing",
+  "level": "verified",
+  "verified_versions": [
+   "2024",
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 401）★ **PASS 4/4** —— 24h 计划 v2 段 4（孔族）：`solidworks_hole_pattern`（`scripts/sw_hole_features.hole_pattern_report`）。它把 `create_hole_pattern` 的 **`creator` 可调用对象**换成**具名的 `kind`**（★ MCP 层给不出函数）。真机（走 `sw_guard`，14.4 s 无弹窗）：**4 个通孔 ⇒ requested=4 · holes=4 · 特征树 7 → 15**（`孔_1`..`孔_4`）；三条负例全部被拒（counterbore · blind 缺 depth_mm · 空孔位表）。证据 output/hole-pattern-evidence.json。★ 同族的 `configure_straight_tap` / `configure_tapered_tap` **不挂** —— 它们吃 **COM 元素**，★ 而本仓**没有路径能从孔特征拿到它**（只在 mock 测试里出现过）⇒ MCP 层给不出实参。",
+    "kind": "json_artifact",
+    "path": "output/hole-pattern-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；steps 记 requested=4·holes=4·树 7→15，三条负例按预期被拒"
+   },
+   {
+    "raw": "pytest tests/test_sw_hole_features.py（孔特征与修饰）",
+    "kind": "pytest_file",
+    "path": "tests/test_sw_hole_features.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘（11161 字节 / 16 个 def test）；本轮只读，未运行"
+   },
+   {
+    "raw": "python tools/verify_hole_standards_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：`list_hole_standards` → 15 条 · `list_fastener_types('ANSI Inch')` → 14 条 · `list_fastener_table_types` → [0,1,2]，**11/11 通过**，含「**去掉热身就会失败**」的反向验证，证据落 output/hole-standards-smoke-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/verify_hole_standards_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘（6424 字节）；所引 JSON 顶层 passed=11 total=11 verdict=pass"
+   },
+   {
+    "raw": "python 真机（2026-10-01 轮 268）：★ 声明式建通孔 **verdict: pass** —— 特征树 7→9（新增 草图2 + 通孔）· center_sent_m=[-0.02, 0.0]；★ 证据 output/hole-by-selection-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/hole-by-selection-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；steps 记 树 7→9 新增 草图2+通孔，center_sent_m=[-0.02,0.0]"
+   }
+  ],
+  "limitations_n": 15,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 6,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e006.json",
+  "id": "parameter_updates",
+  "level": "verified",
+  "verified_versions": [
+   "2024",
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_cad_reliability.py（参数更新回读）",
+    "kind": "pytest_file",
+    "path": "tests/test_cad_reliability.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "pytest 文件真实存在；非 JSON，顶层三字段不适用"
+   },
+   {
+    "raw": "★ **真机运行证据（★ 2026-10-04 补 —— 这才是 A4 要的那一条）**：`python tools/sw_guard.py --timeout 300 -- python tools/probe_a4_runtime_evidence.py` ⇒ ★ `sw_alive: true` · ★ **零弹窗** · ★ `parameter_updates_ok: **True**`；★ 证据文件 `output/a4-runtime-evidence.json` ✓ ★★ **逐字读数**：★ 建 100×60×20 板 ⇒ 草图矩形 + `extrude_boss(20mm)` ⇒ ★ 改 `D1@凸台-拉伸1` 为 **35.0** ⇒ ★ `set_status: **0**` · ★ `after_mm.current = **35.0**` ⇒ ★★ **回读等于所要求的值** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "叙述真机成功；所引 output/a4-runtime-evidence.json 顶层 verdict=partial"
+   },
+   {
+    "raw": "⚠★ **同一次真机顺带量到一处可疑（★ 未定性 —— ★ 要另核）**：★ 那次调用的 `before_mm.current` 是 **20000.0**，★ 而该模型那个尺寸的**本意是 20 mm**（★ `extrude_boss(..., 20.0)`）⇒ ★★ **20 → 20000 正好是 ×1000 两次** ⇒ ★★★ **可能是 `_dimension_value_mm` 的单位换算多做了一次**（★ **也可能是我读错了对象** —— ★ 例如那个名字其实指**别的**尺寸）⇒ ★ **按铁律 5：未核不写成缺陷**，★ 只把这次读数如实记下 ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "存疑记录：before_mm=20000 疑单位换算多做，自称未定性"
+   }
+  ],
+  "limitations_n": 1,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 7,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e007.json",
+  "id": "custom_properties_and_bom",
+  "level": "verified",
+  "verified_versions": [
+   "2024",
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_cad_reliability.py（自定义属性与 BOM ⇒ ★⚠ **那是形状检查、不是运行证据** —— ★ 见下条）",
+    "kind": "pytest_file",
+    "path": "tests/test_cad_reliability.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在；条目自称「形状检查、非运行证据」"
+   },
+   {
+    "raw": "★★★★ **真机运行证据（★ 2026-10-04 补 —— 这才是 A4 要的那一条）**：`python tools/sw_guard.py --timeout 300 -- python tools/probe_a4_custom_properties.py` ⇒ ★ `sw_alive: true` · ★ **零弹窗** · ★ 1.72 s · ★ 证据文件 `output/a4-custom-properties-evidence.json` ✓ ★★ **判据是**两层独立**（★ 不能只信被测者自己的回读）**：★ ① `set_custom_properties` 自报的 `verified` 全 `True`（★ `service_ok: true`）；★★ ② **本探针独立再调一次 `read_custom_property`**、逐条等于所写（★ `independent_ok: true`）✓ ★★★ **逐字读数**：★ 写 `{A4_探针_甲: alpha, A4_探针_乙: beta, A4_探针_丙: gamma}` ⇒ 三条 `verified: True` · `raw` 分别是 `alpha` / `beta` / `gamma` · `exists: true` · `status: 2` ✓ ★★★★ **并更正一条旧读数**：★ 轮 55 那次探针记的 `readback_value: None` **是**探针的错**（★ 它取 `readback.get(\"value\")`、★ 而 `read_custom_property` 回的键是 **`raw`**）—— ★ **能力层一直是对的** ✓（★ 旧探针按「`tools/` 只报不动」原样保留，★ 它那次读数作为历史证据仍然有效）✓",
+    "kind": "json_artifact",
+    "path": "output/a4-custom-properties-evidence.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层无三字段；service_ok 与 independent_ok 均 true"
+   }
+  ],
+  "limitations_n": 1,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 8,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e008.json",
+  "id": "pack_and_go",
+  "level": "verified",
+  "verified_versions": [
+   "2024",
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_sw_delivery.py",
+    "kind": "pytest_file",
+    "path": "tests/test_sw_delivery.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘上（26792 字节）；非 .json 故顶层三字段查不到；无 COM 假件回归"
+   },
+   {
+    "raw": "pytest tests/solidworks_week3_delivery_regression.py（Pack and Go 交付）",
+    "kind": "pytest_file",
+    "path": "tests/solidworks_week3_delivery_regression.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘上（15106 字节）；其 docstring 自称不被普通 pytest 自动收集"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 9,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e009.json",
+  "id": "assembly_and_mates",
+  "level": "stitched",
+  "verified_versions": [
+   "2024"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_sw_assembly_doc_contract.py",
+    "kind": "pytest_file",
+    "path": "tests/test_sw_assembly_doc_contract.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件存在(14485B)；文本只给 pytest 命令，无结果判据"
+   },
+   {
+    "raw": "pytest tests/test_sw_assembly_aliases.py（装配与配合）",
+    "kind": "pytest_file",
+    "path": "tests/test_sw_assembly_aliases.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件存在(706B)；文本只给 pytest 命令，无结果判据"
+   },
+   {
+    "raw": "python tools/verify_in_context_reference_smoke.py（**真机**，轮 161，2 零件 + 1 装配）：★ `edit_part_in_context` **已验证生效** —— `EditPart2` 返回 `-1` 且 `GetEditTarget` **非空**；`exit_edit_part_in_context` 调通；`list_external_file_references_count` 基线读回 **0**。⚠ **判据①②（关系数 N→N+1 · 外部参考 0→≥1）还没绿**（`add_relation` 调用形态未解决）⇒ **外部参考还没真的建立，未取证**（8/11）。",
+    "kind": "py_script",
+    "path": "tools/verify_in_context_reference_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本存在(12984B)；自称判据①②未绿；所引JSON顶层 verdict=fail 9/12"
+   }
+  ],
+  "limitations_n": 6,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 10,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e010.json",
+  "id": "motion_study",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_sw_motion_audit.py（旋转马达创建与结果审计）",
+    "kind": "pytest_file",
+    "path": "tests/test_sw_motion_audit.py",
+    "exists": true,
+    "verdict": "不适用（非 JSON 证据）",
+    "passed": "不适用（非 JSON 证据）",
+    "total": "不适用（非 JSON 证据）",
+    "note": "盘上存在，3795 字节/128 行 4 用例；全为 fake/mock，无 xfail/skip，未记录任何运行结果"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 11,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e011.json",
+  "id": "drawing_dimension_insertion",
+  "level": "not_implemented",
+  "verified_versions": [
+   "2024",
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_cad_reliability.py（工程图尺寸插入回读）",
+    "kind": "pytest_file",
+    "path": "tests/test_cad_reliability.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在；L8 自称未在本机实测；L66 现断言 not_implemented"
+   },
+   {
+    "raw": "⚠⚠ ★★★★ **2026-10-04（接手轮）如实标注：上面那条**不是运行证据**** —— 处置 `JUDGE-A_B.md` 的 🔴 **A-drawing 一**，★ 裁判逐字：「★ `drawing_dimension_insertion` 的 evidence 唯一相关行是 `assert index[...][\"level\"] == \"verified\"` —— ★ **循环自证**，★ 测试文件**自己写「未在本机实测」**」✓ ★★ **我复核了那个文件**：★ 逐字 L8「⚠ **未在本机实测 SolidWorks**（见 AGENTS.md 铁律 2）」· ★ L53 `assert index[\"drawing_dimension_insertion\"][\"level\"] == \"verified\"` ⇒ ★★★ **即：★ 它的证据是「一个断言自己是 verified 的形状检查」** ✓ ⇒ ★★★★ **本条的 `level: verified` 因此**缺我们自己的运行证据****（★ 验收标准 **A4** 的原话）⇒ ★ **待补**：★ 真机跑一次「插尺寸 + 回读」（★ 需要**一个打开着的工程图**）✓ ★ **在那之前不许再把它当「已跑过」引用** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文更正记录：称 pytest 那条是循环自证、非运行证据、缺运行证据"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 12,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e012.json",
+  "id": "drawings_and_bom",
+  "level": "verified",
+  "verified_versions": [
+   "2024",
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_delivery_compare.py",
+    "kind": "pytest_file",
+    "path": "tests/test_delivery_compare.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件存在(1570B)；2 个纯 Python 断言测试，不连 COM"
+   },
+   {
+    "raw": "pytest tests/test_drawing_subskill.py（工程图与 BOM）",
+    "kind": "pytest_file",
+    "path": "tests/test_drawing_subskill.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件存在(22752B)；docstring 自述「无 COM 契约」测试，无阴性声明"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 13,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e013.json",
+  "id": "export_delivery",
+  "level": "verified",
+  "verified_versions": [
+   "2024",
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 403）★ **PASS** —— 24h 计划 v2 段 6（导出）：`solidworks_export_image`（`sw_export.export_image_report`）。真机（走 `sw_guard`，4.0 s 无弹窗）：一张 PNG ⇒ **`exists=true` · `size_bytes=67997` · `grew_or_created=true`**；负例（非法目录）⇒ `ok=false`。★ 判据**复用本模块既有的 `_export_report`**（回读文件：存在且 size>0，并记 `size_before` / `grew_or_created`）—— 不另造一套。证据 output/export-two-evidence.json。★★ 同轮真机抓到一个真 bug 并修掉：`export_to_image` 里用了 `out_i4()`（标量出参包装）而本模块**漏了导入** ⇒ 一调就 `NameError`（★ **而这正是它一直没被挂的原因**）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "轮403真机PASS叙述；所引 JSON 存在，顶层 verdict=pass"
+   },
+   {
+    "raw": "pytest tests/test_delivery_compare.py（导出交付）",
+    "kind": "pytest_file",
+    "path": "tests/test_delivery_compare.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘（1570 字节）；条目本身不含成败读数"
+   },
+   {
+    "raw": "python tools/verify_bmp_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：`export_to_bmp(model, path, 800, 600)` 建成 ⇒ **读回 BMP 头（偏移 18/22，小端 int32）尺寸 == 800x600**（**定量往返**，空操作满足不了）；官方 Remarks 那条也验了 —— 宽高 ≤ 0 ⇒ 读回 (1460, 1049) 即**窗口尺寸**；扩展名不是 `.bmp` ⇒ ValueError；**8/8 通过**，证据落 output/bmp-smoke-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/verify_bmp_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘（7871 字节）；其引 JSON 顶层 verdict=pass 8/8"
+   },
+   {
+    "raw": "python tools/verify_png_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：`export_to_image` 出 **PNG 129437 字节**（魔数 `89 50 4E 47…` + `IHDR` 尺寸 **1232x1049**）与 **JPG 54431 字节**（魔数 `FF D8 FF`）；**9/9 通过**，证据落 output/png-smoke-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/verify_png_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘（9748 字节）；其引 JSON 顶层 verdict=pass 9/9"
+   },
+   {
+    "raw": "python tools/probe_dwg_magic.py（**真机**，轮 156，钣金件 60x40x1 mm 已保存到 output/）：**读魔数**取证 —— `.dxf` ⇒ **20208 字节**，头部 `  0\\r\\nSECTI` ⇒ **DXF** ✓；`.dwg` ⇒ **272032 字节**，头部 `AC1015` ⇒ **真 DWG（AC1015 = AutoCAD 2000 / R2000）** ✓。★ 结论：`export_to_dxf` 的「DXF/DWG」是**名实相符**的（正面结论）。★ 另记前置条件：**零件路径要求「钣金件 + 必须先保存」** —— 普通拉伸件会报`ValueError: 导出展开 DXF 前必须先保存钣金零件`（**错误清晰、是对的**）。",
+    "kind": "py_script",
+    "path": "tools/probe_dwg_magic.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘（7129 字节）；只给字节数/魔数，未指向可核验 JSON"
+   },
+   {
+    "raw": "python tools/probe_export_magic_matrix.py（**真机**，轮 157，钣金件 60x40x1 mm 已保存）：**逐格式读文件头** ⇒ **9/10 名实相符** —— STEP `ISO-10303-21` · STL `stlbn`（二进制）· IGES `SolidWorks IGES file` · Parasolid `**ABCDEFGH…` · DXF `  0\\r\\nSECTION` · DWG `AC1015` · PNG `\\x89PNG` · JPEG `\\xff\\xd8\\xff\\xe0…JFIF` · BMP `BM`；★ **`pdf` 在零件上失败**：`AttributeError: <unknown>.GetSldWorksObject`",
+    "kind": "py_script",
+    "path": "tools/probe_export_magic_matrix.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘（7779 字节）；条目自述 9/10，pdf 一项失败"
+   },
+   {
+    "raw": "python tools/probe_pdf_on_drawing.py（**真机**，轮 158，工程图 1 张图纸已保存）：★★ 修好后 `export_to_pdf` 成功 ⇒ **39830 字节 · 头部 `%PDF-1.4` · 页数 = 1**（数 `/Type /Page`）⇒ 定量证据；★ 同时 `export_to_dxf(.dwg)` 在**工程图**上 ⇒ **279450 字节 · 头部 `AC1015`**（真 DWG）⇒ 轮 156 那条「只测钣金件」的限度补上了。",
+    "kind": "py_script",
+    "path": "tools/probe_pdf_on_drawing.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘（7621 字节）；条目自述 pdf 修复后成功 39830 字节"
+   }
+  ],
+  "limitations_n": 9,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "第6条 probe_export_magic_matrix.py 原文：9/10 名实相符…「pdf 在零件上失败：AttributeError <unknown>.GetSldWorksObject」；第7条称已修好。"
+ },
+ {
+  "n": 14,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e014.json",
+  "id": "headless_open_format_writing",
+  "level": "verified",
+  "verified_versions": [
+   "ezdxf 1.4.4"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_headless_cad_writer.py（**7 passed**；覆盖非 OCP 的全部写出格式：.cadstudio.json / STL / OBJ / DXF / SVG / PDF / PNG —— 含 PNG 魔数、%PDF、<svg、STL solid、OBJ `\\nf `、previewManifest，以及**输入文档只读**与 **dwg 必须 blocked 且不产文件**）",
+    "kind": "pytest_file",
+    "path": "tests/test_headless_cad_writer.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘上；原文称 7 passed，非 JSON 无顶层 verdict 可读"
+   },
+   {
+    "raw": "pytest tests/test_mcp_headless_open_format.py（**8 passed**；⭐ **它验的是 MCP 层的参数传递** ——OCP 后端由 `monkeypatch.setattr` 替换为假实现，**不代表 OCP 真能跑**，见本条 limitations 末条）",
+    "kind": "pytest_file",
+    "path": "tests/test_mcp_headless_open_format.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘上；原文称 8 passed，但自述不代表 OCP 真跑"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 15,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e015.json",
+  "id": "geometry_and_delivery_review",
+  "level": "verified",
+  "verified_versions": [],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_delivery_compare.py（几何与交付复核）",
+    "kind": "pytest_file",
+    "path": "tests/test_delivery_compare.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘上(1570B,2个用例);无.json结果件,顶层三字段查不到"
+   }
+  ],
+  "limitations_n": 1,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 16,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e016.json",
+  "id": "dfm_checks",
+  "level": "verified",
+  "verified_versions": [
+   "python 3.14.7"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/verify_dfm_e2e.py（**11/11 通过 · verdict: pass**；证据 D:\\AI\\SW\\output\\dfm-evidence.json）—— **故意造违规**逐条触发 limitations 的三句：四种工艺都识别 · **单位归一**（mm/inch 结论一致）· **Profile 能力交集**（窄 profile 把 Al7075 判为 `profile_material_capability` 越界）· **B-Rep 证据绑定**不崩 · **缺 bendRadius/kFactor/材料 ⇒ `blocked` + `missingInputs` 点名** · `manualReviewRequired is True` · **`limitations` 里写出「DFM 规则检查不等于制造认证」** · `brepEvidence.available` 显式给出可得性",
+    "kind": "json_artifact",
+    "path": "output/dfm-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 15,
+    "total": 15,
+    "note": "脚本亦在；JSON 为 15/15 而条文写 11/11，verdict 均 pass"
+   },
+   {
+    "raw": "pytest tests/test_dfm_review.py tests/test_dfm_queue_worker.py（**19 passed**）",
+    "kind": "pytest_file",
+    "path": "tests/test_dfm_review.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "两测试文件均在；'19 passed' 未复核（需实跑）"
+   }
+  ],
+  "limitations_n": 4,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 17,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e017.json",
+  "id": "autocad_basic_drafting",
+  "level": "not_implemented",
+  "verified_versions": [],
+  "evidence": [],
+  "limitations_n": 2,
+  "evidence_reachable": "none",
+  "level_supported": "cannot_tell",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 18,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e018.json",
+  "id": "configurations_and_design_tables",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_cad_reliability.py（配置与设计表）",
+    "kind": "pytest_file",
+    "path": "tests/test_cad_reliability.py",
+    "exists": true,
+    "verdict": "不适用（非 .json）",
+    "passed": "不适用（非 .json）",
+    "total": "不适用（非 .json）",
+    "note": "文件在盘（15963 B）；该测试只断言清单 level=verified 与版本 2026，无功能测试、无 xfail/skip"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 19,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e019.json",
+  "id": "sheet_metal",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_sw_sheet_metal.py（★ ⚠ 只覆盖 `dataclass` 与参数校验 —— ★ **不碰 COM**）",
+    "kind": "pytest_file",
+    "path": "tests/test_sw_sheet_metal.py",
+    "exists": true,
+    "verdict": "不适用（非 .json）",
+    "passed": "不适用（非 .json）",
+    "total": "不适用（非 .json）",
+    "note": "实存；71 行、3 个 test_ 函数；COM/connect/get_com_member 命中 0"
+   },
+   {
+    "raw": "pytest tests/solidworks_sheet_metal_regression.py（钣金）",
+    "kind": "pytest_file",
+    "path": "tests/solidworks_sheet_metal_regression.py",
+    "exists": true,
+    "verdict": "不适用（非 .json）",
+    "passed": "不适用（非 .json）",
+    "total": "不适用（非 .json）",
+    "note": "实存；157 行、0 个 test_/Test 类，是 argparse 跑真机的脚本 → pytest 收 0 例"
+   },
+   {
+    "raw": "🕓 **2026-10-04（接手轮）更正上两条 —— 它们都不构成「我们自己的运行证据」** （★ 处置 `JUDGE-C_D_E.md` 的 🔴 **#10** · `C-sm-1 V-2 / V-3`）—— ★ 裁判逐字：「★ 两条 evidence 一条**不碰 COM**、一条按字面 pytest **收 0 个用例** ⇒ ★ 直接**违反验收标准 A4**」✓ ★★ **我逐条复核（★ 两条都实跑了）**：<br>· ★ **第 1 条**：★ `pytest tests/test_sw_sheet_metal.py` ⇒ **6 passed** —— ★★ 而该文件 71 行、只 `import sw_export` 与 `BaseFlangeSpec`（**一个 dataclass**）⇒ ★★★ **`COM` / `connect` / `get_com_member` / `SolidWorks` 各 0 次** ✓<br>· ★★ **第 2 条**：★ `pytest tests/solidworks_sheet_metal_regression.py` ⇒ ★★★ **`no tests ran`（收 0 个用例，exit 1）** ⇒ ★★ **它什么都没验** ✓<br>★★★ **⇒ 而真机证据是**有的**，★ 只是从没写进 `evidence`**：★ `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 逐字记着「★ **闭轮廓**真机建成：特征树出现「钣金6 / 基体-法兰1 / 平展型式6」」（★ 2026-10-01，SW 2026 SP4.1）⇒ ★★★★ **本轮把它补进 `evidence`** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "不适用（prose）",
+    "passed": "不适用（prose）",
+    "total": "不适用（prose）",
+    "note": "散文：自述前两条不构成运行证据，第2条 no tests ran、exit 1"
+   },
+   {
+    "raw": "★ **真机运行证据（★ 这才是 A4 要的那一条）**：`scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 的 `create_base_flange` 项逐字 —— 「★ **闭轮廓**真机建成：特征树出现「钣金6 / 基体-法兰1 / 平展型式6」」· ★ 时间/版本：2026-10-01 · SW 2026 SP4.1 → ★ `sheet_metal_evidence` 项：「★ 真机读回正确：thickness_m=0.002、has_base_flange=True、all_solid_bodies_are_sheet_metal=True」✓ ★★ **范围**：★ 仅**闭轮廓**（★ 开放折线实测失败，★ 见 `limitations`）✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "不适用（prose）",
+    "passed": "不适用（prose）",
+    "total": "不适用（prose）",
+    "note": "散文：引 sw_sheet_metal.py 闭轮廓真机建成，自述开放折线失败"
+   }
+  ],
+  "limitations_n": 6,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "第3条 evidence 自述前两条 pytest「都不构成我们自己的运行证据」、第2条 no tests ran(exit 1)；第1条自述不碰 COM；第4条自述开放折线实测失败 —— 而 level 仍为 verified。"
+ },
+ {
+  "n": 20,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e020.json",
+  "id": "weldments",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 428）★ **PASS** —— **结构构件**（焊件族第一条）。真机（走 `sw_guard`，无弹窗）：前视基准面上一段 100 mm 直线作路径 + **GB 方管轮廓**（`GB\\square-rods.sldlfp`）⇒ **建成 `square-rods (1)`**，★ 判据是**特征树**（不是计数）：`new_type_names` = **[\"WeldMemberFeat\", \"WeldmentFeature\"]**。证据 output/structural-member-evidence.json。★★ 而本轮探查**推翻了**一条既有结论：`capabilities.yaml` 里轮 364 记的「**本机没装焊件轮廓库**」★ **不成立** —— 本机 `C:\\ProgramData\\SOLIDWORKS\\SOLIDWORKS 2026\\weldment profiles` 下有 **111 个** `.sldlfp`（ansi / GB / iso / DIN / JIS …）。★ 工具不读选区也不依赖选中状态：它自己按**草图名**取线段、建构件、并**用特征树回读**。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文称真机PASS；所引 JSON 在盘上，顶层 verdict=pass"
+   },
+   {
+    "raw": "pytest tests/test_cad_reliability.py（焊件）",
+    "kind": "pytest_file",
+    "path": "tests/test_cad_reliability.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在；仅断言清单 level=verified，不跑焊件、不查证据"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 21,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e021.json",
+  "id": "surface_modeling",
+  "level": "stitched",
+  "verified_versions": [],
+  "evidence": [],
+  "limitations_n": 3,
+  "evidence_reachable": "none",
+  "level_supported": "cannot_tell",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 22,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e022.json",
+  "id": "mold_tools",
+  "level": "stitched",
+  "verified_versions": [],
+  "evidence": [],
+  "limitations_n": 3,
+  "evidence_reachable": "none",
+  "level_supported": "cannot_tell",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 23,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e023.json",
+  "id": "simulation_and_fea",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_fea_analysis.py（CalculiX / Elmer 求解链）",
+    "kind": "pytest_file",
+    "path": "tests/test_fea_analysis.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在仓；证据只写 pytest 命令，未记通过或失败数"
+   },
+   {
+    "raw": "**可跑的真机证据**：`python tools/capture_simulation_evidence.py` （2026-10-01 起；期望 `verdict: pass`，证据落 `output/simulation-evidence.json`）",
+    "kind": "py_script",
+    "path": "tools/capture_simulation_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在仓；写的是期望 verdict: pass，实测产物不在仓"
+   },
+   {
+    "raw": "⚠⚠ 2026-10-04（接手轮）**如实补记（铁律 5）**：★ **`output/simulation-evidence.json` 这个产物当前不在仓里**（★ 探针脚本 `tools/capture_simulation_evidence.py` 在）⇒ ★★ 所以这一条与下一条里引用的具体数字（`element_count: 7310` · `suggested_size_mm: 4.933908705960544` · `plot_count: 4`）**回不到原文** —— ★ 它们是当时真机跑出来的读数、而**产物没入库**（★ `output/` 在 `.gitignore` 里）⇒ ★★★ **要复现就重跑那个脚本**；★ 在那之前，★ 这几个数字只能当「当时的读数」，不能当「可随时回原文的证据」✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "自述产物 simulation-evidence.json 不在仓，所引数字回不到原文"
+   },
+   {
+    "raw": "⚑ 2026-10-01 真机整链（SW 2026 SP4.1 / 34.4.1，100×60×20 mm 单实体板）：赋材料 → 按**面坐标**选面 → 夹具 → 载荷（`Count == 2`）→ `CreateMesh`（**7,310 个单元**）→ `RunAnalysis`（1 秒）→ **`study.Results` 非空、`GetPlotCount == 4`、`GetPlotNames == ('品质1','应力1','位移1','应变1')`**。**已复现两次。**",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "叙述整链：7310 单元、4 张图、已复现两次；无产物可回读"
+   }
+  ],
+  "limitations_n": 10,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 24,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e024.json",
+  "id": "autocad_headless_preview",
+  "level": "verified",
+  "verified_versions": [
+   "ezdxf 1.4.4"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_headless_cad_writer.py（**7 passed**）—— 覆盖 limitations 承诺的每一句：PNG（**魔数** `\\x89PNG` + IHDR 尺寸）· SVG/PDF/STL/OBJ/DXF 回退 · PreviewScene JSON 与 previewManifest · **`dwg` 必须 blocked 且磁盘上不出现任何 dwg 文件**（杜绝「假装写了 DWG」）· **输入文档只读**（sha256 与 mtime 不变）",
+    "kind": "pytest_file",
+    "path": "tests/test_headless_cad_writer.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "仓库内确有该测试文件（11674 字节）；证据自称 7 passed，无 .json 产物可核。"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 25,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e025.json",
+  "id": "dxf_preview_scene",
+  "level": "verified",
+  "verified_versions": [
+   "ezdxf 1.4.4"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/verify_dxf_preview_e2e.py（**15/15 通过 · verdict: pass**；证据 D:\\AI\\SW\\output\\dxf-preview-evidence.json）—— 逐条判过 limitations 承诺的四件事：白名单实体（3DFACE 只进 warnings）/ 图层计数 / 几何边界 / **拒绝覆盖** + **源 DXF 只读** + CLI 入口",
+    "kind": "py_script",
+    "path": "tools/verify_dxf_preview_e2e.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘；所引 JSON 也在盘，顶层 verdict=pass · 15/15，15 项 checks 全 ok"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 26,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e026.json",
+  "id": "autocad_script_backend",
+  "level": "verified",
+  "verified_versions": [
+   "2024"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_acad_script_backend.py（AutoCAD 脚本后端）",
+    "kind": "pytest_file",
+    "path": "tests/test_acad_script_backend.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件存在（1041B）；2 个测试无 skip，断言白名单拦截+已知命令返回 pilot"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 27,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e027.json",
+  "id": "autocad_dotnet_backend",
+  "level": "verified",
+  "verified_versions": [
+   "2024"
+  ],
+  "evidence": [
+   {
+    "raw": "pytest tests/test_acad_dotnet_preflight.py（AutoCAD .NET 预检）",
+    "kind": "pytest_file",
+    "path": "tests/test_acad_dotnet_preflight.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件真实存在（9249 字节，8 个用例全 monkeypatch，无真机 AutoCAD）"
+   }
+  ],
+  "limitations_n": 4,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 28,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e028.json",
+  "id": "routing",
+  "level": "stitched",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/verify_routing_e2e.py（**18/18 通过 · verdict: pass**；证据 D:\\AI\\SW\\output\\routing-evidence.json）—— **故意造违规**逐条触发 limitations ①：端点/分段/长度（3-4-5 直角三角形 ⇒ totalLength=50）· BOM 一致 · **碰撞障碍 FRAME 被点名** · **支撑不足 required=2 + `routing_supports_insufficient`** · **弯曲半径过小被抓**（`routing_bend_radius_too_small`）· 输入上限/损坏 JSON/根节点类型/缺失都被结构化挡下 · **输入文件只读**（sha256 不变）· **`readyForNativeWrite is False`**（limitations ② 的诚实承诺）· 两个 CLI 入口（`--input/--output` 与 `--preflight`）",
+    "kind": "json_artifact",
+    "path": "output/routing-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 18,
+    "total": 18,
+    "note": "顶层 pass 18/18，18 项 ok 全 true；脚本 verify_routing_e2e.py 亦存在"
+   },
+   {
+    "raw": "pytest tests/test_routing_review.py tests/test_sw_routing_contract.py（**23 passed**）",
+    "kind": "pytest_file",
+    "path": "tests/test_routing_review.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "两测试文件均在盘上；23 passed 无 JSON 产物可核"
+   }
+  ],
+  "limitations_n": 4,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 29,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e029.json",
+  "id": "topology_optimization",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_topology_evidence.py（真机闭环，落 output/topology-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/capture_topology_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘(13109B)；但它声称落的 output/topology-evidence.json 不存在"
+   },
+   {
+    "raw": "⚠⚠ 2026-10-04（接手轮）**如实补记（铁律 5）**：★ **`output/topology-evidence.json` 当前不在仓里**（★ 脚本在、★ `output/` 被 gitignore）⇒ ★★ 本条目里引用的那些读数（`AnalysisType == 13` · `GetPlotCount == 4` 等）**回不到原文**，要复现就**重跑 `tools/capture_topology_evidence.py`** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "自述证据 JSON 已不在仓；我实测确认该文件确实缺失"
+   },
+   {
+    "raw": "pytest tests/test_sw_topology_contract.py（8 条契约测试，无 COM）",
+    "kind": "pytest_file",
+    "path": "tests/test_sw_topology_contract.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在(24141B)；实含14个test_函数，与原文8条不符；未运行"
+   }
+  ],
+  "limitations_n": 21,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 30,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e030.json",
+  "id": "costing",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/verify_costing_e2e.py（⇒ ★★ **verdict 是 `partial`、不是 `pass`** —— ★⚠ 2026-10-04（接手轮）更正：★ 此处原写「verdict: pass」，★ 而**证据文件** output/costing-evidence.json 逐字是 `\"verdict\": \"partial\"` · `\"passed\": 5` · `\"of\": 6` ⇒ ★★★ **5/6**；★ 唯一未过的那一步是 **`list_templates`**（★ 其余五步 `get_costing_manager` / `evidence` / `body_count` / `list_bodies` / `read_analysis` 全 `true`）✓ 处置 `JUDGE-A_B.md` 的 🔴 **A-moldcosting V-1**：「★ 条目写 `verdict: pass`，★ 文件是 `partial`（5/6）；★ 同仓另两条文字（`costing_readback` + ROADMAP）都写 partial ⇒ ★ **一个文件被写成两种结论**」✓ 依据 output/costing-evidence.json 逐字）",
+    "kind": "py_script",
+    "path": "tools/verify_costing_e2e.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘；产物 costing-evidence.json 实读 partial/5/6"
+   }
+  ],
+  "limitations_n": 15,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "唯一 evidence 自述 verdict=partial 非 pass，passed 5/of 6，点名 list_templates 未过；产物 costing-evidence.json 实读亦为 partial/5/6，而 level 标 verified。"
+ },
+ {
+  "n": 31,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e031.json",
+  "id": "animation_export",
+  "level": "stitched",
+  "verified_versions": [],
+  "evidence": [
+   {
+    "raw": "python tools/verify_motion_avi_e2e.py（verdict: fail —— 已排除 6 种条件；**根因已定位为「缺 SolidWorks Motion 加载项」**；证据 D:\\AI\\SW\\output\\motion-avi-evidence.json）",
+    "kind": "py_script",
+    "path": "tools\\verify_motion_avi_e2e.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "脚本在盘；其证据 JSON 顶层 verdict=fail（导出 0 字节）"
+   },
+   {
+    "raw": "python probe_motion_addin.py（算例类型可行性矩阵 + Motion 加载项 ProgID 探测）",
+    "kind": "py_script",
+    "path": "probe_motion_addin.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "脚本在盘；记录 CosmosMotion StudyType 静默失败的阴性结论"
+   }
+  ],
+  "limitations_n": 38,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 32,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e032.json",
+  "id": "helix_and_spiral",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/verify_helix_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → 进草图 → 画圆 → 选中 → 建螺旋线 → **读回定义** → 关件不保存，**13/13 通过**，证据落 output/helix-smoke-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/verify_helix_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘；output/helix-smoke-evidence.json 在盘，verdict=pass、13/13"
+   },
+   {
+    "raw": "pytest tests/test_sw_helix_contract.py（**契约测试，无 COM**）",
+    "kind": "pytest_file",
+    "path": "tests/test_sw_helix_contract.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "契约测试在盘（无 COM）；文件头旧注仍写「无真机证据/stitched」"
+   }
+  ],
+  "limitations_n": 8,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 33,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e033.json",
+  "id": "sketch_edit_ops",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/verify_sketch_edit_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → 进草图 → 画两条相接直线 → 选中两条 → 调 `create_sketch_chamfer`，**8/10** —— 选中前置成立，但倒角报错）",
+    "kind": "py_script",
+    "path": "tools/verify_sketch_edit_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上（8941 字节）；原文自报 8/10，倒角报错"
+   },
+   {
+    "raw": "pytest tests/test_sw_sketch_edit_contract.py（**16 条契约测试，无 COM**）",
+    "kind": "pytest_file",
+    "path": "tests/test_sw_sketch_edit_contract.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "测试文件在盘上（14821 字节）；原文称 16 条契约测试、无 COM"
+   }
+  ],
+  "limitations_n": 16,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "E0（tools/verify_sketch_edit_smoke.py，文件在盘上）自报「**8/10** —— 选中前置成立，但倒角报错」，该脚本判据本就含「倒角后线段数应变化」⇒ 证据自称阴性，而 level 标 verified。"
+ },
+ {
+  "n": 34,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e034.json",
+  "id": "equations",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/verify_equation_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新建临时零件 → 加方程式 → 列 → 求解 → 关件不保存，**5/5 通过**，证据落 output/equation-smoke-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/verify_equation_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本与所引 JSON 均在盘；该 JSON 顶层 verdict=pass、5/5"
+   },
+   {
+    "raw": "pytest tests/test_sw_equation_contract.py（**10 条契约测试，无 COM**）",
+    "kind": "pytest_file",
+    "path": "tests/test_sw_equation_contract.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘；实测含 10 个 def test_，与「10 条」相符；未跑测试"
+   }
+  ],
+  "limitations_n": 10,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 35,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e035.json",
+  "id": "sketch_query",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 399）★ **PASS** —— 24h 计划 v2 段 3：`solidworks_current_sketch_name`（读当前活动草图名）。真机（走 `sw_guard`）：草图打开时回 **「草图1」**（**真名**，不是 English fallback）；草图**关闭后** + 自定义回退值 ⇒ 回**那个回退值**（★ 验证的是**已文档化的局限**：★ 回退值 ≠ 真名 ⇒ 别拿它去按名取草图）。证据 output/part-read-dimension-evidence.json（`verdict: pass` 4/4）。★ 同轮分诊补了**第四/五层证据**：`*_report` 包装已暴露⇒不是缺口（此前把 `sw_selection_spec` 的 2 条误判为缺口）；**空存根**（`pass`-only）⇒不做。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "叙述轮399真机PASS；并述草图关闭后回退值不等于真名（已文档化局限）"
+   },
+   {
+    "raw": "python tools/verify_sketch_getters_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → 进草图 → 画 1 条线 + 1 段弧 → 逐个调取法 → 退草图 → 关件不保存，**17/17 通过**，证据落 output/sketch-getters-smoke-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/verify_sketch_getters_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘上；所引产物 verdict=pass 18/18，正文写 17/17"
+   },
+   {
+    "raw": "pytest tests/test_sw_sketch_contract.py（**12 条契约测试，无 COM**）",
+    "kind": "pytest_file",
+    "path": "tests/test_sw_sketch_contract.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘上；正文只声明12条契约测试，无COM，未写通过数"
+   },
+   {
+    "raw": "python tools/probe_sketch_getter_shapes.py + probe_spline_creation.py + probe_spline_redraw.py（**真机**，SW 2026 SP4.1 / 34.4.1）：**按类型取法全是数值数组** （line/arc/ellipse = **12 / 16 / 22** 个 `float` 每实体，画 1/2 个 ⇒ 12/24 · 16/32 · 22/44）；★★ 并查出 **`sketch_spline` 是静默空操作** —— `CreateSpline2` 返回 `None`、段数 **0**，**重绘后仍是 0**（排除了官方 Remark 的「必须重绘」解释）⇒ 已改成**失败即抛**",
+    "kind": "py_script",
+    "path": "tools/probe_sketch_getter_shapes.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "三个脚本均在盘上；查出get_*返回数值数组，sketch_spline静默空操作（已改失败即抛）"
+   },
+   {
+    "raw": "python tools/probe_slot_and_point_shapes.py（**真机**，SW 2026 SP4.1 / 34.4.1）：★ **推翻轮 141 的一概而论** —— `get_sketch_slots` 画 1/2 个 ⇒ **1/2** 个 `CDispatch`；`get_sketch_points` 画 1/2 条直线 ⇒ **2/4** 个（**每条线两个端点**）⇒ **这两条返回对象列表**，而 `get_lines`/`get_arcs`/`get_ellipses` 返回数值数组",
+    "kind": "py_script",
+    "path": "tools/probe_slot_and_point_shapes.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘上；查出slots/points返回CDispatch对象列表，推翻轮141一概而论"
+   },
+   {
+    "raw": "python tools/capture_sketch_evidence.py（**真机**，2026-10-01 轮 222 / 砌墙 W1：新零件 → 画 1 条线 + 1 个圆 → **退草图** → 按名取草图对象 → 4 个读数 + 2 个负例，**verdict: pass**，证据落 output/sketch-evidence.json）—— ★ 这一步是**挂成 MCP 工具之后**的验证：走的是工具真实路径（import tool_specs_batch18._sketch_args），不是只调底层函数。★ 它当场抓到一个只有真机能暴露的 bug：草图关闭时 sw_part.current_sketch_name 回**英文 fallback**「Sketch1」，而中文 UI 下真名是「草图1」⇒ 新加 sw_sketch.resolve_sketch （中英文候选名 → 特征树兜底 → 抛错）修掉。",
+    "kind": "py_script",
+    "path": "tools/capture_sketch_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件在盘上；自述verdict pass，并当场抓到fallback命名bug已修"
+   }
+  ],
+  "limitations_n": 9,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 36,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e036.json",
+  "id": "geometric_tolerance",
+  "level": "stitched",
+  "verified_versions": [],
+  "evidence": [
+   {
+    "raw": "python tools/verify_gtol_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → InsertGtol → 加指示符 → 关件不保存）—— ⚠ **3/5**：`insert_gtol` **通过**、**`add_gtol_indicator` 失败**（证据落 output/gtol-smoke-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/verify_gtol_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上；同批 JSON 产物自述 verdict=fail · passed 3/5"
+   },
+   {
+    "raw": "pytest tests/test_sw_gtol_contract.py（**16 条契约测试，无 COM**）",
+    "kind": "pytest_file",
+    "path": "tests/test_sw_gtol_contract.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "契约测试文件在盘上（10202 字节）；本条未声明通过数"
+   }
+  ],
+  "limitations_n": 10,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 37,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e037.json",
+  "id": "standard_parts_toolbox",
+  "level": "verified",
+  "verified_versions": [
+   "2026 SP4.1"
+  ],
+  "evidence": [
+   {
+    "raw": "python -c \"import sw_toolbox_index as tb; print(len(tb.list_standards()), len(tb.load_index()['parts']))\"（**2026-10-01 轮 163 实跑**：**19** 套标准 / **1844** 个零件）",
+    "kind": "other",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "内联 python -c 命令，非路径条目；只读复跑得 19 套 / 1844 个零件，与原文一致"
+   },
+   {
+    "raw": "tb.search('bearing') ⇒ **184** 条（检索可用）",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：称 bearing 检索得 184 条；只读复跑亦为 184，不自述失败"
+   },
+   {
+    "raw": "★ **可核的产物**：`scripts/sw_toolbox_index.py`（实现）+ `scripts/toolbox_index.json`（索引本体）—— ★ 上面那两个数字（19 套 / 1844 个零件）可从它们重算。",
+    "kind": "py_script",
+    "path": "scripts/sw_toolbox_index.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "原文列两文件，均在盘上；path 取首个 .py 故三字段不适用；index.json 顶层无 verdict/passed/total"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 38,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e038.json",
+  "id": "sketch_chamfer",
+  "level": "verified",
+  "verified_versions": [
+   "2026 SP4.1"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/verify_sketch_edit_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → 进草图 → 两条相接直线 → 选中两条（选区计数 **2**）→ `create_sketch_chamfer(chamfer_type=2, distance_mm=5)` ⇒ **线段数 2 → 3**）—— **10/10** `verdict: pass`",
+    "kind": "py_script",
+    "path": "tools/verify_sketch_edit_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在；其产物 output/sketch-edit-smoke-evidence.json 实读 verdict=pass、10/10、段数 2→3"
+   },
+   {
+    "raw": "python tools/probe_chamfer_forms.py（**真机**，逐类型试：type0/type1 段数不变 · **type2 段数 2 → 3**）",
+    "kind": "py_script",
+    "path": "tools/probe_chamfer_forms.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在；产物 output/chamfer-forms.json：type0/1 changed=false、type2 changed=true"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 39,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e039.json",
+  "id": "gtol_insert",
+  "level": "verified",
+  "verified_versions": [
+   "2026 SP4.1"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/verify_gtol_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → `insert_gtol()` **拿到 CDispatch**）",
+    "kind": "py_script",
+    "path": "tools/verify_gtol_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘；产物 output/gtol-smoke-evidence.json 顶层 verdict=fail、3/5"
+   },
+   {
+    "raw": "python tools/probe_gtol_frame_order.py（**真机**：`ConvertFormat()` ⇒ 0 → **`AddFrame()` ⇒ True** → `GetFrameCount` ⇒ **2** → `GetFrame(1)/(2)` **有对象**）",
+    "kind": "py_script",
+    "path": "tools/probe_gtol_frame_order.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘；产物 output/gtol-frame-order.json 无顶层三字段，frames[1][2] 有对象"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "第1条证据脚本产物 output/gtol-smoke-evidence.json 顶层 verdict=fail、passed 3<total 5（两项 add_gtol_indicator 失败；limitations 声明不含该半）"
+ },
+ {
+  "n": 40,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e040.json",
+  "id": "drawing_current_sheet_query",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 301）★ **PASS 5/5** —— 图纸比例读(1:1) · 写 1:5/1:2/1:1 三个都回读一致 · 负例(numerator=3 / -1:5 / 图纸名不存在)都显式拒绝 · 证据 output/sheet-scale-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/sheet-scale-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 5,
+    "total": "查不到",
+    "note": "在盘上；verdict=pass · passed=5 · 无 total 键（用 of=5）"
+   },
+   {
+    "raw": "python tools/capture_drawing_query_evidence.py（真机，2026-10-01 轮 224 / 砌墙 W2：新建空工程图 ⇒ 三个读数 + 在零件上的负例 + 返回结构不足的负例，verdict: pass，证据落 output/drawing-query-evidence.json）—— ★ 关键正例：空图纸上 list_views 回空表（证明假视图被过滤）。",
+    "kind": "json_artifact",
+    "path": "output/drawing-query-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "在盘上；verdict=pass · 无 passed/total 键；同名 .py 也在盘上"
+   },
+   {
+    "raw": "python tools/probe_drawing_object_routes.py（真机探针，定下三个未知：model.GetType()==3 且 GetCurrentSheet() 能直接调 · GetProperties2 是 8 个 double · 空图纸 GetFirstView() 回的是图纸本身；证据 output/drawing-object-routes.json）",
+    "kind": "json_artifact",
+    "path": "output/drawing-object-routes.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "在盘上；无 verdict/passed/total 键；两条 steps 均取到数"
+   },
+   {
+    "raw": "pytest tests（全量 0 failed，含两个「钉死数量」守卫已同步：all_specs() 65 / 协议层 110）",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文散：自称全量 pytest 0 failed、钉 all_specs()65 / 协议层110"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 41,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e041.json",
+  "id": "file_custom_property_read",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_custom_property_evidence.py（真机，2026-10-01 轮 227 / 砌墙 W3：新建零件 ⇒ Add3 写一个属性（count 28→29）⇒ **读回写入值** ⇒ 读全部（count_read 29 == count_reported 29）⇒ 2 个负例，verdict: pass，证据落 output/custom-property-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/capture_custom_property_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在；证据 output/custom-property-evidence.json 顶层 verdict=pass"
+   },
+   {
+    "raw": "python tools/probe_custom_property_reads.py（真机探针：定下「管理器必须当方法调用」与「by-ref out 不通、只能用单返回值的 Get」；证据 output/custom-property-reads.json）",
+    "kind": "py_script",
+    "path": "tools/probe_custom_property_reads.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在；证据 JSON 无顶层 verdict，verdict_readback.ok=true"
+   },
+   {
+    "raw": "pytest tests（全量 0 failed；两个「钉死数量」守卫已同步：all_specs() 67 / 协议层 112）",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：自称全量 pytest 0 failed、all_specs 67/协议层 112，无具体文件路径"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 42,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e042.json",
+  "id": "sketch_build",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 399）★ **PASS** —— 24h 计划 v2 段 3：`solidworks_auto_dimension_sketch`（按官方 `ISketch.AutoDimension2` 给当前草图建**真实模型尺寸**）。真机：有活动草图时 ⇒ **status=pass · status_code=0 · selected=2**；负例（**没有活动草图**）⇒ **status=blocked · error_code=SKETCH_NOT_ACTIVE**。证据 output/part-read-dimension-evidence.json。★ 它建的是**真实的 `DisplayDimension`**（★ 可被工程图导入复核），不是草图里画几条线。",
+    "kind": "json_artifact",
+    "path": "output/part-read-dimension-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；无 passed/total 键；负例=无活动草图回 SKETCH_NOT_ACTIVE"
+   },
+   {
+    "raw": "python 真机（轮 398）★ **PASS** —— 24h 计划 v2 段 2「草图图元」5 个工具（`mcp-server/tool_specs_batch54.py`）：`solidworks_sketch_add_arc` · `solidworks_sketch_add_ellipse` · `solidworks_sketch_add_polygon` · `solidworks_sketch_add_slot` · `solidworks_sketch_add_centerline`。真机（走 `sw_guard`）判据是**段数**（独立于返回值 —— `CreateArc` 那些回 COM 对象而“回对象”≠“图形在”）：arc [0→1] · ellipse [0→1] · polygon [0→7] · slot [0→5] · centerline [0→1]；负例（**不存在的草图名**）⇒ **抛 RuntimeError**。证据 output/sketch-primitives-evidence.json。★★ 同轮抓到两个真 bug：① `sw_sketch.resolve_sketch` 对**非空但找不到**的名字**静默回退**到「特征树里最后一个草图」（会让调用方在**另一个草图**上读/写）—— 已修（兜底只对空名字成立）；② 本批 5 条 ToolSpec **漏了 `inject=\\\"model\\\"`**（会让工具拿不到文档对象、一调就 TypeError）—— **契约测试当场抓到**，已补。",
+    "kind": "json_artifact",
+    "path": "output/sketch-primitives-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；5 个图元段数均增加；负例抛 RuntimeError（预期）"
+   },
+   {
+    "raw": "python tools/capture_sketch_build_evidence.py（真机，2026-10-01 轮 229 / 砌墙 W4：新建零件 → start（前视）→ 画线 → 画圆 → 画矩形 → end，★ **并用 W1 的只读工具回读断言**：线后 count_lines=1 · 圆后 count_arcs=1 · 矩形后 count_lines=5（1 线 + 4 边）· **关掉草图后仍读到 5**；另记两条：不 start 就画线 = 静默 · 坏基准面名 = ValueError。verdict: pass，证据落 output/sketch-build-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/capture_sketch_build_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘；其产物 sketch-build-evidence.json 顶层 verdict=pass"
+   },
+   {
+    "raw": "python tools/capture_sketch_evidence.py（W1，只读批；与本批构成**读写配对**）",
+    "kind": "py_script",
+    "path": "tools/capture_sketch_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘（8223 字节）；仅描述只读回读批，无失败断言"
+   },
+   {
+    "raw": "pytest tests（全量 0 failed；两个「钉死数量」守卫已同步：all_specs() 72 / 协议层 117）",
+    "kind": "pytest_file",
+    "path": "tests",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "目录在盘；原文称全量 0 failed，未点名具体测试文件"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 43,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e043.json",
+  "id": "feature_build_extrude",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_feature_build_evidence.py（真机，2026-10-01 轮 230 / 砌墙 W4 续：新建零件 → batch21 建草图（矩形 40×20）→ extrude_boss(10) ⇒ ★ **包围盒 size [40,20,10]**；再建圆草图 → extrude_cut(0=完全贯穿) ⇒ 特征树 19→21；另一新零件 → extrude_midplane(总深 10) ⇒ size [40,20,10] 且 min/max **±5**（两侧对称）；负例：不存在的草图名 ⇒ ValueError。verdict: pass，证据落 output/feature-build-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/capture_feature_build_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘(10085B)；其产出 output/feature-build-evidence.json 也在盘，顶层 verdict=pass"
+   },
+   {
+    "raw": "python tools/capture_sketch_build_evidence.py（batch21；与本批合起来构成**建模最小闭环**）",
+    "kind": "py_script",
+    "path": "tools/capture_sketch_build_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘(8701B)；原文只述 batch21 与建模最小闭环，未给任何结果数字"
+   },
+   {
+    "raw": "pytest tests（全量 0 failed；两个「钉死数量」守卫已同步：all_specs() 75 / 协议层 120）",
+    "kind": "pytest_file",
+    "path": "tests",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "tests 目录在盘；原文自述全量 0 failed 并钉 75/120，非可解析 JSON"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 44,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e044.json",
+  "id": "chamfer_fillet_on_selection",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_chamfer_fillet_evidence.py（真机，2026-10-01 轮 231 / 砌墙 W4 续：建草图→拉伸成盒 → 选 `index:0` → `chamfer(2mm)` ⇒ 特征「**倒角1**」（19→20）；再选 `index:1` → `fillet(3mm)` ⇒ 特征「**圆角1**」（→21）；★ **对照实验**：清空选区后调用 ⇒ **特征数不变**（21→21，且返回对象无名）⇒ 证实「它作用在当前选择上」；负例：`index:9999` ⇒ EntitySelectionError（给出上界 18）。verdict: pass，证据落 output/chamfer-fillet-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/capture_chamfer_fillet_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在；产物 output/chamfer-fillet-evidence.json 也在，顶层 verdict=pass"
+   },
+   {
+    "raw": "pytest tests（全量 0 failed；两个「钉死数量」守卫已同步：all_specs() 77 / 协议层 122）",
+    "kind": "pytest_file",
+    "path": "tests",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "tests 目录在；本条自称全量 0 failed（我没跑 pytest）"
+   },
+   {
+    "raw": "python -m pytest tests/test_sw_chamfer_geometry.py（**6 passed**，★ 纯几何无 COM：两个解析公式 + **两条负例**）",
+    "kind": "pytest_file",
+    "path": "tests/test_sw_chamfer_geometry.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "测试文件在(4314B)；本条自称 6 passed（我没跑 pytest）"
+   }
+  ],
+  "limitations_n": 7,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 45,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e045.json",
+  "id": "mass_property_read",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_mass_property_evidence.py（真机，2026-10-01 轮 234 / 砌墙 W5：建草图（矩形 40×20）→ 拉伸 10mm → 读质量属性 ⇒ ★ **数字断言**：volume **8000** · surface_area **2800** · center_of_mass **[0,0,−5]**；另如实记录 `mass` 的量纲疑点与 `AccuracyLevel` 读不到；负例：在**工程图**上调用 ⇒ RuntimeError。verdict: pass，证据落 output/mass-property-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/capture_mass_property_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上；引用的 mass-property-evidence.json 顶层 verdict=pass"
+   },
+   {
+    "raw": "python tools/probe_mass_property_reads.py（真机探针：定下「`CreateMassProperty` **当属性取**即可」——★ 与其兄弟 `CustomPropertyManager`（**必须当方法调**）**相反**；并实测出**单位是毫米系**；证据 output/mass-property-reads.json）",
+    "kind": "py_script",
+    "path": "tools/probe_mass_property_reads.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上；引用的 mass-property-reads.json 存在但无顶层 verdict"
+   },
+   {
+    "raw": "pytest tests（全量 0 failed；两个「钉死数量」守卫已同步：all_specs() 78 / 协议层 123）",
+    "kind": "pytest_file",
+    "path": "tests",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "指目录 tests（非文件）；「全量 0 failed」为叙述，无可读产物"
+   },
+   {
+    "raw": "python tools/probe_mass_units_controlled.py（**真机对照实验**，2026-10-01 轮 263：★ **四个量的单位定死** —— Density **kg/m³**（赋 AISI 1020 ⇒ **7900.0**）· Volume **mm³** · CenterOfMass **mm**（z=-5.0）· **Mass = Volume × Density**（数值即 µg））",
+    "kind": "py_script",
+    "path": "tools/probe_mass_units_controlled.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上；仅陈述对照实验结论，未给产物路径"
+   }
+  ],
+  "limitations_n": 8,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 46,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e046.json",
+  "id": "assembly_read",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_assembly_evidence.py（真机，2026-10-01 轮 237 / 砌墙 W6：造临时零件（40×20×10 盒）存到 output/_fixtures/ → 建装配 → 同一零件加两次；★ **一正一反**：重叠（都在 z=0）⇒ interference_count **1** · 分开（z=0 与 z=60）⇒ **0**（status pass）；另回读 2 个组件与配合清单。verdict: pass，证据落 output/assembly-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/capture_assembly_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "真机脚本在盘；其产物 assembly-evidence.json 顶层 verdict='pass'（重叠1/分开0）"
+   },
+   {
+    "raw": "pytest tests（全量 0 failed；两个「钉死数量」守卫已同步：all_specs() 81 / 协议层 126）",
+    "kind": "pytest_file",
+    "path": "tests",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "声称全量 pytest 0 failed；tests/ 实存 252 个测试文件，未复跑"
+   }
+  ],
+  "limitations_n": 6,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 47,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e047.json",
+  "id": "simulation_loads_wiring",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_simulation_loads_evidence.py（真机，2026-10-01 轮 238 / 砌墙 W7：★ **走工具真实路径**（`inject`(resolve_study) + `pre_call`(选面) + `derived_args`(补 model)）⇒ 夹具「**固定-1**」· 载荷「**力-1**」· 选区计数 **1/1** · `LoadsAndRestraintsManager.Count == 2`。verdict: pass，证据落 output/simulation-loads-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/capture_simulation_loads_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上；所指 output/simulation-loads-evidence.json 顶层 verdict=pass"
+   },
+   {
+    "raw": "python tools/capture_simulation_evidence.py（真机，既有脚本，**能力层直调**：赋材料 → 夹具 → 载荷（Count == 2）→ CreateMesh（**7,310 单元**）→ RunAnalysis（1 秒）→ **study.Results 非空、GetPlotCount == 4**（品质/应力/位移/应变）。verdict: pass）",
+    "kind": "py_script",
+    "path": "tools/capture_simulation_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上；原文自称 verdict: pass，无失败表述"
+   },
+   {
+    "raw": "pytest tests（全量 0 failed；两个「钉死数量」守卫已同步：all_specs() 83 / 协议层 128）",
+    "kind": "pytest_file",
+    "path": "tests",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "tests 目录在盘上；原文称全量 0 failed"
+   }
+  ],
+  "limitations_n": 8,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 48,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e048.json",
+  "id": "simulation_study_create",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_simulation_study_evidence.py（真机，2026-10-01 轮 239 / 24h 段 1.1：★ **走工具真实路径** ⇒ 建研究 `DSH-141` 成功，★ `entry_name` = **CreateNewStudy3**、`error_code` = 0；★ **建完回读**名字逐字相等；★ **列出** count 1 且含该名字；★ **负例**：取不存在的名字 ⇒ `found` 为 **False**。verdict: pass，证据落 output/simulation-study-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/capture_simulation_study_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上7981B；其产出 JSON 也在，顶层 verdict=pass，无 passed/total"
+   },
+   {
+    "raw": "python tools/probe_simulation_study_shapes.py（真机探针：定死三个真形状 —— `create_static_study` 回 **tuple(3)**、`iter_studies` yield **`(index, study)`**、`get_study_by_name` 找不到**回 None 不抛错**）",
+    "kind": "py_script",
+    "path": "tools/probe_simulation_study_shapes.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上7239B；只记录三个返回形状，无成败结论"
+   },
+   {
+    "raw": "python scripts/check_param_binding.py（★ 本批新增的门禁：声明参数必须『有归属』；★ **已用负例证明它抓得住** —— 临时摘掉 `param_alias` ⇒ exit 1 并精确指出是哪个参数）",
+    "kind": "py_script",
+    "path": "scripts/check_param_binding.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "门禁脚本在盘上16910B；exit 1 属故意摘 param_alias 的负例，非失败"
+   },
+   {
+    "raw": "pytest tests（全量 0 failed；两个「钉死数量」守卫已同步：all_specs() 86 / 协议层 131）",
+    "kind": "other",
+    "path": "tests",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "指向目录 tests 而非单文件；目录在，自述全量 0 failed"
+   }
+  ],
+  "limitations_n": 6,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 49,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e049.json",
+  "id": "mesh_create_readback",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_mesh_solve_evidence.py（真机，2026-10-01 轮 242：★ **经 `run_isolated` 在子进程执行** ⇒ `mesh_size` 回 `{element_size: 4930.5, tolerance: 246.5}`（0.2s）；`create_mesh` 回 **`{ok: True, element_count: 7250}`**（0.6s）⇒ ★ **网格真的建出来了**；★ 证据落 output/mesh-solve-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/capture_mesh_solve_evidence.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "脚本在盘上；所引json顶层verdict=pass，但该文件记create_mesh 1.4s（证据写0.6s）"
+   },
+   {
+    "raw": "tests/test_isolate.py（4 条：正常回值 · ★ **超时即杀子进程** · 异常不吞 · 模块不存在说清楚）",
+    "kind": "pytest_file",
+    "path": "tests/test_isolate.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "文件在盘上；实测4个test_函数，与“4条”一致"
+   },
+   {
+    "raw": "tools/experiment_subprocess_com.py（★ 隔离方案的**三前提**真机验过：子进程能连同一实例 / 卡住不阻塞主进程 / 可被杀）",
+    "kind": "py_script",
+    "path": "tools/experiment_subprocess_com.py",
+    "exists": true,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "文件在盘上8161B；散文称三前提已真机验过，未独立复核"
+   }
+  ],
+  "limitations_n": 4,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 50,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e050.json",
+  "id": "analysis_run_readback",
+  "level": "stitched",
+  "verified_versions": [],
+  "evidence": [
+   {
+    "raw": "⚠ **无** —— 真机实测 `timed_out=True`（300s 后杀子进程）；★ 该结果已如实记入 `output/mesh-solve-evidence.json` 的 `run_analysis.timed_out`",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "自述无证据：真机 timed_out=True；所引 mesh-solve-evidence.json 确实存在"
+   },
+   {
+    "raw": "★ **反证（有价值）**：同一份证据里 `mesh_size` 与 `create_mesh` **成功** ⇒ ★ 说明失败点**精确定位在「跑求解」**，而不是整条链",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "反证：同链 mesh_size 与 create_mesh 成功，失败点精确在跑求解这一步"
+   }
+  ],
+  "limitations_n": 8,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 51,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e051.json",
+  "id": "simulation_load_family_breadth",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 425）★ **PASS** —— 刚性连接件（B 组第一条）。真机（走 `sw_guard`，6.4 s 无弹窗）：双体零件上★ **计数 0→1**（判据：回读计数**恰好 +1**）。证据 output/rigid-twobody-evidence.json。★★ 而它一次证实了前面**两条**链上的假设：① 崩的真因是「**读选区只拿得到第 1 个实体**」（事实 336/337：`GetSelectedObject6`/`4`/`5`/`GetSelectedObjectsFace` **五个入口都试过**，而 `Count2(-1)` 如实报 2）⇒ 换成「**按已知实体清单装数组**」（不读选区）后**不再崩**；② 它**要两个体**（事实 338：同族形参名写着 `Comp1`/`Comp2`）—— 单体零件上它**成功返回却不建**（计数 0→0、无错误），那是**应然的**。★★ 因此本工具**不读选区**，而是自己按**序号**把两组实体装好，且**两侧体号可分别指定**。",
+    "kind": "json_artifact",
+    "path": "output/rigid-twobody-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；无 passed/total 字段。"
+   },
+   {
+    "raw": "python 真机（轮 415）★ **PASS** —— ◆ 热载荷组：convection 0→1 · heat_flux 1→2 · heat_power 2→3 · **temperature 3→4** · radiation 4→5；◆ 结构载荷组：distributed_mass 0→1 · force 1→2 · **remote_load 2→3**。★ 而真因**不在探针**：能力层里一张**手抄 CHM 的名单**`_ERRORCODE_MEMBERS` **漏了 `AddTemperature` 与 `AddRemoteLoad`** ⇒ `_wants_error_code` 回 False ⇒ **不补 `out_i4()`** ⇒ `com_error(-2147352561, 非选择性的参数)`。★ 而定位它用的是**出厂类型库**：**PowerShell  的纯元数据反射**（`[Reflection.Assembly]::LoadFrom` → `SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）—— ★ **零依赖、不需要 SolidWorks 实例**；它给出★★ **全部 35 个 `Add*` 都带 `ErrorCode:Int32&`**（不带的 0 个）⇒ 名单改为那 35 个（一条改动修好两个名字）。证据 output/thermal-loads-evidence.json 与 output/loads-groupa3-evidence.json。",
+    "kind": "json_artifact",
+    "path": "output/thermal-loads-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；原文另提及的 loads-groupa3 也存在。"
+   },
+   {
+    "raw": "python 真机（轮 414）★ **PASS** —— 24h 计划 v2 段 5（A 组收尾）：`solidworks_simulation_apply_distributed_mass` 与 `solidworks_simulation_apply_force`。真机（走 `sw_guard`，4.0 s 无弹窗）：在 **静力算例**上★ **distributed_mass 计数 0→1** · **force 计数 1→2**（**单调序列**）。证据 output/loads-groupa3-evidence.json。★★ 而真因值得单记：第一版用了**固定算例名** ⇒ 回读计数变 `-1`（`_loads_count` 对“取不到”的约定）⇒ **判据假红**；★ 而诊断探针证明 `Count` 在**静力与热两种算例上都正常**⇒ 真因是**算例名重复**（仓里自注“能力层不检查重名”）⇒ 改成**带时间戳的唯一名**后立刻 pass。★ 这两条与热载荷那 4 条**相反**：它们要 **static**（各载荷对算例类型要求不同）。⚠ `remote_load` **仍不注册**：报缺必填参数，★ 而仓里来源块记的官方声明与`_check` 一致 ⇒ ★ 嫌疑 CHM（2021 版）过时，与 `AddTemperature` 同形（反射 dump 里两个名字都没有）⇒ 按铁律 5 不猜。",
+    "kind": "json_artifact",
+    "path": "output/loads-groupa3-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；原文自述 remote_load 仍不注册。"
+   },
+   {
+    "raw": "python 真机（轮 408）★ **PASS** —— 24h 计划 v2 段 5（仿真载荷族）：**4 条热载荷恢复注册**（convection / heat_flux / heat_power / radiation）。★ 起点是**抄官方声明**（收敛报告写的下一步）：CHM 里六条 VB 声明**一模一样**（`AddXxx(DispArray As Object, ByRef ErrorCode)`）且与**已能用的** `AddElasticConnector` 同形⇒ 形态没错。★★ 而线索来自**载荷的性质**：这五条是**热载荷**，而轮 402 我一直在 **`static`** 算例上试它们。真机（走 `sw_guard`，4.9 s 无弹窗）：建 **thermal（`study_type=3`）** 算例后 ★ **convection 0→1 · heat_flux 1→2 · heat_power 2→3 · radiation 3→4**（逐条 +1）。证据 output/thermal-loads-evidence.json。★ 各载荷对算例类型的要求**不同**：这 4 条要 **thermal**，而 `elastic_connector` 相反（在 **static** 下成、在 thermal 下不成）。⚠ `temperature` **仍不注册**：报 `-2147352561 非选择性的参数`（缺必填）—— CHM 那页是 **2021 版**、本机是 2026；而反射 dump 与 arity 表里**都没有这个名字**⇒ 按铁律 5 不猜，下一步查 CHM 的**示例代码**或活的类型库。",
+    "kind": "json_artifact",
+    "path": "output/thermal-loads-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；原文自述 temperature 仍不注册。"
+   },
+   {
+    "raw": "python 真机（轮 402）★ **PASS** —— 24h 计划 v2 段 5（仿真载荷族）：`solidworks_simulation_apply_elastic_connector`（`sw_simulation_loads.apply_elastic_connector_report`）。★ 调用走**工具层同序**（`inject` → `pre_call` → `derived_args`），★★ 而且照既有脚本留下的**先例警告**：每次**先 `ClearSelection2(True)`** （`select_face_at` 的 `append=False` 只表示“不追加”、**不清空**）。真机：载荷计数 **0 → 1**（★ 判据是回读计数恰好 +1，不是返回值）。证据 output/loads-simple6-evidence.json。⚠ **同批另 5 条（convection / heat_flux / heat_power / temperature / radiation）真机未建成** ⇒ 按硬约束⑥ **回退注册**（★ 包装与探针保留）；★ 真因：这一族里**吃单实体 / 吃数组 / 参数更多**三种混在一起，★ 而仓里的来源块**只抄了 4 条官方声明**（事实 317）。",
+    "kind": "json_artifact",
+    "path": "output/loads-simple6-evidence.json",
+    "exists": true,
+    "verdict": "partial",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=partial；steps 里 6 条中 5 条 ok=false。"
+   },
+   {
+    "raw": "python 真机（轮 349）★ **PASS 5/5** —— **三类荷载全通 + 回读载荷数 = 3**：`add_pressure` ⇒ `ok` · `add_force` ⇒ `ok` · `add_gravity` ⇒ `ok`（都是 `<COMObject>`）· ★ `LoadsAndRestraintsManager.Count` ⇒ **3**（★ 规则 6 的回读：三个荷载**真的加进去了**）· 证据 output/loadfamily-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/loadfamily-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；无 passed/total 字段。"
+   },
+   {
+    "raw": "python 真机（轮 348/349）★ **两处通用修复（都在能力层 `_check`，一处 ⇒ 整批受益）**：① **末尾 `ByRef ErrorCode` 统一补 `out_i4()`**（★ 缺它 ⇒ `DISP_E_PARAMNOTOPTIONAL`「非选择性的参数」）；② **第 3 参 `RefGeom` 裸传 `None` ⇒ 换成空 Dispatch 参数包**（★ 裸 `None` ⇒ `com_error(-2147352571, '类型不匹配', None, 3)`）。★ 两处都**只对已从官方声明核过的成员**生效（★ 白名单，★ 表外不乱补 —— 铁律 5）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "讲两处通用修复（补 out_i4()、空 Dispatch），无路径。"
+   },
+   {
+    "raw": "python 真机（轮 245 的历史发现，本批兑现）★ `RegGeom`/`RefGeom` **不能裸传 `None`** —— ★ 而那时**只修了 `add_torque`，`add_force` 漏了**（★ 本轮补上）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "讲 RegGeom/RefGeom 不能裸传 None，无路径。"
+   },
+   {
+    "raw": "★ **静态那一半是绿的**：`all_specs()` 出现这 4 个工具 · `scripts/check_param_binding.py` **PASS**。",
+    "kind": "py_script",
+    "path": "scripts/check_param_binding.py",
+    "exists": true,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "该脚本在盘上；非 json，不读三字段。"
+   }
+  ],
+  "limitations_n": 10,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "第5条(轮402)所引 output/loads-simple6-evidence.json 顶层 verdict=partial，6条里5条 ok=false 计数不涨；第3、4条原文亦自称 remote_load/temperature「仍不注册」。"
+ },
+ {
+  "n": 52,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e052.json",
+  "id": "topology_iteration_options_backend_limited",
+  "level": "stitched",
+  "verified_versions": [],
+  "evidence": [
+   {
+    "raw": "⚠ **无**（真机报 `0x80010105`）—— ★ 该结果已如实落 `output/topology-readback-evidence.json` 的 `set_iteration_options`",
+    "kind": "json_artifact",
+    "path": "output/topology-readback-evidence.json",
+    "exists": true,
+    "verdict": "fail",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "原文自称「无（真机报 0x80010105）」；该 JSON 顶层 verdict=fail"
+   },
+   {
+    "raw": "★ **反证（有价值）**：同一份证据里 `set_goal` **成功**（0→1）⇒ ★ 说明**不是「拓扑域整体不行」**，而是**这一个调用**撞后端限制",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "反证：同证据 set_goal 成功(0→1)，非拓扑域整体问题"
+   },
+   {
+    "raw": "★ 静态那一半是绿的：`scripts/check_param_binding.py` PASS · 门禁链 18 道 exit 0",
+    "kind": "py_script",
+    "path": "scripts/check_param_binding.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "静态半绿：该脚本 PASS、门禁 18 道 exit 0"
+   }
+  ],
+  "limitations_n": 8,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 53,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e053.json",
+  "id": "mesh_size_sanity_gate",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_mesh_sane_evidence.py（真机，2026-10-01 轮 248：**4/4 通过**，★ **全程无弹框、不挂起**；证据落 output/mesh-sane-evidence.json）",
+    "kind": "json_artifact",
+    "path": "output/mesh-sane-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；4/4 记在 steps.judgement(passed/of)，不在顶层"
+   },
+   {
+    "raw": "★ **对照证据**：tools/capture_simulation_evidence.py 的 `output/simulation-evidence.json`（`suggested_size_mm: 4.933908705960544` · `element_count: 7310` · `plot_count: 4`）—— ★ 那是「参数生效」的权威参照",
+    "kind": "json_artifact",
+    "path": "output/simulation-evidence.json",
+    "exists": false,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "盘上不存在（脚本 tools/capture_simulation_evidence.py 在）"
+   },
+   {
+    "raw": "⚠⚠ 2026-10-04（接手轮）**如实补记（铁律 5）**：★ **`output/simulation-evidence.json` 当前不在仓里**（★ 脚本在、★ `output/` 被 gitignore）⇒ ★★ 上面那三个数字**回不到原文**，要复现就**重跑 `tools/capture_simulation_evidence.py`** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "更正记录：自述该 JSON 不在仓、三个数字回不到原文，需重跑脚本"
+   },
+   {
+    "raw": "★ 静态：`scripts/check_param_binding.py` PASS（★ 它当场抓到了本批初版漏写 `param_alias`）· 门禁链 18 道 exit 0",
+    "kind": "py_script",
+    "path": "scripts/check_param_binding.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上；此条是静态门禁 PASS 断言，非真机证据"
+   }
+  ],
+  "limitations_n": 8,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 54,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e054.json",
+  "id": "feature_readback_criterion",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_modeling_readback_evidence.py（真机，2026-10-01 轮 249：`criterion_selfcheck.ok = true`，★ 两侧都对；证据落 output/modeling-readback-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/capture_modeling_readback_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘9106B;其JSON顶层verdict=pass,自检ok=true"
+   },
+   {
+    "raw": "★ **三轮真机打磨**：① 直接调 `GetWhatsWrong2` ⇒ 取不到；② 改用 `Extension.GetWhatsWrongCount` ⇒ 取到（0 条错）；③ 过滤从「枚举容器名」改成「`GetTypeName2` 非空」（★ 与 UI 语言无关）",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文:①GetWhatsWrong2取不到,②改用Extension.GetWhatsWrongCount取到0错"
+   },
+   {
+    "raw": "★ 静态：`scripts/check_union_conventions.py` PASS · `check_param_binding.py` PASS",
+    "kind": "py_script",
+    "path": "scripts/check_union_conventions.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "两脚本在盘36005B/16910B;条目自称均PASS"
+   }
+  ],
+  "limitations_n": 7,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 55,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e055.json",
+  "id": "modeling_feature_readback_tools",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★ 既有冒烟（权威 · 本仓库自己的判据）：`python tools/verify_dome_smoke.py` ⇒ 9/9 · verdict: pass（★ 两个独立证据：边界框逐分量变了 [20,60,100]→[34.2222,60,100]；特征树条数 19→20 · ★ 且逐条标注了能证明什么、不能证明什么）",
+    "kind": "py_script",
+    "path": "tools/verify_dome_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上 14892 字节；原文自述 9/9 · verdict: pass"
+   },
+   {
+    "raw": "★ `python tools/capture_modeling_readback_evidence.py` ⇒ verdict: pass（2/4：`shell` 与 `insert_dome` 的 readback 三条全真）",
+    "kind": "py_script",
+    "path": "tools/capture_modeling_readback_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上 9106 字节；原文自述 verdict: pass（2/4）"
+   },
+   {
+    "raw": "⚠ `python tools/verify_composite_curve_smoke.py` ⇒ 7/8 · verdict: fail，而它写明「前置成立 ⇒ 这是真失败」（★ 不是前置不可达那种免责失败）",
+    "kind": "py_script",
+    "path": "tools/verify_composite_curve_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上 13689 字节；原文自述 7/8 · verdict: fail 判真失败"
+   },
+   {
+    "raw": "★ `python tools/probe_shell_thickness_units.py` ⇒ 单位判决 = 毫米（t=2 ⇒ 空腔 96×56×18；t=4 ⇒ 92×52×16）· ⚠ 官方文档写 meters 对本机不成立",
+    "kind": "py_script",
+    "path": "tools/probe_shell_thickness_units.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上 8399 字节；原文自述单位判决=毫米"
+   },
+   {
+    "raw": "`python tools/probe_rib_preconditions.py` ⇒ 三变体全 8→8（★ 无错误、无特征）—— ★ 排除了一个假设（★ 排除假设与找到正解同样是进展）",
+    "kind": "py_script",
+    "path": "tools/probe_rib_preconditions.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘上 8626 字节；原文自述三变体全 8→8 无特征"
+   }
+  ],
+  "limitations_n": 8,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "evidence[2] tools/verify_composite_curve_smoke.py 原文自述 7/8 · verdict: fail，且写明「前置成立 ⇒ 这是真失败」—— 可达证据自称失败，level 却标 verified。"
+ },
+ {
+  "n": 56,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e056.json",
+  "id": "config_and_export",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_config_export_evidence.py（真机，2026-10-01 轮 255：**verdict: pass** · 10/12；★ 证据落 output/config-export-evidence.json）",
+    "kind": "json_artifact",
+    "path": "output/config-export-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "JSON 顶层 verdict=pass；10/12 在 steps.judgement 下，非顶层"
+   },
+   {
+    "raw": "★ 既有冒烟（§5.0 复用）：`python tools/verify_bmp_smoke.py` ⇒ **8/8 · verdict: pass**（★ 它只证「尺寸按请求走 + 文件合法」，**不证画面内容** —— ★ 如实标注）",
+    "kind": "py_script",
+    "path": "tools/verify_bmp_smoke.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "冒烟脚本在盘上；自报 8/8 pass，明说不证画面内容"
+   },
+   {
+    "raw": "★ 静态：`scripts/check_param_binding.py` PASS（117 个工具）· `check_union_conventions.py` PASS · `tests/test_server_wiring.py` 8 passed",
+    "kind": "other",
+    "path": "tests/test_server_wiring.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "三项静态声明自报 PASS/8 passed；仓库并行改动下未复核"
+   }
+  ],
+  "limitations_n": 9,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 57,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e057.json",
+  "id": "render_materials_and_appearance",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_appearance_evidence.py（真机，2026-10-01 轮 258：**verdict: pass** · 4/4；★ 证据落 output/appearance-evidence.json）",
+    "kind": "py_script",
+    "path": "tools/capture_appearance_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本在盘(8472B)；产出 appearance-evidence.json 顶层 verdict=pass，4/4 记在 steps.judgement"
+   },
+   {
+    "raw": "★ 既有工具（本批**没有**新建工具）：`solidworks_list_render_materials` / `solidworks_collect_appearance_evidence` / `solidworks_refresh_scene_graph`",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "说本批没新建工具，只点名三个既有 MCP 工具"
+   }
+  ],
+  "limitations_n": 7,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 58,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e058.json",
+  "id": "selection_helpers",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 397）★ **PASS 9/9** —— 24h 计划 v2 段 1「选择底座」的 6 个工具（`mcp-server/tool_specs_batch53.py`）：`solidworks_selection_count` · `solidworks_select_entity_by_index` · `solidworks_resolve_selection` · `solidworks_selection_point` · `solidworks_select_by_selector` · `solidworks_resolve_entity`。真机（走 `sw_guard`，3.94 s 无弹窗）：清空后计数 0 · 按序号选边/面 ⇒ 回读计数 1 · `selection_point` ⇒ **ok: true · point_mm: [-20.0, 0.0, -5.0]** · 解析选择器选中 ⇒ 1 · 选择器选中 ⇒ count 1 · 解析实体 ⇒ resolved true/count 1；三条负例全过（越界抛 EntitySelectionError · 空选区拒绝 · 非法选择器拒绝）。证据 output/selection-base-evidence.json。★★ **同轮真机抓到一个真 bug 并修掉**：`selection_point` 内部给 `GetSelectionPoint2` 与 `GetSelectionPoint` **都传了 `(1, -1)`**，而官方签名是 `GetSelectionPoint2(Index, Mark)`（**2 参**）与 `GetSelectionPoint(AtIndex)`（**1 参**）⇒ 走到 1 参那个必然报 `(-2147352562, '无效的参数数目。')`（★ 而那个错指不出是参数个数问题）；修法：**按名字给各自 arity** + **两个入口的报错都留住**（先前是后者覆盖前者）。★★ **另一条真机语义**：`GetSelectionPoint2` 对**面**有效（返回坐标）而对**顶点**的 6 种 (Index, Mark) 组合**全部回 None** —— \"selection point\" 是**选择时鼠标落在面上的那个位置**，顶点选中时没有面可投影。",
+    "kind": "json_artifact",
+    "path": "output/selection-base-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；自述 PASS 9/9"
+   },
+   {
+    "raw": "★ 端到端：`probe_selection_spec_e2e.py` **12/12 通过**（★ 声明式选择 + 按对象选实体）",
+    "kind": "py_script",
+    "path": "probe_selection_spec_e2e.py",
+    "exists": true,
+    "verdict": "不适用（非 JSON）",
+    "passed": "不适用（非 JSON）",
+    "total": "不适用（非 JSON）",
+    "note": "自述 12/12 通过；脚本真实存在"
+   },
+   {
+    "raw": "★ 既有：`sw_selection_spec.py` 的 `EntitySelectionError`（★ 越界会大声报错，真机证据见 `output/chamfer-fillet-evidence.json` 的 `negative_out_of_range`）",
+    "kind": "json_artifact",
+    "path": "output/chamfer-fillet-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；引用 negative_out_of_range"
+   },
+   {
+    "raw": "python 真机（2026-10-01 轮 266）：★ `selection_point` **判据自证通过**（两侧）—— 没选中 ⇒ ok=False + 明确原因；选中面 ⇒ ok=True + point；★ 证据 output/selection-point-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/selection-point-evidence.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层仅 captured_at/capability/steps"
+   },
+   {
+    "raw": "python 真机对照实验（2026-10-01 轮 267）：★ 三点对照 ⇒ 比值 ≈1.000 ⇒ **单位 = 毫米**（output/selection-point-units.json）",
+    "kind": "json_artifact",
+    "path": "output/selection-point-units.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层仅 captured_at/question/rows"
+   },
+   {
+    "raw": "python 真机（轮 328）★ **顶点枚举**：把 `entities_on_body` 扩展到 `VERTEX`（★ 用已有工具，**不新开**）⇒ 20×20×10 盒子 **FACE=6 · EDGE=12 · VERTEX=8**，★ **欧拉公式 `V−E+F=2` 成立** · 未知类型 ⇒ 显式拒绝 · 证据 output/vertices-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/vertices-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 2,
+    "total": "查不到",
+    "note": "顶层 verdict=pass、passed=2、无 total"
+   }
+  ],
+  "limitations_n": 8,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 59,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e059.json",
+  "id": "declarative_hole_creation",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 298）★ **PASS 5/5** —— 修掉单位 bug 之后，**5 个孔型全部在全新文档里建成**（through / blind 7->9 / counterbore 7->11 / countersink 7->10 / semicircular_slot 7->9）· 证据 output/hole-units-fixed-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/hole-units-fixed-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 5,
+    "total": "查不到",
+    "note": "顶层 verdict=pass、passed=5；无 total 键（有 of=5），5 个孔型 ok 全 true"
+   },
+   {
+    "raw": "python 真机（轮 297/296）：单位 bug 的两面 —— 毫米调 countersink **2/2 PASS**（output/countersink-mm-probe.json）· 米调报 `创建圆草图失败`（output/countersink-diag-probe.json）",
+    "kind": "json_artifact",
+    "path": "output/countersink-mm-probe.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 2,
+    "total": "查不到",
+    "note": "顶层 pass/2；同条另指 diag-probe.json，内含米调旧 bug 的 ok=false"
+   },
+   {
+    "raw": "python 真机（轮 292/293）：入口链 PASS · 有视图的图 · 见 drawing_view_operations 条",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "散文：只称入口链 PASS 与有视图的图，指向 drawing_view_operations 条，无文件可开"
+   }
+  ],
+  "limitations_n": 8,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 60,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e060.json",
+  "id": "weldment_cut_list",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 429）★ **PASS** —— **焊件切割清单那条链**（先建结构构件、再走切割清单）。真机：`evidence_before` 的 `cut_list_folders` = **[]** ⇒ `ensure_cut_list` **建出了** ⇒ `update_cut_list` 报 \"切割清单项目1\"（type=CutListFolder, body_count=1）⇒ `evidence_after` 非空 ⇒ `export_cut_list_csv` **224 字节**（★ 旧证据只有 **26 B**）。证据 output/cut-list-chain-evidence.json 与 output/cut-list-chain.csv。★★ 而唯一没过的 `set_cut_list_properties` 真因是**本地化名**：英文名（`Description`/`Material`）报「回读失败」，而**中文名（`说明`/`材料`）写入并回读得到**（cut-list-property-names-evidence.json PASS）。",
+    "kind": "json_artifact",
+    "path": "output/cut-list-chain-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "存在 1955B，顶层 verdict=pass；同引 CSV 224B 也在盘上"
+   },
+   {
+    "raw": "★★★ 2026-10-03（轮 496-498）**更正上面那条（轮 270）的「create_cut_list 后端限制」定性** —— ★ 它**不是后端限制**：★ 回筛：`GetIDsOfNames(\"InsertWeldmentCutList2\")` ⇒ **`dispid = 174`**（★ **不是 1**）；`Invoke(174, 0, DISPATCH_METHOD, True, VARIANT(VT_ARRAY|VT_DISPATCH, bodies))` ⇒ **4/4 全调通**、★★ 两条**树真的新增 `切割清单项目1`**。★ 而实现层**早就有 dispid 兜底**（`scripts/sw_weldment.py` L260-275，注释逐字：「SW2026 IDispatch 将 **DISPID 174** 的方法**同时暴露成值为 `None` 的伪属性**」）。★ **而旧证据 `output/weldment-evidence.json` 全仓 grep 不到产出者** ⇒ ★ **它是过时的** ⚠（★ 故本条据据它做出的「到不了」结论不成立）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "更正/推理记录：称 dispid=174 已调通；引的 weldment-evidence.json 实际存在(709B)但被当作过时"
+   },
+   {
+    "raw": "★★ 2026-10-03（轮 498）**按工具层契约的端到端证据——判据 `pass`** ✓ —— `python tools/prove_weldment_tools_e2e.py`（走 `sw_guard`，`sw_alive: true`、**零弹窗**，13.12s）：★ `solidworks_weldment_create_structural_member`（inject=model · `sketch_name` · `profile_path`）⇒ **ok: true**；★ `solidworks_weldment_ensure_cut_list`（inject=model · 无参）⇒ **{ok: true, n: 1}**；★★ 特征树：`WeldmentFeature` = **['焊接件']**、`CutListFolder` = **['切割清单项目1', '切割清单项目1']**；★ `solidworks_weldment_evidence` ⇒ `has_weldment_feature` / `has_structural_member` / `cut_list_folders` / `cut_list_items` 均可读。证据 `output/weldment-tools-e2e-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/weldment-tools-e2e-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "存在 3724B，顶层 verdict=pass；引的 prove_weldment_tools_e2e.py 也在"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 61,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e061.json",
+  "id": "simulation_solver_options",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 347）★ **PASS 3/3** —— 整条路通了：`create_study` ⇒ `ok=true` · `get_options` ⇒ **`CDispatch`** · `configure_static_solver_report(study, reference_pressure=1.0)` ⇒ **`ok=true` · `changed=[\"reference_pressure\"]` · `returned={'DefinedReferencePressure': 1.0}`**（★ **设置真的生效**）· 证据 output/solver-options-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/solver-options-evidence.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件存在；顶层只有 steps/captured_at，无这三个字段"
+   },
+   {
+    "raw": "python 真机（轮 346）★ **工具层修掉一处一行之差**：`resolve_study` 原先 `next(iter(iter_studies(sw)), None)` **没解包**（★ `iter_studies` 产 `(index, study)` 元组）⇒ 把元组当 study 传下去 ⇒ ★ **所有没声明 `study_name` 的工具全中招**。★ 修后 `study` = **`CDispatch`**，三个配置入口的报错**换了层次**（★ 从无意义的 `SldWorks.Application.X` 变成有意义的「该研究类型可能不是这一族」）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "记 resolve_study 少解包一层的修复经过，无可查路径"
+   },
+   {
+    "raw": "python 真机（轮 345）★ **建研究的两个真实前置查清**：① 第一参必须是 **`ISldWorks`**（★ 传 `doc` ⇒ `AttributeError: <unknown>.GetAddInObject`）· ② 文档里**必须有实体**（★ 否则 `swsStudyError_e = 1`）⇒ `create_study_report` 真机 `ok=true`。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "记建研究两个前置（须传 ISldWorks、文档须有实体）"
+   },
+   {
+    "raw": "python 真机（轮 273）★ `list_setter_summary`（零参）**ok=True**（9 个族 / 202 个 setter 名）· ★★ **证据 `output/batch36-evidence.json`** —— ★ 它的顶层逐字是 `passed=6` / `of=6` / `verdict=pass`，★ 且 `steps.list_setter_summary.ok` 是 **`True`** ✓",
+    "kind": "json_artifact",
+    "path": "output/batch36-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 6,
+    "total": "查不到",
+    "note": "存在；verdict=pass、passed=6；顶层无 total（有 of=6）"
+   },
+   {
+    "raw": "⚠⚠ 2026-10-04（接手轮）**修正一条挂错的引证**：★ 本条原来把上面那句挂到 **`output/batch37-evidence.json`** 上 ⇒ ★★ **而那份文件里根本没有 `list_setter_summary` 的结果**，★ 且它的顶层逐字是 **`passed=1` / `of=4` / `verdict=partial`**、★ 四个 step 里 **三个 `ok=False`**（`set_option_ComputeFrequencyModes` · `set_option_ContactPenetrationStiffness` · `set_options`）⇒ ★★★ **把断言挂在它上面，在排期上等同于把「1/4」写成「PASS」** ✓",
+    "kind": "json_artifact",
+    "path": "output/batch37-evidence.json",
+    "exists": true,
+    "verdict": "partial",
+    "passed": 1,
+    "total": "查不到",
+    "note": "存在；verdict=partial、passed=1/of=4，自称三步 ok=False"
+   },
+   {
+    "raw": "★ 上一条里那份 `batch37` 的真实状态**已如实记在这里**（★ 而不是让它沉默）：★ **它是 1/4 partial、★ 三步失败** —— ★ 那三步测的是**另一些求解器选项**（★ `ComputeFrequencyModes` / `ContactPenetrationStiffness`），★ **不属本条**（本条是「9 个族 / 202 个 setter 名」的清单读取），★ 故**不改变本条的 `level`**；★ 但**后续若要攻那两项，★ 起点就是这份 1/4 的证据** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "散文：申辩 batch37 那 1/4 属另一些选项、不属本条"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "evidence[4]（第5条）自述 output/batch37-evidence.json 顶层 verdict=partial、passed=1/of=4、三步 ok=False；同文称那三步属另一些选项、不属本条。"
+ },
+ {
+  "n": 62,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e062.json",
+  "id": "topology_constraints_and_controls",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python tools/capture_topology_readback_evidence.py（真机：8 项过 7 · set_goal 的 before/after 计数变化是设置真生效的硬证据）",
+    "kind": "py_script",
+    "path": "tools/capture_topology_readback_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本真实存在；路径是 .py 无顶层 verdict；散文称「8 项过 7」"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "唯一那条 evidence（py 脚本）原文写「真机：8 项过 7 · set_goal 的 before/after 计数变化是设置真生效的硬证据」——它自己写明 8 项检查只过 7 项（7 < 8），而该条目 level 仍为 verified。"
+ },
+ {
+  "n": 63,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e063.json",
+  "id": "topology_readback",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 383）★ **7/8 通过**（`tools/capture_topology_readback_evidence.py`，走 `sw_guard` 护栏，5.3 s 无弹窗）：`bindings` ✓ · `material` = `AISI 1020` ✓ · `create_study` ✓ · `collect_numbers` ✓（`status: no_results`，合理 —— 不跑求解）· `constraints` ✓（9 kinds）· `manager_report` / `options_report` ✓（`CDispatch`）· **`set_goal` ✓（`before_taken: 0 → after_taken: 1` ⇒ 设置真的生效）**；★ **`set_iteration_options` 报 `com_error: (-2147417851, '服务器出现意外情况。')`** = **`0x80010105`** ⇒ ★★ 那是**事实 47 同族的架构性后端限制**（「不能调用官方标记为仅进程内非托管 C++ 的指针接口」），★ **不是参数没找对**。证据 output/topology-readback-evidence.json。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "叙述：轮383真机7/8通过；set_iteration_options 报 0x80010105 后端限制"
+   },
+   {
+    "raw": "python tools/capture_topology_readback_evidence.py（真机：读回部分通过；★ run 未通过）",
+    "kind": "py_script",
+    "path": "tools/capture_topology_readback_evidence.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本文件真实存在(10125字节)；自述 run 未通过"
+   }
+  ],
+  "limitations_n": 6,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "evidence[1]（可达 py_script）自述「真机：读回部分通过；★ run 未通过」；evidence[0] 自述 7/8 通过、set_iteration_options 报错；level=verified。"
+ },
+ {
+  "n": 64,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e064.json",
+  "id": "costing_readback",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 274）：**5/6** —— 四个读数是**真的读到了数据** · 证据 output/costing-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/costing-evidence.json",
+    "exists": true,
+    "verdict": "partial",
+    "passed": 5,
+    "total": "查不到",
+    "note": "顶层无 total 键（作 of=6）；list_templates 步 ok=false"
+   }
+  ],
+  "limitations_n": 4,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "evidence[0] 逐字写「**5/6**」；其 output/costing-evidence.json 顶层 verdict=partial、passed=5/of=6，list_templates 步 ok=false"
+ },
+ {
+  "n": 65,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e065.json",
+  "id": "render_material_library",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 373）★ **PASS 5/5** —— `RenderMaterialSpec(file_name=<真实 .p2m>)` 打通整族：`create` ok · `add_entity` ok · `add_render_material` ok · **`list_render_materials` 读到 1 个** · `GetRenderMaterialsCount2(2, names)` 也回 **1** ⇒ 命中 5/5。★ 同时验证新契约：`RenderMaterialSpec()`（空 `file_name`）**明确抛 ValueError**。证据 output/render-material-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/render-material-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；steps 五项全 ok=true，无 passed/total 字段"
+   },
+   {
+    "raw": "python 真机（轮 373）★ **真因是 `FileName` 必须绑 `.p2m`** —— 四轮收窄的终点（known-facts 287→290）：`CreateRenderMaterial(name)` 建出的外观**没有绑定材质文件**时，`AddDisplayStateSpecificRenderMaterial` **照样回 true** 且 `GetLinkedDisplayStates` **显示已链接**，而 `GetMaterialIds` 回 `None`、`GetRenderMaterialsCount2` 恒 **0**（★ 一个「看起来成功、实际不算数」的外观）。★ 设 `FileName = '<真实 .p2m>'` 之后：`GetMaterialIds` 回 `id1=6`、`GetRenderMaterialsCount2` 回 **2**、我们自己的 `list_render_materials` 读到条目。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：记 FileName 必须绑 .p2m 的根因，绑后 GetMaterialIds 回 id1=6"
+   },
+   {
+    "raw": "python 真机（轮 367）★ **顺带修掉第 12 处「设属性写成取或调」**：`create_render_material` 的 `spec.extra` 循环原为 `get_com_member(material, key, float(value))`（事实 227）⇒ `TypeError`；已改 `set_com_member`（★ 前人轮 319 修了 11 处，这一处漏了）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：记第 12 处 get 改 set_com_member 修复，非验证结论"
+   },
+   {
+    "raw": "python 真机（轮 371/372）★ **观察点**：`IRenderMaterial.GetLinkedDisplayStates()` 直接回答「外观挂到了哪些显示状态」，★ 不经过「清单」那条可疑中介 ⇒ 用它证明 `Add…` 的**链接**确实生效（而清单仍空）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：GetLinkedDisplayStates 作链接生效观察点，清单仍空"
+   }
+  ],
+  "limitations_n": 4,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 66,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e066.json",
+  "id": "sheet_metal_creation",
+  "level": "stitched",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★ `create_base_flange` 真机验过（SW 2026 SP4.1 ⇒ 特征树出现钣金特征）· ⚠ 其余三条到不了（known-facts 47/43）",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "纯散文证据，无任何路径可查；文中自述其余三条达不到"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "none",
+  "level_supported": "cannot_tell",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 67,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e067.json",
+  "id": "mold_analysis",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 343）★ **冒烟 5/5 PASS**（★ 改前报 3/5 fail，★ 真因是**脚本的键形状假定过时**：它在顶层找 4 个计数键，而实现放在 `counts` 子字典）：「含官方只读入口的键 **6/6**」·「新零件上读数都是空/0 **6 个**」· 证据 output/mold-evidence-smoke.json",
+    "kind": "json_artifact",
+    "path": "output/mold-evidence-smoke.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 5,
+    "total": 5,
+    "note": "文件存在；顶层 verdict=pass，passed 5=total 5，与「冒烟 5/5 PASS」相符"
+   },
+   {
+    "raw": "python 真机（轮 177，复验于 343）★ **4/4 PASS**：`IFeatureManager.MoldDraftAnalysis` ⇒ **AttributeError** · `IModelDoc2.MoldDraftAnalysis` ⇒ **能取到** · ★ **而真机回 `bool`**（★ 官方签名写的是 `Void`）· 证据 output/mold-draft-analysis-owner.json",
+    "kind": "json_artifact",
+    "path": "output/mold-draft-analysis-owner.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 4,
+    "total": 4,
+    "note": "文件存在；顶层 verdict=pass，passed 4=total 4，与「4/4 PASS」相符"
+   }
+  ],
+  "limitations_n": 4,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 68,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e068.json",
+  "id": "preview_and_review_report",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 340）★ **PASS 4/4**：`set_standard_view` ⇒ `ok=true`（★ 而 `readback_ok=false` —— ★ `ActiveView` 成员全报 `<unknown>`，事实 36 形态）；`collect_model_summary` ⇒ **20 个特征**；`build_review_report` ⇒ `status=\"warn\"` · `score=92`（★ 它的判据是 **`evaluation.status`**，不是 `ok`）；产物 **4 个非空 BMP** · 证据 output/review-tools-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/review-tools-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 4,
+    "total": "查不到（顶层无 total 键，实际用键 of，值 = 4）",
+    "note": "文件在盘上（675 字节）；顶层 verdict=pass、passed=4/of=4；内层 readback_ok=false 自注为已知限制"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 69,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e069.json",
+  "id": "motion_validation_and_preconditions",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 278）：**PASS 5/5** 中的 2 项 · 证据 output/motion-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/motion-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 5,
+    "total": "查不到",
+    "note": "文件在（916 字节）；顶层 verdict=pass、passed=5；无 total 键（用 of=5）"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 70,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e070.json",
+  "id": "drawing_views_and_summary",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 318）★ **PASS 2/2**（★ 用 **SolidWorks 自带示例图**做夹具）：`bolt-assembly.slddrw` ⇒ `list_views` **5 个视图**（`Drawing View1/2/3`…）· `sheets_summary` = 1 张 `Sheet1`；`box.slddrw` ⇒ `list_views` **4 个视图** · `sheets_summary` = 1 张 `Sheet1`。另：`current_sheet_info` 真机回 `paper_size` / `scale_num` / `scale_den` / `first_angle` / `height_mm`。证据 output/drawing-views-evidence.json · sheets-summary-probe.json",
+    "kind": "json_artifact",
+    "path": "output/drawing-views-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 2,
+    "total": "查不到",
+    "note": "两个 json 均在盘上；主文件 verdict=pass、passed=2（无 total 键，用 of=2），两条 run 均 ok=true"
+   }
+  ],
+  "limitations_n": 1,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 71,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e071.json",
+  "id": "weldment_profile_and_curve",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 341）★ **PASS 3/3**：`create_weldment_profile` ⇒ **`ok=true`**· `size_bytes=49204`；产物 **`vp2.SLDLFP` 49204 字节**（★ 已**排除 `~$` 锁文件**）· 证据 output/weldment-profile-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/weldment-profile-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 3,
+    "total": "查不到",
+    "note": "JSON 在；verdict=pass、passed=3；无 total 键（实际键名 of=3）。"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 72,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e072.json",
+  "id": "costing_templates_and_defaults",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 366）★ **PASS 3/3** —— 修掉一条真 bug 后整族通过：`list_costing_templates_report(cm)` ⇒ `ok=true · count=2` · `get_default_template_report(cm, 0)` 与 `(cm, 1)` ⇒ 都 `ok=true`（回了真实模板路径 `…\\lang\\chinese-simplified\\costing templates\\…`）· 证据 output/costing-templates-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/costing-templates-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "真机叙述并指向该 JSON；JSON 顶层 verdict=pass，无 passed/total"
+   },
+   {
+    "raw": "python 真机（轮 366）★ **真 bug 修在一行上**：`list_costing_templates_report` 原先把 `d`（`CostingDefaults`）传给 `list_templates`，而 `GetTemplatePathnames` **挂在 `ICostManager` 上**（反射转储 `iface_sldcostingapi.txt` 的 `## ICostManager`：`GetTemplateCount(Int32)` / `GetTemplatePathnames(Int32)` 成对）⇒ 改成传 `cost_manager` 即通。COM 报的是 `<unknown>.GetTemplatePathnames`（像“成员不存在”，其实是**对象不对** —— 事实 36 的形态）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "自述一行修复：改传 cost_manager 才通；曾报 <unknown>.GetTemplatePathnames"
+   },
+   {
+    "raw": "python 真机（轮 366）★ **受控实验定位**：A（只取 defaults）/ B（先取 model 再取 defaults）都通，而工具层入口不通 ⇒ 把嫌疑缩到“工具层内部那一处传参”上。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "自述受控实验：A/B 两条路都通、工具层入口不通"
+   }
+  ],
+  "limitations_n": 4,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 73,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e073.json",
+  "id": "mold_parting_geometry",
+  "level": "stitched",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 390）★ **`insert_parting_surface` PASS**：`parting_surface` ⇒ **`分型面1`** · 特征树 8 → 9（★ 官方 8 参；★ Remarks：**有分型线后不必再选方向与边**）。★ 同轮另两个的现状：`insert_shut_off_surface` **回 Feature 非 None 而特征树不变**（★ 最可能：模型上**没有通孔**可关）；`insert_core_cavity_solids` 报 RuntimeError「未先建分型面」**而分型面已建**（★ 我们的错误文案是猜测 ⇒ 待读官方 Remarks 核对）。证据 output/mold-family-rest-evidence.json。★ 同轮**抓到一条真问题**：`scripts/sw_mold.py` 的 `insert_core_cavity_solids(model, *, scale, thickness, flip, offset)` 与 `insert_parting_surface(model, *, surface_type, flip, use_trim, distance, angle, option, tolerance, alternate)` 的**参数名与官方不符**（官方是 Dist1/Dist2/Setback/Angle 与 Radiate/ReverseAlignment/ReverseOffset/OffsetDistance/Angle/Smooth/SmoothDistance/Knit）⇒ ★ 功能能跑而**语义对应关系不清**（★ 待单独一轮改签名 + 调用方）。",
+    "kind": "json_artifact",
+    "path": "output/mold-family-rest-evidence.json",
+    "exists": true,
+    "verdict": "partial",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=partial：分型面 PASS，关断面树不变、成型芯报错。"
+   },
+   {
+    "raw": "python 真机（轮 389）★ **PASS** —— 写入那半的 `insert_parting_line` 打通：按官方 Remarks 的 mark 表（**direction of pull = 1** · **parting line edges = 4**），★ 方向选基准面、★ 边按**中点**（`GetStartVertex`/`GetEndVertex` 求平均）用 `SelectByID2` 选 ⇒ **回读 `GetSelectedObjectCount2(-1)` = 5**（1 基准面 + 4 条边）· `insert_parting_line` ⇒ **`分型线1`**。证据 output/mold-parting-line-marks-evidence.json。★★ **更正事实 301**：先前判「给边线打 mark 4 在 pywin32 上做不到」是**误判** —— 真因是当时给的 `x, y, z` 是**猜测的点**、没落在边上（静默成功：回 true 而计数 0）；★ 用**边的中点**即有效。",
+    "kind": "json_artifact",
+    "path": "output/mold-parting-line-marks-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass：建成 分型线1，mark 回读计数 5。"
+   },
+   {
+    "raw": "python 真机（轮 384）★ **只读那半 5/5 pass**（`tools/verify_mold_evidence_smoke.py`，走 `sw_guard` 护栏，2.49 s 无弹窗）：`mold_evidence()` 可调用且返回 dict · 含官方只读入口的键 **6/6** · 新零件上这些读数都是 0/空（非 0 就是读错了对象）。★ **写入那半的穷尽式结论**（`tools/prove_mold_parting_geometry.py`）：官方 Remarks 要求「**拔模方向 mark 1 + 分型线边线 mark 4**，且必须用 `SelectByID2`」；★ 而真机上**「给边线打 mark 4」做不到** —— `IEntity.Select4` 只有 2 个参数（传 mark 报 `-2147352562 '无效的参数数目。'`，事实 32），而 `SelectByID2(\"\", \"EDGE\", x, y, z, …, 4, …)` **回 True 而 `GetSelectedObjectCount2(-1)` = 0**（事实 8：bool 返回值不可信）。⇒ `insert_parting_line` 恒回 None（官方在缺前置时返回 None）⇒ 那是**同族的后端限制**，不是我们没做对。证据 output/mold-parting-geometry-evidence.json · output/mold-evidence-smoke.json。",
+    "kind": "json_artifact",
+    "path": "output/mold-parting-geometry-evidence.json",
+    "exists": true,
+    "verdict": "partial",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=partial：insert_parting_line ok=false 恒 None。"
+   },
+   {
+    "raw": "⚠ **仍无真机证据**：本族 4 个工具需**先选拔模方向参考**，★ 而在**未准备的分型件**上会弹框 ⇒ ★ 前置得由人配合。（★ 2026-10-01 轮 343：已删去旧 evidence 里那句**已过时**的「冒烟 3/5 fail」—— ★ 那是 **`mold_analysis` 的脚本键形状**问题，与本族无关。）",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "不适用（散文）",
+    "passed": "不适用（散文）",
+    "total": "不适用（散文）",
+    "note": "自称「仍无真机证据」：需人先选拔模方向参考。"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 74,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e074.json",
+  "id": "pattern_and_mirror",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 317）★ **两半都建成**：镜像 ⇒ **`镜向1`** · type=**`MirrorPattern`**；阵列 ⇒ **`阵列(圆周)1`** · type=**`CirPattern`**（★ 前置 `基准轴1` 由 `IModelDoc2.InsertAxis2` 建）",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "陈述镜向1/阵列(圆周)1建成的散文，无文件路径"
+   },
+   {
+    "raw": "★ 关键修正：镜像的 mark **原本是反的**（特征 4→1 · 平面 1→2，★ 官方 `InsertMirrorFeature2.md` 的 Remarks 给了完整 mark 表）",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文更正：镜像mark原为特征4/平面1，已改正"
+   },
+   {
+    "raw": "证据 output/mirror-fixed-evidence.json · pattern-axis-evidence.json · pattern-probe.json",
+    "kind": "json_artifact",
+    "path": "output/mirror-fixed-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 1,
+    "total": "查不到",
+    "note": "output/下三文件都存在；首文件顶层verdict=pass、passed=1无total字段"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 75,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e075.json",
+  "id": "drawing_view_operations",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 294）：**视图比例三条事实** —— ScaleRatio 回 (1.0,500.0)=1:500 · ScaleDecimal 回 0.002 · **写不进**（关掉 UseSheetScale 后赋值仍不变）；set_view_scale_verified 如实报 ok=false · 证据 output/set-view-scale-probe.json · scale-ratio-probe.json",
+    "kind": "json_artifact",
+    "path": "output/set-view-scale-probe.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "两产物均在盘上；顶层无 verdict；内含 set_verified.ok=false"
+   },
+   {
+    "raw": "python 真机（轮 293）：有视图的图（3 视图）—— list/collect ok count=3 · get_view_scale ok scale=0.002 · 证据 output/drawing-view-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/drawing-view-evidence.json",
+    "exists": true,
+    "verdict": "partial",
+    "passed": 2,
+    "total": "查不到",
+    "note": "顶层 verdict=partial、passed=2、无 total 字段；set_scale ok=false"
+   },
+   {
+    "raw": "python 真机（轮 292）：capture_drawing_query_evidence.py **PASS**（入口链）· 证据 output/drawing-query-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/drawing-query-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；所引脚本 capture_drawing_query_evidence.py 也在"
+   }
+  ],
+  "limitations_n": 9,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "第2条 output/drawing-view-evidence.json：顶层 verdict=partial、passed=2(of=3)，set_scale ok=false；第1条亦记 set_verified.ok=false。"
+ },
+ {
+  "n": 76,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e076.json",
+  "id": "surface_features",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 388）★ **PASS** —— objective② 补的第二个真缺 `filled_surface`：`scripts/sw_surface_features.py` 新增 `insert_fill_surface_report`（官方 `IFeatureManager.InsertFillSurface2`，**6 参**）。真机（走 `sw_guard`，6.47 s 无弹窗）：前置 `曲面-拉伸1`（树 6→7）· 负例 `resolutions = 9` 被拒 · **`insert_fill_surface_report(doc, 2)` ⇒ 新特征 `曲面填充1` · 选 4 条边 · 树 7→8** ⇒ `verdict: pass`。★★ **真机打通的关键**：边界边必须用 `SelectByID2` 带 **mark = 1**（官方 Remarks 的 Boundary curves）；★ `IEntity.Select4` **没有 mark 参数**（事实 32），而传 **mark = 4** 会**静默失败**（回 true 而 `GetSelectedObjectCount2(-1)` = 0 —— 事实 8）。证据 output/fill-surface-evidence.json。",
+    "kind": "json_artifact",
+    "path": "output/fill-surface-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；无 passed/total 字段"
+   },
+   {
+    "raw": "python 真机（轮 386）★ **PASS** —— objective② 补的第一个真缺 `extend_surface`：`scripts/sw_surface_features.py` 新增 `insert_extend_surface_report`（官方 `IModelDoc2.InsertExtendSurface(bool ExtendLinear, int EndCondition, double Distance)`，**3 参**，回 `void` ⇒ 判据是**特征树 diff**）。真机（走 `sw_guard` 护栏，5.16 s 无弹窗）：前置曲面 `曲面-拉伸1`（tree 6→7）· 负例（距离 0）被入口拒 · **`extend_surface` ⇒ feature `曲面-延伸1` · faces_selected=4 · tree 7→8** ⇒ `verdict: pass`。证据 output/extend-surface-evidence.json。★ ⚠ 真机推翻了「不选面」当负例的假设 —— **不选面它也能成**（它自己会找面），故负例换成参数校验（距离 ≤ 0）。",
+    "kind": "json_artifact",
+    "path": "output/extend-surface-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；无 passed/total 字段"
+   },
+   {
+    "raw": "python 真机（轮 309）★ **PASS 2/2**：`knit_surfaces_report(doc, 0.0001)` ⇒ **新特征 `曲面-缝合1`** · 选中 **8** 面 · **body 2→1**；负例容差 5.0 ⇒ 显式拒绝并列出官方上下限 0.0001–0.1 mm · 证据 output/surface-knit-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/surface-knit-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 2,
+    "total": "查不到",
+    "note": "顶层 verdict=pass、passed=2；total 字段查不到"
+   },
+   {
+    "raw": "python 真机（轮 308）★ **PASS 2/3**：`create_extruded_surface_report(doc, 10.0)` ⇒ **建成 `曲面-拉伸1`**（特征树 6→7 · 22 参）· 负例 `-5.0` ⇒ 显式拒绝· ⚠ `through_all=True` **未通过**（树 7→7，已如实标）· 证据 output/surface-feature-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/surface-feature-evidence.json",
+    "exists": true,
+    "verdict": "partial",
+    "passed": 2,
+    "total": "查不到",
+    "note": "顶层 verdict=partial、passed=2；through 步 ok=false"
+   },
+   {
+    "raw": "python 真机（轮 308）`output/surface-feature-probe.json`：**首次试通**（★ 与 `IModeler.Create*Surface` 完全不同的入口）",
+    "kind": "json_artifact",
+    "path": "output/surface-feature-probe.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass；无 passed/total 字段"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "第4条 output/surface-feature-evidence.json 顶层 verdict=partial、passed=2（of=3）、through.ok=false；原文写「through_all=True 未通过」。"
+ },
+ {
+  "n": 77,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e077.json",
+  "id": "geometry_measurement",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 382）★ **绝对 mm 判据第一次真机使用 · PASS** —— `tools/prove_absolute_criteria.py`（走 `sw_guard` 护栏）建 100×60×20 mm 板，**数据取自真机几何**（顶点坐标差实测 `delta_mm = [0.0, 0.0, -20.0]` = 板厚；`volume = 120000.0` mm³ · `area = 18400.0` mm² 与手算精确一致），三条判据各带**正例与负例**：`check_axis_alignment` / `check_radii` / `check_same_level` **全部「正例 ok=True 且负例 ok=False」** ⇒ `verdict: pass`。证据 output/absolute-criteria-evidence.json。★ 依据调研 v2 发现①：**定位用绝对、等价用相对** —— 两条互补，只留一条会各瞎一半；**现在两条都真机 PASS 过**（相对判据见 compare_geometry 的既有 evidence）。",
+    "kind": "json_artifact",
+    "path": "output/absolute-criteria-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "顶层 verdict=pass、无 passed/total；正文所称 tools/prove_absolute_criteria.py 亦存在"
+   },
+   {
+    "raw": "python 真机（轮 311）★ **PASS 3/3** —— ★ 期望值全部由几何推出且全部对上：两平行面 ⇒ `distance` **10.0 mm**（板厚 10）· 单面 ⇒ `area` **400 mm²**（20×20）与 `perimeter` **80 mm**（4×20）· 未选中 ⇒ 显式拒绝 · 证据 output/measure-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/measure-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 3,
+    "total": "查不到",
+    "note": "顶层 verdict=pass、passed=3、无 total（键名为 of=3）；三步全 ok=true"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 78,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e078.json",
+  "id": "loft_and_sweep",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 315）★ **扫描建成 `扫描1`** · **type=`Sweep`**（★ 走 CreateDefinition(swFmSweep=17)）· 未选中 ⇒ 显式拒绝 · 证据 output/sweep-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/sweep-evidence.json",
+    "exists": true,
+    "verdict": "partial",
+    "passed": 2,
+    "total": "查不到",
+    "note": "顶层 verdict=partial、passed=2、of=3；circle_path2 的 ok=false"
+   },
+   {
+    "raw": "python 真机（轮 314）★ **PASS 3/3** —— 同平面与两平面都建成 **`放样1`** 且 **类型名 = `Blend`**（★ 对照拉伸 = `Extrusion`）· 未选中 ⇒ 显式拒绝 · 证据 output/loft-evidence.json · loft-type-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/loft-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 3,
+    "total": "查不到",
+    "note": "顶层 verdict=pass、passed=3；另提 loft-type-evidence.json 存在但无这三字段"
+   }
+  ],
+  "limitations_n": 1,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "evidence[0]→output/sweep-evidence.json：顶层 verdict=partial、passed=2 of=3，其 circle_path2 ok=false；yaml 原文只写「扫描建成 扫描1」。"
+ },
+ {
+  "n": 79,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e079.json",
+  "id": "reference_axis",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "python 真机（轮 317）★ `model.InsertAxis2(True)` 回 **True** 且出现 **`基准轴1`**；★ 而 `FeatureManager.InsertAxis2` 报 `<unknown>.InsertAxis2`（★ 入口层级错）· 证据 output/pattern-axis-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/pattern-axis-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": 1,
+    "total": "查不到",
+    "note": "JSON 在盘（388B）；顶层 verdict=pass、passed=1；无 total 键（另有 of=1）"
+   }
+  ],
+  "limitations_n": 1,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 80,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e080.json",
+  "id": "sketch_primitives_b1",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "output/b1-sketch-primitives-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/b1-sketch-primitives-evidence.json",
+    "exists": true,
+    "verdict": "pass",
+    "passed": "查不到",
+    "total": 9,
+    "note": "顶层 verdict=pass、total=9、can=9；无顶层 passed 字段"
+   }
+  ],
+  "limitations_n": 1,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 81,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e081.json",
+  "id": "sketch_edit_ops_b3",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "output/b3-sketch-edit-evidence.json",
+    "kind": "json_artifact",
+    "path": "output/b3-sketch-edit-evidence.json",
+    "exists": true,
+    "verdict": "partial",
+    "passed": "查不到",
+    "total": 7,
+    "note": "文件真实存在；顶层 verdict=partial、total=7，无顶层 passed 字段"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "唯一证据 output/b3-sketch-edit-evidence.json 顶层 verdict=partial（total=7）；items 第7项「交叉曲线」verdict=不能、built=false，而 yaml 该条 level=verified。"
+ },
+ {
+  "n": 82,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e082.json",
+  "id": "sketch_modify_ops",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★ 2026-10-03（轮 472）**真机 5/5**（走 `tools/sw_guard.py`，全程 `sw_alive: true`、**零弹窗**）：`python tools/sw_guard.py --timeout 500 -- python tools/prove_b4_sketch_modify.py`。证据 output/b4-sketch-modify-evidence.json。★★ **判据按操作分**（★ 本批最要紧的经验）：改**坐标系**的（移动/旋转/镜像）看 `Sketch.ModelToSketchTransform.ArrayData`；改**几何**的（缩放/伸展）看草图线段端点的 bbox。★ 具体数值：移动 5mm ⇒ 平移 [0,0,0]→**[-0.005,-0.005,0]**（严格对应）；旋转 30° ⇒ 3×3 首行 **[0.866025,-0.500001,0]**（cos30°/sin30°）；镜像 ⇒ 首行 **[1,0,0]→[-1,0,0]**；缩放 1.5 ⇒ bbox ±20/±10→**±30/±15**（×1.5）。",
+    "kind": "json_artifact",
+    "path": "output/b4-sketch-modify-evidence.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": 5,
+    "total": 5,
+    "note": "存在；顶层 passed=5/total=5，items 5 条均 ok=true/能"
+   },
+   {
+    "raw": "★ 2026-10-03（轮 472）**走 MCP 契约的真机调用 5/5**（★ 不手调内部实现，而按 `ToolSpec` 声明的 `inject` + `params` 装配）：`python tools/sw_guard.py --timeout 600 -- python tools/prove_tools_by_contract.py solidworks_sketch_`。证据 output/tools-by-contract-evidence.json。",
+    "kind": "json_artifact",
+    "path": "output/tools-by-contract-evidence.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": 1,
+    "total": "查不到",
+    "note": "存在；但当前内容 prefix=solidworks_insert_，非本条 sketch_ 前缀"
+   },
+   {
+    "raw": "★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**（★ 每个声明都覆盖了包装的必需对象形参）；五统一门禁（`ToolSpec` 声明时）通过；`tests/test_tool_registry.py` **20 passed**。",
+    "kind": "py_script",
+    "path": "tools/check_inject_binding.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "存在；同条提到的 tests/test_tool_registry.py 也存在"
+   },
+   {
+    "raw": "★ 三源互证（swapi + CHM + 出厂反射，**成员名三方一致**）：`IModelDoc2.SketchModify{Translate,Rotate,Scale,Flip}`、`IModelDocExtension.Stretch`。★ **不用 `Tools*` 族**（`ToolsSketchTranslate()` 零参数、交互式弹框，与无人值守红线冲突）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：三源互证成员名一致，声明不用 Tools* 族"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 83,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e083.json",
+  "id": "surface_edit_ops",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★ 2026-10-03（轮 474）**真机 5/5**（走 `tools/sw_guard.py`，全程 `sw_alive: true`、**零弹窗**）：`python tools/sw_guard.py --timeout 600 -- python tools/prove_b6a_surface_edit.py`。证据 output/b6a-surface-edit-evidence.json。★ 逐条：平面区域 树 6→7 `曲面-基准面1`；等距曲面 树 7→8 `曲面-等距1`；直纹曲面 树 7→8 `直纹曲面1`；删除面 树 7→8 `删除面1`；替换面 树 7→8 `替换面1`。★ 判据 = **特征树叶子名增量**（`sw_part.feature_names`），★ 3/5 的官方返回是 `void`。",
+    "kind": "json_artifact",
+    "path": "output/b6a-surface-edit-evidence.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": 5,
+    "total": 5,
+    "note": "json 顶层 passed=5 total=5、无 verdict 键，5 项 ok=true"
+   },
+   {
+    "raw": "★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**；五统一门禁（声明时）通过。`ToolSpec` **241 → 246**。",
+    "kind": "py_script",
+    "path": "tools/check_inject_binding.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "脚本存在；非 JSON，顶层 verdict/passed/total 不适用"
+   },
+   {
+    "raw": "★ 走 MCP 契约的真机调用（`tools/prove_tools_by_contract.py`）：1/5 —— ★ 而那**是预期的**：该探针**不建前置**，而本批 4/5 都要先选面/边（★ 不是能力不行）。",
+    "kind": "py_script",
+    "path": "tools/prove_tools_by_contract.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "MCP 契约探针实测 1/5；原文注明是预期、不是能力不行"
+   },
+   {
+    "raw": "★ 三源互证里**两处“台账给的名字是旧的”**：`InsertRuledSurface` ⇒ 真名在 `IFeatureManager`，且 `…FromEdge` 官方标 **Obsolete**（用 `…FromEdge2`）；`InsertReplaceFace` ⇒ `InsertFeatureReplaceFace`。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "纯叙述：更正 InsertRuledSurface / InsertReplaceFace 真名"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 84,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e084.json",
+  "id": "surface_ref_ops",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★ 2026-10-03（轮 476）**真机建成**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_b6b_surface_ref.py`。★ **放样曲面**：树 **7→8**，新增 **`曲面-放样1`**。证据 output/b6b-surface-ref-evidence.json。★ 判据 = **特征树叶子名增量**（`sw_part.feature_names`）—— 本条官方回 `void`。",
+    "kind": "json_artifact",
+    "path": "output/b6b-surface-ref-evidence.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": 1,
+    "total": 2,
+    "note": "JSON 存在；顶层 passed=1<total=2；旋转曲面项 ok=false"
+   },
+   {
+    "raw": "★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**；五统一门禁（声明时）通过。`ToolSpec` **246 → 247**。",
+    "kind": "py_script",
+    "path": "tools/check_inject_binding.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "文件存在 6067 字节；非 JSON，顶层三字段查不到"
+   },
+   {
+    "raw": "★ 三源互证里**台账给的两个名字都不对**：`FeatureRevolveRefSurface` ⇒ swapi 里**根本没有**（真名 `IFeatureManager.InsertRevolvedRefSurface`）；`InsertProtrusionBlend2(Surface)` ⇒ 真名 **`IModelDoc2.InsertLoftRefSurface2`**。★ 同族 `FeatureExtruRefSurface{,2,3}` 命名不同 ⇒ **不能按前缀猜**。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：更正台账两处 API 名字，不指向仓库文件"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "第1条 output/b6b-surface-ref-evidence.json：顶层 passed=1<total=2；items[0]旋转曲面 verdict=不能、5组全部新增=[]；仅放样曲面 ok=true"
+ },
+ {
+  "n": 85,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e085.json",
+  "id": "ref_geometry",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★ 2026-10-03（轮 479）**真机 3/5 建成**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_b8_ref_geometry.py`。★ **质心**（`InsertCenterOfMass()`）· **边界框**（`InsertGlobalBoundingBox2`，**`Status=0 (Success)`**）· **坐标系**（`InsertCoordinateSystem`）。证据 output/b8-ref-geometry-evidence.json。",
+    "kind": "json_artifact",
+    "path": "output/b8-ref-geometry-evidence.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": 5,
+    "total": 5,
+    "note": "JSON 顶层 passed=5 total=5、无 verdict 字段；5 项均 ok。原文 3/5，末条补到 5/5。"
+   },
+   {
+    "raw": "★ 同轮静态门禁：`tools/check_inject_binding.py` **PASS 0 条**；五统一门禁（声明时）通过。`ToolSpec` **247 → 250**。",
+    "kind": "py_script",
+    "path": "tools/check_inject_binding.py",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "tools/check_inject_binding.py 在盘上 6067 字节；原文自称 PASS 0 条。"
+   },
+   {
+    "raw": "★★ **`out` 参数的正确传法**（本轮踩到并修好）：`InsertGlobalBoundingBox2` 的第 5 个形参 `Status` 是 **out**，★ 裸传 `0` 真机回 `com_error: (-2147352571, '类型不匹配。', None, **5**)`（**位置 5 就是它**）；★ 必须用 **`sw_connect.out_i4()`**（其 docstring：「创建 `Int32&` 出参的 VARIANT 包装 —— **唯一被真机验证通过的形态**」）。★ 而判据也因此**更强**：`Status == Success(0)` 是**官方给的成败码**。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "记 out 形参须用 out_i4；裸传 0 真机报类型不匹配（位置5）。"
+   },
+   {
+    "raw": "★★ **台账 T701 给的成员是错的**：它写 `Create3DBoundingBox`，而官方原话是「for a **cut list item in a weldment part**」⇒ **焊件切割清单专用**，普通零件上不成是**应然的**；★ 工具栏那个的真名是 **`InsertGlobalBoundingBox2`**。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "称台账 T701 成员有误，真名应为 InsertGlobalBoundingBox2（切清单专用）。"
+   },
+   {
+    "raw": "★★ 2026-10-03（轮 480）**补齐到 5/5** —— 上一轮那两条（基准面 / 点）**缺的是同一件事**：★ **调用前按 `mark` 选一个参考实体**。★ 真机：基准面 `预选 ok=True {face_index:0, mark:0, sel_count:1}` ⇒ 树新增 **`基准面1`**；点同样 `mark=0` ⇒ 树新增 **`点1`**。★ 而 **mark 表就在官方 Remarks 里**：`0 = First reference entity · 1 = Second reference entity · 2 = Third reference entity`。★★ 另正上一轮的一句错话：我上轮写的「官方**未给**那张 mark 表」—— **那是错的**，表就在**同一条** Remarks 的紧下一段，我当时没读到。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "称补齐到 5/5：预选 mark=0 后树新增 基准面1、点1；更正上轮误说无 mark 表。"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 86,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e086.json",
+  "id": "curve_and_split",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★ 2026-10-03（轮 481）**真机 2/4**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_b7a_curve_split.py`。★ **通过参考点的曲线**：树新增 **`曲线1`**（`InsertCurveFileBegin/Point/End` 三步式）；★ **配合参考**：树新增 **`['配合参考', 'MCP_MateRef-<1>', '配合参考___EndTag___']`**。证据 output/b7a-curve-split-evidence.json。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "轮481真机2/4，曲线1+配合参考建成；引output/b7a-curve-split-evidence.json"
+   },
+   {
+    "raw": "★★ **`类型不匹配` 位置 6 ⇒ 未用的 entity 槽要传「空 Dispatch」**：`InsertMateReference2` 的 `Secondary/TertiaryReferenceEntity` 类型是 `Entity`，★ 裸传 `None` 不行；★ 用本仓 `sw_connect.create_empty_dispatch_variant()`（★ 它就是**事实 12**那条）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "说未用的Entity槽须传空Dispatch（事实12）"
+   },
+   {
+    "raw": "★★ **`无效的参数数目` ⇒ 官方第三组少一个形参**：完整签名是 **12** 个（`… TertiaryReferenceType, TertiaryReferenceAlignment )`",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "说官方第三组少一个形参，完整签名12个"
+   },
+   {
+    "raw": "—— **没有 `TertiaryReferenceAlignAxes`**）；★ 我按“三组同形”推成 13 个 ⇒ 报错。★ **别按同形推，要逐数完整签名**。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "承接上条：按同形推成13个形参会报错"
+   },
+   {
+    "raw": "★★★★ **2026-10-03（接手轮）分割线（投影）真机建成**（走 `tools/sw_guard.py`，`sw_alive: true`、**零弹窗**）：`python tools/prove_split_line_geometry_per_example.py` + `tools/prove_split_line_minimal_matrix.py`。★ 判据**三条一起**：树新增 **`分割线1`**（`GetTypeName2` = `PLine`）· **面数 6→7** · **有一张面从 1 环变 2 环**（`IFace2.GetLoopCount`）；★ 且**切开的那张面的包围盒**恰在 **z = 0.01778 m**（＝投影落点平面）⇒ 证明切的是**投影落点那张面**。证据 output/split-line-geometry-per-example-evidence.json · output/split-line-minimal-matrix-evidence.json。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "投影分割线建成：分割线1、面6→7、一面1环变2环"
+   },
+   {
+    "raw": "★★★★ **2026-10-03（接手轮）分割线（轮廓）真机建成**：`python tools/prove_split_line_silhouette_marks.py` 的 **S5**：树新增 `分割线1` · **面数 +1** · 圆柱侧面 **2 环 → 两张各 1 环**（`[1,1,2] → [1,1,1,1]`）。证据 output/split-line-silhouette-marks-evidence.json。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "轮廓分割线仅S5成立：面+1、侧面2环拆成1+1"
+   },
+   {
+    "raw": "★★★ **前置（真机单变量对照，★ 两个前件都必要）**：投影型 = **草图 mark 4 + 面 mark 1**；轮廓型 = **方向项 mark 2 + 面 mark 1**。★ 缺任一个都**不成**（M3/M4 · S6）；★ 而轮廓型**只把 mark 2 换成 mark 0**（S7）就不成 ⇒ **官方那个 2 是承重的**。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "阴性对照：缺任一mark都不成（M3/M4/S6/S7）"
+   },
+   {
+    "raw": "★★★ **几何前提（★ 官方签名与 Remarks 都没写，★ 只有官方例子的调用序给得出，★ 并由真机单变量对照确认）**：★ 投影型要求**投影草图所在面在实体之外**、与目标面平行、沿投影方向隔开；★ 轮廓型要求**视线不能顺着回转轴**（圆柱轴 = +Z 时用前视面不成、换上视面成）。★ 反例：草图被实体夹住时**特征会建出来而一个面也切不开**（`分割线1` 进树、面数 6→6）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "几何前提+反例：特征进树但面数6→6切不开"
+   },
+   {
+    "raw": "★★★ **`InsertSplitLineProject` / `InsertSplitLineSil` 建成时都回 `None`** ⇒ ★ 「回 `None` ⇒ 真的没建」**不成立**（本轮真机证伪了 `docs/known-facts.md` 事实 420 的那条分类判据）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "更正记录：建成时回None，故回None≠没建"
+   }
+  ],
+  "limitations_n": 4,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "第1条自述「★ 2026-10-03（轮 481）**真机 2/4**」——4 项目标仅成2（其引的json顶层 passed=2/total=4）；第7、8条又记「缺任一个都不成」「特征建出来而一个面也切不开」的阴性结果。"
+ },
+ {
+  "n": 87,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e087.json",
+  "id": "surface_thicken_silent_noop",
+  "level": "stitched",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 502-504）**真机总账：共 11 组 · 两条入口 · 前置每次完美**——结果**全部 `None`、特征树不动、连错误都不报**：★ 轮 502：`IFeatureManager.FeatureBossThicken`（7 参）**1 组**；★ 轮 503：同上**7 组**（官方开关的主要组合）；★ 轮 504：**`IModelDoc2.FeatureBossThicken`（3 参 · Obsolete）**3 组。★ 而每次 `pre` 都是 **`solid = 0 · surface = 1`**（一张曲面体、零个实体）⇒ ★★ **前置没问题**。证据 `output/thicken-surface-evidence.json` · `output/thicken-matrix-evidence.json` · `output/thicken-obsolete-entry-evidence.json`。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "叙述：11 组两条入口全 None、树不动；所引 3 个 json 确实在盘上（verdict=fail，0/7，0/3）"
+   },
+   {
+    "raw": "★ **两个软件侧的事实**：① 官方参数表逐字写 `FaceIndex` ⇒ **「Not used」**（★ 故本包装**不收面索引** —— 收了是骗人）；② 形态与**事实 40**（`IModeler.Create*Surface` 返 `None` 而几何不变）**同族**：★ 「**静默不干活**」，**而不是**「报错说参数不对」。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "推理：官方 FaceIndex 逐字 Not used；与事实 40 同族，属静默不干活"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 88,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e088.json",
+  "id": "surface_offset",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 516）**真机建成**（走 `sw_guard`，`sw_alive: true`、**零弹窗**）：先建一张曲面（`曲面-拉伸1`）⇒ **4 张面选中** ⇒ `InsertOffsetSurface(5.0 mm, False)` ⇒ ★ **`曲面-等距1`（特征树 7→8）**。证据 `output/surface-oldstyle-three-evidence.json` · 探针 `tools/prove_surface_oldstyle_three.py`。",
+    "kind": "json_artifact",
+    "path": "output/surface-oldstyle-three-evidence.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": 2,
+    "total": 3,
+    "note": "JSON 在(2740B)，顶层 passed=2/total=3、无 verdict；探针脚本也在。"
+   },
+   {
+    "raw": "★ **走的是「旧式方法」那侧**（`IModelDoc2.InsertOffsetSurface` · **2 参 · void**）—— ★★ 而不是新架构（`CreateDefinition` + `CreateFeature`）。★ 依据：**事实 395** 指出「旧式方法那侧是成的」（填充 `InsertFillSurface2` / 延伸 `InsertExtendSurface` / 缝合 `InsertSewRefSurface` / 曲面-拉伸 `FeatureExtruRefSurface3`）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "散文：说明走旧式 IModelDoc2.InsertOffsetSurface，依据事实 395。"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "evidence[0] 的 JSON 顶层 passed=2/total=3（ok=false 的是 T605 平面区域，非本条）；本条的 T606 等距曲面 ok=true。"
+ },
+ {
+  "n": 89,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e089.json",
+  "id": "surface_planar_region",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 517）**真机建成**（走 `sw_guard`，`sw_alive: true`、零弹窗）：先建一张曲面，再建**一个闭合草图**，按 **mark=1 选**那个草图（回读 `sel_count = 1`）⇒ `InsertPlanarRefSurface()` ★ **回 `True`** · **建成 `曲面-基准面1`**。证据 `output/planar-replace-variants-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/planar-replace-variants-evidence.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": 2,
+    "total": 3,
+    "note": "顶层 passed=2/total=3；失败格是 T609 变体A（ok:false）"
+   },
+   {
+    "raw": "★★★ **而「boundary entities」到底是什么，是真机定的**：★ 轮 516 先试**曲面体的边**（12 条 · mark=1）⇒ **0 增量**、返回值 `False`；★ 轮 517 改试**草图**（闭合轮廓 · mark=1）⇒ **返回 `True` · 建成** ✓ ⇒ ★★ **故它指的是草图**（★ 而官方那句 `Remarks` **两种读法都通**）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "轮516选曲面体边→False/0增量；轮517改选闭合草图→True并建成"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "evidence 1 的 output/planar-replace-variants-evidence.json 顶层 passed=2<total=3（失败格「T609 变体A: 实体面=1 曲面面=2」ok:false），而 level 标 verified。"
+ },
+ {
+  "n": 90,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e090.json",
+  "id": "replace_face",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 517）**真机建成**（走 `sw_guard`，`sw_alive: true`、零弹窗）：先建一个**实体盒** + 一张**曲面**，按 **曲面面 mark=1 · 实体面 mark=2** 选两张面（回读 2）⇒ `InsertFeatureReplaceFace()` ⇒ **建成 `替换面1`**。证据 `output/planar-replace-variants-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/planar-replace-variants-evidence.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": 2,
+    "total": 3,
+    "note": "文件在(972B)；顶层 passed=2/total=3、无 verdict；变体A ok=false"
+   },
+   {
+    "raw": "★★★ **两个 mark 的分工是真机定的**（★ 官方那句 `Remarks` **被截断了**）：★ 轮 516 按「实体面=1 · 曲面面=2」⇒ **0 增量**；★ 轮 517 调过来（实体面=2 · 曲面面=1）⇒ **建成 `替换面1`** ✓ ⇒ ★★ **曲面面 = mark 1（要替换掉的）· 实体面 = mark 2（替换成它）**，★ 而它与官方「要替换的面 mark 1」**一致**。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：说曲面面=1/实体面=2；轮516反选0增量、轮517建成替换面1"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "output/planar-replace-variants-evidence.json 顶层 passed=2/total=3（无 verdict）；cases[1]「变体A」ok=false、new_features 空"
+ },
+ {
+  "n": 91,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e091.json",
+  "id": "surface_revolve",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 529）**真机建成**（走 `sw_guard`，`sw_alive: true`、零弹窗）：前视面上画**轮廓 + 中心线**（`CreateCenterLine`），选那个草图（回读 `sel=1`）⇒ **建成 `曲面-旋转1`**（类型名 **`RevolvRefSurf`**）。★ **两条入口都成**：`IModelDoc2.InsertRevolvedRefSurface`（旧式）与 `IFeatureManager.InsertRevolvedRefSurface`（本仓现路）。证据 `output/revolve-oldstyle-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/revolve-oldstyle-evidence.json",
+    "exists": true,
+    "verdict": "revolve_oldstyle_works",
+    "passed": 2,
+    "total": 3,
+    "note": "文件在盘上；passed 2/3（无中心线那格失败），verdict 非 fail"
+   },
+   {
+    "raw": "★★★ **而根因是一组对照定下的：「无中心线」那组**不成**（树 0 增量）** —— ★ 而官方原话逐字是「by revolving a profile around a **centerline**」。\n       ⇒ ★★ **故：本仓此前对它的「不成」（轮 501，5 组全试过）真因是**前置缺中心线**，而**不是**架构问题** ✓\n       ★ 而它**修正了一个归因**：「新架构那侧不成」在**旋转曲面上不成立**。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "不适用（散文）",
+    "passed": "不适用（散文）",
+    "total": "不适用（散文）",
+    "note": "推理说明：无中心线那组不成，根因缺前置，非架构问题"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "output/revolve-oldstyle-evidence.json 顶层 passed=2 < total=3（3 例中「无中心线」那格 ok=false、new=[]），level=verified。"
+ },
+ {
+  "n": 92,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e092.json",
+  "id": "sketch_dimension_horizontal",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 542）**真机建成**（走 `sw_guard`，`sw_alive: true`、`dialogs: []` 零弹窗）：在前视面画**一条水平线段**，★ **按对象选中它**（或选两个端点）后调那两个方法：**草图尺寸 0 → H:1 → V:1**（★ 两条**都建成**）。证据 `output/hv-dimension-with-selection-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/hv-dimension-with-selection-evidence.json",
+    "exists": true,
+    "verdict": "hv_dimension_works",
+    "passed": 2,
+    "total": 3,
+    "note": "真机建成 H:1 V:1；顶层 passed 2 < total 3，未过的是 cases[2] 对照不选"
+   },
+   {
+    "raw": "★★★ **而根因是一组对照定下的：「**不选**」那组 `尺寸 0 → H:0 → V:0`（**不成**）** —— ★ 故**前置就是“**必须先选中实体**”**。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "对照：不选那组 尺寸0→H:0→V:0 不成，结论=前置必须先选中实体"
+   },
+   {
+    "raw": "★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "更正旧定性：此前记「会挂」，真相是弹「修改」数值输入框；选中实体后不再弹"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "第1条：output/hv-dimension-with-selection-evidence.json 顶层 passed=2 < total=3；未过的是 cases[2] 对照不选，ok:false。"
+ },
+ {
+  "n": 93,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e093.json",
+  "id": "sketch_dimension_vertical",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 542）**真机建成**（走 `sw_guard`，`sw_alive: true`、`dialogs: []` 零弹窗）：在前视面画**一条水平线段**，★ **按对象选中它**（或选两个端点）后调那两个方法：**草图尺寸 0 → H:1 → V:1**（★ 两条**都建成**）。证据 `output/hv-dimension-with-selection-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/hv-dimension-with-selection-evidence.json",
+    "exists": true,
+    "verdict": "hv_dimension_works",
+    "passed": 2,
+    "total": 3,
+    "note": "顶层 verdict=hv_dimension_works passed=2 total=3"
+   },
+   {
+    "raw": "★★★ **而根因是一组对照定下的：「**不选**」那组 `尺寸 0 → H:0 → V:0`（**不成**）** —— ★ 故**前置就是“**必须先选中实体**”**。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：对照/更正记录，未指向可查文件"
+   },
+   {
+    "raw": "★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：对照/更正记录，未指向可查文件"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "evidence[0] 的 JSON 顶层 verdict=\"hv_dimension_works\"，但 passed=2 < total=3 —— 第 3 格「对照：不选」ok=false、dim_after_h/v=0"
+ },
+ {
+  "n": 94,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e094.json",
+  "id": "feature_revolve_cut",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 550）**真机建成**（走 `sw_guard`，零弹窗）：实体盒 + 前视面上的**中心线 + 剖面**，调 `FeatureRevolve2(..., IsCut=True, ...)` ⇒ **树新增 `切除-旋转1`**，★ **体积 0.8255 倍**（**变小 = 真切除**）。证据 `output/revolve-cut-evidence.json`。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "叙述:轮550真机建成切除-旋转1,体积0.8255倍变小;所引JSON实存、passed2=total2"
+   },
+   {
+    "raw": "★★ **而对照组同时跑**：`IsCut=False` ⇒ 树新增 `旋转1`、★ **体积 1.1745 倍**（**变大）** —— ★ 故**那一个布尔就是“切除”与“加料”的分界** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "对照:IsCut=False树增旋转1,体积1.1745倍变大;该布尔是切除/加料分界"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 95,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e095.json",
+  "id": "sketch_slot_types",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 553）**四个值全真机建成**（走 `sw_guard`，零弹窗）：`CreateSketchSlot(type, 0, 0.004, -0.02,0,0, 0.02,0,0, 0,0.012,0, 1, True)` ⇒ **四个 type 均令草图段数 0 → 5**（★ 每个槽口 5 段）· 返回 `CDispatch`。证据 `output/sketch-slot-four-types-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/sketch-slot-four-types-evidence.json",
+    "exists": true,
+    "verdict": "slot_all_four_work",
+    "passed": 4,
+    "total": 4,
+    "note": "JSON 真在盘上；顶层 verdict=slot_all_four_work，passed 4 = total 4，未称失败"
+   },
+   {
+    "raw": "★ 对应台账四条（★ 而**它们是同一个方法的四个枚举值**）：直槽口 / 中心点直槽口 / 中心点圆弧槽口 / 三点圆弧槽口。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：说明四个枚举值对应台账四条，无失败陈述"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 96,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e096.json",
+  "id": "surface_flatten",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 556）**真机建成**（走 `sw_guard`，零弹窗）：一张直线拉出的曲面 **+ 选它的面（mark=1）+ 它的一个顶点（mark=16）** ⇒ **建成 `曲面-展平1`**（类型名 **`FlattenSurface`**）。证据 `output/flatten-with-anchor-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/flatten-with-anchor-evidence.json",
+    "exists": true,
+    "verdict": "flatten_with_marks_works",
+    "passed": 2,
+    "total": 4,
+    "note": "verdict=flatten_with_marks_works 为正面；passed=2 < total=4"
+   },
+   {
+    "raw": "★★★ **而根因是一组**四格对照**定下的**：\n       ① 面(1) + **锚点(16)**        ⇒ **成** ✓\n       ② 面(1) + 引导边(2)（**无锚点**）⇒ **不成** ✗\n       ③ 面(1) + 锚点(16) + 引导边(2) ⇒ **成** ✓\n       ④ **只给面(1)**                ⇒ **不成** ✗\n       ⇒ ★★ **故：`mark = 16`（锚点）是**必需的****—— ★ 四格里**只有带锚点的两格成** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "四格对照定根因：带锚点两格成、无锚点两格不成，结论锚点必需"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "证据1的 flatten-with-anchor-evidence.json 顶层 passed=2 < total=4（② ④ 无锚点格不成）；但 verdict 字段是正面结论"
+ },
+ {
+  "n": 97,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e097.json",
+  "id": "surface_untrim",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 558）**真机建成**（走 `sw_guard`，零弹窗）：★ **先造出一张真被剪裁过的曲面**（`PreTrimSurface` + 选 `SURFACEBODY` + `PostTrimSurface` —— 面数 8→7），★ **再选它的边 · `EdgeUntrimType = 2`** ⇒ **建成 `曲面-解除剪裁1`**（类型名 **`UnTrimRefSurf`**）。证据 `output/untrim-matrix-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/untrim-matrix-evidence.json",
+    "exists": true,
+    "verdict": "untrim_works",
+    "passed": 1,
+    "total": 6,
+    "note": "JSON 在盘上(2472B,2026-10-03)；verdict=untrim_works，passed=1/total=6，cases 六格里只有 ⑤ ok=true"
+   },
+   {
+    "raw": "★★★ **而根因是一组**六格矩阵**定下的—— ★ 六组里**只有一组成**：\n       ① 面 · Face=0(AllEdges)           ⇒ 不成\n       ② 面 · Face=1(InternalEdges)      ⇒ 不成\n       ③ 面 · Face=2(ExternalEdges)      ⇒ 不成\n       ④ **边 · Edge=1(ConnectEndPoints)** ⇒ 不成\n       ⑤ **边 · Edge=2(ExtendEdges)**     ⇒ **成** ✓\n       ⑥ 面 · BTrimOppositeSide=True  ⇒ 不成\n       ⇒ ★★ **故：必须选**边**，且 `EdgeUntrimType = 2`** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：六格矩阵记 ①②③④⑥「不成」，仅 ⑤ 边·Edge=2 成"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "第1条 evidence（output/untrim-matrix-evidence.json，2472B）顶层 verdict=untrim_works（非 fail/partial），但 passed=1 < total=6：cases 里 ①②③④⑥ 的 ok 均为 false，只有 ⑤ ok=true；第2条散文同样只记 1 成 5 不成。"
+ },
+ {
+  "n": 98,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e098.json",
+  "id": "feature_loft_cut",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 561）**真机建成**（走 `sw_guard`，零弹窗）：一个实体 + 两个平行剖面（**按顺序**选中 · **mark=1**）⇒ `InsertCutBlend(…)` ⇒ **建成 `切除-放样1`**·**类型名 `BlendCut`**·★ **体积 0.9714 倍**（变小 = 真切除）。证据 `output/loft-cut-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/loft-cut-evidence.json",
+    "exists": true,
+    "verdict": "loft_cut_works",
+    "passed": 2,
+    "total": 2,
+    "note": "实测：verdict=loft_cut_works，passed=2/2，两例 ok 均 true"
+   },
+   {
+    "raw": "★★ **而对照组同时跑**：放样**凸台**（`InsertProtrusionBlend2`·**18 参**）⇒ `放样1`·**类型名 `Blend`**·**体积 1.0286 倍**（变大）。\n       ⇒ ★★ **故两者的分界就是**类型名**：`Blend` = 凸台 · **`BlendCut` = 切除**** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "对照组叙述：凸台 Blend、体积 1.0286 倍，无路径"
+   },
+   {
+    "raw": "★★★ **而本轮又是一次“失败在判据”**：我第一版照**凸台**抄成 `type_name == \"Blend\"` ⇒ ★ **对已建成的 `切除-放样1` 判了 `ok=False`** ⚠ （★ 与事实 420 / 431 同族）。\n       ★ 而与**事实 429**（旋转切除用 `IsCut=True`）**同一族**：★ **“切”会换类型名** 。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "不适用",
+    "passed": "不适用",
+    "total": "不适用",
+    "note": "更正记录：首版判据抄错致 ok=False，非能力失败"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 99,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e099.json",
+  "id": "surface_delete_hole",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 564）**真机建成**（零弹窗）：在**一张真正的带孔平面**（面 1 / 环 2）上选**孔那圈边** ⇒ `InsertDeleteHoleForSurface()` ⇒ **名 `删除孔1`**·**型 `DelHole`**·★ **环Δ = −1**（孔被填上）✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "叙述真机建成（删除孔1/DelHole/环Δ=−1）；散文无路径。"
+   },
+   {
+    "raw": "★★★ **★ 成功那一次的证据文件**：`output/planar-region-and-delete-hole-evidence.json` —— ★ 它的 `verdict` 逐字是 **`planar_region_and_delete_hole_work`**、★ 且 `cases[1]`（「★ 平面区域 + **删除孔**」）的 `ok` 是 **`True`** ✓",
+    "kind": "json_artifact",
+    "path": "output/planar-region-and-delete-hole-evidence.json",
+    "exists": true,
+    "verdict": "planar_region_and_delete_hole_work",
+    "passed": 2,
+    "total": 2,
+    "note": "文件存在；verdict为work，2/2全通过，cases[1].ok=true。"
+   },
+   {
+    "raw": "⚠⚠ 2026-10-04（接手轮）**修正一条容易误导的引证**：★ 本条目原来在 evidence 里**并列引了三份文件**，★ 而**其中两份的 `verdict` 是否定的** —— ★ `output/delete-hole-for-surface-evidence.json` 的 `verdict` 是 **`successor_also_fails`**、`output/delete-hole-inner-loop-evidence.json` 的 `verdict` 是 **`inner_loop_still_fails`**。★★ 它们记的是**试过但失败的路**，★ **不是**本条能力的成功证据 ⇒ ★ 已挪到 `limitations` ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "更正记录：所引另两份文件 verdict 均为否定（已实测），已移入 limitations。"
+   }
+  ],
+  "limitations_n": 8,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 100,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e100.json",
+  "id": "sketch_line2",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 565）**真机建成**（走 `sw_guard`，零弹窗）：先 `start_sketch`，再 `CreateLine2(-0.02,-0.01,0, 0.02,0.01,0)` ⇒ **草图段数 0 → 1**（★ 增 1）· 返回 `CDispatch`。证据 `output/createline2-and-createspline-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/createline2-and-createspline-evidence.json",
+    "exists": true,
+    "verdict": "partial_1",
+    "passed": 1,
+    "total": 3,
+    "note": "JSON 确实在盘上；顶层 verdict=partial_1，passed=1<total=3，另含 CreateSpline 失败格"
+   },
+   {
+    "raw": "★★ **而负例与官方 Remarks 逐字对上**：★ **无活动草图**时调它 ⇒ **回 `None`**、草图段数**不可读（-1）** —— ★ 官方：\"If a sketch is **not active**, then the line is **not created and NULL is returned**\" ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：称无活动草图时回 None、段数不可读，与官方 Remarks 逐字对上"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "output/createline2-and-createspline-evidence.json 顶层 verdict=partial_1、passed=1<total=3（CreateSpline 那格 ok=false），而本条 level 仍标 verified。"
+ },
+ {
+  "n": 101,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e101.json",
+  "id": "feature_cosmetic_thread",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 568）**真机建成**（走 `sw_guard`，零弹窗）：一个带圆孔的实体 · **选圆柱面的一条圆边** ⇒ `InsertCosmeticThread3(1, \"\", \"\", 0.008, 2, 0.0, \"\")` ⇒ **名 `装饰螺纹线1`** · **型 `CosmeticThread`**。证据 `output/cosmetic-thread-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/cosmetic-thread-evidence.json",
+    "exists": true,
+    "verdict": "cosmetic_thread_works",
+    "passed": 1,
+    "total": 3,
+    "note": "verdict=cosmetic_thread_works；passed=1<total=3"
+   },
+   {
+    "raw": "★★★ **而根因是三格对照定下的**：\n       ★ 选**圆柱面的边**   ⇒ **成** ✓\n       ★ 选**圆柱面本身**   ⇒ 不成 ✗\n       ★ **什么都不选**     ⇒ 不成 ✗",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：对照三格——选边成功、选面/不选失败，定前置"
+   },
+   {
+    "raw": "★★★ **而本轮又一次证明“失败在我这边”**：第一版我用 `str(Surface.Identity)` 里含 `\"Cylinder\"` 来**猜**哪个面是圆柱面 ⇒ ★ **三组全 `cyl=False`**（★ 根本没找到面）⚠；\n       ★ 而官方有现成的 **`ISurface.IsCylinder()`** ⇒ ★ 换成它之后**一次就成** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：更正记录——失败在探测脚本瞂猜圆柱面，换 IsCylinder() 即成"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "evidence1 output/cosmetic-thread-evidence.json：顶层 passed=1/total=3；cases 里 pick=face、pick=none 两格 ok=false。"
+ },
+ {
+  "n": 102,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e102.json",
+  "id": "sketch_spline",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 574）**真机建成**（走 `sw_guard`，零弹窗）：先 `start_sketch`，再 `CreateSpline2(VARIANT(VT_ARRAY|VT_R8, [x,y,z,…]), False)` ⇒ **草图段数 0 → 1** · 返回 `CDispatch`。证据 `output/spline-with-variant-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/spline-with-variant-evidence.json",
+    "exists": true,
+    "verdict": "spline_variant_works",
+    "passed": 1,
+    "total": 4,
+    "note": "JSON 在盘上；顶层 passed=1/total=4，cases 里 3 格 ok=false"
+   },
+   {
+    "raw": "★★★ **而三个条件是四格对照定下的**：\n       ① ★ **成员名 = `CreateSpline2`**。★ **`CreateSpline`（不带 2）在**迟到绑定**下根本取不到**（`成员不可调用`，★ 第四类形态）⚠\n       ② ★ **数组形态 = `VARIANT(VT_ARRAY|VT_R8, 扁平 list)`** （★ 而**扁平 list / list of tuples 都回 `None`**）\n       ③ ★ **第二个参数 = `False`**（`SimulateNaturalEnds`）\n       ⇒ ★★ **四格里只有一格成** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "散文：四格对照，只有 CreateSpline2+VARIANT 这一格成，其余三格回 None"
+   },
+   {
+    "raw": "★★ **而本轮还证明了一件事**：★ `call_com_member` **就是 `get_com_member` 的别名**（实现只有一行；★ 只是**名字即意图**）⇒ ★ **换名字不会改行为** ⚠",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "散文：call_com_member 是 get_com_member 的别名，换名不改行为"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "evidence[0] 的 output/spline-with-variant-evidence.json 顶层 passed=1 < total=4（3 格 ok=false），自称部分失败，level 却 verified。"
+ },
+ {
+  "n": 103,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e103.json",
+  "id": "sketch_spline3_2d",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 576）**真机建成**（走 `sw_guard`，零弹窗）：`CreateSpline3(PointData=[至少 6 个坐标], Surfs=None, Direction=None, SimulateNaturalEnds=False, Status=byref)` ⇒ **草图段数 0 → 1** · 返回 `CDispatch`。证据 `output/createspline3-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/createspline3-evidence.json",
+    "exists": true,
+    "verdict": "spline3_2d_True_on_surface_False",
+    "passed": 1,
+    "total": 3,
+    "note": "文件在(1400B)；2D格ok=true，但顶层passed=1<total=3，另两格ok=false"
+   },
+   {
+    "raw": "★★ **而两格对照把参数说清了**：\n       ★ **2D**（至少 6 坐标 + 其余 `null`） ⇒ **成** ✓\n       ★ 只给**一个点**（不足 6 坐标）          ⇒ 不成 ✗\n       ★ 而官方 Remarks 逐字：**2D 要至少 6 个坐标；其余参数全给 `null`/`Nothing`** ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "散文无路径：记两格对照——2D至少6坐标成，只给1点不成"
+   }
+  ],
+  "limitations_n": 2,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "第1条 output/createspline3-evidence.json 顶层passed=1<total=3、verdict='spline3_2d_True_on_surface_False'；yaml level=verified"
+ },
+ {
+  "n": 104,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e104.json",
+  "id": "sketch_rotate_or_copy_3d",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 580）**真机建成**（走 `sw_guard`，零弹窗）：`Insert3DSketch(True)` 开一个 **3D 草图** · 里面 `CreateLine` 画一条线 · 再 `RotateOrCopy3DAboutXYZ(Copy=True, 1, True, 0,0,0, 0.785, 0, 0)` ⇒ **草图段数 1 → 2**（★ 增 1 = 复制了一份）· 返回 `True`。证据 `output/rotate-or-copy-3d-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/rotate-or-copy-3d-evidence.json",
+    "exists": true,
+    "verdict": "rotate_or_copy_works",
+    "passed": 1,
+    "total": 2,
+    "note": "文件真在(906B)；顶层 passed=1 < total=2，对照组 ok=false"
+   },
+   {
+    "raw": "★★ **而对照组把那个布尔钉死了**：",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "纯叙述：说用对照组把那个布尔钉死了"
+   },
+   {
+    "raw": "`Copy=False` ⇒ **段 1 → 1**（★ 只旋转、不复制）· 而也回 `True` ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "纯叙述：Copy=False 时段 1→1、也回 True"
+   },
+   {
+    "raw": "★★★ **而本轮又纠了一个自己的错**：我第一版传了 **8 个参数**（★ **漏了 `AngleAboutZDir`**）⇒ `DISP_E_PARAMNOTOPTIONAL`（`0x8002000F`）；\n       ★ 而**那个错看不出是哪个参数漏了** ⚠ —— ★ 故又靠**反射的 arity**把它钉出来（铁律 4）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "纯叙述：自述首版 8 参报错 DISP_E_PARAMNOTOPTIONAL"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "evidence[0] 指向 output/rotate-or-copy-3d-evidence.json，其顶层 passed=1 < total=2（cases[1].ok=false），自称失败；而 level=verified。"
+ },
+ {
+  "n": 105,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e105.json",
+  "id": "sketch_equation_curve",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 581）**真机建成**（走 `sw_guard`，零弹窗）：先 `start_sketch`，再 `CreateEquationSpline2(\"\", \"exp(x)\", \"\", \"-1\", \"1\", False, 0.0, 0.0, 0.0, True, True)` ⇒ **草图段数 0 → 1** · 返回 `CDispatch`。证据 `output/equation-driven-curve-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/equation-driven-curve-evidence.json",
+    "exists": true,
+    "verdict": "equation_curve_1_of_3",
+    "passed": 1,
+    "total": 3,
+    "note": "文件在（927B）；顶层 passed=1 小于 total=3，自称三格里只成一格"
+   },
+   {
+    "raw": "★★ **而三格把两套用法的边界钉死了**：\n       ★ **显式** `y=exp(x)`（**X 给 `\"\"`**） ⇒ **段 0 → 1** ✓\n       ★ 参数 `x=sin(t)`/`y=cos(t)`           ⇒ 段 0 → 0（★ 而**回了 `CDispatch`**）⚠\n       ★ 坏表达式 `y=zzz(x)`                  ⇒ 段 0 → 0 · 回 `None`（★ 合理）",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：记三格边界——参数曲线段 0→0 但回 CDispatch；坏表达式回 None"
+   }
+  ],
+  "limitations_n": 4,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "evidence[0] 指向的 JSON 产物顶层 passed=1 < total=3、verdict=equation_curve_1_of_3，而 level=verified。"
+ },
+ {
+  "n": 106,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e106.json",
+  "id": "curve_through_xyz",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 582）**两套用法均真机建成**（走 `sw_guard`，零弹窗），判据 = **特征树增量**：\n       ★ **三步式**：`Begin()` → `Point(x,y,z)` × **4** → `End()` ⇒ **特征 5 → 6**，新增 **`曲线1`**；\n         ★ 而每一步都回了：`Begin=ok`（★ **它官方回 `void`**）· `Point=[True,True,True,True]` · `End=True` ✓\n       ★ **从文件**：`InsertCurveFile(path)` ⇒ **特征 5 → 6**，新增 **`曲线1`**，返回 `True` ✓\n证据 `output/curve-through-xyz-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/curve-through-xyz-evidence.json",
+    "exists": true,
+    "verdict": "xyz_curve_2_of_2",
+    "passed": 2,
+    "total": 2,
+    "note": "JSON 顶层 verdict=xyz_curve_2_of_2、passed 2=total 2，两格 ok=true"
+   },
+   {
+    "raw": "★★ **而判据是按事实 436 取的**：`InsertCurveFileBegin` 官方回 **`void`** ⇒ ★ **不能看返回值**，改看 **`feature_names()` 的增量**。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：说明判据取特征树增量（Begin 官方回 void），非失败记录"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "some",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 107,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e107.json",
+  "id": "select_by_ray",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 589）**真机选中**（走 `sw_guard`，零弹窗）：先造一块板，再 `SelectByRay(0, 0, +0.05, 0, 0, **-1**, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)` ⇒ **选中计数 1 → 2**（增 1）· 返回 `True`。证据 `output/hole-wizard5-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/hole-wizard5-evidence.json",
+    "exists": true,
+    "verdict": "ray_select_1_of_1",
+    "passed": 1,
+    "total": 1,
+    "note": "json 在盘(924B)；verdict=ray_select_1_of_1，passed 1/1"
+   },
+   {
+    "raw": "★ 它的**语义**（官方逐字）：\"Defines a **cylindrical region of infinite length** that starts at the specified point and runs parallel to the ray direction\"。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "散文：引官方逐字语义「无限长圆柱区域平行于射线方向」"
+   },
+   {
+    "raw": "★★ **而它是 `HoleWizard5` 定孔位的**前置****（事实 464 的 Remarks）：\"…call **`SelectByRay` with Mark = 0** for each location.\"。\n       ★★ **故孔位是“射线选出来的”、**而不是裸坐标** —— ★ **命中什么由几何决定**。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "散文/推理：称其为 HoleWizard5 定孔位前置(Mark=0)"
+   },
+   {
+    "raw": "★ 而坐标/枚举均有**可核的来源**：`swSelFACES = 2` 取自本机反射 dump（★ 铁律 4 的裁决者）。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": null,
+    "passed": null,
+    "total": null,
+    "note": "散文：swSelFACES=2 取自反射 dump，未点名具体路径"
+   }
+  ],
+  "limitations_n": 3,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ },
+ {
+  "n": 108,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e108.json",
+  "id": "feature_hole_wizard5",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★ 2026-10-03（轮 591）**真机建成**（走 `sw_guard`，零弹窗）：",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "纯叙述：称轮591真机建成，无路径可查"
+   },
+   {
+    "raw": "`SelectByRay(0,0,+0.05, 0,0,-1, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)` 定孔位",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "SelectByRay 调用参数叙述，无路径"
+   },
+   {
+    "raw": "⇒ `HoleWizard5(**swWzdHole=2**, **ANSI_METRIC=1**, **40**螺钉间隙, **\"M8\"**, **swEndCondThroughAll=1**, 0.008, 0.02, 0, 0×12, \"\", False, True, False, False, False, False)",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "HoleWizard5 27参实参叙述，无路径"
+   },
+   {
+    "raw": "⇒ **特征 7 → 8**，新增 **`M8 间隙孔1`**（★ **真的异型孔向导特征**）· 返回 `CDispatch` ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "称特征7变8新增M8间隙孔1，无路径"
+   },
+   {
+    "raw": "证据 `output/hole-wizard5-build-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/hole-wizard5-build-evidence.json",
+    "exists": true,
+    "verdict": "hole_wizard5_1_of_5",
+    "passed": 1,
+    "total": 5,
+    "note": "JSON在盘上；passed1/total5，4个负对照返回None"
+   },
+   {
+    "raw": "★★★ **而关键是一个参数的形态**（★ #3211的五格对照）：\n       `SSize=''` · `'8'` · `'0.008'` · `'M8x1.25'` ⇒ **全 `None`**；★ **而 `SSize='M8'` ⇒ 成** ✓\n       ⇒ ★ 故 **`SSize` 要的是“**规格串**”**（★ 如 `M8`），★ **而不是空串、也不是纯数字** —— ★ 正是官方那句“**必须是该紧固件类型的合法尺寸**”。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "五格对照叙述，无路径"
+   },
+   {
+    "raw": "★★ 2026-10-03（轮 593）**包装真机通过**（走 `sw_guard`，零弹窗）：`scripts/sw_hole_features.create_hole_wizard_at_selection_report(model, \"+z\", \"M8\")`\n       ⇒ **特征 7 → 8**，新增 **`异型孔向导`**。证据 `output/hole-wizard-wrapper-evidence.json`。\n       ★ **而对照组**（`size=\"\"`）⇒ **回 `None`**，★ 而错误信息逐字给出三个常见原因（★ 事实 469）✓\n     ★★ **而它在设计上走过一次弯**（★ 事实 470）：我第一版设计成**先读选区的点**（`selection_point`）⇒ ★ 而真机否掉了它（★ `GetSelectionPoint` **要的是点、不是面**）；\n       ★ 改成接**声明式的面选择器**（★ 走本仓 `sw_simulation.resolve_face_selector`，★ 它从 `GetBodyBox()` 取**那个面的中心点**）⇒ ★ **通了** ✓",
+    "kind": "json_artifact",
+    "path": "output/hole-wizard-wrapper-evidence.json",
+    "exists": true,
+    "verdict": "wrapper_1_of_2",
+    "passed": 1,
+    "total": 2,
+    "note": "JSON在盘上；passed1/total2，对照组size空串失败"
+   }
+  ],
+  "limitations_n": 4,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "两条可达JSON顶层passed<total：hole-wizard5-build-evidence.json(1/5)、hole-wizard-wrapper-evidence.json(1/2)。"
+ },
+ {
+  "n": 109,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e109.json",
+  "id": "sketch_offset_on_surface",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★★ 2026-10-03（轮 612）**真机建成**（走 `sw_guard`，零弹窗）—— **三格对照**：\n       `按对象选 4 条边（补设 mark=1）` → `SketchOffsetOnSurface(0.01, False, True, False)` → `ClearSelection2` → **`SketchManager.InsertSketch(True)`**\n       ⇒ **特征 7 → 9**，新增 **`基准面1`** + **`草图2`** ✓\n       ★ **而对照组（★ 不做 `InsertSketch`）⇒ 特征 7 → 7、新增 []** —— ★ **故那一步是必需的**（★ 与官方 Remarks 第 ③ 条完全对应）✓\n       证据 `output/offset-on-surface-per-example-evidence.json`。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：真机建成 7→9；所引 JSON 实存，passed 2<total 3"
+   },
+   {
+    "raw": "★★ **而本轮修了两个真因**（★ 全靠真机逼出来）：\n       ① ★ **`SelectByID2(\"\", \"EDGE\", x,y,z, …)` 一条边都选不中**（★ 角点与中点两种坐标都 `selected = 0`）⚠\n         ★ 而**事实 32 早写着**：选实体要用 **`IEntity.Select4`（按对象）**；★ 本仓封装：`sw_selection_spec.entities_on_body` + `select_object`\n       ② ★ **`Select4` 没有 mark 参数** ⇒ 用 **`ISelectionMgr.SetSelectedObjectMark(i, mark, -1)`** 补设 ✓",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文更正记录：SelectByID2 选不中边、Select4 无 mark 参数；未给产物路径"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "some",
+  "level_supported": "no",
+  "contradiction": true,
+  "contradiction_note": "evidence[0] 所引 offset-on-surface-per-example-evidence.json 实存：顶层 passed=2<total=3、verdict=2_of_3；level 为 verified。"
+ },
+ {
+  "n": 110,
+  "out": "C:\\Users\\Zegel\\AppData\\Local\\Temp\\swsideline\\b1\\e110.json",
+  "id": "coverage_gap_batch1",
+  "level": "verified",
+  "verified_versions": [
+   "2026"
+  ],
+  "evidence": [
+   {
+    "raw": "★★★ 2026-10-03（接手轮）**真机 3/3**（走 `tools/sw_guard.py`，零弹窗、`sw_alive: true`）：`python tools/prove_coverage_gap_batch1.py`。① **旋转曲面** ⇒ 树新增 **`曲面-旋转1`** · **曲面体 0→1** · 选中轮廓 1；② **孔向导** ⇒ 树新增 **`异型孔向导`**（`M8`）；③ **完全定义检查** ⇒ `GetConstrainedStatus` 回 **int**。证据 `output/coverage-gap-batch1-evidence.json`。",
+    "kind": "json_artifact",
+    "path": "output/coverage-gap-batch1-evidence.json",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": 3,
+    "total": 3,
+    "note": "JSON 顶层无 verdict；passed 3 = total 3，三个 case 的 ok 均 true"
+   },
+   {
+    "raw": "★★ **完全定义那个读数**证明**有区分度**（不是常量）：欠定义的矩形（4 段）回 **2**；对 4 段全加 `sgFIXED` 后回 **3** ⇒ ★ 两次读数**不同**。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：称 GetConstrainedStatus 欠定义回 2、加 sgFIXED 后回 3，有区分度"
+   },
+   {
+    "raw": "★★ **覆盖率回读（生成器现算，★ 不是我算的）**：`docs/user-feature-coverage.md` §三 本仓库 **96/145 (66%) → 99/145 (68%)**；§八「只有四家有」**35 → 32 项** ⇒ ★ **+3 与接出去的工具数完全对上**（★ 这不是刷分：那 3 个工具**确实就是那些功能**，且都有真机证据）。",
+    "kind": "md_doc",
+    "path": "docs/user-feature-coverage.md",
+    "exists": true,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "该生成文档现存为 §三 119/145(82%)、§八 14 项，与文中数字非同一时点"
+   },
+   {
+    "raw": "★ 三个工具名**有意含覆盖率脚本要的关键词**（`revolved_surface` / `hole_wizard` / `fully_defined`）—— ★ 该脚本按「功能关键词**子串**命中工具名」计分 ⇒ **让名字与能力对上**是应有之义。",
+    "kind": "prose",
+    "path": null,
+    "exists": null,
+    "verdict": "查不到",
+    "passed": "查不到",
+    "total": "查不到",
+    "note": "散文：称三个工具名有意含覆盖率脚本所需关键词（已在 tool_specs_batch72.py 见到）"
+   }
+  ],
+  "limitations_n": 5,
+  "evidence_reachable": "all",
+  "level_supported": "yes",
+  "contradiction": false,
+  "contradiction_note": ""
+ }
+]

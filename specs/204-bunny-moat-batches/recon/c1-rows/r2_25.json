@@ -1,0 +1,15 @@
+{"idx":25,"pages_read":13,"rows":[
+{"iface":"IView","file":"GetAnnotationsByType.md","signature":"System.object GetAnnotationsByType( System.int Type )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"GetDimensionDisplayInfoSize.md","signature":"System.int GetDimensionDisplayInfoSize()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetFirstDisplayDimension4.md","signature":"DisplayDimension GetFirstDisplayDimension4()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetRevisionClouds.md","signature":"System.object GetRevisionClouds()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetBreakOutSections.md","signature":"Feature IGetBreakOutSections( System.int Count )","obsolete":false,"pointer":true,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetFirstDisplayDimension3.md","signature":"DisplayDimension IGetFirstDisplayDimension3()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"InsertBomTable.md","signature":"System.object InsertBomTable( System.string Template, System.double Xloc, System.double Yloc, out System.int Errors )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"SetLightweightToResolved.md","signature":"void SetLightweightToResolved()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"CreateBreakOutSection.md","signature":"System.bool CreateBreakOutSection( System.double Depth )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"ExplodeBlockInstance.md","signature":"System.bool ExplodeBlockInstance()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"ICreateSectionViewAt5.md","signature":"View ICreateSectionViewAt5( System.double X, System.double Y, System.double Z, System.string SectionLabel, System.int Options, System.int NumExcludedComponents, ref System.object ExcludedComponents, System.double SectionDepth )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"LoadLineStyles.md","signature":"System.bool LoadLineStyles( System.string StyleFiles, System.object StyleNameList, System.bool ReplaceExisting )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"ISheet","file":"GetOLEObjectCount.md","signature":"System.int GetOLEObjectCount()","obsolete":true,"pointer":false,"zero":"是（空括号）"}
+]}

@@ -1,0 +1,87 @@
+{
+  "idx": 271,
+  "results": [
+    {
+      "member": "GetThroughPointCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Curve_Through_Reference_Points_Example_CSharp.md",
+        "Create_Curve_Through_Reference_Points_Example_VB.md",
+        "Create_Curve_Through_Reference_Points_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在调用前后加了 AccessSelections / ReleaseSelectionAccess 访问括号；成员页 Remarks 只交代与 IGetThroughPoints 的先后",
+          "example_quote": "featData.AccessSelections Part, Nothing",
+          "example_file": "Create_Curve_Through_Reference_Points_Example_VB.md"
+        }
+      ],
+      "note": "3 份示例同构；均未调用 IGetThroughPoints"
+    },
+    {
+      "member": "GetTime",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Motion_Study_Example_VB.md",
+        "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md",
+        "swmotionstudyapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "GetTitle",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "任务列的 4 份示例均调 IModelDoc2.GetTitle；成员页自列 Get_Design_Table_Example_*"
+    },
+    {
+      "member": "GetToleranceFitValues",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Dimensions_to_Mid-Tolerance_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页只有 Obsolete 摘要，无 Remarks 段，跳过"
+    },
+    {
+      "member": "GetToleranceType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Dimensions_to_Mid-Tolerance_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页只有 Obsolete 摘要，无 Remarks 段，跳过"
+    },
+    {
+      "member": "GetToleranceValue",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Length_of_Spline_or_Elliptical_Edge_Example_VB.md",
+        "Get_Parameters_and_Spline_Points_for_Curve_Example_VB.md",
+        "Get_Tolerance_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 段，跳过"
+    },
+    {
+      "member": "GetToleranceValues",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Block_Tolerance_Example_VB.md",
+        "Get_DimXpert_Block_Tolerance_Example_VBNET.md",
+        "Set_Dimensions_to_Mid-Tolerance_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页只有 Obsolete 摘要，无 Remarks 段，跳过"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{"idx":18,"pages_read":13,"rows":[
+{"iface":"IView","file":"EnumSectionLines.md","signature":"EnumDrSections EnumSectionLines()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetDimensionCount3.md","signature":"System.int GetDimensionCount3()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetFirstCustomSymbol.md","signature":"System.object GetFirstCustomSymbol()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetProjectionArrow.md","signature":"System.object GetProjectionArrow()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetBaseView.md","signature":"View IGetBaseView()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetFirstCenterOfMass.md","signature":"CenterOfMass IGetFirstCenterOfMass()","obsolete":false,"pointer":true,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetWeldSymbols.md","signature":"WeldSymbol IGetWeldSymbols( System.int NumWeldSymbol )","obsolete":false,"pointer":true,"zero":"否（有形参）"},
+{"iface":"IView","file":"SetDisplayMode.md","signature":"void SetDisplayMode( System.int DisplayIn )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"CreateAngDim2.md","signature":"System.bool CreateAngDim2( System.object VP0, System.object VP1, System.object VP2, System.object VP3, System.object VP4, System.object VP5, System.object VP6, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot, System.object VTextPoint )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"EditRebuild.md","signature":"void EditRebuild()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"ICreateOrdinateDim.md","signature":"void ICreateOrdinateDim( ref System.double P0, ref System.double P1, ref System.double P2, ref System.double P3, ref System.double P4, System.double Angle, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"InsertTableAnnotation2.md","signature":"TableAnnotation InsertTableAnnotation2( System.bool UseAnchorPoint, System.double X, System.double Y, System.int AnchorType, System.string TableTemplate, System.int Rows, System.int Columns )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"ISheet","file":"FocusLocked.md","signature":"System.bool FocusLocked {get; set;}","obsolete":false,"pointer":false,"zero":"是（无括号）"}
+]}

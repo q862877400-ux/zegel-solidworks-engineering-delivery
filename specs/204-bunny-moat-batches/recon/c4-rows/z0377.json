@@ -1,0 +1,111 @@
+{
+  "idx": 377,
+  "results": [
+    {
+      "member": "ObjectType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_CSharp.md",
+        "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_VBNET.md",
+        "Get_Objects_in_Selection_Set_Example_CSharp.md",
+        "Get_Objects_in_Selection_Set_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Currently only [[features]] and [[components]] are supported. Null is returned for sub-components of an assembly loaded hidden with a selective open.",
+          "example_quote": "nodeObjectType = node.ObjectType;",
+          "example_file": "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_CSharp.md",
+          "why": "签名是 System.int；示例先声明 int nodeObjectType = 0 再直接接收并 switch，Null 落不到该类型上。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "给出确切的两个枚举取值，比「只支持 features/components」更具体",
+          "example_quote": "case (int)swTreeControlItemType_e.swFeatureManagerItem_Feature:",
+          "example_file": "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_CSharp.md"
+        },
+        {
+          "what": "示例的 Null 分支判的是 node.Object，不是 ObjectType",
+          "example_quote": "restOfString = \"[FEATURE: object Null?!]\";",
+          "example_file": "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说会返回 Null，但签名与两份示例都是整型。"
+    },
+    {
+      "member": "ObliqueAngle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VB.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md",
+        "Get_All_Elements_of_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "该页没有 ## Remarks 段，按纪律跳过；四份示例均只读取打印。"
+    },
+    {
+      "member": "Offset",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "本页无 ## Examples；四份示例的 Offset 分属 TabAndSlotGroupData 与 IThreadFeatureData，均为布尔量。"
+    },
+    {
+      "member": "OffsetAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Parting_Surface_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Parting_Surface_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "以「非 Perpendicular」作否定判据；枚举只有三个成员，与 Remarks 的 Tangent/Normal 等价",
+          "example_quote": "if (swPartingSurfaceFeatureData.PartingType == (int)swPartingSurfaceMoldParmType_e.swPartingSurfaceMoldParmPerpendicular)",
+          "example_file": "Get_and_Set_Parting_Surface_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "无冲突；Remarks 把枚举拼成 swPartingSurfceMoldParmNormal，示例拼写完整。"
+    },
+    {
+      "member": "OffsetDimType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Edge_Flange_Example_CSharp.md",
+        "Create_Edge_Flange_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出满足前置的具体组合：OffsetType 取 Blind 而非 UpToVertex",
+          "example_quote": "FeatData.OffsetType = (int)swFlangeOffsetTypes_e.swFlangeOffsetBlind;",
+          "example_file": "Create_Edge_Flange_Example_CSharp.md"
+        }
+      ],
+      "note": "无冲突；示例显式赋的 InnerVirtualSharp 正是 Remarks 所述默认值。"
+    },
+    {
+      "member": "OffsetDirections",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md",
+        "Create_Base_Flange_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "该页没有 ## Remarks 段，跳过；两示例分别赋 1 与 2，页面未给取值域。"
+    },
+    {
+      "member": "OffsetDistance",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "本页无 ## Examples；四份示例的 OffsetDistance 属 IEdgeFlangeFeatureData 与 IProfileCenterMateData。"
+    }
+  ]
+}

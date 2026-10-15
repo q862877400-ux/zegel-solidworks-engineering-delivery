@@ -1,0 +1,15 @@
+{"idx": 35, "pages_read": 13, "rows": [
+{"iface": "IView", "file": "GetBendNoteTextFormat.md", "signature": "`System.string GetBendNoteTextFormat()`", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetDimensionIds4.md", "signature": "`System.object GetDimensionIds4()`", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetFirstRevisionCloud2.md", "signature": "`System.object GetFirstRevisionCloud2()`", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetSketch.md", "signature": "`System.object GetSketch()`", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetDependentViews.md", "signature": "`View IGetDependentViews( System.bool AllViews, System.int SpecificViewType, System.int DependentViewCount )`", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IView", "file": "IGetLines2.md", "signature": "`System.double IGetLines2()`", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "InsertHoleTable.md", "signature": "`HoleTableAnnotation InsertHoleTable( System.bool UseAnchorPoint, System.double X, System.double Y, System.int AnchorType, System.string TableTemplate )`", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IView", "file": "ShowSheetMetalBendNotes.md", "signature": "`System.bool ShowSheetMetalBendNotes {get; set;}`", "obsolete": false, "pointer": false, "zero": "是（无括号）"},
+{"iface": "IDrawingDoc", "file": "CreateDiamDim2.md", "signature": "`System.bool CreateDiamDim2( System.double DimVal, System.object VP0, System.object VP1, System.object VP2, System.object VP3, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot, System.object VTextPoint )`", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "GetDrawingPaletteViewNames.md", "signature": "`System.object GetDrawingPaletteViewNames()`", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "IInsertCustomSymbol2.md", "signature": "`CustomSymbol IInsertCustomSymbol2( System.string FileName )`", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "NewSheet3.md", "signature": "`System.bool NewSheet3( System.string Name, System.int PaperSize, System.int TemplateIn, System.double Scale1, System.double Scale2, System.bool FirstAngle, System.string TemplateName, System.double Width, System.double Height, System.string PropertyViewName )`", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "ISheet", "file": "GetZoneMargin.md", "signature": "`System.double GetZoneMargin( System.int ZoneMargin )`", "obsolete": false, "pointer": false, "zero": "否（有形参）"}
+]}

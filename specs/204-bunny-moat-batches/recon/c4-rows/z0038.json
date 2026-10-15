@@ -1,0 +1,161 @@
+{
+  "idx": 38,
+  "results": [
+    {
+      "member": "CapEnds",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Core_Feature_Example_VB.md",
+        "Get_Core_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先调 AccessSelections 再读 CapEnds，末尾 ReleaseSelectionAccess，成员页未给调用序",
+          "example_quote": "b = swCoreFeat.AccessSelections(swModel, Nothing)",
+          "example_file": "Get_Core_Feature_Example_VB.md"
+        },
+        {
+          "what": "前置还要求在特征树中选中该特征，示例用 GetSelectedObject6 取得 Feature",
+          "example_quote": "Set swFeat = swSelMgr.GetSelectedObject6(1, -1)",
+          "example_file": "Get_Core_Feature_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；按纪律跳过冲突判定。示例与 Returns 的布尔语义一致。"
+    },
+    {
+      "member": "CapPlanar",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Intersect_Feature_Data_Example_CSharp.md",
+        "Get_Intersect_Feature_Data_Example_VB.md",
+        "Get_Intersect_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出读取时机：PostIntersect 建出 Intersect1、GetDefinition 之后才读 CapPlanar",
+          "example_quote": "Set featData = swFeat.GetDefinition",
+          "example_file": "Get_Intersect_Feature_Data_Example_VB.md"
+        },
+        {
+          "what": "示例用 PreIntersect(False) 并就地注释 Do not cap，把 True/False 极性锚在“不封口”侧",
+          "example_quote": "'Do not cap planar surface openings of intersect feature",
+          "example_file": "Get_Intersect_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；跳过冲突判定。三份示例一致，与 Returns 的 True=close 不冲突。"
+    },
+    {
+      "member": "Capture3DView",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Capture_3DView_Example_CSharp.md",
+        "Capture_3DView_Example_VB.md",
+        "Capture_3DView_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method requires that the SOLDWORKS MBD add-in be loaded. ([[ISldWorks::LoadAddIn]])",
+          "example_quote": "' 1. Open a part or assembly.\n' 2. Open an Immediate window.",
+          "example_file": "Capture_3DView_Example_VB.md",
+          "why": "成员页把 MBD 加载项列为硬前置；三份示例的前置清单只有两条且代码从不调 LoadAddIn，两侧不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例展示返回对象上可直接读 ModelBreakViewName、ConfigurationName 等，成员页只写“返回 IView3D”",
+          "example_quote": "sw3DView.ModelBreakViewName",
+          "example_file": "Capture_3DView_Example_CSharp.md"
+        }
+      ],
+      "note": "本批唯一冲突。签名回 View3D 与 Returns 的 IView3D 是同一对象，不算 return_shape 差异。"
+    },
+    {
+      "member": "CavitySurfaces",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Tooling_Split_Feature_Data_Example_CSharp.md",
+        "Get_Tooling_Split_Feature_Data_Example_VB.md",
+        "Get_Tooling_Split_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 AccessSelections、读完整组 CavitySurfaces 后才 ReleaseSelectionAccess，Remarks 只指向外部文档",
+          "example_quote": "bRet = swToolingSplitFeatData.AccessSelections(swModel, Nothing)",
+          "example_file": "Get_Tooling_Split_Feature_Data_Example_VB.md"
+        },
+        {
+          "what": "C# 侧把返回值 cast 成 object[] 并按 GetCavitySurfacesCount 定长索引出 Body2",
+          "example_quote": "cavSurf = (object[])swToolingSplitFeatData.CavitySurfaces;",
+          "example_file": "Get_Tooling_Split_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只说“见选择访问文档、更多细节在该页”，未与示例相抵，故不判冲突。"
+    },
+    {
+      "member": "CenterDistance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 Calculate 之前先设 ArcOption，并把 0/1/2 注释为中心到中心/最小距离/最大距离",
+          "example_quote": "' 0 = center to center",
+          "example_file": "Measure_Selected_Entities_Example_VB.md"
+        },
+        {
+          "what": "示例对 CenterDistance 也先判是否等于 -1 再打印，与 Returns 的失效约定对应",
+          "example_quote": "If (Not (swMeasure.CenterDistance = -1)) Then",
+          "example_file": "Measure_Selected_Entities_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；跳过冲突判定。三份示例读法完全一致。"
+    },
+    {
+      "member": "CenterFooter",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先把 UsePageSetup 置为 swPageSetupInUse_Document，再取 ModelDoc.PageSetup 去写页脚",
+          "example_quote": "swModelDocExt.UsePageSetup = swPageSetupInUse_e.swPageSetupInUse_Document",
+          "example_file": "Print_Drawing_as_High_Quality_Example_VB.md"
+        },
+        {
+          "what": "页脚内容由两个 GetHeaderFooterString 返回值夹一个字面分隔串拼成，成员页未说内容形态",
+          "example_quote": "footerText = (footerTextNumber & \" of \" & footerTextCount)",
+          "example_file": "Print_Drawing_as_High_Quality_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；跳过冲突判定。示例只写不读该属性。"
+    },
+    {
+      "member": "CenterLineFont",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "List_Center_Marks_in_Drawing_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出遍历序：图纸 GetFirstView/GetNextView，视图内 GetFirstCenterMark2/GetNext 后读该布尔",
+          "example_quote": "swCenterMark = swView.GetFirstCenterMark2",
+          "example_file": "List_Center_Marks_in_Drawing_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；跳过冲突判定。示例仅把该布尔直接拼串打印。"
+    }
+  ]
+}

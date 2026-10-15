@@ -1,0 +1,92 @@
+{
+  "idx": 362,
+  "results": [
+    {
+      "member": "Material",
+      "remarks_empty": true,
+      "examples_actually_used": ["Insert_Cosmetic_Weld_Bead_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无 ## Remarks；Get_Hole_Series_* 的 swFeatData 是 HoleSeriesFeatureData2，同名不同接口"
+    },
+    {
+      "member": "MaterialID",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无 ## Remarks；Create_3DContact 示例的 MaterialID(0) 是 3D 接触数据带参成员，非 IRenderMaterial"
+    },
+    {
+      "member": "MaterialIdName",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_Material_Property_Names_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "空串表示该面未赋材料，须判空后才打印",
+          "example_quote": "        If sMatName <> \"\" Then",
+          "example_file": "Get_Material_Property_Names_Example_VB.md"
+        },
+        {
+          "what": "面须由实体体的 Body.GetFirstFace/GetNextFace 遍历取得（实体面，非参考曲面体面）",
+          "example_quote": "    Set swFace = swBody.GetFirstFace",
+          "example_file": "Get_Material_Property_Names_Example_VB.md"
+        }
+      ],
+      "note": "Set_Material_Property_Name 示例只用在 ModelDoc/PartDoc 上，故未计入；Remarks 限定条件与示例不冲突"
+    },
+    {
+      "member": "MaterialModifier",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_PMI_Data_Example_CSharp.md", "Get_PMI_Data_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取到该属性的完整链：GetPMIData→GetFrameAtIndex→GetGtolBoxAtIndex，k 从 0 到 GetGtolBoxCount-1",
+          "example_quote": "                                For k = 0 To swPMIFrameData.GetGtolBoxCount - 1\n                                    Set swPMIGtolBoxData = swPMIFrameData.GetGtolBoxAtIndex(k)",
+          "example_file": "Get_PMI_Data_Example_VB.md"
+        }
+      ],
+      "note": "两份示例只读取并按 swMaterialModifier_e 打印，未触及被排除的 Translation；两侧不冲突"
+    },
+    {
+      "member": "MaterialName",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四个 Environmental_Impact 示例的 materialInfo 是 sustainabilityLib.SustainabilityMaterial，非 ITexture"
+    },
+    {
+      "member": "MaterialPropertyValues",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无 ## Remarks（仅 Obsolete 摘要）；四示例分别在 Face2 / ModelDoc2 / Component2 上调用，非 IBody2"
+    },
+    {
+      "member": "MaterialPropertyValues2",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_Material_Property_Values_Example_VB.md"],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is intended to be used on bodies other than the base body and should follow a call to [[IPartDoc::EnumRelatedBodies2]].",
+          "example_quote": "    For i = 0 To 5\n        vBodyArr = swPart.GetBodies2(i, False)",
+          "example_file": "Get_Material_Property_Values_Example_VB.md",
+          "why": "Remarks 要求先调 EnumRelatedBodies2 且只用非基体；示例改走 GetBodies2 且 i=0 即 swSolidBody 基体，两条取体路线不能同时成立"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出索引 0..8 的逐项对应，并用 IsEmpty 表示该体没有颜色信息",
+          "example_quote": "        If IsEmpty(vMatProp) Then\n            Debug.Print \" No color information.\"",
+          "example_file": "Get_Material_Property_Values_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 第4条「设置后刷新图形区」在本只读示例中未涉及，不构成冲突"
+    }
+  ]
+}

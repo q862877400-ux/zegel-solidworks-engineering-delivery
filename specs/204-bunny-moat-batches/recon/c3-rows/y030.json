@@ -1,0 +1,162 @@
+{
+  "idx": 30,
+  "results": [
+    {
+      "name": "motion_validation_and_preconditions",
+      "level": "verified",
+      "members_found": [
+        "GetMotionStudyManager",
+        "GetMotionStudyCount",
+        "GetMotionStudyNames",
+        "GetMotionStudy",
+        "StudyType",
+        "GetDuration",
+        "GetMotionFeaturesCount",
+        "GetMotionFeatures",
+        "GetResults",
+        "IsOutOfDate",
+        "IsActive",
+        "IsPlaying",
+        "GetNumOfExternalMotors",
+        "GetNumOfExternalForces",
+        "GetTypeName2",
+        "GetTypeName",
+        "GetType",
+        "Name",
+        "pythoncom.LoadTypeLib+gencache.EnsureModule（swmotionstudy.tlb）"
+      ],
+      "examples_used": [
+        "Get_Motion_Study_Example_VB.md",
+        "Add_Damper_to_Motion_Study_Example_VB.md",
+        "sldworksapi__Create_Motion_Studies_Example_VB.md",
+        "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md",
+        "swmotionstudyapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "Open a model that has a Physical Simulation motion study named PhysSim",
+          "from": "Get_Motion_Study_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "load the SOLIDWORKS Motion Study add-in (Tools > Add-Ins > SOLIDWORKS Motion)",
+          "from": "Get_Motion_Study_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "add a reference to the SolidWorks MotionStudy type library",
+          "from": "Get_Motion_Study_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "MotionManager 选项卡可见（View > MotionManager）",
+          "from": "Add_Damper_to_Motion_Study_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetMotionStudyManager() 返回 Nothing 即 End（必须先拿到 manager）",
+          "from": "sldworksapi__Create_Motion_Studies_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "算例不是活动态时要先 Activate",
+          "from": "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetResults 第 1 参须与 StudyType 对应（示例传 4 取 COSMOSMotion 槽位）",
+          "from": "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "先 Calculate 并等 IsPlaying 变 False，再 GetResults / IsOutOfDate",
+          "from": "Get_Motion_Study_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Motion Study 1 存在且 Type of Study 设为 Motion Analysis",
+          "from": "swmotionstudyapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "evidence 仅 1 句、不含任何前置文字；tlb 只出现在 limitations，故 9 项全 not_covered。"
+    },
+    {
+      "name": "drawing_views_and_summary",
+      "level": "verified",
+      "members_found": [
+        "GetType",
+        "GetSheetCount",
+        "GetSheetNames",
+        "GetCurrentSheet",
+        "GetName",
+        "GetProperties2",
+        "GetSheetFormatName",
+        "GetFirstView",
+        "GetNextView",
+        "Type",
+        "GetName2"
+      ],
+      "examples_used": [
+        "Activate_Each_View_on_Current_Sheet_Example_VB.md",
+        "Get_Solid-fill_Hatch_Information_Example_VB6.md",
+        "Get_Names_of_Annotations_Example_VB.md",
+        "Set_Drawing_Sheet_Properties_Example_VB.md",
+        "Get_Sheet_Numbers_and_Names_Example_VB.md",
+        "Get_Loaded_Sheets_Example_CSharp.md",
+        "Custom_Check_Document_Example_VB.md",
+        "Print_Drawing_Document_to_File_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "Open a drawing with one or more drawing views.",
+          "from": "Activate_Each_View_on_Current_Sheet_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "`bolt-assembly.slddrw` ⇒ `list_views` **5 个视图**"
+        },
+        {
+          "text": "First view is the current drawing sheet；遍历前先 GetNextView 一次",
+          "from": "Get_Solid-fill_Hatch_Information_Example_VB6.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Create a new drawing document.（GetProperties2 读的是当前图纸页）",
+          "from": "Set_Drawing_Sheet_Properties_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "`current_sheet_info` 真机回 `paper_size` / `scale_num` / `scale_den` / `first_angle` / `height_mm`"
+        },
+        {
+          "text": "Open a drawing that has multiple sheets.",
+          "from": "Get_Sheet_Numbers_and_Names_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "要先 ActivateSheet 再 GetCurrentSheet（读指定图纸页前必须先切页）",
+          "from": "Get_Loaded_Sheets_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "活动文档必须是工程图（swDocDRAWING）",
+          "from": "Custom_Check_Document_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "`box.slddrw` ⇒ `list_views` **4 个视图**"
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "多图纸、图纸页伪视图、先切页三项 evidence 未提；GetSheetFormatName 两索引零命中。"
+    }
+  ]
+}

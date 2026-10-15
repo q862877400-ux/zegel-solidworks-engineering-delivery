@@ -1,0 +1,16 @@
+{"idx":1,"pages_read":14,"rows":[
+{"iface":"IView","file":"AlignDrawingView.md","signature":"System.bool AlignDrawingView( System.int AlignViewType )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"GetDatumPointsCount.md","signature":"System.int GetDatumPointsCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetEllipses.md","signature":"System.object GetEllipses()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetParabolaCount.md","signature":"System.int GetParabolaCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetVisibleEntities2.md","signature":"System.object GetVisibleEntities2( Component2 LpViewComponent, System.int EntityType )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetDimensionString.md","signature":"System.string IGetDimensionString()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetSFSymbols.md","signature":"SFSymbol IGetSFSymbols( System.int NumSFSymbol )","obsolete":false,"pointer":true,"zero":"否（有形参）"},
+{"iface":"IView","file":"Position.md","signature":"System.object Position {get; set;}","obsolete":false,"pointer":false,"zero":"是（无括号）"},
+{"iface":"IDrawingDoc","file":"AutoBalloon5.md","signature":"System.object AutoBalloon5( AutoBalloonOptions BalloonOptions )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"CreateText.md","signature":"System.bool CreateText( System.string TextString, System.double TextX, System.double TextY, System.double TextZ, System.double TextHeight, System.double TextAngle )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"ICreateAngDim.md","signature":"void ICreateAngDim( ref System.double P0, ref System.double P1, ref System.double P2, ref System.double P3, ref System.double P4, ref System.double P5, ref System.double P6, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"InsertModelAnnotations.md","signature":"System.bool InsertModelAnnotations( System.int Option, System.bool AllTypes, System.int Types, System.bool AllViews )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"SketchDim.md","signature":"void SketchDim()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"ISheet","file":"SetSize.md","signature":"System.bool SetSize( System.int Size, System.double Width, System.double Height )","obsolete":false,"pointer":false,"zero":"否（有形参）"}
+]}

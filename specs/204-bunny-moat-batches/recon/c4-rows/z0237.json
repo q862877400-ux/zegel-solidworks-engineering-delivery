@@ -1,0 +1,109 @@
+{
+  "idx": 237,
+  "results": [
+    {
+      "member": "GetPolylines5",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Polylines_Information_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 段。示例传 0 且注释 No cross-hatch lines，与 GetPolylines7 页 0=include 相反；本页未说明该参数，不判冲突。"
+    },
+    {
+      "member": "GetPolylines7",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Polyline_Data_from_View_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回坐标乘 1000 再标 mm，说明 x,y,z（center/start/end point）原始单位是米；Remarks 全文未写单位。",
+          "example_quote": "Debug.Print \"      center pt = (\" & dGeomData(0) * 1000# & \", \" & dGeomData(1) * 1000# & \", \" & dGeomData(2) * 1000# & \") mm\"",
+          "example_file": "Get_Polyline_Data_from_View_Example_VB.md"
+        },
+        {
+          "what": "示例把 Remarks 格式表里的 LineColor/LineStyle/LineFont/LineWeight 固定为 4 项、LayerID/LayerOverride 固定为 2 项，给出可直接用的分组长度。",
+          "example_quote": "' Entries for line data and layer data have a fixed size.\n        lLineDataSize = 4\n        lLayerDataSize = 2",
+          "example_file": "Get_Polyline_Data_from_View_Example_VB.md"
+        }
+      ],
+      "note": "无冲突。示例解析顺序与 Remarks 格式表逐项吻合；单位只能由示例的 *1000 推断。"
+    },
+    {
+      "member": "GetPosition",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例均非本成员：Broken_View 调 IBreakLine::GetPosition(0)，Center_Marks 调 ICenterMark::GetPosition(i)。"
+    },
+    {
+      "member": "GetPreSelectedObject",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Preselected_Object_Example_CSharp.md",
+        "Get_Preselected_Object_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 段。示例在 UserSelectionPreNotify 回调内调用，按 SelectionType 强转为 Face2 或 Edge。"
+    },
+    {
+      "member": "GetPreviewBitmap",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Preview_Bitmap_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method is not supported in macros or out-of-process applications in SOLIDWORKS x64.",
+          "example_quote": "Option Explicit\nDim swApp As SldWorks.SldWorks\nSub main()\n    Set swApp = Application.SldWorks\n    Dim p As stdole.StdPicture 'See MSDN for details about the StdPicture object\n    Dim fileName As String\n    fileName = \"C:\\Users\\Public\\Documents\\SOLIDWORKS\\SOLIDWORKS 2018\\samples\\tutorial\\api\\centerlink.sldprt\"\n    Set p = swApp.GetPreviewBitmap(fileName, \"Default\")",
+          "example_file": "Get_Preview_Bitmap_Example_VB.md",
+          "why": "Remarks 第 2 条说 x64 下宏不可用，而唯一官方示例正是 VBA 宏；64 位下二者不能同时成立（第 2 条以 x64 为限，示例未标位数）。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把返回的 IPictureDisp 在 VBA 里接成 stdole.StdPicture，并示范读 Handle/Height/Width/Type 四个成员。",
+          "example_quote": "Dim p As stdole.StdPicture 'See MSDN for details about the StdPicture object\n    Debug.Print \"Height: \" & p.Height\n    Debug.Print \"Width: \" & p.Width\n    Debug.Print \"Type (1 = bitmap): \" & p.Type",
+          "example_file": "Get_Preview_Bitmap_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 第 1 条允许宏、第 2 条禁宏（限 x64），本身互斥；唯一官方示例是 VBA 宏。"
+    },
+    {
+      "member": "GetPreviewBitmapFile",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Save_Configuration_Data_Example_CSharp.md",
+        "Save_Configuration_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 段。示例按配置循环调用，并用 bool status 判是否写盘成功。"
+    },
+    {
+      "member": "GetPrimaryDatumModifiers",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把修饰符数组当 Variant，与 GetPrimaryDatums() 同循环同下标 mods(I) 配对取值；datums 为空则报 none、不碰 mods。",
+          "example_quote": "For I = LBound(dats) To UBound(dats)\n        mcm = mods(I)",
+          "example_file": "Get_DimXpert_Datum_Example_VB.md"
+        }
+      ],
+      "note": "无冲突。示例的 swDimXpertMCM_* 即成员页所引 swDimXpertMaterialConditionModifier_e 的成员。"
+    }
+  ]
+}

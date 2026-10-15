@@ -1,0 +1,31 @@
+{
+  "idx": 1,
+  "project": "Eduardof0nt",
+  "files_read": 1,
+  "calls": [
+    {
+      "member": "ActiveDoc",
+      "file": "server.py",
+      "argc": 0,
+      "has_out_variant": false,
+      "evidence": "        Set swApp = Application.SldWorks\n        Set swDoc = swApp.ActiveDoc",
+      "official_found": true,
+      "official_signature": "System.object ActiveDoc {get;}",
+      "official_argc": 0,
+      "verdict": "match",
+      "note": "occurs only inside a docstring VBA example; no Python COM call in file"
+    },
+    {
+      "member": "GetTitle",
+      "file": "server.py",
+      "argc": 0,
+      "has_out_variant": false,
+      "evidence": "        Set swDoc = swApp.ActiveDoc\n        MsgBox \"Document: \" & swDoc.GetTitle()",
+      "official_found": true,
+      "official_signature": "System.string GetTitle()",
+      "official_argc": 0,
+      "verdict": "match",
+      "note": "same docstring VBA example; compared against IModelDoc2.GetTitle"
+    }
+  ]
+}

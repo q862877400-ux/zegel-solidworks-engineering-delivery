@@ -1,0 +1,116 @@
+{
+  "idx": 335,
+  "results": [
+    {
+      "member": "IsExploded",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例调的都是后继 IModelDocExtension::IsExploded(out ViewName)；本页无 Examples 段。"
+    },
+    {
+      "member": "IsFixed",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_CSharp.md",
+        "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_VBNET.md",
+        "Get_Component_State_Example_CSharp.md",
+        "Get_Component_State_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "To determine if a component is fixed or floating, you must begin the traversal from the subassembly document in the appropriate configuration instead of from the root level. At the root level, all of the components in the subassembly are allowed to move.",
+          "example_quote": "' Select subassembly\nstatus = swModelDocExt.SelectByID2(\"blade shaft-1@98food processor\", \"COMPONENT\", 0, 0, 0, False, 0, Nothing, 0)\nSet swSelMgr = swModel.SelectionManager\nSet swAssy = swModel\nSet swComp = swSelMgr.GetSelectedObjectsComponent3(1, 0)\n' Print to the Immediate window the path and state of the\n' selected component\nDebug.Print \"File = \" & swModel.GetPathName\nDebug.Print \" Component = \" & swComp.Name2\nDebug.Print \" Path = \" & swComp.GetPathName\nDebug.Print \" IsHidden = \" & swComp.IsHidden(True)\nDebug.Print \" IsFixed = \" & swComp.IsFixed",
+          "example_file": "Get_Component_State_Example_VB.md",
+          "why": "Remarks 要求从子装配文档+指定配置起遍历；示例在根装配里直接选中子装配组件就读 IsFixed，未取子装配文档也未激活配置，根层级读数不代表真实固定状态。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "Expand_Collapse 两例按 Returns 语义 True=Fixed/False=Floating，无冲突。"
+    },
+    {
+      "member": "IsFlatPatternView",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Tangent_Edges_of_Bendlines_Example_CSharp.md",
+        "Get_Tangent_Edges_of_Bendlines_Example_VB.md",
+        "Get_Tangent_Edges_of_Bendlines_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples，无 ## Remarks 段，按规则跳过。"
+    },
+    {
+      "member": "IsFrozen",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Whether_Feature_is_Locked_Example_CSharp.md",
+        "Get_Whether_Feature_is_Locked_Example_VB.md",
+        "Get_Whether_Feature_is_Locked_Example_VBNET.md",
+        "Move_Freeze_Bar_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先在特征树选中一个已冻结特征，再由选区取 IFeature；成员页没写这条选区前置。",
+          "example_quote": "swModel = (ModelDoc2)swApp.ActiveDoc;\nswSelMgr = (SelectionMgr)swModel.SelectionManager;\nswFeat = (Feature)swSelMgr.GetSelectedObject6(1, -1);\nbRet = swFeat.IsFrozen();\nDebug.Print(\"Feature is frozen? \" + bRet);",
+          "example_file": "Get_Whether_Feature_is_Locked_Example_CSharp.md"
+        },
+        {
+          "what": "Move Freeze Bar 示例补出 IsFrozen 随冻结条位置变化的语义：条在顶时全部未冻结。",
+          "example_quote": "// feat = Null if freeze bar is at the top of FeatureManager design tree",
+          "example_file": "Move_Freeze_Bar_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只定义冻结语义；示例补了选区前置与冻结条位置语义，两者可同时成立。"
+    },
+    {
+      "member": "IsFutureVersion",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Version_History_of_Future_Version_Document_Example_CSharp.md",
+        "Get_Version_History_of_Future_Version_Document_Example_VB.md",
+        "Get_Version_History_of_Future_Version_Document_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出判定后的取法：为真才调 SldWorks::VersionHistory(文件名)，否则用 IModelDoc2::VersionHistory。",
+          "example_quote": "Debug.Print(\"Is future version = \" + swExtension.IsFutureVersion());\nif ((!(swExtension.IsFutureVersion() == false)))\n{\n    vVersionHistory = (object[])swApp.VersionHistory(strFileName);",
+          "example_file": "Get_Version_History_of_Future_Version_Document_Example_CSharp.md"
+        },
+        {
+          "what": "示例补出前置：须把未来版本零件放到宏目录，再由 OpenDoc6 打开该文件。",
+          "example_quote": "1. Copy a future version part document to this macro's directory.",
+          "example_file": "Get_Version_History_of_Future_Version_Document_Example_CSharp.md"
+        }
+      ],
+      "note": "示例与 Remarks 同口径：仍调 IModelDoc2::VersionHistory 拿模板历史，用 SldWorks::VersionHistory 拿文件历史。"
+    },
+    {
+      "member": "IsGraphicsBody",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Inspect_Facets_Example_CSharp.md",
+        "Inspect_Facets_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/See Also，无 ## Remarks 段，按规则跳过。"
+    },
+    {
+      "member": "IsGrouped",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Center_Marks_Set_Example_CSharp.md",
+        "Get_and_Set_Center_Marks_Set_Example_VBA.md",
+        "Get_and_Set_Center_Marks_Set_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples，无 ## Remarks 段，按规则跳过。"
+    }
+  ]
+}

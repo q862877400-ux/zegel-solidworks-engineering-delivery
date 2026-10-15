@@ -1,0 +1,117 @@
+{
+  "idx": 499,
+  "results": [
+    {
+      "member": "TolerancePerUnitType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IPMIFrameData::GeometricCharacteristic]] returns [[swGeometricCharacteristic_e]]:\n\n- swGeometricCharacteristic_Flatness\n\n- swGeometricCharacteristic_Straightness",
+          "example_quote": "                                            for (k = 0; k <= swPMIFrameData.GetGtolBoxCount() - 1; k++)\n                                            {\n                                                swPMIGtolBoxData = (PMIGtolBoxData)swPMIFrameData.GetGtolBoxAtIndex(k);\n                                                Debug.Print(\"    Gtol box \" + k);\n                                                Debug.Print(\"      Material modifier as defined in swMaterialModifier_e: \" + swPMIGtolBoxData.MaterialModifier);\n                                                Debug.Print(\"      Tolerance: \" + swPMIGtolBoxData.TolValue);\n                                                Debug.Print(\"      Units as defined in swPMIUnit_e: \" + swPMIGtolBoxData.Unit);\n                                                Debug.Print(\"      Tolerance zone modifier as defined in swToleranceZoneModifier_e: \" + swPMIGtolBoxData.ToleranceZoneModifier);\n                                                Debug.Print(\"      Tolerance per unit area type as defined in swPMITolPerUnitAreaType_e: \" + swPMIGtolBoxData.TolerancePerUnitType);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md",
+          "why": "Remarks 限定只在 GeometricCharacteristic 为 Flatness/Straightness 时有效；示例遍历全部 Gtol box 无条件读取该属性，未判该前提。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "VB 与 C# 两例写法一致，同样未体现几何特性前提。"
+    },
+    {
+      "member": "TolerancePerUnitValue1",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IPMIFrameData::GeometricCharacteristic]] returns [[swGeometricCharacteristic_e]]:\n\n- swGeometricCharacteristic_Flatness\n\n- swGeometricCharacteristic_Straightness",
+          "example_quote": "                                            Debug.Print(\"      Tolerance per unit area type as defined in swPMITolPerUnitAreaType_e: \" + swPMIGtolBoxData.TolerancePerUnitType);\n                                                Debug.Print(\"      Tolerance 1 per unit area value: \" + swPMIGtolBoxData.TolerancePerUnitValue1);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md",
+          "why": "Remarks 只在 Flatness/Straightness 下有效；示例在同一 Gtol box 循环里直接读 Value1，未按 GeometricCharacteristic 分支。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "示例只读不算值，未演示 Remarks 所述用 Value1 与 Value2 算单位面积再除 TolValue。"
+    },
+    {
+      "member": "TolerancePerUnitValue2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if:\n\n- [[IPMIFrameData::GeometricCharacteristic]] returns [[swGeometricCharacteristic_e]]\n\n  - swGeometricCharacteristic_Flatness\n\n  - swGeometricCharacteristic_Straightness\n\n- [[IPMIGtolBoxData::TolerancePerUnitType]] returns [[swPMITolPerUnitAreaType_e]].swPMITolPerUnitType_Rectangular.",
+          "example_quote": "                                            Debug.Print(\"      Tolerance per unit area type as defined in swPMITolPerUnitAreaType_e: \" + swPMIGtolBoxData.TolerancePerUnitType);\n                                                Debug.Print(\"      Tolerance 1 per unit area value: \" + swPMIGtolBoxData.TolerancePerUnitValue1);\n                                                Debug.Print(\"      Tolerance 2 per unit area value: \" + swPMIGtolBoxData.TolerancePerUnitValue2);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md",
+          "why": "Remarks 给了两个前提；示例紧接打印 TolerancePerUnitType 后仍无条件读 Value2，两个前提都没判。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "条件数最多的一个：几何特性加 Rectangular 类型，示例两条都没用。"
+    },
+    {
+      "member": "TolerancePrecision",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md",
+        "Get_and_Set_Hole_Callout_Variables_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取法：先 GetHoleCalloutVariables，再按 Type==Length 转成 CalloutLengthVariable 取该属性。",
+          "example_quote": "                    swCalloutLengthVariable = (CalloutLengthVariable)swCalloutVariable;\n                    Debug.Print(\"Callout variable(\" + i + \")'s\" + \" type = length\");\n                    Debug.Print(str1);\n                    Debug.Print(str2);\n                    Debug.Print(\"  Length = \" + swCalloutLengthVariable.Length);\n                    Debug.Print(\"  Precision = \" + swCalloutLengthVariable.Precision);\n                    Debug.Print(\"  Tolerance precision = \" + swCalloutLengthVariable.TolerancePrecision);",
+          "example_file": "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md"
+        }
+      ],
+      "note": "两份 Get PMI 示例调的是 IPMIDimensionItem::TolerancePrecision，非本成员，已排除；示例也未调 Remarks 所说的 SetPrecision3。"
+    },
+    {
+      "member": "ToleranceType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md",
+        "Get_and_Set_Hole_Callout_Variables_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在基础 CalloutVariable 对象上写该属性，不在转出来的 Length 变量上写。",
+          "example_quote": "swCalloutVariable.ToleranceType = (int)swTolType_e.swTolBILAT;",
+          "example_file": "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md"
+        }
+      ],
+      "note": "Auto Dimension Scheme 两例用的是 IDimXpertAutoDimSchemeOption::ToleranceType，已排除；示例未调 Remarks 要求的 GraphicsRedraw。"
+    },
+    {
+      "member": "ToleranceZoneModifier",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 与 See Also，无 Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "ToolBodyRegion",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Indent_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；示例循环上界取的是 GetBodiesCount 而非数组长度。"
+    }
+  ]
+}

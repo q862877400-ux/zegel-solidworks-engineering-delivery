@@ -1,0 +1,145 @@
+{
+ "idx": 314,
+ "results": [
+  {
+   "member": "InsertGridFeature",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_Grid_System_Feature_Example_CSharp.md",
+    "Insert_Grid_System_Feature_Example_VB.md",
+    "Insert_Grid_System_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "调用前必须先选中草图；Remarks 只讲元素数与层数的关系，未提任何前置",
+     "example_quote": "boolstatus = Part.Extension.SelectByID2(\"Sketch1\", \"SKETCH\", 0, 0, 0, false, 0, null, 0);",
+     "example_file": "Insert_Grid_System_Feature_Example_CSharp.md"
+    },
+    {
+     "what": "数组是米制：传 0.05，同文件 Postconditions 读作 50.0 mm；Remarks 只写 distances 未给单位",
+     "example_quote": "heightsArray[0] = 0.05;",
+     "example_file": "Insert_Grid_System_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "2 元数组产出 Level1/Level2，与 Remarks「元素数=层数」一致"
+  },
+  {
+   "member": "InsertGroundPlane",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_Ground_Plane_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "Remarks 只说「用 SelectByRay 或 SelectByID2 选中」；示例给的是 6 个 double 的射线(点+方向)加命中距离、mark=0 的完整调用形态",
+     "example_quote": "boolstatus = Part.Extension.SelectByRay(-9.07572786993001E-02, -3.35232970080597E-02, -0.329520078481409, -0.560777860996441, 0.738723196597798, -0.373920084275486, 1.28607075733318E-02, 2, False, 0, 0)",
+     "example_file": "Insert_Ground_Plane_Example_VB.md"
+    },
+    {
+     "what": "插入后落在 Ground Planes 文件夹；Remarks 只说 at each level of a plant assembly，未说落点",
+     "example_quote": " 1. Inserts Ground Plane1 in the Ground Planes folder.",
+     "example_file": "Insert_Ground_Plane_Example_VB.md"
+    }
+   ],
+   "note": "Remarks 的 SelectByID2 分支示例未演示；页面标 Obsolete 但示例仍直调本成员"
+  },
+  {
+   "member": "InsertGtol",
+   "remarks_empty": false,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "4 份示例调的都是零参 IModelDoc2.InsertGtol（swModel.InsertGtol），非 IDimXpertPart.InsertGtol(int Type)；本页也无 Examples 段"
+  },
+  {
+   "member": "InsertGussetFeature2",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_Weldment_Features_Example_CSharp.md",
+    "Insert_Weldment_Features_Example_VB.md",
+    "Insert_Weldment_Features_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "ProfileAngle 实传 0.7853981633975（π/4），说明角度是弧度；页面参数表只写 Value for profile angle，未给单位",
+     "example_quote": "0, 0, false, 0.025, 0.025, 0.015, 0.7853981633975, 0.015, true,",
+     "example_file": "Insert_Weldment_Features_Example_CSharp.md"
+    },
+    {
+     "what": "Faces 数组由 mark=1 与 mark=2 分别选出的两面经 GetSelectedObject6(1,n) 攒成；Remarks 只说可改用 Gusset3，未说数组怎么攒",
+     "example_quote": "= (Face2)selMgr.GetSelectedObject6(1, 2);",
+     "example_file": "Insert_Weldment_Features_Example_CSharp.md"
+    }
+   ],
+   "note": "Remarks 只给「改用 Gusset3」的替代路径；本页未标 Obsolete"
+  },
+  {
+   "member": "InsertGussetFeature3",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_Gusset_Feature_Example_CSharp.md",
+    "Insert_Gusset_Feature_Example_VB.md",
+    "Insert_Gusset_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "Remarks 把距离与角度推给 Help；示例给出实际值 ProfileAngle=0.78539816339745、ProfileChamferAngle=0.785398163397452（皆 π/4 弧度）",
+     "example_quote": "Set myFeature = Part.FeatureManager.InsertGussetFeature3(0.005, swGussetThicknessType_e.swGussetThicknessBothSides, swGussetProfileLocationType_e.swGussetProfileLocationCenter, False, 0.025, 0.025, 0.015, 0.78539816339745, 0.015, False, 0.005, 0, False, False, False, 0.0125, 0.0125, 0.785398163397452, True, False)",
+     "example_file": "Insert_Gusset_Feature_Example_VB.md"
+    },
+    {
+     "what": "页面说 ProfileD5/D6 与倒角角度仅在 BNeedChamferInGusset 为 true 时有效；示例末位传 false 却仍把这三个都填了值",
+     "example_quote": "0.005, 0, false, false, false, 0.0125, 0.0125, 0.785398163397452, true, false);",
+     "example_file": "Insert_Gusset_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "示例两次 SelectByID2 都用 mark=1，与 Remarks 一致；三份示例实参完全相同"
+  },
+  {
+   "member": "InsertHatchedFace",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Area_Hatch_Data_Example_CSharp.md",
+    "Get_Area_Hatch_Data_Example_VB.md",
+    "Get_Area_Hatch_Data_Example_VBNET.md",
+    "Override_Layer_Color_for_Area_Hatch_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例先 ActivateView 激活图纸视图再选面；Remarks 只限定 drawings only，未提激活视图这一步",
+     "example_quote": "bRet = swDraw.ActivateView(\"Drawing View1\");",
+     "example_file": "Get_Area_Hatch_Data_Example_CSharp.md"
+    },
+    {
+     "what": "要剖的面按 mark=0 选中；Remarks 只说 the selected faces，未给 mark",
+     "example_quote": "bRet = swModel.Extension.SelectByID2(\"\", \"FACE\", 0.246685509728212, 0.236217308689246, 0.0149999999999864, true, 0, null, 0);",
+     "example_file": "Get_Area_Hatch_Data_Example_CSharp.md"
+    }
+   ],
+   "note": "4 份示例全在 .slddrw 上跑，与不支持零件/装配体一致；摘要提到 closed sketch segments 但无一示例演示"
+  },
+  {
+   "member": "InsertHelix",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Spiral_Example_CSharp.md",
+    "Create_Spiral_Example_VB.md",
+    "Create_Spiral_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "Remarks 只要求螺旋给 pitch 与 revolution；示例还把 Height 传 0，并给了 Remarks 未提的 Startangle 4.712388980385（3π/2 弧度）",
+     "example_quote": "swModel.InsertHelix(false, true, false, false, (int)swHelixDefinedBy_e.swHelixDefinedBySpiral, 0, 0.04, 2, 0, 4.712388980385);",
+     "example_file": "Create_Spiral_Example_CSharp.md"
+    }
+   ],
+   "note": "三份示例实参完全一致；页面只给 Height 标 meters，Pitch 未标单位"
+  }
+ ]
+}

@@ -1,0 +1,112 @@
+{
+  "idx": 341,
+  "results": [
+    {
+      "member": "IsStyleSpline",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Style_Spline_Curve_Type_Example_CSharp.md",
+        "Get_Style_Spline_Curve_Type_Example_VB.md",
+        "Get_Style_Spline_Curve_Type_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples/See Also，无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "IsSubAssemblyRigid",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Explode_Step_Example_CSharp.md",
+        "Get_Explode_Step_Example_VB.md",
+        "Get_Explode_Step_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置与取对象路径：装配体须已有爆炸视图，且须先经 Configuration.GetExplodeStep(0) 取得 ExplodeStep。",
+          "example_quote": "1. Open an assembly document with an explode view.",
+          "example_file": "Get_Explode_Step_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 仅指向帮助文档，未给前置/返回/单位/mark 任何约束，无可冲突项。"
+    },
+    {
+      "member": "IsSupportedMatesAvailable",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Mate_Controller_Example_CSharp.md",
+        "Create_Mate_Controller_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "If this property is true, then use [[IAssemblyDoc::CollectAllSupportiveMates]] to collect the supportive mates in this assembly.",
+          "example_quote": "boolstatus = Assem.IsSupportedMatesAvailable;\nvar = (object[])Assem.CollectAllSupportiveMates();",
+          "example_file": "Create_Mate_Controller_Example_CSharp.md",
+          "why": "Remarks 要求 flag 为 true 才收集；示例存入 boolstatus 后从不判断，下一行直接调用 CollectAllSupportiveMates，VB.NET 版相同。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例点名受支持的 slot 约束为 Distance Along Slot / Percent Along Slot；Remarks 仅以排除法说明。",
+          "example_quote": "Open an assembly document that contains a mechanical slot feature with a slot mate that has one of these constraints: - Distance Along Slot - Percent Along Slot",
+          "example_file": "Create_Mate_Controller_Example_CSharp.md"
+        }
+      ],
+      "note": "两版示例调用序一致；slot 约束与 Remarks 的排除项不矛盾。"
+    },
+    {
+      "member": "IsSuppressed",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Material_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在同一调用点并排输出 Remarks 推荐的 GetSuppression 状态值与 IsSuppressed 布尔值。",
+          "example_quote": "Debug.Print \" State = \" & swComp.GetSuppression\n    Debug.Print \" Suppressed = \" & swComp.IsSuppressed",
+          "example_file": "Change_Material_Properties_Example_VB.md"
+        }
+      ],
+      "note": "三份 Auto_Dimension_Scheme 例调的是 IDimXpertFeature.IsSuppressed，属另一成员，已排除。"
+    },
+    {
+      "member": "IsSuppressed2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Solid_Bodies_from_Cut-list_Folders_and_Get_Custom_Properties_Example_CSharp.md",
+        "Get_Solid_Bodies_from_Cut-list_Folders_and_Get_Custom_Properties_Example_VB.md",
+        "Get_Solid_Bodies_from_Cut-list_Folders_and_Get_Custom_Properties_Example_VBNET.md",
+        "Is_Feature_Suppressed_in_Specified_Configurations_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples/See Also，无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "IsTangentPlane",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples/See Also，无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "IsTaskPaneExpanded",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_TaskPaneView_Add-in_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples/See Also，无 ## Remarks 段，按纪律跳过。"
+    }
+  ]
+}

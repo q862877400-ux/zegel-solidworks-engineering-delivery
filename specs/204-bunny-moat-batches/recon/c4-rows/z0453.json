@@ -1,0 +1,160 @@
+{
+  "idx": 453,
+  "results": [
+    {
+      "member": "SetProcess",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weld_Symbol_Example_CSharp.md",
+        "Insert_Weld_Symbol_Example_VB.md",
+        "Insert_Weld_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没有的前置：插入前须先选中一个面/边/草图线段，成员页 Remarks 未提任何选择前置。",
+          "example_quote": "// 2. Select a face, edge, or sketch segment for Weld Symbol insertion.",
+          "example_file": "Insert_Weld_Symbol_Example_CSharp.md"
+        },
+        {
+          "what": "示例只用 GetProcess/GetProcessReference 回读标志与参考框，从不读回 process 文本本身。",
+          "example_quote": "swWeldSymbol.SetProcess(true, \"Process\", true);",
+          "example_file": "Insert_Weld_Symbol_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例同构；Remarks 与示例在 Process/Reference 语义上一致，无冲突。"
+    },
+    {
+      "member": "SetProperties",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Sheet_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只翻转第 5 项 FirstAngle 后把 GetProperties 的 7 项原样整体写回。",
+          "example_quote": "vSheetProps(4) = Not bFirstAng",
+          "example_file": "Get_and_Set_Sheet_Properties_Example_VB.md"
+        },
+        {
+          "what": "示例写回属性后还要调 EditRebuild 才生效，Remarks 未提需要重建。",
+          "example_quote": "swDraw.EditRebuild",
+          "example_file": "Get_and_Set_Sheet_Properties_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 关于 Templ 不覆盖 PaperSz 的说法，示例原样透传，未被违反。"
+    },
+    {
+      "member": "SetProperties2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_CSharp.md",
+        "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_VB.md",
+        "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_VBNET.md",
+        "Set_Drawing_Sheet_Properties_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "The **Tools > Options > Document Properties > Drawing Sheets > Use custom property values from the sheet** check box must be preselected.",
+          "example_quote": "swSheet.SetProperties2 swDwgPaperSizes_e.swDwgPapersUserDefined, swDwgTemplates_e.swDwgTemplateCustom, 1, 2, False, swSheetWidth, swSheetHeight, True",
+          "example_file": "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_VB.md",
+          "why": "Remarks 说该标志置 true 必须先勾选 Tools>Options 复选框；三份 shoulders 示例末位传 True，前置只写「Verify that the part and templates exist / Open the Immediate window」，未建立该前置；而 Set_Drawing_Sheet_Properties_CSharp 的前置第 3 步恰恰照做了。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例显示 Width/Height 以米传入（1.189 / 0.841 对应 A0 1189×841 mm），成员页两个参数都没写单位。",
+          "example_quote": "swSheetWidth = 1.189\nswSheetHeight = 0.841",
+          "example_file": "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_VB.md"
+        },
+        {
+          "what": "示例按 1:2 建图（Scale1=1、Scale2=2），Remarks 只说视图会跟随新比例，没给具体取值。",
+          "example_quote": "swSheet.SetProperties2((int)swDwgPaperSizes_e.swDwgPapersUserDefined, (int)swDwgTemplates_e.swDwgTemplateCustom, 1, 2, false, swSheetWidth, swSheetHeight, true);",
+          "example_file": "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示 GetProperties2 回读数组强转 double[]，再按位取 0/1/4/7；Remarks 未说返回形状。",
+          "example_quote": "sheetProperties = (double[])swSheet.GetProperties2();",
+          "example_file": "Set_Drawing_Sheet_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "Set_Drawing_Sheet_Properties_CSharp 满足 Remarks 的复选框前置，与三份 shoulders 示例不一致。"
+    },
+    {
+      "member": "SetRadius",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md",
+        "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Radius 以米传入：0.006 即 6 mm，尽管所用表名写的是 MM SAMPLE.XLS；成员页未给单位。",
+          "example_quote": "smGaugeTableParam.SetRadius(0.006, true);",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        },
+        {
+          "what": "示例在修改阶段先 SetCurrentGaugeNumber 再 SetThickness 再 SetRadius，最后 SetGaugeTableParameters 回写。",
+          "example_quote": "smGaugeTableParam.SetThickness(0.006, true);",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+        }
+      ],
+      "note": "两份 Get_Broken_Out_Section 里的 SetRadius 是 SketchArc 的同名成员，不是本成员，已排除。"
+    },
+    {
+      "member": "SetRange",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "所列唯一示例调的是 IPropertyManagerPageSlider 的 3 参 SetRange，不是本 5 参成员，故不算用到。"
+    },
+    {
+      "member": "SetReferenceAxes",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Ref_Plane_SSMember_Example_CSharp.md",
+        "Create_Ref_Plane_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "实体数组须由 SelectionMgr.GetSelectedObject6 取出后包成 DispatchWrapper[] 再传入。",
+          "example_quote": "eArray = ObjectArrayToDispatchWrapperArray(horzPlanes);",
+          "example_file": "Create_Ref_Plane_SSMember_Example_VBNET.md"
+        },
+        {
+          "what": "示例实际传 3 个方向面（Plane2、Top Plane、Plane3），后置 9 个成员=3×3 印证；其自身说明文字只写了两个面。",
+          "example_quote": "horzPlanes[2] = swSelMgr.GetSelectedObject6(5, 0);",
+          "example_file": "Create_Ref_Plane_SSMember_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的「成员数=轴数×位置数」与示例的 9 个成员一致，无冲突。"
+    },
+    {
+      "member": "SetReferenceLocations",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Ref_Plane_SSMember_Example_CSharp.md",
+        "Create_Ref_Plane_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「至少一个方向轴实体」落成调用序：先 SetReferenceAxes 成功，再调 SetReferenceLocations。",
+          "example_quote": "stat = memRefPlaneDef.SetReferenceLocations(fArray)",
+          "example_file": "Create_Ref_Plane_SSMember_Example_VBNET.md"
+        },
+        {
+          "what": "位置面同样须包成 DispatchWrapper[]；本页摘要行把 Set 方法误写成 Gets，与示例不符。",
+          "example_quote": "fArray = ObjectArrayToDispatchWrapperArray(vertPlanes);",
+          "example_file": "Create_Ref_Plane_SSMember_Example_CSharp.md"
+        }
+      ],
+      "note": "摘要行写 Gets 属成员页自身笔误，非 Remarks 与示例冲突，故未计入 conflicts。"
+    }
+  ]
+}

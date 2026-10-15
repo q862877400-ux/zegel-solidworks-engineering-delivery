@@ -1,0 +1,115 @@
+{
+  "idx": 50,
+  "project": "andrewbartels1",
+  "files_read": 5,
+  "calls": [
+    {
+      "member": "GetDocumentCount",
+      "file": "src/utils/convert_step_to_sldprt.py",
+      "argc": 0,
+      "has_out_variant": false,
+      "evidence": "n_before = int(sw.GetDocumentCount())",
+      "official_found": true,
+      "official_signature": "System.int GetDocumentCount()",
+      "official_argc": 0,
+      "verdict": "match",
+      "note": "官方页 ISldWorks\\GetDocumentCount.md；实参与形参个数相同"
+    },
+    {
+      "member": "ActiveDoc",
+      "file": "src/utils/convert_step_to_sldprt.py",
+      "argc": 0,
+      "has_out_variant": false,
+      "evidence": "doc = sw.ActiveDoc",
+      "official_found": true,
+      "official_signature": "System.object ActiveDoc {get;}",
+      "official_argc": 0,
+      "verdict": "match",
+      "note": "属性读取（非方法调用），argc 按 0 计；官方页 ISldWorks\\ActiveDoc.md"
+    },
+    {
+      "member": "GetType",
+      "file": "src/utils/convert_step_to_sldprt.py",
+      "argc": 0,
+      "has_out_variant": false,
+      "evidence": "doc_type = int(doc.GetType())",
+      "official_found": true,
+      "official_signature": "System.int GetType()",
+      "official_argc": 0,
+      "verdict": "match",
+      "note": "doc 为 sw.ActiveDoc，取 IModelDoc2 下的 GetType.md；同成员另在 13 个接口下存在"
+    },
+    {
+      "member": "CloseDoc",
+      "file": "src/utils/convert_step_to_sldprt.py",
+      "argc": 1,
+      "has_out_variant": false,
+      "evidence": "sw.CloseDoc(doc.GetTitle())",
+      "official_found": true,
+      "official_signature": "void CloseDoc( System.string Name )",
+      "official_argc": 1,
+      "verdict": "match",
+      "note": "官方页 ISldWorks\\CloseDoc.md；全文共 3 处调用（第 220/235/243 行）"
+    },
+    {
+      "member": "GetTitle",
+      "file": "src/utils/convert_step_to_sldprt.py",
+      "argc": 0,
+      "has_out_variant": false,
+      "evidence": "sw.CloseDoc(doc.GetTitle())",
+      "official_found": true,
+      "official_signature": "System.string GetTitle()",
+      "official_argc": 0,
+      "verdict": "match",
+      "note": "官方页 IModelDoc2\\GetTitle.md；作为 CloseDoc 的实参出现"
+    },
+    {
+      "member": "SaveAs",
+      "file": "src/utils/convert_step_to_sldprt.py",
+      "argc": 1,
+      "has_out_variant": false,
+      "evidence": "ok = bool(doc.SaveAs(str(out_path)))",
+      "official_found": true,
+      "official_signature": "System.bool SaveAs( System.string NewName )",
+      "official_argc": 1,
+      "verdict": "match",
+      "note": "IModelDoc2\\SaveAs.md 逐字标 Obsolete（Superseded by IModelDocExtension::SaveAs，后者 6 参）"
+    },
+    {
+      "member": "Visible",
+      "file": "src/utils/convert_step_to_sldprt.py",
+      "argc": 0,
+      "has_out_variant": false,
+      "evidence": "app.Visible = True",
+      "official_found": true,
+      "official_signature": "System.bool Visible {get; set;}",
+      "official_argc": 0,
+      "verdict": "match",
+      "note": "属性赋值（非方法调用），argc 按 0 计；官方页 ISldWorks\\Visible.md"
+    },
+    {
+      "member": "GetUserPreferenceToggle",
+      "file": "src/utils/convert_step_to_sldprt.py",
+      "argc": 1,
+      "has_out_variant": false,
+      "evidence": "app.GetUserPreferenceToggle(SW_PREF_MULTICAD_ENABLE_3D_INTERCONNECT)",
+      "official_found": true,
+      "official_signature": "System.bool GetUserPreferenceToggle( System.int UserPreferenceToggle )",
+      "official_argc": 1,
+      "verdict": "match",
+      "note": "官方页 ISldWorks\\GetUserPreferenceToggle.md；实参为文件内常量 691"
+    },
+    {
+      "member": "SetUserPreferenceToggle",
+      "file": "src/utils/convert_step_to_sldprt.py",
+      "argc": 2,
+      "has_out_variant": false,
+      "evidence": "app.SetUserPreferenceToggle(\n                    SW_PREF_MULTICAD_ENABLE_3D_INTERCONNECT, False\n                )",
+      "official_found": true,
+      "official_signature": "void SetUserPreferenceToggle( System.int UserPreferenceValue, System.bool OnFlag )",
+      "official_argc": 2,
+      "verdict": "match",
+      "note": "官方页 ISldWorks\\SetUserPreferenceToggle.md；两处调用实参个数均为 2（第 316 行 False、第 359 行 True）"
+    }
+  ]
+}

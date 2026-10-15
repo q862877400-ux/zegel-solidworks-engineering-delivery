@@ -1,0 +1,136 @@
+{
+  "idx": 141,
+  "results": [
+    {
+      "member": "GeometricAccuracy",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_Motion_Study_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页只说「this Physical Simulation motion study」，未给取得途径；示例先 GetProperties(2) 再赋给 PhysicalSimulationMotionStudyProperties 变量。",
+          "example_quote": "Set swMotionStudyProps = swMotionStudy1.GetProperties(2)",
+          "example_file": "Get_Motion_Study_Example_VB.md"
+        },
+        {
+          "what": "成员页未列前置；示例前置要求加载 Motion 加载项并加 MotionStudy 类型库引用，且模型里须有名为 PhysSim 的算例。",
+          "example_quote": "' 2. In SOLIDWORKS Design, load the SOLIDWORKS Motion Study add-in",
+          "example_file": "Get_Motion_Study_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 谈的是「值越高越准但越慢」，示例只读取不设定，无相互矛盾的说法。"
+    },
+    {
+      "member": "GeometricCharacteristic",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_PMI_Data_Example_CSharp.md", "Get_PMI_Data_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页只说「this Gtol frame」；示例给出取得途径：Gtol 的 PMIData 用 GetFrameAtIndex(j) 逐帧取。",
+          "example_quote": "Set swPMIFrameData = swPMIDataGtol.GetFrameAtIndex(j)",
+          "example_file": "Get_PMI_Data_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GeometryPattern",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例都写了同名 GeometryPattern，但对象是 Linear/Fill/Table/MirrorPatternFeatureData，不是 ICircularPatternFeatureData，全部弃用。"
+    },
+    {
+      "member": "Get",
+      "remarks_empty": true,
+      "examples_actually_used": ["Add_and_Get_Custom_Properties_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页 FieldName 栏写「No description」；示例给出实际用法：先 GetNames 再逐个名字取值，管理器取自所选特征的 CustomPropertyManager。",
+          "example_quote": "Debug.Print \" \" & vName & \" [\" & swCustPropMgr.GetType(vName) & \"] = \" & swCustPropMgr.Get(vName)",
+          "example_file": "Add_and_Get_Custom_Properties_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段（本页只标 Obsolete），按纪律跳过冲突判定。"
+    },
+    {
+      "member": "Get2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Custom_Properties_for_Cut-list_Item_Example_VB.md",
+        "Get_Custom_Property_Values_On_Cut_List_Folders_Example_VB.md",
+        "Get_Solid_Bodies_from_Cut-list_Folders_and_Get_Custom_Properties_Example_CSharp.md",
+        "Get_Solid_Bodies_from_Cut-list_Folders_and_Get_Custom_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页签名回 void 但未说两个 out 量的含义；VBA 示例显示它们分别是文本表达式与求值结果，且直接按位置传变量名。",
+          "example_quote": "swCustPropMgr.Get2 name, textexp, evalval",
+          "example_file": "Get_Custom_Properties_for_Cut-list_Item_Example_VB.md"
+        },
+        {
+          "what": "同一调用在 C# 侧必须写出 out，示例给出强类型形状，比成员页的 out 声明更具体。",
+          "example_quote": "CustomPropMgr.Get2(CustomPropName, out CustomPropVal, out CustomPropResolvedVal);",
+          "example_file": "Get_Solid_Bodies_from_Cut-list_Folders_and_Get_Custom_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段（本页只标 Obsolete），按纪律跳过冲突判定。"
+    },
+    {
+      "member": "Get3DViewCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Capture_3DView_Example_CSharp.md",
+        "Capture_3DView_Example_VB.md",
+        "Capture_3DView_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method requires that the SOLDWORKS MBD add-in be loaded. ([[ISldWorks::LoadAddIn]])",
+          "example_quote": "' Preconditions:\n' 1. Open a part or assembly.\n' 2. Open an Immediate window.",
+          "example_file": "Capture_3DView_Example_VB.md",
+          "why": "Remarks 把加载 MBD 加载项列为必要前置；三份示例的前置清单却只有打开零件/装配体与 Immediate 窗，两侧前置不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例在 Capture3DView 之后先 Refresh3DViews 才读计数，说明该数包含运行时刚建的 3D 视图，成员页未提。",
+          "example_quote": "swModelExt.Refresh3DViews",
+          "example_file": "Capture_3DView_Example_VB.md"
+        }
+      ],
+      "note": "其余无冲突：签名 System.int 与示例 Debug.Print 直接取值一致。"
+    },
+    {
+      "member": "Get3DViewNames",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Capture_3DView_Example_CSharp.md",
+        "Capture_3DView_Example_VB.md",
+        "Capture_3DView_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method requires that the SOLDWORKS MBD add-in be loaded. ([[ISldWorks::LoadAddIn]])",
+          "example_quote": "' Preconditions:\n' 1. Open a part or assembly.\n' 2. Open an Immediate window.",
+          "example_file": "Capture_3DView_Example_VB.md",
+          "why": "同族同一条 Remarks 要求先加载 MBD 加载项；示例前置清单无此步骤，仅打开零件/装配体，两侧前置不一致。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "成员页只说返回名字数组、签名 System.object；C# 示例强转为 string[]，给出运行期实际类型。",
+          "example_quote": "viewNames = (string[])swModelExt.Get3DViewNames();",
+          "example_file": "Capture_3DView_Example_CSharp.md"
+        }
+      ],
+      "note": "VB/VB.NET 侧用 Variant/Object 接 UBound 遍历，与 System.object 签名一致，无冲突。"
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "idx": 39,
+  "results": [
+    {
+      "member": "CenterOfMass",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_of_Multibody_Assembly_Component_Example_CSharp.md",
+        "Get_Mass_Properties_of_Multibody_Assembly_Component_Example_VB.md",
+        "Get_Mass_Properties_of_Multibody_Assembly_Component_Example_VBNET.md",
+        "Insert_Coordinate_System_Feature_at_Center_of_Mass_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回值是米：示例乘 1000 再打印 mm，而成员页 Returns 完全没写单位",
+          "example_quote": "            Debug.Print(\"Center of mass = (\" + vCoM[0] * 1000.0 + \", \" + vCoM[1] * 1000.0 + \", \" + vCoM[2] * 1000.0 + \") mm\");",
+          "example_file": "Get_Mass_Properties_of_Multibody_Assembly_Component_Example_CSharp.md"
+        },
+        {
+          "what": "调用序：先 AddBodies 装载实体，随即取 CenterOfMass",
+          "example_quote": "            bRet = swMass.AddBodies((dispArray));\r\n            //Get mass properties of selected component's bodies\r\n            vCoM = (double[])swMass.CenterOfMass;",
+          "example_file": "Get_Mass_Properties_of_Multibody_Assembly_Component_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的触发条件（OverrideCenterOfMass / IncludeHiddenBodiesOrComponents）示例均未建立，故不判冲突。"
+    },
+    {
+      "member": "CenterOnBendLines",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_SM_Corner_Relief_Feature_Example_CSharp.md",
+        "Create_SM_Corner_Relief_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- [[ISMCornerReliefData::ReliefType]] is set to [[swCornerReliefType_e]].:\r\n\r\n  - swCornerCircularRelief\r\n\r\n  - swCornerObroundRelief\r\n\r\n  - swCornerRectangularRelief",
+          "example_quote": "               cornerItr.CenterOnBendLines = true;\r\n               cornerItr.TangentToBend = true;\r\n               cornerItr.ReliefType = (int)swCornerReliefType_e.swCornerRectangularRelief;",
+          "example_file": "Create_SM_Corner_Relief_Feature_Example_CSharp.md",
+          "why": "示例在 ReliefType 仍是 CollectAllCorners 给的 swCornerTearRelief 时就置 true，而 Remarks 三个允许值不含 Tear。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例点明初始 ReliefType 默认为 Tear（CollectAllCorners 的实参）",
+          "example_quote": "           longstatus = cornerReliefFeatData.CollectAllCorners((int)swCornerReliefType_e.swCornerTearRelief, out corners);",
+          "example_file": "Create_SM_Corner_Relief_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "VB.NET 版同型：第158行先置 True、第160行才改 ReliefType。"
+    },
+    {
+      "member": "CenteredOnBendLines",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Modify_Break_Corner_Feature_Example_CSharp.md",
+        "Modify_Break_Corner_Feature_Example_VB.md",
+        "Modify_Break_Corner_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "前置调用序：GetDefinition 后必须先 AccessSelections 才能读写该属性",
+          "example_quote": "            swBreakCornerFeatureData = (BreakCornerFeatureData)swFeature.GetDefinition();\r\n            status = swBreakCornerFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Modify_Break_Corner_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "改完须以 ModifyDefinition 提交",
+          "example_quote": "            status = swFeature.ModifyDefinition(swBreakCornerFeatureData, swModel, null);",
+          "example_file": "Modify_Break_Corner_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按规则跳过冲突判定。"
+    },
+    {
+      "member": "ChamferDistance",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weldment_End_Cap_Example_CSharp.md",
+        "Insert_Weldment_End_Cap_Example_VB.md",
+        "Insert_Weldment_End_Cap_Example_VBNET.md",
+        "List_End-Cap_Feature_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "单位是米：示例乘 1000 打印 mm，成员页 Returns 未写单位",
+          "example_quote": "\t            Debug.Print(\"    Chamfer distance or fillet radius                      = \" + swEndCap.ChamferDistance * 1000.0 + \" mm\");",
+          "example_file": "Insert_Weldment_End_Cap_Example_CSharp.md"
+        },
+        {
+          "what": "该例第3实参 BIsChamfer=false，故读到的其实是 Returns 里的 fillet radius 分支",
+          "example_quote": "\t            myFeature = Part.FeatureManager.InsertEndCapFeature3(0.005, false, false, 0.003, 0.6, 0.003, true, 0.002, false, 2);",
+          "example_file": "Insert_Weldment_End_Cap_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 要求 UseCornerTreatment 为真；示例第7实参 BIsCornerTreatment=true，两侧一致。"
+    },
+    {
+      "member": "ChamferPrecision",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Chamfer_Display_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "带索引的取值：0=倒角距离小数位数，1=倒角角度小数位数",
+          "example_quote": "        indx = swDispDim.ChamferPrecision(0)\r\n\t        Debug.Print(\"Precision of chamfer distance: \" & indx & \" decimal places\")\r\n\t        indx = swDispDim.ChamferPrecision(1)\r\n\t        Debug.Print(\"Precision of chamfer angle: \" & indx & \" decimal places\")",
+          "example_file": "Get_Chamfer_Display_Dimension_Example_VBNET.md"
+        },
+        {
+          "what": "前置：显示尺寸必须是倒角尺寸（Type2=10）",
+          "example_quote": "\t        Debug.Print(\"Dimension type as defined in swDimensionType_e: \" & swDispDim.Type2) '10=swChamferDimension",
+          "example_file": "Get_Chamfer_Display_Dimension_Example_VBNET.md"
+        }
+      ],
+      "note": "成员页只有一个标题，连 Signature/Returns 都没有；索引口径仅见于示例。"
+    },
+    {
+      "member": "ChamferType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "读取前置：注解类型须为 swDimXpertDimTol_ChamferDimension",
+          "example_quote": "    ElseIf annoType = swDimXpertDimTol_ChamferDimension Then\r\n        Select Case annotation.ChamferType\r\n        Case swDimXpertChamferDimensionType_Angle",
+          "example_file": "Get_DimXpert_Datum_Example_VB.md"
+        },
+        {
+          "what": "返回 Angle 时该注解按角度处理（后续按弧度换算成度）",
+          "example_quote": "            strs.Add (\"Chamfer Dimension Type: Angle\")\r\n            isAngleType = True",
+          "example_file": "Get_DimXpert_Datum_Example_VB.md"
+        }
+      ],
+      "note": "成员页有 Returns 但无 Remarks；四份示例都真的读了该属性。"
+    },
+    {
+      "member": "ChangeComponentLayer",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Layer_for_Selected_View_Example_CSharp.md",
+        "Create_Layer_for_Selected_View_Example_VB.md",
+        "Create_Layer_for_Selected_View_Example_VBNET.md",
+        "Determine_if_Layer_is_Visible_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "前置更具体：先在树里选中视图，再 SelectEntity 选中该视图内的实体",
+          "example_quote": "    bRet = swView.SelectEntity(swEnt, False)\r\n    ChangeComponentLayer swApp, swDraw, swView.Name",
+          "example_file": "Create_Layer_for_Selected_View_Example_VB.md"
+        },
+        {
+          "what": "图层须先用 CreateLayer2 建出来，再改组件层",
+          "example_quote": "    bRet = swDraw.CreateLayer2( _\r\n                sLayerName, _\r\n                \"Layer for part in \" & sLayerName, _\r\n                0, swLineCONTINUOUS, swLW_NORMAL, True, True)",
+          "example_file": "Create_Layer_for_Selected_View_Example_VB.md"
+        }
+      ],
+      "note": "成员页只有 Parameters、无 Remarks；四份示例均调 swDraw.ChangeComponentLayer。"
+    }
+  ]
+}

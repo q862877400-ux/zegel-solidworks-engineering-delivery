@@ -1,0 +1,155 @@
+{
+  "idx": 392,
+  "results": [
+    {
+      "member": "PreSplitBody2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Split-body_Feature_Example_VB.md",
+        "Create_Split-body_Feature_Example_VBNET.md",
+        "Create_Split-body_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "3. Create the Split feature using [[IFeatureManager::PostSplitBody]].",
+          "example_quote": "Set swFeat = swFeatMgr.PostSplitBody2((vBodiesToMark), True, (vBodyOrigins), (vBodyNames), \"\")",
+          "example_file": "Create_Split-body_Feature_Example_VB.md",
+          "why": "Remarks 第3步点名 PostSplitBody，三份官方示例实际调的是 PostSplitBody2，两者不是同一成员。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例取到分裂体后先 ClearSelection2 再喂给后继调用，这一步 Remarks 未提。",
+          "example_quote": "    vResultingBodies = swFeatMgr.PreSplitBody2\n    swModel.ClearSelection2 True",
+          "example_file": "Create_Split-body_Feature_Example_VB.md"
+        },
+        {
+          "what": "C# 示例把返回值强制转成 object[] 并转成 DispatchWrapper[] 再传给后继，Remarks 只说「数组」。",
+          "example_quote": "object[] vResultingBodies = null;\n            vResultingBodies = (object[])swFeatMgr.PreSplitBody2();",
+          "example_file": "Create_Split-body_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "唯一硬冲突是后继成员名不一致；选面用 SelectByID2 append=True mark=0，Remarks 未规定 mark。"
+    },
+    {
+      "member": "PreTrimSurface",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Solid_Body_Surface_Trim_Feature_Example_CSharp.md",
+        "Create_Solid_Body_Surface_Trim_Feature_Example_VB.md",
+        "Create_Solid_Body_Surface_Trim_Feature_Example_VBNET.md",
+        "Create_Trimmed_Surface_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "After calling this method:\n\n1. Select the trimming surfaces or trim tool.",
+          "example_quote": "// Select surface features\n            status = swModelDocExt.SelectByID2(\"\", \"SURFACEBODY\", -0.0446486526100784, 0.0218350174377093, 0.0123754341749418, true, 0, null, 0);\n            status = swModelDocExt.SelectByID2(\"\", \"SURFACEBODY\", -0.00815686270678384, 0.0415839719953865, 0.0242402652081068, true, 0, null, 0);\n            // Select trimming surfaces to create solid body surface trim feature\n            status = swFeatureManager.PreTrimSurface(true, true, false, true);",
+          "example_file": "Create_Solid_Body_Surface_Trim_Feature_Example_CSharp.md",
+          "why": "Remarks 要求先调本方法、再选修剪面；该示例把选修剪面放在调用之前。Create_Trimmed_Surface_CSharp 则相反，两官方示例互斥。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值赋给 status 后立刻被下一句 SelectByID2 覆盖，全程不判成败。",
+          "example_quote": "status = swFeatureMgr.PreTrimSurface(false, true, false, false);\n            // Trim the surface\n            status = swModelDocExt.SelectByID2(\"\", \"SURFACEBODY\", 0.0289416986472588, 0.00781827749557351, 0.0290635845400971, true, 0, null, 0);",
+          "example_file": "Create_Trimmed_Surface_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例对 SURFACEBODY 一律 append=true、mark=0，Remarks 未给选择标记口径。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"SURFACEBODY\", 0.0289416986472588, 0.00781827749557351, 0.0290635845400971, true, 0, null, 0);",
+          "example_file": "Create_Trimmed_Surface_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "SolidForTrim 步骤示例先读回打印再赋值，比 Remarks 的「Optionally, call」更具体。",
+          "example_quote": "Debug.Print(\"Solid body surface trim feature? \" + swFeatureManager.SolidForTrim);\n            swFeatureManager.SolidForTrim = true;",
+          "example_file": "Create_Solid_Body_Surface_Trim_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "唯一硬冲突是「先调用还是先选修剪面」；BMutualTrimIn/BRemovePickedIn 与两示例的取值自洽。"
+    },
+    {
+      "member": "Precision",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。列出的两份示例的 .Precision 全在 CalloutLengthVariable 上，Angle 分支只读 .Angle，未用到本成员。"
+    },
+    {
+      "member": "Prefix",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。页内自相矛盾：NOTE 称 get-only、Set 未实现，签名却写 {get; set;}（非页-例冲突）。"
+    },
+    {
+      "member": "Preload",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Hole_Series_Information_Example_CSharp.md",
+        "Get_Hole_Series_Information_Example_VB.md",
+        "Get_Hole_Series_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「在 SOLIDWORKS Toolbox 中配置孔与紧固件」列为前置，并注明未配置时报错，Preload 读取就在该段内。",
+          "example_quote": "' Bolt and nut information causes an error\n               ' if SOLIDWORKS Toolbox is not configured",
+          "example_file": "Get_Hole_Series_Information_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 说 Toolbox 数据库里没有该值，示例只说未配置 Toolbox 会报错，两者可并存，不判冲突。"
+    },
+    {
+      "member": "PresentationTransform",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Use_Presentation_Transforms_to_Move_Component_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "IComponent2::RemovePresentationTransform removes any transform applied by IComponent2::PresentationTransform. Set IAssemblyDoc::EnablePresentation to false after calling IComponent2::RemovePresentationTransform.",
+          "example_quote": "        swComp.RemovePresentationTransform\n        swComp.PresentationTransform = swMathXform\n        ' Redraw so it is shown immediately\n        Set swModelView = swModel.ActiveView\n        Set rect = Nothing\n        swModelView.GraphicsRedraw (rect)\n    Next i\n    ' Re-enable access to menus\n    ' Comment out to leave component in its moved position\n    swAssy.EnablePresentation = False",
+          "example_file": "Use_Presentation_Transforms_to_Move_Component_Example_VB.md",
+          "why": "Remarks 规定收尾是「先 RemovePresentationTransform 再置 EnablePresentation=false」；示例末句直接置 false，此刻呈现变换仍挂着、未被移除。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体刷新调用：从 ActiveView 取 ModelView 再 GraphicsRedraw(Nothing)，比 Remarks 只点名 GraphicsRedraw2 更具体。",
+          "example_quote": "Set swModelView = swModel.ActiveView\n        Set rect = Nothing\n        swModelView.GraphicsRedraw (rect)",
+          "example_file": "Use_Presentation_Transforms_to_Move_Component_Example_VB.md"
+        },
+        {
+          "what": "示例注明启用呈现变换后大部分菜单被屏蔽且无法做选择，是成员页未写的前置约束。",
+          "example_quote": "' * When presentation transforms are enabled,\n' access to most of the menus is blocked.\n' This is by design because selections cannot\n' be made because the graphics area is not the\n' same as the model data.",
+          "example_file": "Use_Presentation_Transforms_to_Move_Component_Example_VB.md"
+        }
+      ],
+      "note": "唯一硬冲突是收尾次序；示例每轮循环先 Remove 再重设，与 Remarks 不矛盾。"
+    },
+    {
+      "member": "PreserveZAxis",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例第129行先把 CreateDerivedConfigurations 置 false、第138行才设 PreserveZAxis，落实了 Remarks 的生效条件。",
+          "example_quote": "swMirroCompFeatData.CreateDerivedConfigurations = false;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        }
+      ],
+      "note": "示例满足 Remarks 的唯一前置条件，未发现冲突。"
+    }
+  ]
+}

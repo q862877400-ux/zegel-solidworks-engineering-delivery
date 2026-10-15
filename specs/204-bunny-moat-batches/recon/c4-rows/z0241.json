@@ -1,0 +1,118 @@
+{
+  "idx": 241,
+  "results": [
+    {
+      "member": "GetRadiatedEntitiesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Planar_Surface_Feature_Example_CSharp.md",
+        "Create_Planar_Surface_Feature_Example_VB.md",
+        "Create_Planar_Surface_Feature_Example_VBNET.md",
+        "Create_Radiate_Surface_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把该计数当作 RadiatedEntities 属性数组的循环上界，成员页只说它是 IGetRadiatedEntities 的数组长度",
+          "example_quote": "for (i = 0; i <= swRadiate.GetRadiatedEntitiesCount() - 1; i++)",
+          "example_file": "Create_Planar_Surface_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示须先 AccessSelections 取数、取完 ReleaseSelectionAccess，成员页没提这层前置",
+          "example_quote": "boolStatus = swRadiate.AccessSelections(Part, null);",
+          "example_file": "Create_Radiate_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例一致，无硬冲突；Remarks 只约束 IGetRadiatedEntities 的调用次序。"
+    },
+    {
+      "member": "GetRadiiCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md",
+        "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规定跳过冲突比对。"
+    },
+    {
+      "member": "GetRadius",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份候选示例调的是 ISketchArc/SketchArc.GetRadius，同名不同接口，无一用本成员。"
+    },
+    {
+      "member": "GetRadius2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Asymmetric_Elliptic_Fillets_Example_CSharp.md",
+        "Create_Asymmetric_Elliptic_Fillets_Example_VB.md",
+        "Create_Asymmetric_Elliptic_Fillets_Example_VBNET.md",
+        "Get_Radius_of_Variable_Radius_Fillet_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 AccessSelections、读完 ReleaseSelectionAccess 才调 GetRadius2，成员页未写这层前置",
+          "example_quote": "boolstatus = swFeatData.AccessSelections(swModel, Nothing)",
+          "example_file": "Create_Asymmetric_Elliptic_Fillets_Example_VB.md"
+        },
+        {
+          "what": "示例把返回值当米（乘 1000 才是 mm），成员页全页未写单位",
+          "example_quote": "Debug.Print \"Radius1 = \" & radius1 * 1000#",
+          "example_file": "Get_Radius_of_Variable_Radius_Fillet_Example_VB.md"
+        }
+      ],
+      "note": "示例的 Distance1/Distance2 分工与 Remarks 逐字一致；顶针来自 GetFilletEdgeAtIndex 的顶点。"
+    },
+    {
+      "member": "GetRayTraceRenderer",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Surface-finish_Image_Path_and_Filename_Example_CSharp.md",
+        "Update_Graphics_After_Changing_Render_Options_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规定跳过；C# 侧那处调用在示例里是注释掉的。"
+    },
+    {
+      "member": "GetRefAxisParams",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Parameters_for_Reference_Axis_Example_VB.md",
+        "Get_Reference_Axis_Data_Example_CSharp.md",
+        "Get_Reference_Axis_Data_Example_VB.md",
+        "Get_Reference_Axis_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例说明返回 6 个 double 是米（乘 1000 才是 mm），成员页只讲排布不讲单位",
+          "example_quote": "Debug.Print \" Start = (\" & vAxisParam(0) * 1000 & \", \" & vAxisParam(1) * 1000 & \", \" & vAxisParam(2) * 1000 & \") mm\"",
+          "example_file": "Get_Parameters_for_Reference_Axis_Example_VB.md"
+        },
+        {
+          "what": "示例须先选中基准轴特征并用 GetSpecificFeature2 取 RefAxis，成员页没写这条前置",
+          "example_quote": "Set swRefAxis = swFeat.GetSpecificFeature2",
+          "example_file": "Get_Reference_Axis_Data_Example_VB.md"
+        }
+      ],
+      "note": "四份示例的 [StartPt3, EndPt3] 读法与 Remarks 完全一致；C++ 示例用的是 IGetRefAxisParams，不在本组。"
+    },
+    {
+      "member": "GetRefPlaneParams",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Plane_using_Curve_and_Point_Example_VB.md",
+        "Get_Plane_or_Face_for_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有一句 Obsolete. Superseded by IRefPlane::Transform，无 ## Remarks 段。"
+    }
+  ]
+}

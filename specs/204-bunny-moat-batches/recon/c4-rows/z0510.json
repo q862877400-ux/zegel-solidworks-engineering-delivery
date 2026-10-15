@@ -1,0 +1,147 @@
+{
+  "idx": 510,
+  "results": [
+    {
+      "member": "UnlockedProperties",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Sheet-metal_Part_Example_CSharp.md",
+        "Mirror_Sheet-metal_Part_Example_VB.md",
+        "Mirror_Sheet-metal_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出读该属性前的完整调用序：先 GetDefinition，再 AccessSelections，最后 ReleaseSelectionAccess；成员页没写这层前置。",
+          "example_quote": "swMirrorFeatData.AccessSelections(swModel, null);",
+          "example_file": "Mirror_Sheet-metal_Part_Example_CSharp.md"
+        },
+        {
+          "what": "示例说明如何满足 Remarks 的前置 SheetMetalInformation=true：在 MirrorPart2 的 options 里加 ImportSMInfo。",
+          "example_quote": "mirrorOptions = (int)swMirrorPartOptions_e.swMirrorPartOptions_ImportSMInfo + (int)swMirrorPartOptions_e.swMirrorPartOptions_ImportIndProps + (int)swMirrorPartOptions_e.swMirrorPartOptions_ImportSolids + (int)swMirrorPartOptions_e.swMirrorPartOptions_ImportCutListProperties;",
+          "example_file": "Mirror_Sheet-metal_Part_Example_CSharp.md"
+        }
+      ],
+      "note": "示例只读不写，与 Remarks 的前置一致，三份示例同构，无冲突。"
+    },
+    {
+      "member": "UnsuppressView",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Auto_Insert_Center_Marks_Example_CSharp.md",
+        "Auto_Insert_Center_Marks_Example_VB.md",
+        "Auto_Insert_Center_Marks_Example_VBNET.md",
+        "Display_Hidden_Lines_in_Drawing_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，不找冲突。"
+    },
+    {
+      "member": "Updatable",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_or_Set_Whether_Edits_Update_Design_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说 EditFeature 要在「设置」之前；示例把它放在第一次「读取」之前也先调用。",
+          "example_quote": "swDesignTable.EditFeature\n    ' Get whether design table is updatable\n    laststate = swDesignTable.Updatable",
+          "example_file": "Get_or_Set_Whether_Edits_Update_Design_Table_Example_VB.md"
+        }
+      ],
+      "note": "示例调用序 EditFeature→读→写→UpdateFeature→再读，与 Remarks 完全一致。"
+    },
+    {
+      "member": "Update",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Drag_Arrow_Manipulator_Example_CSharp.md",
+        "Create_Drag_Arrow_Manipulator_Example_VB.md",
+        "Create_Drag_Arrow_Manipulator_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "To change the length of a handle, use [[IDragArrowManipulator::Length]] or [[IDragArrowManipulator::LengthOppositeDirection]], then use this method to see display the modified handle in the graphics area.",
+          "example_quote": "swTmpManipulator.Origin = swMathPoint;\n            swTmpManipulator.Update();",
+          "example_file": "Create_Drag_Arrow_Manipulator_Example_CSharp.md",
+          "why": "Remarks 把 Update 的触发条件限定为改 length；示例在只改了 Origin（未动 length）后同样调 Update。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例显示先 Manipulator.Show(model) 才显示，Update 只是随后刷新，不是它本身让句柄出现在图形区。",
+          "example_quote": "swManip.Show(swModel);\n            swDrag.Update();",
+          "example_file": "Create_Drag_Arrow_Manipulator_Example_CSharp.md"
+        }
+      ],
+      "note": "第三份示例 sldworksapi__Insert_and_Use_Plane 实为 IPlaneManipulator::Update，已剔除。"
+    },
+    {
+      "member": "UpdateBox",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Recalculate_Bounding_Box_Example_CSharp.md",
+        "Recalculate_Bounding_Box_Example_VB.md",
+        "Recalculate_Bounding_Box_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例触发手段是改组件草图尺寸值，不是 Remarks 举的 IComponent2::Transform2 移动组件位置。",
+          "example_quote": "errors = (int)swDimension.SetSystemValue3(0.04, (int)swSetValueInConfiguration_e.swSetValue_InThisConfiguration, null);",
+          "example_file": "Recalculate_Bounding_Box_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 GetBox 返回值乘 1000.0 才按 mm 打印，暗示 GetBox 是米制；成员页全文没给单位口径。",
+          "example_quote": "\"  Min = (\" + boxArray[0] * 1000.0 + \", \" + boxArray[1] * 1000.0 + \", \" + boxArray[2] * 1000.0 + \") mm\"",
+          "example_file": "Recalculate_Bounding_Box_Example_CSharp.md"
+        },
+        {
+          "what": "示例用 GetBox 前/后各读一次并把角点打到 Immediate 作为生效判据，比成员页的「避免裁剪」更可核验。",
+          "example_quote": "box = (object)swAssy.GetBox((int)swBoundingBoxOptions_e.swBoundingBoxIncludeRefPlanes);",
+          "example_file": "Recalculate_Bounding_Box_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 Transform2 是「for example」非穷举，示例用改尺寸触发不构成矛盾。"
+    },
+    {
+      "member": "UpdateCutList",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Save_Solid_Body_to_File_Example_CSharp.md",
+        "Save_Solid_Body_to_File_Example_VB.md",
+        "Save_Solid_Body_to_File_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例取 IBodyFolder 是遍历特征树匹配类型名 GetTypeName2=\"SolidBodyFolder\"，不走 Remarks 的 IsWeldment 路。",
+          "example_quote": "If swFeat.GetTypeName2 = \"SolidBodyFolder\" Then",
+          "example_file": "Save_Solid_Body_to_File_Example_VB.md"
+        },
+        {
+          "what": "示例每次 UpdateCutList 前都先 SetAutomaticCutList(True)，且在 SaveToFile3 生成的新零件上也要重跑一遍。",
+          "example_quote": "boolstatus = swBodyFolder.SetAutomaticCutList(True)\n            boolstatus = swBodyFolder.UpdateCutList()",
+          "example_file": "Save_Solid_Body_to_File_Example_VB.md"
+        }
+      ],
+      "note": "示例用特征树类型名找 IBodyFolder，未走 Remarks 的 IsWeldment 路径，属方法差异非矛盾。"
+    },
+    {
+      "member": "UpdateFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_CSharp.md",
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_VB.md",
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_VBNET.md",
+        "Get_or_Set_Whether_Edits_Update_Design_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，不找冲突。"
+    }
+  ]
+}

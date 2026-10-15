@@ -1,0 +1,165 @@
+{
+  "idx": 463,
+  "results": [
+    {
+      "member": "SetWitnessLineGap",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Dimension_Extension_Lines_Gaps_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补了成员页没写的前置：先打开一张工程图并选中一条竖直边，再现场造尺寸。",
+          "example_quote": "' 1. Open public_documents\\samples\\tutorial\\api\\replaceview.slddrw.",
+          "example_file": "Get_and_Set_Dimension_Extension_Lines_Gaps_Example_VB.md"
+        },
+        {
+          "what": "备注要求调 IModelView::GraphicsRedraw，示例末尾改调 IModelDoc2 的同名成员。",
+          "example_quote": "    swModel.GraphicsRedraw",
+          "example_file": "Get_and_Set_Dimension_Extension_Lines_Gaps_Example_VB.md"
+        }
+      ],
+      "note": "两侧一致：示例用 GetUserPreferenceDoubleValue 取文档默认值、UseDoc 传 False，未见冲突。"
+    },
+    {
+      "member": "SetWorkingPlaneOrientation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_3D_Sketch_Plane_Example_CSharp.md",
+        "Create_3D_Sketch_Plane_Example_VB.md",
+        "Create_3D_Sketch_Plane_Example_VBNET.md",
+        "Get_Angle_Between_Plane_and_Line_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "12 个实参是连续 4 个三元组（原点/X 轴/Y 轴/法向），扁平参数名看不出分组。",
+          "example_quote": "    status = swSketch.SetWorkingPlaneOrientation(0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)",
+          "example_file": "Create_3D_Sketch_Plane_Example_VB.md"
+        },
+        {
+          "what": "每次都要重新取活动草图再调用，且只对其后创建的图元生效。",
+          "example_quote": "    Set swSketch = swSketchManager.ActiveSketch\n    status = swSketch.SetWorkingPlaneOrientation(0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)",
+          "example_file": "Create_3D_Sketch_Plane_Example_VB.md"
+        },
+        {
+          "what": "名为建 3D 草图平面的示例，真正建平面用的是 CreateSketchPlane，不是本方法。",
+          "example_quote": "    status = swSketchManager.CreateSketchPlane(9, 9, 0)",
+          "example_file": "Create_3D_Sketch_Plane_Example_VB.md"
+        }
+      ],
+      "note": "备注与示例一致（都只影响其后的新图元）；Get_Angle_Between_Plane_and_Line 成员页未列但任务清单列了。"
+    },
+    {
+      "member": "SetupSheet4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Up_Drawing_Sheet_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "传的是当前图纸名而非新建名；因用模板枚举，Width/Height 直接传 0#。",
+          "example_quote": "    bRet = swDraw.SetupSheet4(swSheet.GetName, swDwgPaperBsize, swDwgTemplateBsize, 1#, 1#, False, \"\", 0#, 0#, \"\")",
+          "example_file": "Set_Up_Drawing_Sheet_Example_VB.md"
+        },
+        {
+          "what": "备注的 ForceRebuild3 步骤示例照做，且第二参传 False。",
+          "example_quote": "    swModel.ForceRebuild3 (False)",
+          "example_file": "Set_Up_Drawing_Sheet_Example_VB.md"
+        }
+      ],
+      "note": "与示例一致。附注：本页 Width/Height 把纸张枚举 swDwgPapersUserDefined 与模板枚举并列，SetupSheet6 则分开表述。"
+    },
+    {
+      "member": "SetupSheet6",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Drawing_Sheet_Zones_Example_CSharp.md",
+        "Create_Drawing_Sheet_Zones_Example_VB.md",
+        "Create_Drawing_Sheet_Zones_Example_VBNET.md",
+        "Modify_Multiple_Drawing_Sheets_Setups_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "To modify the setups of multiple drawing sheets with just one call to IDrawingDoc::SetupSheet6, call [[IDrawingDoc::SetSelectedSheets]] before calling IDrawingDoc::SetupSheet6.",
+          "example_quote": "swDrawing.SetSheetsSelected(sheetNameArray);",
+          "example_file": "Modify_Multiple_Drawing_Sheets_Setups_Example_CSharp.md",
+          "why": "备注点名的 IDrawingDoc::SetSelectedSheets 在 C:\\swapi\\types 下无成员页；示例与 IDrawingDoc 页用的真名是 SetSheetsSelected，两名不能同时成立。"
+        },
+        {
+          "kind": "unit_diff",
+          "remarks_quote": "Multiplying ZoneRow by ZoneCol equals the total number of zones in the zone area of this drawing sheet. The zone area is specified by ZoneLeftMargin, ZoneRightMargin, ZoneTopMargin, and ZoneBottomMargin.",
+          "example_quote": "0.2794, 0.2159, \"Default\", False, 0.5, 0.5, 0.5, 0.5, 3, 3)",
+          "example_file": "Create_Drawing_Sheet_Zones_Example_VB.md",
+          "why": "同一次调用里 Width/Height 用米（0.2794/0.2159），四个 Zone 边距却是 0.5；同一单位下边距大于整张图，成员页又未标边距单位。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "多表示例只给一个 Name=\"Sheet3\"，且分区行列与四个边距全传 0（不分区）。",
+          "example_quote": "swDrawing.SetupSheet6(\"Sheet3\", (int)swDwgPaperSizes_e.swDwgPapersUserDefined, (int)swDwgTemplates_e.swDwgTemplateCustom, 1, 1, true,",
+          "example_file": "Modify_Multiple_Drawing_Sheets_Setups_Example_CSharp.md"
+        }
+      ],
+      "note": "核心冲突是 Remarks 的 SetSelectedSheets 不存在；Zone 边距单位官方未给。ZoneRow×ZoneCol=3×3=9 与示例后置条件互相印证。"
+    },
+    {
+      "member": "ShadedContour",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Render_Model_Example_CSharp.md",
+        "Render_Model_Example_VB.md",
+        "Render_Model_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "写侧按备注顺序来：先开卡通渲染，再设渲染类型为轮廓，最后才写本属性。",
+          "example_quote": "    swRayTraceRenderOptions.ContourCartoonRenderingEnabled = True\n    Debug.Print \"  Contour/cartoon enabled? \" & swRayTraceRenderOptions.ContourCartoonRenderingEnabled\n    swRayTraceRenderOptions.RenderType = swRayTraceRenderingType_e.swRayTraceContour\n    Debug.Print \"  Render type = \" & swRayTraceRenderOptions.RenderType\n    swRayTraceRenderOptions.ShadedContour = False",
+          "example_file": "Render_Model_Example_VB.md"
+        },
+        {
+          "what": "示例补了成员页没写的运行前置：需 Premium 许可且渲染引擎已加载。",
+          "example_quote": "You must have a Premium license to run this example.",
+          "example_file": "Render_Model_Example_VB.md"
+        }
+      ],
+      "note": "两个前提在示例写侧都被满足；但示例在设置这两项之前就先无条件读了一次本属性。"
+    },
+    {
+      "member": "Shape",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 NOTE 说明 get-only），按纪律跳过；两示例也只 Debug.Print 读取。"
+    },
+    {
+      "member": "ShapeIntensity",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Jagged_Cut_Break_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 InsertBreak3 的第 5 个实参就把本值设为 2，且 Style 先传锯齿枚举。",
+          "example_quote": "swBreakLine = (BreakLine)swView.InsertBreak3(2, -0.0291950859897372, 0.0198236302285804, (int)swBreakLineStyle_e.swBreakLine_Jagged, 2, true);",
+          "example_file": "Insert_Jagged_Cut_Break_Example_CSharp.md"
+        },
+        {
+          "what": "先读 Style 再读本属性，与备注一致；调试串把 Style 标注为 5=jagged cut。",
+          "example_quote": "Debug.Print(\"Break line style (5 = jagged cut): \" + swBreakLine.Style);",
+          "example_file": "Insert_Jagged_Cut_Break_Example_CSharp.md"
+        }
+      ],
+      "note": "任务清单另列的三份 Create_Detail_Circle_and_Detail_View 用的是 IDetailCircle.ShapeIntensity，不是本成员。"
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "idx": 117,
+  "results": [
+    {
+      "member": "ExplodeDistance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Explode_Step_Example_VB.md",
+        "Edit_Radial_Explode_Step_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，跳过冲突判定。Add_Multibody_Part_Explode_Step_Example_CSharp.md 用的是 PartExplodeStep（IPartExplodeStep 另有 ExplodeDistance），属异接口，不计入。"
+    },
+    {
+      "member": "ExplodeStepType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Explode_Step_Example_VB.md",
+        "Edit_Radial_Explode_Step_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出实际枚举成员名 swAssemblyExplodeStepType_SubAssembly，比页面的「defined in swAssemblyExplodeStepType_e」更具体",
+          "example_quote": "If explStep.ExplodeStepType = swAssemblyExplodeStepType_SubAssembly Then",
+          "example_file": "Add_Explode_Step_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定。两份示例均声明 Dim explStep As SldWorks.ExplodeStep，确为 IExplodeStep。"
+    },
+    {
+      "member": "Exponent",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_3DContact_Feature_Example_VB.md",
+        "Create_3D_Contact_Feature_Example_CSharp.md",
+        "Create_3D_Contact_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Exponent 归在「Use impact force」分支内，与 MaxDamping/Penetration/Stiffness 同组读取",
+          "example_quote": "Debug.Print \"    Exponent of exponential force: \" & swContFeat.Exponent",
+          "example_file": "Create_3DContact_Feature_Example_VB.md"
+        }
+      ],
+      "note": "示例只在 UseRestitutionCoefficient 为假的分支读 Exponent，未再判 SpecifyMaterial；两者仍可同时成立，故不判冲突。"
+    },
+    {
+      "member": "ExportResults",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Run_Interference_Detection_Example_CSharp.md",
+        "Run_Interference_Detection_Example_VB.md",
+        "Run_Interference_Detection_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出页面没写的调用序：须先 ToolsCheckInterference 开窗格并取 InterferenceDetectionManager，再跑检测",
+          "example_quote": "swAssemblyDoc.ToolsCheckInterference",
+          "example_file": "Run_Interference_Detection_Example_VB.md"
+        }
+      ],
+      "note": "示例用 .xlsx 且 IncludeThumbnail=True，与 Remarks「仅对 Excel 文件有效」一致，不构成冲突。"
+    },
+    {
+      "member": "ExportToDWG2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Export_Part_To_DWG_Example_CSharp.md",
+        "Export_Part_To_DWG_Example_VB.md",
+        "Export_Part_To_DWG_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "You must select multi-body sheet-metal features (i.e., multiple flat-pattern features) before calling this method.",
+          "example_quote": "1. Creates three DWG files containing:",
+          "example_file": "Export_Part_To_DWG_Example_VB.md",
+          "why": "Remarks 无条件要求调用前选中多实体钣金特征；示例全程无任何 Select 调用、前提只写拷贝文件，却声明成功导出。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 SheetMetalOptions 置 1 并注为 include flat-pattern geometry，对应 Remarks 的 Bit #1",
+          "example_quote": "options = 1   'include flat-pattern geometry",
+          "example_file": "Export_Part_To_DWG_Example_VB.md"
+        }
+      ],
+      "note": "页面自身笔误：Remarks 写 swExportToDW_ExportSelectedFacesOrLoops，Parameters 与示例均写 swExportToDWG_。"
+    },
+    {
+      "member": "ExportToExcel",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Advanced_Variable_Pattern_Feature_Example_CSharp.md",
+        "Insert_Advanced_Variable_Pattern_Feature_Example_VB.md",
+        "Insert_Advanced_Variable_Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例表明该调用在 AccessSelections 已打开、ReleaseSelectionAccess 未释放的区间内进行",
+          "example_quote": "status = swDimensionDrivenTablePatternFeat.AccessSelections(swModel, Nothing)",
+          "example_file": "Insert_Advanced_Variable_Pattern_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例给出返回码的成功值 0，页面只说「as defined in swPatternFeatureImportExportError_e」",
+          "example_quote": "Debug.Print \"Table exported to Microsoft Excel file (0 = Succeeded)? \" & errors",
+          "example_file": "Insert_Advanced_Variable_Pattern_Feature_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定。三份示例都用 .xls 且 Overwrite=True，落在页面列出的扩展名内。"
+    },
+    {
+      "member": "ExtendSurface",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Extend_Surface_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 EndCondition=0 时的实参形态：边数组 + 距离，PUpToVtx/PUpToFace 传 Nothing",
+          "example_quote": "Set newBody1 = swBody.ExtendSurface((edgeVar), bExtLin, endCond, 0.01, swVertex, swFace)",
+          "example_file": "Extend_Surface_Example_VB.md"
+        },
+        {
+          "what": "示例指出返回的是临时体，须自行 Display2 才能看见，页面未提显示方式",
+          "example_quote": "newBody1.Display2 swPart, RGB(255, 0, 0), 0",
+          "example_file": "Extend_Surface_Example_VB.md"
+        }
+      ],
+      "note": "示例前提「Open a part that contains a surface body」与 Remarks「supports surface bodies only」一致。Dist 参数写 (see Remarks) 但 Remarks 未给单位。"
+    }
+  ]
+}

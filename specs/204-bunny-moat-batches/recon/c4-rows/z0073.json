@@ -1,0 +1,148 @@
+{
+  "idx": 73,
+  "results": [
+    {
+      "member": "CreateSurfaceFeatureFromBody",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Loft_Surface_Body_and_Change_Into_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Options 固定为具体枚举 swCreateFeatureBodyCheck，页面只泛指 swCreateFeatureBodyOpts_e",
+          "example_quote": "vFeatures = swPart.CreateSurfaceFeatureFromBody(swBody, swCreateFeatureBodyOpts_e.swCreateFeatureBodyCheck)",
+          "example_file": "Create_Loft_Surface_Body_and_Change_Into_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例说明 Body 必须是先由 IModeler.CreateLoftBody2 建出的放样曲面体",
+          "example_quote": "Set swBody = swModeler.CreateLoftBody2(swModel, profiles, guides, Nothing, False, 0, 0, 0, True, False, True, False, False, 1, 1, 1, True, True, 1, 1, False)",
+          "example_file": "Create_Loft_Surface_Body_and_Change_Into_Feature_Example_VB.md"
+        }
+      ],
+      "note": "页面无 Remarks 段；示例补出 Options 取值与 Body 来源"
+    },
+    {
+      "member": "CreateTangentArc",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "列出的 4 份示例全部调 ISketchManager::CreateTangentArc（7 参、返回 SketchSegment），不是本页 6 参返回 bool 的 IModelDoc2 成员，故一律不用"
+    },
+    {
+      "member": "CreateTaskpaneView2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+        "Add_Buttons_to_Task_Pane_Example_CSharp.md",
+        "Add_Buttons_to_Task_Pane_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Bitmap 传空串以取默认标签图标，Remarks 只规定「给了位图」时的规格",
+          "example_quote": "bitmap = \"\";",
+          "example_file": "Add_Buttons_to_Task_Pane_Example_CSharp.md"
+        },
+        {
+          "what": "另两份 .NET 控件示例同样传空串取默认图标",
+          "example_quote": "pTaskPanView = iSwApp.CreateTaskpaneView2(\"\", \".NET Windows Form Control\");",
+          "example_file": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只约束位图规格（16 色 16x18、白为透明），示例未供位图 ⇒ 不构成矛盾"
+    },
+    {
+      "member": "CreateTaskpaneView3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Task_Pane_View_Example_CSharp.md",
+        "Add_Task_Pane_View_Example_VB.md",
+        "Add_Task_Pane_View_Example_VBNET.md",
+        "Create_TaskPaneView_Add-in_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "ImageList contains paths to PNG or BMP images in six pixel sizes:",
+          "example_quote": "string[] bitmap = new string[1];",
+          "example_file": "Create_TaskPaneView_Add-in_Example_CSharp.md",
+          "why": "Remarks 要求六个尺寸的路径（20/32/40/64/96/128），该 Add-in 示例只放 1 个 bmp 路径，两者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "另三份示例把六个尺寸写成占位路径名，需替换为真实全路径",
+          "example_quote": "bitmap[0] = \"20x20_bitmap_pathname\";",
+          "example_file": "Add_Task_Pane_View_Example_CSharp.md"
+        }
+      ],
+      "note": "只有 Create_TaskPaneView_Add-in_Example_CSharp 用 1 元素数组，与 Remarks 的六尺寸冲突"
+    },
+    {
+      "member": "CreateText",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Note_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先判文档类型必须是工程图再调用；页面 6 个参数全是 No description",
+          "example_quote": "swModel.CreateText str, 0.09, 0.08, 0, 0.01, 0",
+          "example_file": "Create_Note_Example_VB.md"
+        }
+      ],
+      "note": "页面无 Remarks 且参数无说明；示例补出「必须工程图」这一调用前提"
+    },
+    {
+      "member": "CreateText2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Attach_Annotation_Example_CSharp.md",
+        "Attach_Annotation_Example_VB.md",
+        "Attach_Annotation_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在建注释前先 ActivateSheet，Remarks 未提这一步",
+          "example_quote": "boolstatus = part.ActivateSheet(\"Sheet1\")",
+          "example_file": "Attach_Annotation_Example_VB.md"
+        },
+        {
+          "what": "示例说明返回值可直接 GetAnnotation 后接 SetLeader3 作引线",
+          "example_quote": "Set anAnnot = aNote.GetAnnotation",
+          "example_file": "Attach_Annotation_Example_VB.md"
+        }
+      ],
+      "note": "示例与 Remarks 一致（米/弧度、相对图纸左下角）；只多出先激活图纸一步"
+    },
+    {
+      "member": "CreateTexture",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Apply_and_Remove_Texture_By_Body_Display_State_Example_CSharp.md",
+        "Apply_and_Remove_Texture_By_Body_Display_State_Example_VB.md",
+        "Apply_and_Remove_Texture_By_Body_Display_State_Example_VBNET.md",
+        "Apply_and_Remove_Texture_By_Configuration_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "MatName 实为 <SystemTexture> 库内路径，不是页面所写的「纹理文件名」",
+          "example_quote": "namStr = \"<SystemTexture>\\\\images\\\\textures\\\\pattern\\\\checker2.jpg\";",
+          "example_file": "Apply_and_Remove_Texture_By_Body_Display_State_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出典型实参 Scale=5、Angle=45、Blend=false",
+          "example_quote": "texture = (Texture)swModelDocExt.CreateTexture(namStr, 5, 45, false);",
+          "example_file": "Apply_and_Remove_Texture_By_Body_Display_State_Example_CSharp.md"
+        }
+      ],
+      "note": "页面无 Remarks 段；示例补出纹理名的库路径写法与典型实参"
+    }
+  ]
+}

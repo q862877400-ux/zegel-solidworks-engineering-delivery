@@ -1,0 +1,146 @@
+{
+  "idx": 494,
+  "results": [
+    {
+      "member": "ThickenSheet",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Thicken_Sheet_Body_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：打开含片体的零件并选中片体；且返回值是临时体，必须再转成特征。",
+          "example_quote": "' 1. Open a part that contains a sheet body.",
+          "example_file": "Thicken_Sheet_Body_Example_VB.md"
+        },
+        {
+          "what": "临时体转特征的官方写法，成员页 Returns 只说「临时加厚体」，没说下一步。",
+          "example_quote": "Set swFeature = swPart.CreateFeatureFromBody3(vBodies(0), False, swCreateFeatureBodyOpts_e.swCreateFeatureBodyCheck)",
+          "example_file": "Thicken_Sheet_Body_Example_VB.md"
+        }
+      ],
+      "note": "示例只用 swThickenDirection_Side1，未演示 Remarks 的 Both 双向同厚，无冲突。"
+    },
+    {
+      "member": "Thickness",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "The setter of this property is valid only if [[IBaseFlangeFeatureData::OverrideDefaultSheetMetalParameters]] is true and [[IBaseFlangeFeatureData::UseMaterialSheetMetalParameters]] is false.",
+          "example_quote": "' If above override value is true, then use following properties to set override value",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md",
+          "why": "Remarks 的写入门闸是 OverrideDefaultSheetMetalParameters/UseMaterialSheetMetalParameters；示例改用 OverrideThickness 当闸门（两者是同接口并存的两个属性），两侧给不出同时成立的答案。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 Thickness 当字符串赋值，而签名为 System.double；成员页对类型未置一词。",
+          "example_quote": "featDef.Thickness = \"0.06\"",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        },
+        {
+          "what": "该 setter 位于 override=False 的死分支内，示例实际并未执行到。",
+          "example_quote": "override = False",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        }
+      ],
+      "note": "另三份 Change_Wrap_Feature_Face 用的是 WrapSketchFeatureData.Thickness，非本成员。"
+    },
+    {
+      "member": "ThicknessRatioForOffset",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weldment_End_Cap_Example_VB.md",
+        "Insert_Weldment_End_Cap_Example_CSharp.md",
+        "Insert_Weldment_End_Cap_Example_VBNET.md",
+        "List_End-Cap_Feature_Properties_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "[[IEndCapFeatureData::UseThicknessRatioForOffset]] must be set to true for this property to have an effect.",
+          "example_quote": "Set myFeature = Part.FeatureManager.InsertEndCapFeature3(0.005, False, False, 0.003, 0.6, 0.003, True, 0.002, False, 2)",
+          "example_file": "Insert_Weldment_End_Cap_Example_VB.md",
+          "why": "Remarks 把比值生效挂在 UseThicknessRatioForOffset=true；示例却把 0.6 传给 InsertEndCapFeature3 的 WallThicknessRatio 并读回本属性，全程未设置该开关。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把本属性与开关一起读出，说明二者是同一对可读量，可交叉核对。",
+          "example_quote": "\"    Use thickness ratio for offset                     = \" & swEndCap.UseThicknessRatioForOffset",
+          "example_file": "Insert_Weldment_End_Cap_Example_VB.md"
+        }
+      ],
+      "note": "C#/VBNET 两份调用参数完全相同；List 示例只读不写，不构成前置冲突。"
+    },
+    {
+      "member": "ThicknessSide",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Thicken_Surface_and_Generate_Boss_Example_VB.md",
+        "Thicken_Surface_and_Generate_Boss_Example_CSharp.md",
+        "Thicken_Surface_and_Generate_Boss_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；三份示例均只读取该属性。"
+    },
+    {
+      "member": "ThicknessTableName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出赋值来源：先 GetTableThicknesses 取名字数组，再按下标选一个赋值。",
+          "example_quote": "featDef.ThicknessTableName = thicknessNames(3)",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过；示例赋值依赖 gauge 表已就绪。"
+    },
+    {
+      "member": "ThicknessType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Gusset_Feature_Data_Example_VB.md",
+        "Get_Gusset_Feature_Data_Example_CSharp.md",
+        "Get_Gusset_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过；三份示例均只读取该属性。"
+    },
+    {
+      "member": "ThinFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md",
+        "Insert_Swept-boss_Feature_Example_VB.md",
+        "Insert_Swept-cut_Feature_Using_Tool_Body_Example_VB.md",
+        "Insert_Swept-cut_Thin-walled_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "薄壁还需双向 SetWallThickness（单位米）+ ThinWallType 才成立，成员页未提配套调用。",
+          "example_quote": "swSweep.SetWallThickness True, 0.001 'Meters in Direction 1",
+          "example_file": "Insert_Swept-cut_Thin-walled_Feature_Example_VB.md"
+        },
+        {
+          "what": "薄壁同样可用于 swept-cut（不只是 boss），成员页只泛称 sweep feature。",
+          "example_quote": "Set swSweep = swModel.FeatureManager.CreateDefinition(swFmSweepCut)",
+          "example_file": "Insert_Swept-cut_Thin-walled_Feature_Example_VB.md"
+        }
+      ],
+      "note": "四份示例均在 CreateFeature 之前设置，与 Remarks 一致，无冲突。"
+    }
+  ]
+}

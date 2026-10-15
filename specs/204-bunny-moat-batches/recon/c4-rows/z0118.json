@@ -1,0 +1,148 @@
+{
+  "idx": 118,
+  "results": [
+    {
+      "member": "Extension",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_and_Release_Access_to_Edges_Example_CSharp.md",
+        "Access_and_Release_Access_to_Edges_Example_VBNET.md",
+        "Activate_SOLIDWORKS_CommandManager_Tab_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取用形态：先赋给一个 ModelDocExtension 变量，再在其上调成员；成员页只一句描述。",
+          "example_quote": "swModelDocExt = swModelDoc.Extension;",
+          "example_file": "Activate_SOLIDWORKS_CommandManager_Tab_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定。四份示例都真的读 ModelDoc2.Extension。"
+    },
+    {
+      "member": "ExtensionLineDirection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Extension_Line_Direction_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补了页上没有的取数前置：先在图形区选中尺寸，再 GetDimension 取 IDimension。",
+          "example_quote": "' 2. Select a non-radial dimension.",
+          "example_file": "Get_Extension_Line_Direction_Example_VB.md"
+        }
+      ],
+      "note": "示例注释与 Remarks 同口径（非 0 只对 feature dimension），未发现互斥说法。"
+    },
+    {
+      "member": "ExtensionLineExtendsFromCenterOfSet",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Properties_of_Angular_Running_Dimension_Example_CSharp.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VB.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出程序化建角注尺寸再读该属性的路径，而非 Remarks 描述的右键 UI 路径。",
+          "example_quote": "dispdimvar = Part.Extension.AddAngularRunningDim(false, true, true, 0.154288188900673, 0.0794194886913027, 0, out intstatus);",
+          "example_file": "Set_Properties_of_Angular_Running_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "C#/VB/VB.NET 三份示例只差语言壳，内容一致；与 Remarks 不冲突。"
+    },
+    {
+      "member": "ExtensionLineSameAsLeaderStyle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Properties_of_Angular_Running_Dimension_Example_CSharp.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VB.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它与 DisplayAsChain/RunBidirectionally/Jogged 同批读出，取值来源限定为角注尺寸对象。",
+          "example_quote": "Debug.Print(\"Extension line style same as leader line style? \" + dispdim.ExtensionLineSameAsLeaderStyle);",
+          "example_file": "Set_Properties_of_Angular_Running_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "ExtensionLineUseDocumentDisplay",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Properties_of_Angular_Running_Dimension_Example_CSharp.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VB.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IDisplayDimension::ExtensionLineSameAsLeaderStyle]] is set to false.",
+          "example_quote": "Debug.Print(\"Extension line uses document settings? \" + dispdim.ExtensionLineUseDocumentDisplay);",
+          "example_file": "Set_Properties_of_Angular_Running_Dimension_Example_CSharp.md",
+          "why": "示例全程未把 SameAsLeaderStyle 置 false、也不判断它，却直接读本属性；要么读的是无效值，要么该前置不成立。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "VB / VB.NET 两份与 C# 逐字等价，同一处冲突三份示例都在。"
+    },
+    {
+      "member": "ExternalState",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md",
+        "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_VB.md",
+        "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_VBNET.md",
+        "swmotionstudyapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "The return value for each event is a double that specifies the new force or torque magnitude.",
+          "example_quote": "return 1;",
+          "example_file": "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md",
+          "why": "Remarks 说返回值是 double 幅值；示例处理器声明为 int 并返回 1，幅值另写入 ref 参数数组。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "IMotionStudy ForceTimeStepChangeNotify and ForceOutputTimeStampChangeNotify events are called with the motor name, time, and a pointer for the return value.",
+          "example_quote": "motionstudy.ForceOutputTimeStepChangeNotify += this.motionStudy_ForceOutputTimeStepChangeNotify;",
+          "example_file": "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md",
+          "why": "Remarks 点名的事件名与示例实际挂接的不一致（TimeStamp 对 TimeStep），且实际处理器是 7 个形参而非所列 3 个。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例另设同名的 ISimulationMotorFeatureData.ExternalState 并调 SetFireOutputTimeStepEvents(true)，成员页都没写。",
+          "example_quote": "swMotionStudy.SetFireOutputTimeStepEvents(true);",
+          "example_file": "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md"
+        }
+      ],
+      "note": "swmotionstudyapi 版与 sldworksapi 版逐字相同；VB/VB.NET 也复现同一返回形状。"
+    },
+    {
+      "member": "ExtrusionDirection",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Rib_Feature_Data_Example_CSharp.md",
+        "Get_Rib_Feature_Data_Example_VB.md",
+        "Get_Rib_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补了取数前置：先 InsertRib 建肋，再由特征 GetDefinition 取 RibFeatureData2 才读得到。",
+          "example_quote": "Set swRibFeat = swFeat.GetDefinition",
+          "example_file": "Get_Rib_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定。"
+    }
+  ]
+}

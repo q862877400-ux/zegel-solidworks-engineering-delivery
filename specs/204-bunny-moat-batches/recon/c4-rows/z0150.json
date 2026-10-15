@@ -1,0 +1,132 @@
+{
+  "idx": 150,
+  "results": [
+    {
+      "member": "GetBasePoint",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 例皆非本接口：3 例走 ISketchPatternFeatureData、1 例走 ITablePatternFeatureData；GetBasePoint 三接口同名。"
+    },
+    {
+      "member": "GetBaseView",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_Base_Views_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例写明无父视图时返回 NULL，成员页 Returns 只写「Base view」未提",
+          "example_quote": "Returns NULL if no parent",
+          "example_file": "Get_Base_Views_Example_VB.md"
+        },
+        {
+          "what": "示例把范围扩到整张图纸所有视图逐个调用，比成员页的单视图语义更宽",
+          "example_quote": "get the names of the base views for all of",
+          "example_file": "Get_Base_Views_Example_VB.md"
+        }
+      ],
+      "note": "对象 SldWorks.View；GetBaseView 全库仅 IView 持有，示例无同名歧义。"
+    },
+    {
+      "member": "GetBelowFrameTextAt",
+      "remarks_empty": true,
+      "examples_actually_used": ["Set_Text_in_Datum_Tags_and_GTols_Example_VBNET.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：图纸须含至少一个视图、一个基准特征和一个几何公差",
+          "example_quote": "Open a drawing that contains at least one view, a datum feature",
+          "example_file": "Set_Text_in_Datum_Tags_and_GTols_Example_VBNET.md"
+        },
+        {
+          "what": "示例给出取对象的路径：跳过图纸首页视图后用 GetFirstGTOL 拿 GTol",
+          "example_quote": "swDispGtol = swView.GetFirstGTOL",
+          "example_file": "Set_Text_in_Datum_Tags_and_GTols_Example_VBNET.md"
+        }
+      ],
+      "note": "该例 4 处 GetBelowFrameTextAt 全在 Debug.Print 字符串字面量内，代码从未真正调用该成员。"
+    },
+    {
+      "member": "GetBendEdgesCount",
+      "remarks_empty": true,
+      "examples_actually_used": ["Create_ConvertSolid_Feature_Example_CSharp.md", "Create_ConvertSolid_Feature_Example_VBNET.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例的取数路径：CreateFeature 后经 GetDefinition 拿 FeatData 才读得到计数",
+          "example_quote": "FeatData = (ConvertSolidFeatureData)swFeat.GetDefinition();",
+          "example_file": "Create_ConvertSolid_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例在 AccessSelections 之前就读计数，说明该计数不依赖选择访问",
+          "example_quote": "Debug.Print(\"Number of bend edges: \" + FeatData.GetBendEdgesCount());",
+          "example_file": "Create_ConvertSolid_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "C#/VB.NET 两例一致；GetBendEdgesCount 全库仅 IConvertSolidFeatureData 持有。"
+    },
+    {
+      "member": "GetBendLineCount",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_Tangent_Edges_of_Bendlines_Example_CSharp.md", "Get_Tangent_Edges_of_Bendlines_Example_VB.md", "Get_Tangent_Edges_of_Bendlines_Example_VBNET.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先判 IsFlatPatternView 才调用，非展平视图不取该计数",
+          "example_quote": "if (swView.IsFlatPatternView())",
+          "example_file": "Get_Tangent_Edges_of_Bendlines_Example_CSharp.md"
+        },
+        {
+          "what": "示例先 GetNextView 跳过作为伪视图的图纸本身，再进入遍历",
+          "example_quote": "swView = (View)swView.GetNextView();",
+          "example_file": "Get_Tangent_Edges_of_Bendlines_Example_CSharp.md"
+        },
+        {
+          "what": "示例用该计数预分配数组，且 >0 才去取 GetBendLines",
+          "example_quote": "BendlinesArr = new Object[nbrBendlines];",
+          "example_file": "Get_Tangent_Edges_of_Bendlines_Example_CSharp.md"
+        }
+      ],
+      "note": "C#/VBA/VB.NET 三例调用一致；成员页只说展平视图，示例补了遍历与判空次序。"
+    },
+    {
+      "member": "GetBendLineDirection",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_Direction_of_Bendline_Example_CSharp.md", "Get_Direction_of_Bendline_Example_VBNET.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出枚举字面含义 0/1/2，成员页只把返回值指向 swBendLineDirection_e",
+          "example_quote": "Direction of bend line (0 = not a bendline; 1 = bendline has up direction; 2 = bendline has down direction): ",
+          "example_file": "Get_Direction_of_Bendline_Example_CSharp.md"
+        },
+        {
+          "what": "示例前置：先解除展平特征压缩，再按 EXTSKETCHSEGMENT 选中折弯线才取方向",
+          "example_quote": "SelectByID2(\"Line12@Bend-Lines1\", \"EXTSKETCHSEGMENT\"",
+          "example_file": "Get_Direction_of_Bendline_Example_CSharp.md"
+        }
+      ],
+      "note": "两例一致；该成员全库仅 ISketchLine 持有，示例对象 SketchLine 无同名歧义。"
+    },
+    {
+      "member": "GetBendLines",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_Tangent_Edges_of_Bendlines_Example_CSharp.md", "Get_Tangent_Edges_of_Bendlines_Example_VB.md", "Get_Tangent_Edges_of_Bendlines_Example_VBNET.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出数组元素的具体类型 SketchSegment，成员页只写 bendlines",
+          "example_quote": "swSketchSegment = (SketchSegment)BendlinesArr[i];",
+          "example_file": "Get_Tangent_Edges_of_Bendlines_Example_CSharp.md"
+        },
+        {
+          "what": "示例对每个元素再调 IsBendLine 复核，确认它确为折弯线",
+          "example_quote": "swSketchSegment.IsBendLine()",
+          "example_file": "Get_Tangent_Edges_of_Bendlines_Example_CSharp.md"
+        }
+      ],
+      "note": "三例一致；示例把返回值接成 object[]/Variant 再转 SketchSegment，不直接下标。"
+    }
+  ]
+}

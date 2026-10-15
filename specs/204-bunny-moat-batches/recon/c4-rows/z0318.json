@@ -1,0 +1,132 @@
+{
+  "idx": 318,
+  "results": [
+    {
+      "member": "InsertNewVirtualAssembly",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_New_Virtual_Assembly_Example_CSharp.md",
+        "Insert_New_Virtual_Assembly_Example_VB.md",
+        "Insert_New_Virtual_Assembly_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回码存进 status 却不判它，改判 out 组件是否为 Nothing",
+          "example_quote": "(swComp Is Nothing) Then",
+          "example_file": "Insert_New_Virtual_Assembly_Example_VB.md"
+        }
+      ],
+      "note": "三份示例均无预选，正落在 Remarks 的“无预选→进主装配”分支，未见矛盾。"
+    },
+    {
+      "member": "InsertNewVirtualPart",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_New_Virtual_Component_Example_CSharp.md",
+        "Insert_New_Instance_of_Virtual_Component_Example_CSharp.md",
+        "Insert_New_Instance_of_Virtual_Component_Example_VB.md",
+        "Insert_New_Instance_of_Virtual_Component_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规则跳过；示例实参三份传前视基准面、一份传平面面。"
+    },
+    {
+      "member": "InsertNote",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Anchor_a_Note_Example_CSharp.md",
+        "Anchor_a_Note_Example_VB.md",
+        "Anchor_a_Note_Example_VBNET.md",
+        "Create_Block_Definition_and_Insert_Block_Instance_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例点明不清选区时新注释会附着到刚建好的直线上",
+          "example_quote": "// Clear selections; otherwise, notes are attached to line",
+          "example_file": "Create_Block_Definition_and_Insert_Block_Instance_Example_CSharp.md"
+        },
+        {
+          "what": "无选区生成的自由注释，用 Annotation.SetPosition 显式搬离原点",
+          "example_quote": "boolstatus = myAnnotation.SetPosition(0.2, 0.269, 0);",
+          "example_file": "Anchor_a_Note_Example_CSharp.md"
+        }
+      ],
+      "note": "示例的“先清选区”与 Remarks 的“引线来自调用前的选择”同向，不构成冲突。"
+    },
+    {
+      "member": "InsertObjectFromFile",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Sheet_Properties_and_Insert_Object_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "该页只有 Obsolete 行、无 ## Remarks，五参数全写 No description，按规则跳过。"
+    },
+    {
+      "member": "InsertOffsetSurface",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Thicken_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在调用前选中两个面（第二个 append），把可选实体落到 FACE",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", 2.35573770133328E-02, 0, -2.4476412300487E-03, False, 0, Nothing, 0)",
+          "example_file": "Create_Thicken_Feature_Example_VB.md"
+        },
+        {
+          "what": "VBA 以无括号语句形式调用，坐实该成员无返回值",
+          "example_quote": "swModel.InsertOffsetSurface 0.01, False",
+          "example_file": "Create_Thicken_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 把可选实体交给 Help，示例用两个 FACE 落实，与前置要求不矛盾。"
+    },
+    {
+      "member": "InsertPart3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Modify_Derived_Part_Example_CSharp.md",
+        "Modify_Derived_Part_Example_VB.md",
+        "Modify_Derived_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显式给配置名与 ImportSolids 选项，且全程不调用 InsertMoveCopyBody2",
+          "example_quote": "swFeat = (Feature)swPart.InsertPart3(derivedFileName, (int)swInsertPartOptions_e.swInsertPartImportSolids, \"Default\" );",
+          "example_file": "Modify_Derived_Part_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都保持插入件在原点、只改派生参数，与 Remarks 的定位说法一致。"
+    },
+    {
+      "member": "InsertPattern",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Pattern_Example_CSharp.md",
+        "Get_and_Set_Pattern_Example_VB.md",
+        "Get_and_Set_Pattern_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 FeatureSelectorOptions 写成值为 -1 的整型数组以表达 default",
+          "example_quote": "dimarray(0) = -1  ' default",
+          "example_file": "Get_and_Set_Pattern_Example_VB.md"
+        },
+        {
+          "what": "选中标记取 51，是 Remarks“大于 50”这条约束下的具体取值",
+          "example_quote": "retval = selectMgr.SetSelectedObjectMark(1, 51, swSelectionMarkSet)",
+          "example_file": "Get_and_Set_Pattern_Example_VB.md"
+        }
+      ],
+      "note": "三份示例同路径：预选一个 CBORE 面、mark 51、patternType 2、findall 为真，五步前置全对上。"
+    }
+  ]
+}

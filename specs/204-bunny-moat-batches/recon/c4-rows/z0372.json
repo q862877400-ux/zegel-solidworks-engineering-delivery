@@ -1,0 +1,145 @@
+{
+  "idx": 372,
+  "results": [
+    {
+      "member": "MultiplyTransform",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Description/Signature/Parameters/Returns，无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "Name",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份指派示例全文无 Body2/GetBodies，用的是 IFeature.Name 与 IComponent2.Name，未真用到 IBody2.Name。"
+    },
+    {
+      "member": "Name2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Comment_to_Assembly_Component_Example_VB.md",
+        "Add_Comment_to_Assembly_Component_Example_VBNET.md",
+        "Add_Component_and_Mate_Example_VB.md",
+        "Add_Explode_Step_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值拼进 @ 分隔的实体全名，比成员页只给 Part1-1 更具体",
+          "example_quote": "FirstSelection = \"Top@\" + strCompName & \"@\" + AssemblyName",
+          "example_file": "Add_Component_and_Mate_Example_VB.md"
+        },
+        {
+          "what": "示例显示实例号命名可直接当 SelectByID2 的 COMPONENT 名用",
+          "example_quote": "boolstatus = swModel.Extension.SelectByID2(\"Testimo1-2@RegularExplodeStep\", \"COMPONENT\", 0, 0, 0, True, 1, Nothing, 0)",
+          "example_file": "Add_Explode_Step_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都只读不写；Remarks 的两条写入前置无对照面，故无冲突。"
+    },
+    {
+      "member": "NameModifierType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_CSharp.md",
+        "Mirror_Components_II_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出满足两条前置的写入次序：先 OppositeHandComponents 与 MirroredComponentFilenames",
+          "example_quote": "swMirroCompFeatData.OppositeHandComponents = CTMOH;\n…\nswMirroCompFeatData.MirroredComponentFilenames = namesVar;\nswMirroCompFeatData.NameModifierType = (int)swMirrorComponentNameModifier_e.swMirrorComponentName_Custom;",
+          "example_file": "Mirror_Components_II_Example_CSharp.md"
+        },
+        {
+          "what": "示例用非默认值 Custom，成员页只提到默认 Prefix",
+          "example_quote": "swMirroCompFeatData.NameModifierType = swMirrorComponentNameModifier_e.swMirrorComponentName_Custom",
+          "example_file": "Mirror_Components_II_Example_VBNET.md"
+        }
+      ],
+      "note": "两份示例都先满足两条前置再写本属性，与 Remarks 一致，未见冲突。"
+    },
+    {
+      "member": "NameView",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Description/Signature/Parameters，无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "Names",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Color_of_Component_in_Specific_Display_State_Example_VB.md",
+        "Change_Color_of_Component_in_Specific_Display_State_Example_VBNET.md",
+        "Get_Display_State_Settings_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "After calling this method:\n\n1. Call [[IDisplayStateSetting::Entities]] to specify the entities.\n\n2. Call [[IDisplayStateSetting::Option]] to specify the display state scope of the setting.",
+          "example_quote": "swDisplayStateSetting.Entities = swComponents\nswDisplayStateSetting.Option = swSpecifyDisplayState\ndisplayStateNames(0) = \"Display State-1\"\nswDisplayStateSetting.Names = displayStateNames",
+          "example_file": "Change_Color_of_Component_in_Specific_Display_State_Example_VB.md",
+          "why": "Remarks 说先调本方法再调 Entities/Option；示例先 Entities/Option 后 Names，次序相反。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "After calling this method:\n\n1. Call [[IDisplayStateSetting::Entities]] to specify the entities.",
+          "example_quote": "varStatus = swExt.DisplayMode(swDSS)\n…\nvarTStatus = swExt.Transparency(swDSS)\n…\nvarVStatus = swExt.Visibility(swDSS)\n…\nlistComp = swDSS.Entities\n…\ndsNames = swDSS.Names",
+          "example_file": "Get_Display_State_Settings_Example_VB.md",
+          "why": "示例先读 DisplayMode/Transparency/Visibility，再取 Entities，最后才读 Names，与 Remarks 次序相反。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出数组取用方式：先 GetNameCount() 取长度再逐项索引，成员页未提",
+          "example_quote": "dsNameCount = swDSS.GetNameCount()\nDim dsNames() As String\ndsNames = swDSS.Names",
+          "example_file": "Get_Display_State_Settings_Example_VB.md"
+        },
+        {
+          "what": "示例在 Names 之后多设一步 PartLevel，成员页六步流程里没有这一步",
+          "example_quote": "swDisplayStateSetting.PartLevel = False",
+          "example_file": "Change_Color_of_Component_in_Specific_Display_State_Example_VB.md"
+        }
+      ],
+      "note": "VB 与 VB.NET 两份示例次序相同：Entities→Option→Names。"
+    },
+    {
+      "member": "NearCounterSinkAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md",
+        "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for swCounterSunk and swCounterSunkDrilled holes.",
+          "example_quote": "swFeat = swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore, (int)swWzdHoleStandards_e.swStandardISO, (int)swWzdHoleStandardFastenerTypes_e.swStandardISOHexCapScrew, \"M6\", (int)swWzdHoleThreadEndCondition_e.swEndThreadTypeBLIND, 0.0066, 0.02, 0.014547, 0.004, 0.0,\n1.0, 2.059488517353, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);\n…\nDebug.Print(\"  NearCounterSinkAngle         = \" + swWizHole.NearCounterSinkAngle * 57.3 + \" deg\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "Remarks 限定只对沉头孔类相关；三份 Create_Holes 示例建的是 swWzdCounterBore 沉孔仍读该属性，适用范围对不上。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出单位：弧度；成员页 Returns 只写 Near side countersink angle",
+          "example_quote": "FeatureData.NearCounterSinkAngle = 1.57;\n// radians",
+          "example_file": "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_CSharp.md"
+        },
+        {
+          "what": "示例写出取数前的选择步骤：先 SelectByID2 选中 Hole1 再 GetDefinition",
+          "example_quote": "boolstatus = swModelDocExt.SelectByID2(\"Hole1\", \"BODYFEATURE\", 0, 0, 0, false, 0, null, (int)swSelectOption_e.swSelectOptionDefault);",
+          "example_file": "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_CSharp.md"
+        }
+      ],
+      "note": "直径侧示例另标 // meters；角度侧三份示例一律按弧度用（×57.3 转度）。"
+    }
+  ]
+}

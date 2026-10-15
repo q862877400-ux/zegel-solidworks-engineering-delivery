@@ -1,0 +1,15 @@
+{"idx":12,"pages_read":13,"rows":[
+{"iface":"IView","file":"CropViewNoOutline.md","signature":"System.bool CropViewNoOutline {get; set;}","obsolete":false,"pointer":false,"zero":"是（无括号）"},
+{"iface":"IView","file":"GetDetailCircleInfo.md","signature":"System.object GetDetailCircleInfo()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetFirstBlockInstance.md","signature":"BlockInstance GetFirstBlockInstance()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetPolylines4.md","signature":"System.object GetPolylines4()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"HiddenEdges.md","signature":"System.object HiddenEdges {get; set;}","obsolete":false,"pointer":false,"zero":"是（无括号）"},
+{"iface":"IView","file":"IGetEllipses3.md","signature":"System.double IGetEllipses3()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetUserPoints2.md","signature":"System.double IGetUserPoints2()","obsolete":false,"pointer":true,"zero":"是（空括号）"},
+{"iface":"IView","file":"RootDrawingComponent2.md","signature":"","obsolete":false,"pointer":false,"zero":"查不到"},
+{"iface":"IDrawingDoc","file":"ChangeRefConfigurationOfFlatPatternView.md","signature":"System.bool ChangeRefConfigurationOfFlatPatternView( System.string ModelName, System.string ConfigName )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"DragModelDimension.md","signature":"void DragModelDimension( System.string ViewName, System.short DropEffect, System.double X, System.double Y, System.double Z )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"ICreateDiamDim3.md","signature":"DisplayDimension ICreateDiamDim3( System.double DimValue, ref System.double P0, ref System.double P1, ref System.double P2, ref System.double P3, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot, ref System.double TextPoint )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"InsertOrdinate.md","signature":"void InsertOrdinate()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"ViewFullPage.md","signature":"void ViewFullPage()","obsolete":false,"pointer":false,"zero":"是（空括号）"}
+]}

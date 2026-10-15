@@ -1,0 +1,146 @@
+{
+ "role": "V1",
+ "sampled": 12,
+ "findings": [
+  {
+   "capability": "part_and_features",
+   "precondition": "种子特征 BODYFEATURE 按 mark=4 选、方向边按 mark=1 选，才调 FeatureCircularPattern4",
+   "from": "Create_Circular_Pattern_Example_CSharp.md",
+   "state_claimed": "not_covered",
+   "your_state": "not_covered",
+   "who_is_right": "我们",
+   "why": "正文无 mark 字样，但代码两次 SelectByID2 的 mark 位确为 4 与 1 ⇒ 前置真出自该示例，判未覆盖站得住。",
+   "evidence": "SelectByID2(\"Cut-Extrude1\", \"BODYFEATURE\", 0.00843730075439453, 0.00364341890551145, -0.0354416044676498, false, 4, null, 0);"
+  },
+  {
+   "capability": "part_and_features",
+   "precondition": "包覆用的草图必须是 2D，官方原话 3D sketches are invalid",
+   "from": "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md",
+   "state_claimed": "not_covered",
+   "your_state": "not_covered",
+   "who_is_right": "我们",
+   "why": "state 对但 from 错：该句在示例里 0 命中，逐字出自成员页 InsertWrapFeature.md:31 ⇒ 成员页 Remarks 被记成示例前置。",
+   "evidence": "C:\\swapi\\types\\IFeatureManager\\InsertWrapFeature.md:31 命中；C:\\swapi\\examples 全目录 0 命中"
+  },
+  {
+   "capability": "part_and_features",
+   "precondition": "GetUnits 须有活动模型文档（示例先取 IActiveDoc2，指针为 NULL 就直接 return）",
+   "from": "Get_and_Set_Units_Example_CPlusPlus_COM.md",
+   "state_claimed": "not_covered",
+   "your_state": "not_covered",
+   "who_is_right": "我们",
+   "why": "逐字核过：该示例确有 get_IActiveDoc2 后判 NULL 即 return，且自注 IGetUnits 须进程内 DLL ⇒ 真前置、来源对。",
+   "evidence": "if( S_OK != m_pSldWorks->get_IActiveDoc2( &pModelDoc ) || pModelDoc == NULL ) return;"
+  },
+  {
+   "capability": "mass_property_read",
+   "precondition": "示例显式设 UseSystemUnits=false（注释 Use document property units）才按文档单位给读数",
+   "from": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+   "state_claimed": "not_covered",
+   "your_state": "not_covered",
+   "who_is_right": "我们",
+   "why": "逐字核过 UseSystemUnits 与该注释各 1 次命中 ⇒ 前置真出自该示例；本仓 4 条 evidence 均未提该开关 ⇒ 未覆盖对。",
+   "evidence": "✓ 'UseSystemUnits': 1 · ✓ 'Use document property units': 1"
+  },
+  {
+   "capability": "mass_property_read",
+   "precondition": "示例前置：先 OpenDoc6 打开一个已存在的文档，再对其 Extension 取 CreateMassProperty2",
+   "from": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+   "state_claimed": "covered",
+   "your_state": "not_covered",
+   "who_is_right": "agent",
+   "why": "引文只有「建草图（矩形 40×20）→拉伸 10mm→读质量属性」，既没 OpenDoc6 也没「已存在文档」⇒ 逐字闸过了，但没证明这条前置。",
+   "evidence": "quote: \"建草图（矩形 40×20）→ 拉伸 10mm → 读质量属性\"（不含 OpenDoc6、不含「已存在」）"
+  },
+  {
+   "capability": "drawing_views_and_summary",
+   "precondition": "Create a new drawing document.（GetProperties2 读的是当前图纸页）",
+   "from": "Set_Drawing_Sheet_Properties_Example_VB.md",
+   "state_claimed": "covered",
+   "your_state": "判不了",
+   "who_is_right": "判不了",
+   "why": "该条前置逐字是「Create a new drawing document.」，evidence 只打开样图、没新建；text 把夹具与语义捆一句，一个 state 位判不了。",
+   "evidence": "' 1. Create a new drawing document. ｜ quote: \"current_sheet_info 真机回 paper_size / scale_num / scale_den…\""
+  },
+  {
+   "capability": "drawing_views_and_summary",
+   "precondition": "Open a drawing that has multiple sheets.",
+   "from": "Get_Sheet_Numbers_and_Names_Example_VB.md",
+   "state_claimed": "not_covered",
+   "your_state": "not_covered",
+   "who_is_right": "我们",
+   "why": "逐字命中该示例前置第 1 条；本仓两种夹具 sheets_summary 均为 1 张 ⇒ 多页行为真未验，是真缺口。",
+   "evidence": "' 1. Open a drawing that has multiple sheets."
+  },
+  {
+   "capability": "simulation_study_create",
+   "precondition": "1. Open a part.",
+   "from": "Get_and_Set_Material_Visual_Properties_Example_VB.md",
+   "state_claimed": "not_covered",
+   "your_state": "not_covered",
+   "who_is_right": "我们",
+   "why": "逐字出自该示例没错，但该示例 0 次提到 CreateNewStudy/StudyManager/ICWModelDoc ⇒ 与本事例无关的样板句，state 对但不该计入。",
+   "evidence": "✓ 'Open a part': 1 · ✗ 'CreateNewStudy': 0 · ✗ 'StudyManager': 0"
+  },
+  {
+   "capability": "solidworks_addin_host",
+   "precondition": "SOLIDWORKS API SDK add-in templates 已安装；用 SwCSharpAddin 模板建 C# 工程",
+   "from": "Add_Menu_and_Menu_Item_Example_CSharp.md",
+   "state_claimed": "not_covered",
+   "your_state": "not_covered",
+   "who_is_right": "我们",
+   "why": "逐字出自该示例前置 1–2，state 对；但那是 C# 插件开发环境要求，而本仓该工具是 winreg/ctypes 零 COM ⇒ 对本事例无区分力。",
+   "evidence": "' 1. Verify that the SOLIDWORKS API SDK add-in templates ... are installed. / ' 2. ... create a C# project using the SwCSharpAddin template."
+  },
+  {
+   "capability": "select_by_ray",
+   "precondition": "示例前置2：打开 Immediate 窗口（示例靠 Debug.Print 回读 SelectByRay 的返回）",
+   "from": "Select_Face_Using_Intersecting_Ray_Example_VB.md",
+   "state_claimed": "not_covered",
+   "your_state": "not_covered",
+   "who_is_right": "我们",
+   "why": "state 对，但这是该能力唯一的 not_covered ⇒ 整条 has_uncovered 全靠「没开 VBA 的 Immediate 窗口」撑着，是判据噪声造成的假阳性。",
+   "evidence": "该条 note 自述逐字：「唯一 not_covered 是 Immediate 窗口。」"
+  },
+  {
+   "capability": "sketch_dimension_horizontal",
+   "precondition": "Part or assembly is open.",
+   "from": "Dimension_Edge_in_Drawing_Example_VB.md（Preconditions 第 (1) 条）",
+   "state_claimed": "not_covered",
+   "your_state": "covered",
+   "who_is_right": "agent",
+   "why": "evidence 逐字「在前视面画一条水平线段」——没有活动零件根本进不了草图 ⇒ 该前置被蕴含；只看字面的判据把它判成未覆盖。",
+   "evidence": "★ 在前视面画**一条水平线段**，★ 按对象选中它（或选两个端点）后调那两个方法：草图尺寸 0 → H:1 → V:1"
+  },
+  {
+   "capability": "simulation_study_create",
+   "precondition": "CreateMeshForMeshControl 在两份索引与官方示例库中均无先例 ⇒ 前置无从判定",
+   "from": "（两份 recon 索引 0 命中）",
+   "state_claimed": "cannot_tell",
+   "your_state": "非前置",
+   "who_is_right": "agent",
+   "why": "text 是 agent 自述「查不到」，不是前置；from 也不是文件。全表同类 29 条（28 条落 cannot_tell）⇒ 判据的失败被当成判据的输入。",
+   "evidence": "from='（两份 recon 索引 0 命中）'；C:\\swapi\\examples 下不存在该文件（Path.is_file() False）"
+  }
+ ],
+ "criterion_defects": [
+  "把示例的 Preconditions 段等同于本能力的 API 前置：那段是「怎么跑这篇示例」（开哪个 .sldprt、开 Immediate 窗口、装加载项），对 Python COM 近零区分力，却全量计入 not_covered。",
+  "from 无类型约束：既装示例文件名，也装「（无示例）」/索引文件名/成员 .md 页/本仓源码路径（120/534）⇒ 单位口径不成立，无法机械判定是否出自官方示例。",
+  "无「无示例 ⇒ 不产出前置」的兜底：51 条前置在 from 明写「无示例」时仍被产出（autocad_dotnet_backend 5 条读自本仓 subskills 源码）并计入分母。",
+  "covered 只判「引文字面出现在 evidence 里」，不判「evidence 证明了该前置」⇒ 蕴含式前置被判未覆盖（Part is open），无关引文被判覆盖（建草图→拉伸→读质量属性）。",
+  "一条 text 常捆两件事（示例夹具＋真语义）却只有一个 state 位，只能二选一（Create a new drawing document.（GetProperties2 读的是当前图纸页））。",
+  "缺「示例与本事例是否同源」的机器判据：只凭成员名命中就取该示例整段前置；agent 自写「同源存疑」仍照样计入（simulation_study_create 取自材料外观示例）。",
+  "允许在 text 里写「无先例/零命中/无从判定」这类元陈述（29 条，28 条落 cannot_tell）⇒ 判据自身的失败被当成判据的输入，cannot_tell 81 虚高。",
+  "members_found 为空的能力仍产出前置（7 条能力 / 6 条前置，全部 cannot_tell）⇒ 链路第一环已断，却没有「无成员即不出前置」的守卫。",
+  "evidence_quote 无最小长度与相关性下限：131 条 covered 里 18 条引文 <20 字（如「活动配置 默认」「回读计数 0 → 1」），字面命中即判覆盖。"
+ ],
+ "is_80_an_overestimate": "计数上不算高估：剔除样板句/非示例来源/元陈述后仍 79，再要求「实质 API 前置」后 75。但「官方示例明确要求」这句高估——322 条 not_covered 里约 60 条是示例自身的运行环境要求，且至少 3 条是假阳性。保守可写的数：75/98。",
+ "counts_i_dispute": [
+  "80/98 ⇒ 我给 75/98（只留「出自真实示例文件、且不是示例运行环境说明」的前置）。",
+  "「前置 534」⇒ 120 条的 from 不是 C:\\swapi\\examples 的文件（放宽到 _raw 按名回查仍 75 条），51 条自写「无示例」；按示例派生口径分母约 459。",
+  "「cannot_tell 81」⇒ 其中 28 条 text 是 agent 自述「无先例/零命中」，不是前置；该口径下 cannot_tell 约 53。",
+  "报告 §2.1 把 chamfer_fillet_on_selection 记成「全部 covered／判定正确」，数据却是 3 covered + 1 not_covered（[3] block.sldprt）⇒ 该抽查表有一个反例。",
+  "报告写「100 条 level: verified（共 112 条能力 / 320 条 evidence）」⇒ 100 条 verified 名下是 299 条，320 是全部 112 条的。",
+  "不争的两条：98 判完/2 条未判（缺 idx=14 箱：equations、sketch_query）与引文闸 131/0 —— 我独立复跑一致。"
+ ]
+}

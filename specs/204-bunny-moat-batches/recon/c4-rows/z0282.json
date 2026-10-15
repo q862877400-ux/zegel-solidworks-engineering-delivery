@@ -1,0 +1,148 @@
+{
+  "idx": 282,
+  "results": [
+    {
+      "member": "GetWitnessEntitiesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Virtual_Sharp_Witness_Line_Data_Example_VB.md",
+        "Get_Virtual_Sharp_Witness_Line_Data_Example_VBNET.md",
+        "Get_Virtual_Sharp_Witness_Line_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都用返回值当门禁：Count>0 才去取几何数组；成员页没写这条前置",
+          "example_quote": "If (Count > 0) Then",
+          "example_file": "Get_Virtual_Sharp_Witness_Line_Data_Example_VB.md"
+        },
+        {
+          "what": "示例把 out 的 size 读进来只打印、解析循环却用返回值 Count 收尾，Size 未真正参与定界",
+          "example_quote": "While entityCounts < Count - 1",
+          "example_file": "Get_Virtual_Sharp_Witness_Line_Data_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 说取 GetWitnessGeomInfo/IGetWitnessGeomInfo 的数组大小；示例顺序一致，无矛盾"
+    },
+    {
+      "member": "GetWitnessGeomInfo",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Virtual_Sharp_Witness_Line_Data_Example_VB.md",
+        "Get_Virtual_Sharp_Witness_Line_Data_Example_VBNET.md",
+        "Get_Virtual_Sharp_Witness_Line_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置要求打开含虚拟尖角及延伸线的零件工程图；成员页只字未提模型状态",
+          "example_quote": "Open the drawing of a part that contains one or more\nvirtual sharps with witness lines.",
+          "example_file": "Get_Virtual_Sharp_Witness_Line_Data_Example_VB.md"
+        },
+        {
+          "what": "示例用 GetFirstView/GetNextView 遍历全部视图逐个取数；成员页只说 this drawing view",
+          "example_quote": "Set swView = swView.GetNextView",
+          "example_file": "Get_Virtual_Sharp_Witness_Line_Data_Example_VB.md"
+        }
+      ],
+      "note": "数组布局与示例逐字段解析一致：5 项属性+0 标记+线数+6/线+1 标记+弧数+12/弧"
+    },
+    {
+      "member": "GetWitnessLine",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_GTol_Witness_Line_Example_VB.md",
+        "Get_GTol_Witness_Line_Example_VBNET.md",
+        "Get_GTol_Witness_Line_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先选中公差框、从选区取对象；成员页没提任何选择前置",
+          "example_quote": "Set selGtol = swSelMgr.GetSelectedObject6(1, 0)",
+          "example_file": "Get_GTol_Witness_Line_Example_VB.md"
+        },
+        {
+          "what": "Remarks 说拖动引线才生成延伸线；示例改用 SetPosition+强制重建，不做拖动",
+          "example_quote": "selGtol.SetPosition 0.433, 0.432, 0#",
+          "example_file": "Get_GTol_Witness_Line_Example_VB.md"
+        },
+        {
+          "what": "示例在读之前必须 ForceRebuild3；成员页没写重建这一步",
+          "example_quote": "swModel.ForceRebuild3 False",
+          "example_file": "Get_GTol_Witness_Line_Example_VB.md"
+        }
+      ],
+      "note": "成员页说返回六个 double；三份示例分别按 UBound 与 (Double[]) 取 6 个，一致"
+    },
+    {
+      "member": "GetWitnessLineGap",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Dimension_Extension_Lines_Gaps_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例走完整往返：先设 UseDoc=False 再回读，才让 Remarks 的「本地值」分支可见",
+          "example_quote": "retBool = swDisplayDim.SetWitnessLineGap(1, False, Gap)",
+          "example_file": "Get_and_Set_Dimension_Extension_Lines_Gaps_Example_VB.md"
+        },
+        {
+          "what": "Remarks 说文档默认值取自文档级用户偏好；示例给出具体取法（ModelDoc2 而非 ISldWorks）",
+          "example_quote": "swModel.GetUserPreferenceDoubleValue(swDetailingWitnessLineGap)",
+          "example_file": "Get_and_Set_Dimension_Extension_Lines_Gaps_Example_VB.md"
+        },
+        {
+          "what": "示例前置写「先选中一条竖直边」，代码却用 AddDimension2 另建尺寸，并未读该选中对象",
+          "example_quote": "Set swDisplayDim = swModel.AddDimension2(0.07991695284535, 0.1237274983129, 0)",
+          "example_file": "Get_and_Set_Dimension_Extension_Lines_Gaps_Example_VB.md"
+        }
+      ],
+      "note": "示例拿到 retBool 后不判成败直接打印 UseDoc/Gap；页称返回值表示成败，无相反说法"
+    },
+    {
+      "member": "GetXAxis",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks。4 份示例全部只在 PlotOutput 上调 GetXAxis，从未在 MotionPlotFeatureData 上调"
+    },
+    {
+      "member": "GetYAxis",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks。示例的 PlotOutput.GetYAxis(参数) 是 IMotionPlotFeatureOutput 成员，非本成员（零参）"
+    },
+    {
+      "member": "GetXAxisEntitiesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Coordinate_System_Feature_Example_VB.md",
+        "Insert_Coordinate_System_Feature_at_Center_of_Mass_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 点名 IGetXAxisEntities；两份示例配对用的是 XAxisEntities 属性，且计数读到即弃",
+          "example_quote": "vCount = cSysData.GetXAxisEntitiesCount",
+          "example_file": "Create_Coordinate_System_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例另给出实体种类判据（草图段）；成员页只说「实体」未限定类型",
+          "example_quote": "If TypeOf xEnt Is SketchSegment Then",
+          "example_file": "Insert_Coordinate_System_Feature_at_Center_of_Mass_Example_VB.md"
+        },
+        {
+          "what": "两份示例都必须先 AccessSelections 才能读到计数；成员页没写这条前置",
+          "example_quote": "boolstatus = cSysData.AccessSelections(swModel, component)",
+          "example_file": "Create_Coordinate_System_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Create_Coordinate_System 示例在读计数前有一句 Stop，跑到该行即停；属示例自身缺陷"
+    }
+  ]
+}

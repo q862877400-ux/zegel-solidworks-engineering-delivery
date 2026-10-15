@@ -18,7 +18,10 @@
 
 - [x] **T-002** 跑既有测试，确认实现本身是好的
   **✅** `tests/test_dfm_review.py` + `tests/test_dfm_queue_worker.py` ⇒ **19 passed**。
-  `→ 验收:` `python -m pytest tests/test_dfm_review.py tests/test_dfm_queue_worker.py -q`
+  ★★★ **2026-10-10 改验收命令（★ 如实）**：★ 业主架构指令 —— ★ **只继承工具 · 方法移出** ⇒
+  ★ `dfm_review.py`（★ **DFM 规则库 = 方法**）已移出 ⇒ ★ 它的判据 `test_dfm_review.py` **跟着移出** ✓
+  ★★ **⇒ 验收改为跑留下的那个**（★ 它测的是**队列工具**，★ 不是方法）✓
+  `→ 验收:` `python -m pytest tests/test_dfm_queue_worker.py -q`
 
 - [x] **T-003** 逐条读 `limitations` 三句，把每句变成可判的验收点
   **✅** L1（Profile 交集 / 单位归一 / B-Rep 绑定 / 缺失⇒blocked）· L2（人工确认项）·
@@ -36,7 +39,11 @@
   单位 : dfm_review.UNIT_TO_MM   = {mm:1.0, cm:10.0, m:1000.0, inch:25.4, in:25.4}
   入口 : dfm_review.check_dfm_document(...) / cad_studio 的 MCP 工具
   ```
-  `→ 验收:` `Select-String scripts\dfm_review.py -Pattern 'DFM_PROCESSES|UNIT_TO_MM'`
+  `→ 验收:` `Select-String archive\inherited-methods\scripts\dfm_review.py -Pattern 'DFM_PROCESSES|UNIT_TO_MM'`
+  ★★★ **2026-10-10 改路径（★ 如实）**：★ 业主架构指令 —— ★ **只继承工具 · 方法移出** ⇒
+  ★ `dfm_review.py`（★ **DFM 规则库 = 方法**）已移出 `scripts/` ⇒
+  ★★ 落在 `archive/inherited-methods/scripts/dfm_review.py`（★ **只搬不删**）✓
+  ★ 判据：★「**规则错了，回读能不能查出来**」⇒ ★ **不能** ⇒ 是方法 ✓
 
 ---
 

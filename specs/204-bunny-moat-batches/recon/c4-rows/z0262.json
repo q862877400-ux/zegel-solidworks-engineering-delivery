@@ -1,0 +1,117 @@
+{
+  "idx": 262,
+  "results": [
+    {
+      "member": "GetStandardCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_COLORREF_Values_of_Standard_User-interface_Elements_Example_CSharp.md",
+        "Get_COLORREF_Values_of_Standard_User-interface_Elements_Example_VB.md",
+        "Get_COLORREF_Values_of_Standard_User-interface_Elements_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；3 份示例均真调用该成员。"
+    },
+    {
+      "member": "GetStandardViewRotation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Show_Named_View_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出可用的视图 ID 遍历区间 swFrontView 到 swDimetricView，并直接取旋转数组；成员页只说「见 swStandardViews_e」。",
+          "example_quote": "lIdx = swStandardViews_e.swFrontView To swStandardViews_e.swDimetricView",
+          "example_file": "Show_Named_View_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只警告前视面可被用户重定义；示例未涉及该点，无正面冲突。"
+    },
+    {
+      "member": "GetStartColumnNumber",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Excel_Design_Table_Worksheet_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；该示例第 52 行真调用。"
+    },
+    {
+      "member": "GetStartPoint2",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；4 份示例都调 ISketchLine.GetStartPoint2，非 ISketchArc 版，故不计入。"
+    },
+    {
+      "member": "GetStartRowNumber",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Excel_Design_Table_Worksheet_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；该示例第 51 行真调用。"
+    },
+    {
+      "member": "GetStartVertex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Check_Interference_Between_Two_Bodies_Example_VB.md",
+        "Check_Interference_using_Modeler_CheckInterference_Example_VB.md",
+        "Create_Asymmetric_Elliptic_Fillets_Example_CSharp.md",
+        "Create_Asymmetric_Elliptic_Fillets_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Because edges have no natural direction, you cannot necessarily predict which of the two points you will get first and which last.",
+          "example_quote": "Set ver1 = swedge.GetStartVertex … AsyRadius1 = swFeatData.GetRadius2(ver1, True) … If AsyRadius1 <> 0.008 Then ErrorMsg SwApp, \"Radius R1 at vertex V1 is wrong\"",
+          "example_file": "Create_Asymmetric_Elliptic_Fillets_Example_VB.md",
+          "why": "Remarks 说先/后不可预测；示例却把 GetStartVertex 固定当 V1 并断言半径必须是 0.008，否则报错。两侧不能同时成立。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Because edges have no natural direction, you cannot necessarily predict which of the two points you will get first and which last.",
+          "example_quote": "ver1 = (Vertex)swedge.GetStartVertex(); … AsyRadius1 = swFeatData.GetRadius2(ver1, out boolstatus); … if (AsyRadius1 != 0.008) ErrorMsg(swApp, \"Radius R1 at vertex V1 is wrong\");",
+          "example_file": "Create_Asymmetric_Elliptic_Fillets_Example_CSharp.md",
+          "why": "C# 版与 VBA 版同形：把「起点=0.008 半径、终点=0.009 半径」当确定映射并断言，与 Remarks 的不可预测说冲突。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "If no vertex exists for this edge (such as the edge of a newly created cylinder), then this method returns null.",
+          "example_quote": "Set swVertex1 = swEdge.GetStartVertex … vPoint1 = swVertex1.GetPoint",
+          "example_file": "Check_Interference_using_Modeler_CheckInterference_Example_VB.md",
+          "why": "Remarks 写明无顶点时返回 null；示例取到即 .GetPoint 不判空，遇到这类边两者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例用圆角边的两个端点去对应 GetRadius2 的两处半径读数（V1 取起始顶点、V2 取结束顶点），成员页未提这一用法。",
+          "example_quote": "AsyRadius1 = swFeatData.GetRadius2(ver1, True)",
+          "example_file": "Create_Asymmetric_Elliptic_Fillets_Example_VB.md"
+        },
+        {
+          "what": "示例对返回的顶点显式判空并报错，说明官方示例也认为 GetStartVertex 可能返回 null（与 Remarks 一致，非矛盾）。",
+          "example_quote": "If ver1 Is Nothing Then ErrorMsg SwApp, \"Failed to get start vertex of edge\"",
+          "example_file": "Create_Asymmetric_Elliptic_Fillets_Example_VB.md"
+        }
+      ],
+      "note": "仅此成员有 Remarks；3 处冲突均有逐字引用，未推测。"
+    },
+    {
+      "member": "GetStreamName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Traverse_Hierarchy_of_Configurations_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；该示例第 54 行真调用。"
+    }
+  ]
+}

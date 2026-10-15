@@ -1,0 +1,126 @@
+{
+  "idx": 332,
+  "results": [
+    {
+      "member": "IsClosed",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Sketch_Contours_Example_CSharp.md",
+        "Create_Extrude_Feature_Using_Sketch_Contours_Example_CSharp.md",
+        "Create_Extrude_Feature_Using_Sketch_Contours_Example_VB.md",
+        "Create_Extrude_Feature_Using_Sketch_Contours_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "True if the sketch contour is open, false if closed",
+          "example_quote": "if ((closed == false))",
+          "example_file": "Get_Sketch_Contours_Example_CSharp.md",
+          "why": "示例把 false 映射为 Open、else 映射为 Closed，与成员页「True = open」正好相反，二者不可同时成立"
+        },
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "True if the sketch contour is open, false if closed",
+          "example_quote": "Debug.Print(\"  Sketch contour \" + i + \" is closed? \" + skcontour.IsClosed());",
+          "example_file": "Create_Extrude_Feature_Using_Sketch_Contours_Example_CSharp.md",
+          "why": "示例把返回值直接标注为「是否闭合」（true 即闭合），成员页说 true 是 open，语义冲突"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ISketchContour 的获取链：FeatureByName→GetSpecificFeature2→GetSketchContours，成员页未给获取方式",
+          "example_quote": "vSkContours = (object[])mySketch.GetSketchContours();",
+          "example_file": "Get_Sketch_Contours_Example_CSharp.md"
+        },
+        {
+          "what": "经 ExtrudeFeatureData2 取 Contours 前后必须成对调用 AccessSelections / ReleaseSelectionAccess，成员页未提",
+          "example_quote": "swExtrudeFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Create_Extrude_Feature_Using_Sketch_Contours_Example_CSharp.md"
+        }
+      ],
+      "note": "矛盾点在成员页 ## Returns 段；## Remarks 只写「suppressed 也能用」。四份示例一致：true=closed。"
+    },
+    {
+      "member": "IsCollisionPresent",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Manage_Collision_Detection_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置链：SetAssembly→CreateGroup→SetComponents→ApplyTransforms 之后才调用；成员页无任何前置",
+          "example_quote": "longstatus = cdm.SetAssembly(swDoc);",
+          "example_file": "Manage_Collision_Detection_Example_CSharp.md"
+        },
+        {
+          "what": "示例把「有无碰撞」读自 GetCollisions 的计数；IsCollisionPresent 的 int 返回仅存 longstatus、不参与判断",
+          "example_quote": "numCollisions = cdm.GetCollisions(true, out var1);",
+          "example_file": "Manage_Collision_Detection_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks「比 GetCollisions 快」与示例先调它再调 GetCollisions 相容，无矛盾；示例补了前置与取值来源。"
+    },
+    {
+      "member": "IsComposite",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（Returns 后直接 See Also），按纪律跳过，未读示例。"
+    },
+    {
+      "member": "IsCompoundNote",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段；页首另有 Obsolete for documents created in SOLIDWORKS 2016 and later. 一句，按纪律跳过。"
+    },
+    {
+      "member": "IsConcentricSpheres",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "IsCone",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Parameters_of_Conical_Surface_Example_CSharp.md",
+        "Get_Parameters_of_Conical_Surface_Example_VB.md",
+        "Get_Parameters_of_Conical_Surface_Example_VBNET.md",
+        "Locate_Apex_of_Conical_Face_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都把 IsCone 当作读 ConeParams2 的前置门禁；成员页未写任何前置",
+          "example_quote": "if (swSurf.IsCone())",
+          "example_file": "Get_Parameters_of_Conical_Surface_Example_CSharp.md"
+        },
+        {
+          "what": "Locate_Apex 注明锥面可被截断，顶点须由 ConeParams 解析算出（AddVector），不靠顶点处的边/边线",
+          "example_quote": "' NOTE: Conical face can be truncated.",
+          "example_file": "Locate_Apex_of_Conical_Face_Example_VB.md"
+        },
+        {
+          "what": "示例给出锥参数单位口径：原点/半径为米（×1000 转 mm）、半角为弧度（×57.3 或 Tan）",
+          "example_quote": "Debug.Print(\"Half angle           = \" + vCone[7] * 57.3 + \" degrees\");",
+          "example_file": "Get_Parameters_of_Conical_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 与 Locate_Apex 的截断锥不矛盾：Remarks 前提是「have an apex point」，截断锥顶点不在面上。"
+    },
+    {
+      "member": "IsControlTabActive",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例。"
+    }
+  ]
+}

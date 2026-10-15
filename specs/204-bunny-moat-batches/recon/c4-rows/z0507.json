@@ -1,0 +1,106 @@
+{
+  "idx": 507,
+  "results": [
+    {
+      "member": "UMaxBoundType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过对照；三份示例均真实调用该属性"
+    },
+    {
+      "member": "UMaxValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Edge_Curve_Parameterization_Example_CSharp.md",
+        "Get_Edge_Curve_Parameterization_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取值路径：须先由 IEdge.GetCurveParams3 取 CurveParamData 再读此只读属性，且原样打印，未按 Remarks 做负参数空间归一化",
+          "example_quote": "swCurveParaData = (CurveParamData)swEdge.GetCurveParams3();",
+          "example_file": "Get_Edge_Curve_Parameterization_Example_CSharp.md"
+        }
+      ],
+      "note": "示例仅打印该值，不含任何与 Remarks 冲突的断言"
+    },
+    {
+      "member": "UMin",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md",
+        "Return_Untrimmed_Curve_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；四份示例均真实调用该属性"
+    },
+    {
+      "member": "UMinBoundType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过对照；三份示例均真实调用该属性"
+    },
+    {
+      "member": "UMinValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Edge_Curve_Parameterization_Example_CSharp.md",
+        "Get_Edge_Curve_Parameterization_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先打印 Sense 再打印 UMinValue/UMaxValue，给出了 Remarks 描述的判定顺序（Sense 决定是否在负参数空间）",
+          "example_quote": "Debug.Print(\"The curve and edge are in the same direction: \" + swCurveParaData.Sense);",
+          "example_file": "Get_Edge_Curve_Parameterization_Example_CSharp.md"
+        }
+      ],
+      "note": "示例仅打印该值，不含任何与 Remarks 冲突的断言"
+    },
+    {
+      "member": "UOrder",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过对照；三份示例均真实调用该属性"
+    },
+    {
+      "member": "UPeriodicity",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取值路径：须先用 Surface.Parameterization2 取参数化数据，再传入 GetBSurfParams3 得 BSurfParamData 才可读此属性",
+          "example_quote": "swBSurfParam = (BSurfParamData)swSurf.GetBSurfParams3(false, false, swSurfParam, 0.01, out sense);",
+          "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "示例只同时打印 U/V 周期性，未与 Remarks 的方向判定冲突"
+    }
+  ]
+}

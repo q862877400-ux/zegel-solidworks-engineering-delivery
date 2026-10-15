@@ -1,0 +1,145 @@
+{
+  "idx": 306,
+  "results": [
+    {
+      "member": "InsertBendTable",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；候选示例调的是 swView.InsertBendTable（6 参，IView），非本页 4 参版。"
+    },
+    {
+      "member": "InsertBomTable2",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份候选示例全部调用 swView.InsertBomTable2（7 参，IView 族），无一调用本 IModelDocExtension 成员，故无示例可比。"
+    },
+    {
+      "member": "InsertBomTable3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VB.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VBNET.md",
+        "Get_BOM_Balloon_Properties_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "The system does not default to the Default configuration when you specify an empty string for Configuration. You must specify the configuration.",
+          "example_quote": "            swBomTableAnnotation = (BomTableAnnotation)swModelDocExt.InsertBomTable3(\"C:\\\\Program Files\\\\SolidWorks Corp\\\\SolidWorks\\\\lang\\\\english\\\\bom-standard.sldbomtbt\", 618, 568, (int)swBomType_e.swBomType_TopLevelOnly, \"\", false, (int)swNumberingType_e.swNumberingType_None, false);",
+          "example_file": "Get_BOM_Balloon_Properties_Example_CSharp.md",
+          "why": "成员页称空串不回落且必须指定配置；示例给 TopLevelOnly 传空串，后置条件称已插入 BOM 表，两者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "页面举例路径为 C:\\Program Files\\SOLIDWORKS\\lang\\English；官方示例用真实安装目录 english（小写）且多一层 SOLIDWORKS Corp。",
+          "example_quote": "            tableTemplate = \"C:\\\\Program Files\\\\SOLIDWORKS Corp\\\\SOLIDWORKS\\\\lang\\\\english\\\\bom-standard.sldbomtbt\";",
+          "example_file": "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md"
+        }
+      ],
+      "note": "4 份候选均真调用本成员（swModelDocExt.InsertBomTable3），冲突只在空串 Configuration 的处理。"
+    },
+    {
+      "member": "InsertBomTable4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_and_Show_BOM_Table_in_Assembly_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例同时传 DetailedCutList=True 与 DissolvePartLevelRows=True，印证后者仅在前者为真时有效。",
+          "example_quote": "            swBOMAnnotation = (BomTableAnnotation)swModelDocExt.InsertBomTable4(TemplateName, 0, 0, BomType, Configuration, false, nbrType, true, true);",
+          "example_file": "Insert_and_Show_BOM_Table_in_Assembly_Example_CSharp.md"
+        }
+      ],
+      "note": "4 份候选中仅 CSharp 真调用本成员；另 3 份调用的是 IView.InsertBomTable4（10 参，首参 bool）。"
+    },
+    {
+      "member": "InsertBomTable6",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Dissolve_Subassembly_in_a_BOM_Table_Example_CSharp.md",
+        "Dissolve_Subassembly_in_a_BOM_Table_Example_VB.md",
+        "Dissolve_Subassembly_in_a_BOM_Table_Example_VBNET.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "If the BOM table is a parts-only or indented-style BOM and the Configuration specified is invalid, then the BOM is not created.",
+          "example_quote": "    BomType = swBomType_Indented\n    TableTemplate = \"C:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\lang\\english\\bom-standard.sldbomtbt\"\n    Configuration = \"\"\n    Set swBOMAnnotation = swView.InsertBomTable6(False, 0.4, 0.3, AnchorType, BomType, Configuration, TableTemplate, False, swNumberingType_Detailed, True, True, True)",
+          "example_file": "Dissolve_Subassembly_in_a_BOM_Table_Example_VB.md",
+          "why": "页面称 indented 类 BOM 配置无效则不建表；示例对 indented 传空串且后置条件称已插入 indented BOM 表。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "UseAnchorPoint=False 时示例仍传 0.4/0.3（米制量级），说明 X/Y 以米为单位；成员页未写单位。",
+          "example_quote": "    Set swBOMAnnotation = swView.InsertBomTable6(False, 0.4, 0.3, AnchorType, BomType, Configuration, TableTemplate, False, swNumberingType_Detailed, True, True, True)",
+          "example_file": "Dissolve_Subassembly_in_a_BOM_Table_Example_VB.md"
+        }
+      ],
+      "note": "4 份候选均真调用本成员（IView 版 12 参），与 IModelDocExtension 同名成员不同族。"
+    },
+    {
+      "member": "InsertBreak",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Broken_View_Example_CSharp.md",
+        "Create_Broken_View_Example_VB.md",
+        "Create_Broken_View_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "- **Orientation**: Horizontal or vertical cut as defined in [[swBreakLineOrientation_e]]",
+          "example_quote": "            swBreakLine = (BreakLine)swView.InsertBreak(0, -0.0291950859897372, 0.0198236302285804, 1);",
+          "example_file": "Create_Broken_View_Example_CSharp.md",
+          "why": "枚举只有 1=Horizontal / 2=Vertical，C# 与 VB.NET 示例却传 0（VB 示例传 2），0 不属任一方向。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例位置为米制量级（-2.91950859897372E-02 / 1.98236302285804E-02，约 -29mm 与 20mm），成员页未写单位。",
+          "example_quote": "    Set swBreakLine = swView.InsertBreak(2, -2.91950859897372E-02, 1.98236302285804E-02, 2)",
+          "example_file": "Create_Broken_View_Example_VB.md"
+        },
+        {
+          "what": "示例显示 InsertBreak 只插线：还需 SetPosition + EditRebuild3，再经 BreakView 才断开视图。",
+          "example_quote": "    status = swBreakLine.SetPosition(-0.03, 0.05)\n    swModel.EditRebuild3",
+          "example_file": "Create_Broken_View_Example_VB.md"
+        }
+      ],
+      "note": "3 份示例都调用本成员；VB 传 Orientation=2 合法，C# 与 VB.NET 均传枚举外的 0。"
+    },
+    {
+      "member": "InsertBreak3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Jagged_Cut_Break_Example_CSharp.md",
+        "Insert_Jagged_Cut_Break_Example_VB.md",
+        "Insert_Jagged_Cut_Break_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例位置同为米制量级（-2.91950859897372E-02），成员页未写单位。",
+          "example_quote": "    Set swBreakLine = swView.InsertBreak3(2, -2.91950859897372E-02, 1.98236302285804E-02, swBreakLineStyle_e.swBreakLine_Jagged, 2, True)",
+          "example_file": "Insert_Jagged_Cut_Break_Example_VB.md"
+        },
+        {
+          "what": "示例在 InsertBreak3 后直接读 Style 与 ShapeIntensity 即止，不再调 SetPosition/BreakView。",
+          "example_quote": "    Debug.Print \"Break line style (5 = jagged cut): \" & swBreakLine.Style\n    Debug.Print \" Shape intensity: \" & swBreakLine.ShapeIntensity",
+          "example_file": "Insert_Jagged_Cut_Break_Example_VB.md"
+        }
+      ],
+      "note": "3 份示例都调用本成员，参数全部落在成员页与枚举允许范围内，未找到冲突。"
+    }
+  ]
+}

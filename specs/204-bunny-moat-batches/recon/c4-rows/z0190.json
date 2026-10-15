@@ -1,0 +1,154 @@
+{
+  "idx": 190,
+  "results": [
+    {
+      "member": "GetFacesForReplacementCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Replace_Face_Example_CSharp.md",
+        "Replace_Face_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call this method before calling [[IReplaceFaceFeatureData::IGetFacesForReplacement]].",
+          "example_quote": "vFacesToReplace = (object[])featData.FacesForReplacement;",
+          "example_file": "Replace_Face_Example_CSharp.md",
+          "why": "Remarks 指向的 IGetFacesForReplacement 在其页明写「VBA, VB.NET, C#, and C++/CLI: Not supported」；示例是 C#，实际改走 AccessSelections + FacesForReplacement 属性。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "成员页未写取定义与访问选择这两步；示例先 GetDefinition() 再 AccessSelections(Part, null)。",
+          "example_quote": "featData.AccessSelections(Part, null);",
+          "example_file": "Replace_Face_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例都读 FacesForReplacement 属性，无一处调 IGetFacesForReplacement。"
+    },
+    {
+      "member": "GetFacetCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Inspect_Facets_Example_CSharp.md",
+        "Inspect_Facets_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面无任何前置；示例给出取 GraphicsBody 的前置链：先判体类型，再 GetGraphicsBody()。",
+          "example_quote": "swThisGraphicsBody = (GraphicsBody)swCurBod.GetGraphicsBody();",
+          "example_file": "Inspect_Facets_Example_CSharp.md"
+        }
+      ],
+      "note": "同例另在 MeshBody 上调同名 GetFacetCount，属 IMeshBody 同名成员，未计入本页。"
+    },
+    {
+      "member": "GetFacetEdges",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Inspect_Facets_Example_CSharp.md",
+        "Inspect_Facets_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只写「Array of three IEdges」；示例按运行时长度处理，算 GetUpperBound(0)+1 并逐条判空。",
+          "example_quote": "lFacetEdgesCount = vGEdges.GetUpperBound(0) + 1;",
+          "example_file": "Inspect_Facets_Example_CSharp.md"
+        }
+      ],
+      "note": "Facet 对象由 GraphicsBody 与 MeshBody 两支共用，该成员两支都真调用。"
+    },
+    {
+      "member": "GetFacetFins",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VB.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 版把返回强转成 (int[])；并按 j=0..2 硬编码三格，未用 IGetFacetFinsCount。",
+          "example_quote": "//Should always be three fins per facet",
+          "example_file": "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md"
+        },
+        {
+          "what": "页面无前置；示例先开 NeedFaceFacetMap、设 MatchType，再 Tessellate() 才有 fin ID。",
+          "example_quote": "tess.NeedFaceFacetMap = true;",
+          "example_file": "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都真调 tess.GetFacetFins；成员页 Examples 段另列 Tessellate_a_Body_Example_*。"
+    },
+    {
+      "member": "GetFacetVertices",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Inspect_Facets_Example_CSharp.md",
+        "Inspect_Facets_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只写「Array of three IVertex」；示例同样按运行时长度算，并逐个判 Is Nothing。",
+          "example_quote": "lFacetVertsCount = vGVerts.GetUpperBound(0) + 1;",
+          "example_file": "Inspect_Facets_Example_CSharp.md"
+        }
+      ],
+      "note": "与 GetFacetEdges 同文件同分支，两支都真调用该 IFacet 成员。"
+    },
+    {
+      "member": "GetFacets",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Inspect_Facets_Example_CSharp.md",
+        "Inspect_Facets_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只说返回 IFacet 数组；示例按 object[] 接住再逐项转 Facet 遍历。",
+          "example_quote": "vFacets = (object[])swThisGraphicsBody.GetFacets();",
+          "example_file": "Inspect_Facets_Example_CSharp.md"
+        },
+        {
+          "what": "示例遍历前先取同一 graphics body 的 GetFacetCount 作数量参考。",
+          "example_quote": "lGFacetCount = swThisGraphicsBody.GetFacetCount();",
+          "example_file": "Inspect_Facets_Example_CSharp.md"
+        }
+      ],
+      "note": "示例对 MeshBody 的同名调用属 IMeshBody.GetFacets，未计入本页。"
+    },
+    {
+      "member": "GetFacettedHlrDisplay",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Whether_HLR_HLV_Edges_Are_Displayed_Faceted_Example_VB.md",
+        "Set_Display_Mode_of_View_Example_CSharp.md",
+        "Set_Display_Mode_of_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面无前置；三份示例都以「已选中一个工程图视图」为前置，View 取自 GetSelectedObject6。",
+          "example_quote": "swView = (View)swSelectionMgr.GetSelectedObject6(1, -1);",
+          "example_file": "Set_Display_Mode_of_View_Example_CSharp.md"
+        },
+        {
+          "what": "示例把这个布尔标注成 draft quality，与 SetDisplayMode4 第 3 个实参对应；页面只说 facetted。",
+          "example_quote": "Debug.Print(\"Faceted (draft quality)?:  \" + Facetted);",
+          "example_file": "Set_Display_Mode_of_View_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 版把前置逐字写成打开工程图并选中一个视图。",
+          "example_quote": "1. Open a drawing and select a drawing view.",
+          "example_file": "Get_Whether_HLR_HLV_Edges_Are_Displayed_Faceted_Example_VB.md"
+        }
+      ],
+      "note": "三份示例均真调 GetFacettedHlrDisplay，且都在 SetDisplayMode4 前后各读一次。"
+    }
+  ]
+}

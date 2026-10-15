@@ -1,0 +1,114 @@
+{
+  "idx": 329,
+  "results": [
+    {
+      "member": "InterlockSurface",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Tooling_Split_Feature_Data_Example_CSharp.md",
+        "Get_Tooling_Split_Feature_Data_Example_VB.md",
+        "Get_Tooling_Split_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都在调用 AccessSelections 之前先读 Angle/Depth/InterlockSurface，成员页只指向 Selections 文档、未给调用序",
+          "example_quote": "            Debug.Print(\"    Draft angle: \" + swToolingSplitFeatData.Angle);\n            Debug.Print(\"    Depth of block in direction 1: \" + swToolingSplitFeatData.get_Depth(0));\n            Debug.Print(\"    Depth of block in direction 2: \" + swToolingSplitFeatData.get_Depth(1));\n            Debug.Print(\"    Interlock surface? \" + swToolingSplitFeatData.InterlockSurface);\n            bRet = swToolingSplitFeatData.AccessSelections(swModel, null);",
+          "example_file": "Get_Tooling_Split_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 版同样无条件先读草稿角 Angle，未先判断 InterlockSurface 是否为 true 才读",
+          "example_quote": "    Debug.Print \"    Draft angle: \" & swToolingSplitFeatData.Angle\n    Debug.Print \"    Depth of block in direction 1: \" & swToolingSplitFeatData.Depth(0)\n    Debug.Print \"    Depth of block in direction 2: \" & swToolingSplitFeatData.Depth(1)\n    Debug.Print \"    Interlock surface? \" & swToolingSplitFeatData.InterlockSurface\n    bRet = swToolingSplitFeatData.AccessSelections(swModel, Nothing)",
+          "example_file": "Get_Tooling_Split_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只讲 true 时可指定拔模角；示例全是读侧，无相互矛盾的说法。"
+    },
+    {
+      "member": "IntermittentWeld",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出写侧用法：读出 false 就先置 true，再进入下级判断（Remarks 只说 true 才可用那五个属性）",
+          "example_quote": "            Debug.Print(\"   Intermittent weld properties enabled? \" + swCosmeticWeldBeadFeatureData.IntermittentWeld);\n            if (swCosmeticWeldBeadFeatureData.IntermittentWeld == false)\n            {\n                swCosmeticWeldBeadFeatureData.IntermittentWeld = true;\n            }",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Example_CSharp.md"
+        },
+        {
+          "what": "示例在五个属性之下再加一层 GapOrPitch 分流：真才读 Gap，假才读 Pitch/Staggered，Remarks 未写这层",
+          "example_quote": "                if (swCosmeticWeldBeadFeatureData.GapOrPitch == true)\n                {\n                    Debug.Print(\"   Intermittent gap: \" + swCosmeticWeldBeadFeatureData.Gap);\n                    Debug.Print(\"   Intermittent weld length: \" + swCosmeticWeldBeadFeatureData.IntermittentWeldLength);",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 列的五个属性在示例里全部出现且都被 IntermittentWeld==true 包裹，两侧一致。"
+    },
+    {
+      "member": "IntermittentWeldLength",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把读取放在 IntermittentWeld==true 且 GapOrPitch==True 分支内（假分支另读一次），前置比 Remarks 更具体",
+          "example_quote": "    If swCosmeticWeldBeadFeatureData.IntermittentWeld = True Then\n        If swCosmeticWeldBeadFeatureData.GapOrPitch = True Then\n            Debug.Print \" Intermittent gap: \" & swCosmeticWeldBeadFeatureData.Gap\n            Debug.Print \" Intermittent weld length: \" & swCosmeticWeldBeadFeatureData.IntermittentWeldLength",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Example_VB.md"
+        },
+        {
+          "what": "示例先调 AccessSelections 再取该属性，Remarks 完全没提这一步",
+          "example_quote": "            swCosmeticWeldBeadFeatureData = (CosmeticWeldBeadFeatureData)swFeature.GetDefinition();\n            swCosmeticWeldBeadFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的唯一前置（IntermittentWeld 为 true）被示例照做，不构成冲突。"
+    },
+    {
+      "member": "InternalCornersOnly",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Modify_Break_Corner_Feature_Example_CSharp.md",
+        "Modify_Break_Corner_Feature_Example_VB.md",
+        "Modify_Break_Corner_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 与 Examples，没有 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "InterpolatedMotor",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Linear_Motor_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Parameters / Examples，没有 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "IntersectCurve",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "所列两份示例调的是 swSurf.IntersectCurve，即 ISurface.IntersectCurve（Obsolete，含 3 个 out），不是本成员 ICurve.IntersectCurve；全 examples 目录无 Curve 对象调 IntersectCurve 的写法。"
+    },
+    {
+      "member": "IntersectSurface",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Intersecting_Faces_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Parameters / Returns / Examples，没有 ## Remarks 段，按纪律跳过。"
+    }
+  ]
+}

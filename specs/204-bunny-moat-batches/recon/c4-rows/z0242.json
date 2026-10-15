@@ -1,0 +1,125 @@
+{
+  "idx": 242,
+  "results": [
+    {
+      "member": "GetRefPoint",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Reference_Point_Data_Example_CSharp.md",
+        "Get_Reference_Point_Data_Example_VB.md",
+        "Get_Reference_Point_Data_Example_VBNET.md",
+        "Insert_Reference_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IRefPoint\\GetRefPoint.md 无 ## Remarks，按纪律 3 跳过分析。"
+    },
+    {
+      "member": "GetReferenceEdges",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "ICosmeticWeldBeadFeatureData\\GetReferenceEdges.md 无 ## Remarks，跳过分析。"
+    },
+    {
+      "member": "GetReferenceEntity",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Plane_on_which_Sketch_Created_Example_VB.md",
+        "Get_Plane_or_Face_for_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 swSelDATUMPLANES 的具体数值 4，成员页只写枚举名",
+          "example_quote": "Debug.Print (\"Type of reference entity (4 = swSelectType_e.swSelDATUMPLANES): \" & longstatus)",
+          "example_file": "Get_Plane_on_which_Sketch_Created_Example_VB.md"
+        },
+        {
+          "what": "示例说返回可能是 Feature 对象，比成员页的『reference plane or a face』更宽",
+          "example_quote": "'The plane can be either a face or a Feature object",
+          "example_file": "Get_Plane_on_which_Sketch_Created_Example_VB.md"
+        },
+        {
+          "what": "示例说明基准面分支下同一返回对象可同时当 Feature 与 RefPlane，且只能按 Feature 选中",
+          "example_quote": "Set pPlaneFeat = pEntity\n        Set pRefPlane = pEntity\n...\n' Cannot select through Entity; must\n    ' select through Feature\n    bRet = pPlaneFeat.Select2(False, 0)",
+          "example_file": "Get_Plane_or_Face_for_Sketch_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的 NULL + swSelNOTHING 分支两例都未处理，但两例并未否认该分支，故不算冲突。"
+    },
+    {
+      "member": "GetReferenceFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_DimXpert_Feature2_Example_VB.md",
+        "Get_DimXpert_Feature2_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "两份 Extrude 示例调的是 IDimXpertExtrudeFeature 同名成员；本成员示例只按基接口读 .Name，未转平面接口。"
+    },
+    {
+      "member": "GetReferencePointType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Local_Sketch-driven_Pattern_Example_CSharp.md",
+        "Get_Properties_of_Sketch-Pattern_Feature_Example_CSharp.md",
+        "Get_Properties_of_Sketch-Pattern_Feature_Example_VB.md",
+        "Get_Properties_of_Sketch-Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks，跳过。附记：示例注释称 -1 为 centroid，成员页 Returns 称 -1 为 default/orgin/none。"
+    },
+    {
+      "member": "GetReferencedModelName",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks，跳过。所列 4 例调的是绘图视图的 swView.GetReferencedModelName，不是 IBomFeature 的。"
+    },
+    {
+      "member": "GetReferences2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Library_Feature_With_References_Example_CSharp.md",
+        "Create_Library_Feature_With_References_Example_VB.md",
+        "Create_Library_Feature_With_References_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "See [Accessing Selections that Define Features](<../../docs/Programming with the SOLIDWORKS API/Selections that Define Features.md>) for additional details on using this method.",
+          "example_quote": "Set swLibFeat = swFeatureManager.CreateDefinition(swFmLibraryFeature)\n...\nstatus = swLibFeat.Initialize(\"...straight slot.sldlfp\")\n...\nnRefCount = swLibFeat.GetReferencesCount\n...\nvRefs = swLibFeat.GetReferences2(swLibFeatureData_FeatureRespect, vRefTypes)\n...\nstatus = swLibFeat.AccessSelections(swModel, Nothing)",
+          "example_file": "Create_Library_Feature_With_References_Example_VB.md",
+          "why": "Remarks 指向的官方文档要求先 AccessSelections 再调目标方法；三份示例都在 Initialize 后直接 GetReferences2，顺序相反。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例标明 RefType 数组里边对应的 swSelectType_e 数值为 1",
+          "example_quote": "Debug.Print \"Types of references required (edge = 1): \"",
+          "example_file": "Create_Library_Feature_With_References_Example_VB.md"
+        },
+        {
+          "what": "示例给出 Scope 的具体枚举成员 swLibFeatureData_FeatureRespect，成员页只写枚举名",
+          "example_quote": "vRefs = swLibFeat.GetReferences2(swLibFeatureData_FeatureRespect, vRefTypes)",
+          "example_file": "Create_Library_Feature_With_References_Example_VB.md"
+        },
+        {
+          "what": "示例显示先调 GetReferencesCount 再调本方法，成员页未提这个配对",
+          "example_quote": "nRefCount = swLibFeat.GetReferencesCount\n...\nvRefs = swLibFeat.GetReferences2(swLibFeatureData_FeatureRespect, vRefTypes)",
+          "example_file": "Create_Library_Feature_With_References_Example_VB.md"
+        }
+      ],
+      "note": "成员页标 Obsolete（后继 GetReferences3），三例仍演示 GetReferences2；旧成员仍可调用，不算冲突。"
+    }
+  ]
+}

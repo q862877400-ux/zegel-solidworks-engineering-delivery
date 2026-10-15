@@ -1,0 +1,171 @@
+{
+  "idx": 182,
+  "results": [
+    {
+      "member": "GetDynamicCenterTransform",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Section_View_Data_Example_CSharp.md",
+        "Get_Section_View_Data_Example_VB.md",
+        "Get_Section_View_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置是「三剖面」剖视图（每剖面 X 旋转 45°），比成员页「多于一剖」具体得多",
+          "example_quote": "' 2. Create a section view with three sections:",
+          "example_file": "Get_Section_View_Data_Example_VB.md"
+        },
+        {
+          "what": "只对第 3 剖面调用一次（Index=3），与成员页 1/2/3 取值域不矛盾",
+          "example_quote": "Set swMathTransform = data.GetDynamicCenterTransform(3)",
+          "example_file": "Get_Section_View_Data_Example_VB.md"
+        },
+        {
+          "what": "返回值当完整 MathTransform 用：ArrayData 12 个数按 3x3 Rotate + Translate 打印",
+          "example_quote": "Debug.Print \" Translate: \" & Format(transform(9), \"###0.0#####\") & \" \" & Format(transform(10), \"###0.0#####\") & \" \" & Format(transform(11), \"###0.0#####\")",
+          "example_file": "Get_Section_View_Data_Example_VB.md"
+        }
+      ],
+      "note": "三份示例一致；页说单剖面返回 null，示例前置为三剖面，不冲突。"
+    },
+    {
+      "member": "GetEdge",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Fill_Gaps_in_Body_Example_CSharp.md",
+        "Get_and_Fill_Gaps_in_Body_Example_VB.md",
+        "Get_and_Fill_Gaps_in_Body_Example_VBNET.md",
+        "Select_Loop_of_Edges_Example_VB_.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回的 Edge 用于对象同一性比较，据此消解 solid body 边的 coedge 二义性",
+          "example_quote": "If swEdge Is swCoEdge.GetEdge Then",
+          "example_file": "Select_Loop_of_Edges_Example_VB_.md"
+        },
+        {
+          "what": "示例给出边对应的 coedge 数量规律（实体边 2 个、曲面体边 1 或 2 个）",
+          "example_quote": "' 1 or 2: Coedges for an edge on a surface body\n' 2: Coedges for an edge on a solid body",
+          "example_file": "Select_Loop_of_Edges_Example_VB_.md"
+        },
+        {
+          "what": "gaps 示例把返回值强转 Edge 后直接 Select4 选中填充面边界",
+          "example_quote": "swEdge = (Edge)swCoEdge.GetEdge();",
+          "example_file": "Get_and_Fill_Gaps_in_Body_Example_CSharp.md"
+        }
+      ],
+      "note": "ICoEdge/GetEdge.md 无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetEdgeChamferDistance",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Chamfer_Distances_Example_CSharp.md",
+        "Get_Chamfer_Distances_Example_VB.md",
+        "Get_Chamfer_Distances_Example_VBNET.md",
+        "Get_Edge_Chamfer_Distances_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "For angle-distance chamfers, set side to 0.",
+          "example_quote": "swFeat = (Feature)swFeatMgr.InsertFeatureChamfer(4, 1, 0.00254, 0.78539816339745, 0, 0, 0, 0);\n            Debug.Print(\"    EdgeChamferDistance(1)    = \" + swChamfer.GetEdgeChamferDistance(1) * 1000.0 + \" mm\");",
+          "example_file": "Get_Edge_Chamfer_Distances_Example_CSharp.md",
+          "why": "InsertFeatureChamfer 第 2 参 ChamferType=1 即 swChamferAngleDistance，示例自建的就是角-距离倒角，却读了成员页规定该情形只准 0 的 Side=1。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "返回值以米计（示例乘 1000.0 才按 mm 打印），成员页 Returns 未写单位",
+          "example_quote": "Debug.Print(\"    EdgeChamferDistance(0)    = \" + swChamfer.GetEdgeChamferDistance(0) * 1000.0 + \" mm\");",
+          "example_file": "Get_Chamfer_Distances_Example_CSharp.md"
+        },
+        {
+          "what": "该示例前置只要求「选中倒角特征」，未限定倒角类型，两个 Side 一律照读",
+          "example_quote": "// 2. Select the chamfer feature.",
+          "example_file": "Get_Chamfer_Distances_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 Get_Chamfer_Distances 未限定类型故不判冲突；只有自建角-距离倒角那份冲突。"
+    },
+    {
+      "member": "GetEdgeCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "所列 4 份都不碰 IBody2：三份调的是 ChamferFeatureData2.GetEdgeCount，C++ 那份是 ILoop::GetEdgeCount。无示例可比，冲突留空。"
+    },
+    {
+      "member": "GetEdgeInformation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Heal_Edges_Feature_Data_Example_CSharp.md",
+        "Get_Heal_Edges_Feature_Data_Example_VB.md",
+        "Get_Heal_Edges_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序前置：先 AccessSelections，末尾 ReleaseSelectionAccess",
+          "example_quote": "swHealEdgesFeature.AccessSelections(swModel, null);\n            Debug.Print(\"Number of faces in this heal edges feature: \" + swHealEdgesFeature.GetFacesCount());",
+          "example_file": "Get_Heal_Edges_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "前置是活动文档里已选中 HealEdge1 特征（GetSelectedObject6(1,0)）后才取定义",
+          "example_quote": "swFeature = (Feature)swSelMgr.GetSelectedObject6(1, 0);",
+          "example_file": "Get_Heal_Edges_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "IHealEdgesFeatureData/GetEdgeInformation.md 无 ## Remarks 段，跳过冲突判定。"
+    },
+    {
+      "member": "GetEdges",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Check_Edges_for_Faults_Example_CSharp.md",
+        "Check_Edges_for_Faults_Example_VB.md",
+        "Check_Edges_for_Faults_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按可空处理：返回 null 时另走分支打印 \"No edges in part.\"",
+          "example_quote": "Debug.Print(\"      No edges in part.\");",
+          "example_file": "Check_Edges_for_Faults_Example_CSharp.md"
+        },
+        {
+          "what": "示例先 GetBodies2(swAllBodies,true) 取体，再对每个体调 GetEdges() 逐边查 fault",
+          "example_quote": "vEdgeArr = (object[])swBody.GetEdges();",
+          "example_file": "Check_Edges_for_Faults_Example_CSharp.md"
+        }
+      ],
+      "note": "Add_Highlighting 那份调的是 SldWorks.Face.GetEdges，非 IBody2，已排除。"
+    },
+    {
+      "member": "GetEdgesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_and_Release_Access_to_Edges_Example_CSharp.md",
+        "Access_and_Release_Access_to_Edges_Example_VB.md",
+        "Access_and_Release_Access_to_Edges_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例次序 AccessSelections → GetEdgesCount → Edges 属性 → ReleaseSelectionAccess",
+          "example_quote": "bRet = swRip.AccessSelections(swModel, null);\n            Debug.Print(\"Number of edges: \" + swRip.GetEdgesCount());",
+          "example_file": "Access_and_Release_Access_to_Edges_Example_CSharp.md"
+        },
+        {
+          "what": "示例取边走 Edges 属性而非 IGetEdges，仍保持「先计数后取边」序，不与成员页相悖",
+          "example_quote": "vEdge = (object[])swRip.Edges;",
+          "example_file": "Access_and_Release_Access_to_Edges_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例一致，且都先 AccessSelections；与页的 IGetEdges 前置同序不冲突。"
+    }
+  ]
+}

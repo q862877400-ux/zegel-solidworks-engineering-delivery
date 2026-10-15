@@ -1,0 +1,192 @@
+{
+  "idx": 185,
+  "results": [
+    {
+      "member": "GetEntitiesToSplitCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Parting_Line_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Parting_Line_Feature_Data_Example_VB.md",
+        "Get_and_Set_Parting_Line_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先在特征树选中分型线特征、取定义并回滚后才能取数，成员页没写",
+          "example_quote": "// 2. Select the parting line feature in the FeatureManager design tree.",
+          "example_file": "Get_and_Set_Parting_Line_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出回滚调用 AccessSelections 的实参形态（模型 + null）",
+          "example_quote": "state = swPartingLineFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Get_and_Set_Parting_Line_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例只把它当计数打印，全程未调用 Remarks 所说的 IGetEntitiesToSplit",
+          "example_quote": "Debug.Print(\"    Number of entities to split: \" + swPartingLineFeatureData.GetEntitiesToSplitCount());",
+          "example_file": "Get_and_Set_Parting_Line_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只规定与 IGetEntitiesToSplit 的先后，示例未调用后者，不构成矛盾。"
+    },
+    {
+      "member": "GetEntitiesType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Sketch_Relations_Example_CSharp.md",
+        "Get_Sketch_Relations_Example_VB.md",
+        "Get_Sketch_Relations_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 示例把返回强转成 int[]，给出具体数组元素类型",
+          "example_quote": "vEntTypeArr = (int[])swSkRel.GetEntitiesType();",
+          "example_file": "Get_Sketch_Relations_Example_CSharp.md"
+        },
+        {
+          "what": "示例要求类型数组与 GetEntities 数组下标数相等才逐项配对",
+          "example_quote": "If UBound(vEntTypeArr) = UBound(vEntArr) Then",
+          "example_file": "Get_Sketch_Relations_Example_VB.md"
+        },
+        {
+          "what": "前置：先选中要查看关系的草图",
+          "example_quote": "' 2. Select the sketch whose relations you want to see.",
+          "example_file": "Get_Sketch_Relations_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetEntitiesWeldFrom",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "weld-from 面必须按 mark=4 选中，示例给出坐标式 SelectByID2",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", 0.447611268878973, 0.185506718400291, 6.76112086262037E-03, True, 4, Nothing, 0)",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_VB.md"
+        },
+        {
+          "what": "读该 getter 前须 AccessSelections 回滚、读后 ReleaseSelectionAccess",
+          "example_quote": "swCosmeticWeldBeadFeatureData.AccessSelections swModel, Nothing",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_VB.md"
+        },
+        {
+          "what": "C# 示例把返回强转成 object[]",
+          "example_quote": "weldObjs = (object[])swCosmeticWeldBeadFeatureData.GetEntitiesWeldFrom(out entityType);",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetEntitiesWeldTo",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "weld-to 面按 mark=8 选中，与 weld-from 的 mark=4 配对",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", 0.567647499089958, 8.88999999998532E-02, 2.08831790428121E-03, True, 8, Nothing, 0)",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_VB.md"
+        },
+        {
+          "what": "示例在最后显式 ReleaseSelectionAccess 收尾",
+          "example_quote": "swCosmeticWeldBeadFeatureData.ReleaseSelectionAccess",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_VB.md"
+        },
+        {
+          "what": "C# 示例把返回强转成 object[]",
+          "example_quote": "weldObjs = (object[])swCosmeticWeldBeadFeatureData.GetEntitiesWeldTo(out entityType);",
+          "example_file": "Insert_Cosmetic_Weld_Bead_Using_Geometric_Entities_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetEntityByName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Entity_By_Name_Example.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例传裸字面量 2，经 swSelectType_e 即 swSelFACES，与合法类型表一致",
+          "example_quote": "Set Face = Part.GetEntityByName(faceName, 2)",
+          "example_file": "Get_Entity_By_Name_Example.md"
+        },
+        {
+          "what": "swSelFACES 时返回值直接赋给 Face2 变量，比页面的 Entity 更具体",
+          "example_quote": "Dim Face As SldWorks.Face2",
+          "example_file": "Get_Entity_By_Name_Example.md"
+        },
+        {
+          "what": "示例补了名字的删除与改名环节，成员页未提",
+          "example_quote": "ret = Part.SetEntityName(Entity, \"NewFaceName\")",
+          "example_file": "Get_Entity_By_Name_Example.md"
+        }
+      ],
+      "note": "字面量 2 = swSelFACES，落在 Remarks 的合法类型表内，无冲突。"
+    },
+    {
+      "member": "GetEntityCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Display_State_Settings_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例拿它给 Entities 属性的数组定上界，全程未调 IGetEntities",
+          "example_quote": "listComp = swDSS.Entities",
+          "example_file": "Get_Display_State_Settings_Example_VB.md"
+        },
+        {
+          "what": "示例用 VBA 16 位 Integer 接收 System.int 返回，比签名更窄",
+          "example_quote": "Dim entCount As Integer",
+          "example_file": "Get_Display_State_Settings_Example_VB.md"
+        },
+        {
+          "what": "前置：装配体、至少三个顶层组件、两个显示状态",
+          "example_quote": "' components and two display states, \"DS_1\" and \"DS_2\".",
+          "example_file": "Get_Display_State_Settings_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 限定用途于 IGetEntities，示例改配 Entities 属性，属补充非互斥。"
+    },
+    {
+      "member": "GetEntityName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Component_Face_By_Name_Example_VB.md",
+        "Get_Cross_Break_Feature_Data_in_Sheet_Metal_Part_Example_CSharp.md",
+        "Get_Cross_Break_Feature_Data_in_Sheet_Metal_Part_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例遍历组件体的面，用它逐一比对名字来定位目标面",
+          "example_quote": "currentFaceName = swModel.GetEntityName(swFace)",
+          "example_file": "Get_Component_Face_By_Name_Example_VB.md"
+        },
+        {
+          "what": "钣金示例先用 SelectedFaceProperties 命名，再取名字",
+          "example_quote": "faceName = swModel.GetEntityName(swEntity);",
+          "example_file": "Get_Cross_Break_Feature_Data_in_Sheet_Metal_Part_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks；Create_and_Rename 例子调的是 PartDoc 上的同名成员，未采用。"
+    }
+  ]
+}

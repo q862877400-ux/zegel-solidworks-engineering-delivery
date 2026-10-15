@@ -1,0 +1,15 @@
+{"idx":49,"pages_read":13,"rows":[
+{"iface":"IView","file":"GetCenterMarkCount2.md","signature":"System.int GetCenterMarkCount2( out System.int Size )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"GetDisplayData3.md","signature":"System.object GetDisplayData3()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetLines2.md","signature":"System.object GetLines2()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetTemporaryAxesCount.md","signature":"System.int GetTemporaryAxesCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetDimensionDisplayString3.md","signature":"System.string IGetDimensionDisplayString3()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetPolylines6.md","signature":"Edge IGetPolylines6( System.short CrossHatchOption, System.int ArraySize, out System.double Polylines, System.int EdgeArraySize )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"IsExploded.md","signature":"System.bool IsExploded()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"AddLineStyle.md","signature":"System.bool AddLineStyle( System.string StyleName, System.string StyleDefinition )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"CreateLinearDim4.md","signature":"System.object CreateLinearDim4( System.object P0, System.object P1, System.object P2, System.object P3, System.object P4, System.object TextPoint, System.double Val, System.double Angle, System.double TextHeight )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"GetPenInfo.md","signature":"System.object GetPenInfo()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"InsertCenterMark.md","signature":"CenterMark InsertCenterMark( System.bool UseDoc, System.double Size, System.bool ShowLines, System.double Angle )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"SetLineWidthCustom.md","signature":"void SetLineWidthCustom( System.double Width )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"ISheet","file":"IPageSetup.md","signature":"PageSetup IPageSetup {get;}","obsolete":false,"pointer":false,"zero":"是（无括号）"}
+]}

@@ -1,0 +1,114 @@
+{
+  "idx": 228,
+  "results": [
+    {
+      "member": "GetObjectId",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Corresponding_Objects_in_Assembly_Component_Example_CSharp.md",
+        "Get_Corresponding_Objects_in_Assembly_Component_Example_VB.md",
+        "Get_Corresponding_Objects_in_Assembly_Component_Example_VBNET.md",
+        "Get_Object_ID_of_GTol_Annotation_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段（只有 Parameters/Returns），按规则跳过比对；4 份示例均真实调用。"
+    },
+    {
+      "member": "GetOpenDocSpec",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Deselect_Marked_Entity_Example_CSharp.md",
+        "Deselect_Marked_Entity_Example_VB.md",
+        "Deselect_Marked_Entity_Example_VBNET.md",
+        "Fire_Notification_for_Background_Processing_Events_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按规则跳过；4 份示例均真实取用文档规格对象。"
+    },
+    {
+      "member": "GetOpenDocument",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Names_of_Open_Documents_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Only call this method for a document that has already been opened in its own window. If you call this method for a document that has not been opened in its own window, then methods on the returned object may not work as expected.",
+          "example_quote": "' Assembly components are opened, but are not visible\n        ' until opened by the user",
+          "example_file": "Get_Names_of_Open_Documents_Example_VB.md",
+          "why": "示例用 GetFirstDocument/GetNext 收集文档名，含其自注的「未打开即不可见」的装配体零件名，仍传给 GetOpenDocument 并随即调用返回对象方法。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "页面只说缺扩展名会被忽略；示例给出扩展名是否存在的决定因素（是否已保存 + 资源管理器设置）",
+          "example_quote": "' The document name contains a filename extension\n        ' if the document has been saved\n        ' and is subject to Microsoft File Explorer setting;",
+          "example_file": "Get_Names_of_Open_Documents_Example_VB.md"
+        }
+      ],
+      "note": "页面唯一示例即以未在自己窗口打开的文档名调用，与前置条件直接冲突。"
+    },
+    {
+      "member": "GetOpenDocumentByName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Differences_Between_Parts_Example_VB.md",
+        "Get_Model_Path_Names_in_BOM_Table_Example_CSharp.md",
+        "Get_Model_Path_Names_in_BOM_Table_Example_VB.md",
+        "Get_Model_Path_Names_in_BOM_Table_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Only call this method for a document that has already been opened in its own window. If you call this method for a document that has not been opened in its own window, then methods on the returned object may not work as expected.",
+          "example_quote": "strDocumentName = swBomFeature.GetReferencedModelName();\n\t            swDocument = (ModelDoc2)swApp.GetOpenDocumentByName(strDocumentName);\n\t            Debug.Print(\"Referenced model = \" + strDocumentName);\n\t            swAssembly = (AssemblyDoc)swDocument;",
+          "example_file": "Get_Model_Path_Names_in_BOM_Table_Example_CSharp.md",
+          "why": "前置只让打开图纸；名字取自 BOM 的被参照模型，未在自己的窗口打开，返回值仍被直接转成 AssemblyDoc 取用。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只举 FileOpenNotify2 作取名来源；示例改从 BOM 特征的 GetReferencedModelName 取全名",
+          "example_quote": "strDocumentName = swBomFeature.GetReferencedModelName",
+          "example_file": "Get_Model_Path_Names_in_BOM_Table_Example_VB.md"
+        }
+      ],
+      "note": "冲突见 BOM 示例（C#/VB/VB.NET 三份同形）；Get Differences 示例先开文档，符合前置。"
+    },
+    {
+      "member": "GetOpenFileName2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Open_File_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按规则跳过；唯一示例真实调用该成员。"
+    },
+    {
+      "member": "GetOrdinateDimensionArrowSize",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Ordinate_Dimensions_Example_CSharp.md",
+        "Create_Ordinate_Dimensions_Example_VB.md",
+        "Create_Ordinate_Dimensions_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段（只有 Parameters/See Also），按规则跳过；三份示例均以 out 取值。"
+    },
+    {
+      "member": "GetOrientationName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Custom_Check_Document_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 Examples 段，所列示例出自 dsgnchkapi；两侧未找到不能同时成立的说法。"
+    }
+  ]
+}

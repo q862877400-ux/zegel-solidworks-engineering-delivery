@@ -1,0 +1,96 @@
+{
+  "idx": 338,
+  "results": [
+    {
+      "member": "IsOuter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Determine_Type_of_Face_Example_VB.md",
+        "Fill_Holes_in_Part_Example_CSharp.md",
+        "Fill_Holes_in_Part_Example_VB.md",
+        "Fill_Holes_in_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页只说圆柱面「没有明确外环」，示例给出该情形下的具体后果：CreateTrimmedSheet4 通常返回 Nothing",
+          "example_quote": "' Typically nothing is returned if the loop is\n' perpendicular to the surface, as in the\n' end loops of a cylinder",
+          "example_file": "Fill_Holes_in_Part_Example_VB.md"
+        },
+        {
+          "what": "成员页未给判定规则，示例给出非外环的具体判别流程（比较两侧法向：相等=相切，叉积=切向则孔，否则凸台）",
+          "example_quote": "If swThisLoop.IsOuter = False Then",
+          "example_file": "Determine_Type_of_Face_Example_VB.md"
+        }
+      ],
+      "note": "两份示例分别取 IsOuter=True 与 False，分工互补，与 Remarks 无矛盾"
+    },
+    {
+      "member": "IsParallel",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "IsParametric",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Ruled_Surface_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "IsPenetrating",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Manage_Collision_Detection_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "IsPerpendicular",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "IsPlane",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Infinite_Plane_Example_VB.md",
+        "Get_Angle_of_Hole_Not_Normal_to_a_Face_Example_VB.md",
+        "Get_Normal_of_Planar_Surface_Example_VB.md",
+        "Get_Parameters_of_Planar_Surface_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段；示例确实调用 IsPlane，但成员页 Examples 只列 3 份，缺 Get_Normal_of_Planar_Surface"
+    },
+    {
+      "member": "IsPlaying",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Motion_Study_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定"
+    }
+  ]
+}

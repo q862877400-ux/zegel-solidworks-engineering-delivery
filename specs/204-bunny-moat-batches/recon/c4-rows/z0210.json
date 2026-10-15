@@ -1,0 +1,131 @@
+{"idx": 210, "results": [
+{
+  "member": "GetLayerList",
+  "remarks_empty": false,
+  "examples_actually_used": ["Get_Layers_Example_CSharp.md", "Get_Layers_Example_VB.md", "Get_Layers_Example_VBNET.md"],
+  "conflicts": [],
+  "example_more_specific": [
+    {
+      "what": "C# 版把返回值强转成 object[] 再取名，与 Returns 的 string 数组不同形态",
+      "example_quote": "vLayerArr = (object[])swLayerMgr.GetLayerList();",
+      "example_file": "Get_Layers_Example_CSharp.md"
+    },
+    {
+      "what": "三份示例都用 For Each 遍历，从不按 0 基下标取值",
+      "example_quote": "For Each vLayer In vLayerArr",
+      "example_file": "Get_Layers_Example_VB.md"
+    }
+  ],
+  "note": "Remarks 只说 0 基；示例未下标取值，两侧不冲突"
+},
+{
+  "member": "GetLayerManager",
+  "remarks_empty": true,
+  "examples_actually_used": ["Create_Sketch_Line_with_Visual_Properties_Example_VB.md", "Determine_if_Layer_is_Visible_Example_VB.md", "Get_Layers_Example_CSharp.md", "Get_Layers_Example_VB.md"],
+  "conflicts": [],
+  "example_more_specific": [
+    {
+      "what": "示例在 NewDrawing2 新建的 DrawingDoc 对象上直接调用，不经 ActiveDoc",
+      "example_quote": "Set pLayerMgr = pDrawing.GetLayerManager",
+      "example_file": "Create_Sketch_Line_with_Visual_Properties_Example_VB.md"
+    }
+  ],
+  "note": "成员页无 Remarks 段，按纪律跳过冲突判定"
+},
+{
+  "member": "GetLeader",
+  "remarks_empty": true,
+  "examples_actually_used": ["Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md"],
+  "conflicts": [],
+  "example_more_specific": [
+    {
+      "what": "示例把它当作整个 leader 块的 bool 门控，而不是取点数",
+      "example_quote": "If True = swAnn.GetLeader Then",
+      "example_file": "Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md"
+    }
+  ],
+  "note": "成员页只有 Obsolete 句、无 Remarks 段"
+},
+{
+  "member": "GetLeaderCount",
+  "remarks_empty": false,
+  "examples_actually_used": ["Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md", "Insert_Weld_Symbol_Example_CSharp.md", "Insert_Weld_Symbol_Example_VB.md", "Insert_Weld_Symbol_Example_VBNET.md"],
+  "conflicts": [],
+  "example_more_specific": [
+    {
+      "what": "示例先用 bool 门控再取 count，并用 count 直接当 For 上界",
+      "example_quote": "For i = 0 To swAnn.GetLeaderCount - 1",
+      "example_file": "Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md"
+    },
+    {
+      "what": "焊接符号示例在刚插入的 WeldSymbol（IAnnotation 派生）上无门控直接调用",
+      "example_quote": "Debug.Print \"Number of leaders on this weld symbol: \" & swWeldSymbol.GetLeaderCount",
+      "example_file": "Insert_Weld_Symbol_Example_VB.md"
+    }
+  ],
+  "note": "Remarks 的 0 分支与示例的显式门控一致，不构成矛盾"
+},
+{
+  "member": "GetLeaderPointsAtIndex",
+  "remarks_empty": false,
+  "examples_actually_used": ["Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md"],
+  "conflicts": [
+    {
+      "kind": "precondition_diff",
+      "remarks_quote": "The number of points must also be passed to the method to help prevent overwrite problems if you have not allocated an array that is the correct size.",
+      "example_quote": "vLeaderPt = swAnn.GetLeaderPointsAtIndex(i)",
+      "example_file": "Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md",
+      "why": "Remarks 要点数作第二实参防覆盖；官方示例只传索引一个实参就取返回值。"
+    },
+    {
+      "kind": "other_conflict",
+      "remarks_quote": "- If IAnnotation::GetLeaderStyle returns swNO_LEADER, then the number of points = 0.",
+      "example_quote": "If True = swAnn.GetBentLeader Then",
+      "example_file": "Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md",
+      "why": "Remarks 指定用 GetLeaderStyle 分三档含 0 点；示例改用 GetBentLeader 只判 2 或 3 点。"
+    },
+    {
+      "kind": "return_shape_diff",
+      "remarks_quote": "retval[0] = X-coordinate of first leader point",
+      "example_quote": "ReDim leaderPt(nNumPts) As Double",
+      "example_file": "Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md",
+      "why": "Remarks 返回数组每点 3 分量（3 点即 retval[0..8]）；示例按点数 ReDim，定尺口径不同。"
+    }
+  ],
+  "example_more_specific": [
+    {
+      "what": "示例用 IsEmpty 判断落实 Remarks 说的 VBA 无效索引返回空 SafeArray",
+      "example_quote": "If Not IsEmpty(vLeaderPt) Then",
+      "example_file": "Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md"
+    }
+  ],
+  "note": "三处冲突同源于这一份示例；索引 0 基与 Remarks 一致"
+},
+{
+  "member": "GetLength",
+  "remarks_empty": true,
+  "examples_actually_used": [],
+  "conflicts": [],
+  "example_more_specific": [],
+  "note": "四份候选全是同名不同对象：Ellipse 用 MathVector.GetLength，SketchPath 用 SketchPath/SketchSegment.GetLength（均零参）"
+},
+{
+  "member": "GetLength2",
+  "remarks_empty": true,
+  "examples_actually_used": ["Dimension_Edge_in_Drawing_Example_VB.md", "Get_Intersecting_Faces_Example_VB.md", "Get_Length_of_Edge_Example_VB.md", "Get_Reference_Curve_Information_Example_VB.md"],
+  "conflicts": [],
+  "example_more_specific": [
+    {
+      "what": "示例把返回值 *1000# 后才当 mm 打印，即返回单位为米",
+      "example_quote": "swCurve.GetLength2(vCurveParam(6), vCurveParam(7)) * 1000# & \" mm\"",
+      "example_file": "Get_Length_of_Edge_Example_VB.md"
+    },
+    {
+      "what": "示例只对已裁剪曲线取长度，无限曲线另走重建裁剪曲线",
+      "example_quote": "If swIntCurve.IsTrimmedCurve Then",
+      "example_file": "Get_Intersecting_Faces_Example_VB.md"
+    }
+  ],
+  "note": "成员页无 Remarks 段，按纪律跳过冲突判定；四例均确认是 ICurve"
+}
+]}

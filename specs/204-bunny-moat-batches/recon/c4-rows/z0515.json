@@ -1,0 +1,149 @@
+{
+  "idx": 515,
+  "results": [
+    {
+      "member": "UseLightWeightDefault",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页没有 ## Remarks 段，按规则跳过，未读示例、未比对。"
+    },
+    {
+      "member": "UseMaterialHatch",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Face_Hatch_Data_Example_CSharp.md",
+        "Get_Face_Hatch_Data_Example_VB.md",
+        "Get_Face_Hatch_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三例只读不写：经 View.GetFaceHatches() 取到 FaceHatch 后打印该属性。",
+          "example_quote": "Debug.Print(\"   Material crosshatch = \" + swFaceHatch.UseMaterialHatch);",
+          "example_file": "Get_Face_Hatch_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例把前置钉死在剖视图，正落在 Remarks 的适用范围里；未覆盖对齐剖视图。",
+          "example_quote": "// 2. Select Section View A-A in the FeatureManager design tree.",
+          "example_file": "Get_Face_Hatch_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 限剖视图/对齐剖视图，三例前置均为 Section View A-A，无冲突。"
+    },
+    {
+      "member": "UseMaterialSheetMetalParameters",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Base_Flange_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "值由 Initialize 第 1 个位置实参定死，创建后只读回，印证 {get;} 与“不可更改”。",
+          "example_quote": "Call swBaseFlangeFeat.Initialize(False, False, cba, False, swSheetMetalReliefTypes_e.swSheetMetalReliefRectangular, True, 0.8, 0#, 0#)",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        },
+        {
+          "what": "读回走的是 SHFeat.GetDefinition() 新对象，不是原来那个 definition。",
+          "example_quote": "Debug.Print(\"Use material sheet metal parameters? \" & baseFlangeFeatData.UseMaterialSheetMetalParameters)",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "3 份 swept flange 示例用的是 ISweptFlangeFeatureData 的同名成员（另有成员页），非本成员。另：Remarks 引用的 IBaseFlangeFeatureData::UseGaugeTable 在该接口下无成员页。"
+    },
+    {
+      "member": "UseMergeEntities",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Surface_Knit_Feature_Example_CSharp.md",
+        "Create_Surface_Knit_Feature_Example_VB6.md",
+        "Create_Surface_Knit_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三例逐字相同：两个曲面体在调用前按 mark=1 选好。",
+          "example_quote": "boolstatus = swModelDocExt.SelectByID2(\"Surface-Extrude1\", \"BODYFEATURE\", 0, 0, 0, false, 1, null, 0);",
+          "example_file": "Create_Surface_Knit_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "创建走 5 参 InsertSewRefSurface，该属性只从 GetDefinition() 读出，从不写。",
+          "example_quote": "Debug.Print(\"  Use merge entities? \" + swSurfaceKnitFeature.UseMergeEntities);",
+          "example_file": "Create_Surface_Knit_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只指向选择文档、未规定 mark；三例都用 mark=1，与页面不冲突。"
+    },
+    {
+      "member": "UseOffset",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "赋值顺序被示例钉死：UseOffset=True → OffsetDistance → FlipOffset。",
+          "example_quote": "swFeatData.UseOffset = true;\n                swFeatData.OffsetDistance = 0.05;\n                swFeatData.FlipOffset = false;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+        },
+        {
+          "what": "CreateDefinition 前的选区只有两个 FACE（mark 0），没有参考点实体 ⇒ 走 Remarks 的假定参考点分支。",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"\", \"FACE\", -0.0538403893476698, 0.0036701308754914, 0.05530817474488, false, 0, null, 0);\n                boolstatus = Part.Extension.SelectByID2(\"\", \"FACE\", -0.0177780871801474, -0.0307393226379986, 0.0341128529187245, true, 0, null, 0);",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+        }
+      ],
+      "note": "示例同时对上“先 true 后设 offset distance”与“无参考点用假定点”两条 Remarks。"
+    },
+    {
+      "member": "UseOtherSide",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Weld_Bead_Faces_Example_VB.md",
+        "Modify_Fillet_Weld_Bead_Example_CSharp.md",
+        "Modify_Fillet_Weld_Bead_Example_VB.md",
+        "Modify_Fillet_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "唯一写它的例子：置 true 后按“侧”索引给另一侧单独设 BeadType 与 SetFaces，比页面的单一类型更具体。",
+          "example_quote": "'Set the type of weld bead to intermittent\nswWeldBead.BeadType(swWeldBeadOtherSide)\n= swWeldBeadTypeIntermittent",
+          "example_file": "Change_Weld_Bead_Faces_Example_VB.md"
+        },
+        {
+          "what": "另三例只打印读取，从不写。",
+          "example_quote": "Debug.Print(\"  Apply weld bead to both sides of intersecting faces? \" + swWeldBead.UseOtherSide);",
+          "example_file": "Modify_Fillet_Weld_Bead_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的有效性条件（全长/间歇）示例未证伪：前置只保证存在被选中的 fillet bead。"
+    },
+    {
+      "member": "UsePageSetup",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三例同序：先在扩展上置 swPageSetupInUse_Document，再按 Remarks 的 Document 行取 swModel.PageSetup。",
+          "example_quote": "swModelDocExt.UsePageSetup = (int)swPageSetupInUse_e.swPageSetupInUse_Document;\n            swPageSetup = (PageSetup)swModel.PageSetup;",
+          "example_file": "Print_Drawing_as_High_Quality_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 例把枚举直接赋给 int 属性，C#/VB.NET 例显式 (int) 强转。",
+          "example_quote": "swModelDocExt.UsePageSetup = swPageSetupInUse_e.swPageSetupInUse_Document",
+          "example_file": "Print_Drawing_as_High_Quality_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的 Application/Document/Sheet 三行映射与示例走的 Document 行完全对上，无冲突。"
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "idx": 258,
+  "results": [
+    {
+      "member": "GetSketchRegions",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Sketch_Regions_Example_VB.md",
+        "Get_Sketch_Regions_Example_VBNET.md",
+        "Get_Sketch_Regions_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；先 GetSketchRegionCount 再取数组，示例带 Stop。"
+    },
+    {
+      "member": "GetSketchSegmentCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Broken_Out_Section_Feature_Data_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call this method to set the Count parameter of [[IBrokenOutSectionFeatureData::IGetSketchSegment]].",
+          "example_quote": "varskSeg = (object[])swFeatData.SketchSegment;\nDebug.Print(\"              Number of sketch segments: \" + swFeatData.GetSketchSegmentCount());",
+          "example_file": "Get_Broken_Out_Section_Feature_Data_Example_CSharp.md",
+          "why": "成员页要求先取 count 再据其取数组；示例先取 SketchSegment 属性数组、之后才调 count，且配对的是属性而非 IGetSketchSegment。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例置 EditSketch=true 后改读 SketchSegment 属性取数组，全程不调 IGetSketchSegment",
+          "example_quote": "swFeatData.EditSketch = true;",
+          "example_file": "Get_Broken_Out_Section_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Create_Sketch_Path 三例调的是 SketchPath 的同名成员（另有 ISketchPath 成员页），非本成员。"
+    },
+    {
+      "member": "GetSketchSegments",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Autodimension_All_Sketches_Example_CSharp.md",
+        "Autodimension_All_Sketches_Example_VB.md",
+        "Autodimension_All_Sketches_Example_VBNET.md",
+        "Create_Corner_Relief_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先筛出 swUnderConstrained 草图再调用，并对 null 返回做保护",
+          "example_quote": "if ((vSketchSegArr != null))",
+          "example_file": "Autodimension_All_Sketches_Example_CSharp.md"
+        },
+        {
+          "what": "示例草图仍在编辑态未提交，直接取 vSketchSegments[0]，不判空也不判越界",
+          "example_quote": "vSketchSegments = (object[])swSketch.GetSketchSegments();\nswSketchLine = (SketchLine)vSketchSegments[0];",
+          "example_file": "Create_Corner_Relief_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只说草图有错时返回不全；两示例均做防御处理，未构成矛盾。"
+    },
+    {
+      "member": "GetSketchSlot",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_CSharp.md",
+        "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_VB.md",
+        "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例直接强转并读 Length，未判 null；而 Returns 写明未关联时返回 null",
+          "example_quote": "swSketchSlot = (SketchSlot)swSketchPoint.GetSketchSlot();\nDebug.Print(\"Length: \" + swSketchSlot.Length);",
+          "example_file": "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只说内部点/用户点都返回槽位，未与示例冲突。"
+    },
+    {
+      "member": "GetSketchSlotCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Sketch_Slot_Data_Example_vb.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只把它用于打印，接着配 GetSketchSlots 用 For Each 遍历，未按其定数组长度",
+          "example_quote": "iSlotCount = swSketch.GetSketchSlotCount\nDebug.Print \"Number of slots: \" & iSlotCount",
+          "example_file": "Get_Sketch_Slot_Data_Example_vb.md"
+        }
+      ],
+      "note": "Remarks 的配对目标是 IGetSketchSlots，示例配的是 GetSketchSlots；两者不互斥。"
+    },
+    {
+      "member": "GetSketchSlots",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Sketch_Slot_Data_Example_vb.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "GetSketchTextSegments",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Sketch_Entities_Example_VB.md",
+        "Replace_Sketch_Text_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    }
+  ]
+}

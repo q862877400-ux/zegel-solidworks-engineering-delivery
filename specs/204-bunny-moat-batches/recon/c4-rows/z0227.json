@@ -1,0 +1,103 @@
+{
+  "idx": 227,
+  "results": [
+    {
+      "member": "GetNumOfComponents",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；示例未读。"
+    },
+    {
+      "member": "GetNumOfExternalForces",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；示例未读。"
+    },
+    {
+      "member": "GetNumOfExternalMotors",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；示例未读。"
+    },
+    {
+      "member": "GetOLEObjectCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Determine_if_OLE_Objects_are_Linked_or_Embedded_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 的「先 Count 再取对象」配对，示例落到非 I 版 GetOLEObjects；返回值是可 UBound 的 Variant 数组",
+          "example_quote": "ub = UBound(vOleObjs)",
+          "example_file": "Determine_if_OLE_Objects_are_Linked_or_Embedded_Example_VB.md"
+        },
+        {
+          "what": "示例给出前置：文档须含一个或多个 OLE 对象；Options 声明为 Long 且不赋值，即 0（GetAll）",
+          "example_quote": "Open a model document that contains",
+          "example_file": "Determine_if_OLE_Objects_are_Linked_or_Embedded_Example_VB.md"
+        }
+      ],
+      "note": "示例按 Remarks 的顺序调用；未出现与 Remarks 相斥的说法。"
+    },
+    {
+      "member": "GetOLEObjects",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过；示例未读。"
+    },
+    {
+      "member": "GetObjectByPersistReference",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面正文只有 Obsolete 摘要行，无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "GetObjectByPersistReference3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Object_s_Persistent_Reference_ID_Example_VB.md",
+        "Use_Persistent_Reference_Example_CSharp.md",
+        "Use_Persistent_Reference_Example_VB.md",
+        "Use_Persistent_Reference_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Objects returned by IModelDocExtension::GetObjectByPersistReference3 are often features, including IConfiguration, IRefPlane, and IRefAxis objects. You must first obtain a reference to a feature, and then use IFeature::GetSpecificFeature2 to get the original object.",
+          "example_quote": "Debug.Assert(swSelObj Is swObj)",
+          "example_file": "Use_Persistent_Reference_Example_VB.md",
+          "why": "Remarks 说返回值是基类、原对象须再经 GetSpecificFeature2；示例却断言返回值与选中对象同一引用，且前置只写「Select an entity」未排除特征，两种身份判定不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "PID 是字节数组、每元素 VarType 为 vbByte；示例用三位补零字符串往返再还原成字节",
+          "example_quote": "Debug.Assert vbByte = VarType(vPID)",
+          "example_file": "Use_Persistent_Reference_Example_VB.md"
+        },
+        {
+          "what": "示例示范同一 PID 在释放对象、重建、关闭并重开文档之后仍可取回对象",
+          "example_quote": "Debug.Print \"Get object by persistent reference ID after closing and opening part: \" & errorCode",
+          "example_file": "Get_Object_s_Persistent_Reference_ID_Example_VB.md"
+        },
+        {
+          "what": "成功时 ErrorCode 取 swPersistReferencedObject_Ok —— Remarks 只指向枚举页、未点名该枚举子",
+          "example_quote": "Debug.Assert((int)swPersistReferencedObjectStates_e.swPersistReferencedObject_Ok == nRetval);",
+          "example_file": "Use_Persistent_Reference_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 Use_Persistent_Reference 断言一致（C# 用 ReferenceEquals）；另一示例只打印 errorCode。"
+    }
+  ]
+}

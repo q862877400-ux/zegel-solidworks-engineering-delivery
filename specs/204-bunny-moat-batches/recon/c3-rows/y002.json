@@ -1,0 +1,169 @@
+{
+  "idx": 2,
+  "results": [
+    {
+      "name": "part_and_features",
+      "level": "verified",
+      "members_found": [
+        "IFeatureManager.FeatureCircularPattern4",
+        "IModelDocExtension.SelectByID2",
+        "IFeatureManager.InsertMirrorFeature2",
+        "IFeatureManager.FeatureRevolve2",
+        "ISketch.GetSketchSegments",
+        "IEntity.Select4",
+        "IFeatureManager.InsertWrapFeature2",
+        "ISelectionMgr.GetSelectedObjectCount2",
+        "IModelDoc2.FirstFeature",
+        "IFeature.GetNextFeature",
+        "IFeature.GetSpecificFeature2",
+        "ISensor.SensorType",
+        "ISensor.GetSensorValue",
+        "IModelDoc2.GetUnits",
+        "ISldWorks.GetUserPreferenceIntegerValue",
+        "IModelDoc2.EditUndo2",
+        "IModelDoc2.AddDimension2"
+      ],
+      "examples_used": [
+        "Create_Circular_Pattern_Example_CSharp.md",
+        "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+        "Create_360-degree_Revolve_Feature_Example_VBNET.md",
+        "Get_Mirror_Feature_Data_Example_VB.md",
+        "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md",
+        "Fire_Undo_and_Redo_Pre-_and_Post-notifications_in_Part_Document_Example_CSharp.md",
+        "Get_Annotations_Array_Example_VB.md",
+        "Dimension_Edge_in_Drawing_Example_VB.md",
+        "Get_and_Set_Units_Example_CPlusPlus_COM.md",
+        "Get_and_Set_User_Preferences_Example_VB.md",
+        "Get_and_Set_Sensor_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "种子特征 BODYFEATURE 按 mark=4 选、方向边按 mark=1 选，才调 FeatureCircularPattern4",
+          "from": "Create_Circular_Pattern_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "零件内须已有 Axis1 与轮廓 Sketch1；轴须由矩形的一条边创建（轴的存在与类型）",
+          "from": "Create_360-degree_Revolve_Feature_Example_VBNET.md",
+          "state": "covered",
+          "evidence_quote": "轴 = **草图里的线段**，类型名 **`EXTSKETCHSEGMENT`**（★ **不是** `SKETCHSEGMENT`），mark **4 或 16**（★ 两个都能建）⇒ 建成 **`旋转1`** · type=**`Revolution`**"
+        },
+        {
+          "text": "官方调用序：先 SelectByID2 选 Axis（mark 16、Callout 传 Nothing），再选轮廓 Sketch（mark 0）",
+          "from": "Create_360-degree_Revolve_Feature_Example_VBNET.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "镜像前先 ClearSelection2；被镜像特征 mark=1、镜像平面（面或平面）mark=2；参考平面须用 Feature 选而非 Entity",
+          "from": "Get_Mirror_Feature_Data_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "包覆前先在面上 InsertSketch 画圆草图并退出，再选草图 mark=4 与目标面 mark=1，才调 InsertWrapFeature2",
+          "from": "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "包覆用的草图必须是 2D，官方原话 3D sketches are invalid",
+          "from": "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "EditUndo2 之前必须有可撤的动作（官方示例是刚建好的圆），否则无处可撤",
+          "from": "Fire_Undo_and_Redo_Pre-_and_Post-notifications_in_Part_Document_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "前置 `凸台-拉伸1`（树 **7**）· 负例 `steps=0` 被入口拒"
+        },
+        {
+          "text": "AddDimension2 调用前实体须处于选中态（官方示例先 CreateLine 画出该线再直接标注）",
+          "from": "Get_Annotations_Array_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "唯一差别是本轮**每次选之前都 `ClearSelection2(True)`**"
+        },
+        {
+          "text": "AddDimension2 只在可见文档上使用，且尺寸按给定位置放置",
+          "from": "Dimension_Edge_in_Drawing_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "官方另注「only use on visible documents」且尺寸**按位置**放置"
+        },
+        {
+          "text": "该示例另设两条：装配体须完全解算；边若无法转成工程图视图则不建尺寸",
+          "from": "Dimension_Edge_in_Drawing_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetUnits 须有活动模型文档（官方示例先取 IActiveDoc2，指针为 NULL 就直接 return）",
+          "from": "Get_and_Set_Units_Example_CPlusPlus_COM.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "该用户偏好示例的前置是「打开工程图并建名为 test 的图层」，与读 swUnitsLinear 不是同一件事",
+          "from": "Get_and_Set_User_Preferences_Example_VB.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "零件里须已存在 Measurement(dimension) 传感器（该示例前提是一个 2.5 英寸尺寸 + 对应传感器）",
+          "from": "Get_and_Set_Sensor_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方示例还要求先在特征树 Sensors 文件夹里选中该传感器，再经 GetSelectedObject6 取出",
+          "from": "Get_and_Set_Sensor_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "旋转、撤销、加尺寸三条前置被 evidence 逐字覆盖；包覆/镜像/圆形阵列的 mark 与调用序、旋转选序、单位与传感器的文档前置均未出现在 evidence 里（只在 limitations）。"
+    },
+    {
+      "name": "external_spur_gear_geometry",
+      "level": "verified",
+      "members_found": [
+        "solidworks_gear_calculate_spur -> 纯 Python，无 COM 成员",
+        "ISketchManager.CreateLine",
+        "ISketchManager.CreateCircle",
+        "IFeatureManager.FeatureExtrusion3",
+        "IModelDocExtension.SelectByID2",
+        "ISketchManager.InsertSketch",
+        "IModelDoc2.ClearSelection2",
+        "IModelDoc2.ForceRebuild3"
+      ],
+      "examples_used": [
+        "Create_Extrude_Feature_Using_Sketch_Contours_Example_CSharp.md",
+        "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "InsertSketch(true) 进草图画轮廓 → 退出 → 按名选中草图（mark 4）才调 FeatureExtrusion3",
+          "from": "Create_Extrude_Feature_Using_Sketch_Contours_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "建草图前先用 SelectByID2 选中基准面（\"PLANE\"、mark 0）再 InsertSketch",
+          "from": "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "算齿轮那条是纯几何计算、不碰 COM，两份 recon 里也没有它的官方示例",
+          "from": "(无适用示例)",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "唯一 evidence 只有一行 pytest（tests/test_cad_reliability.py），未提任何官方前置；建模链的选面-建草图-选草图序列一条都没覆盖。"
+    }
+  ]
+}

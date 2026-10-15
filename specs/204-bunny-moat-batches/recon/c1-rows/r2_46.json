@@ -1,0 +1,15 @@
+{"idx":46,"pages_read":13,"rows":[
+{"iface":"IView","file":"GetCenterLines.md","signature":"System.object GetCenterLines()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetDimensionString4.md","signature":"System.object GetDimensionString4()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetLineCount.md","signature":"System.int GetLineCount()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetTableAnnotationCount.md","signature":"System.int GetTableAnnotationCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetDimensionDisplayInfo5.md","signature":"System.double IGetDimensionDisplayInfo5( System.int ArraySize )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetPolylines3.md","signature":"System.double IGetPolylines3()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"ISelectEntity.md","signature":"System.bool ISelectEntity( Entity Entity, System.bool AppendFlag )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"AddChamferDim.md","signature":"System.object AddChamferDim( System.double X, System.double Y, System.double Z )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"CreateLinearDim.md","signature":"System.bool CreateLinearDim( System.object P0, System.object P1, System.object P2, System.object P3, System.object P4, System.double Angle, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"GetLineFontName2.md","signature":"System.string GetLineFontName2( System.int Index )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"InsertBreakVertical.md","signature":"void InsertBreakVertical()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"SetLineColor.md","signature":"void SetLineColor( System.int Color )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"ISheet","file":"InsertRevisionTable.md","signature":"RevisionTableAnnotation InsertRevisionTable( System.bool UseAnchorPoint, System.double X, System.double Y, System.int AnchorType, System.string TableTemplate )","obsolete":true,"pointer":false,"zero":"否（有形参）"}
+]}

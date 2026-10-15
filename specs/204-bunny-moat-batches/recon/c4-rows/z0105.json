@@ -1,0 +1,156 @@
+{
+  "idx": 105,
+  "results": [
+    {
+      "member": "EditDistanceMate",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Edit_Distance_Mate_Example_VB.md",
+        "Add_and_Edit_Distance_Mate_Example_CSharp.md",
+        "Add_and_Edit_Distance_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先用 SelectByRay 以 mark 1/2 取出 Entity 对象再重选，成员页只说直接 Select4",
+          "example_quote": "    swEnt1.Select4 True, Nothing\n    swEnt2.Select4 True, Nothing\n    swFeat.Select2 True, 0",
+          "example_file": "Add_and_Edit_Distance_Mate_Example_VB.md"
+        }
+      ],
+      "note": "Parameters 把 Distance 指向 Remarks，但 Remarks 未给单位；示例用 0.3 无单位标注"
+    },
+    {
+      "member": "EditFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_VB.md",
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_CSharp.md",
+        "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_VBNET.md",
+        "Get_or_Set_Whether_Edits_Update_Design_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先调 EditTable2(False) 打开设计表再 EditFeature，成员页无前置说明",
+          "example_quote": "    Set myWorksheet = swDesignTable.EditTable2(False)\n    'Allow changes to characteristics of design table\n    swDesignTable.EditFeature",
+          "example_file": "Disable_Cell_Drop-down_Lists_in_Design_Table_Example_VB.md"
+        },
+        {
+          "what": "另一示例不调 EditTable2，直接 EditFeature 后读写 Updatable 并 UpdateFeature",
+          "example_quote": "    ' Allow changes to the characteristics of the\n    ' design table\n    swDesignTable.EditFeature",
+          "example_file": "Get_or_Set_Whether_Edits_Update_Design_Table_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段；四份示例均真调 IDesignTable.EditFeature"
+    },
+    {
+      "member": "EditFreeze2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Move_Freeze_Bar_Example_VB.md",
+        "Move_Freeze_Bar_Example_CSharp.md",
+        "Move_Freeze_Bar_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示 Location 为 End/Top 时 FeatureName 必须传空串，页面只写「Name of the feature」",
+          "example_quote": "        lRet = featMgr.EditFreeze2(swMoveFreezeBarToBeforeFeature, featFrozen.Name, True, True)\n        Debug.Print \"Freeze bar moved to the top of the FeatureManager design tree. Press F5.\"\n        Stop\n        lRet = featMgr.EditFreeze2(swMoveFreezeBarToEnd, \"\", True, True)",
+          "example_file": "Move_Freeze_Bar_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks；Returns 的 0/1 反直觉口径，三份示例均未读 lRet"
+    },
+    {
+      "member": "EditLinearSketchStepAndRepeat",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_and_Edit_Linear_Sketch_Pattern_Example_VB.md",
+        "Create_and_Edit_Linear_Sketch_Pattern_Example_CSharp.md",
+        "Create_and_Edit_Linear_Sketch_Pattern_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置：先按 EXTSKETCHSEGMENT 选中种子实体 Line3@Sketch2 再 EditSketch，页面无前置",
+          "example_quote": "    boolstatus = swModelDocExt.SelectByID2(\"Line3@Sketch2\", \"EXTSKETCHSEGMENT\", -0.002651338304644, -0.007221297464333, 0, False, 0, Nothing, 0)\n    swModel.EditSketch",
+          "example_file": "Create_and_Edit_Linear_Sketch_Pattern_Example_VB.md"
+        },
+        {
+          "what": "示例的 Seeds 末尾多一个下划线，并把间距/角度尺寸标志置 False",
+          "example_quote": "    boolstatus = swSketchMgr.EditLinearSketchStepAndRepeat(3, 2, 0.0254, 0.0254, 0.296705972839, 1.134464013796, \"\", False, False, False, True, True, \"Line2_Line1_Line4_\")",
+          "example_file": "Create_and_Edit_Linear_Sketch_Pattern_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 仅一句「尺寸可由交互用户改」，与示例三个 False 不构成矛盾"
+    },
+    {
+      "member": "EditMate3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Mate_Example_VB.md",
+        "Edit_Mate_Example_CSharp.md",
+        "Edit_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "mark_diff",
+          "remarks_quote": "The two mated items must be selected with a selection mark of 1.",
+          "example_quote": "        '   IAssemblyDoc::EditMate3 requires that mate entities\n        '   be selected with mark of 1 except for:\n        '       swMateCAMFOLLOWER\n        '           cam face              --> 1\n        '           cam follower face     --> 8\n        '       swMateSYMMETRIC\n        '           symmetry faces        --> 1\n        '           symmetry plane        --> 4",
+          "example_file": "Edit_Mate_Example_VB.md",
+          "why": "Remarks 把 mark=1 写成无条件硬要求；示例明写 cam follower face 用 8、symmetry plane 用 4，两者不可同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例注明配合特征的 mark 被忽略，成员页只要求「必须最后选」未提 mark",
+          "example_quote": "    ' IAssemblyDoc::EditMate3 requires mate feature to be selected last\n    ' Mark is ignored\n    bRet = swFeat.Select2(True, 0)",
+          "example_file": "Edit_Mate_Example_VB.md"
+        }
+      ],
+      "note": "C#/VB.NET 两份示例逐字重复同一 mark 例外表，三份一致对撞 Remarks"
+    },
+    {
+      "member": "EditMate4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Repair_Mates_Missing_Same_Mate_Entity_Example_VB.md",
+        "Repair_Mates_Missing_Same_Mate_Entity_Example_CSharp.md",
+        "Repair_Mates_Missing_Same_Mate_Entity_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出配合特征的类型串「MATE」与 mark 0，成员页只说「Mate feature to repair」",
+          "example_quote": "    status = swModelDocExt.SelectByID2(\"Concentric1\", \"MATE\", 0, 0, 0, False, 0, Nothing, 0)\n    status = swModelDocExt.SelectByID2(\"\", \"FACE\", -5.62994754449733E-02, -7.69308980977712E-04, 8.1518960735707E-03, True, 1, Nothing, 0)",
+          "example_file": "Repair_Mates_Missing_Same_Mate_Entity_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的选择顺序与两个 mark=1 在三份示例中完全对上，未见冲突"
+    },
+    {
+      "member": "EditPart2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Plane_Thru_3_Points_In-context_Example_VB.md",
+        "Insert_Cavity_Example_VB.md",
+        "Insert_Cavity_Example_CSharp.md",
+        "Insert_Cavity_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例调用前先 Select2 选中组件，返回值存入 nRetval 却不校验",
+          "example_quote": "    bRet = swMoldBaseComp.Select2(False, 0)\n    nRetval = swAssy.EditPart2(True, True, nInfo)",
+          "example_file": "Insert_Cavity_Example_VB.md"
+        },
+        {
+          "what": "另一示例传 AllowReadOnly=False，并断言返回值等于 swEditPartSuccessful",
+          "example_quote": "    ' Start in-context edit\n    nRetVal = swAssy.EditPart2(True, False, nInfo)\n    Debug.Assert swEditPartSuccessful = nRetVal",
+          "example_file": "Create_Plane_Thru_3_Points_In-context_Example_VB.md"
+        }
+      ],
+      "note": "两份示例 AllowReadOnly 取值相反但都合法，不构成冲突；均以 EditAssembly 返回"
+    }
+  ]
+}

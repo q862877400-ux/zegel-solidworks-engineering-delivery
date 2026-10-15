@@ -1,0 +1,106 @@
+{
+  "idx": 34,
+  "results": [
+    {
+      "name": "loft_and_sweep",
+      "level": "verified",
+      "members_found": [
+        "GetSelectedObjectCount2",
+        "ClearSelection2",
+        "SelectByID2",
+        "InsertProtrusionBlend2",
+        "CreateDefinition",
+        "AccessSelections",
+        "CreateFeature",
+        "FeatureByName",
+        "GetTypeName2"
+      ],
+      "examples_used": [
+        "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+        "Insert_Protrusion_Blend_Example_CSharp.md",
+        "Select_Multiple_Splines_for_Loft_Guide_Curves_Example_CSharp.md",
+        "Get_Guide_Curves_in_Sweep_Feature_Example_CSharp.md",
+        "Insert_Swept-boss_Feature_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "放样：轮廓草图必须先选中（示例 SelectByID2 按 mark=1 选 Sketch1/Sketch2）后才成立",
+          "from": "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "未选中 ⇒ 显式拒绝"
+        },
+        {
+          "text": "放样：轮廓选中顺序即语义（示例 Sketch1 先、Sketch2 append）；引导线另给 4098 等 mark",
+          "from": "Insert_Protrusion_Blend_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "放样：各轮廓草图须先建好并 InsertSketch(true) 关闭草图，之后才能被选中",
+          "from": "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "扫描：轮廓与路径草图必须先选中；示例先 ClearSelection2 再逐个 append",
+          "from": "Insert_Swept-boss_Feature_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "未选中 ⇒ 显式拒绝"
+        },
+        {
+          "text": "扫描：mark 取值 轮廓=1 · 路径=4 · 引导线=2（示例三行 SelectByID2 的 mark 实参）",
+          "from": "Insert_Swept-boss_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "扫描：官方 CreateDefinition→CreateFeature 路线在 CreateFeature 之前不调用 AccessSelections",
+          "from": "Insert_Swept-boss_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "扫描：CreateDefinition 之后先设 ISweepFeatureData 属性（Tangency/ThinFeature/Merge）再 CreateFeature",
+          "from": "Insert_Swept-boss_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "evidence 只覆盖「必须选中→未选则显式拒绝」；mark 取值、轮廓顺序、草图关闭、AccessSelections 调用序均未出现在 evidence。"
+    },
+    {
+      "name": "reference_axis",
+      "level": "verified",
+      "members_found": [
+        "GetSelectedObjectCount2",
+        "InsertAxis2"
+      ],
+      "examples_used": [
+        "Create_Revolve_Features_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "建轴前必须已选中要建轴的几何；示例先 SelectByID2 选 Right Plane 与 Top Plane 再 InsertAxis2(true)",
+          "from": "Create_Revolve_Features_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "轴的几何来源：官方示例用的是两个平面的交线（Right Plane ∩ Top Plane）这一变体",
+          "from": "Create_Revolve_Features_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "入口必须在 IModelDoc2 上（官方示例在 swModel 上调 InsertAxis2），不是 FeatureManager",
+          "from": "Create_Revolve_Features_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "而 `FeatureManager.InsertAxis2` 报 `<unknown>.InsertAxis2`（★ 入口层级错）"
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "选区前置完全未进 evidence（limitations 提到「未验两点/两平面交线」，但按纪律只认 evidence）；仅入口层级被覆盖。"
+    }
+  ]
+}

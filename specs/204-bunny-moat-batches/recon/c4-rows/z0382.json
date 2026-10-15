@@ -1,0 +1,119 @@
+{
+  "idx": 382,
+  "results": [
+    {
+      "member": "OverrideDocSettings",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_CSharp.md",
+        "Insert_Sheet_Metal_Gusset_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。四份示例均引用该成员。"
+    },
+    {
+      "member": "OverrideDocumentSettings",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Forming_Tool_Feature_Example_CSharp.md",
+        "Create_Forming_Tool_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例证明它不止建特征时可用：GetDefinition+AccessSelections 后在 ModifyDefinition 前再调一次。",
+          "example_quote": "swLibFormFeatData1 = swFeat.GetDefinition(); ... swLibFormFeatData1.AccessSelections(swModel, null); ... swLibFormFeatData1.OverrideDocumentSettings(true, true, true, true); ... swFeat.ModifyDefinition(swLibFormFeatData1, swModel, null);",
+          "example_file": "Create_Forming_Tool_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出有效组合：OverrideSettings 为 true 时三个显示开关同传 true，两处调用都如此。",
+          "example_quote": "LibFormToolFeatureData.OverrideDocumentSettings(true, true, true, true);",
+          "example_file": "Create_Forming_Tool_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说三开关仅在 OverrideSettings 为 true 时有效；示例正传 (True,True,True,True)，两侧一致，无冲突。"
+    },
+    {
+      "member": "OverrideKFactor",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。示例中 featDef 声明为 BaseFlangeFeatureData，接口对得上。"
+    },
+    {
+      "member": "OverrideMass",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+        "Get_Mass_Properties_Using_IMassProperty_Example_VBNET.md",
+        "Get_Mass_Properties_using_MassProperty_Object_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没写的落地步骤：改完须 SetOverrideOptions 再 Recalculate 才生效。",
+          "example_quote": "MyMassProp.SetOverrideOptions(OvProp, (int)swInConfigurationOpts_e.swThisConfiguration, null); MyMassProp.Recalculate();",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出单位口径：UseSystemUnits=false（用文档属性单位 MKS），成员页对该值单位未作说明。",
+          "example_quote": "// Use document property units (MKS) MyMassProp.UseSystemUnits = false;",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只要求置 true 后调 SetOverrideMassValue，三份示例都照做，无冲突。"
+    },
+    {
+      "member": "OverrideMomentsOfInertia",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+        "Get_Mass_Properties_Using_IMassProperty_Example_VBNET.md",
+        "Get_Mass_Properties_using_MassProperty_Object_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "After setting this property to true, call:\n\n- [[IMassPropertyOverrideOptions::SetOverrideMomentsOfInertiaValue]]\n\n- [[IMassPropertyOverrideOptions::SetOverridePrincipalAxesOrientation]]\n\n- [[IMassPropertyOverrideOptions::SetOverridePrincipalMomentsOfInertia]]",
+          "example_quote": "OvProp.OverrideMomentsOfInertia = true; OvProp.SetOverrideMomentsOfInertiaValue(0, comArr, \"\");",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+          "why": "Remarks 列 3 个置 true 后必调的成员，三份示例只调了 SetOverrideMomentsOfInertiaValue，另两个一次都没出现。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出实参形状：第二参是 9 元素数组，第三参传空串；成员页对参数个数无说明。",
+          "example_quote": "OvProp.SetOverrideMomentsOfInertiaValue(0, comArr, \"\");",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例（C#/VB.NET/VBA）在此处写法一致，故冲突只记一条。"
+    },
+    {
+      "member": "OverrideRadius",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。两份 swept-flange 示例的 OverrideRadius 属 ISheetMetalGaugeTableParameters，非本成员。"
+    },
+    {
+      "member": "OverrideThickness",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。两份 swept-flange 示例的 OverrideThickness 属 ISheetMetalGaugeTableParameters，非本成员。"
+    }
+  ]
+}

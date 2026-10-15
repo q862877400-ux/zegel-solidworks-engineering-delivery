@@ -1,0 +1,145 @@
+{
+  "idx": 292,
+  "results": [
+    {
+      "member": "IGetActiveConfiguration",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Block_Tolerance_Example_VB.md",
+        "Get_DimXpert_Block_Tolerance_Example_VBNET.md",
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段（只有 Obsolete 行与签名），按纪律跳过。"
+    },
+    {
+      "member": "IGetActiveSketch2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Cylinder_Example_CPlusPlus_COM.md",
+        "Insert_Sketch_Text_and_Hole_Example_CSharp.md",
+        "Insert_Sketch_Text_and_Hole_Example_VB.md",
+        "Insert_Sketch_Text_and_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Before you can use this method, you must select and activate a sketch. You can use [[IModelDocExtension::SelectByID2]] to select a sketch and [[ISketchManager::InsertSketch]] to make the sketch active.",
+          "example_quote": "swDoc->IGetActiveSketch2(&swSketch);\nif (swSketch == NULL)",
+          "example_file": "Create_Cylinder_Example_CPlusPlus_COM.md",
+          "why": "Remarks 说必须先选中并激活草图才能调用；示例先调用（无活动草图），再按返回 NULL 补 SelectByID2+InsertSketch2，把它当探针用。前置互斥。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例的激活动作是 InsertSketch2，与 Remarks 指的 ISketchManager::InsertSketch 不是同一成员",
+          "example_quote": "swDoc->InsertSketch2(VARIANT_TRUE);",
+          "example_file": "Create_Cylinder_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "三份 Sketch Text 示例按 Remarks 的顺序：先 InsertSketch 再取活动草图",
+          "example_quote": "swSketchMgr.InsertSketch(true);\nselPt = (double[])TransformPoint(swModel.IGetActiveSketch2(), selPt[0], selPt[1], selPt[2]);",
+          "example_file": "Insert_Sketch_Text_and_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "两份示例分两派：Create Cylinder 违反前置，三份 Sketch Text 遵守前置。"
+    },
+    {
+      "member": "IGetBCurveParams",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Curve_Spline_Points_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Pointer to an array of doubles describing the parameters of the curve (see **Remarks**)",
+          "example_quote": "pCurve->IGetBCurveParams( dSplineParams);",
+          "example_file": "Get_Curve_Spline_Points_Example_CPlusPlus_COM.md",
+          "why": "成员页是零参、返回数组指针；示例把调用方 new 出来的数组当输出参数传入，之后自己 delete[]。返回形状不一致。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 packedDouble 偏移算法写实：控制点数组起点 = 2 + order + NumControlPoints",
+          "example_quote": "double\n*dCtrlArray = &dSplineParams[ 2+ propArray[1]+propArray[2] ];",
+          "example_file": "Get_Curve_Spline_Points_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "偏移算法与 Remarks 的 numKnots=numControlPoints+order 自洽，不是冲突。"
+    },
+    {
+      "member": "IGetBCurveParamsSize2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Curve_Spline_Points_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Size of the data set returned by [[ICurve::IGetBCurveParams]].",
+          "example_quote": "pCurve->IGetBCurveParamsSize2( FALSE, TRUE,\n&nParamSize);",
+          "example_file": "Get_Curve_Spline_Points_Example_CPlusPlus_COM.md",
+          "why": "成员页签名是 2 参回 System.int；示例是 3 参、第 3 个是 long* 输出参数。两个调用形状不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 size 与写入成对的调用序：先取 size、据此 new，再交回写入",
+          "example_quote": "double\n*dSplineParams = new double [nParamSize];\npCurve->IGetBCurveParams( dSplineParams);",
+          "example_file": "Get_Curve_Spline_Points_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "示例传 FALSE/TRUE（非三次/非有理），与两个参数说明不矛盾。"
+    },
+    {
+      "member": "IGetBody",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "This method returns a valid IBody2 object only for fully resolved components that reference an [[IPartDoc]]. For the root component, lightweight components or components that reference an AssemblyDoc, this method returns a NULL body object.",
+          "example_quote": "resultVal = pFace->IGetBody(&pCheckBody);",
+          "example_file": "Enumerate_Bodies_Example_CPlusPlus_COM.md",
+          "why": "示例在零件文档里对 LPFACE 调用（那是 IFace2 的成员，同一示例也被 IFace2/IGetBody.md 引用），全程没有装配组件；与 Remarks 的组件前提及返回 NULL 的说法不能同时成立。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "成员页挂的这份示例根本没调 IComponent2::IGetBody，故 examples_actually_used 为空。"
+    },
+    {
+      "member": "IGetCenterPoint2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；示例确有 swSkArc.IGetCenterPoint2() 调用。"
+    },
+    {
+      "member": "IGetChildrenCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Show_All_Components_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出把单层计数变成全树遍历的调用序：计数只作显示，递归由示例自写",
+          "example_quote": "    vChildArray = swComp.GetChildren\n    For i = 0 To UBound(vChildArray)\n        Set swChildComp = vChildArray(i)\n        SetCompVisib swChildComp\n    Next i",
+          "example_file": "Show_All_Components_Example_VB.md"
+        },
+        {
+          "what": "示例补了 Remarks 没说的起点：用 ActiveConfiguration 取根组件",
+          "example_quote": "Set swRootComp = swConfig.GetRootComponent3(True)",
+          "example_file": "Show_All_Components_Example_VB.md"
+        }
+      ],
+      "note": "递归在示例自己的过程里，与 GetChildren 不递归不矛盾，故无冲突。"
+    }
+  ]
+}

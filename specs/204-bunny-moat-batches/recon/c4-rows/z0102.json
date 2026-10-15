@@ -1,0 +1,158 @@
+{
+ "idx": 102,
+ "results": [
+  {
+   "member": "DualDimensions",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Insert_Punch_Table_Example_CSharp.md",
+    "Insert_Punch_Table_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 Remarks 段；两示例均在 InsertPunchTable 建表后只读该属性（C#65 行 / VBNET 75 行），从不设置它。"
+  },
+  {
+   "member": "Duplicate",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+    "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+    "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md",
+    "swmotionstudyapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例补出前置：须是已含 Motion Study 1 与折叠爆炸视图的装配体，并须有光线追踪渲染引擎；Remarks 全文只讲命名规则、未提任何前置。",
+     "example_quote": "// 1. Open an assembly document that has a motion study named\n//    MotionStudy 1 and a collapsed exploded view.\n// 2. Verify that a ray-trace rendering engine is active.",
+     "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+    },
+    {
+     "what": "示例把 Duplicate() 的返回值丢弃不用，副本靠命名规则去 MotionManager 里取；示例自身前置里把算例名误写成 MotionStudy 1（无空格），与同页 Motion Study 1 不一致。",
+     "example_quote": "            swMotionStudy1.Duplicate();",
+     "example_file": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+    }
+   ],
+   "note": "Remarks 的 Motion Study 1 -> Motion Study 2 命名例与示例后置条件完全一致，无冲突。"
+  },
+  {
+   "member": "DynamicClearanceEnabled",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Rotate_Assembly_Component_on_Axis_Example_CSharp.md",
+    "Rotate_Assembly_Component_on_Axis_Example2_CSharp.md",
+    "Rotate_Assembly_Component_on_Axis_Example2_VB.md",
+    "Rotate_Assembly_Component_on_Axis_Example2_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 Remarks 段；示例一律在 CollisionDetectionEnabled 之后、BeginDrag 之前把它设为 false（C# 80-86 行）。"
+  },
+  {
+   "member": "DynamicFrictionCoefficient",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_3DContact_Feature_Example_VB.md",
+    "Create_3D_Contact_Feature_Example_CSharp.md",
+    "Create_3D_Contact_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "Available only when [[ISimulation3DContactFeatureData::FrictionOption]] is [[swMotionContactFrictionType_e]].swMotionContactFrictionDynamic.",
+     "example_quote": "            If swContFeat.FrictionOption = swMotionContactFrictionType_e.swMotionContactFrictionFull Then\n                Debug.Print(\"  Static contact friction:\")\n                Debug.Print(\"    Coefficient: \" & swContFeat.StaticFrictionCoefficient)\n                Debug.Print(\"    Velocity: \" & swContFeat.StaticFrictionVelocity)\n            Else\n                Debug.Print(\"  Dynamic contact friction:\")\n                Debug.Print(\"    Coefficient: \" & swContFeat.DynamicFrictionCoefficient)\n                Debug.Print(\"    Velocity: \" & swContFeat.DynamicFrictionVelocity)\n            End If",
+     "example_file": "Create_3D_Contact_Feature_Example_VBNET.md",
+     "why": "成员页说只有 FrictionOption 为 swMotionContactFrictionDynamic(=2) 才可用；示例的判据却是 「等于 Full 才走静态、否则一律读动态」，而该枚举另有 swMotionContactFrictionOff(=0)，Off 时示例仍读该属性。两者不能同时成立。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例自身先把 FrictionOption 设成 swMotionContactFrictionFull，故它实际走的是静态分支、从不读该属性；动态读取是死代码。",
+     "example_quote": "        swContFeat.FrictionOption = swMotionContactFrictionType_e.swMotionContactFrictionFull",
+     "example_file": "Create_3D_Contact_Feature_Example_VBNET.md"
+    }
+   ],
+   "note": "三份示例的分支结构一致；C# 版把组件而非面作为 ContactComponents，与本属性无关。"
+  },
+  {
+   "member": "DynamicFrictionVelocity",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_3DContact_Feature_Example_VB.md",
+    "Create_3D_Contact_Feature_Example_CSharp.md",
+    "Create_3D_Contact_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "Available only when [[ISimulation3DContactFeatureData::FrictionOption]] is [[swMotionContactFrictionType_e]].swMotionContactFrictionDynamic.",
+     "example_quote": "            If swContFeat.FrictionOption = swMotionContactFrictionType_e.swMotionContactFrictionFull Then\n                Debug.Print(\"  Static contact friction:\")\n                Debug.Print(\"    Coefficient: \" & swContFeat.StaticFrictionCoefficient)\n                Debug.Print(\"    Velocity: \" & swContFeat.StaticFrictionVelocity)\n            Else\n                Debug.Print(\"  Dynamic contact friction:\")\n                Debug.Print(\"    Coefficient: \" & swContFeat.DynamicFrictionCoefficient)\n                Debug.Print(\"    Velocity: \" & swContFeat.DynamicFrictionVelocity)\n            End If",
+     "example_file": "Create_3D_Contact_Feature_Example_VBNET.md",
+     "why": "成员页说只有 FrictionOption 为 swMotionContactFrictionDynamic(=2) 才可用；示例的判据却是 「等于 Full 才走静态、否则一律读动态」，而该枚举另有 swMotionContactFrictionOff(=0)，Off 时示例仍读该属性。两者不能同时成立。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例自身先把 FrictionOption 设成 swMotionContactFrictionFull，故它实际走的是静态分支、从不读该属性；动态读取是死代码。",
+     "example_quote": "        swContFeat.FrictionOption = swMotionContactFrictionType_e.swMotionContactFrictionFull",
+     "example_file": "Create_3D_Contact_Feature_Example_VBNET.md"
+    }
+   ],
+   "note": "三份示例的分支结构一致；C# 版把组件而非面作为 ContactComponents，与本属性无关。"
+  },
+  {
+   "member": "Edge",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出调用序：必须先 AccessSelections(model, Nothing) 再取 Edge，最后 ReleaseSelectionAccess（第 89 行）；Remarks 只指向一篇文档，未写调用序。",
+     "example_quote": "        boolstatus = thisCThread.AccessSelections(myModel, Nothing)\n        Set holeEdge = thisCThread.Edge()\n        If Not holeEdge Is Nothing Then",
+     "example_file": "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md"
+    }
+   ],
+   "note": "Create_a_Thread_Feature_Example_* 三份的 .Edge 属 ThreadFeatureData(swFmSweepThread)，非本接口，已排除。"
+  },
+  {
+   "member": "EdgeChamferAngle",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Chamfer_Distances_Example_CSharp.md",
+    "Get_Chamfer_Distances_Example_VB.md",
+    "Get_Chamfer_Distances_Example_VBNET.md",
+    "Get_Edge_Chamfer_Distances_Example_CSharp.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "This method is relevant only for an angle-distance type of chamfer.",
+     "example_quote": "\t            swFeat = (Feature)swSelMgr.GetSelectedObject6(1, -1);\n\t            swChamfer = (ChamferFeatureData2)swFeat.GetDefinition();\n\t            // Get chamfer information\n            Debug.Print(\"File = \" + swModel.GetPathName());\n\t            Debug.Print(\"  \" + swFeat.Name);\n\t            Debug.Print(\"    EdgeChamferAngle          = \" + swChamfer.EdgeChamferAngle * DegPerRad + \" degrees\");",
+     "example_file": "Get_Chamfer_Distances_Example_CSharp.md",
+     "why": "Remarks 限定「仅角度-距离型相关」；该示例前置只要求「至少一个倒角特征」，GetDefinition 后立即读取，全程不看 Type（Type 到第 77 行才打印、从不分支），故对距离-距离型与顶点型也读。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例给出单位口径：返回值是弧度，须乘 DegPerRad 才是度；成员页 Returns 未写单位。",
+     "example_quote": "\t            Debug.Print(\"    EdgeChamferAngle          = \" + swChamfer.EdgeChamferAngle * DegPerRad + \" degrees\");",
+     "example_file": "Get_Chamfer_Distances_Example_CSharp.md"
+    },
+    {
+     "what": "示例注释列出 Type 的三个取值，证明示例并未把范围限定在角度-距离型这一支。",
+     "example_quote": "\t            // ChamferFeatureData2::Type\n            //   1 = Angle-Distance\n            //   2 = Distance-Distance\n            //   3 = Vertex",
+     "example_file": "Get_Chamfer_Distances_Example_CSharp.md"
+    },
+    {
+     "what": "另一示例建倒角时角度实参 0.78539816339745（=45° 的弧度），再次印证该属性以弧度计。",
+     "example_quote": "            swFeat = (Feature)swFeatMgr.InsertFeatureChamfer(4, 1, 0.00254, 0.78539816339745, 0, 0, 0, 0);",
+     "example_file": "Get_Edge_Chamfer_Distances_Example_CSharp.md"
+    }
+   ],
+   "note": "四份示例都取自 ChamferFeatureData2（接口正确），差异只在是否按 Type 分支。"
+  }
+ ]
+}

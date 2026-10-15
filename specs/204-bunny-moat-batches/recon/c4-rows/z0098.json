@@ -1,0 +1,119 @@
+{
+  "idx": 98,
+  "results": [
+    {
+      "member": "Distance",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 段；4 份示例均为同名碰撞（DistanceMate 与 swRadiate 的 Distance）。"
+    },
+    {
+      "member": "Distance1",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_DimXpert_Chamfer_Feature_Example_VBNET.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在读完 chamferType、angle、angleType 之后才连读 Distance1 与 Distance2，显示两者成对使用。",
+          "example_quote": "chamferDistance1\n= chamferFeature.Distance1",
+          "example_file": "Get_DimXpert_Chamfer_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "无 Remarks 段，按纪律跳过冲突判定。示例确以 IDimXpertChamferFeature 调用本成员。"
+    },
+    {
+      "member": "Distance2",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_DimXpert_Chamfer_Feature_Example_VBNET.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Distance2 紧接 Distance1 之后读，两值取自不同倒角侧，与成员页 side 1 / side 2 的说法一致。",
+          "example_quote": "chamferDistance2\n= chamferFeature.Distance2",
+          "example_file": "Get_DimXpert_Chamfer_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "无 Remarks 段，按纪律跳过冲突判定。示例确以 IDimXpertChamferFeature 调用本成员。"
+    },
+    {
+      "member": "DistanceFirstArcCondition",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Edit_Distance_Mate_Example_CSharp.md",
+        "Add_and_Edit_Distance_Mate_Example_VB.md",
+        "Add_and_Edit_Distance_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 AddDistanceMate 返回的 Mate2 上、尚未 EditRebuild3 之前立即读取本属性，三语言版本写法一致。",
+          "example_quote": "            swMate = swAssembly.AddDistanceMate(2, false, 0.2, 0, 0, 1, 1, out errors);\n            Debug.Print(\"First arc condition as defined in swDistanceMateArcConditions_e: \" + swMate.DistanceFirstArcCondition);",
+          "example_file": "Add_and_Edit_Distance_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "示例选的是两个圆柱实体，属 Remarks 允许的两圆柱面情形，未见冲突。"
+    },
+    {
+      "member": "DistanceFromEnd",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Width_Mate_Example_CSharp.md",
+        "Create_Width_Mate_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IWidthMateFeatureData::ConstraintType]] is set to [[swMateWidthOptions_e]].swMateWidth_Dimension.",
+          "example_quote": "                swWidthMateData.ConstraintType = (int)swMateWidthOptions_e.swMateWidth_Percent;\n                swWidthMateData.PercentDistanceFromEnd = 47;\n                swWidthMateData.FlipDimension = false;\n                Debug.Print(\"Width mate constraint type changed to \" + swWidthMateData.ConstraintType);\n                Debug.Print(\"Distance from the end of this width mate: \" + swWidthMateData.DistanceFromEnd);",
+          "example_file": "Create_Width_Mate_Example_CSharp.md",
+          "why": "Remarks 限定唯一有效条件为 swMateWidth_Dimension；示例先改成 swMateWidth_Percent 再读该属性，按 Remarks 此时无效。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IWidthMateFeatureData::ConstraintType]] is set to [[swMateWidthOptions_e]].swMateWidth_Dimension.",
+          "example_quote": "        swWidthMateData.ConstraintType = SwConst.swMateWidthOptions_e.swMateWidth_Percent\n        swWidthMateData.PercentDistanceFromEnd = 47\n        swWidthMateData.FlipDimension = False\n        Debug.Print \"Width mate constraint type changed to \" & swWidthMateData.ConstraintType\n        Debug.Print \"Distance from the end of this width mate: \" & swWidthMateData.DistanceFromEnd",
+          "example_file": "Create_Width_Mate_Example_VB.md",
+          "why": "同一处冲突的 VBA 版本：ConstraintType 已置为 Percent，仍读 DistanceFromEnd，与 Remarks 的唯一有效条件冲突。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把写入侧包进 if (ConstraintType == swMateWidth_Dimension)，比 Remarks 的散文更具体地给出前置的满足方式。",
+          "example_quote": "                if (swWidthMateData.ConstraintType == (int)swMateWidthOptions_e.swMateWidth_Dimension)\n                {\n                    swWidthMateData.DistanceFromEnd = 0.04975511004;\n                    swWidthMateData.FlipDimension = true;\n                }",
+          "example_file": "Create_Width_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "写入侧守了前置，读取侧没有；两份官方示例同形。"
+    },
+    {
+      "member": "DistanceMember",
+      "remarks_empty": false,
+      "examples_actually_used": ["Create_Secondary_SSMembers_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例调用序：先 SetFromPoint 与 SetFromPointMembers，再把偏移类型显式置为 _Distance，才写 DistanceMember=0.1。",
+          "example_quote": "swSecondaryMemberUpToMembersDistanceFromEndType_e.swSecondaryMemberUpToMembersDistanceFromEndType_Distance;\nUpToMemDef.DistanceMember = 0.1;\nUpToMemDef.RevDirectionDistanceMember = false;",
+          "example_file": "Create_Secondary_SSMembers_Example_CSharp.md"
+        }
+      ],
+      "note": "示例先置偏移类型再写该属性，与 Remarks 的唯一有效条件一致，未见冲突。"
+    },
+    {
+      "member": "DistanceMember1",
+      "remarks_empty": false,
+      "examples_actually_used": ["Create_Secondary_SSMembers_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用裸字面量 0 设偏移类型；经官方枚举页 0 即 _Distance，故与 Remarks 相符，且与 DistanceMember2 成对写入。",
+          "example_quote": "memBetweenPointsSecDef.SecondaryMemberOffsetType = 0;\nmemBetweenPointsSecDef.DistanceMember1 = 0.5d;\nmemBetweenPointsSecDef.DistanceMember2 = 0.4d;",
+          "example_file": "Create_Secondary_SSMembers_Example_CSharp.md"
+        }
+      ],
+      "note": "同文件的 between-points 与 up-to-member 两处都先设偏移类型再写距离，均与 Remarks 一致。"
+    }
+  ]
+}

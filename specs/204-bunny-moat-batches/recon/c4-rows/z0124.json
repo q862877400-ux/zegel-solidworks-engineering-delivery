@@ -1,0 +1,187 @@
+{
+  "idx": 124,
+  "results": [
+    {
+      "member": "FeatureExtrusionThin2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Body_From_Selected_Faces_Example_CSharp.md",
+        "Create_Body_From_Selected_Faces_Example_VB.md",
+        "Create_Body_From_Selected_Faces_Example_VBNET.md",
+        "Create_Extruded_Thin_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出选中草图的具体 mark=4，Remarks 只描述方向/选体语义，未给任何 mark",
+          "example_quote": "Part.Extension.SelectByID2(\"Sketch1\", \"SKETCH\", 0, 0, 0, False, 4, Nothing, 0)",
+          "example_file": "Create_Extruded_Thin_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例给出 30 个实参的完整调用，并把 T0 遍历成 SketchPlane/Offset/Vertex 六组组合",
+          "example_quote": "Set myFeature = Part.FeatureManager.FeatureExtrusionThin2(True, False, False, nEndcondition1, nEndcondition2, 0.00254, 0.00254, False, False, False, False, 1.74532925199433E-02, 1.74532925199433E-02, False, False, False, False, True, dThickness, 0.00254, 0.00254, lThinFeatureType, lCapEnds, False, 0.005, True, True, nStartCondition, dStartOffset, bFlipOffset)",
+          "example_file": "Create_Extruded_Thin_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例用 UseAutoSelect=True 建凸台后立刻回读 IsThinFeature 与 FromType，Remarks 未提回读",
+          "example_quote": "If (swExtrusionData.IsThinFeature = False) Then",
+          "example_file": "Create_Extruded_Thin_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的默认方向/双端反向/UseAutoSelect 选体三条与两份示例逐条一致，未找到不能同时成立的说法。"
+    },
+    {
+      "member": "FeatureFillet3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Asymmetric_Elliptic_Fillets_Example_CSharp.md",
+        "Create_Asymmetric_Elliptic_Fillets_Example_VB.md",
+        "Create_Asymmetric_Elliptic_Fillets_Example_VBNET.md",
+        "Create_Curvature_Continuous_Variable_Fillet_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "只选 1 条边却给 2 个 Radii 值：示例用起点/终点顶点回读，说明每条边占 2 个槽位",
+          "example_quote": "AsyRadius1 = swFeatData.GetRadius2(ver1, True)",
+          "example_file": "Create_Asymmetric_Elliptic_Fillets_Example_VB.md"
+        },
+        {
+          "what": "示例回读 ConicTypeForCrossSectionProfile 并给出枚举名注释，Remarks 只列可选名不给读数",
+          "example_quote": "Debug.Print \"Fillet profile type as defined in swFeatureFilletProfileType_e (0 = Elliptical): \" & Fillet_ProfileTyp",
+          "example_file": "Create_Asymmetric_Elliptic_Fillets_Example_VB.md"
+        },
+        {
+          "what": "示例给出含 CurvatureContinuous 的 Options 组合；Remarks 第 8 步只说未含它时另加 CornerType",
+          "example_quote": "filletOptions = (int)swFeatureFilletOptions_e.swFeatureFilletCurvatureContinuous + (int)swFeatureFilletOptions_e.swFeatureFilletKeepFeatures + (int)swFeatureFilletOptions_e.swFeatureFilletPropagateFeatToParts;",
+          "example_file": "Create_Curvature_Continuous_Variable_Fillet_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "mark=1 选边与 Remarks 第 1 步一致；越界 rho 钳位在示例中未被回读验证，不据此判冲突。"
+    },
+    {
+      "member": "FeatureFilters",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Auto_Dimension_Scheme_Example_CSharp.md",
+        "Auto_Dimension_Scheme_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This API is in force only when [[IDimXpertAutoDimSchemeOption::ScopeAllFeature]] is set to true.",
+          "example_quote": "retval = swDXPart.AutoDimensionScheme(schemeOption)",
+          "example_file": "Auto_Dimension_Scheme_Example_VB.md",
+          "why": "示例只 GetAutoDimSchemeOption 取默认值，ScopeAllFeature 仅被打印（77-78 行）从未置 true 就交给 AutoDimensionScheme；按 Remarks 此时 FeatureFilters 不生效。C# 版同样只打印不设置。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 ScopeAllFeature/FeatureFilters/PartType/PatternType 一组默认值逐条打印，比 Returns 的 8191 更可核对",
+          "example_quote": "Debug.Print (schemeOption.FeatureFilters)",
+          "example_file": "Auto_Dimension_Scheme_Example_VB.md"
+        }
+      ],
+      "note": "冲突仅一条：示例未建立 Remarks 要求的 ScopeAllFeature=true 前置却依赖 FeatureFilters 生效。"
+    },
+    {
+      "member": "FeatureFolderLocation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Move_Assembly_Components_to_New_Folder_Example_CSharp.md",
+        "Move_Assembly_Components_to_New_Folder_Example_VB.md",
+        "Move_Assembly_Components_to_New_Folder_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序：先 InsertFeatureTreeFolder2 + ReorderComponents，再按组件名取 feature 问其所在 folder",
+          "example_quote": "Set folderFeat = featureMgr.FeatureFolderLocation(feat)",
+          "example_file": "Move_Assembly_Components_to_New_Folder_Example_VB.md"
+        }
+      ],
+      "note": "成员页没有 ## Remarks 段，按规则跳过冲突判定。"
+    },
+    {
+      "member": "FeatureLinearPattern4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Linear_Pattern_Example_CSharp.md",
+        "Change_Linear_Pattern_Example_VB.md",
+        "Change_Linear_Pattern_Example_VBNET.md",
+        "Create_Linear_Pattern_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "unit_diff",
+          "remarks_quote": "- **Offset1**: Offset in meters from a selected reference in Direction 1 (see **Remarks**); valid only if HasOffset1 is true",
+          "example_quote": "* 0.l9 (Offset1; furthest instance in Direction 1 is offset by 190 mm",
+          "example_file": "Create_Linear_Pattern_Example_VB.md",
+          "why": "页面写 Offset1 以米计、示例注释把同一个 0.19 说成 190 mm；同一行的 Spacing2 同样：页面「in meters」对示例「* 0.02 (Spacing2 in mm)」。"
+        },
+        {
+          "kind": "mark_diff",
+          "remarks_quote": "- 8388608 to mark a seed instance reference when FromCentroid1 or FromCentroid2 is false",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Boss-Extrude2\", \"SOLIDBODY\", 0, 0, 0, True, 256, Nothing, 0)",
+          "example_file": "Change_Linear_Pattern_Example_VB.md",
+          "why": "F4 的 mark 表只有特征/组件两行（1/2/4/2097152/8388608），无 256；示例用 256 选实体，256 只出现在 F5 页「256 to mark the solid bodies to pattern」。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "DName1/DName2 示例传字面量 \"NULL\"（Create_Linear_Pattern 传空串），Remarks 与 Parameters 都没说该填什么",
+          "example_quote": "Set swFeature = swFeatureMgr.FeatureLinearPattern4(3, 0.0254, 1, 0.00254, True, False, \"NULL\", \"NULL\", False, False, False, False, False, False, True, True, False, False, 0, 0)",
+          "example_file": "Change_Linear_Pattern_Example_VB.md"
+        },
+        {
+          "what": "示例把 2097152（偏移基准面）与 8388608（种子边）各写成一条带注释的 SelectByID2，比 Remarks 的裸列表更可照抄",
+          "example_quote": "' Select seed instance edge with which to measure distances between pattern instances",
+          "example_file": "Create_Linear_Pattern_Example_VB.md"
+        }
+      ],
+      "note": "单位那条引自成员页 Parameters 块（F4 的 Remarks 段本身没写单位）；mark 那条引自 Remarks 段。"
+    },
+    {
+      "member": "FeatureLinearPattern5",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Bidirectional_Linear_Pattern_Example_CSharp.md",
+        "Create_Bidirectional_Linear_Pattern_Example_VB.md",
+        "Create_Bidirectional_Linear_Pattern_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "DName1/DName2 传字面量 \"NULL\"、Offset 传 0，配 FromCentroid1/2=True；页面未给这种组合",
+          "example_quote": "Set swFeature = swFeatureManager.FeatureLinearPattern5(3, 0.01, 3, 0.01, False, False, \"NULL\", \"NULL\", True, False, False, False, False, False, True, True, False, False, 0, 0, False, False)",
+          "example_file": "Create_Bidirectional_Linear_Pattern_Example_VB.md"
+        },
+        {
+          "what": "示例按 Remarks 顺序 mark 4 选特征、mark 1/2 选两方向，并标出实体类型 \"BODYFEATURE\"",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"CBORE for #6 Binding Head Machine Screw1\", \"BODYFEATURE\", 0, 0, 0, False, 4, Nothing, 0)",
+          "example_file": "Create_Bidirectional_Linear_Pattern_Example_VB.md"
+        }
+      ],
+      "note": "示例的 mark 4/1/2 与 Remarks 表逐条对应；GeometryPattern=True 配 VaryInstance=False 也未与页面冲突。"
+    },
+    {
+      "member": "FeatureManager",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Add_Objects_to_Selection_List_Example_CSharp.md",
+        "Add_Objects_to_Selection_List_Example_VB.md",
+        "Add_Objects_to_Selection_List_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取值写法与先后次序：先取 Extension / SelectionManager，再取 FeatureManager 赋给局部变量",
+          "example_quote": "modDoc.FeatureManager",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md"
+        }
+      ],
+      "note": "成员页没有 ## Remarks 段，按规则跳过冲突判定。"
+    }
+  ]
+}

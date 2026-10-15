@@ -1,0 +1,152 @@
+{
+  "idx": 205,
+  "results": [
+    {
+      "member": "GetHoleCalloutVariables",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md",
+        "Get_and_Set_Hole_Callout_Variables_Example_VB.md",
+        "Get_and_Set_Hole_Callout_Variables_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都给出返回值的实际用法：整体转 object[]/Variant 数组，逐元素转 CalloutVariable，再按 Type 区分 length/angle/string 三支。",
+          "example_quote": "holeVariables = (object[])swDisplayDimension.GetHoleCalloutVariables();",
+          "example_file": "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md"
+        },
+        {
+          "what": "示例补出成员页没写的取对象路径：靠选区第 1 项拿 DisplayDimension，且前置要求先选中孔标注。",
+          "example_quote": "swDisplayDimension = (DisplayDimension)swSelMgr.GetSelectedObject6(1, -1);",
+          "example_file": "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks。三份示例一致：返回可转 object[]/Variant 数组，元素转 CalloutVariable 后按 Type 分派。"
+    },
+    {
+      "member": "GetHoleStandards",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Wizard_Hole_Standards_Data_Example_CSharp.md",
+        "Get_Wizard_Hole_Standards_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例具体化 Names 的形态：C# 把它转成 object[] 并取 [0] 当字符串键，往下传给 GetFastenerTypes；Indexes 拿到但全程没用。",
+          "example_quote": "standardsArray = (object[])standards;",
+          "example_file": "Get_Wizard_Hole_Standards_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks。仅这两份 Hole Standards Data 示例真正调用；无冲突。"
+    },
+    {
+      "member": "GetHoleStandardsData",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Wizard_Hole_Standards_Data_Example_CSharp.md",
+        "Get_Wizard_Hole_Standards_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出页面 Returns 里没展开的具体可用值：传 swWzdCounterBore（非 5）并直接强转 HoleStandardsData，未演示 null 分支。",
+          "example_quote": "holeStandards = (HoleStandardsData)swApp.GetHoleStandardsData((int)swWzdGeneralHoleTypes_e.swWzdCounterBore);",
+          "example_file": "Get_Wizard_Hole_Standards_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks。两示例都传 swWzdCounterBore，无冲突。"
+    },
+    {
+      "member": "GetHyperlinkText",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Remove_Hyperlink_from_Note_in_Drawing_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例走的是 Remarks 第二段那条分支：全程没调 SetHyperlinkText，只把 URL 当正文插入注释，靠「正文里显式写了 http://」被检出。",
+          "example_quote": "Set swNote = swModel.InsertNote(\"http://www.solidworks.com\")",
+          "example_file": "Remove_Hyperlink_from_Note_in_Drawing_Example_VB.md"
+        },
+        {
+          "what": "示例前置补出 Remarks 没提的环境要求：点注释会真的去联网打开页面，所以要预先确认有网络。",
+          "example_quote": "' 2. Verify that you have internet connection.",
+          "example_file": "Remove_Hyperlink_from_Note_in_Drawing_Example_VB.md"
+        }
+      ],
+      "note": "示例未在改写后再次调用本方法，故读不出与 Remarks 的矛盾；两侧说法可同时成立。"
+    },
+    {
+      "member": "GetID",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "列出的四份示例都不是本成员：Spotlight 三份调 ILight.GetID，Sketch 那份调 ISketchSegment.GetID（返回变体数组）。无示例侧可比。"
+    },
+    {
+      "member": "GetISO2768PartType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Block_Tolerance_Example_VB.md",
+        "Get_DimXpert_Block_Tolerance_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补出调用前提：只有 blockTols.Type 为 ISO2768 分支才调本方法，out 值再按 Fine/Medium/Coarse/VeryCoarse 分派。",
+          "example_quote": "boolstatus = blockTols.GetISO2768PartType(isoCode)",
+          "example_file": "Get_DimXpert_Block_Tolerance_Example_VB.md"
+        },
+        {
+          "what": "示例说明 out 形参在 VBA 侧用 Long 承接，再与 swDimXpertISO2768PartType_e 的四个成员逐个比对。",
+          "example_quote": "Case swDimXpertISO2768PartType_VeryCoarse",
+          "example_file": "Get_DimXpert_Block_Tolerance_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks。两示例调用形态与签名一致，无冲突。"
+    },
+    {
+      "member": "GetImportFileData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Import_DXF_File_into_Part_Sketch_Example_VB.md",
+        "Import_DXF_File_to_Drawing_Example_VB.md",
+        "Import_STEP_File_Example_CSharp.md",
+        "Import_STEP_File_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Path and name of the IGES or DXF/DWG file",
+          "example_quote": "stepFileName = \"C:\\Users\\Public\\Documents\\SOLIDWORKS\\SOLIDWORKS 2019\\samples\\tutorial\\api\\db9 male.STEP\"",
+          "example_file": "Import_STEP_File_Example_VB.md",
+          "why": "页面 Parameters 把 FileName 限定为 IGES 或 DXF/DWG；示例把一个 .STEP 文件路径传进去。两者不能同时成立。"
+        },
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "[[IGES import data]] or [[DXF/DWG import data]]",
+          "example_quote": "swImportStepData = (ImportStepData)swApp.GetImportFileData(stepFileName);",
+          "example_file": "Import_STEP_File_Example_CSharp.md",
+          "why": "页面 Returns 只给 IGES / DXF-DWG 两种导入数据对象；示例把返回值强转成 ImportStepData 并用其 MapConfigurationData。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "DXF 示例把 Remarks 的「现场算默认值」落成具体清单：输入单位、图纸幅面、图纸比例、页名，逐项说明不设即由 SOLIDWORKS 决定。",
+          "example_quote": "To let SOLIDWORKS Design determine an appropriate input file unit, do not set the LengthUnit property",
+          "example_file": "Import_DXF_File_to_Drawing_Example_VB.md"
+        },
+        {
+          "what": "DXF 示例补出传回 LoadFile4 的位置约束：先取接口对象并设好属性，再作为第 3 参传入，配置串为只读的 \"r\"。",
+          "example_quote": "Set swPart = swApp.LoadFile4(stepFileName, \"r\", swImportStepData, errors)",
+          "example_file": "Import_STEP_File_Example_VB.md"
+        }
+      ],
+      "note": "两份 DXF 示例与页面一致；两份 STEP 示例与页面的文件类型与返回类型两处矛盾。Remarks 本身与示例无冲突。"
+    }
+  ]
+}

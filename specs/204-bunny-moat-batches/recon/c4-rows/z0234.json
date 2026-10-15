@@ -1,0 +1,128 @@
+{
+  "idx": 234,
+  "results": [
+    {
+      "member": "GetPeripheral",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weld_Symbol_Example_VB.md",
+        "Insert_Weld_Symbol_Example_CSharp.md",
+        "Insert_Weld_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 GetPeripheral 的含义写成「Weld all around the contour?」，比成员页的 peripheral weld 更具体",
+          "example_quote": "Debug.Print \"Weld all around the contour? \" & swWeldSymbol.GetPeripheral",
+          "example_file": "Insert_Weld_Symbol_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只指向 SetPeripheral；三示例均先 SetPeripheral False 再读回，无冲突。"
+    },
+    {
+      "member": "GetPersistReference3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Check_Edges_for_Faults_Example_CSharp.md",
+        "Check_Edges_for_Faults_Example_VB.md",
+        "Check_Edges_for_Faults_Example_VBNET.md",
+        "Check_Faces_for_Faults_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 示例把返回值硬转型为 byte[]，比成员页只说 Array 更具体",
+          "example_quote": "vPIDarr = (byte[])swModExt.GetPersistReference3(swEdge);",
+          "example_file": "Check_Edges_for_Faults_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 示例断言数组每元素类型为 Byte，给出成员页未写的元素类型",
+          "example_quote": "Debug.Assert vbByte = VarType(vPID)",
+          "example_file": "Check_Faces_for_Faults_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 称内部表示可变、用法一致；示例只做格式化打印，非 Remarks 承诺的取实体用法。"
+    },
+    {
+      "member": "GetPersistReferenceCount3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Object_s_Persistent_Reference_ID_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "**Signature**: `System.int GetPersistReferenceCount3( System.object DispObj )`",
+          "example_quote": "long sizePersistIDs;\nswDocExt->GetPersistReferenceCount3(disp, &sizePersistIDs);",
+          "example_file": "Get_Object_s_Persistent_Reference_ID_Example_CPlusPlus_COM.md",
+          "why": "成员页为 1 参回 int；示例按 2 参调用（第二参 out long）并取其值。同一成员两种调用形态不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出取 DispObj 的具体途径：SelectionMgr 取第 1 个选中对象，比成员页「Selected object」更具体",
+          "example_quote": "swSelMgr->GetSelectedObject6(1, -1, &disp);",
+          "example_file": "Get_Object_s_Persistent_Reference_ID_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "Remarks 禁配对的是 IGetPersistReference3；示例用的是 GetPersistReference3，不构成违反。"
+    },
+    {
+      "member": "GetPiecesToKeepCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Trimmed_Surface_Feature_Example_VB.md",
+        "Create_Trimmed_Surface_Feature_Example_CSharp.md",
+        "Create_Trimmed_Surface_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例调用前后有 AccessSelections / ReleaseSelectionAccess，成员页未写该前置",
+          "example_quote": "surfTrimFeatData.AccessSelections swModel, Nothing",
+          "example_file": "Create_Trimmed_Surface_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 说为 IGetPiecesToKeep 取数组长度；三示例都没调那个接口，只打印计数。"
+    },
+    {
+      "member": "GetPlacementPlane2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Library_Feature_Data_Example_CSharp.md",
+        "Get_Library_Feature_Data_Example_VB.md",
+        "Get_Library_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "VBA/VB.NET 把返回值当可选中实体调用 Select，C# 只读 out 的 Type 不 Select",
+          "example_quote": "placementPlane.Select False",
+          "example_file": "Get_Library_Feature_Data_Example_VB.md"
+        },
+        {
+          "what": "示例以 AccessSelections 开头、ReleaseSelectionAccess 收尾，正是 Remarks 所指的 Selections 前置",
+          "example_quote": "boolstatus = LibraryFeatureData.AccessSelections(ModelDoc2, Nothing)",
+          "example_file": "Get_Library_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "三示例 Scope 皆传 swLibFeatureData_PartRespect、Type 为 out，与签名一致。"
+    },
+    {
+      "member": "GetPlanarTrimMembers",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读其示例。"
+    },
+    {
+      "member": "GetPlanarZoneVector",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读其示例。"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "idx": 104,
+  "results": [
+    {
+      "member": "EditBalloons",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Autoballoon_to_Face_Example_CSharp.md",
+        "Add_Autoballoon_to_Face_Example_VB.md",
+        "Add_Autoballoon_to_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体取值组合：EditBalloons=True 的下一行紧接 EditBalloonOption=swEditBalloonOption_Resequence，成员页只说返回语义指向 IAutoBalloonOption::EditBalloonOption",
+          "example_quote": "autoballoonParams.EditBalloons = True",
+          "example_file": "Add_Autoballoon_to_Face_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定；三例均在 AutoBalloonOptions 变量上赋 EditBalloons。"
+    },
+    {
+      "member": "EditCircularSketchStepAndRepeat",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_and_Edit_Circular_Sketch_Pattern_Example_CSharp.md",
+        "Create_and_Edit_Circular_Sketch_Pattern_Example_VB.md",
+        "Create_and_Edit_Circular_Sketch_Pattern_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用前置：先 SelectByID2 选中阵列里一条图元再 EditSketch() 打开该阵列，Remarks 只谈尺寸可交互改",
+          "example_quote": "swModel.EditSketch();",
+          "example_file": "Create_and_Edit_Circular_Sketch_Pattern_Example_CSharp.md"
+        },
+        {
+          "what": "示例实传 Seeds=\"Line2_Line1_Line4_Line3_\"：不是 Line1..N 顺序且尾部多一个下划线，比参数页给的 Line1_Line2_Line3_Line4 更具体",
+          "example_quote": "\"Line2_Line1_Line4_Line3_\"",
+          "example_file": "Create_and_Edit_Circular_Sketch_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只讲半径/角度/实例数三个尺寸可交互修改，示例与之一致；未见不能同时成立的说法。"
+    },
+    {
+      "member": "EditConcentricMate",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VB.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出三处选择的具体做法与 mark：两次 SelectByRay(Type=2) 选两个面 + 一次 SelectByID2 选 Concentric2，三者 mark 都是 0；Remarks 未给 mark",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Concentric2\", \"MATE\", 0, 0, 0, true, 0, null, 0);",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "示例在调用后先 ClearSelection2(True) 再重建，Remarks 只要求调用 EditRebuild3",
+          "example_quote": "swModel.EditRebuild3()",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VBNET.md"
+        }
+      ],
+      "note": "示例满足 Remarks 的两条选择项与「须先有父同心配合」；对照的 AddConcentricMateWithTolerance 用 mark=1，本成员用 mark=0，Remarks 未规定故不算冲突。"
+    },
+    {
+      "member": "EditCopy",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Copy_and_Paste_Drawing_Sheet_Example_CSharp.md",
+        "Copy_and_Paste_Drawing_Sheet_Example_VB.md",
+        "Copy_and_Paste_Drawing_Sheet_Example_VBNET.md",
+        "Copy_and_Paste_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页只挂 Copy and Paste Feature 三例；Drawing Sheet 三例补充了 EditCopy 也可作用于 SHEET 类型的选中项",
+          "example_quote": "boolstatus = swModelDocExt.SelectByID2(\"Sheet1\", \"SHEET\", 0.09205356547875, 0.10872368523, 0, false, 0, null, 0);",
+          "example_file": "Copy_and_Paste_Drawing_Sheet_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段；四例均在 ModelDoc2 上调 EditCopy，收件对象核对一致。"
+    },
+    {
+      "member": "EditCut",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Cut_and_Paste_Sketch_Example_CSharp.md",
+        "Cut_and_Paste_Sketch_Example_VB.md",
+        "Cut_and_Paste_Sketch_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例选中的是单条 EXTSKETCHSEGMENT（Line1@Sketch1）就调 EditCut，说明被剪切项可以是草图段而非整张草图",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Line1@Sketch1\", \"EXTSKETCHSEGMENT\", -0.051595524691358, 0.0117347222222222, 0, false, 0, null, 0);",
+          "example_file": "Cut_and_Paste_Sketch_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段；三例均为 ModelDoc2 收件的 EditCut 调用。"
+    },
+    {
+      "member": "EditDelete",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Copy_Components_With_Mates_To_Assembly_Example_CSharp.md",
+        "Copy_Components_With_Mates_To_Assembly_Example_VB.md",
+        "Copy_Components_With_Mates_To_Assembly_Example_VBNET.md",
+        "Create_Advanced_Hole_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Use [[IModelDocExtension::DeleteSelection2]] to turn off prompting the user to confirm the deletion.",
+          "example_quote": "swModel.EditDelete();",
+          "example_file": "Copy_Components_With_Mates_To_Assembly_Example_CSharp.md",
+          "why": "Remarks 说 EditDelete 会弹确认框、需先 DeleteSelection2 关掉；示例宏直接调 EditDelete 且声明删除已完成，无该调用。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "四例均选中 COMPONENT 或草图点后直接 EditDelete，全篇无 DeleteSelection2；同一模式见 Create_Advanced_Hole 的循环删点。"
+    },
+    {
+      "member": "EditDimensionProperties",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份 Modify_Dimension_Properties 示例调的是 swModelDocExt.EditDimensionProperties（20 参，属 IModelDocExtension），非本成员（11 参，已废弃），故不用。"
+    }
+  ]
+}

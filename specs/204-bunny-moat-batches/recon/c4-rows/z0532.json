@@ -1,0 +1,118 @@
+{
+  "idx": 532,
+  "results": [
+    {
+      "member": "origin",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Drag_Arrow_Manipulator_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Before calling this property to change the origin setting, set [[IDragArrowManipulator::FixedLength]] to true.",
+          "example_quote": "swDrag.origin = swPickPt",
+          "example_file": "Create_Drag_Arrow_Manipulator_Example_VB.md",
+          "why": "成员页要求改 origin 前先置 FixedLength=true；示例建完操纵器直接赋 origin，全程未出现 FixedLength。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例补出 FixedLength 的运行期行为：首次拖动被置 true 并移动 origin，其后置 false 且 origin 不变。",
+          "example_quote": "The first time you drag the handle, IDragArrowManipulator::FixedLength is set to true, and the origin is moved in the direction of the drag.",
+          "example_file": "Create_Drag_Arrow_Manipulator_Example_VB.md"
+        },
+        {
+          "what": "示例给出待赋值的构造方式：用 MathUtility.CreatePoint 造 MathPoint。",
+          "example_quote": "Set swPickPt = swMathUtil.CreatePoint((vPickPt))",
+          "example_file": "Create_Drag_Arrow_Manipulator_Example_VB.md"
+        }
+      ],
+      "note": "示例还演示读取：Set origin = swDrag.origin 后取 pt = origin.ArrayData。"
+    },
+    {
+      "member": "originFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Tolerance6_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks，按纪律跳过。示例仅取 .Name 打印，未涉及任何前置或单位。"
+    },
+    {
+      "member": "patternTreatment",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Tolerance2_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks，按纪律跳过。示例只与 unknown 枚举比较判有效性。"
+    },
+    {
+      "member": "patternType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Pattern_Example_VB.md",
+        "Get_and_Set_Pattern_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks，按纪律跳过。两份示例都只把 patternFeature.patternType 读回赋给 featureType。"
+    },
+    {
+      "member": "pointArray",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Free_Point_Curve_Feature_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "The ArrayDataIn argument is an array of doubles containing 3 * points:",
+          "example_quote": "For i = 0 To nbrPoints - 1",
+          "example_file": "Insert_Free_Point_Curve_Feature_Example_VB.md",
+          "why": "成员页定义为 3*点数的扁平坐标数组；示例按点数上界遍历并逐点打印，两种形状不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例用 InsertCurveFilePoint 的米制数值建曲线后读 pointArray，成员页对该属性未提单位。",
+          "example_quote": "status = swModel.InsertCurveFilePoint(0, 0, 0.0127)",
+          "example_file": "Insert_Free_Point_Curve_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 用 ArrayDataIn 指称参数，但签名是无参属性 get/set。"
+    },
+    {
+      "member": "precision",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 跳过。所列示例的 precision 读写全在 CalloutLengthVariable 上，非 Angle 变量。"
+    },
+    {
+      "member": "preserveZAxis",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Mirror_Components_II_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先置 CreateDerivedConfigurations=False，再置 preserveZAxis=True，顺序与前置一致。",
+          "example_quote": "swMirroCompFeatData.CreateDerivedConfigurations = False",
+          "example_file": "Mirror_Components_II_Example_VBNET.md"
+        },
+        {
+          "what": "示例把 preserveZAxis 与 OppositeHandComponents 数组配对设置，点明其作用对象。",
+          "example_quote": "swMirroCompFeatData.OppositeHandComponents = CTMOH",
+          "example_file": "Mirror_Components_II_Example_VBNET.md"
+        }
+      ],
+      "note": "示例遵守前置条件，未发现冲突。"
+    }
+  ]
+}

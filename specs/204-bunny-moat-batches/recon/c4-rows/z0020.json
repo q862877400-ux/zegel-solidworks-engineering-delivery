@@ -1,0 +1,173 @@
+{
+ "idx": 20,
+ "results": [
+  {
+   "member": "AllowFlip",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Drag_Arrow_Manipulator_Example_CSharp.md",
+    "Create_Drag_Arrow_Manipulator_Example_VB.md",
+    "Create_Drag_Arrow_Manipulator_Example_VBNET.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "This property is valid only if [[IDragArrowManipulator::ShowOppositeDirection]] is false.",
+     "example_quote": "swDrag.ShowOppositeDirection = true;",
+     "example_file": "Create_Drag_Arrow_Manipulator_Example_CSharp.md",
+     "why": "备注说 ShowOppositeDirection 为 false 时 AllowFlip 才有效；C# 示例设成 true，却又断言 AllowFlip 为 true 并生效，两条不能同时成立。"
+    },
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "This property is valid only if [[IDragArrowManipulator::ShowOppositeDirection]] is false.",
+     "example_quote": "swDrag.ShowOppositeDirection = True",
+     "example_file": "Create_Drag_Arrow_Manipulator_Example_VBNET.md",
+     "why": "同一前置在 VB.NET 示例里也被违反：ShowOppositeDirection 设为 True，而备注要求 false。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "成员页无示例段；示例给出取操纵器→转为 DragArrowManipulator→再设 AllowFlip 的具体调用序。",
+     "example_quote": "(DragArrowManipulator)swManip.GetSpecificManipulator();",
+     "example_file": "Create_Drag_Arrow_Manipulator_Example_CSharp.md"
+    }
+   ],
+   "note": "VBA 示例设 ShowOppositeDirection = False 才是合规写法，三份官方示例彼此不一致。"
+  },
+  {
+   "member": "AllowMultipleSelectOfSameEntity",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Show_Bubble_ToolTip_for_PropertyManager_Page_Control_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例把它紧接在 SingleEntityOnly=false 之后设置，且整块都在 pm_Page.Show() 之前，成员页未提与 SingleEntityOnly 的配对。",
+     "example_quote": "pm_Selection.SingleEntityOnly = false;\n            pm_Selection.AllowMultipleSelectOfSameEntity = true;\n            pm_Selection.Height = 50;",
+     "example_file": "Show_Bubble_ToolTip_for_PropertyManager_Page_Control_Example_CSharp.md"
+    }
+   ],
+   "note": "唯一示例在构造函数里设置、Show() 之前，与备注一致，无冲突。"
+  },
+  {
+   "member": "AlongCurveOption",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_Reference_Point_Data_Example_CSharp.md",
+    "Get_Reference_Point_Data_Example_VB.md",
+    "Get_Reference_Point_Data_Example_VBNET.md",
+    "Insert_Reference_Points_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "唯一带创建动作的示例给出前置：必须预选边，并用 InsertReferencePoint 传四个参数建多点。",
+     "example_quote": "' An edge must be preselected\n    vFeatArr = swFeatMgr.InsertReferencePoint(swRefPointAlongCurve, swRefPointAlongCurveEvenlyDistributed, 0#, 6)",
+     "example_file": "Insert_Reference_Points_Example_VB.md"
+    },
+    {
+     "what": "其余三份示例只读取回显、从不赋值，说明该属性可只读使用。",
+     "example_quote": "Debug.Print \"    AlongCurveOption   = \" & swRefPtData.AlongCurveOption",
+     "example_file": "Get_Reference_Point_Data_Example_VB.md"
+    }
+   ],
+   "note": "成员页无 Remarks；Returns 用 True/False 措辞而签名是 System.int，按纪律跳过冲突判定。"
+  },
+  {
+   "member": "AlphaOutput",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Render_Model_Example_CSharp.md",
+    "Render_Model_Example_VB.md",
+    "Render_Model_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "三份示例只在“Current rendering values”里读取它；后面的“Change rendering values”段写了其余全部选项，唯独跳过 AlphaOutput。",
+     "example_quote": "Debug.Print(\"  Alpha output? \" + swRayTraceRenderOptions.AlphaOutput);",
+     "example_file": "Render_Model_Example_CSharp.md"
+    },
+    {
+     "what": "示例里取得渲染器的那一行被注释掉，却直接用 swRayTraceRenderer 取选项（VBA 版同样被注释）。",
+     "example_quote": "//swRayTraceRenderer = (RayTraceRenderer)swApp.GetRayTraceRenderer((int)swRayTraceRenderType_e.ray_trace_rendering_engine_member);",
+     "example_file": "Render_Model_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页无 Remarks，按纪律跳过冲突判定。"
+  },
+  {
+   "member": "AlternateName",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Change_Configuration_Properties_Example_VB.md",
+    "Get_List_Of_Configurations_Example_CSharp.md",
+    "Get_List_Of_Configurations_Example_VB.md",
+    "Get_List_Of_Configurations_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出必须先把 BOMPartNoSource 置成 UserSpecified 再写 AlternateName 的顺序，并连写两次同一值。",
+     "example_quote": "thisConfig.BOMPartNoSource = swBOMPartNumber_UserSpecified\n        thisConfig.AlternateName = \"XXXX\"\n        thisConfig.UseAlternateNameInBOM = True\n        thisConfig.AlternateName = \"XXXX\"",
+     "example_file": "Change_Configuration_Properties_Example_VB.md"
+    },
+    {
+     "what": "示例只在 BOMPartNoSource 为 UserSpecified 的分支里读 AlternateName，正是备注那条清空规则的反面用法。",
+     "example_quote": "BOMPartNumber = config.AlternateName",
+     "example_file": "Change_Configuration_Properties_Example_VB.md"
+    }
+   ],
+   "note": "四份示例与备注全部自洽：三份只读打印，改例按 UserSpecified 顺序写入。"
+  },
+  {
+   "member": "AnchorType",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_General_Table_Feature_Example_CSharp.md",
+    "Get_General_Table_Feature_Example_VBNET.md",
+    "Get_and_Set_Table_Anchor_of_Hole_Table_Example_CSharp.md",
+    "Get_and_Set_Table_Anchor_of_Hole_Table_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "孔表示例给出四种锚点的对角映射（BottomLeft↔TopRight 等）并回写 AnchorType，成员页只说类型由该枚举定义。",
+     "example_quote": "newCorner = swBOMConfigurationAnchorType_e.swBOMConfigurationAnchor_TopRight;",
+     "example_file": "Get_and_Set_Table_Anchor_of_Hole_Table_Example_CSharp.md"
+    },
+    {
+     "what": "Get_General_Table_Feature 两例只读取 AnchorType 回显，从不赋值。",
+     "example_quote": "anchorType = swTableAnnotation.AnchorType;",
+     "example_file": "Get_General_Table_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "成员页无 Remarks，按纪律跳过冲突判定。"
+  },
+  {
+   "member": "Anchored",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_General_Table_Feature_Example_CSharp.md",
+    "Get_General_Table_Feature_Example_VB.md",
+    "Get_General_Table_Feature_Example_VBNET.md",
+    "Get_and_Set_Table_Anchor_of_Hole_Table_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "孔表示例给出取锚点对象的实际路径：从视图所属 Sheet 上按表类型取 TableAnchor，成员页只让用 AnchorType 与 GetPosition。",
+     "example_quote": "holeTableAnchor = (TableAnchor)drwView.Sheet.get_TableAnchor((int)swTableAnnotationType_e.swTableAnnotation_HoleChart);",
+     "example_file": "Get_and_Set_Table_Anchor_of_Hole_Table_Example_CSharp.md"
+    },
+    {
+     "what": "锚点位置写在 TableAnchor.Position 上（与表自身的 GetPosition 不是同一处），这是示例才有的落点。",
+     "example_quote": "holeTableAnchor.Position = dNewPosition;",
+     "example_file": "Get_and_Set_Table_Anchor_of_Hole_Table_Example_CSharp.md"
+    }
+   ],
+   "note": "四份示例都只读 Anchored，全网示例无一给它赋值，与备注不冲突。"
+  }
+ ]
+}

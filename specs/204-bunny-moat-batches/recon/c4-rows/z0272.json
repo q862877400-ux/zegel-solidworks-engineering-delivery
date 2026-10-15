@@ -1,0 +1,110 @@
+{
+  "idx": 272,
+  "results": [
+    {
+      "member": "GetTotalColumnCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例变量类型为 DesignTable，调 IDesignTable 同名成员；其自身前置即 Attach，不算本成员证据。"
+    },
+    {
+      "member": "GetTotalRowCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例变量类型为 DesignTable，调 IDesignTable 同名成员；其自身前置即 Attach，不算本成员证据。"
+    },
+    {
+      "member": "GetTrackingIDs",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_Set_And_Remove_Tracking_IDs_On_Body_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值 0 判为成功，成员页只指向 swTrackingIDError_e",
+          "example_quote": "GetTrackingIDs Result (if 0, then call successful): ",
+          "example_file": "Get_Set_And_Remove_Tracking_IDs_On_Body_Example_VB.md"
+        },
+        {
+          "what": "返回数组按 0 基取用，成员页只说 Array of tracking IDs on this body",
+          "example_quote": "Debug.Print \"      Tracking ID after SetTrackingID call : \" & vTrackingIDs(0)",
+          "example_file": "Get_Set_And_Remove_Tracking_IDs_On_Body_Example_VB.md"
+        },
+        {
+          "what": "cookie 由 RegisterTrackingDefinition 取得，-1 即无效；成员页未给失败值",
+          "example_quote": "If (Cookies = -1) Then",
+          "example_file": "Get_Set_And_Remove_Tracking_IDs_On_Body_Example_VB.md"
+        }
+      ],
+      "note": "Edge/Face/Vertex 三份示例用 swEdge/swFace/swVertex，属别的接口，只取 Body 一份。"
+    },
+    {
+      "member": "GetTrackingIDsCount",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_Set_And_Remove_Tracking_IDs_On_Body_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序：先 GetTrackingIDsCount(Cookies) 再 GetTrackingIDs，与 Remarks 的 count 先行一致",
+          "example_quote": "NbrTrackingIds = swBody.GetTrackingIDsCount(Cookies)",
+          "example_file": "Get_Set_And_Remove_Tracking_IDs_On_Body_Example_VB.md"
+        },
+        {
+          "what": "计数 0 被当作「无 tracking ID」的分支条件，成员页只说返回数量",
+          "example_quote": "If (NbrTrackingIds = 0) Then",
+          "example_file": "Get_Set_And_Remove_Tracking_IDs_On_Body_Example_VB.md"
+        }
+      ],
+      "note": "Edge/Face/Vertex 三份示例用 swEdge/swFace/swVertex，属别的接口，只取 Body 一份。"
+    },
+    {
+      "member": "GetTransform",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_Transform_for_Each_Circular_Pattern_Instance_Example_CSharp.md"],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "1 <= *Instance* <= [[ICircularPatternFeatureData::TotalInstances]]",
+          "example_quote": "for (i = 0; i < NbrInstances; i++)",
+          "example_file": "Get_Transform_for_Each_Circular_Pattern_Instance_Example_CSharp.md",
+          "why": "示例 i 从 0 起并调用 GetTransform(i)，传入 0 违反 Remarks 的 1 下界。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 0 基索引按 1 基编号显示，说明实例编号另有 1 基解释",
+          "example_quote": "Debug.Print(\" Processing instance \" + (i + 1) + \"...\");",
+          "example_file": "Get_Transform_for_Each_Circular_Pattern_Instance_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出取定义前置：先 SelectByID2 选特征，再 GetSelectedObject6，再 GetDefinition",
+          "example_quote": "swCircularPatternFeatureData = (CircularPatternFeatureData)swFeature.GetDefinition();",
+          "example_file": "Get_Transform_for_Each_Circular_Pattern_Instance_Example_CSharp.md"
+        }
+      ],
+      "note": "3 份 Get_Properties_of_Sketch-Pattern 示例调 SketchPatternFeatureData，属另一接口，已排除。"
+    },
+    {
+      "member": "GetTranslateSurface",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；3 份示例调 SurfExtrudeFeatureData 同名成员（另有其页），非本接口。"
+    },
+    {
+      "member": "GetTreatmentGroupFolderCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过比对；2 份示例在 CornerManagementFolder 上调用，接口一致。"
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "idx": 130,
+  "results": [
+    {
+      "member": "FirstRotationX",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_VBNET.md",
+        "Get_Section_View_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例写出实际写入值 0.296705972839036（=17° 的弧度），成员页 Returns 未给单位",
+          "example_quote": "data.FirstRotationX = 0.296705972839036;",
+          "example_file": "Create_Section_View_in_Model_Example_CSharp.md"
+        },
+        {
+          "what": "读取示例的前置说明 UI 侧用度数「Set X Rotation to 45.00deg」，与 API 侧弧度值并存",
+          "example_quote": "//    b. Set X Rotation to 45.00deg in Section 1.",
+          "example_file": "Get_Section_View_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "FirstRotationY",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_VBNET.md",
+        "Get_Section_View_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例写出实际写入值 0.174532925199433（=10° 的弧度），成员页 Returns 未给单位",
+          "example_quote": "data.FirstRotationY = 0.174532925199433;",
+          "example_file": "Create_Section_View_in_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定；读取示例只 Debug.Print 该值，前置从未设 Y 旋转。"
+    },
+    {
+      "member": "FitHeight",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序与载体：Decal 的 RenderMaterial 上先设 MappingType=0、FixedAspectRatio=false，再置 FitHeight=true",
+          "example_quote": "swMaterial.FitHeight = true;",
+          "example_file": "Add_Decal_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只交代与 FitWidth/Width/Height 的关系；示例未调用 Width/Height，无矛盾。"
+    },
+    {
+      "member": "FitToSWWindow",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[ISwScene::BackgroundType]] is [[swSceneBackgroundType_e]].swBackgroundType_Image.",
+          "example_quote": "Scene.BackgroundType = (int)swSceneBackgroundType_e.swBackgroundType_UseEnvironment;",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md",
+          "why": "Remarks 说仅 BackgroundType 为 Image 时有效；示例先设成 UseEnvironment(4)，再把 FitToSWWindow 置 true 并读回，两侧不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出验证方式：置 true 后立即 Debug.Print 读回同一属性；成员页无任何调用序",
+          "example_quote": "Debug.Print(\"Stretch to fit in SOLIDWORKS Design window? \" + Scene.FitToSWWindow);",
+          "example_file": "Get_and_Set_Scene_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "VB/VBNET 两份同样先设 UseEnvironment；示例只读 BackgroundImage，未按 Remarks 设置。"
+    },
+    {
+      "member": "FitType",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "给的 3 份示例调的是 swDimensionTolerance.FitType（IDimensionTolerance，见该接口同名成员页），非本成员，按纪律不算用到。"
+    },
+    {
+      "member": "FitWidth",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例与 FitHeight 成对使用：FixedAspectRatio=false 之后同时置 true，成员页只说二者互相交叉引用",
+          "example_quote": "swMaterial.FitWidth = true;",
+          "example_file": "Add_Decal_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例的 FitWidth 均为 true，与 Remarks 的 True 语义一致，无矛盾。"
+    },
+    {
+      "member": "FixComponent",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Resolve_All_Components_Fix_A_Component_Example_CSharp.md",
+        "Resolve_All_Components_Fix_A_Component_Example_VB.md",
+        "Resolve_All_Components_Fix_A_Component_Example_VBNET.md",
+        "Switch_Edit_Context_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：先 ResolveAllLightWeightComponents，再 SelectByID2 用「配置@文件」全名选组件",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Pad_1-1@key pad_1\", \"COMPONENT\", 0, 0, 0, false, 0, null, 0);",
+          "example_file": "Resolve_All_Components_Fix_A_Component_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出验证手段：FixComponent 后用 Component2.IsFixed() 读回，成员页无 Returns/验证说明",
+          "example_quote": "Debug.Print(\"Selected component fixed? \" + swComp.IsFixed());",
+          "example_file": "Resolve_All_Components_Fix_A_Component_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定；Switch_Edit_Context 示范 Fix→Unfix→EditPart2 成对用法。"
+    }
+  ]
+}

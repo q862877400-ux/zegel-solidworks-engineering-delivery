@@ -1,0 +1,151 @@
+{
+ "idx": 160,
+ "results": [
+  {
+   "member": "GetCommandID",
+   "remarks_empty": false,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "两份 Flash 示例的 GetCommandID 都调在 CreateObject(\"SwHtmlControl.SwHtmlInterface.14\") 得到的 ISwHtmlInterface 上（例 2 里 swApp=Application.SldWorks 也没拿它调），示例自述同样写明用 ISwHtmlInterface ⇒ 名字撞上但非本成员，未采用。"
+  },
+  {
+   "member": "GetCommandIDsCount",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "Call this method before calling [[ICommandManager::IGetGroupDataFromRegistry]] to determine the size of the array for that method.",
+     "example_quote": "Dim getDataResult As Boolean = iCmdMgr.GetGroupDataFromRegistry(mainCmdGroupID, registryIDs)",
+     "example_file": "Create_Flyouts_in_the_CommandManager_Example_VBNET.md",
+     "why": "示例第 182 行先调 GetGroupDataFromRegistry，第 206 行才调本方法且只 Debug.Print，计数从未用来定数组大小，与「先取计数」的次序相反。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "实参是命令组的用户自定义 ID（mainCmdGroupID），调用点在 AddCommandItem2 与 cmdGroup.Activate() 之后。",
+     "example_quote": "iCmdMgr.GetCommandIDsCount(0)",
+     "example_file": "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+    }
+   ],
+   "note": "Remarks 点名 IGetGroupDataFromRegistry，示例调的是无 I 前缀的 GetGroupDataFromRegistry（.NET 侧同一方法）。"
+  },
+  {
+   "member": "GetCommandManager",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+    "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+    "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md",
+    "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "四份示例都在 ConnectToSW 内、SetAddinCallbackInfo 之后立即用形参 Cookie 调用，先取 CommandManager 再建命令组。",
+     "example_quote": "iCmdMgr = iSwApp.GetCommandManager(Cookie);",
+     "example_file": "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md"
+    }
+   ],
+   "note": "Remarks 只是一条指向《CommandManager and CommandGroups》的链接，无可对照的断言，故无冲突。"
+  },
+  {
+   "member": "GetCommandTab",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+    "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+    "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md",
+    "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "在 docTypes（swDocASSEMBLY/DRAWING/PART）循环里、cmdGroup.Activate() 之后调用，TabName 传加载项标题 Title。",
+     "example_quote": "cmdTab = iCmdMgr.GetCommandTab(docType, Title);",
+     "example_file": "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md"
+    },
+    {
+     "what": "返回 NULL 被当作「尚未创建」，为真才 AddCommandTab，印证 Remarks 的 NULL 约定。",
+     "example_quote": "if (cmdTab == null)",
+     "example_file": "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md"
+    }
+   ],
+   "note": "四份示例与 Remarks 一致，无冲突；Remarks 的「首个匹配项」分支未被示例演示。"
+  },
+  {
+   "member": "GetCommandTabs",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Activate_SOLIDWORKS_CommandManager_Tab_Example_CSharp.md",
+    "Activate_SOLIDWORKS_CommandManager_Tab_Example_VB.md",
+    "Activate_SOLIDWORKS_CommandManager_Tab_Example_VBNET.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "other_conflict",
+     "remarks_quote": "To activate and query the add-in CommandManager tabs, call [[ICommandManager::CommandTabs]].",
+     "example_quote": "swModelDocExt.ActiveCommandTab = \"Sketch\";",
+     "example_file": "Activate_SOLIDWORKS_CommandManager_Tab_Example_CSharp.md",
+     "why": "Remarks 把激活与查询都指向 ICommandManager::CommandTabs；三份示例一律用 IModelDocExtension::ActiveCommandTab 激活，全篇不出现该成员。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "须在已打开文档的 swModelDoc.Extension 上调用；返回对象赋给局部变量后示例中并未使用。",
+     "example_quote": "cmdTabs = swModelDocExt.GetCommandTabs();",
+     "example_file": "Activate_SOLIDWORKS_CommandManager_Tab_Example_CSharp.md"
+    }
+   ],
+   "note": "VB 与 VB.NET 两版代码内容相同，仅换行排版不同。"
+  },
+  {
+   "member": "GetCommands",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md",
+    "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "在 AddCommands 之后调用，只用返回值确认命令数，两个 out 数组被声明后即丢弃。",
+     "example_quote": "buttonNumber = cmdBox.GetCommands(out idObject, out textTypeObject);",
+     "example_file": "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md"
+    },
+    {
+     "what": "VB.NET 版以预声明变量传入、源码里不写 out，注释写明用途是确认数量。",
+     "example_quote": "cmdBox.GetCommands(idObject,",
+     "example_file": "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md"
+    }
+   ],
+   "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+  },
+  {
+   "member": "GetCommentCount",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Comments_in_Comments_Folder_Example_CSharp.md",
+    "Get_Comments_in_Comments_Folder_Example_VB.md",
+    "Get_Comments_in_Comments_Folder_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "须在 AddComment 与 UpdateFeatureTree() 之后调用，计数随后直接当数组上界用。",
+     "example_quote": "nbrComments = swCommentFolder.GetCommentCount();",
+     "example_file": "Get_Comments_in_Comments_Folder_Example_CSharp.md"
+    },
+    {
+     "what": "CommentFolder 取自特征树中 GetTypeName 为 \"CommentsFolder\" 的那个特征。",
+     "example_quote": "if (sFeatType == \"CommentsFolder\")",
+     "example_file": "Get_Comments_in_Comments_Folder_Example_CSharp.md"
+    }
+   ],
+   "note": "三份示例都先 GetCommentCount 再 GetComments，与 Remarks 完全一致，无冲突。"
+  }
+ ]
+}

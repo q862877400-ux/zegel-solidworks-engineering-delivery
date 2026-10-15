@@ -1,0 +1,98 @@
+{
+  "idx": 352,
+  "results": [
+    {
+      "member": "LimitsAndFitsCode",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Summary/Signature/Returns/Examples，无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "LineLength",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VB.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md",
+        "Get_All_Elements_of_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段；描述句称 in meters 但不在 Remarks 内，按规则不判冲突。"
+    },
+    {
+      "member": "LineParams",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Angle_Between_Plane_and_Line_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只用下标 3/4/5 当方向向量，喂给 swMath.CreateVector 再做点乘叉乘；成员页没写这层用法约束。",
+          "example_quote": "dirArr(0) = params(3)\ndirArr(1) = params(4)\ndirArr(2) = params(5)\nSet curveVec = swMath.CreateVector((dirArr))",
+          "example_file": "Get_Angle_Between_Plane_and_Line_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 写 6 个 double（rootPoint 存米），示例取 params(3..5) 与之吻合，未发现不可同时成立处。"
+    },
+    {
+      "member": "LineSpacing",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VB.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md",
+        "Get_All_Elements_of_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，跳过。Returns 只写 Line spacing，未写单位，无可对照基准。"
+    },
+    {
+      "member": "LineStyle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_BCurve_Spline_Points_Example_CSharp.md",
+        "Get_BCurve_Spline_Points_Example_VB.md",
+        "Get_BCurve_Spline_Points_Example_VBNET.md",
+        "Get_P-Spline_Parameterization_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，跳过。Returns 引 swLineStyles_e 与 -1，未在 Remarks 内展开。"
+    },
+    {
+      "member": "LineWidth",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_BCurve_Spline_Points_Example_CSharp.md",
+        "Get_BCurve_Spline_Points_Example_VB.md",
+        "Get_BCurve_Spline_Points_Example_VBNET.md",
+        "Get_P-Spline_Parameterization_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，跳过。Returns 只引 swLineWeights_e，无语义说明可比对。"
+    },
+    {
+      "member": "LinkDisplayStatesToConfigurations",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Link_Display_States_to_Configurations_Example_CSharp.md",
+        "Link_Display_States_to_Configurations_Example_VB.md",
+        "Link_Display_States_to_Configurations_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，跳过。Returns 写了 True/False 语义，但不在 Remarks 内。"
+    }
+  ]
+}

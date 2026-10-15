@@ -1,0 +1,114 @@
+{
+  "idx": 356,
+  "results": [
+    {
+      "member": "LockPosition",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Anchor_a_Note_Example_CSharp.md",
+        "Anchor_a_Note_Example_VB.md",
+        "Anchor_a_Note_Example_VBNET.md",
+        "Get_Corresponding_Objects_in_Assembly_Component_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks；四份示例只做布尔赋值，无可比对语义"
+    },
+    {
+      "member": "LockRotation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Profile_Center_Mate_Example_CSharp.md",
+        "Create_Profile_Center_Mate_Example_VB.md",
+        "Create_Standard_Mates_Example_CSharp.md",
+        "Create_Standard_Mates_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks；四份示例均置 false（同心配合不解锁旋转）后回读"
+    },
+    {
+      "member": "LoopEdges",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Shut-Off_Surface_Data_Example_VB.md",
+        "Get_Shut-Off_Surface_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有标题、无正文；示例按 GetLoopCount 索引当带参方法调用"
+    },
+    {
+      "member": "LoopPatchType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Shut-Off_Surface_Data_Example_VB.md",
+        "Get_Shut-Off_Surface_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有标题、无正文；示例 LoopPatchType(i) 按循环索引取值"
+    },
+    {
+      "member": "LoopSpacing",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Fill_Pattern_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先置 PatternLayoutType=0（枚举即 swPatternLayoutCircular，落在 Remarks 允许的三个值内）再设 LoopSpacing",
+          "example_quote": "swFeatData.PatternLayoutType = 0;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出 LoopSpacing 的实赋值，与同文件 InstanceSpacing 同为 0.0170240490494193（成员页 Returns 未写单位）",
+          "example_quote": "swFeatData.LoopSpacing = 0.0170240490494193;",
+          "example_file": "Create_Fill_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的前置条件与示例一致，无矛盾；示例只补充赋值顺序与数值"
+    },
+    {
+      "member": "Loops",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Chamfer_Distances_Example_CSharp.md",
+        "Get_Chamfer_Distances_Example_VB.md",
+        "Get_Chamfer_Distances_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：必须先 AccessSelections(swModel, null) 才能读 Loops，结束后 ReleaseSelectionAccess",
+          "example_quote": "bRet = swChamfer.AccessSelections(swModel, null);",
+          "example_file": "Get_Chamfer_Distances_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出元素类型：Loops 需转 object[]，元素为 Loop2，且拓扑 loop 不能直接按实体选中",
+          "example_quote": "// Cannot select loop-through-entity interface because loop",
+          "example_file": "Get_Chamfer_Distances_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 仅外链 Selections that Define Features；示例补出取用前置与拓扑限制"
+    },
+    {
+      "member": "LowerInspection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Chamfer_Display_Dimension_Example_CSharp.md",
+        "Get_Chamfer_Display_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在设完 SetLowerText 与 ShowLowerParenthesis 之后只读 LowerInspection，未给它赋值",
+          "example_quote": "Debug.Print(\" Show lower inspection: \" + swDispDim.LowerInspection);",
+          "example_file": "Get_Chamfer_Display_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只说检验尺寸呈椭圆；示例只回读，无相互矛盾之处"
+    }
+  ]
+}

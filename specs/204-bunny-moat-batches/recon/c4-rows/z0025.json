@@ -1,0 +1,131 @@
+{
+  "idx": 25,
+  "results": [
+    {
+      "member": "Ascending",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Sort_Table_Example_VB.md",
+        "Sort_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示 Ascending 是按下标索引的可写属性：0=主排序、1=次排序逐级设方向；三级排序缺席时 ColumnIndex(2)=-1 且不写 Ascending(2)。成员页除标题外无签名无说明",
+          "example_quote": "swSortData.Ascending(0) = True ' sort ascending",
+          "example_file": "Sort_Table_Example_VB.md"
+        },
+        {
+          "what": "示例给出唯一取得途径：先从 IBomTableAnnotation 取 BomTableSortData 再逐级赋值，页面完全未提对象从哪来",
+          "example_quote": "Set swSortData = swSpecTable.GetBomTableSortData",
+          "example_file": "Sort_Table_Example_VB.md"
+        }
+      ],
+      "note": "成员页仅 10 行、无 Signature 也无 Remarks，按纪律跳过冲突判定"
+    },
+    {
+      "member": "Aspect",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_OLE_Object_Data_Example_CSharp.md",
+        "Get_OLE_Object_Data_Example_VB.md",
+        "Get_OLE_Object_Data_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "The ViewingAspect argument uses the DVASPECT enumeration, which has the following values:",
+          "example_quote": "Debug.Print(\"  Viewing aspect (1=Content, 2=Thumbnail, 4=Icon, 8=DocPrint): \" + swOleObj.Aspect);",
+          "example_file": "Get_OLE_Object_Data_Example_CSharp.md",
+          "why": "Remarks 把 ViewingAspect 称作 argument，但本页签名是无参只读属性 Aspect，示例也按无参属性读；ISwOLEObject 14 个成员里并无 ViewingAspect。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出取得该对象的唯一路径：模型里先插入 OLE 对象，再用 GetSelectedObject6(1,0) 取已选中项；Remarks 无任何前置或获取说明",
+          "example_quote": "swOleObj = (SwOLEObject)swSelMgr.GetSelectedObject6(1, 0);",
+          "example_file": "Get_OLE_Object_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "取值 1/2/4/8 与示例标签逐项一致，无冲突"
+    },
+    {
+      "member": "AssemblyFeatureScope",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例都在 swSweep（SweepFeatureData）上调该名，属 ISweepFeatureData 而非 IExtrudeFeatureData2，按撞名不采用；页面本身无 Remarks"
+    },
+    {
+      "member": "AsymmetricFillet",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "2 份示例的 swFeatData 是 VariableFilletFeatureData2；AsymmetricFillet 另有 IVariableFilletFeatureData2 一份，属撞名不采用；页面无 Remarks"
+    },
+    {
+      "member": "Attach",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例的 Attach 都调在 DesignTable 对象上（GetDesignTable 的返回值），不是 IBomTable，撞名不采用；页面无 Remarks 段"
+    },
+    {
+      "member": "AttachAnnotation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Attach_Annotation_Example_CSharp.md",
+        "Attach_Annotation_Example_VB.md",
+        "Attach_Annotation_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例的第二项选择是视图内的一个 FACE（按点 SelectByID2，append=True、mark=0），而非 Remarks 所说的整个 drawing view 对象",
+          "example_quote": "boolstatus = part.Extension.SelectByID2(\"\", \"FACE\", 0.0783563575357558, 0.17448024010205, -499.965138294658, true, 0, null, 0);",
+          "example_file": "Attach_Annotation_Example_CSharp.md"
+        },
+        {
+          "what": "示例附着前先 SetLeader3 设为弯引线（swBENT），Remarks 没有任何引线前置要求",
+          "example_quote": "ret = anAnnot.SetLeader3(swLeaderStyle_e.swBENT, swLeaderSide_e.swLS_SMART, true, false, false, false);",
+          "example_file": "Attach_Annotation_Example_CSharp.md"
+        },
+        {
+          "what": "示例先 ActivateView 激活目标视图、再往选区追加面，Remarks 只说 multi-select 未提激活",
+          "example_quote": "boolstatus = draw.ActivateView(\"Drawing View1\");",
+          "example_file": "Attach_Annotation_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说 multi-select 视图、示例实选视图内一个面；判为更具体而非矛盾，故 conflicts 为空"
+    },
+    {
+      "member": "AutoBalloon2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Autoballoons_Example_VB_AutoBalloon2_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "参数 Layout 取自用户首选项 DetailingAutoBalloonLayout，示例以常量 -1 表示默认；页面两个参数都只写 No description",
+          "example_quote": "Const swDetailingBalloonLayout_Default As Long = -1",
+          "example_file": "Insert_Autoballoons_Example_VB_AutoBalloon2_VB.md"
+        },
+        {
+          "what": "返回形状由示例给出：已有气球或文档为 lightweight 时返回空数组，否则每个已解析组件一个 Note；页面无 Returns 段",
+          "example_quote": "' Returns an empty array if:",
+          "example_file": "Insert_Autoballoons_Example_VB_AutoBalloon2_VB.md"
+        },
+        {
+          "what": "前置：必须先选中一个 drawing view 并激活，页面未提任何前置",
+          "example_quote": "bRet = swModelDocExt.SelectByID2(\"Drawing View1\", \"DRAWINGVIEW\", 0, 0, 0, False, 0, Nothing, 0)",
+          "example_file": "Insert_Autoballoons_Example_VB_AutoBalloon2_VB.md"
+        }
+      ],
+      "note": "示例自述 now obsolete，与页面 Obsolete 相符；页面无 Remarks 故跳过冲突判定"
+    }
+  ]
+}

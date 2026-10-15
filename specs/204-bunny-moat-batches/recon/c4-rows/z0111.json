@@ -1,0 +1,152 @@
+{
+  "idx": 111,
+  "results": [
+    {
+      "member": "EndConditionOverride",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 的 UseBaselineDimensions 前置，在示例里落到 AdvancedHole2 的第 3 个位置实参 false",
+          "example_quote": "feat = swFeatureMgr.AdvancedHole2(dispArray, dispArray2, false, true, false, out ResultArray);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        },
+        {
+          "what": "示例自带注释点明该实参含义，与 Remarks 的前置一致",
+          "example_quote": "//Create the Advanced Hole using the near and far side element arrays; specify to not use baseline dimensions; customize Hole Callouts",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出必须先转型成 ICounterboreElementData、再设 override 的具体次序",
+          "example_quote": "swCounterBoreFar = (CounterboreElementData)swAdvHole_Far_1;",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都设了 EndCondition + override，与 Remarks 相容，无冲突"
+    },
+    {
+      "member": "EndDrag",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rotate_Assembly_Component_on_Axis_Example2_CSharp.md",
+        "Rotate_Assembly_Component_on_Axis_Example2_VB.md",
+        "Rotate_Assembly_Component_on_Axis_Example2_VBNET.md",
+        "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 BeginDrag→多次 Drag→EndDrag 的配对调用序，成员页未写",
+          "example_quote": "bRet = swDragOp.BeginDrag();",
+          "example_file": "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+        },
+        {
+          "what": "示例注明中途 Drag 可失败，故 EndDrag 之前需判返回值",
+          "example_quote": "// Returns false if drag fails",
+          "example_file": "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；四份示例均真调用"
+    },
+    {
+      "member": "EndFace",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Hole_Series_Information_Example_CSharp.md",
+        "Get_Hole_Series_Information_Example_VB.md",
+        "Get_Hole_Series_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示读 EndFace 前必须先 AccessSelections，成员页无此前置",
+          "example_quote": "swFeatData.AccessSelections(swDoc, null);",
+          "example_file": "Get_Hole_Series_Information_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出返回值取用形状：转成 Face2 再取其 Entity",
+          "example_quote": "swFace = (Face2)swFeatData.EndFace;",
+          "example_file": "Get_Hole_Series_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks；示例对象确为 HoleSeriesFeatureData2，接口对得上"
+    },
+    {
+      "member": "EndOffset",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "两份示例的 swFeatData 是 SweptFlangeFeatureData，命中的是 ISweptFlangeFeatureData 同名成员，非本成员"
+    },
+    {
+      "member": "EndPoint",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Edge_Curve_Parameterization_Example_CSharp.md",
+        "Get_Edge_Curve_Parameterization_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 侧需把 System.object 显式转成 double[] 才能按下标取三分量",
+          "example_quote": "vEndPoint = (double[])swCurveParaData.EndPoint;",
+          "example_file": "Get_Edge_Curve_Parameterization_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；VB/VB.NET 走后期绑定 Object + UBound，形状一致"
+    },
+    {
+      "member": "EndSketchEdit",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Compound_Note_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 BeginSketchEdit 与 EndSketchEdit 必须配对的调用序",
+          "example_quote": "swNote.BeginSketchEdit",
+          "example_file": "Create_Compound_Note_Example_VB.md"
+        },
+        {
+          "what": "示例用索引 1/2 取第一、二段文字，印证 Remarks 的 1 起编号",
+          "example_quote": "n2 = swNote.GetTextAtIndex(2)",
+          "example_file": "Create_Compound_Note_Example_VB.md"
+        },
+        {
+          "what": "示例前置特意用 2012 版图纸，与成员页「2016 及以后创建的文档不适用」相容",
+          "example_quote": "Open public_documents\\samples\\tutorial\\api\\2012-sm.slddrw.",
+          "example_file": "Create_Compound_Note_Example_VB.md"
+        }
+      ],
+      "note": "示例索引用法与 Remarks 逐条吻合，未见矛盾"
+    },
+    {
+      "member": "EndSymbol",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Display_Elevation_Symbol_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体枚举取值，Remarks 只说由 Elevation 控制显示",
+          "example_quote": "swDisplayDim.EndSymbol = swOrdDimEndSymbol_Dowel",
+          "example_file": "Display_Elevation_Symbol_Example_VB.md"
+        },
+        {
+          "what": "示例显示须先赋 EndSymbol 再把 Elevation 置 True 才显出符号",
+          "example_quote": "swDisplayDim.Elevation = True",
+          "example_file": "Display_Elevation_Symbol_Example_VB.md"
+        }
+      ],
+      "note": "示例与 Remarks 的 Elevation 控制关系完全一致"
+    }
+  ]
+}

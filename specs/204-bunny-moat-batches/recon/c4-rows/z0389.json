@@ -1,0 +1,110 @@
+{
+  "idx": 389,
+  "results": [
+    {
+      "member": "PlanarTrimOption",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IComplexCornerTreatmentFeatureData::PlanarTrimToolType]] is set to [[swCornerTreatmentPlanarTrimToolType_e]].swAutomatic.",
+          "example_quote": "'Below is valid only if PlanarTrimToolType is set to\n'swCornerTreatmentPlanarTrimToolType_e.swCornerTreatmentPlanarTrimTool_UserDefined",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md",
+          "why": "两侧对同一 PlanarTrimToolType 的哪个枚举值使平面修剪属性有效给出相反答案：成员页写 swAutomatic，示例唯一条件注释写 UserDefined；示例还在从未设置 ToolType 的情况下直接读 PlanarTrimOption。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例读这些属性前先调 AccessSelections，并在三种角处理接口上分别读该属性。",
+          "example_quote": "crnrFeat2.AccessSelections modDoc, Nothing",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md"
+        }
+      ],
+      "note": "示例的条件注释实挂在 UserDefinedTrimFaces 上，未证实成员页的 swAutomatic。"
+    },
+    {
+      "member": "PlanarTrimToolType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "Plane",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "指定 4 份示例用的是 transInfo.Plane，属另一接口，非 IMirrorPatternFeatureData。"
+    },
+    {
+      "member": "PlaneParams",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Infinite_Plane_Example_VB.md",
+        "Get_Angle_of_Hole_Not_Normal_to_a_Face_Example_VB.md",
+        "Get_Normal_of_Planar_Surface_Example_VB.md",
+        "Get_Parameters_of_Planar_Surface_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 0 基下标映射：0-2 为 normal，3-5 为 rootPoint，成员页只列顺序未给下标。",
+          "example_quote": "Debug.Print \" Root = (\" & vPlane(3) * 1000# & \", \" & vPlane(4) * 1000# & \", \" & vPlane(5) * 1000# & \") mm\"",
+          "example_file": "Get_Parameters_of_Planar_Surface_Example_VB.md"
+        },
+        {
+          "what": "示例只对 rootPoint 乘 1000，normal 原样作单位向量参与点积，坐实单位口径。",
+          "example_quote": "nVector(0) = vPlane(0): nVector(1) = vPlane(1): nVector(2) = vPlane(2)",
+          "example_file": "Get_Angle_of_Hole_Not_Normal_to_a_Face_Example_VB.md"
+        },
+        {
+          "what": "示例要求先判 IsPlane 才取该属性，成员页未写此闸门。",
+          "example_quote": "If swSurf.IsPlane Then\n        vPlane = swSurf.PlaneParams",
+          "example_file": "Get_Parameters_of_Planar_Surface_Example_VB.md"
+        }
+      ],
+      "note": "4 份示例与 Remarks 完全一致（rootPoint 为米、normal 无量纲），无冲突。"
+    },
+    {
+      "member": "Play",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md",
+        "swmotionstudyapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "PlayMode",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+        "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VBNET.md",
+        "swmotionstudyapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "PointArray",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "指定 4 份示例的 PointArray 属 TablePatternFeatureData，非本接口；真用本成员的示例未派发。"
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "idx": 398,
+  "results": [
+    {
+      "member": "PullDirection",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Parting_Line_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Parting_Line_Feature_Data_Example_VB.md",
+        "Get_and_Set_Parting_Line_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples/See Also，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "PullDirectionType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Parting_Line_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Parting_Line_Feature_Data_Example_VB.md",
+        "Get_and_Set_Parting_Line_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；三份示例均只读取该属性打印。"
+    },
+    {
+      "member": "PulleyComponents",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Belt_Chain_Feature_Example_CSharp.md",
+        "Create_Belt_Chain_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先把 object[] 转成 DispatchWrapper[] 再赋值；成员页只说「Array of pulley members」，未提包装类型",
+          "example_quote": "dArray = ObjectArrayToDispatchWrapperArray(pulleyComps);",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例三个数组（PulleyComponents/PulleyDiameters/FlipSides）长度同为 2，正是 Remarks 所说的 one-to-one",
+          "example_quote": "beltChainFeatData.PulleyComponents = dArray;",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 唯一断言（三个数组一一对应）被示例满足，两侧不冲突。"
+    },
+    {
+      "member": "PulleyDiameters",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Belt_Chain_Feature_Example_CSharp.md",
+        "Create_Belt_Chain_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例赋 0.02 后自述为 20 mm ⇒ 该数组单位是米；成员页 Returns 只写「Array of diameters」，未定单位",
+          "example_quote": "Debug.Print(\"Pulley diameters changed to 20 mm\");",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "读取时可直接强转 double[]，赋值也直接给 double[]（不需 DispatchWrapper 包装），成员页未说返回的具体类型",
+          "example_quote": "pulleyDiamsOri = (double[])swFeatData.PulleyDiameters;",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 与 PulleyComponents 的 Remarks 互为镜像，示例三数组等长，无冲突。"
+    },
+    {
+      "member": "PunchTable",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Punch_Table_Example_CSharp.md",
+        "Insert_Punch_Table_Example_VB.md",
+        "Insert_Punch_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；三份示例都是 myTableAnn.PunchTable 取回对象。"
+    },
+    {
+      "member": "PurgeDisplayState",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_CSharp.md",
+        "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_VB.md",
+        "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；三份示例各调用一次并赋给 boolstatus。"
+    },
+    {
+      "member": "QuantityDenotationText",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Balloon_to_Stacked_Balloon_Example_VBNET.md",
+        "Insert_BOM_Table_and_Stacked_Balloon_Example_CSharp.md",
+        "Insert_BOM_Table_and_Stacked_Balloon_Example_VB.md",
+        "Insert_BOM_Table_and_Stacked_Balloon_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例操作的对象类型是 StackedBalloonOptions，即 IStackedBalloonOptions 的同名成员，不是本页的 IBalloonOptions",
+          "example_quote": "StackedBalloonParams.QuantityDenotationText = \"PLACES\";",
+          "example_file": "Insert_BOM_Table_and_Stacked_Balloon_Example_CSharp.md"
+        },
+        {
+          "what": "示例在 ShowQuantity = False 的同一段里仍给它赋值，成员页未说它是否依赖 ShowQuantity",
+          "example_quote": "swStackedBalloons.QuantityDenotationText = \"X\"",
+          "example_file": "Add_Balloon_to_Stacked_Balloon_Example_VBNET.md"
+        }
+      ],
+      "note": "Remarks 只是「详见 SOLIDWORKS 帮助」的指引，无可证伪断言，故不构成冲突。"
+    }
+  ]
+}

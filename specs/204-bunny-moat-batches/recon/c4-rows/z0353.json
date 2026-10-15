@@ -1,0 +1,118 @@
+{
+  "idx": 353,
+  "results": [
+    {
+      "member": "LinkParentConfiguration",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Link_Projected_View_to_Parent_Configuration_Example_CSharp.md",
+        "Link_Projected_View_to_Parent_Configuration_Example_VB.md",
+        "Link_Projected_View_to_Parent_Configuration_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "After setting this property, call [[IModelDoc2::EditRebuild3]].",
+          "example_quote": "if (status)\n{\n    Debug.Print(\"Projected view now linked to parent configuration.\");\n    swModel.EditRebuild3();\n}",
+          "example_file": "Link_Projected_View_to_Parent_Configuration_Example_CSharp.md",
+          "why": "成员页把 EditRebuild3 写成设值后的无条件义务；示例只在 getter 回读 true 的分支里重建，false 分支不重建。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例要求先 ActivateView 再取 ActiveDrawingView 拿到 IView；成员页没给任何取对象的途径",
+          "example_quote": "swView = (View)swDrawing.ActiveDrawingView;",
+          "example_file": "Link_Projected_View_to_Parent_Configuration_Example_CSharp.md"
+        },
+        {
+          "what": "示例只对「Drawing View2」这一个投影视图操作，且明说不保存改动",
+          "example_quote": "status = swDrawing.ActivateView(\"Drawing View2\");",
+          "example_file": "Link_Projected_View_to_Parent_Configuration_Example_CSharp.md"
+        }
+      ],
+      "note": "VB/VBNET 两份的调用序与 C# 一致，冲突同一条。"
+    },
+    {
+      "member": "LinkToFile",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "列出的 4 份示例都不碰本成员：2 份是 IEquationMgr、2 份是 ISketchBlockDefinition 同名属性；无冲突可判。"
+    },
+    {
+      "member": "LinkToFormTool",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Forming_Tool_Feature_Example_CSharp.md",
+        "Create_Forming_Tool_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段（Returns 直接接 See Also），按纪律跳过。"
+    },
+    {
+      "member": "LinkToLibraryPart",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Library_Feature_Data_Example_CSharp.md",
+        "Get_Library_Feature_Data_Example_VB.md",
+        "Get_Library_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "读本属性前必须先 AccessSelections，末尾 ReleaseSelectionAccess；成员页只把细节外链到选择文档",
+          "example_quote": "boolstatus = LibraryFeatureData.AccessSelections(ModelDoc2, null);",
+          "example_file": "Get_Library_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例先按 GetTypeName==\"LibraryFeature\" 过一遍特征树，再用 GetDefinition 取数据对象；成员页未写",
+          "example_quote": "if (Feature.GetTypeName() == \"LibraryFeature\")",
+          "example_file": "Get_Library_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "VB 版多一步：先把放置平面选中再读本属性，C# 版没有这一步",
+          "example_quote": "placementPlane.Select False",
+          "example_file": "Get_Library_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "三份示例调用序一致；成员页外链的《Accessing Selections that Define Features》与示例不矛盾。"
+    },
+    {
+      "member": "LinkedDisplayState",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_CSharp.md",
+        "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_VB.md",
+        "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段（Returns 直接接 Examples），按纪律跳过。"
+    },
+    {
+      "member": "LinkedViews",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Viewports_Example_CSharp.md",
+        "Set_Viewports_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段；成员页另列的 VBA 那份示例里没有本成员。"
+    },
+    {
+      "member": "ListExternalFileReferences2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_External_References_Example_CSharp.md",
+        "Get_External_References_Example_VB.md",
+        "Get_External_References_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段（Parameters 直接接 Examples），按纪律跳过。"
+    }
+  ]
+}

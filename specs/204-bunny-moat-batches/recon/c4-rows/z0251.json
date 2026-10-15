@@ -1,0 +1,135 @@
+{
+  "idx": 251,
+  "results": [
+    {
+      "member": "GetSelectedObject3",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Curve_Spline_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks（仅 Obsolete+签名+参数），按纪律跳过。"
+    },
+    {
+      "member": "GetSelectedObject5",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Bend_Radius_of_Sheet_Metal_Part_Example_VB.md",
+        "Change_Bend_Radius_of_Sketched_Bend_Example_VB.md",
+        "Change_Height_of_Dome_Feature_Example_VB.md",
+        "Change_Weld_Bead_Faces_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；四例均真调用（末例 3 处，index 1 与 2）。"
+    },
+    {
+      "member": "GetSelectedObject6",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Assembly_Example_CPlusPlus_COM.md",
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md",
+        "Access_and_Release_Access_to_Edges_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "ISelectionMgr object obtained from a part or assembly document\n\n[[IComponent2]] object.",
+          "example_quote": "swFeat = (Feature)swSelMgr.GetSelectedObject6(1, -1);",
+          "example_file": "Access_and_Release_Access_to_Edges_Example_CSharp.md",
+          "why": "Remarks 的条件只说 ISelectionMgr 取自哪种文档，没说要选中什么；此例 swSelMgr 来自 box.sldprt（零件），按 Remarks 该情形必返 IComponent2，实际返的是 Feature。两条不能同时成立。"
+        },
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "ISelectionMgr object obtained from a part or assembly document\n\n[[IComponent2]] object.",
+          "example_quote": "Set segments(0) = swSelMgr.GetSelectedObject6(1, 0)",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md",
+          "why": "同上：swSelMgr 取自 weldment_box.sldprt（零件），返回值被当作草图线段喂给 SetPathSegments。按 Remarks 此情形必须返回 IComponent2，与示例直接冲突（C# 版同型）。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "C++ 原型给出 raw 接口形态：3 个形参、末位是 IDispatch 出参，与页面 2 参的晚绑定签名不是同一形态。",
+          "example_quote": "hres = swSelMgr->GetSelectedObject6(1, -1, &pComponentDisp);",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "装配件里要拿到 IComponent2 还须先 Select2 选中、再 QueryInterface 转接口；页面只说直接返回 IComponent2。",
+          "example_quote": "hres = pComponentDisp->QueryInterface(__uuidof(IComponent2),",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例用 Mark=0 只取无标记的选择（选中时 mark 传的也是 0），页面给了规则却没给这种用法。",
+          "example_quote": "Set segments(0) = swSelMgr.GetSelectedObject6(1, 0)",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 返回类型表只按文档来源给条件，未提选中的是什么。"
+    },
+    {
+      "member": "GetSelectedObjectCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Objects_to_Selection_List_Example_CSharp.md",
+        "Add_Objects_to_Selection_List_Example_VB.md",
+        "Add_Objects_to_Selection_List_Example_VBNET.md",
+        "Check_Interference_using_AssemblyDoc_ToolsCheckInterference2_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；四例均真调用该无参计数成员。"
+    },
+    {
+      "member": "GetSelectedObjectCount2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Library_Feature_With_References_Example_CSharp.md",
+        "Create_Library_Feature_With_References_Example_VB.md",
+        "Create_Library_Feature_With_References_Example_VBNET.md",
+        "Create_New_Part_from_Existing_Part_Using_Temporary_Body_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值当作 GetSelectedObject6 的 1 基循环上界（i 由 1 数到 nSelCount），页面没写这层用法。",
+          "example_quote": "nSelCount = swSelMgr.GetSelectedObjectCount2(-1);\nfor (i = 1; i <= nSelCount; i++)",
+          "example_file": "Create_New_Part_from_Existing_Part_Using_Temporary_Body_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 版先把计数减 1，剔除 AccessSelections 留下的那个库特征，只留两条定位用的边。",
+          "example_quote": "selCount = selCount - 1",
+          "example_file": "Create_Library_Feature_With_References_Example_VB.md"
+        }
+      ],
+      "note": "同名示例 C# 版不减 1，VBA/VB.NET 版减 1，两版取到的引用集合不同。"
+    },
+    {
+      "member": "GetSelectedObjectType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Rename_Objects_Example_VB.md",
+        "Get_Circular_Holes_In_Face_Example_CPlusPlus_COM.md",
+        "Get_Edge_Points_Example_VB.md",
+        "Get_Note_By_Name_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；四例均真调用，并与 swSelEDGES/swSelNOTES 比对。"
+    },
+    {
+      "member": "GetSelectedObjectType2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Calculate_Closest_Distance_Between_Model_Components_Example_VB.md",
+        "Determine_Type_of_Face_Example_VB.md",
+        "Display_Elevation_Symbol_Example_VB.md",
+        "Display_Grid_Bubble_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；四例均真调用，index 从 1 起累加。"
+    }
+  ]
+}

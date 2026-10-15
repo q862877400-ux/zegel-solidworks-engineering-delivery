@@ -1,0 +1,156 @@
+{
+  "idx": 64,
+  "results": [
+    {
+      "member": "CreateFlyoutGroup2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Flyouts_in_the_CommandManager_Example_CSharp.md",
+        "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 8 实参的具体填法：UserID=91、两个 3 元素图标数组与两个回调名（成员页只说数组须同序同尺寸）",
+          "example_quote": "iCmdMgr.CreateFlyoutGroup2(flyoutGroupID, \"Dynamic Flyout\", \"Dynamic Flyout\", \"Flyout Hint\",",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出图标数组的逐项路径写法（nxn / nnxnn / nnnxnnn 两组平行）",
+          "example_quote": "mainIcons[2] = \"Pathname_to_nnnxnnn_image\";",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页的 AddCommands / AddContextMenuFlyout / AddCommandItem 调用序两份示例都照做，未见冲突。"
+    },
+    {
+      "member": "CreateFormTool2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Forming_Tool_Example_CSharp.md",
+        "Create_Forming_Tool_Example_VB.md",
+        "Create_Forming_Tool_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「停止面」落成按点定位的 SelectByID2 调用；成员页只规定 Append=True 与 Mark=1",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"\", \"FACE\", 0.0283459459495816, 0.0187563215566229, 0, true, 1, null, 0);",
+          "example_file": "Create_Forming_Tool_Example_CSharp.md"
+        },
+        {
+          "what": "示例把「待移除面」按 Mark=2 再选一次；三份示例与成员页的 mark 表一致",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"\", \"FACE\", 0.0358143533097106, 0.0308169322714775, 0.0066335048657038, true, 2, null, 0);",
+          "example_file": "Create_Forming_Tool_Example_CSharp.md"
+        }
+      ],
+      "note": "签名两参 (OriginX, OriginY) 与示例 CreateFormTool2(0, 0) 一致；两侧都没写单位，无单位可判。"
+    },
+    {
+      "member": "CreateGroup",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Manage_Collision_Detection_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面无 Remarks；示例给出调用序：先 GetCollisionDetectionManager→SetAssembly，再建组（成员页零前置）",
+          "example_quote": "longstatus = cdm.SetAssembly(swDoc);",
+          "example_file": "Manage_Collision_Detection_Example_CSharp.md"
+        },
+        {
+          "what": "返回签名是 System.object，示例必须显式强转成 CollisionDetectionGroup",
+          "example_quote": "cdg = (CollisionDetectionGroup)cdm.CreateGroup();",
+          "example_file": "Manage_Collision_Detection_Example_CSharp.md"
+        }
+      ],
+      "note": "同名 CreateGroup 属 swNormalCutFeatData（Create_Normal_Cut_Feature 示例），非本成员。"
+    },
+    {
+      "member": "CreateInstance5",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Attribute_to_Feature_and_Include_In_Library_Feature_Example_VB.md",
+        "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_CSharp.md",
+        "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_VBNET.md",
+        "Create_Attribute_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "If you add an attribute to an entity, SOLIDWORKS strips the attribute feature from the entity if the entity is included in your export to a library feature or library feature part.",
+          "example_quote": "swAttribute = swAttributeDef.CreateInstance5(swModel, swFace, \"TestAttribute\", 0, (int)swInConfigurationOpts_e.swAllConfiguration);\n            swAttribute.IncludeInLibraryFeature = true;",
+          "example_file": "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_CSharp.md",
+          "why": "成员页说实体属性导出库特征会被剥离；示例恰恰把属性挂到 Face2（实体）并置 IncludeInLibraryFeature=True 让它保留，同一场景两种结局。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例用循环换名重试，说明重名时本方法返回 Nothing（成员页只要求名字唯一）",
+          "example_quote": "Set swAtt = swAttDef.CreateInstance5(swModel, swEnt, AttName, CreateVisible, swThisConfiguration)",
+          "example_file": "Create_Attribute_Example_VB.md"
+        },
+        {
+          "what": "示例明确 OwnerObj 传的是 Face2 而非 Feature —— 落在实体分支，不在特征分支",
+          "example_quote": "// Add the attribute to one of the feature's faces",
+          "example_file": "Add_Attribute_to_Feature_and_Include_in_Library_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "options 位语义（1=隐藏 / 0=可见）与示例注释 '1 = invisible 一致；swAllConfiguration 也与 NOTE 相容。"
+    },
+    {
+      "member": "CreateLayer",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Put_Assembly_Components_in_Drawing_View_on_Different_Layers_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出禁用符号的替代写法：先把 / 换成 _（成员页只写不要用，没给替代）",
+          "example_quote": "sLayerName = Replace(sLayerName, \"/\", \"_\")",
+          "example_file": "Put_Assembly_Components_in_Drawing_View_on_Different_Layers_Example_VB.md"
+        },
+        {
+          "what": "示例注释把 @ 一并替换；其 NOTE 又称建层时会自动替换非法字符，代码却手工先换",
+          "example_quote": "sLayerName = Replace(sLayerName, \"@\", \"_\")",
+          "example_file": "Put_Assembly_Components_in_Drawing_View_on_Different_Layers_Example_VB.md"
+        }
+      ],
+      "note": "6 实参与 Returns 一致；本成员 Obsolete（后继 CreateLayer2），示例仍调它。"
+    },
+    {
+      "member": "CreateLayer2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Layer_for_Selected_View_Example_CSharp.md",
+        "Create_Layer_for_Selected_View_Example_VB.md",
+        "Create_Layer_for_Selected_View_Example_VBNET.md",
+        "Determine_if_Layer_is_Visible_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 7 实参完整形态：BOn 与 BPrint 都传 true，线型/线宽用枚举（成员页未给示例值）",
+          "example_quote": "bRet = swDraw.CreateLayer2(sLayerName, \"Layer for part in \" + sLayerName, 0, (int)swLineStyles_e.swLineCONTINUOUS, (int)swLineWeights_e.swLW_NORMAL, true, true);",
+          "example_file": "Create_Layer_for_Selected_View_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示建层之后还要调 ChangeComponentLayer 才把实体放上层；成员页只讲建层本身",
+          "example_quote": "swDraw.ChangeComponentLayer(sLayerName, true);",
+          "example_file": "Create_Layer_for_Selected_View_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例一致（VB/VB.NET/C# 同形）；Determine_if_Layer_is_Visible 里硬编码 Layer1 后再读 Visible。"
+    },
+    {
+      "member": "CreateLine",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例调的都是 ISketchManager.CreateLine，无一调 IModelDoc2.CreateLine。"
+    }
+  ]
+}

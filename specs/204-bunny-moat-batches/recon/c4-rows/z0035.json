@@ -1,0 +1,171 @@
+{
+  "idx": 35,
+  "results": [
+    {
+      "member": "BomFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VB.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VBNET.md",
+        "Insert_BOM_Table_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只说返回 IBomFeature 指针；示例用它取 BOM 的 Name，作为 MBD 3D PDF 的 BOM 映射名。",
+          "example_quote": "BOMTableName = swBOMFeature.Name;",
+          "example_file": "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md"
+        },
+        {
+          "what": "示例注释说明因 BomType 是 swBomType_TopLevelOnly，才改用 BomFeature 读写配置。",
+          "example_quote": "Names = swBomFeat.GetConfigurations(false, ref Visible);",
+          "example_file": "Insert_BOM_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定；四份示例均真调用 BomFeature。"
+    },
+    {
+      "member": "BorderLineWeight",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_General_Table_Feature_Example_CSharp.md",
+        "Get_General_Table_Feature_Example_VB.md",
+        "Get_General_Table_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 InsertTableAnnotation2 之后、判空块内把它与 GridLineWeight 一起写成字面量 0。",
+          "example_quote": "swTableAnnotation.BorderLineWeight = 0;",
+          "example_file": "Get_General_Table_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定；三份示例均真赋值该属性。"
+    },
+    {
+      "member": "BothDirections",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Extruded_Reference_Surface_Example_CSharp.md",
+        "Insert_Extruded_Reference_Surface_Example_VB.md",
+        "Insert_Extruded_Reference_Surface_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只给布尔语义；示例的读序是先 AccessSelections 再读属性，末尾 ReleaseSelectionAccess。",
+          "example_quote": "swSurfExtrudeFeature.AccessSelections(swModel, null);",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_CSharp.md"
+        },
+        {
+          "what": "示例建双向盲拉伸时对两个方向各给一组 depth 与 end condition 参数。",
+          "example_quote": "Debug.Print(\"  Surface extruded in both directions? \" + swSurfExtrudeFeature.BothDirections);",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定；三份示例均真读该属性。"
+    },
+    {
+      "member": "BoundingBox",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Coordinates_of_the_Plane's_Bounding_Box_Example_CSharp.md",
+        "Get_Coordinates_of_the_Plane's_Bounding_Box_Example_VB.md",
+        "Get_Coordinates_of_the_Plane's_Bounding_Box_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只说返回两个 IMathpoint；示例用 ArrayData 取 double[3] 的 x/y/z。",
+          "example_quote": "arrData = (double[])swMathPoint.ArrayData;",
+          "example_file": "Get_Coordinates_of_the_Plane's_Bounding_Box_Example_CSharp.md"
+        },
+        {
+          "what": "示例的基准面由 InsertRefPlane 首参 8（距离）偏置 0.0889 生成，非默认面。",
+          "example_quote": "swRefPlane = (RefPlane)swFeatureMgr.InsertRefPlane(8, 0.0889, 0, 0, 0, 0);",
+          "example_file": "Get_Coordinates_of_the_Plane's_Bounding_Box_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；示例确在 RefPlane 上调用，非同名他对象。"
+    },
+    {
+      "member": "BoundingEntities",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Planar_Surface_Feature_Example_CSharp.md",
+        "Create_Planar_Surface_Feature_Example_VB.md",
+        "Create_Planar_Surface_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面 Remarks 只给文档交叉引用；示例给出读序：先 AccessSelections，读后 Release。",
+          "example_quote": "boolStatus = swPlane.AccessSelections(Part, null);",
+          "example_file": "Create_Planar_Surface_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例建面时四条边界边一律以 mark=1 选中，成员页未写该 mark。",
+          "example_quote": "boolStatus = Part.Extension.SelectByID2(\"\", \"EDGE\", -0.0150796523155918, 0.0330635737250304, 0.0277193529692568, false, 1, null, 0);",
+          "example_file": "Create_Planar_Surface_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "页面 Returns 只说数组；示例说明元素可转成 Entity，循环上界取计数减一。",
+          "example_quote": "swEnt = (Entity)vBoundEnt[i];",
+          "example_file": "Create_Planar_Surface_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 是一句文档交叉引用，与示例无相互否证之处，故不记冲突。"
+    },
+    {
+      "member": "BoundingSketch",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Core_Feature_Example_VB.md",
+        "Get_Core_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面 Remarks 只给文档交叉引用；示例的读序是先 AccessSelections 再取该属性。",
+          "example_quote": "b = swCoreFeat.AccessSelections(swModel, Nothing)",
+          "example_file": "Get_Core_Feature_Example_VB.md"
+        },
+        {
+          "what": "页面 Returns 只说指向 IFeature；示例实际当作 Feature 用并取其 Name 打印。",
+          "example_quote": "Debug.Print \"Name of bounding sketch = \" & nam",
+          "example_file": "Get_Core_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例的前置还要求在特征树里选中该 core 特征，页面未写此前置。",
+          "example_quote": "' 3. Select the core feature in the FeatureManager design tree.",
+          "example_file": "Get_Core_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 是文档交叉引用，未提出与示例互斥的主张，故不记冲突。"
+    },
+    {
+      "member": "BreakAngle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Cross_Break_Feature_Data_in_Sheet_Metal_Part_Example_CSharp.md",
+        "Get_Cross_Break_Feature_Data_in_Sheet_Metal_Part_Example_VB.md",
+        "Get_Cross_Break_Feature_Data_in_Sheet_Metal_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面 Returns 只写 Angle 无单位；示例建特征首参传 1.5707963267949 即 pi/2，再回读打印。",
+          "example_quote": "swFeature = (Feature)swFeatureManager.InsertCrossBreak(1.5707963267949, 0.000635);",
+          "example_file": "Get_Cross_Break_Feature_Data_in_Sheet_Metal_Part_Example_CSharp.md"
+        },
+        {
+          "what": "示例把该角度与 BreakRadius、ReverseDirection 一并打印，成员页未列这一组。",
+          "example_quote": "Debug.Print(\"  Angle: \" + swCrossBreakFeatureData.BreakAngle);",
+          "example_file": "Get_Cross_Break_Feature_Data_in_Sheet_Metal_Part_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定；三份示例均真读该属性。"
+    }
+  ]
+}

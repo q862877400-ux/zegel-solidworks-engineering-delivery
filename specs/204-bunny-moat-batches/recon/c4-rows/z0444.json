@@ -1,0 +1,143 @@
+{
+  "idx": 444,
+  "results": [
+    {
+      "member": "SetFeatureManagerWidth",
+      "remarks_empty": false,
+      "examples_actually_used": ["Change_Width_of_FeatureManager_Design_Tree_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出成员页没写的前置：先打开一个模型文档；并示范把 GetFeatureManagerWidth 读到的像素值原样乘 2 传入",
+          "example_quote": "    nWidth = swModel.GetFeatureManagerWidth\n    nRetVal = swModel.SetFeatureManagerWidth(nWidth * 2)",
+          "example_file": "Change_Width_of_FeatureManager_Design_Tree_Example_VB.md"
+        }
+      ],
+      "note": "0/-1 的成败表只在成员页；示例把 nRetVal 存下却从不检查，量纲（像素）两侧一致"
+    },
+    {
+      "member": "SetFieldWeld",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weld_Symbol_Example_CSharp.md",
+        "Insert_Weld_Symbol_Example_VB.md",
+        "Insert_Weld_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页未写的前置：插入前须先选中一个面、边或草图线段",
+          "example_quote": "// 2. Select a face, edge, or sketch segment for Weld Symbol insertion.",
+          "example_file": "Insert_Weld_Symbol_Example_CSharp.md"
+        },
+        {
+          "what": "把成员页只指向枚举的形参具体化为枚举成员 swFieldWeldNone，并按 Remarks 用 GetFieldWeld 读回",
+          "example_quote": "            swWeldSymbol.SetFieldWeld((int)swWeldSymbolField_e.swFieldWeldNone);",
+          "example_file": "Insert_Weld_Symbol_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例取值完全一致，且与 Remarks「用 GetFieldWeld 取回」相符"
+    },
+    {
+      "member": "SetFireOutputTimeStepEvents",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md",
+        "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_VB.md",
+        "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_VBNET.md",
+        "swmotionstudyapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出成员页未规定的调用序：先算一遍、挂事件、把力/马达置为 external，再设本方法，最后重算",
+          "example_quote": "            // Fire event at every output time step\n            swMotionStudy.SetFireOutputTimeStepEvents(true);\n            //Recalculate the motion study\n            swMotionStudy.Calculate();",
+          "example_file": "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md"
+        },
+        {
+          "what": "四份示例一律传 True，与成员页「true = 在输出时间步而非积分器步触发」完全对应",
+          "example_quote": "    ' Fire event at every output time step\n    swMotionStudy.SetFireOutputTimeStepEvents (True)",
+          "example_file": "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_VB.md"
+        }
+      ],
+      "note": "返回 void，示例无法凭返回值确认，只能看重算后事件是否真的触发"
+    },
+    {
+      "member": "SetFitFont",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Dimension_Tolerance_Example_CSharp.md",
+        "Get_Dimension_Tolerance_Example_VB.md",
+        "Get_Dimension_Tolerance_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例照 Remarks 的「其他参数被忽略」，故意把 UseScale 传 False、Value 传 0",
+          "example_quote": "        swDimensionTolerance.SetFitFont(True, False, 0)",
+          "example_file": "Get_Dimension_Tolerance_Example_VBNET.md"
+        },
+        {
+          "what": "示例把字高读数乘 1000.0 才标注 mm，暗示该族字高为米；成员页对 Value 未写单位",
+          "example_quote": "            Debug.Print(\"  Height of font: \" + fontHeight * 1000.0 + \" mm\");",
+          "example_file": "Get_Dimension_Tolerance_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例调用逐字相同；Remarks 的 UseDimension=True 分支与示例传值不矛盾，故不记冲突"
+    },
+    {
+      "member": "SetFocus",
+      "remarks_empty": true,
+      "examples_actually_used": ["Set_Focus_on_PropertyManager_Page_Control_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律整条跳过比对；示例确有调用（pm_Page.SetFocus (textId)）"
+    },
+    {
+      "member": "SetFormatting",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Paragraph_Properties_Example_CSharp.md",
+        "Get_and_Set_Paragraph_Properties_Example_VB.md",
+        "Get_and_Set_Paragraph_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出成员页未写的前置：打开含多段注释的工程图并选中该注释，再经 Annotation 取 Paragraphs",
+          "example_quote": "// 1. Open a drawing with a note annotation that contains one or more\n//    paragraphs.\n// 2. Select the annotation in the graphics area.",
+          "example_file": "Get_and_Set_Paragraph_Properties_Example_CSharp.md"
+        },
+        {
+          "what": "示例传 0.0011/0.0012 与 0.0021/0.0022，量级暗示单位为米；成员页两个形参均未写单位",
+          "example_quote": "                        paragraphs.SetFormatting(0.0011, 0.0012);",
+          "example_file": "Get_and_Set_Paragraph_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "示例严格遵守 Remarks 的「先 CurrentParagraph、后 UpdateParagraph」次序，三份完全一致"
+    },
+    {
+      "member": "SetFrameSymbols2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_GTol_Example_CSharp.md",
+        "Insert_GTol_Example_VB.md",
+        "Insert_GTol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把版本前置具体化：打开 SOLIDWORKS 2018 的工程图，落在「早于 2022 才有效」之内",
+          "example_quote": "    fileName = \"C:\\Users\\Public\\Documents\\SOLIDWORKS\\SOLIDWORKS 2018\\samples\\tutorial\\advdrawings\\foodprocessor.slddrw\"",
+          "example_file": "Insert_GTol_Example_VB.md"
+        },
+        {
+          "what": "示例给出 Remarks 里丢失的具体符号串，正是其要求的库名-符号名格式，且随后即调 SetFrameValues2",
+          "example_quote": "        swGtol.SetFrameSymbols2 1, \"<IGTOL-POSI>\", False, \"\", False, \"\", \"\", \"\", \"\"",
+          "example_file": "Insert_GTol_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 中 GCS/TolMC1 的示例值显示为空串，但同族 GetFrameSymbols2.md:37 有同样的标记剥离痕迹，判为文档渲染缺失而非语义冲突，故只记 more_specific"
+    }
+  ]
+}

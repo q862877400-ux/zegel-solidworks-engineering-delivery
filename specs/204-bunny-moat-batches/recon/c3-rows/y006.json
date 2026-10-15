@@ -1,0 +1,75 @@
+{
+  "idx": 6,
+  "results": [
+    {
+      "name": "export_delivery",
+      "level": "verified",
+      "members_found": [
+        "Extension",
+        "SaveAs3",
+        "SaveBMP",
+        "ExportToDWG2",
+        "GetType",
+        "GetPathName",
+        "SetUserPreferenceIntegerValue"
+      ],
+      "examples_used": [
+        "Save_Model_as_Bitmap_Example_VB.md",
+        "Save_Model_as_Bitmap_Example_VBNET.md",
+        "Export_Part_To_DWG_Example_VB.md",
+        "Export_Part_To_DWG_Example_VBNET.md",
+        "Add_and_Edit_Distance_Mate_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "SaveBMP 前必须先打开一个零件文档作为活动文档（示例前置：打开 cstick.sldprt）",
+          "from": "Save_Model_as_Bitmap_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "`export_to_bmp(model, path, 800, 600)` 建成"
+        },
+        {
+          "text": "示例注释：宽高传 0 表示用当前窗口尺寸（use current window size）",
+          "from": "Save_Model_as_Bitmap_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "宽高 ≤ 0 ⇒ 读回 (1460, 1049) 即**窗口尺寸**"
+        },
+        {
+          "text": "ExportToDWG2 前置：须是已保存到磁盘的钣金零件（示例把 2012-sm.sldprt 复制到 c:\\temp）",
+          "from": "Export_Part_To_DWG_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "★ 另记前置条件：**零件路径要求「钣金件 + 必须先保存」**"
+        },
+        {
+          "text": "调用前须准备 12 个双精度的 3×4 对齐数组（示例 dataAlignment(0..11)）",
+          "from": "Export_Part_To_DWG_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "SaveAs3 在官方示例里只出现于保存零件场景，与本导出能力无关 ⇒ 其前置无从判定",
+          "from": "Add_and_Edit_Distance_Mate_Example_VB.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "SaveBMP 与 ExportToDWG2 的示例前置已被 evidence 覆盖；ExportToDWG2 的 12 个对齐参数未见覆盖；SaveAs3 覆盖 5 个导出工具但无对口官方示例。"
+    },
+    {
+      "name": "headless_open_format_writing",
+      "level": "verified",
+      "members_found": [],
+      "examples_used": [],
+      "preconditions": [
+        {
+          "text": "该工具经 scripts/headless_cad_writer.py，无任何 SolidWorks COM 成员 ⇒ 无官方示例可对账",
+          "from": "（无）",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "cannot_tell",
+      "note": "实现是纯 Python/ezdxf/matplotlib/可选 OCP，不碰 COM；两份证据均为 pytest 且 OCP 后端被 monkeypatch，无官方示例前置可核。"
+    }
+  ]
+}

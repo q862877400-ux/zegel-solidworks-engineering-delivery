@@ -1,0 +1,15 @@
+{"idx":33,"pages_read":13,"rows":[
+{"iface":"IView","file":"GetBendLines.md","signature":"System.object GetBendLines()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetDimensionIds2.md","signature":"System.object GetDimensionIds2()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetFirstNote2.md","signature":"System.object GetFirstNote2()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetSFSymbolCount.md","signature":"System.int GetSFSymbolCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetDatumTags.md","signature":"DatumTag IGetDatumTags( System.int NumDatumTag )","obsolete":false,"pointer":true,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetGTols.md","signature":"Gtol IGetGTols( System.int NumGTol )","obsolete":false,"pointer":true,"zero":"否（有形参）"},
+{"iface":"IView","file":"InsertBreak3.md","signature":"System.object InsertBreak3( System.int Orientation, System.double Position1, System.double Position2, System.int Style, System.int ShapeIntensity, System.bool BreakSketchBlocks )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"ShowExploded.md","signature":"System.bool ShowExploded( System.bool ShowIt )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"CreateDetailViewAt4.md","signature":"System.object CreateDetailViewAt4( System.double X, System.double Y, System.double Z, System.int Style, System.double Scale1, System.double Scale2, System.string LabelIn, System.int Showtype, System.bool FullOutline, System.bool JaggedOutline, System.bool NoOutline, System.int ShapeIntensity )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"GetBlockDefinitions.md","signature":"System.object GetBlockDefinitions()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"IGetPenInfo.md","signature":"System.int IGetPenInfo()","obsolete":false,"pointer":true,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"NewSheet.md","signature":"void NewSheet( System.string Name, System.short PaperSize, System.short TemplateIn, System.double Scale1, System.double Scale2 )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"ISheet","file":"GetTemplateSketch.md","signature":"Sketch GetTemplateSketch()","obsolete":false,"pointer":false,"zero":"是（空括号）"}
+]}

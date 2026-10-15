@@ -1,0 +1,103 @@
+{
+  "idx": 43,
+  "results": [
+    {
+      "name": "surface_untrim",
+      "level": "verified",
+      "members_found": [
+        "InsertUntrimSurface2",
+        "PreTrimSurface",
+        "PostTrimSurface",
+        "SelectByID2",
+        "Select4"
+      ],
+      "examples_used": [
+        "Create_Trimmed_Surface_Feature_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "需先有可剪裁曲面体；官方建法：两张相交曲面拉伸 → PreTrimSurface → 选 SURFACEBODY → PostTrimSurface(true)",
+          "from": "Create_Trimmed_Surface_Feature_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "**先造出一张真被剪裁过的曲面**（`PreTrimSurface` + 选 `SURFACEBODY` + `PostTrimSurface` —— 面数 8→7）"
+        },
+        {
+          "text": "选曲面体只能按点走空名 SelectByID2 + SURFACEBODY（实体不能按名字选）",
+          "from": "Create_Trimmed_Surface_Feature_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "★ **再选它的边 · `EdgeUntrimType = 2`**"
+        },
+        {
+          "text": "InsertUntrimSurface2 前须先选中它的面或边（Remarks 逐字 face or edges）—— 该成员无示例可核",
+          "from": "(无官方示例 · InsertUntrimSurface2 在两份示例索引均无命中)",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "示例前置块：Verify that the specified document template exists",
+          "from": "Create_Trimmed_Surface_Feature_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "只覆盖「先造出真被剪裁曲面」这一步；InsertUntrimSurface2 自身前置（face or edges）无示例 ⇒ cannot_tell。"
+    },
+    {
+      "name": "feature_loft_cut",
+      "level": "verified",
+      "members_found": [
+        "InsertCutBlend",
+        "InsertProtrusionBlend2",
+        "SelectByID2",
+        "GetSelectedObjectCount2",
+        "FeatureByName"
+      ],
+      "examples_used": [
+        "Insert_Protrusion_Blend_Example_CSharp.md",
+        "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+        "Select_Multiple_Splines_for_Loft_Guide_Curves_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "轮廓草图按期望顺序选中，mark=1（示例 Sketch1→Sketch2、append、mark=1）",
+          "from": "Insert_Protrusion_Blend_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "一个实体 + 两个平行剖面（**按顺序**选中 · **mark=1**）"
+        },
+        {
+          "text": "引导线要预先建好并按 mark=2 选中；多根先合成 SELOBJGROUP 再以 mark=2 选",
+          "from": "Select_Multiple_Splines_for_Loft_Guide_Curves_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "中心线要按 mark=4 选中（示例 Curve5 以 mark=4 追加）",
+          "from": "Insert_Protrusion_Blend_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "第二个剖面建在偏移出的参考基准面上（示例先 InsertRefPlane(8,0.07)）",
+          "from": "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "InsertCutBlend 前须有可切实体、剖面按顺序 mark=1 —— 该成员在两份索引零示例命中",
+          "from": "(无官方示例 · InsertCutBlend 在两份示例索引均无命中)",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "示例前置块：Verify that the specified part template exists",
+          "from": "Insert_Protrusion_Blend_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "InsertCutBlend 无官方示例 ⇒ 自身前置只能 cannot_tell；证据只覆盖 mark=1 与顺序，引导线/中心线/参考基准面三项未提。"
+    }
+  ]
+}

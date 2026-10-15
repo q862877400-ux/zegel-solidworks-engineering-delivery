@@ -1,0 +1,98 @@
+{
+  "idx": 212,
+  "results": [
+    {
+      "member": "GetLineCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例比对。"
+    },
+    {
+      "member": "GetLineCount2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Lines_in_Sketch_Example_VB.md",
+        "Get_Polylines_Information_Example_VB.md",
+        "Get_Polyline_Data_from_View_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把实参写成字面量 1 并就地注明含义「排除剖面线」，成员页只指向枚举不给含义",
+          "example_quote": "NumLines = swSketch.GetLineCount2(1) ' Exclude crosshatch lines",
+          "example_file": "Get_Lines_in_Sketch_Example_VB.md"
+        },
+        {
+          "what": "Remarks 只点名与 IGetLines2 成对；示例实际是与 GetLines2（非 I 前缀）成对先取数后取数组",
+          "example_quote": "vLines = swSketch.GetLines2(1) 'Exclude crosshatch lines",
+          "example_file": "Get_Lines_in_Sketch_Example_VB.md"
+        }
+      ],
+      "note": "两份视图示例里本成员另有 swView 版调用，属 IView 同名成员，不计本成员。"
+    },
+    {
+      "member": "GetLineStyle",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例比对。"
+    },
+    {
+      "member": "GetLineStyles",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例比对。"
+    },
+    {
+      "member": "GetLineThickness",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例比对。"
+    },
+    {
+      "member": "GetLines2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Lines_in_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说返回起终点坐标、未给单位；示例把返回值乘 1000# 才当 mm 显示，即米制",
+          "example_quote": "Debug.Print \" Start = (\" & vLines(12 * i + 6) * 1000# & \",\" & vLines(12 * i + 7) * 1000# & \",\" & vLines(12 * i + 8) * 1000# & \") mm\"",
+          "example_file": "Get_Lines_in_Sketch_Example_VB.md"
+        },
+        {
+          "what": "示例把实参写成字面量 1 并就地注明含义「排除剖面线」，成员页只指向枚举不给含义",
+          "example_quote": "vLines = swSketch.GetLines2(1) 'Exclude crosshatch lines",
+          "example_file": "Get_Lines_in_Sketch_Example_VB.md"
+        }
+      ],
+      "note": "示例的 i*12+6..11 取位与 Remarks 的 12 个 double/条、起点在第 6 位完全相符。"
+    },
+    {
+      "member": "GetLines4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Polyline_Data_from_View_Example_VB.md",
+        "Get_Polylines_Information_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "两份示例都把返回值乘 1000# 当 mm 打印、未套 GetXForm，佐证坐标系是视图空间且单位为米",
+          "example_quote": "Write #1, \" Start point = (\" & vLines(i * 12 + 6) * 1000# & \", \" & vLines(i * 12 + 7) * 1000# & \", \" & vLines(i * 12 + 8) * 1000# & \") mm\"",
+          "example_file": "Get_Polylines_Information_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的「图纸必须可见」在示例前置里只写「打开一个零件的工程图」，属遗漏非互斥，不记冲突。"
+    }
+  ]
+}

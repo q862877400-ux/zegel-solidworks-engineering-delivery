@@ -1,0 +1,131 @@
+{
+  "idx": 193,
+  "results": [
+    {
+      "member": "GetFieldWeld",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weld_Symbol_Example_CSharp.md",
+        "Insert_Weld_Symbol_Example_VB.md",
+        "Insert_Weld_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没有的前置：插入焊接符号前须先选中面、边或草图线段",
+          "example_quote": "// 2. Select a face, edge, or sketch segment for Weld Symbol insertion.",
+          "example_file": "Insert_Weld_Symbol_Example_CSharp.md"
+        }
+      ],
+      "note": "无冲突。三例一致：先 SetFieldWeld 再读回；Remarks 仅指向 setter。"
+    },
+    {
+      "member": "GetFilletEdgeAtIndex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Asymmetric_Elliptic_Fillets_Example_CSharp.md",
+        "Create_Asymmetric_Elliptic_Fillets_Example_VB.md",
+        "Create_Asymmetric_Elliptic_Fillets_Example_VBNET.md",
+        "Get_Radius_of_Variable_Radius_Fillet_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体前置与收尾：先 AccessSelections(model, Nothing)，末尾 ReleaseSelectionAccess",
+          "example_quote": "boolstatus = swFeatData.AccessSelections(swModel, Nothing)",
+          "example_file": "Create_Asymmetric_Elliptic_Fillets_Example_VB.md"
+        }
+      ],
+      "note": "无冲突。Remarks 只外链「定义特征的选区访问」文档，未给具体前置。"
+    },
+    {
+      "member": "GetFinVertices",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VB.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出返回形状与调用上下文：int[] 两个顶点 ID，须在 GetFacetFins 之后按索引逐个取",
+          "example_quote": "//Should always be two vertices per fin",
+          "example_file": "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定；三份示例确有调用。"
+    },
+    {
+      "member": "GetFirstAnnotation2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md",
+        "sldworksapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VB.md",
+        "sldworksapi__Get_DimXpert_Display_Dimensions_and_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例更细：装配体不直接调本方法，而是取根组件、遍历子件，对其零件文档逐个调用",
+          "example_quote": "Set swRootComp = swConfig.GetRootComponent",
+          "example_file": "Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md"
+        }
+      ],
+      "note": "Show_Dimensions 示例调的是 IView::GetFirstAnnotation2（另一成员），已排除。"
+    },
+    {
+      "member": "GetFirstAnnotation3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Display_Dimensions,_Gtols,_and_Surface-Finish_Symbols_Example_VB.md",
+        "Get_Entities_Attached_To_Cosmetic_Thread_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没有的前置：文档须为工程图，且该视图须在图形区被选中后才取其首个注释",
+          "example_quote": "If (selType = swSelDRAWINGVIEWS) Then",
+          "example_file": "Get_Entities_Attached_To_Cosmetic_Thread_Example_VB.md"
+        }
+      ],
+      "note": "Show_Dimensions 示例用的是已废弃的 IView::GetFirstAnnotation2，已排除。"
+    },
+    {
+      "member": "GetFirstCThread",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Patterned_Cosmetic_Thread_Annotations_Data_Example_CSharp.md",
+        "Get_Patterned_Cosmetic_Thread_Annotations_Data_Example_VB.md",
+        "Get_Patterned_Cosmetic_Thread_Annotations_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显式跳过 GetFirstView 的首项（图纸页 Sheet1），成员页未提这一点",
+          "example_quote": "If thisView.Name = \"Sheet1\" Then",
+          "example_file": "Get_Patterned_Cosmetic_Thread_Annotations_Data_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律跳过冲突判定；三份示例均真调用。"
+    },
+    {
+      "member": "GetFirstCenterLine",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Centerlines_in_Drawing_Example_CSharp.md",
+        "Get_Centerlines_in_Drawing_Example_VB.md",
+        "Get_Centerlines_in_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例自 GetFirstView 起遍历（含图纸页本身），逐视图取首个中心线并 GetAnnotation 取名",
+          "example_quote": "Set swView = swDrawing.GetFirstView",
+          "example_file": "Get_Centerlines_in_Drawing_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，跳过冲突判定；C# 例对强类型返回值仍写了强制转换。"
+    }
+  ]
+}

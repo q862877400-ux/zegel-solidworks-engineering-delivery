@@ -1,0 +1,168 @@
+{
+  "idx": 256,
+  "results": [
+    {
+      "member": "GetSheetNames",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Loaded_Sheets_Example_CSharp.md",
+        "Get_Loaded_Sheets_Example_VB.md",
+        "Get_Loaded_Sheets_Example_VBNET.md",
+        "Get_Sheet_Numbers_and_Names_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律 3 跳过；4 份示例均确调 swDraw.GetSheetNames"
+    },
+    {
+      "member": "GetSheetMetalObjectsByPersistReference",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_and_Get_Sheet_Metal_Part's_Persistent_Reference_IDs_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "调用时必须已处于折叠态：示例顺序为取消抑制展开→取 PID→再抑制展开→才调用本方法",
+          "example_quote": "' Suppress (fold) flat-pattern feature",
+          "example_file": "Set_and_Get_Sheet_Metal_Part's_Persistent_Reference_IDs_Example_VBNET.md"
+        },
+        {
+          "what": "返回值为数组（需 LBound/UBound 遍历），元素可能为 Nothing，表示 PID 转换失败",
+          "example_quote": "For i = LBound(swObjList) To UBound(swObjList)",
+          "example_file": "Set_and_Get_Sheet_Metal_Part's_Persistent_Reference_IDs_Example_VBNET.md"
+        },
+        {
+          "what": "元素须逐个判空后才选中，空则直接退出并报“PID conversion error.”",
+          "example_quote": "Debug.Print(\"PID conversion error.\")",
+          "example_file": "Set_and_Get_Sheet_Metal_Part's_Persistent_Reference_IDs_Example_VBNET.md"
+        }
+      ],
+      "note": "Remarks 仅指向 Persistent Reference IDs 文档；示例补出调用时序与数组/空元素形态"
+    },
+    {
+      "member": "GetSize",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Drop_Drawing_Views_from_View_Palette_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无 Remarks 段，按纪律 3 跳过；另 3 份 Flip_Sketch_Picture 调的是 ISketchPicture::GetSize，非 ISheet"
+    },
+    {
+      "member": "GetSketch",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份指定示例全部调 SketchSegment.GetSketch（另一接口），无一用 INote::GetSketch；本页亦无 Examples 段"
+    },
+    {
+      "member": "GetSketchBlockDefinitions",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Block_Definitions_in_Part_or_Assembly_Example_VB.md",
+        "Get_Block_Information_Example_VB.md",
+        "Get_and_Set_Blocks_Data_in_Any_Document_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "无块定义时返回 IsEmpty，必须先判空再 UBound（三个示例一致）",
+          "example_quote": "If\nIsEmpty(vBlocks) Then\nExit\nSub",
+          "example_file": "Get_Block_Definitions_in_Part_or_Assembly_Example_VB.md"
+        },
+        {
+          "what": "文档类型不限：part / assembly / drawing 均可，前置是已含至少一个块定义与块实例",
+          "example_quote": "' Preconditions: Open a part, assembly, or drawing document containing",
+          "example_file": "Get_and_Set_Blocks_Data_in_Any_Document_Example_VB.md"
+        },
+        {
+          "what": "改块实例角度须先 EditSketch 进入块草图（改操作前置，取定义本身不需）",
+          "example_quote": "swModel.EditSketch",
+          "example_file": "Get_and_Set_Blocks_Data_in_Any_Document_Example_VB.md"
+        },
+        {
+          "what": "元素是 SketchBlockDefinition 对象（VBA 用 Set 取）",
+          "example_quote": "pBlock = vBlocks(itr)",
+          "example_file": "Get_Block_Definitions_in_Part_or_Assembly_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只指向 Block Definitions 文档；示例补出 IsEmpty 空返回与文档类型范围"
+    },
+    {
+      "member": "GetSketchContours",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Corresponding_Objects_in_Assembly_Component_Example_CSharp.md",
+        "Get_Corresponding_Objects_in_Assembly_Component_Example_VB.md",
+        "Get_Corresponding_Objects_in_Assembly_Component_Example_VBNET.md",
+        "Get_Sketch_Contours_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回值可转 object[] 并按 GetUpperBound/GetLowerBound 求个数，C# 侧先判 mySketch 非空",
+          "example_quote": "vSkContours = (object[])mySketch.GetSketchContours();",
+          "example_file": "Get_Sketch_Contours_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 侧同样用 UBound/LBound 求个数，且数组元素须判 Nothing",
+          "example_quote": "nbrSketchContours = UBound(sketchContours) - LBound(sketchContours) + 1",
+          "example_file": "Get_Corresponding_Objects_in_Assembly_Component_Example_VB.md"
+        },
+        {
+          "what": "返回的 SketchContour 可直接喂 IComponent2::GetCorresponding 做装配对应",
+          "example_quote": "Set swObject = swComponent.GetCorresponding(swSketchContour)",
+          "example_file": "Get_Corresponding_Objects_in_Assembly_Component_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只说“压缩的草图也可用”；示例补出数组求长与元素判空，未与 Remarks 冲突"
+    },
+    {
+      "member": "GetSketchHatches",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Area_Hatch_Data_Example_CSharp.md",
+        "Get_Area_Hatch_Data_Example_VB.md",
+        "Get_Area_Hatch_Data_Example_VBNET.md",
+        "Get_Hatching_Data_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "- in drawing views, use [[IView::GetFaceHatchCount]], [[IView::GetFaceHatches]], and [[IView::IGetFaceHatches]].",
+          "example_quote": "Hatching applied by the user is accessed through the ISketchHatch object. In contrast, hatching in a section view is accessed through the IFaceHatch object.",
+          "example_file": "Get_Hatching_Data_Example_VB.md",
+          "why": "两侧按不同维度分类：Remarks 按视图类型（drawing view→IFaceHatch），示例按影线来源（用户手工→ISketchHatch）。同一份用户手工面影线被指到两种对象，不能同时成立。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "- in drawing views, use [[IView::GetFaceHatchCount]], [[IView::GetFaceHatches]], and [[IView::IGetFaceHatches]].",
+          "example_quote": "vSketchHatch = (object[])swSketch.GetSketchHatches();",
+          "example_file": "Get_Area_Hatch_Data_Example_CSharp.md",
+          "why": "普通 drawing view 的用户面影线，示例（C#/VB/VBNET 三版一致）走 ISketch::GetSketchHatches，全程未调 Remarks 指定的 IView::GetFaceHatches。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "返回值可为空：VBA 用 IsEmpty、C# 用 null 判空后才遍历",
+          "example_quote": "If Not IsEmpty(vSketchHatch) Then",
+          "example_file": "Get_Hatching_Data_Example_VB.md"
+        },
+        {
+          "what": "元素 Angle 是弧度，示例乘 57.3 转角度",
+          "example_quote": "Debug.Print \" Angle = \" & swSketchHatch.Angle * 57.3 & \" degrees\"",
+          "example_file": "Get_Hatching_Data_Example_VB.md"
+        },
+        {
+          "what": "Get_Area_Hatch_Data 调用前先选中该视图、取 swView.GetSketch，再 EditSketch 并清选区",
+          "example_quote": "swModel.EditSketch",
+          "example_file": "Get_Area_Hatch_Data_Example_VB.md"
+        }
+      ],
+      "note": "两条冲突都出在“drawing view 的影线该走哪个接口族”；示例按来源分类，Remarks 按视图类型分类"
+    }
+  ]
+}

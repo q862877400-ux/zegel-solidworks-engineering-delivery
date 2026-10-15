@@ -1,0 +1,16 @@
+{"idx":7,"pages_read":14,"rows":[
+{"iface":"IView","file":"BreakLineGap.md","signature":"System.double BreakLineGap {get; set;}","obsolete":false,"pointer":false,"zero":"是（无括号）"},
+{"iface":"IView","file":"GetDependentViews.md","signature":"System.object GetDependentViews( System.bool AllViews, System.int SpecificViewType )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"GetFaceHatches.md","signature":"System.object GetFaceHatches()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetPolyLineCount4.md","signature":"System.int GetPolyLineCount4( out System.int PointCount )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"GetWeldSymbols.md","signature":"System.object GetWeldSymbols()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetDisplayData3.md","signature":"DisplayData IGetDisplayData3()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetSplines2.md","signature":"System.double IGetSplines2()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"RemoveAlignment.md","signature":"void RemoveAlignment()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"BreakLineZigZagCut.md","signature":"void BreakLineZigZagCut()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"CreateViewport2.md","signature":"System.string CreateViewport2( System.double LowerLeftX, System.double LowerLeftY, System.double UpperRightX, System.double UpperRightY, System.short SketchSize, System.double Scale )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"ICreateCompoundNote.md","signature":"Note ICreateCompoundNote( System.double Height, System.double X, System.double Y, System.double Z )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"InsertMultiJogLeader.md","signature":"void InsertMultiJogLeader()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"UnsuppressView.md","signature":"void UnsuppressView()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"ISheet","file":"TableAnchor.md","signature":"","obsolete":false,"pointer":false,"zero":"查不到"}
+]}

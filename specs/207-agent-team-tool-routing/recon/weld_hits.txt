@@ -1,0 +1,53 @@
+### solidworks_insert_global_bounding_box
+★ 边界框：`IFeatureManager.InsertGlobalBoundingBox2(…)`（5 参，回 `IFeature`）。★★ **台账 T701 给的 `Create3DBoundingBox` 是焊件切割清单专用的另一个** ——官方的才是这条。★ 第 5 个形参 `Status` 是 **out**（`swGlobalBoundingBoxResult_e`，**Success=0**）⇒ 实现层用 `sw_connect.out_i4()` 包（★ 裸传 int 会 `类型不匹配`，位置 5）。★ 真机建成：**`Status=0 (Success)`** + 特征树增量。
+
+### solidworks_ref_geometry_create_3d_bounding_box
+★ 官方签名（逐字，来自 Create3DBoundingBox.md）：`**Signature**: `void Create3DBoundingBox()``。官方摘要逐字「Creates a 3D bounding box for a **cut list item in a weldment part**.」⇒ ★ 只对『焊件零件的切割清单项』有意义，普通零件上不成是应然的。Remarks：调用后 ISelectionMgr::GetSelectedObjectType3 返回 swSelSKETCHES，而 GetSelectedObject6 返回的是 IFeature（不是 ISketch）。★ 官方回 void ⇒ 成败判据只有特征树增量。
+
+### solidworks_sheet_metal_create_gusset
+Create a native sheet-metal gusset on a SELECTED supporting face. The face is selected for you from `selection` BEFORE the call. ⚠ **仍不可用，但属性层已修好**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #3）。★★ **旧描述（已作废）**：`setting \`Thickness\` gave \`Property ... can not be set\`` ——★ **真因不是「属性只读」，是接口不对**：`Thickness` 是**焊件族**的名字，★ 本工具要走的是**钣金族**的 `ISMGussetFeatureData` ⇒ ★ 已改设 `GussetThickness`（★ 源码里注明「原 Thickness（焊件名）」）。★★★ **现在的事实**：★ 改用 `GussetThickness` / `ProfileHeightDim` / `ProfileLengthDim` / `ProfileAngleDim` 后**真机属性层读回全部成功**（0.002 / 0.01 / 0.01 / 45.0）；★ 报错已变为 `CreateFeature(118) 创建失败` ⇒ **卡点在创
+
+### solidworks_simulation_get_edge_weld_connector
+★ 官方签名（逐字，来自 ICWLoadsAndRestraintsManager~GetEdgeWeldConnector.txt）：`Function GetEdgeWeldConnector( _ ByVal NIndex As System.Integer, _ ByRef ErrorCode As System.Integer _ ) As CWEdgeWeldConnector`。★ 官方页**不在 C:\swapi\types\ 下**（该树只收录 SolidWorks 核心 API；实测 Get-ChildItem 'C:\swapi\types' 无任何 ICW* 接口目录 ⇒ Simulation/CosWorks 加载项接口族查不到，故 q1 的路径形态与常见条目不同）；本页在 CHM cosworks 册里，正文以 JSON 转义嵌在 <script> 标签中（模块 docstring L8-L15 记载这一坑），official_file 指向本仓已抽好的纯文本副本（工具 tools\extract_cosworks_docs.py），签名在该文件里逐字可
+
+### solidworks_weldment_create_cut_list
+Create the weldment cut list and return the cut-list folders as evidence.
+
+### solidworks_weldment_create_profile_center_mate
+Create a profile-center mate between declaratively selected structural members.
+
+### solidworks_weldment_create_structural_member
+Create a **STRUCTURAL MEMBER** (weldment) along a path sketch with a weldment profile, and return a READ-BACK report. ★★ **判据是特征树**（★ 不是计数）：`new_type_names` 应含 `WeldmentFeature` 与 `WeldMemberFeat`。⚠ 本机需要装「焊件轮廓库」—— ★ 本机**有**（111 个 `.sldlfp`）。
+
+### solidworks_weldment_create_sub_weld_folder
+Create a sub-weldment folder in the active weldment part.
+
+### solidworks_weldment_create_weldment_profile
+Create a weldment profile from a declaratively selected sketch and write it to output_path. ★ The criterion is the FILE.
+
+### solidworks_weldment_ensure_cut_list
+Create the cut list if it is missing, and return the cut-list folders.
+
+### solidworks_weldment_evidence
+Read back the weldment state: structural members, cut-list folders, and their quantity/length/angle/source properties. Read-only when create_missing_cut_list is False.
+
+### solidworks_weldment_export_cut_list_csv
+Write a cut-list evidence dict to CSV and return the path. ★ The criterion is the FILE (exists and non-empty), not the return value.
+
+### solidworks_weldment_gusset_create
+★ **焊件角撑板**：`IFeatureManager.InsertGussetFeature3(20 参)` → `IFeature`。★★★ **官方前置（Remarks 逐字，本批最硬的一条）**："Before calling this method, you must call `SelectByID2` to select **two faces** that are the supporting legs of this gusset **with a Mark of 1**." ⇒ ★★ 必须选**两个面**、★ **mark = 1**（★ **不是 0**）；★ ★ 官方例子两次都 **Append=True 且 mark=1** ⇒ ★ 本工具照抄这个组合、★ `preconditions_held` 判的是「**mark 1 上 ≥ 2 个**」⇒ ★ 调用者能一眼看见「mark 1 上只有 1 个面」这种失败。⚠★ **接口别认错**：★ 这是**焊件**角撑板（`IGussetFeatureData`，官方描述 "Allows access to a **weldment** gusset feature."，14 属性 / 4 方法）⇒ ★ **不是**钣金那个 `ISMGussetFeatureData`（"Allows access to a *
+
+### solidworks_weldment_insert_end_cap
+★ **焊件顶端盖**：`IFeatureManager.InsertEndCapFeature3(10 参)` → `IFeature`。★★★ **官方前置（Remarks 逐字）**："Before calling this method, **select one or more end faces** of a structural member in the graphics area." ⇒ ★ 调用前必须在图形区选中端面；★ 本工具**不代选**（★ 面没有可用名字 —— 已知事实 32；★ 且规则 3 禁裸坐标），★ 只**回读选区计数**写进 `preconditions_held`。★ ★ 官方**这一句没给 mark**，★ 官方例子用的是 mark=**0** ⇒ ★ **与角撑板的 mark=1 不一样**，★ 两个入口的 mark 不能互相套用。⚠ ★★ `InsertEndCapFeature2`（7 参 · 末位 `System.object Faces`）**不是**废弃成员 —— ★ 官方页无 Obsolete 句、★ 且 Remarks 明写它是「用 Faces 数组」的**并列**入口 ⇒ ★★ **不是** `1 → 2 → 3` 的线性继承；★ 而它末位是**数组形参** ⇒ `Param` 表达不了 ⇒ 本工具不做。★ 判据 = **
+
+### solidworks_weldment_iter_features
+★ 官方签名（逐字，来自 sw_weldment.py）：`查不到（本函数不是 API 成员，无官方签名可抄）。★ 真源是本仓 scripts/sw_weldment.py 第 294-306 行（`def iter_features_recursive(model)` → 内部 `walk()` 递归 + `_iter_feature_chain(first_feature, next_member)` 逐字：`_iter_feature_chain` `。★ 调用序（docs/recon/member-to-example-index.md 第 4144 行 `Get_Mates_and_Mate_Entities_Example_VBNET.md` 摘句，逐字）：「each mate is a subfeature of MateGroup; walk with GetFirstSubFeature / ...」—— ★ 即「先顶层 FirstFeature/GetNextFeature 循环，再对每个节点用 GetFirstSubFeature/GetNextSubFeature 下钻」，与本函数 walk() 的写法一致。★ 同索引第 7
+
+### solidworks_weldment_read_property_manager
+Read the active PropertyManager page's controls as a JSON-able dict. ★ Read-only.
+
+### solidworks_weldment_set_cut_list_properties
+Set cut-list properties and return the read-back list. ⚠ Does NOT save the document. ★★ **属性名用中文（本地化）名**：`说明` / `材料`，★ **不是** `Description` / `Material`（真机：后者报「切割清单属性回读失败」，而前者写入并回读得到）。
+
+### solidworks_weldment_update_cut_list
+Refresh the cut list and return the updated folders.

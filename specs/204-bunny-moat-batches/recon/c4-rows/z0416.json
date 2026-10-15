@@ -1,0 +1,102 @@
+{
+  "idx": 416,
+  "results": [
+    {
+      "member": "RevolutionType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Screw_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出字面量并固定调用顺序：先 RevolutionType=0，再 RevolutionVal=1、Reverse，最后 CreateMate；Remarks 只描述两个枚举分支，未给顺序与字面量。",
+          "example_quote": "MateData.RevolutionType = 0;",
+          "example_file": "Create_Screw_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只列两个枚举分支；示例以字面量 0 实例化。"
+    },
+    {
+      "member": "RevolutionVal",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Screw_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- swRevolutionsPerUnitLength, then specify this property with the number of revolutions of one component for each unit length that the other component translates. Set [[swUserPreferencesIntegerValue_e]].swUnitsLinear to a unit length as defined in [[swLengthUnit_e]].",
+          "example_quote": "MateData.RevolutionVal = 1;",
+          "example_file": "Create_Screw_Mate_Example_CSharp.md",
+          "why": "Remarks 要求赋该值前先设 swUnitsLinear 指定单位基准；示例先置 RevolutionType=0 再直接赋 RevolutionVal=1，全文无 swUnitsLinear 赋值。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体取值与配对关系（RevolutionType=0 之后赋 RevolutionVal=1）；Remarks 只说明两分支各自的语义，不给取值。",
+          "example_quote": "MateData.RevolutionVal = 1;",
+          "example_file": "Create_Screw_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "与 RevolutionType 共用同一示例；本成员 Remarks 多出 swUnitsLinear 一步。"
+    },
+    {
+      "member": "RightHanded",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_a_Thread_Feature_Example_CSharp.md",
+        "Create_a_Thread_Feature_Example_VB.md",
+        "Create_a_Thread_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks（只有 Returns/See Also），按纪律跳过。"
+    },
+    {
+      "member": "RipGap",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_ConvertSolid_Feature_Example_CSharp.md",
+        "Create_ConvertSolid_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过；两示例均以 Debug.Print 读取该值。"
+    },
+    {
+      "member": "RipOverlapRatio",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_ConvertSolid_Feature_Example_CSharp.md",
+        "Create_ConvertSolid_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过；两示例均以 Debug.Print 读取该值。"
+    },
+    {
+      "member": "RollBy",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Roll_Model_View_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks（仅 Summary/Parameters/Examples），按纪律跳过。"
+    },
+    {
+      "member": "RootDrawingComponent",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_at_Specified_Location_Example_VB.md",
+        "Get_Components_Properties_in_Drawing_View_Example_VB.md",
+        "Get_Components_in_Drawing_View_Example_CSharp.md",
+        "Get_Components_in_Drawing_View_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，且整页已标 Obsolete→RootDrawingComponent2；按纪律跳过。"
+    }
+  ]
+}

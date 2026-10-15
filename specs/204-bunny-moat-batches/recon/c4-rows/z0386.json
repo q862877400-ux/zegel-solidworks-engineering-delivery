@@ -1,0 +1,114 @@
+{
+ "idx": 386,
+ "results": [
+  {
+   "member": "PatternFaceArray",
+   "remarks_empty": false,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "唯一列出的示例用的是 TablePatternFeatureData.PatternFaceArray，同名不同接口；已 grep 全 examples 目录，无任何示例用 ICircularPatternFeatureData 的该成员。"
+  },
+  {
+   "member": "PatternFeature",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Derived_Pattern_Feature_Example_CSharp.md",
+    "Create_Derived_Pattern_Feature_Example_VB.md",
+    "Create_Derived_Pattern_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例演示：必须先 AccessSelections(swModel, null) 再读 PatternFeature，Remarks 只给了文档指针",
+     "example_quote": "swDerivedPatternFeatureData.AccessSelections(swModel, null);",
+     "example_file": "Create_Derived_Pattern_Feature_Example_CSharp.md"
+    },
+    {
+     "what": "示例把返回的 Feature 再 GetDefinition 成 LinearPatternFeatureData，Remarks 只说返回一个 feature",
+     "example_quote": "swLinearPatternFeatureData = (LinearPatternFeatureData)patternObj.GetDefinition();",
+     "example_file": "Create_Derived_Pattern_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "VBA 版缺 CreateDefinition/CreateFeature 两行，swFeature 恒 Nothing，整块走不到——示例自身缺陷，非与 Remarks 冲突。"
+  },
+  {
+   "member": "PatternFeatureArray",
+   "remarks_empty": false,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "4 份列出的示例分别用 LinearPatternFeatureData / MirrorPatternFeatureData / TablePatternFeatureData 的同名成员，无一用 ICircularPatternFeatureData 的。"
+  },
+  {
+   "member": "PatternLayoutPolygonSides",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Fill_Pattern_Example_CSharp.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "This property is valid only if [[IFillPatternFeatureData::PatternLayoutType]] = [[swPatternLayoutType_e]].swPatternLayoutPolygon.",
+     "example_quote": "swFeatData.PatternLayoutPolygonSides = 0; … swFeatData.PatternLayoutType = 0;",
+     "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+     "why": "官方枚举页 swPatternLayoutType_e 记 0=Circular、2=Polygon。示例把它设成 0 且先写 PolygonSides，与「仅当 Polygon 有效」不能同时成立。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例给出该成员的入口：CreateDefinition(swFmFillPattern) 之后、CreateFeature 之前赋值",
+     "example_quote": "swFeatData = (FillPatternFeatureData)swFeatMgr.CreateDefinition((int)swFeatureNameID_e.swFmFillPattern);",
+     "example_file": "Create_Fill_Pattern_Example_CSharp.md"
+    }
+   ],
+   "note": "两处引用之间用「 … 」表示省略的中间行。"
+  },
+  {
+   "member": "PatternLayoutType",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Fill_Pattern_Example_CSharp.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "After specifying this property, specify the following:",
+     "example_quote": "swFeatData.FeaturesToPatternType = 0; … swFeatData.GeometryPattern = false; … swFeatData.Margins = 0; … swFeatData.PatternLayoutType = 0;",
+     "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+     "why": "Remarks 要求 PatternLayoutType 之后再指定 Margins/GeometryPattern/FeaturesToPatternType；示例这三项全排在它之前，另两项 PatternDirection、PropagateVisualProperty 从未赋值。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例给出 Remarks 未列的具体赋值（间距/实例数/交错角等），Remarks 只点名 5 个属性",
+     "example_quote": "swFeatData.LayoutSpacingType = 1; … swFeatData.LoopSpacing = 0.0170240490494193; … swFeatData.NoOfInstances = 10; … swFeatData.StaggerAngle = 1.0471975511966;",
+     "example_file": "Create_Fill_Pattern_Example_CSharp.md"
+    }
+   ],
+   "note": "两处引用之间用「 … 」表示省略的中间行。"
+  },
+  {
+   "member": "PatternTreatment",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_DimXpert_Tolerance2_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 ## Remarks 段（仅 Returns/Examples/See Also），按纪律跳过比对。"
+  },
+  {
+   "member": "PatternType",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Auto_Dimension_Scheme_Example_CSharp.md",
+    "Auto_Dimension_Scheme_Example_VB.md",
+    "Auto_Dimension_Scheme_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 ## Remarks 段。另两份 Get_DimXpert_Feature_* 里的 patternFeature.PatternType 属 IDimXpertPatternFeature（返回 swDimXpertFeatureType_e），非本接口，已剔除。"
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+{"idx":51,"project":"andrewbartels1","files_read":5,"calls":[
+{"member":"GetModuleForTypelib","file":"src/solidworks_mcp/adapters/sw_type_info.py","argc":4,"has_out_variant":false,
+ "evidence":"mod = gencache.GetModuleForTypelib(SW_TLB_IID, 0, major, 0)",
+ "official_found":false,"official_signature":null,"official_argc":null,"verdict":"member_not_found",
+ "note":"win32com.client.gencache 自由函数，非 ISldWorks 成员；C:\\swapi\\types 全树 0 命中"},
+{"member":"EnsureModule","file":"src/solidworks_mcp/adapters/sw_type_info.py","argc":4,"has_out_variant":false,
+ "evidence":"gencache.EnsureModule(SW_TLB_IID, 0, major, 0)",
+ "official_found":false,"official_signature":null,"official_argc":null,"verdict":"member_not_found",
+ "note":"同为 pywin32 gencache 自由函数，非 SolidWorks 成员；官方 types 全树 0 命中"},
+{"member":"_FlagAsMethod","file":"src/solidworks_mcp/adapters/sw_type_info.py","argc":1,"has_out_variant":false,
+ "evidence":"obj._FlagAsMethod(name)",
+ "official_found":false,"official_signature":null,"official_argc":null,"verdict":"member_not_found",
+ "note":"pywin32 CDispatch 内部方法（下划线前缀），非 SolidWorks 成员；官方 types 全树 0 命中"},
+{"member":"GetActiveConfiguration","file":"src/solidworks_mcp/adapters/sw_type_info.py","argc":0,"has_out_variant":false,
+ "evidence":"model.GetActiveConfiguration()",
+ "official_found":true,"official_signature":"System.object GetActiveConfiguration()","official_argc":0,
+ "verdict":"match","note":"仅出现在 flagged() 的 docstring 示例里，不是可执行调用"},
+{"member":"GetName","file":"src/solidworks_mcp/adapters/sw_type_info.py","argc":0,"has_out_variant":false,
+ "evidence":"config.GetName()",
+ "official_found":true,"official_signature":"System.string GetName()","official_argc":0,
+ "verdict":"match","note":"仅 docstring 示例；示例对象是 IConfiguration，官方该接口上是 Name 属性"}
+]}

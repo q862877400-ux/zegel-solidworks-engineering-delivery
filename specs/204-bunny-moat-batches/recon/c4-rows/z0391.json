@@ -1,0 +1,174 @@
+{
+  "idx": 391,
+  "results": [
+    {
+      "member": "PostIntersect",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Intersect_Feature_Example_CSharp.md",
+        "Create_Intersect_Feature_Example_VB.md",
+        "Create_Intersect_Feature_Example_VBNET.md",
+        "Get_Intersect_Feature_Data_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Before calling this method, you must call [[IFeatureManager::PreIntersect]] to obtain the intersect bodies.",
+          "example_quote": "bodyArray = (object[])swFeatureMgr.PreIntersect2(false, 1);",
+          "example_file": "Create_Intersect_Feature_Example_CSharp.md",
+          "why": "Remarks 把必需前置钉在被标 Obsolete 的 PreIntersect；官方 Create 样例改调后继 PreIntersect2，两者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "排除布尔数组长度由 Pre 返回数组推导（GetUpperBound+1），成员页未规定尺寸",
+          "example_quote": "nbrBodies = bodyArray.GetUpperBound(0);\n            bodyExcludeArray = new bool[nbrBodies + 1];",
+          "example_file": "Create_Intersect_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "四份样例都真的调了 PostIntersect；分歧只在前置成员新旧代。"
+    },
+    {
+      "member": "PostMessageToApplication",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_TaskPaneView_Add-in_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "**All applications are required to be compatible with SOLIDWORKS x64. You must replace all calls to 32-bit only APIs with calls to their 64-bit safe counterparts.**",
+          "example_quote": "iSwApp.PostMessageToApplication(userAddin.Cookie,\n    pCallbackData.ToInt32());",
+          "example_file": "Create_TaskPaneView_Add-in_Example_CSharp.md",
+          "why": "Remarks 明令替换掉 32 位专有 API，官方样例却仍保留活的 PostMessageToApplication 调用（出现两处）。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "样例用 Win32.Is64Bit() 运行期分流；SW2016 起已无 32 位，else 分支实为死代码",
+          "example_quote": "if (Win32.Is64Bit())\n{\n    iSwApp.PostMessageToApplicationx64(userAddin.Cookie,\n    pCallbackData.ToInt64());\n}\nelse\n{\n    iSwApp.PostMessageToApplication(userAddin.Cookie,\n    pCallbackData.ToInt32());\n}",
+          "example_file": "Create_TaskPaneView_Add-in_Example_CSharp.md"
+        }
+      ],
+      "note": "唯一示例就是同一份 Add-in 样例；Remarks 是禁令，样例照旧调用。"
+    },
+    {
+      "member": "PostMessageToApplicationx64",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_TaskPaneView_Add-in_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出 early binding 的取法：接口字段由 ISldWorks 强转而来，配合 Is64Bit 分流",
+          "example_quote": "iSwApp = (ISldWorks)ThisSW;",
+          "example_file": "Create_TaskPaneView_Add-in_Example_CSharp.md"
+        },
+        {
+          "what": "UserData 传 IDispatch 的 64 位指针（ToInt64），成员页只说 message-specific information",
+          "example_quote": "IntPtr pCallbackData = Marshal.GetIDispatchForObject(callbackdata);\n    if (Win32.Is64Bit())\n    {\n        iSwApp.PostMessageToApplicationx64(userAddin.Cookie,\n        pCallbackData.ToInt64());",
+          "example_file": "Create_TaskPaneView_Add-in_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的早绑定+64位两条限制，样例都满足；无冲突。"
+    },
+    {
+      "member": "PostSplitBody2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Split-body_Feature_Example_CSharp.md",
+        "Create_Split-body_Feature_Example_VB.md",
+        "Create_Split-body_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "2. Call [[IFeatureManager::PreSplitBody]] to get all of the bodies created by splitting the part.",
+          "example_quote": "vResultingBodies = (object[])swFeatMgr.PreSplitBody2();",
+          "example_file": "Create_Split-body_Feature_Example_CSharp.md",
+          "why": "Remarks 指定的前置 PreSplitBody 已 Obsolete；三份样例一律调后继 PreSplitBody2，无一份调 PreSplitBody。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "BodiesToMark 必须先转成 DispatchWrapper[] 才过 COM 边界，成员页未提此包装",
+          "example_quote": "preSplitBodies = (DispatchWrapper[])ObjectArrayToDispatchWrapperArray((bodiesToMark));\n            vBodyNames = bodyNames;\n            DispatchWrapper[] originsToUse = null;",
+          "example_file": "Create_Split-body_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三语言版样例形态一致；分歧同 PostIntersect。"
+    },
+    {
+      "member": "PostTrimSurface",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Solid_Body_Surface_Trim_Feature_Example_CSharp.md",
+        "Create_Solid_Body_Surface_Trim_Feature_Example_VB.md",
+        "Create_Solid_Body_Surface_Trim_Feature_Example_VBNET.md",
+        "Create_Trimmed_Surface_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "3. Optionally, call [[IFeatureManager::SolidForTrim]].",
+          "example_quote": "Debug.Print(\"Solid body surface trim feature? \" & swFeatureManager.SolidForTrim);\n    swFeatureManager.SolidForTrim = true;",
+          "example_file": "Create_Solid_Body_Surface_Trim_Feature_Example_CSharp.md",
+          "why": "Remarks 说 call SolidForTrim，样例却把它当可读写的布尔属性先读后赋值，不是调用。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "样例在调 PreTrimSurface 之前先选好待修剪的两张曲面，之后再补选修剪工具",
+          "example_quote": "// Select surface features\n    status = swModelDocExt.SelectByID2(\"\", \"SURFACEBODY\", -0.0446486526100784, 0.0218350174377093, 0.0123754341749418, true, 0, null, 0);\n    // Select trimming surfaces to create solid body surface trim feature\n    status = swFeatureManager.PreTrimSurface(true, true, false, true);",
+          "example_file": "Create_Solid_Body_Surface_Trim_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "前三步调用序与样例一致；分歧在第 3 步的调用 vs 属性。"
+    },
+    {
+      "member": "PreIntersect",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Intersect_Feature_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "样例在 Pre 与 Post 之间遍历返回体，做 IsTemporaryBody/Display3 观察",
+          "example_quote": "for (i = 0; i < vResultingBodies.Length; i++)\n\t            {\n\t                swBody = (Body2)vResultingBodies[i];\n\t                Debug.Print(\"Intersect region \" + i + 1 + \" is a temporary body? \" + swBody.IsTemporaryBody());",
+          "example_file": "Get_Intersect_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "选实体这件事样例交给用户手动多选，代码里不调 SelectByID2",
+          "example_quote": "// 4. Multi-select Surface-Extrude1, Boss-Extrude3, and Boss-Extrude4 in the\n    //    FeatureManager design tree and press F5.",
+          "example_file": "Get_Intersect_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "选面由人工多选完成，Remarks 的前置被满足；无冲突。"
+    },
+    {
+      "member": "PreIntersect2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Intersect_Feature_Example_CSharp.md",
+        "Create_Intersect_Feature_Example_VB.md",
+        "Create_Intersect_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "样例在 PreIntersect2 之后、PostIntersect 之前立即 ClearSelection2；Remarks 步骤未提清选区",
+          "example_quote": "bodyArray = (object[])swFeatureMgr.PreIntersect2(false, 1);\n            swModel.ClearSelection2(true);",
+          "example_file": "Create_Intersect_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "RegionType=1 对应样例注释的 Create internal regions，与页面取值表一致",
+          "example_quote": "// * Do not cap planar surface openings of intersect feature\n            // * Create internal regions\n            bodyArray = (object[])swFeatureMgr.PreIntersect2(false, 1);",
+          "example_file": "Create_Intersect_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三份样例形态一致；前置与 RegionType 取值都对得上，无冲突。"
+    }
+  ]
+}

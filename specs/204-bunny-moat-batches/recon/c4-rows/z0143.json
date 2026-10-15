@@ -1,0 +1,138 @@
+{
+  "idx": 143,
+  "results": [
+    {
+      "member": "GetActiveSketch2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Autodimension_a_Sketch_Example_VB.md",
+        "Create_Edge_Flange_Example_CSharp.md",
+        "Create_Edge_Flange_Example_VBNET.md",
+        "Dynamically_Mirror_Sketch_Entities_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 UI 直接打开草图激活，未走 Remarks 的 SelectByID2+InsertSketch 路径",
+          "example_quote": "' 2. Select the top planar face on the part and open a sketch.",
+          "example_file": "Dynamically_Mirror_Sketch_Entities_Example_VB.md"
+        },
+        {
+          "what": "示例靠 EditSketch() 激活草图后立刻取，与 Remarks 给的两步激活路径不同",
+          "example_quote": "               \tswModel.EditSketch();",
+          "example_file": "Create_Edge_Flange_Example_CSharp.md"
+        },
+        {
+          "what": "示例由 CreateCornerRectangle 隐式进入草图编辑态，全程未显式激活草图",
+          "example_quote": "    sketchLines = swSketchManager.CreateCornerRectangle(0, 0, 0, 0.110951010058045, -0.066328380491143, 0)",
+          "example_file": "Autodimension_a_Sketch_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 前半句是硬前置（须有激活草图，示例均满足），后半句『You can use』为建议式，故只算 more_specific。"
+    },
+    {
+      "member": "GetAddInObject",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Check_Against_Existing_File_Example_CSharp.md",
+        "Check_Against_Existing_File_Example_VB.md",
+        "Check_Against_Existing_File_Example_VBNET.md",
+        "Create_Checks_From_Document_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出硬前置：须先手工加载该加载项；Remarks 未提任何前置",
+          "example_quote": "'  1. Load the SOLIDWORKS Design Checker add-in",
+          "example_file": "Check_Against_Existing_File_Example_VB.md"
+        },
+        {
+          "what": "示例给出具体 ProgID 并推荐用带年份的版本专用 ProgID，比 Remarks 的两条分支更具体",
+          "example_quote": "    ' Recommended to use the version-specific ProgID for your version of Design Checker",
+          "example_file": "Check_Against_Existing_File_Example_VB.md"
+        }
+      ],
+      "note": "示例一律走 ProgID 分支，与 Remarks 的 GUID/花括号分支并存而不矛盾。"
+    },
+    {
+      "member": "GetAdjacentFaces",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Faces_Adjacent_to_Vertex_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页确无 ## Remarks，按规定跳过冲突判定，故 more_specific 也无对照面。示例前置为先选中顶点并经 SelectionMgr 取 Vertex。"
+    },
+    {
+      "member": "GetAdvancedSelection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Select_Assembly_Components_Using_Advanced_Selection_Criteria_Example_CSharp.md",
+        "Select_Assembly_Components_Using_Advanced_Selection_Criteria_Example_VBNET.md",
+        "Use_Advanced_Component_Selection_Example_CSharp.md",
+        "Use_Advanced_Component_Selection_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置『须是装配体文档』，并在调用前用 GetType 与 swDocASSEMBLY 判据硬校验",
+          "example_quote": "' 1. An assembly document is active.",
+          "example_file": "Use_Advanced_Component_Selection_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 仅指向 UI 帮助、未作任何可证伪断言；示例返回类型与签名一致，无差异可判。"
+    },
+    {
+      "member": "GetAdvancedSpotLightProperties",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Advanced_Properties_of_Spot_Light_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例说明 Name 须取自 GetLightSourceName 的 SOLIDWORKS 内部名（如 SW#3），Remarks 只写『光源名』",
+          "example_quote": "        sLightName = swModel.GetLightSourceName(i)",
+          "example_file": "Get_Advanced_Properties_of_Spot_Light_Example_VB.md"
+        }
+      ],
+      "note": "示例的 void + 四个 out 传参次序与签名逐项对上；Remarks 只是一句转引，无冲突面。"
+    },
+    {
+      "member": "GetAffectedFaceCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Faces_Affected_by_Feature_Example_CSharp.md",
+        "Get_Faces_Affected_by_Feature_Example_VB.md",
+        "Get_Faces_Affected_by_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置更具体：须选中一个会改面的特征（如拔模），并先经 SelectionMgr 取出再清选区",
+          "example_quote": "\t// 2. Select a feature, such as a draft, that affects faces.",
+          "example_file": "Get_Faces_Affected_by_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出完整的『先 Count 后 Faces』调用序，与 Remarks 的次序要求一致而非相反",
+          "example_quote": "\t            nFaceCount = swFeature.GetAffectedFaceCount();",
+          "example_file": "Get_Faces_Affected_by_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都先 GetAffectedFaceCount 再 GetAffectedFaces，正面印证 Remarks，无冲突。"
+    },
+    {
+      "member": "GetAffectedFaces",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Faces_Affected_by_Feature_Example_CSharp.md",
+        "Get_Faces_Affected_by_Feature_Example_VB.md",
+        "Get_Faces_Affected_by_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页确无 ## Remarks，按规定跳过冲突判定。示例把返回值强转 object[] 并按 Count 遍历。"
+    }
+  ]
+}

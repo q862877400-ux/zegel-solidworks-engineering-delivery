@@ -1,0 +1,1737 @@
+**。
+               ★★ **「打印了错误但退出码 0」正是最危险的形态**：CI 与 `release_check` **只看退出码**，
+                 人也不会去读每次的输出 ⇒ **门禁形同虚设**。
+               ⇒ 改成 `failed = bool(kind_bad)`，并用测试 `assert cgw.main() == 1` **钉死**。
+               ⚠ **附带两条夹具教训**（都实测踩过）：
+                 ① 假 `release_check.py` 里必须有 `str(ROOT / "scripts" / "<名字>")` 那个**精确形态**，
+                    光有 `_run_xxx()` 调用**不算接线** ⇒ 否则夹具自己触发「未接线」；
+                 ② 假仓库必须把 `CLASSIFICATION` 也指向假位置，否则会去读**真仓库**的登记表
+                    ⇒ 与假仓库的调用点对不上。
+            80 🔴 **故障不许伪装成 `skipped`** —— 同一问题的**第四层**（轮 73）：
+               轮 71「接线了没」· 轮 72「接线的方式对不对」· 本轮问第三问：**「跳过的时候呢」**。
+               调用点只看 `"fail"`：
+               ```python
+               provenance = _run_provenance_gate()
+               if provenance.get("status") == "fail":
+                   raise AssertionError(...)
+               ```
+               ⇒ **`skipped` 会被静默放行**。实测 `release_check.py` 里原有 **5 处**：
+               ```python
+               except (subprocess.TimeoutExpired, OSError) as exc:
+                   return {"status": "skipped", "reason": f"门禁无法启动: {exc}"}   # ← **故障！**
+               ```
+               ⚠ **「无法启动（超时/OSError）」是故障，不是便携性** ⇒ **必须**是 `fail`。
+               ⇒ **改掉 5 处**（provenance · diff_markers · union_conventions · member_names ·
+                 interface_ownership 的 proof）⇒ 全仓只剩 **3 处** `skipped`，全部有明确条件。
+               ⇒ **元门禁加第四层** `ALLOWED_SKIP_CONDITIONS` 白名单：返回 `skipped` 的分支，
+                 其**依据**必须落在白名单内（`not _git_available()` / `returncode == 2` /
+                 脚本自报 `[SKIP]`），否则**报**。
+               ★ **负例 4 个活体用例**：故障返回 skipped ⇒ **不命中**（判违规）✓；
+                 另三种合法依据 ⇒ 命中 ✓（`D:\AI\SW\probe_skip_whitelist.py`）。
+            81 ⚠ **判据本身被修了一次（同一个「范围不贴合」的教训，轮 73）**：
+               第一版只检查 `If.test` ⇒ 把 `_run_interface_ownership_probe` 里那条**合法的**
+               `if skipped:`（条件是**变量**，来源在**上一行**）**误报成违规**。
+               ⇒ 改成看**该分支往上 12 行**（`test` + 变量来源都覆盖），并用
+                 `test_skip_branch_looks_at_the_variable_source_not_only_the_test` **钉死**。
+               ★ 与已知事实 51 同族：**判据的范围必须贴合它要抓的那件事**。
+               ⚠ **这是同一族第三次**（轮 72 的行窗口误判 · 轮 71 的注释当调用 · 本轮）——
+                 ⇒ **定则：写判据时先问「我抓的那件事，在源码里长什么样」，再决定扫描范围。**
+            82 ⚑ **事实 48 又踩一次**（轮 73）：把 4 个带引号/换行的用例内联进 `python -c` ⇒
+               `SyntaxError: unterminated string literal`。
+               ⇒ 立刻改成**独立文件** `D:\AI\SW\probe_skip_whitelist.py`（**事实 48 定则①**）。
+               ★ 这已是该事实的第 N 次复现；**长内容一律先落独立文件，不要内联**。
+            83 🎯 **门禁结果**全部进返回体** + `skipped` **显式可见**（同一问题的第五层，轮 74）：
+               轮 71–73 解决了「接线了没 / 接线方式对不对 / 跳过时算不算数」；本轮问：
+               **「跳过了」在结果里看得见吗？**
+               ⚠ 实测 `release_check` 的返回体：
+               ```python
+               return {
+                   "status": "pass",
+                   "provenance": provenance,      # ← 只汇总了 **4 个**
+                   "diff_markers": markers,
+                   "member_names": member_names,
+                   "interface_ownership": ownership,
+                   "missing": [],
+               }
+               ```
+               · 其余 **9 个门禁的状态根本没被汇总**；
+               · **没有任何地方统计 `skipped`** ⇒ **「跳过了」是隐形的**。
+               ★ **一个静默跳过的门禁，与没跑等价**（第三种面孔）。
+               ⇒ **修两件**：① **13 个状态一次全列**（`_gate_results` → `gates`），
+                 非 dict 的标 `unknown`（**不谎报 pass**）；② **`skipped` 显式列出**
+                 （+ `skipped_count`），另附 `gates_passed` 与 `gates_diagnostic`。
+               ⇒ 实测：`gates: 13 个（12 pass + interface_ownership=clean）` ·
+                 **`skipped: []（0 个）`** · `diagnostic: ['interface_ownership']`。
+               ⇒ **元门禁加第五层**「汇总完整性」：`aggregated_vars()` 从 AST 取
+                 `_gate_results` 的 value 名集合，与 `run_release_check` 里所有 `_run_*` 赋值
+                 逐一对照 ⇒ **少汇总一个就报**；反向也报。
+               ★ 负例 3 条：真仓库 ≥13 ✓ · 假源码漏汇总一个能被发现 ✓ · 返回体必须有
+                 `"skipped": skipped` / `skipped_count` / `gates` ✓。
+            84 ⚑ **本轮被两道门禁各拦一次 —— 那是门禁在尽职的证据**：
+               ① **报告数字不符** ⇒ raise（正常流程，同步即可）；
+               ② **改了 `release_check.py` 没跑 `sync_bundled_skill.py`** ⇒
+                  「桌面内嵌 Skill 与根 Skill 不一致: scripts/release_check.py」——
+                  那正是**已知事实 55**，而**门禁帮我记着**
+                  （该快照在 `.gitignore` 里 ⇒ `git status` **看不见它**，人容易忘）。
+               ★ 这正是本轮主题的反面印证：**门禁的价值在于它记得人容易忘的事**。
+            85 🎯 **回到产品本身：`dxf_preview_scene` 从 `stitched` 升 `verified`**（轮 75）——
+               前五轮（71–74）都在加固门禁栈。本轮回到 `capabilities.yaml` 的**非 verified 条目**：
+               实测 **8 条**里 **7 条 `evidence: 无`** ⇒ 逐条看哪条能**真跑补上**。
+               挑中最可离线验证的一条：**`dxf_preview_scene`**（只读 DXF ⇒ PreviewScene JSON，
+               **不碰 SolidWorks**）。
+               ⇒ 新增 `tools/verify_dxf_preview_e2e.py`（**7 组 · 15 项判据 · 15/15 通过**）：
+               ⚠ 判据**逐条覆盖 limitations 承诺的四件事**（那才叫验收，不是"跑通了"）：
+               ```
+               只读白名单实体；输入上限 50 MB/200000 实体；不支持实体只记录 warnings；输出不得覆盖旧场景文件
+               ```
+               · 实体数 = 6（造了 1 个不支持的 `3DFACE` ⇒ **必须被排除**）· 五种实体都识别；
+               · 图层计数（OUTLINE 4 / HOLES 1 / NOTES 1）· `schemaVersion=1.0` · `units=mm`；
+               · **几何边界**与手算一致（x∈[0,40] · y 上界 30）；
+               · **不支持实体只进 `warnings`**、不进 `entities`；
+               · **只读**：源 DXF 的**字节与 mtime 都不变**；
+               · **拒绝覆盖**已有场景（`FileExistsError`）+ 非 `.scene.json` 被拒（`ValueError`）；
+               · **CLI 入口**可用（`rc=0` 且 `status: pass`）。
+               ⇒ 清单升级：`level stitched → **verified**` · `evidence` （空）→ 1 条 ·
+                 `verified_versions` （空）→ **`['ezdxf 1.4.4']`**
+                 ⚑ 本条**不依赖 SolidWorks** ⇒ 照仓内先例 `surface_modeling` 的 `['OCP 7.9.3.1.1']`
+                   填**依赖版本**（不是 SW 版本）。
+                 ⚑ **`limitations` 一条不删** —— 承诺的四件事正是验收命令逐条判过的，留着才是完整契约。
+               ⇒ level 分布：**verified 23 → 24** · **stitched 7 → 6** · not_implemented 1
+            86 ⚑ **下一批候选（按离线可跑性排序，供下轮用）**：
+               `autocad_headless_preview`（同样只读 DXF）· `surface_modeling`（headless-occt）·
+               `routing`（中性 JSON 复核）· `dfm_checks`（需 B-Rep 证据）·
+               `mold_tools`（需 SolidWorks）· `autocad_basic_drafting`（**真机被阻塞**，已知限制）。
+            87 🎯 **第二条升 `verified`：`autocad_headless_preview`**（轮 76）——
+               上轮升了 `dxf_preview_scene`；本轮做 `autocad_headless_preview`。
+               **先判断是否与上轮同型** ⇒ **不是**：上轮是 **DXF 输入 → PreviewScene JSON**，
+               本条是 **中性 CAD 文档 → PNG**（+ DXF/SVG/PDF 回退），实现落在
+               `scripts/headless_cad_writer.py` 的 `write_png`（**手写 PNG chunk、零第三方依赖**）
+               ⇒ **该独立核，不共用验收命令**。
+               ★ **关键发现：既有测试**已经很完整**，但漏了 limitations **点名**的一条**：
+               `tests/test_headless_cad_writer.py` 原有 5 条已覆盖 PNG 魔数 `\x89PNG` /
+               `%PDF` / `<svg` / STL `solid` / OBJ `\nf ` / DXF 实体 / `previewManifest` ⇒ **5 passed**。
+               ⚠ 但逐条核 `limitations` 时发现它写着「…**不能读取或写入 DWG**」，
+                 而既有测试只覆盖了**通用未知格式 `sat`**，**没测点名承诺的 `dwg`**。
+               ⇒ **补两条**（只**追加**它缺的判据，不重造那个测试文件）：
+                 ① `test_headless_writer_refuses_dwg_and_does_not_fake_a_file` —— `dwg` 必须
+                    `blocked`、**磁盘上不许出现任何 dwg 文件**（比"返回 blocked"更强：
+                    **杜绝「假装写了 DWG」** —— 那不只是格式问题，是**诚信**问题）；
+                 ② `test_headless_writer_does_not_modify_the_input_document` —— **只读**承诺
+                    （输入文档的 sha256 与 mtime 都不变）⇒ **7 passed**。
+               ⇒ 清单升级：`level stitched → **verified**` · `evidence` 补 1 条 ·
+                 `verified_versions` → `['ezdxf 1.4.4']` · `limitations` 一条不删。
+               ⇒ level 分布：**verified 24 → 25** · **stitched 6 → 5** · not_implemented 1
+            88 ⚠ **门禁又拦我一次（尽职）**：追加测试后 `check_provenance` 报 **34 行无出处**
+               ⇒ 按仓内约定给新增用例补**来源块**（`覆盖: 后续同级定义`）⇒ 复跑 exit 0。
+               ★ 这条经验值得固化：**往既有测试文件里追加用例时，记得连来源块一起加**
+                 （否则 `check_provenance` 会红）。
+            89 ⚑ **下一批候选（更新后）**：`surface_modeling`（headless-occt，`['OCP 7.9.3.1.1']` 已验过那条链）·
+               `routing`（中性 JSON 复核）· `dfm_checks`（需 B-Rep 证据）·
+               `mold_tools`（需 SolidWorks）· `autocad_basic_drafting`（**真机被阻塞**，已知限制）。
+            90 🔴 **修正一条 `verified` 的**依据** —— 它的证据指向本机**根本不存在的 OCP****（轮 77）——
+               本轮计划是升 `surface_modeling`，**前提检查**却撞到：
+               ```
+               importlib.util.find_spec('OCP')      → **None**（磁盘上也没有 OCP 目录）
+               importlib.util.find_spec('cadquery') → None
+               importlib.util.find_spec('trimesh')  → None
+               ezdxf ✓ · numpy ✓
+               ```
+               而 `headless_open_format_writing`（**level: verified**）写着
+               `verified_versions: ["OCP 7.9.3.1.1"]` ⇒ **本机没有任何当机依据**。
+               ⇒ **顺藤核它的两条 evidence，都是「在 OCP 缺席或被 mock 的情况下通过的」**：
+               ```python
+               # tests/test_mcp_headless_open_format.py（8 passed）
+               monkeypatch.setattr("scripts.advanced_geometry_ocp.execute_ocp_loft", lambda *_args: expected)
+               #   ⇒ 验的是「**MCP 层把参数传对了**」，不是「OCP 真的能跑」
+               # tests/test_headless_cad_writer.py
+               lambda name: None if name == "OCP" else original_find_spec(name)
+               #   ⇒ **显式把 OCP 伪装成不可用**来测降级路径
+               ```
+               ★ 与早先 `motion_study` 那次**完全同型**：**evidence 指向的东西，本机根本不存在。**
+            91 ⚑ **精确结论（不一刀切降级）**：
+               | 该能力的哪一部分 | 本机有真证据吗 |
+               |---|---|
+               | `.cadstudio.json` / STL / OBJ / DXF / SVG / PDF / PNG | ✅ **有**（7 passed） |
+               | STEP / IGES / BREP / GLB（`OCCT_FORMATS`） | ❌ 缺 OCP ⇒ **显式降级**（代码 L587 有记录，那是诚实的）|
+               | `limitations ②`「OCCT 覆盖盒体/圆柱/布尔/Loft」 | ❌ **本机无法复现** |
+               ⇒ **做了四件（把依据写对，不是降级惩罚）**：
+                 ① `verified_versions`：`['OCP 7.9.3.1.1']` → **`['ezdxf 1.4.4']`**（留真的那个）；
+                 ② `evidence` 里**误导性**的「（OCP 无头写出）」**写准确**；
+                 ③ `headless_open_format_writing` **加 limitation** 记录边界；
+                 ④ `surface_modeling` / `mold_tools` **各加一条 limitation**（本机缺 OCP）。
+               ⇒ **`level` 分布**不变**（verified 25 · stitched 5 · not_implemented 1）** ——
+                 该条 `verified` **仍成立**（非 OCP 部分确有我们自己的运行证据），
+                 缺的只是「**哪一部分**有证据」的说明 —— 而那正是 `limitations` 该承担的事。
+            92 ⚑ **`surface_modeling` 本轮**不能**升 `verified`** —— 它的两条 limitations 讲的全是
+               headless-occt（本机缺 OCP）⇒ 已用 limitation 如实标注，
+               **等装了 `cadquery-ocp` 的机器上重跑**才能升。
+               ★ 教训：**升 level 之前先核"证据依赖的东西在本机存不存在"** ——
+                 否则会把「别处的证据」当成「本机的证据」（本轮正是靠这一步提前撞见的）。
+            93 ⚑ **下一批候选（更新）**：`routing`（中性 JSON，离线可跑）· `dfm_checks`（需 B-Rep 证据）·
+               `mold_tools`（**需 SolidWorks + OCP**）· `surface_modeling`（**需 OCP** ⇒ 本机不可升）·
+               `autocad_basic_drafting`（**真机被阻塞**）。
+               ⇒ **离线可跑、又不缺依赖的只剩 `routing`** —— 下轮优先。
+            94 🎯 **第三条升 `verified`：`routing`**（轮 78）——
+               `routing` 是 5 条 `stitched` 里**唯一还能在本机升的**（其余缺 OCP / 缺 SW 加载项 / 真机被阻塞）。
+               ⚑ **先核依赖**（轮 77 的教训）⇒ `json`/`math`/`numpy`/`jsonschema`/`pydantic` **本机都可用**
+                 ⇒ 本条**不需要** OCP，也不需要 SW 加载项（原生写入本就该 blocked）。
+               ⇒ 新增 `tools/verify_routing_e2e.py`（**18/18 通过 · verdict: pass**）：
+               ⚠ 判据**不是"跑通就算"**，而是**故意造违规**、逐条触发 limitations ① 的七项承诺：
+               · totalLength = 50（3-4-5 直角三角形）· endpointTable · bendRadius 回读 ·
+                 routingBom 一致；
+               · **碰撞障碍 `FRAME` 被点名** · **支撑不足（required=2 + `routing_supports_insufficient`）**；
+               · **弯曲半径过小（5 < 30）被抓**（`routing_bend_radius_too_small`）——
+                 ⚠ 这一项我**没有假定**它一定被抓，**结果它被抓了**（如实记录在证据里）；
+               · **`readyForNativeWrite is False`** ← limitations ② 的**核心诚实承诺**；
+               · 输入侧：损坏 JSON / 根节点非 object / 缺失 都被**结构化**挡下 · **输入文件只读**；
+               · 两个 CLI 入口（`--input/--output` 与 `--preflight`）。
+               ⚠ 过程中踩到一次：我按**位置参数**调 CLI ⇒ `rc=2`；实测它用 **`--input/--output`** ⇒ 已改。
+               ⇒ 清单升级：`level stitched → **verified**` · `evidence` 2 条 ·
+                 `verified_versions` → `['2026']`（limitations ② 讲的正是「**本机 SW2026** 可发现
+                 SWRoutingLib.tlb」，而那部分**真的跑了**）· `limitations` 一条不删。
+               ⇒ 等级分布：**verified 25 → 26** · **stitched 5 → 4** · not_implemented 1
+            95 ⚠ **两个既有测试被我打破 —— 正确处理（改行为就改测试 + 说明为什么）**：
+               `test_capability_manifest_marks_unverified_workflows` 与
+               `test_advanced_interfaces_do_not_inherit_unrelated_verified_levels`。
+               * 后者**意图是**「**类型库存在 ≠ 实现已验证**」⇒ **那条照旧成立**：
+                 我把 `routing` 从 `("surface_modeling","mold_tools","routing")` 元组里**移出**，
+                 **`surface_modeling`/`mold_tools` 仍钉住**（它们**只有类型库、没有端到端验收**），
+                 并**新增**一条单独断言钉住 `routing` 现为 `verified`；
+               * **授权没放开**：`ready_for_unattended_use is False` 对三条**照旧**；
+               * 两处都写了**为什么**（附依据与日期）。
+               ★ **不是为了让测试变绿而改期望** —— 是先核「升级依据是否充分」（18/18 + 23 passed），再改。
+            96 ⚑ **`stitched` 剩 4 条，且**全部**受外部条件阻塞**（下轮起应转做别的）：
+               `dfm_checks`（需 B-Rep 证据）· `surface_modeling`（**需 OCP**）·
+               `mold_tools`（**需 SolidWorks + OCP**）· `autocad_basic_drafting`（**真机被阻塞**）。
+               ⇒ **本机能做的升 level 已做完**（23 → 26）。
+            97 🎯 **按目标 ① 走完 Spec Kit 全路径：`specs/004-dfm-verified/`**（轮 79）——
+               本轮**回到目标 ①**（Spec Kit 全路径，最近 12 轮都在做 ②），并选了一个**一石二鸟**的特性：
+               四制品齐全（`spec.md` / `plan.md` / `tasks.md` / `converge.md`），
+               同时把 `dfm_checks` 从 `stitched` 升到 **`verified`**。
+               ★ **前提核查推翻了一个**误判****（这才是本特性成立的原因）：
+                 `dfm_checks` 长期被归入「需 B-Rep 证据（⇒ 需 OCP）」而搁置。实测：
+                 ```
+                 dependencies: ["python"]   ← **只有 python**；本机虽缺 OCP/trimesh，但本条不需要
+                 「SolidWorks/OCCT B-Rep 证据绑定」= **输入由外部给**，不是它自己去跑 OCP
+                 ```
+                 ⇒ 正是**轮 77 教训的正面应用**（那条 `verified` 的证据指向本机不存在的 OCP；
+                   本条核查后**发现它不依赖那些**）。
+               ⇒ 新增 `tools/verify_dfm_e2e.py`（**11/11 通过 · verdict: pass**）：判据**故意造违规**，
+                 逐条触发 limitations 的三句（四种工艺 / 单位归一 / Profile 交集 / 缺关键输入⇒blocked+点名 /
+                 `manualReviewRequired` / 「不等于制造认证」）。
+               ⇒ 清单升级：`level stitched → **verified**` · `evidence` 2 条 ·
+                 `verified_versions` → `['python 3.14.7']`（本条**不依赖 SW/OCP** ⇒ 不填 CAD 版本）·
+                 `limitations` 一条不删 ⇒ **verified 26 → 27 · stitched 4 → 3**
+            98 ⚠ **`converge.md` 如实记了三处不符合项**（那才是 converge 的价值，不是复述 spec）：
+               ① **SC-004 只做到"不崩"** —— 我造的 `brep-evidence` 形态**不是它认的**（`available: false`），
+                  「篡改必被拒」**未达成** ⇒ **不写成通过**（铁律 5），并写明下一步（去读解析分支或找既有测试）；
+               ② **一次假阴性**：SC-008 我先猜关键词「风险复核」⇒ 判 False；查实际报告后原文是
+                  「**DFM 规则检查不等于制造认证**」⇒ **是判据臆造，不是实现缺声明**；
+               ③ **一次接口臆造**：`limits` 我先按嵌套写 ⇒ `profiles: []`；实际是**平铺语义键**。
+               ★★ **教训：判据的关键词与输入字段要取自实际产物/既有测试，不要凭印象写。**
+                 ⚑ **小探针 `probe_dfm_api.py` 在写 200 行之前就暴露了 ②③** —— 那是它的价值。
+            99 ⚑ **`stitched` 剩 3 条，全部受外部依赖阻塞**：
+               `surface_modeling`（需 OCP）· `mold_tools`（需 SolidWorks + OCP）·
+               `autocad_basic_drafting`（真机被阻塞）· 另有 `animation_export`（需 Motion 加载项）。
+               ⇒ **目标 ② 的「能升的都升完了」**（23 → 27）；下轮起应继续做**目标 ①**：
+                 给其余能力/缺陷开 Spec Kit 特性，或攻 A5/A8 的剩余项。
+           100 🎯 **按目标 ① 走完 Spec Kit `005`：还清 004 记的欠账**（轮 80）——
+               起因：004 的 `converge.md §2.1` **如实记了一条未达成**（SC-004「篡改证据必被拒」做不到）。
+               本特性把它**还清**，四制品齐全（`specs/005-brep-evidence-binding/`）。
+               ★ **做法：先读每一条 `raise`，再探针实测，最后才写判据**：
+                 ① 读契约 —— `dfm_review._load_brep_evidence`（L284-365）的 **8 条 `raise` 就是契约**；
+                    `_brep_size`（L260-281）给出包络字段名 ⇒ 落成 `spec.md §一` 的契约表；
+                 ② 探针实测（`tools/probe_brep_evidence_contract.py`，四组对照）⇒ **先证明两件事**：
+                    **实现本来就是对的**（篡改本就被拒）· **我的形态是错的**
+                    （顺 `缺少有效的三轴包络` 追到 `geometryEvidence.envelope_mm`）；
+                 ③ ⇒ **只改判据，不动 `dfm_review.py`**。
+               ⇒ **SC-004 从 1 条弱判据换成 3 条强判据**：
+                 ```
+                 004 时: 「给证据时报告不崩」（**弱到几乎必然成立**）
+                 005 后: a 合法被接受（verifiedSource=True）
+                         b **篡改 sourceSha256 ⇒ 被拒**（"SHA-256 不匹配，证据已失去绑定"）
+                         c **篡改产物内容 ⇒ 被拒**
+                 总数  : 11/11 → **13/13 · verdict: pass**
+                 ```
+                 ★ **教训：验收里不留"必然成立"的弱判据充数** —— 它会让人以为那件事验过了。
+            101 ⚠ **被门禁抓到一次（那正是它的设计意图，轮 80）**：
+               `tasks.md` 里我先写了 `python D:\AI\SW\probe_brep_evidence.py` ⇒
+               `check_spec_acceptance_paths` **精确命中**：
+               ```
+               · [outside-repo] …绝对路径且不在仓库根下 ⇒ **只在写它的那台机器上有**
+               修法：把脚本按仓库规范收进 tools/，或改写成仓库内的等价命令。
+               ```
+               ⇒ 按修法**把探针收进 `tools/probe_brep_evidence_contract.py`**（补来源块、保持只读），
+                 路径同步改为仓库内 ⇒ 门禁 `[PASS]`（77 处 `→ 验收:` 行全可达）。
+               ★ **该门禁的价值在此**：把「只在我机器上能跑的路径」变成「仓库内可达」。
+            102 ⚑ **闭环**：`specs/004-dfm-verified/converge.md §2.1` 加了**指向 005 的"已还清"注记**，
+               **原文保留** —— 欠账的记录本身就是价值。
+               ⚠ **本轮新记一条未查证**（不猜）：给了**被接受**的 B-Rep 证据后，报告的 `bounds` 仍是
+                 `None` ⇒ 怀疑 `build_dfm_report` 里 `_bounds` 与 `_load_brep_evidence` 的**时序**。
+                 **没读那段调用时序 ⇒ 不下结论**（铁律 5）⇒ 记在 `005/converge.md §2.1`，作下轮候选。
+            103 ⚑ **Spec Kit 特性已有 5 个**（001..005）；**`stitched` 仍 3 条**（缺 OCP / SW 加载项 / 真机阻塞）。
+               ⇒ 下轮候选：① `bounds=None` 的时序查证（可能开 `006`）；② 继续目标 ① 的其余项；
+                 ③ A5/A8 的剩余缺口。
+           104 🔴 **查证并**推翻**了上一轮自己记的「时序 bug」怀疑**（轮 81）——
+               起因：轮 80 的 `005/converge.md §2.1` 记着「给了合法 B-Rep 证据后 `bounds` 仍是 `None`
+               ⇒ **怀疑** `_bounds` 与 `_load_brep_evidence` 的**时序**」。本轮去读代码**查证**。
+               ★ **查证结论：不是 bug，是我看错了字段**：
+               ```
+               ① Select-String '\["bounds"\]|"bounds":'  ⇒ **零命中**：报告里**没有** `bounds` 字段
+               ② 报告 24 个顶层字段逐个数过 —— **没有 `bounds`**
+               ③ 它的产物在 **`checks.bounds_available`** 里，**且带着值**：
+                  {"id":"bounds_available","status":"pass","severity":"medium",
+                   "bounds":{"available":true,"min":[-60.0,-35.0,-4.0],"max":[60.0,35.0,4.0]}}
+               ④ `_bounds()` 是模块内函数，被 `_common_checks` 调用 ⇒ **设计如此**
+               ```
+               ⇒ **`r.get("bounds")` 返回 `None` 是因为**这个键不存在**，不是"值算错了"。**
+               ★★ **教训：怀疑某个字段「值不对」之前，先确认**这个字段存不存在** ——
+                 `dict.get(k)` 对不存在的键**静默返回 `None`**，看起来就像"值是空的"。
+                 ⚠ 那正是本项目反复记录的同一族错误
+                 （「判据/断言针对的东西，在源码里长什么样要先看清」—— 事实 51 家族）。
+            105 ⚑ **本轮的修法（不是删掉怀疑，而是两层）**：
+               ① **更正 `005/converge.md §2.1`**：标题加删除线、写清四条证据，**原文保留**
+                  （误判的记录也有价值：它说明"不查证就写怀疑"会留下什么）；
+               ② **加两道判据防同类误判再发生**（`tools/verify_dfm_e2e.py` 的 **SC-106a/b**）：
+                  断言包络在 `checks.bounds_available`、**不在报告顶层**；且 `bounds` **非空**。
+                  ⇒ 验收命令 **13 → 15 项 · 全通过**。
+               ★ **模式**：converge 记的"怀疑/未查证"**下一轮就该去查** —— 查实了是 bug 就开新特性，
+                 查实不是就**更正并留原文** + **加一道判据**。那才是 converge→下一轮 的闭环。
+            106 ⚑ **下一批候选**：
+               ① 继续目标 ①：给 A5/A8 的剩余缺口开 Spec Kit 特性；
+               ② 目标 ② 的剩余：`stitched` 3 条全受外部依赖阻塞（OCP / SW 加载项 / 真机），
+                  `animation_export` 待 Motion 加载项 ⇒ **等用户决定**；
+               ③ B 级 339 个缺口操作的并入（大工程，可拆成多个 Spec Kit 特性）。
+           107 🎯 **Spec Kit `006`：报告 §四 与 `AGENTS.md §一` 逐条对齐**（轮 82）——
+               起因：`AGENTS.md §一` 定义 **A1–A10**，而 `harvest-report.md §四` 的逐条自评
+               用的是**另一套编号**（**同名不同事**）：报告「A3」实为 A5、「A5」实为 A6、
+               「A7」实为 A8、**「A8」是 fork 且根本不是 A 判据**，还混入「官方 API 覆盖」，
+               并**缺 A1/A9/A10** ⇒ 正是 **A8**（「报告写明…」）**自己没做到**。
+               ★ 同类问题**此前已犯过一次**（旧 §一 的「A1」指官方 API 覆盖）⇒ **靠人记必然再漂**。
+               ⇒ 新增 `scripts/check_report_criteria_alignment.py`（第 **14** 道门禁）：
+                 **跑现状先红** —— 那是有牙齿的证明（缺 3 条 + 混入 1 条非法编号行）。
+                 ⚠ 门禁第一版**漏了粗体** `| **A1** |`（本仓表格惯用）⇒ 10 行全报成非法 ⇒
+                   改成容忍 `\*{0,2}`。★ 与 004 的措辞、005 的平铺键**同族**：
+                   **判据要贴合实际产物**。
+            108 ★★ **撞见并修掉一个**假绿**：失败伪装成 `skipped`** ——
+               修 §四 时我用批量脚本同步报告数字，**其中一个变量为空** ⇒ 报告那行被写成
+               `> 偏离上游： · 工作区 clean`（**数字整段被抹掉**）。此时：
+               ```
+               check_report_freshness ⟹ 「**SKIP** —— 找不到那行」⇒ **exit 0**
+               release_check        ⟹ **全绿** · test_report_freshness_gate ⟹ **也绿**
+               ```
+               ⇒ 正是本项目记录过的**第 4 种面孔**（轮 73）。
+               **修法**：区分两件事 —— **报告不存在** ⇒ SKIP（便携性）·
+               **报告在但读不出那行** ⇒ **FAIL**（报告坏了就是坏了）。
+               **负例实测**：拿数字被抹掉的报告当输入 ⇒ **exit 1**（修前 exit 0）。
+               ⚠ **诚实边界**：本轮只修了**这一处** SKIP；仓库里别的门禁是否也把「输入坏了」
+                 混进「数据源不可用」，**未逐条查** ⇒ 记为未查证，作下轮候选。
+            109 ⚑ **接线是三层，缺一不可**（元门禁逐条教会我）：
+               | 缺哪一层 | 元门禁的原话 |
+               |---|---|
+               | 没登记分类 | 「被调用，却**没登记分类**」 |
+               | 结果没进汇总 | 「`crit_align` 的结果**没有进返回体** ⇒ **静默跳过与没跑等价**」 |
+               ⇒ `release_check` 调用 + `gate-classification.json` 登记 `hard` + 进 `_gate_results`。
+               ★ 印证元门禁的设计意图：**「加了门禁」不是完成，三层齐了才是**。
+            110 ⚑ **Spec Kit 特性已有 6 个**（001..006）；门禁 **14** 道。
+               ⇒ 下轮候选：① **逐条查其它门禁的 SKIP 分支**（§2.1 的未查证，可能有同类假绿）；
+                 ② 继续目标 ①：A5/A8 的其余缺口；③ B 级 339 缺口操作的并入（大工程，可拆）。
+           111 🎯 **Spec Kit `007`：门禁 SKIP 的语义（「数据源不可用」vs「输入坏了」）**（轮 83）——
+               起因：轮 82 修掉一处**假绿**后**自己记下的未查证**（「别的门禁是否也这样，没逐条查」）。
+               本特性就是**去查** —— **又抓到两处同型缺陷**。
+               **高危在哪**：门禁 `SKIP` 时**退出码是 0** ⇒ 它`跳过`与它`通过`**在调用方看来一模一样**；
+               若 `SKIP` 的触发是「**我读不出输入**」而非「**本机没有那份数据**」，
+               则**产物被写坏**（轮 82 真实发生过）就会让门禁**报全绿** ⇒ 第 4 种面孔。
+               ★ **方法：先蒐集，再分类，不靠印象** ——
+                 扫 `scripts/check_*.py` 的**全部** SKIP 点 ⇒ **11 个脚本 / 15 处**（不是我印象里的 2~3 处）；
+                 对每处抽**守卫条件**；按**一条判据**分类：
+                 > **被读的那个东西，是本仓库自己的产物，还是本机/外部才有的数据源？**
+                 ⚠ 分类**必须读常量的来源，不靠名字猜** —— 实测差点误判一处：
+                   `check_member_names` 原文「**反射清单不在本机**…」名字像产物，
+                   **读源码确认读的是仓库外的反射转储** ⇒ SKIP 正确。
+            112 ⚑ **修的两处**（同一形状：**不存在 ⇒ SKIP；在但读不出 ⇒ FAIL**）：
+               | 门禁 | 缺陷 | 修后 |
+               |---|---|---|
+               | `check_signature_audit_freshness` | 文档在、但**逐模块表读不出** ⇒ 曾 SKIP | 文档不存在 ⇒ SKIP · **文档在但读不出 ⇒ FAIL** |
+               | `check_workspace_shadowing` | `SERVER = ROOT/"mcp-server"/"server.py"`（**本仓库文件**）不在 ⇒ 曾 SKIP | 目录不在 ⇒ SKIP · **目录在但文件不在 ⇒ FAIL** |
+               **负例证明（两边都测，那才是唯一的证明）**：
+               ```
+               签名审计  正例 0 · 负例A(文档在、表读不出) **1** · 负例B(文档不存在) 0 SKIP
+               遮蔽门禁  正例 0 · 负例A(目录在、文件不在) **1** · 负例B(目录不在)     0 SKIP
+               ```
+               ⚠ 遮蔽门禁的负例用 `tempfile` 造**假仓库** —— 它的 `ROOT` 由 `__file__` 推出，**不能靠参数改**。
+               ★ **不新增第 15 道门禁** —— 判据已存在（SKIP 语义），只是**两处用错了**（避免「为了修房子创建公司」）。
+            113 ★ **写 `007/tasks.md` 时又撞见第三处**：验收命令门禁把 **glob 当字面路径**
+               （`Select-String scripts\check_*.py -Pattern …` 是**合法**的 grep 形态，却被报「仓库里没有这个文件」）。
+               ★ 与它**自己 docstring 里记的那次假阳性**（轮 53：绝对路径**在仓库里**却被报「仓库外」）**同族**：
+                 **判据要贴合实际的书写形态**。
+               ⇒ 修：含 glob 元字符的 token 用 `repo.glob()` 展开，**匹配 ≥1 个**才算通过；
+                 **0 匹配仍红**（报 `glob-no-match` —— 换了原因名但**没放过**）。
+               **负例证明** `tools/probe_spec_glob_gate.py`：正例 0 · glob 无匹配 **1** · 字面不存在 **1**。
+            114 ⚠ **本轮如实记下一处未查证**：`check_signature_audit_freshness` 还有第三处 SKIP
+               （`if checked == 0` ⇒ 自称"便携性守卫"）。⚠ **轮 55 首跑就撞上过**：路径解析写错 ⇒
+               6/6 全报「跑不了」⇒ **误 SKIP**。**本轮没查证**「本机 `--raw` 在却 `checked == 0` 时
+               是否也该 FAIL」⇒ 按铁律 5 记为未查证，**不猜着改**，作下轮候选。
+            115 ⚑ **Spec Kit 特性 7 个**（001..007）· 门禁 14 道 · 回归 970 passed。
+               ⇒ 下轮候选：① 上面那处未查证；② 继续目标 ①（A5/A8 其余缺口）；③ B 级 339 缺口并入。
+           116 🎯 **Spec Kit `008`：`checked == 0` 的 SKIP 语义**（轮 84）——
+               起因：轮 83（`007`）系统排查 SKIP 语义时**如实记下的最后一处未查证**：
+               `check_signature_audit_freshness` 的 `if checked == 0: SKIP`（自称"便携性守卫"）。
+               ⚠ 而**轮 55 首跑就撞上过这个形态**：`resolve_module` 解析写法不对 ⇒
+                 **6/6 全报「跑不了」⇒ 误 SKIP**（注释还留在它的 docstring 里）。
+               **为什么它必然是 FAIL（论证，不是猜）**：
+               ```
+               ① 能走到 checked == 0 ⇒ `refs` 必然非空（上游已把「拿不到反射」那条 SKIP 掉）
+               ② 表里模块是**本仓库自己的 .py**（scripts/*.py、subskills/**/*.py）
+               ⇒ ③ 反射在、却一个都解析不出 ⇒ 解析坏了 / 仓库残缺 —— **故障，不是便携性**
+               ```
+               ★ **先复现，再改**（`tools/probe_checked_zero_skip.py`）：
+                 `--repo <空临时目录>` + `--raw <真反射>` ⇒ 逼出目标路径（**不改任何仓库文件**）：
+                 ```
+                 修前: 反射 **13** 份 · ⚠ 6 个模块跑不了 · **SKIP** ⇒ **exit=0**（全绿）
+                       —— **与轮 55 的误 SKIP 形态一模一样**
+                 修后: [FAIL] 反射转储**在**（13 份），但 6 个模块**一个都解析不出来** ⇒ **exit=1**
+                 便携性: --raw <不存在> ⇒ 仍 SKIP，exit 0（**未受损**）
+                 ```
+            117 ★★ **顺带修掉一个**假用例**（它比没有用例更糟）** ——
+               `tools/probe_skip_semantics.py`（`007` 的交付物）里有个用例「把逐模块表用正则删掉看门禁是否红」；
+               轮 84 回看发现 **那条正则根本没匹配上** ⇒ 产出的"坏文档"**仍带完整的表** ⇒ 门禁照常 `[PASS]`，
+               ⚠ **而我在轮 83 把它当成了"修好了"的证据**。
+               ⇒ 改成**造一份只有标题、不含表的文档**（那才是「文档在、表读不出」的定义）⇒ 实测 exit=1，用例才成立。
+               ★★ **教训：假用例比没有用例更糟** —— 它给出一份**看起来验过的**证据。
+                 ⚠ 与已知事实 62「门禁写了不等于有效」**同族**，只是发生在**测试**而非门禁上。
+            118 ⚠ **探针第一版也没测到目标路径**（当场发现）：它从源码抽 `RAW` 时把**源码文本**
+               （`Path(r"…")`）当路径传 ⇒ 走的是**另一条** SKIP 分支（那条**是合法的**便携性守卫）
+               ⇒ 根本没测到 `checked == 0` ⇒ 改成抽引号里的**真路径**。
+               ★ 又一次「**探针本身要贴合实际形态**」（与 004/005/006/007 同族）。
+            119 ⚠ **本轮如实记下一处未查证**：**「假用例」这一类有多普遍？** 本轮只修了撞见的这一个；
+               `tools/` 下其余探针的用例**是否也成立，未逐条查** ⇒ 作下轮候选。
+            120 ⚑ **与已知事实 53 的对账**：「同一处连续修补 ≥3 次就该停下」——
+               轮 83 修的是「文档在但表读不出」，本轮改的是 `checked == 0`，**两个不同分支**；
+               且本次是**查证后的一次性修正**，非试参数。
+            121 ⚑ **Spec Kit 特性 8 个**（001..008）· 门禁 14 道 · 回归 970 passed · verified 27 · stitched 3。
+               ⇒ 下轮候选：① **假用例普查**（第 119 条的未查证）；② 继续目标 ①（A5/A8 其余缺口）；
+                 ③ B 级 339 缺口并入（大工程，可拆）。
+           122 🎯 **Spec Kit `009`：假用例普查 —— 把「变换没生效」这一类钉成门禁**（轮 85）——
+               起因：轮 84 自己记下的未查证（「**『假用例』这一类有多普遍？只修了撞见的这一个**」）。
+               ★★ **为什么假用例**比没有用例更糟**：没有用例时人知道没验；
+                 **有假用例时人以为验过了**。轮 84 那个正是如此（删表的正则没匹配上 ⇒
+                 "坏文档"仍带完整的表 ⇒ 门禁 `[PASS]`，**而轮 83 的结论建立在它上面**）。
+                 ⚠ 与已知事实 62「**门禁写了不等于有效**」**同族**，只是发生在**测试**而非门禁上。
+               **方法：先分四类，再决定能不能机器判** ——
+               | 类型 | 是什么 | 可否机器判 |
+               |---|---|---|
+               | **1 · 变换没生效** | `re.sub`/`replace` 造"坏输入"但**没匹配上** ⇒ 空转 | ✅ **判了** |
+               | 2 · 坏的理由不对 | 输入确实坏了，但**不是**该用例声称的那点 | ❌ 需语义 |
+               | 3 · 负例与正例结果相同 | 跑了但**没区分出任何东西** | ❌ 需语义 |
+               | 4 · 断言打在恒定字段 | 断言碰巧永远成立 | ❌ 需语义 |
+            123 ⚑ **普查的实际规模（不夸大）**：`tools/` 探针 **24 个** · 含「造负例输入」特征 **8 个** ·
+               其中「变换」形态 **1 个**（另有 3 个是正当文本处理：HTML 剥离 / 标识符归一）。
+               ⇒ **类型 1 的规模是 1**。本特性**因此很小** —— 那是对的：
+                 **普查的价值在确认规模，不在制造工作量**。
+               ★ **门禁的"有牙齿"用的是**真实缺陷**，不是为测试造的样本**：
+                 ```
+                 修复前 [FAIL] **1/1** 处「造负例输入」的变换**没有自证** —— probe_skip_semantics.py L96
+                 修复后 [PASS] 1 处全部自证（比对/字节数/断言）
+                 ```
+                 ⚠ 那处**碰巧是对的**（实测变换生效：`41954 -> 41897` 字节），
+                   但**没有任何东西阻止它变成假用例** —— 正则一改就**静默**退回空转。
+                   ⇒ 修法：**先算 → `assert new != old` → 再写 → 打印前后字节数**。
+            124 ★ **门禁主动声明自己的覆盖面**：`[PASS]` 时也打印「只判『变换没生效』这一类；
+               类型 2/3/4 需要语义判断，**未判**」—— 否则「有 15 道门禁」会让人以为
+               "假用例这事儿已经防住了"，而那正是**「覆盖不全反而有害」**（事实 62 + 第 40 轮教训）。
+               ⇒ 接线三层（调用 / 登记 `hard` / 进汇总）· 门禁 **14 → 15**。
+               ⚠ 实现原先写在 `tools/audit_*` ⇒ **移进 `scripts/`** 并移除副本，避免两份漂移。
+            125 ⚠⚠ **本轮连撞两次的陷阱（值得记）**：为「验证 `tools/audit_*.py` 已移除」写了
+               `Test-Path …（应为 False）` ⇒ `check_spec_acceptance_paths` **只认"文件存在"**
+               ⇒ 报 `[missing-in-repo]`。**改写后**，我在 converge 里**解释这个局限的散文本身又含那个标记**
+               ⇒ **门禁再报一次**。★ **教训：写"关于验收行的散文"时不要复现那个标记的字面量**。
+               ⇒ 该局限（**否定式验收判据无法表达**）如实记进 `009/converge.md §2.6`，**本轮不修**（需解析语义）。
+            126 ⚠ **本轮如实记下的未覆盖**：本门禁**只扫 `tools/*.py`** —— `tests/`（970 个通过）里
+               是否也有「变换没生效」型假用例，**本轮未扫、未查** ⇒ 作下轮候选。
+            127 ⚑ **Spec Kit 特性 9 个**（001..009）· 门禁 **15** 道 · 回归 970 passed · verified 27 · stitched 3。
+               ⇒ 下轮候选：① **扫 `tests/` 的同类假用例**（第 126 条）；② 继续目标 ①（A5/A8 其余缺口）；
+                 ③ B 级 339 缺口并入（大工程，可拆）。
+           128 🎯 **Spec Kit `010`：B 级缺口分诊 —— 目标里最大那块的第一刀**（轮 86）——
+               目标 ②「**B 级并入 339 个缺口操作**」是**目标里最大的一块未动**。
+               动它之前必须先答：**那 339 里，多少是真的没有、多少是"有但名字/暴露方式不同"？**
+               ★ **撞法：先从最小的域找一个具体反例**（不是"看总数觉得不对"）——
+                 模具域缺口只有 **3** 个 ⇒ 随手一查：**2 个我们明明有**！
+                 ```
+                 parting_line      → solidworks_mold_parting_line     （在 tool_specs_batch1.py）
+                 shut_off_surface  → solidworks_mold_shut_off_surface （同上）
+                 tooling_split     → 真的没有
+                 ```
+            129 ★ **真缺陷（已修）：暴露面被低估 20 个** ——
+               `build_union_map._our_tools()` **只读 `server.py` 的 `@mcp.tool(name=…)` 装饰器形式**，
+               而本仓库后补的工具注册在 **`mcp-server/tool_specs_batch*.py`**，**与装饰器交集 = 0**：
+               ```
+               server.py 装饰器 45 · tool_specs_batch*.py 20 · 合并 **65**   ← 修前只数到 45
+               ```
+               **复算**：并集 **384 → 404** · 本仓库独家 **35 → 55**。
+               ⚠ 这个数**不降反升** —— 它量的是「我们带进并集的**独家**操作」，属**修正记账**，不是进度。
+               **根因**：`_normalize` 剥**厂商前缀 + 动词前缀**，但**不剥域词** ⇒
+                 `solidworks_mold_parting_line → mold_parting_line ≠ parting_line` ⇒ 同一条操作两个键。
+               ⚠ **但不给主匹配器加模糊启发式**（已知事实 53）⇒ `build_union_sources.py` **一个字没动**
+                 （`git diff` 验证为空），339 仍是**严格名口径**的诚实数字。
+            130 ⚑ **分诊结果（三个口径分开量）**：
+               | 类 | 个数 | 占比 | 含义 |
+               |---|---|---|---|
+               | **别名（强）** | **26** | 8% | 多出的词**全是域词** ⇒ 极可能同一操作 |
+               | **别名（弱）** | 37 | 11% | 多出的词**含动词** ⇒ 语义可能不同 |
+               | **后缀候选（需人工核）** | 144 | 42% | `scripts/sw_*.py` 有同名函数 ⇒ ⚠ 假阳性约一半 |
+               | **真缺** | 132 | 39% | 连 `scripts/` 里也没有 ⇒ 要从零实现 |
+            131 ★★ **抽验揭穿了我自己的分类规则（本轮最值钱的一步）**：
+               对「后缀候选」抽 10 条 ⇒ **约一半假阳性**（规则只比**最后一个词**）：
+               ```
+               ✅ parting_line→insert_parting_line · export_drawing_pdf→export_to_pdf · create_mate→add_mate
+               ❌ shut_off_surface→create_bspline_surface（都是 surface，但不是 shut-off）
+                  · set_material→add_render_material · create_section_view→activate_view
+               ⛔ 正确拒绝: run_simulation · unfold_sheet_metal
+               ```
+               ⇒ **按事实 53 不调规则**，改为：① 改名「**后缀候选（需人工核）**」；
+                 ② **把抽验率写进工具输出**；③ 报告写明**只用于定范围**。
+               ★ **与「门禁写了不等于有效」同族**，只是这次发生在**我自己的分诊规则**上。
+            132 ⚠ **我最初的怀疑只对了一小半（如实纠正）**：怀疑「339 被命名差异灌水」——
+               实测**强别名只有 26（8%）**；真正的大头是「**能力在 `scripts/` 里、只是没暴露成 MCP 工具**」
+               （144，42%），**而那一类又有一半是后缀假阳性**。
+               ⇒ **诚实结论：339 不能简单说"灌水"** —— 它混了**三个口径**（暴露面/能力面/严格名），
+                 **必须先分清口径再谈进度**。
+            133 ⚠ **本轮未查证（如实记录）**：
+               ① **「真缺 132」是上限估计** —— 语义相同但用词完全不同的操作（如 `run_simulation`
+                  vs 我们的 `run_analysis` 系）会被判成真缺；
+               ② **`scripts/` 779 个公开函数里有多少没暴露成 MCP 工具** —— 本轮只从"缺口那侧"看了 144 个，
+                  **没从"我们这一侧"看**（那是另一个方向的全景，也是**更便宜的待办**）。
+            134 ⚑ **Spec Kit 特性 10 个**（001..010）· 门禁 15 道 · 回归 970 passed · verified 27 · stitched 3。
+               ⇒ 下轮候选：① **从"我们这一侧"看 779 个公开函数没暴露的有多少**（第 133 条②，最便宜）；
+                 ② 人工核那 144 个后缀候选（定范围后逐条）；③ 挑一个域开始**真并入**（如模具域 1 个真缺）。
+           135 ⚑ **Spec Kit `011`：反向全景（我们这一侧）**（轮 87）——
+               从 `010` 的"缺口那侧"转到"我们这一侧"：`scripts/sw_*.py` 有 **779 个公开函数**，
+               而 MCP 暴露面只有 **65 个工具**，其中**只有 24 个函数**被工具直接引用。
+               ⇒ 切三刀后的诚实数字：
+               ```
+               755 未被工具引用
+                 ├ 224 名字像内部辅助
+                 └ 531 名字像能力
+                      ├ 119 被生产代码调用（内部步骤，不是缺口）
+                      ├ 104 **只被测试调用**（用户碰不到，但有测试守着）
+                      └ **308 谁都不调用、也没暴露（孤立能力）**
+               ```
+               ★ **三处坑都是当场抽验/自查发现的**（延续 010 的做法）：
+                 ① 只读 `function=` 字段 ⇒ 高估"未引用"；补 `server.py` 的 `import` 才对；
+                 ② 调用者只扫 `scripts/` ⇒ `add_component` 被假判孤立（它被 examples/tests 调用）；
+                 ③ `tests_only` 定义错（"出现在测试里" ≠ "只出现在测试里"）⇒ 223 误算成 63。
+               ⚠ **未查证**：308 是**上限**（经 `getattr`/作为值传递/装饰器调用的检测不到）。
+            136 ⚑ 下轮候选：① 从 308 里**挑一个域试点暴露**（如装配 `add_mate` 系）；
+               ② 继续 010 的 144 个后缀候选人工核；③ 回到 A5/A8 的其余缺口。
+           137 🔴 **更正 011 的暴露面数字：24 是错的，实为 72**（轮 88-89）——
+               011 靠**扫调用形态**统计「哪些函数被工具引用」，接连漏了三种写法：
+               | 版本 | 读的来源 | 报出 |
+               |---|---|---|
+               | v1 | 只读 `function="…"` 字段 | 20 |
+               | v2 | + `from scripts.X import …` | 17（含辅助名）|
+               | v3 | + `importlib.import_module` 别名 | 24 |
+               | **v4** | **改用 `server.py` 的**分发表**（权威来源）** | **72** |
+               **根因**：`server.py` 有一张分发表 `"op_name": alias.function,` ——
+               它**本身就是「哪些函数被暴露」的清单**；前三版都在**猜**它。
+               ★ 已知事实 53：同一启发式补 ≥3 次就该停 ⇒ **不再加第 5 种形态**，改用权威清单。
+               **⇒ 修正后的数**：`779 公开函数 · **72 被引用（下界）** · 707 未被引用`
+               （其中 495 名字像能力：85 内部步骤 · 102 只被测试调用 · **308 孤立能力**）。
+               ⚠ **308 未变**（「既没暴露、也没人调用」，与暴露口径无关）；**72 仍是下界**，已写进口径声明。
+            138 ⚑ **汇报格式已写成提案**（用户要求拿去写进全局 AGENTS.md）：
+               `D:\AI\SW\REPORTING-STYLE-PROPOSAL.md` —— 六条硬规则（不叙述过程 / 结论先行 /
+               数字带含义 / 错误一行一条 / 未证实显式列出 / 固定结构 120-200 字）+ 骨架 + 正反样例。
+               ★ 病根不是"啰嗦"，是写成了**操作日志** —— 读者被迫从过程里自己拼结论。
+            139 ⚑ 下轮候选：① 从 308 孤立能力里挑一个域做**暴露试点**（装配类候选最多）；
+               ② 继续 010 的 144 个后缀候选人工核；③ 回到 A5/A8 的其余缺口。
+           140 🎯 **Spec Kit `012`：暴露试点 —— 5 个孤立能力接成工具**（轮 90）——
+               从 `011` 的 308 个孤立里，先筛「**签名兼容现有注入**」的（22 个），
+               再挑 **5 个只读/低风险**的接出去：
+               `current_selection` · `clear_selection` · `set_standard_view` ·
+               `list_render_materials` · `collect_appearance_evidence`。
+               ⇒ **首次看到数字往好里动**：暴露面 **72 → 77** · 缺口 **339 → 338** · 孤立 **308 → 303**。
+               ⚠ **5 个的真机行为未测** —— 契约测试只核「声明 vs 签名一致」（18 passed），**不跑 COM**。
+            141 ⚑ 过程记录（都是正常流程，非缺陷）：
+               ① `check_union_conventions` 红 = 地图未重生成；② `check_report_freshness` 红 = 数字未同步；
+               ③ `test_expected_batch_size` 红 = 它**故意钉死批次数 20** ⇒ 已改 25，
+                 并写明「**这是它的设计意图：让悄悄多注册工具这件事可见**」。
+            142 ⚑ 下轮候选：① **给这 5 个做真机冒烟**（SolidWorks 在跑）；
+               ② 剩下 303 个孤立里，需要新解析器的那批（草图 `sketch` 作首参的 17 个）；
+               ③ 继续 010 的 144 个后缀候选人工核。
+           143 ✅ **Spec Kit `012` 补真机冒烟：5 个新工具全部可用**（轮 91）——
+               `tools/verify_batch5_smoke.py` 真连 SolidWorks（复用已有文档）⇒ **7/7 pass**。
+               ⚠ **证据强度不均**（如实记）：
+                 `list_render_materials` 返回 **0 个材质** ⇒ 只证明"不报错"，**没验到"有材质时"**；
+                 `collect_appearance_evidence` 只回 3 个键 ⇒ **未核键的含义对不对**。
+               ⚠ 冒烟本身踩两处迟到绑定老问题：
+                 ① `connect_solidworks()` 返回 **(sw, 元数据)** 元组，不是单对象；
+                 ② `GetTitle` **有时是属性有时是方法** ⇒ 改用仓库自带的 `get_com_member` 兼容。
+            144 ⚑ 下轮候选：① 剩下 303 个孤立里「需要新解析器」的那批（草图 `sketch` 作首参 17 个）；
+               ② 给 5 个新工具**加更硬的证据**（造一个带材质的件再验 `list_render_materials`）；
+               ③ 继续 010 的 144 个后缀候选人工核。
+           145 ✅✅ **Spec Kit `012` 强证据：两条弱证据已变硬**（轮 92）——
+               造一个**带外观的新件**再验：
+               ```
+               ✓ list_render_materials **有材质时**返回 > 0   材质数 = 1（原文档是 0）
+               ✓ appearance_count 与实际一致                appearance_count=1 · 实际=1
+               ✓ appearances[0].diffuse **不是恒定 0**      diffuse=0.75  ← 真读到材质参数
+               ✓ has_appearance 与材质数一致                has_appearance=True
+               ⇒ 12/12 · pass
+               ```
+               ⚠ **本节自己的两处错**（当场抽验发现）：
+                 ① 我按 `rows` 取行 ⇒ 拿到 `None`；**实际键名是 `appearances`**；
+                 ② `created.Close(False)` 报「**无效的参数数目**」⇒ 改用 `ISldWorks.CloseDoc(标题)`。
+               ★ **收尾发现我造的空件残留**（零件6/7/8）⇒ 只关「标题形如 `零件N` **且路径为空**」的，
+                 **绝不碰有路径的文档**；清理后只剩用户原有的两个文档。
+            146 ⚑ 下轮候选：① 剩下 303 个孤立里「需要新解析器」的那批（草图 `sketch` 作首参 17 个）；
+               ② 继续 010 的 144 个后缀候选人工核；③ 回到 A5/A8 的其余缺口。
+           147 🎯 **Spec Kit `013`：暴露试点第二步 —— 3 个孤立能力 + 一个缺陷发现**（轮 93）——
+               接了 `available_point_selectors` / `available_direction_selectors` /
+               `collect_assembly_bom`；暴露面 **77 → 80** · 孤立 **303 → 300** · 回归 **1000 通过**。
+            148 ★★ **最重要的产出：签名兼容 ≠ 能用** ——
+               第 4 个候选 `sw_export.get_mass_property_override_options` 签名**完全兼容**，
+               真机却跑不通，**而且不是参数问题**：
+               ```
+               GetMassProperties(1.0)/(0)/()          ⇒ 全部 (-2147352561, '非选择性的参数。')
+               GetMassProperties2(1.0, out, False)    ⇒ 能跑，但返回**扁平浮点数组**，拿不到 IMassProperty2
+               ```
+               ⇒ 它要的 `GetOverrideOptions()` **两条路都够不到** ⇒ **前提不成立**（已剔除 + 立档
+                 `docs/orphan-functions-not-runnable.md`）。
+               ★ **它是孤立函数** ⇒ **孤立同时意味着「便宜的机会」和「从未被验证」**，
+                 两者必须分开处理：**暴露前必须真机冒烟**。
+               ⚠ **更正 `012` 的乐观说法**（"孤立能力是最便宜的待办，只要接出去"）——
+                 **便宜的只是接线，可用性得单独验**。
+            149 ⚠ **一条要紧的估计**：本轮只抽了 **4 个**候选就撞上 **1 个坏的（25%）**。
+               若这个比例大致成立，则剩余 300 个孤立能力在暴露前**必须先做一遍「能不能跑」的普查**。
+               ⇒ 记进 `013/converge.md` 的未查证，作下轮**首选**。
+               ⚠ 另：草图读回那 17 个需 `ISketch`，而 `GetActiveSketch2` 要求**编辑态** ——
+                 **未查证**能否不进入编辑态拿到 `ISketch`。
+           150 🎯 **Spec Kit `014`：可调用性普查（17 个暴露候选，真机各调一次）**（轮 94）——
+               ```
+               ok 14 · raised 3 ⇒ 复验后：**真缺陷 2** · **普查假阳性 1**
+               ⇒ 真缺陷率 ≈ **12%**
+               ```
+               ⚠⚠ **更正轮 93 的「约 25%」估计** —— 那次只有 **4 个样本**，估不出比例。
+                 **这正是本轮做普查的理由**。
+               ✓ **两个真缺陷**（都**不暴露**，已入 `docs/orphan-functions-not-runnable.md`）：
+                 · `sw_export.get_mass_property_override_options`（轮 93 已知）
+                 · `sw_weldment.create_cut_list` —— `InsertWeldmentCutList2` 在迟到绑定下解析为 `None`
+                   ⇒ 调用即崩（**装配体与新建零件上都崩**，不是输入不合适）
+               ✗ **一个假阳性**：`get_extension` 在普查里报错，**单独调用却完全正常**
+                 ⇒ 失败与前 16 次调用造成的状态有关。
+            151 ★★ **本轮最该记住的**：**普查自己会冤枉好函数** ——
+               所以普查只能用来「**缩小范围**」，**每个 raised 必须单独复验才能定性**。
+               「坏函数被放过去」与「好函数被冤枉」**一样有害**。
+            152 ⚑ **未查证**：剩下 **283 个**孤立能力（300 − 17）没查 —— 本轮只查了"暴露候选"那批；
+               若要普查全部，需为每个备前置条件，**成本需单独立项**。
+               `create_cut_list` 的**正确调用方式**也未查。
+           153 🔧 **Spec Kit `015`：把两个「跑不通的函数」改成**失败可见****（轮 95）——
+               修 `014` 定性出的两个真缺陷。**不是"修好"，是"让失败看得见"**：
+               ```
+               修前: TypeError: 'NoneType' object is not callable      ← 看不出是"成员取不到"
+                     com_error (-2147352561, '非选择性的参数。')        ← 看不出是"后端不可用"
+               修后: RuntimeError: IFeatureManager.InsertWeldmentCutList2 在当前后端（pywin32 迟到绑定）
+                     上**取不到**（权威类型库里有该成员，但 COM 分发解析为 None）
+                     ⇒ 切割清单在当前后端**不可用**；这不是调用参数的问题。
+               ```
+               ★ **为什么不是"修好"**：查证表明两条路都走不通 ——
+                 `InsertWeldmentCutList/2` 权威类型库里有、**pywin32 却取到 None**；
+                 `GetMassProperties` **任何参数数都失败**，`GetMassProperties2` 能跑但**返回数值数组**、
+                 拿不到 `IMassProperty2`。⇒ **是后端能力问题，不是参数问题**。
+                 与仓库对 `IModeler.Create*Surface` 的先例一致（已知事实 40）。
+               ⇒ 桩测 `tests/test_dead_capability_diagnostics.py`（**3 passed**）把"抛什么"钉住，
+                 并**钉住 docstring 必须写明不可用**（本仓库踩过"文档串与代码不同步"的坑）。
+            154 ⚠ **三处红都是"改了运行时文件没同步"**（正常流程，非缺陷）：
+               ① 签名审计表 `sw_weldment.py` 调用点 71 → **72**（我加了判空调用）；
+               ② 报告偏离数字；③ 上面两条的下游。回归 **1003 passed**。
+            155 ⚑ **未查证**：`InsertWeldmentCutList2` 到底能不能用 —— 本轮只证"pywin32 迟到绑定取不到"，
+               **没查**换后端（`comtypes` / 进程内 C++）或换调用方式能否走通；`IMassProperty2` 同理。
+               ⇒ 记为**后端相关的未决**，不是"永远做不到"。
+            156 ⚑ 下轮候选：① 继续暴露候选里剩下的（`012`/`013` 共接了 8 个，还有 ~9 个签名兼容的）；
+               ② 回到 A5/A8 的其余缺口；③ 缺口 338 的域级并入。
+           157 🎯 **Spec Kit `016`：暴露试点收尾 —— 再暴露 3 个**（轮 96）——
+               接了 `activate_model_for_preview` / `clear_selection_for_preview` /
+               `refresh_scene_graph`。真机冒烟 **4/4**，契约测试 **20 passed**。
+               **三批合计**（`012`+`013`+`016`）：接 **11** 个工具 ·
+               暴露面 **72 → 83** · 孤立 **308 → 295** · 回归 **1015 passed**。
+            158 ⚑ **本批筛掉 4 个候选，各有理由**（不是挑剩下的）：
+               · `get_extension` / `byref_pair` —— **COM 辅助**，不是用户操作；
+               · `iter_features_recursive` / `iter_feature_tree` —— **生成器**，
+                 注册器按值传参/返回，需先物化 ⇒ **本批不动**。
+               ★ 但**生成器那两个可能很有用**（特征树遍历对 AI 有价值）⇒ 记为**待设计**，不是否决。
+            159 ⚠ **未查证（如实记）**：
+               ① 本批 3 个**都改文档状态**（激活/清选择/刷新图形），**未验证是否弄脏文档**（`IsDirty`）；
+               ② 清选择/刷新之后**用户原来的选择回不来** —— 未评估这算不算副作用；
+               ③ 生成器怎么过注册器 —— 未查。
+            160 ⚑ 下轮候选：① **生成器暴露的设计**（特征树遍历，对 AI 有价值）；
+               ② 缺口 338 的域级并入；③ 回到 A5/A8 的其余缺口。
+           161 🎯 **Spec Kit `017`：换候选池 —— 两个口径都漏了最好的一池**（轮 97）——
+               起因：想做"特征树遍历"，却发现 `sw_review.collect_model_summary`
+               **已经在遍历特征树并返回 JSON-ready 数据**（`{title,type,feature_count,features:[…],path}`），
+               **却没暴露**。
+               **查它为什么没被发现** ⇒ 它**只被测试调用** ⇒ **两个口径同时排除它**：
+                 · 「孤立」口径排掉有调用者的；· 「未暴露 + 被生产代码调用」口径排掉只被测试调用的。
+            162 ★★ **结论：候选池应当有三个，而最好的那个被两边都漏了**：
+               | 池 | 定义 | 好坏 |
+               |---|---|---|
+               | A · 孤立 | 未暴露 + 无人调用 | ⚠ **从没跑过** ⇒ `014` 证明混着坏的（17 里 2 个跑不通）|
+               | B · 生产在用 | 未暴露 + 被生产代码调用 | 好，但**已被内部使用**，暴露价值较低 |
+               | **C · 只被测试调用** | 未暴露 + **只有测试调** | ★ **最好**：**有测试 ⇒ 跑过的概率高** · **未暴露 ⇒ 用户够不到** |
+               ⇒ 量出池 C **12 个**，从中接 3 个（`collect_model_summary` / `get_costing_manager` /
+                 `list_setter_summary`）。暴露面 **83 → 86** · 回归 **1027 passed**。
+               ★ **本轮最有价值的是这个口径更正**，不是那 3 个工具 —— 前三轮**永远找不到池 C**。
+            163 ⚠ **证据强度不均（如实记）**：
+               `collect_model_summary` **强**（拿到 **18 个特征**）·
+               `list_setter_summary` **中**（9 个键，未核含义）·
+               `get_costing_manager` **弱**（返回 **None** ⇒ 只证明不报错）。
+            164 ⚑ **未查证**：池 C 剩 **9 个**未接（含 2 个需 `spec` 数据类对象的）；
+               `get_costing_manager` 返回 None 是不是"该文档没有 Costing" —— 未查；
+               池 B 的 **13 个一个都没接**（暴露价值需单独评估）。
+            165 ⚑ 下轮候选：① 继续从**池 C** 接（价值最高的池）；② 评估池 B；
+               ③ 缺口 338 的域级并入；④ 回到 A5/A8 的其余缺口。
+           166 🔧 **Spec Kit `018`：模具域补暴露 —— 以及一次**卡住会话的模态框****（轮 98–99）——
+               **能力侧发现**：`010` 说的模具域唯一"真缺口" `tooling_split`，
+               其实**已实现**（`sw_mold.insert_core_cavity_solids`，有测试）**只是没暴露**
+               ⇒ 正是 `010` 记的第三类。batch9 把模具域 3 个这样的接出去。
+               ⚠⚠ **但本轮出过一次真实事故**：第一版冒烟在**空零件**上调
+                 `insert_parting_surface` / `insert_core_cavity_solids`
+                 ⇒ 弹出**模态框**「**此拔模方向尚未定义。**」⇒ **卡住会话**（用户连续两次截图报错）。
+            167 ★★ **两条新事实（已入 `known-facts.md`）**：
+               **64 · `ISldWorks.CommandInProgress = True` 不能抑制某些模态框** ——
+                 铁律 2 说它抑制"未抑制的模态对话框"，**这里是反例**。
+                 ⇒ **调「需要前置几何」的建模工具前必须先确认前置条件已满足**。
+               **65 · 改「视图/选择状态」的工具会把文档标脏** ——
+                 批次 7 的三个工具在装配体上跑过后，标题变成 `mcp_avi_asm.SLDASM *`。
+                 ⚠ 轮 96 把这记为「未查证」，**轮 99 得到答案：会脏**。
+            168 ⚑ **处置**：冒烟改**前置条件感知**（那 2 个**一个都不调**，只记前置条件）·
+               批次 7 三条 doc **加警告** · 关掉我造的**全部**临时件（只匹配「自动命名 + 路径为空」，
+               **绝不碰有路径的**）· ⚠ **未保存任何东西**。
+            169 ⚠ **未验证（如实记）**：`insert_core_cavity_solids` / `insert_parting_surface`
+               的**真机行为未验** —— 需要**已准备的分型件**才能安全调
+               ⇒ batch9 这 2 条**只有静态证据**，没有运行证据。
+            170 ⚑ **一句要紧的话**：**这不会让「缺口 338」变小** —— 计数按**操作名归一**比，
+               我们叫 `core_cavity_solids`、外部叫 `tooling_split` ⇒ **名字对不上**。
+               ★ **名字级计数 ≠ 能力级覆盖**。回归 **1039 passed**。
+           171 🎯 **Spec Kit `019`：把「判据编号一致性」门禁的**作用范围**推广开**（轮 100）——
+               目标是做「NOTICE 与审计报告刷新」，查审计产物时发现
+               `docs/final-audit.md` **既过期又用着另一套 A 编号**
+               （它的 `A3`=签名、`A5`=许可、`A6`=禁词、`A8`=fork）。
+               ⚠ 而轮 82 建的门禁**只扫 `harvest-report.md`** ⇒ **扫不到 `final-audit.md`**。
+            172 ★★ **这是已知事实 62 的又一例**：「一个门禁**写了**不等于它**有效**」——
+               **判据是对的，作用范围没跟上**（轮 82 认的是「`## 四、` 那一节」，
+               而 `final-audit.md` 的表在 `## 逐条判定` 下）。
+               ★ **推广的直接证据**：改完门禁、**还没动 `final-audit.md`** 时跑一次，
+                 它**当场报** `final-audit.md 缺 A9/A10` —— **这才叫"门禁能抓到那个问题"**。
+               ⚠ 当场还抓到门禁**自己**的一个**假阳性**（表头 `| # |` 被当成"混入的非 A 编号行"）⇒ 已修。
+            173 ✅ **`final-audit.md` 已刷新**（过期项）：
+               | 项 | 旧 | 新 |
+               |---|---|---|
+               | 实测时间 | 2026-09-29 | **2026-10-01（轮 100）** |
+               | 本地提交 | 73 | **215** |
+               | 规模 | 89 文件 / +76,000 行 | **230 文件 / +135,608 行 / -269 行** |
+               | A 编号 | **另一套** | **逐条等于 `AGENTS.md §一` 的 A1–A10** |
+               | 签名审计 | 673/31/0 | **711 调用点：696 通过 / 2 存疑 / 0 查不到** |
+               顺带确认：**A9 已是 `verified`**（`topology_optimization`）。
+            174 ⚠ **门禁的能力边界（已写进文档串）**：它只抓**编号集合**，
+               **抓不到「同一编号、不同含义」** ⇒ `final-audit` 原来的 A3/A5/A6/A8
+               正是**号同义不同**，**这一半只能靠人核**。
+            175 ⚑ **未查证**：`final-audit.md` 表格以外的正文（约 80 行）**未逐句复核**；
+               `A5` 的 **2 条存疑**未消（属上游模块）；`THIRD-PARTY-NOTICES.md` 的行数/字节未核。
+               回归 **1046 passed**。
+           176 🎯 **Spec Kit `020`：人工核样 —— 「后缀候选 144」真实命中率只有约 25%**（轮 101）——
+               目标 ② 的最大一块是「B 级并入缺口」。`010` 的分诊把 **144 条（42%）** 归为
+               「**能力在、未暴露**」。⚠ 该归类**来自后缀词匹配**，且标着「需人工核」。
+               **人工核样 24 条**（对 144 条**每 6 取 1**）⇒ **真 6 · 部分 2 · 假 16**。
+            177 ★★ **结论：那一档高估了** ——
+               ```
+               原分档：能力在未暴露 144（42%） · 真缺 132（39%）
+               按 25% 折算：真匹配 ≈ 36 · 假匹配 ≈ 108（应归进"真缺"）
+               ⇒ 真缺 ≈ **240**（不是 132）
+               ```
+               **方向是「缺口比我原先说的更大」** —— ⚠ 与 `017` 那次（找到被漏掉的好池子）相反。
+               ⚠ 抽样限度：**24 个样本，95% 区间约 12%~43%** ⇒ 结论应表述为
+                 「**144 那一档不可信，真值远低于 144**」，**不是**「真缺恰好 240」。
+            178 ★ **根因（可复用的认识）**：该档按**后缀词**匹配，而
+               `sketch` / `view` / `template` / `macro` 是**高频通用词**
+               ⇒ 一个 `*_view` 就能配上几十个操作。**名字是弱信号**（已知事实 52）
+               ⇒ 用名字做的分档**只能当"待核清单"，不能当结论**。
+               实例：`assembly`→`dissolve_assembly`、`broken_view`→`call_view`、
+                     `apply_template`→`find_template`（**都不是同一操作**）。
+            179 ⚑ **处置**：证据与逐条判定落 `docs/union-gap-triage-sample.md`；
+               并在 `union-gap-triage.md` **顶部挂修正提示**（防读者把 144 当事实）。
+               **不动主匹配器**（事实 53）。回归 **1046 passed**。
+            180 ⚑ **未查证**：剩下 **120 条**未逐条核；「部分」2 条的口径未定。
+               下轮候选：① 继续核剩下的 120 条；② 核「别名（强）26 / 别名（弱）37」两档
+               （它们**同样是字符串匹配**，可能同样虚高）；③ 回到 A5/A6 的其余项。
+           181 🎯 **Spec Kit `021`：两档「别名」也全核 —— 连自称最强的档也只有 27%**（轮 102）——
+               轮 101 核出「后缀候选 144」真实命中率约 25%，当时留了一句
+               「另两档别名**同样是字符串匹配**，可能同样虚高」⇒ 本轮**全核那 63 条**：
+               ```
+               别名（强） 26 条 ⇒ ✅ 真 **7**（≈ **27%**）
+               别名（弱） 37 条 ⇒ ✅ 真 **6** · ⚠ 部分 14 · ❌ 假 17（≈ **16%**）
+               ```
+               ★ **最离谱的一处**：强档里 **8 个互不相同的曲面操作**
+                 （`extend` / `extruded` / `filled` / `offset` / `planar` / `revolved` /
+                  `thicken` / `trim` **`_surface`**）**全被配到同样两个函数**
+                 `mold_shut_off_surface, ocp_surface` —— 匹配器**只认到共同后缀 `surface`**。
+            182 ★★ **四档全都要打折**：
+               ```
+                            条数   真    命中率
+               别名（强）      26     7     27%
+               别名（弱）      37     6     16%
+               后缀候选       144    36*    25%   (* 抽样外推)
+               真缺           132   132     —     (定义上就是缺)
+               ------------------------------------------------
+               真匹配 ≈ 49  ⇒  真实缺口 ≈ 338 − 49 ≈ **289**
+               ```
+               `010` 当时说 **132** ⇒ **真实缺口是它说的两倍多**。
+               ⚠ 限度：别名两档是**全核**，后缀候选是**抽样**；「部分」共 **16** 条口径未定
+                 ⇒ 真匹配区间 **49~65** ⇒ 对外只能说「**约 270~290**」。
+            183 ★ **可复用的认识（比数字更重要）**：
+               > **分档的"强/弱"是给匹配规则起的名，不是给结论背的书。**
+               「强别名」的规则写着「多出来的词**全是域词** ⇒ **极可能同一操作**」——
+               听起来很强，**实测 27%**。**规则里的自信语气不能替代核样。**
+               ⚠ 两轮连着做的是**同一件事：给分档表挤水分**，且**方向连续两次都是
+                 "缺口比我原先说的更大"**。
+            184 ⚑ **未查证**：后缀候选剩 **120 条**未核；「部分」**16 条**口径未定；
+               **132 条「真缺」未核** —— ⚠ 也要防它**反向出错**（把"其实我们有"记成缺）。
+               回归 **1046 passed**。
+            185 ⚑ 下轮候选：① 核那 132 条「真缺」（防反向错误）；② 继续核后缀候选剩的 120 条；
+               ③ 回到 A5 的 2 条存疑。
+           186 🎯 **Spec Kit `022`：核「真缺」132 条的反向错误**（轮 103）——
+               前三轮核的是会把"其实没有"记成"有"的三档；「真缺」**方向相反**
+               ⇒ 可能把"其实我们以别的名字实现了"记成缺（轮 98 的 `tooling_split` 就是一例）。
+               无偏抽样（每 6 取 1 ⇒ 22 条）⇒ ✅ 确实有 **4** · ⚠ 部分 2 · ❌ 没有 16
+               ⇒ **反向错误率 ≈ 18%**。
+            187 ★★ **本轮真正的产出：我的自动检查被证伪了三次**
+               ```
+               1. 命中 sw_api_sldworks.py  —— **API 名登记表，不是实现**
+               2. 命中 sw_com_traps.py / sw_api_swdimxpert.py —— COM 陷阱表 / 又一个登记表
+               3. 命中【参数名】与 sw_automation_knowledge —— **知识表**
+               ⇒ 弃用自动检查，改逐条人工判
+               ```
+               ⚠ **三次都是我在写结论之前自己拦下的** ——
+                 若第 1 次就采信，本轮会得出**错的数字并写进报告**。
+               ★ **按名字做的自动检查在这个问题上「两个方向都靠不住」**：
+                 既把"没有"记成"有"（前三轮），也把"有"记成"没有"，还把参数名/知识表当实现。
+            188 ★★ **四轮核样的总账**（方向一致：真实缺口比 `010` 说的大得多）：
+               ```
+                            条数   真    来源
+               别名（强）      26     7    轮 102 **全核**
+               别名（弱）      37     6    轮 102 **全核**
+               后缀候选       144    36    轮 101 抽样外推
+               真缺           132    24    轮 103 抽样外推
+               ----------------------------------
+               真匹配 ≈ 73  ⇒  真实缺口 ≈ **265**（010 说 132）
+               ```
+            189 ⚠ **限度（比前几轮更多）**：后缀候选与真缺都是**抽样外推**；
+               「部分」共 **18** 条**口径未定** ⇒ 真匹配区间 **73~95** ⇒ 缺口约 **245~265**；
+               `pattern_component_circular` 口径存疑（特征阵列 ≠ 零部件阵列）。
+               ⚠ **四轮合计只核了 109 条 / 339，其余 230 条未核**。
+            190 ⚑ 下轮候选：① 继续核剩余 230 条（但**收益递减**，已连续四轮只做核样）；
+               ② ⚠ **换个方向：转去做"真缺"里可实现的**（`helix`/`jog`/`equation`/`gdt` 等
+                  官方 API 名字都已登记，实现路径清楚）；③ 回到 A5 的 2 条存疑。
+               回归 **1046 passed**。
+           191 🎯 **Spec Kit `023`：从「真缺」档补第一条 —— 螺旋线**（轮 104）——
+               前四轮都在**核样**，收益递减 ⇒ **换方向**：从 `010` 的「真缺」档里
+               **挑一条实现出来**。`helix` 经 `022` 核样确认**确实没有**。
+               依据**官方 API**（合法来源）+ **两源互证签名**（出厂反射 + `C:\swapi` md）
+               ⇒ 10 个参数一致，无需类型库裁决。能力条目 31 → **32**（`helix_and_spiral`，`stitched`）。
+            192 ★★ **本轮抓到一个凭记忆写错的枚举值**：
+               ```
+               我写的（凭印象）              官方真值（两源一致）
+               height_and_pitch = 1    ⇒     height_and_pitch = **2**
+               height_and_revolution = 2  ⇒  height_and_revolution = **1**
+               ```
+               ⚠ **如果没停下来查，这个错会直接进仓库** —— 而且**任何门禁都抓不到它**
+                 （门禁查「名字在不在官方清单里」，**不查「值对不对」**）。
+               ★ 这正是 `docs/orphan-functions-not-runnable.md` 的同类问题：
+                 **静态检查只覆盖"存在性"，覆盖不了"正确性"。**
+            193 ⚠ **等级是 `stitched` 不是 `verified`** —— 只有静态证据（签名互核 + 8 条契约测试），
+               **本机从未建过螺旋线**。⚠ 且本轮**主动不做真机测试** —— 轮 98 的模态框事故表明
+               「需要前置几何」的建模工具在未满足前置时**会卡住会话**。
+               ⇒ 与其冒险跑一个准备不足的测试，**不如如实标 `stitched`**。
+            194 ⚑ **未查证**：前置条件（官方示例先选一个圆）未实测；
+               `Pitch` / `TaperAngle` 的**单位官方没写** ⇒ 按同类推断（已声明）；
+               变距螺旋线未实现；「真缺」档还有 **131 条**。回归 **1054 passed**。
+            195 ⚑ 下轮候选：① 继续从「真缺」档补（`jog` / `equation` / `gdt` /
+               `sketch_chamfer` / `sketch_mirror` 的官方名都已登记，路径清楚）；
+               ② 给螺旋线补**真机**证据（需先准备好"选中的圆"这个前置）；
+               ③ 回到 A5 的 2 条存疑。
+           196 🎯 **Spec Kit `024`：真缺档再补两条 —— 草图倒角 / 草图镜像**（轮 105）——
+               接着 `023` 补 `sketch_chamfer` · `sketch_mirror`。能力条目 32 → **33**。
+               ★ 走**非废弃入口**：官方明写 `IModelDoc2.SketchChamfer` 是 **Obsolete**，
+                 被 `ISketchManager::CreateChamfer` 取代 ⇒ 用后继。
+            197 ★★ **铁律 4 第一次真正裁决了一次冲突**：
+               ```
+               swSketchChamfer_DistanceDistance
+                 C:\swapi 的 md 写 **-1**   ·   出厂反射写 **1**   ← 冲突
+               ⇒ 铁律 4「冲突以出厂类型库为准」⇒ 取 **1**
+               ```
+               ⚠ 此前四轮两源一直**一致**（`023` 的 `InsertHelix`、螺旋线枚举）
+                 ⇒ 本轮那条铁律从「预防性条款」变成**实际用上的规则**。
+               ★ 若不是它，取值只能靠"哪个看起来合理" —— 而 **-1 看起来并非不可能**
+                 （有些枚举确实用负数表示变体），**光看值本身判不出来**。
+            198 ★★ **连两轮的错都在「值」上，不在「名字」上**：
+               ```
+               023：枚举值凭记忆写反（1 ↔ 2）  —— 门禁抓不到
+               024：枚举值两源冲突（-1 vs 1）  —— 门禁抓不到
+               ```
+               ⇒ **门禁查的是「名字在不在官方清单里」，不查「值对不对」**
+               ⇒ 这两轮的错**都只能靠人查证拦下**。⚠ 这是本项目一个**已知的覆盖缺口**，
+                 **两轮连着撞上**，值得记进已知事实。
+            199 ⚑ **未查证**：本机从未做过草图倒角/镜像（等级 `stitched`）；
+               前置条件（选中两条实体 / 按标记选中）未实测；
+               `CreateChamfer` 第三参 `AngleORdist` **单位随类型变、官方未写** ⇒ 未换算未验证。
+               「真缺」档还有 **129 条**（`023`+`024` 共补 3 条）。回归 **1064 passed**。
+            200 ⚑ 下轮候选：① ★ **把"值级"覆盖缺口写成已知事实 + 考虑加一道门禁**
+               （如：仓库里出现的官方枚举值必须有反射出处）；② 继续补「真缺」；
+               ③ 回到 A5 的 2 条存疑。
+           201 🎯 **Spec Kit `025`：补上「值级」覆盖缺口 —— 第 16 道门禁**（轮 106）——
+               连着两轮的错**都在「值」上**（023 枚举凭记忆写反 · 024 两源冲突），
+               而**当时的门禁一个都抓不到**：它们查的是「**名字**在不在官方清单里」，
+               **没有一个查「值对不对」**。本轮把它变成机器判据。
+            202 ★ **新门禁做什么**：把 `scripts/sw_*.py` 里
+               `"<key>": <整数>,   # <swMember>`（**91 条**）与**出厂反射转储（8216 个成员）**
+               逐条比对 ⇒ 对不上即 `[FAIL]`；**顺带报出两源冲突**（不判失败，铁律 4 已定取反射）；
+               查不到的成员归「查不到」（铁律 5），**也不判失败**。
+               实跑：**15 条一致 · 75 条查不到 · 1 处冲突**（正是 024 那个）。
+            203 ★★ **门禁自己也踩了同一个坑（当场抓到）**：
+               第一版正则要求**成员名后即行尾** ⇒ **漏掉 `sw_sketch_edit.py` 那行**
+               （它后面有括号注释）⇒ **门禁会漏掉 024 那个冲突本身**。
+               ★ 又是**已知事实 62**：**判据对了，匹配范围没跟上**。
+               ⇒ 这是为什么 SC-2106 要求**对着真实仓库断言它报得出那一处冲突** ——
+                 **不能只测"逻辑对不对"，还要测"它在我们这堆代码上真的看得见"**。
+            204 ★ **意义**：同类错**以后会在门禁上红**，不再依赖我恰好停下来查。
+               门禁数 **15 → 16**；接线元门禁**当场报出我两处漏登记**（汇总体 + 分类表）⇒ 已补。
+               回归 **1072 passed**。
+            205 ⚑ **未查证**：那 **75 条"查不到"未逐条核**（多为 Simulation 的 `sws*`，
+               属另一程序集，不在本转储里）—— **是否有对应反射源可查，未验证**；
+               门禁**不判**「成员名挂的是不是对的枚举」，也**不判**值的语义。
+               下轮候选：① 核那 75 条能否找到反射源；② 继续补「真缺」；③ A5 的 2 条存疑。
+           206 🎯 **Spec Kit `026`：补齐枚举门禁的转储覆盖 —— 「查不到」75 → 0**（轮 107）——
+               把 `025` 留下的「75 条查不到」查清。
+               **事实**：`sws*`（Simulation 枚举）落在 **`SolidWorks.Interop.cosworks.dll`**
+               —— **另一个程序集**；而 `_raw/reflect/enum_cosworks.txt` **早就有了**
+               （363 个枚举节，格式相同）。★ **不是"官方没有"，是我只读了一份转储。**
+            207 ★ **改动**：门禁从「读一份」改成「**读多份并合并**」
+               （sldworks + cosworks），并记下每个成员**来自哪份转储**。
+               ```
+                            轮 106        轮 107
+               转储份数          1             2
+               合并成员       8,216         **10,588**
+               有据可查         15             **90**（全部一致）
+               查不到           75             **0**
+               ```
+               ⇒ **代码里每一个写了官方成员名的枚举值，现在都有据可查、且都对。**
+            208 ⚠ **那句"未查证"里藏着一个错误前提**：`025` 写的是
+               「多半来自 `swsimulation` 程序集」—— **其实没有这个名字的程序集**，
+               真名是 **cosworks**（Simulation 的前身叫 COSMOSWorks）。
+               ★ **猜测写进"未查证"里，读起来像事实。**
+            209 ⚠ **本轮自己踩的坑**：改 `gate-classification.json` 时把 Windows 路径
+               `reflect\enum_cosworks.txt` 写进 JSON 字符串 ⇒ **非法转义 `\e`** ⇒
+               JSON 解析失败 ⇒ `gate_wiring` 与 `release_check` **连着红两次**。
+               ⇒ 改用正斜杠。★ **往 JSON 里塞 Windows 路径要先想转义。**
+               回归 **1074 passed**。
+            210 ⚑ **未查证**：门禁**不判**「成员名挂的是不是对的枚举」，也不判值的语义；
+               **还有没有别的程序集**的枚举被我们用到 —— 本轮只解决了 sldworks + cosworks，
+               其余 interop（`swmotionstudy` / `swdocumentmgr` / `swdimxpert` / `dsgnchk` /
+               `fworks` / `sldcostingapi` / `SWRoutingLib` …）**未逐一检查是否有对应转储**。
+               下轮候选：① 把其余程序集的枚举覆盖也查一遍；② 继续补「真缺」；③ A5 的 2 条存疑。
+           211 🎯 **Spec Kit `027`：其余程序集的枚举覆盖 —— 结论是「已覆盖」**（轮 108）——
+               把 `026` 留的「其余 interop 未逐一检查」量出来。
+               探针：抽代码里的成员名（**90**）→ 比对 `_raw` 下**已有 17 份**转储
+               （覆盖 **11,486** 成员 + **1,521** 枚举类型名）→ 未覆盖的去 17 个 DLL 里字节搜。
+               ⇒ ★ **未覆盖最终只剩 4 条，全是噪声**（程序集名 / 工具名 /
+                 「**该名查不到**」的查证注释里的名字）⇒ **转储覆盖是完整的**。
+            212 ⚠⚠ **我的探针连着两版都是假阳性**（这才是有价值的部分）：
+               版 1：只看转储的**成员行** ⇒ 把**枚举类型名**（`## swFoo_e`）全报成未覆盖（16 条）；
+               版 2：再加枚举类型名 ⇒ 把**我们自己的** `sw_jlcfa_*` 当成官方成员；
+               版 3：剔掉自有名 ⇒ 把**「这个名字是错的」注释里的名字**当成"在用那个名字"。
+               ★ **三轮才收敛** —— 与 `020`/`021`/`022` 同一教训。
+            213 ★★ **本轮形状与 `026` 相反**：
+               026：以为"官方没有" ⇒ 其实**转储只读了一份** ⇒ 是**我的洞**；
+               027：以为"还有别的程序集没覆盖" ⇒ 其实**已覆盖** ⇒ 是**我探针的假阳性**。
+               ⇒ 两轮连着，**两次都是「我的测量」出问题，不是被测量的对象**。
+            214 ★ **顺带查出一处真错（小但真实）**：注释写 `# swExportPDFData`，
+               而官方真名是 **`swExportDataFileType_e.swExportPdfData = 1`**（**Pdf 不是 PDF**，两源一致）。
+               ⚠ **代码一直是对的**（字面量 `1` 就是该值）—— **错的只是注释里的名字**；
+                 但不存在的官方名字写在注释里，会让下一个人以为它存在 ⇒ 已更正
+                 （并在该处补了**函数体内的来源块** —— 改代码行会让它成为"新增行"，溯源门禁要求有出处）。
+               ⚠ 另记：**插入本游标时我的守卫匹配到假阳性** —— 「其余程序集的枚举覆盖」这句话
+                 早在上一条的「下轮候选」里，守卫据此以为"已插过"⇒ **游标没插进去**。
+                 ★ **核对而不是相信脚本的输出，才发现的。**
+               回归 **1074 passed**。
+            215 ⚑ **未查证**：探针**只查"我们用到的"**名字，**没查**「官方有哪些枚举我们**还完全没用到**」
+               （那是 A1 覆盖面，另一个问题）；`_raw` 下 17 份转储**有重复**（`topo-*`/`reflect_*`
+               与顶层重名），**未整理**；探针的"自有名"白名单是**手写**的，**可能有漏**。
+               下轮候选：① 回到补「真缺」档；② A5 的 2 条存疑；③ 整理重复转储。
+           216 🎯 **Spec Kit `028`：真缺档再补一条 —— 方程式**（轮 109）——
+               两源取签名（`GetEquationMgr` / `Add2` / `GetCount` / `Delete` / `EvaluateAll`）
+               ⇒ **5 条逐条一致**。能力条目 33 → **34**（`equations`，`stitched`）。
+               ★ 两处要留神：① `Add` **已废弃** ⇒ 走 **`Add2`**；
+               ② ⚠⚠ **`-1` 有两种语义**（入参 = 追加到末尾 · **返回 = 失败**）——
+                 不区分的话，**失败会被当成"插到了末尾"**，而且**不会当场炸**，
+                 只是**方程式悄悄没加进去**。⇒ 已单独一条测试钉住。
+            217 ★★ **三批「真缺」补录的共同形状**（`023`/`024`/`028`）：
+               | 轮 | 补的 | 最要留神的地方 |
+               |---|---|---|
+               | 023 | 螺旋线 | **枚举值凭记忆写反**（被查证拦下）|
+               | 024 | 草图倒角/镜像 | **两源枚举冲突**（铁律 4 裁决）+ **走非废弃入口** |
+               | 028 | 方程式 | **`-1` 的双重语义** + **走非废弃入口** |
+               ★ 三条里**两条**都撞上「**官方的旧入口已废弃、必须走后继**」
+                 （`SketchChamfer`→`CreateChamfer` · `Add`→`Add2`）。
+               ⇒ **这是这个域的规律性坑：照抄第一个看到的方法名，可能抄到废弃的那个。**
+            218 ⚠ **一个新的覆盖缺口（值得下轮做）**：`025` 的门禁只管**值**，
+               **管不了「你用的是不是废弃入口」** —— 三批里撞上两次，**却没有机器判据**。
+            219 ⚑ **未查证**：本机从未读写过方程式（`stitched`）；
+               **不做方程式字符串格式校验**（官方没给可校验语法）；
+               装配体零部件的「上下文中编辑」情形未处理；
+               `IEquationMgr` 的 **11 属性 + 14 方法未逐一实现**。回归 **1084 passed**。
+            220 ⚑ 下轮候选：① ★ **给「废弃入口」加一道门禁**（官方 md 里带
+               `Obsolete`/`Superseded` 的成员，我们代码里不该直接调）；
+               ② 继续补「真缺」；③ A5 的 2 条存疑。
+           221 🎯 **Spec Kit `029`：官方废弃成员探针 —— 量了，但结论是「做不成门禁」**（轮 110）——
+               起因：连着两轮（`024`/`028`）撞上「官方旧入口已废弃、我们照抄了旧的」，
+               而 `025` 的门禁只管**值**、管不了这个 ⇒ 想补一道。
+               探针抽代码里 `get_com_member(..., "<成员>")` 的 **429** 个成员名，
+               去官方文档找同名、带 `Obsolete` 的 ⇒ **38 条候选**。
+            222 ★★ **结论：补不了** ——
+               ```
+               已核实为真    8 条
+               已核实假阳性 10 条
+               未逐条核     20 条
+               ⇒ 假阳性率 ≥ 26%（10/38），剩余大半里还会有一批
+               ```
+               **根因是「同名不同接口」**：`GetMassProperties` 在 `IModelDoc2` 上废弃、
+               在 `IModelDocExtension` 上**没废弃** —— 而我们用的**正是后者**
+               （文档写的「后继」就是它）。同理 `GetRenderMaterials`（文档在 `IComponent2`，
+               我们用 extension 且**实测可跑**）、`Add2`/`Delete`（文档在 `ICustomPropertyManager`，
+               我们用 **`IEquationMgr`**，**未废弃**）。
+               ⚠ 与**已知事实 36**（同名接口分属不同族）同一类。
+               ★ **假阳性率 26%+ 的门禁不能当门禁** —— 它会让人去改**本来正确**的代码。
+            223 ★ **但它确实查出了真东西**：**8 条**官方已标废弃、而我们仍在调 ——
+               最集中的是 **`sw_sketch.py` 的 6 个 `ISketch` 取法**
+               （`GetLines`/`GetArcs`/`GetEllipses`/`GetParabolas`/`GetSketchPoints`/`GetUserPoints`）；
+               该模块 docstring 明写「**ISketch 完整封装**」⇒ 归属没有疑问。
+               另两条：`AddMate5`（`IAssemblyDoc`）· `GetBodies2`（`IComponent2`）。
+               ⚠ **但这不等于它们跑不通** —— 本台账只证「官方标了废弃」。
+               ★ **两件事必须分开说**：「官方标了废弃」本轮**已证**；「这些调用会坏」本轮**未证**。
+            224 ⚑ **收场方式变了**：这次我**没有**试图把假阳性"修掉"、也没有降级成
+               "弱启发式硬凑"（事实 53），而是**直接放弃做成门禁**，把结论降级成
+               **人工复核台账** `docs/obsolete-member-candidates.md`（**不拦发布**）。
+               ★ **这可能是更正确的一种收场。**
+            225 ⚑ **未查证**：那 8 条**能不能跑**（**未测**）；剩余 **20 条未逐条核**；
+               探针**只扫 `get_com_get_member(...)` 一种调用形态**；
+               `sw_sketch.py` 那 6 个取法**要不要换 `*2`** —— **未决**（换了要重测整个模块）。
+               回归 **1084 passed**。
+               下轮候选：① 评估 `sw_sketch.py` 换 `*2` 的代价；② 继续补「真缺」；③ A5 的 2 条存疑。
+           226 🎯 **Spec Kit `030`：把 `sw_sketch.py` 的 6 个废弃取法换到后继**（轮 111）——
+               承接 `029` 的台账（8 条真候选），先处置最集中的一簇：
+               `GetLines` / `GetArcs` / `GetEllipses` / `GetParabolas` /
+               `GetSketchPoints` / `GetUserPoints`（该模块 docstring 明写「**ISketch 完整封装**」⇒ 归属无疑）。
+            227 ★ **换名之前先量了「形状有没有变」**（这一步是关键）：
+               ```
+               GetLines  → GetLines2(Int16)   ⚠ **多一个参数**（swCrossHatchFilter_e）
+               其余 5 个 → 零参，直接可换
+               ```
+               ★ **如果只看名字就换**，`get_lines` 会在运行期炸（少传一个参数）。
+                 ⇒ **查反射只多花一步，省掉一次运行期故障。**
+               取 `swCrossHatchInclude = 0`（两源一致；swapi 只列 3 个、值相同、无冲突）。
+            228 ★ **测试判据是被"故意打破"后改精确的，不是删掉的**：
+               ```
+               原判据：所有登记取法**必须零参**          —— 我的改动让 GetLines2 破例
+               改后：  **在反射里存在** + 零参的仍须零参 + 例外**显式登记**（NON_ZERO_ARG_OK）
+               ```
+               ★ 关键区别：**放宽判据**会让"有意带参"和"写错了"混在一起；
+                 **显式登记例外**则两者仍可区分。
+                 ⇒ 判据被打破时，先问「**能不能改成更精确的**」，而不是「**能不能不管它**」。
+            229 ✅ **复跑 `029` 的探针**：这 6 条**已不再出现在候选里**。
+               ⚠ 但**换完仍未在真机上验过**（等级仍 `stitched`）—— 换的是**入口名**，
+                 **不是"测过了"**。⚠ 且官方**未说明** `GetLines2(swCrossHatchInclude)`
+                 是否**等价于**旧 `GetLines()` —— 这是**语义推断**，已写进源码注释。
+            230 ⚑ **未查证**：台账里另两条真候选（`AddMate5` · `GetBodies2`）**未改**，
+               且**未查它们的后继形状**（`CreateMate` / `GetBodies3` 的参数可能与旧的不同）；
+               台账里 **20 条未逐条核**的候选仍未核。回归 **1085 passed**。
+               下轮候选：① 查 `CreateMate` / `GetBodies3` 的形状再决定换不换；
+               ② 继续补「真缺」；③ A5 的 2 条存疑。
+           231 🎯 **Spec Kit `031`：另两条废弃候选 —— 查清了，决定「不换」**（轮 112）——
+               `029` 查出 **8 条真候选**，`030` 换掉 6 条；剩这 2 条经查证后**保留旧名**。
+            232 ★ **查证结果（两源）**：
+               ```
+               GetBodies2 → GetBodies3(Int32 BodyType, **out Object** BodiesInfo)
+                 官方说新的**支持轻量化零部件**（确实更好），**但第二个参数是 out** ——
+                 而本机后端对 Object& 类参数**已有两次失败记录**（**已知事实 47**：
+                 ISketchedBendFeatureData 的 AccessSelections/SetFixedFace 在 20+ 种形态全败，
+                 结论是"换 comtypes 或进程内 C++ 才可能解决"）⇒ **不换**
+               AddMate5 → CreateMate(**Object MateData**)
+                 旧的是 **~18 个位置参数**；新的是**收一个 IMateFeatureData 派生对象** ——
+                 **这不是换名，是换调用范式**；本仓库**没有任何 IMateFeatureData 的构造代码**，
+                 换了要新写一套且**没有安全真机验证手段** ⇒ **不换**
+               ```
+            233 ★★ **两轮合起来才是完整处置**：
+               `030` 换 6 条 —— 因为后继**直接可换**；
+               `031` 不换 2 条 —— 因为后继**不是同一个调用形态**。
+               ⇒ **能换的换掉，不能换的把理由写下来** —— 而不是"要么全换、要么全不换"。
+               台账里这一档（8 条）**已全部处置完毕**。
+            234 ⚠ **本轮结论没有一条是实测出来的**：`GetBodies3` 在本机后端**能不能跑未试**；
+               「BYREF 会失败」的依据是**已知事实 47**（另一族成员的失败），**不是**在它上面测的。
+               ⇒ **这是判断**。★ 与 `023`~`030` 相比，本轮**没有新的运行证据，只有新的查证**。
+            235 ⚑ **保留旧名 ⇒ 「官方说它废弃」这件事仍然成立** —— 它们是**已知的、有据可查的**
+               技术债，不是"没问题了"。★ 与 `029` 一脉相承：「官方标了废弃」≠「会坏」；
+               本轮补上第三件：**「知道它废弃」≠「换得起」**。
+               ⚠ 未查证：台账里 **20 条未逐条核**的候选仍未核。回归 **1085 passed**。
+               下轮候选：① 核那 20 条；② 继续补「真缺」；③ A5 的 2 条存疑。
+           236 🎯 **Spec Kit `032`：台账剩下 20 条全部核完**（轮 113）——
+               判法是把**官方文档所在接口**与**我方调用点的目标表达式**并排看
+               （同一个成员常出现在**多个接口**下，只有**一部分**标废弃 ⇒ **光看名字判不出**）。
+               结果：**真 8 · 假阳性 10 · 未定性 1** ⇒ 假阳性率 **50%**（比 `029` 的 26% 更高）。
+               ★ **这门禁确实做不得** —— `029` 的判断再次被证实，且**这一轮的判法必须人工**。
+            237 ★★ **查出一条「活的」—— 而且是**我们自己造的**债**：
+               ```
+               轮 98（Spec Kit 018）我把 sw_mold.mold_undercut_detect 暴露成 MCP 工具
+                 `solidworks_mold_undercut_detect`
+               而它调的 IFeatureManager.MoldUndercutDetect **官方早标了 Obsolete**
+                 ⇒ 后继是 MoldUndercutDetect2
+               ⇒ **发工具的时候，我没查它包着的入口是否已废弃。**
+               ```
+               ⚠ 那几轮挑的是"孤立能力"，标准是「**签名兼容**」+「**冒烟不报错**」——
+                 **没有一条是「入口没废弃」**；而 `029` 的探针**一跑就抓出来了**。
+            238 ⚑ **处置**：在该工具的 `doc` 里**加警示**（诚实、低风险），
+               **不擅自改实现** —— 换 `MoldUndercutDetect2` 要先比形状（`030`/`031` 的教训）。
+               台账补**总账**：真 8（6 换 · 2 不换 · 1 加警示）· 假阳性 18 · 未定性 1。
+            239 ⚠ **未查证**：真候选里 `AutoDimension2` / `ExcludeFromBOM` / `GetDependencies2` /
+               `GetErrorCode` / `ReferenceType` / `SystemValue` / `AdvancedGraphics`
+               **仍未处置**，且**未查它们的后继形状**；`KFactor` **未定性**；
+               台账**仍不做门禁**（假阳性约一半）。回归 **1085 passed**。
+            240 ⚑ 下轮候选：① 查那 7 条的**后继形状**再决定换不换（照 `030`/`031` 的做法）；
+               ② 继续补「真缺」；③ A5 的 2 条存疑。
+           241 🎯 **Spec Kit `033`：最后 7 条废弃候选 —— 查清形状后「全部不换」（台账清空）**（轮 114）——
+               照 `030`/`031` 的做法**先比形状**，结论：**没有一条是"换个名字"**：
+               ```
+               AutoDimension2(Int32×5) → ISketchManager::FullyDefineSketch(…10 参)   换对象 + 10 参
+               GetErrorCode() 0 参     → IFeature::GetErrorCode2(**Boolean&**)      **带 BYREF out**
+               ExcludeFromBOM（属性）  → GetExcludeFromBOM2(Int32, Object)           属性→方法 + 多两参
+               GetDependencies2(Bool×3)→ IModelDocExtension::GetDependencies(Int32,Int32) 参数全变 + 换对象
+               SystemValue（属性）     → GetSystemValue3(Int32, Object)              属性→方法 + 多两参
+               ReferenceType           → Reference2                                ⚠ **反射里查不到**
+               AdvancedGraphics        → （官方未写后继）
+               ```
+            242 ★★ **三批处置合起来才是完整做法**：
+               ```
+               030  换 6 条 —— 后继**零参直接可换**
+               031  不换 2 条 —— 后继**含 out / 换范式**
+               033  不换 7 条 —— 后继**换对象 / 属性变方法 / 带 BYREF / 查不到**
+               ⇒ 换的只占 6/15。**「能换的很少」是这个域的事实，不是懒。**
+               ```
+               ★ 判据一句话：**不是"官方让不让你换"，是"换了之后调用形态还对不对得上"。**
+            243 ⚠ **台账清空了，但债没有消失** —— 9 条**保留旧名**，**仍是官方 Obsolete**。
+               台账措辞是「**已全部处置**」，**不是**「已全部解决」。
+               ★ 到此已是**三层**区分：
+                 「官方标了废弃」≠「会坏」（029）· 「知道它废弃」≠「换得起」（031）·
+                 「已处置完毕」≠「债消失了」（本轮）。
+            244 ⚑ **顺带修了台账自身的债**：写到 11 个二级块时顺序乱了（两个「〇」在末尾）
+               **且有两份「总账」** ⇒ 程序化**重排 + 去重 + 重编号**，
+               **每步断言长度不变、字符集合一致**（防丢内容 —— 事实 48 的应用）。
+            245 ⚑ **未查证**：7 条**全部未实测**（依据是签名形状对照）；
+               `KFactor` 仍**未定性**（台账里唯一一条）；18 条假阳性未再复核。
+               回归 **1085 passed**。
+               下轮候选：① 回到补「真缺」（`helix`/`sketch_*`/`equation` 已补 4 条，还剩百余条）；
+               ② A5 的 2 条存疑；③ 拓扑优化闭环的后续。
+           246 🎯 **Spec Kit `034`：真缺档再补一条 —— 转换实体引用**（轮 115）——
+               ⚠ **并进已有的 `sw_sketch_edit.py`**（与草图倒角/镜像同类）—— **不新开文件**（不重造）。
+            247 ★ **选哪个入口：先查废弃，再选**：
+               ```
+               IModelDoc2.SketchUseEdge2(Boolean)       ⇒ **Obsolete**（md 明写）        ✗
+               ISketchManager.ConvertEntities()          ⇒ 未废弃，**零参**              ~ 可用但语义含糊
+               ISketchManager.SketchUseEdge3(Bool, Bool) ⇒ 未废弃，**两参都有官方说明**  ✓ **采用**
+               ```
+               ★ **没有"哪个都行"就随便选一个** —— 选了之后把**为什么**写进来源块与能力条目。
+            248 ★ **"失败信号长得像正常值"这一类错，本轮被专门挡了一次**：
+               ```
+               官方 SketchUseEdge3 失败时返回 **False** ⇒ `if not got: pass` 会**静默吞掉**
+               ⇒ 本函数对 False **抛带原因的错**，并**单列一条测试**钉住
+               ```
+               ★ 与 `028`（方程式的 **`-1` 双重语义**）同一族。
+            249 ⚑ **「真缺」档补录进度**：`023` 螺旋线 · `024` 草图倒角/镜像 · `028` 方程式 ·
+               `034` 转换实体引用 ⇒ 共 **4 条**（其中本轮这条**并入已有模块**，不新开文件）。
+               ⚠ 该档共约 **132 条**（`022` 抽样估），**剩余仍很多**。
+            250 ⚑ **未查证**：本机**从未做过**转换实体引用（等级仍 `stitched`）；
+               前置条件（先选中 + 在草图态）**未实测**；
+               零参的 `ConvertEntities()` 与 `SketchUseEdge3` 的**行为差异未查**。
+               回归 **1091 passed**。
+               下轮候选：① 继续补「真缺」（`gdt` / `jog` / `activate_sheet` / 图纸类）；
+               ② A5 的 2 条存疑；③ 给已补的 4 条做真机冒烟（需先备前置条件）。
+           251 🎯 **Spec Kit `035`：方向变了 —— 不再补新能力，改把已有的一条**验实****（轮 116）——
+               `023`/`024`/`028`/`034` 连着补了 **4 条 `stitched`**，**都只有静态证据**。
+               ★ 再生产只会**堆更多没验过的条目** —— 那正是我在 `014`/`015` 批评过的
+                 「孤立函数从没跑过」。⇒ **与其再堆一条，不如把已有的一条验实。**
+               挑**真机风险最低**的 ⇒ `equations`（只需一个新零件，不建几何）。
+            252 ★ **冒烟 5/5 通过**（只在新零件上跑，绝不碰用户文档）：
+               ```
+               ✓ 新建临时零件（零件15）
+               ✓ add_equation('"SMOKE_B" = 2')    下标=0
+               ✓ list_equations                    1 条；首条='"SMOKE_B" = 2'
+               ✓ evaluate_equations                ok
+               ✓ 收尾无残留模态框  ← 已知事实 64 的产物（CommandInProgress 压不住所有弹框）
+               （已关闭临时零件，不保存）
+               ```
+            253 ★★ **什么才算"强证据"：往返一致**：
+               ```
+               弱证据：「调用没抛异常」          —— **空操作也能满足**
+               强证据：「写进去的 == 读回来的」  —— **空操作满足不了**
+               ```
+               ⇒ 本轮刻意把**读回内容**打出来比对，而不是只报"列到 1 条"。
+               ⚠ 与 `012` 的教训一致：那时 `list_render_materials` 返回 **0 个材质**，
+                 「没报错」**什么都没证明**。
+            254 ✅ **等级 `stitched` → `verified`**：能力分布 **verified 27 → 28 · stitched 6 → 5**。
+               已配齐 `verified_versions: ["2026"]` + `evidence`（2 条）；
+               并**加了一条测试「禁止降级」**（源码里必须写 `验证等级：verified`）。
+            255 ⚠ **但这不等于"方程式功能全验过了"**：只验了**全局变量方程式**一种；
+               维度方程式 · 含 VB `IIf` 的 · `delete_equation` · `evaluate` 的返回值语义
+               **都未验**。★ `verified` 的定义是「**有我们自己的运行证据**」——
+               **不是**「代码是我们写的」，**也不是**「全部功能都验过」。
+               ⚠ 另 3 条 `stitched`（螺旋线 / 草图编辑 / 转换实体引用）**仍需前置条件**
+                 （进草图编辑态）才能冒烟 —— **未做**（轮 98 的模态框正是那样触发的）。
+               回归 **1091 passed**。
+           256 🎯 **Spec Kit `036`：草图读回真机 17/17 —— 并**顺手补上一处 A1 覆盖缺口****（轮 117）——
+               挑它的理由：轮 111（`030`）我把 **6 个官方已废弃的草图取法换成了后继**
+               （其中 **`GetLines2` 还多带一个参数**）—— ⚠ 那次**只有静态证据**，
+               签名若对不上**代码会在运行期炸**。⇒ **本轮专门验那一次替换。**
+            257 ★ **冒烟 17/17**（程序化造前置，不靠人手）：
+               ```
+               start_sketch → sketch_line(1 条线) → sketch_arc(1 段弧) → 取 ActiveSketch
+               ★ get_lines          list · **12** 个元素      ★ get_arcs   list · **16**
+               ★ get_ellipses       list · 0                  ★ get_parabolas list · 0
+               ★ get_sketch_points  list · **5**              ★ get_user_points list · 0
+               ✓ get_sketch_segments（未换，对照） list · **2**  ← ★ **交叉验证：正好线+弧**
+               end_sketch · 关件不保存 · ★ 收尾无残留模态框
+               ```
+            258 ★★ **拿到的是"能被空操作证伪"的证据**，不只是"没报错"：
+               ```
+               我们画了 1 条线 + 1 段弧
+               ⇒ get_sketch_segments 返回 **2**  ← 与"画了两样东西"对得上
+               ⇒ get_lines 返回 12 个浮点 · get_arcs 返回 16  ← 数据量与"一线一弧"相符
+               ⇒ 没画椭圆/抛物线/用户点 ⇒ 它们返回 **0**  ← 合理
+               ```
+               ⚠ 与 `012` 对照：那时 `list_render_materials` 返回 **0 个材质**，
+                 「没报错」**什么都没证明**。
+            259 ★ **顺手查出一处 A1 覆盖缺口**：
+               ```
+               `sketch_edit_ops` 只管**草图编辑** ⇒ **`sw_sketch.py`（读回）根本没有能力条目**
+               ⇒ A1「每域都有来源」在这一处**本来是空的**，而**没人注意到**
+               ```
+               ⇒ 本轮**新建 `sketch_query` 条目**并直接标 **`verified`**（真机证据已在手）。
+               ★ 教训：**"能力有实现"与"能力有条目"是两件事** ——
+                 `017` 发现过"有实现但没暴露"，本轮发现"**有实现但没登记**"。
+            260 ⚑ **新问题（值得下轮做）**：`scripts/` 下有多少个 `sw_*.py`
+               **没有对应的 capability 条目**？⇒ 本轮只**碰巧**发现一个，**未做系统核对**。
+               ★ 这属于 A1/A4 的直接判据，**且可以机器化**（模块名 ↔ 条目名）。
+               ⚠ 限度：只证"没抛异常 + 元素数合理"，**不证元素内容/顺序**；
+                 只测了线+弧，其余几何未测。
+               能力 **35 条**（新增 1）· `verified 29` · `stitched 5` · 回归 **1091 passed**。
+           261 🎯 **Spec Kit `037`：「模块 ↔ 能力条目」覆盖核对 —— **问了错的问题****（轮 118）——
+               起因：`036` 碰巧发现 `sw_sketch.py` 没有条目 ⇒ 记了「下轮系统核对」。
+               ★ **两版判据都失败**（当场发现并拦住）：
+               ```
+               版 1 模块名出现   ⇒ 报 43 个「没覆盖」⇒ 把 sw_routing↔routing、
+                                    sw_weldment↔weldments、sw_topology↔topology_optimization
+                                    这些**明明有条目**的也报了（条目用**域标签**，不写文件名）
+               版 2 函数名被提到 ⇒ 报 43 个（另一批）⇒ sw_helix **刚建条目**却被判「没覆盖」
+               版 3 两信号并集   ⇒ 仍 38 个 ⇒ **停手**（事实 53）
+               ```
+               ★ 假阳性约 **38/64 ≈ 59%** —— 比 `029`（26%）与 `032`（50%）**都高**。
+            262 ★★ **更重要的一层：这个核对**问错了问题****：
+               ```
+               A1 原文：「**域覆盖矩阵**里本仓库每一格都有来源」⇒ **A1 的单位是「域」，不是「文件」**
+               而 capabilities.yaml 的条目**本来就是域级的**
+                 （routing · weldments · surface_modeling · assembly_and_mates …）
+               ⇒ **条目已经在正确的粒度上** —— 「模块名没出现」**根本不是缺陷**
+               ```
+               ⓘ `036` 那次之所以是**真发现**，不是因为字符串没匹配，而是因为
+                 **「草图读回」是一个域级能力、而它真的没有条目** —— 那是**判断**。
+               ⇒ **本核对把「域级覆盖」误当成「文件级覆盖」来量，量出来的东西没有意义。**
+            263 ★ **处置**：**不做门禁**（59% 假阳性）；探针保留供**人工**扫一眼；
+               ★ **探针源码里写明两版判据都失败**（免得下一个人又拿它当判据）。
+               ★ **如果我第一版就采信**，会得出「43 个模块缺条目」这个**错的数字**并写进报告。
+            264 ★★ **第 8 例：名字匹配在这个项目里反复出问题** ——
+               020/021/022 核样 · 027 探针 · 029 废弃成员（26%）· 032（50%）· 037（59%）。
+               **更强的表述**：
+               > **名字匹配不但假阳性多，还可能把「问题本身」定错** ——
+               > 它默认「名字对得上 = 有关系」，而**这个仓库里关系是语义的**。
+               ⇒ 凡「按名字判有无」的检查，先问一句：
+                 **这两样东西的对应关系是名字上的，还是语义上的？**
+            265 ⚑ **未查证**：★ **「还有多少个模块真缺条目」这个数字没得出** ——
+               字符串匹配答不了，**不要当成"已核对完毕"**；唯一的真实例仍是 `036` 的 `sketch_query`。
+               回归 **1091 passed**。
+               下轮候选：① 回到补「真缺」；② 人工按域过一遍能力条目（要专门花一轮）；
+               ③ 给剩下 3 条 `stitched` 做真机冒烟。
+           266 🎯 **Spec Kit `038`：真缺档再补一条 —— 形位公差（**但换了入口**）**（轮 119）——
+               ★★ **关键查证：官方推荐的那条路在新版上无效**：
+               ```
+               IModelDoc2.InsertGtol()          ⇒ 0 参，返回空 GTol                    ✓ 可用
+               IGtol.SetFrameSymbols2(…9 参)    ⇒ ⚠ Remarks **原文**：
+                 「valid only if this Gtol was created in a version of SOLIDWORKS
+                   **earlier than 2022**」⇒ 本机是 **SW 2026** ⇒ **不可用**
+                 ⚠ 且它的符号参数是 **字形串**（官方文档里显示为空）⇒ **文本协议传不了**
+               ```
+            267 ★★ **最要紧的一步是「查到旧路无效之后，**再查一层**」**：
+               ```
+               第一层：SetFrameSymbols2 不通 ⇒ **最容易的收场是记「不做 + 原因」**（A1 允许）
+               第二层：**再查一层** ⇒ 2022 格式有两条路：
+                       · SetSymbolXml（XML，有独立 Schema 文档）
+                       · **AddIndicator（收枚举 + 字符串）** ← ★ 采用
+               ```
+               ★ **「官方推荐的那条路不通」≠「这件事做不了」**；
+                 但**也不能反过来假设总有路** —— 再查一层仍不通，正确收场就是**记为不做 + 原因**。
+            268 ★ **两条枚举逐值核对**（出厂反射）：`swGtolIndicatorBorderType_e` = 0..3 ·
+               `swGtolGeomCharSymbol_e` = **19 项 / 12..30**。`GetFrame` 的 `FrameIndex` **1 基**。
+               能力 **36 条**（新增 1：`geometric_tolerance`）· 回归 **1101 passed**。
+            269 ★ **本轮测试自己踩了两次（都当场修，且都是判据糙、不是代码坏）**：
+               ```
+               ① 取"实现段"用 split("# ── 来源")[0] ⇒ 切在 **docstring 里那一段**上
+                  （该标记在文件里出现两次）⇒ 取到的"实现"其实是文件头 ⇒ 改正为 rsplit
+               ② 断言"实现里不许出现 SetFrameSymbols2" ⇒ **被自己的说明文字误伤**
+                  （文档串里**必须**提到它才能解释为什么不走它）⇒ 改成查**调用形态**
+               ```
+               ★ **如果不修就去"改代码迎合判据"，那才是真的坏。**
+            270 ⚑ **未查证**：本机**从未建过**形位公差（等级 `stitched`）；
+               `AddIndicator` 的失败原因是**推断**的（官方只说 True/False）；
+               `SetSymbolXml` 的 **XML Schema 未读**；`SetIndicator`/`AddFrame`/`DeleteFrame`/取回族**未实现**。
+               「真缺」档补录进度：`023`/`024`/`028`/`034`/`038` ⇒ 共 **5 条**，该档约 **132 条**。
+               下轮候选：① 继续补「真缺」；② 给剩下 6 条 `stitched` 做真机冒烟；③ A5 的 2 条存疑。
+           271 🎯 **Spec Kit `039`：形位公差的真机冒烟 —— 抓到的是我自己上轮写的缺陷**（轮 120）——
+               挑它的理由：`038` 刚写完 `sw_gtol.py`，而且**整条路都押在 `IGtolFrame.AddIndicator` 上**。
+               **真机 3/5**：✅ `insert_gtol` 通过 · ❌ `add_gtol_indicator` **第一步就不通** · ✓ 无残留模态框。
+            272 ★★ **按事实 53 停手：连量三次把那一步量清楚**：
+               | 轮次 | 试法 | 结果 |
+               |---|---|---|
+               | 1 | 直接 `GetFrame(1)` | `GetFrameCount()`=**1**，但 `GetFrame(0/1/2)` **全 None** |
+               | 2 | 先 `AddFrame()` | 返回 **False**，计数**没涨** |
+               | 3 | 先 `CanConvertFormat()`→`ConvertFormat()` | 返回 **0（成功）**，但转换后计数**掉到 0**、`GetFrame` **仍全 None** |
+               ⇒ **「2022 格式的帧路径」在本机（SW 2026 SP4.1 / pywin32）上取不到帧**；
+                 而另一条路（`SetFrameSymbols2`）官方**明写只对 2022 之前的 Gtol 有效** ⇒ **两条路都不通**。
+            273 ⚠ **第 3 次那个结果特别有诱惑力**：`ConvertFormat` 返回 **0（成功）** ——
+               **看起来只差最后一步**。★ 但**它的成功是"转换"的成功，不是"取到帧"的成功** ——
+               **再往下试第 4 种写法，就是在赌「再试一次就好了」。**
+               ⇒ **停手并如实记录，比"多半能修好"更有价值。**
+            274 ★★ **这是冒烟测试价值的最好例证**：
+               ```
+               038（上轮）：写完 sw_gtol.py，静态证据齐全（签名互核 + 10 条契约测试）—— **全绿**
+               039（本轮）：真机冒烟 ⇒ **发现那条路根本走不通**
+               ⇒ 上轮那 10 条契约测试**一条都没发现** —— 它们测的是"参数传对了没"，
+                 **而问题是"那个 API 在这台机器上不给帧"**。
+               ```
+               ★ 与 `014`/`015`（孤立函数从没跑过）、`029`/`032`（废弃入口）**同一族**：
+                 **静态证据的覆盖面有边界，边界外的东西只有真机能看见。**
+            275 ★ **处置：如实分裂声明**（不粉饰）—— `insert_gtol` ✅ 真机可用 ·
+               `add_gtol_indicator` ❌ 真机到不了（**保留函数作可复算的证据，不删**）。
+               三处都写明：源码头「验证等级：**分成两半**」· docstring 顶部「当前不可用」· 能力条目 `evidence` 写 **3/5**。
+               ★ 这是本项目**第一次**遇到「**一条能力里两半分家**」—— **只写一个等级，无论写哪个都是错的**。
+               ⚠ 未查证：换后端（comtypes / 进程内 C++）能否走通 · `SetSymbolXml`（XML 路径）未试 ·
+                 `SetIndicator`/`DeleteFrame`/取回族未试（都要先能拿到帧）；**枚举本身没问题**，问题在取不到帧。
+               已知事实 **66** 已入库 · 回归 **1107 passed**。
+               下轮候选：① 继续给剩下 5 条 `stitched` 做真机冒烟（**这条路已被证明有产出**）；
+               ② 继续补「真缺」；③ A5 的 2 条存疑。
+           276 🎯 **Spec Kit `040`：螺旋线真机冒烟 —— 抓到缺陷、修好、并升 `verified`**（轮 121）——
+               写冒烟**之前复查源码**就发现一处可疑：`_newest_feature_name()` 读
+               `model.FirstFeature` —— 那是**特征树的第一个**，**不是最新加的那个**。
+               **真机先 9/10**：螺旋线**真的建成了**（树新增 `螺旋线/涡状线1`），
+               但函数**返回 `'收藏'`**（树里的收藏夹）⇒ **缺陷确认**。
+            277 ★★ **缺陷的性质：返回了一个看起来合理的字符串** ——
+               ```
+               它**不抛异常**、返回值**看着像个人名** ⇒ **静态测试一条都抓不到**
+               ```
+               ★ 与 `028`（方程式 `-1` 双重语义）、`034`（`SketchUseEdge3` 返回 `False`）
+                 **同一族**：**失败信号长得像正常值**。
+               ★★ 这是**真机冒烟第二次抓到我自己写的缺陷**（第一次是 `039` 的 GTol）。
+            278 ★ **修复**：改查官方 `IModelDocExtension.GetLastFeatureAdded()`
+               （原文「Gets the **last feature added** to the model」）⇒ 返回 `螺旋线/涡状线1` ✓。
+            279 ★★★ **然后加了一条硬验证：把定义读回来**：
+               ```
+               传进去：height_mm=50 · pitch_mm=10 · revolution=5
+               读回来：Height = **0.05 米** · Pitch = **0.01 米** · Revolution = **5.0**
+               ⇒ ★★ 这同时**证明 mm→米 的换算是对的**（若换算错，读回的会是 50）
+               ```
+               ⇒ **13/13** ⇒ 等级 `stitched` → **`verified`**；`verified 29 → 30` · `stitched 6 → 5`。
+            280 ★★ **连着两轮冒烟，各抓到一处我自己写的缺陷 —— 但性质不同**：
+               ```
+               039（GTol）：API **到不了** —— 不是我的错，是那条路径在本机不通
+               040（螺旋线）：**我的实现写错了** —— 且它"看着像对的"
+               ```
+               ★ 并且「**什么算硬证据**」已攒出**同一档**的三个实例：
+               `035` 方程式（写==读）· `036` 草图（画 2 样 ⇒ segments==2）· `040` 螺旋线（传 50mm ⇒ 读回 0.05）。
+               ★★ **共同点：空操作满足不了它们**；而「没抛异常」**空操作能满足** ⇒ 不算证据。
+               ⚠ 未查证：只验了 3 个参数，其余 6 个与 `helix_def` 的另 3 种取值未测；
+                 **`TaperAngle` 的单位仍未验证**。回归 **1108 passed**。
+               下轮候选：① 继续给剩下 4 条 `stitched` 冒烟（**连续两轮都有产出**）；
+               ② 继续补「真缺」；③ A5 的 2 条存疑。
+           281 🎯 **Spec Kit `041`：草图编辑真机冒烟 —— **倒角到不了，而且是架构性限制****（轮 122）——
+               **8/10**：✅ 造出两条相接直线、**同时选中两条（选区计数 = 2）** ⇒ **前置成立**；
+               ❌ `create_sketch_chamfer` 失败；✓ 无残留模态框。
+            282 ★ **定向探针量到的：不是「参数没调对」，是架构限制**：
+               ```
+               新零件 → 进草图 → 两条相接直线 → 确认选区 = 2 → 调 CreateChamfer(2, 0.005, 0.0)
+                 ⇒ **pywintypes.com_error: (-2147417851, '服务器出现意外情况')**
+               ```
+               ★ `0x80010105` **正是事实 47（`AccessSelections`）与事实 28（`CreateBsplineSurface`）
+                 那个错误码** ⇒ 归入「pywin32 迟到绑定到不了需要真实指针的接口」。
+               ⚠ **按事实 53 停手**，不再试别的类型/参数组合。
+            283 ★★ **连着三轮冒烟，产出各不相同 —— 三种结果都是"产出"**：
+               ```
+               039（GTol）    ：API **到不了** —— 但**不是我的错**（那条路径在本机不通）
+               040（螺旋线）  ：**我的实现写错了** —— 且"看着像对的" ⇒ **修好并升 verified**
+               041（草图倒角）：**到不了，而且认得出原因** ⇒ 归到已知架构限制，**不再浪费轮次**
+               ```
+            284 ★ **本轮没有犯「继续变着法试」的错**：
+               ```
+               第一反应可以是「是不是没选中？」⇒ 冒烟里**先确认选区计数 = 2**（前置已排除）
+               第二反应可以是「是不是类型/角度没传对？」⇒ 写探针把三种组合列出来试
+               ⇒ 第一个组合就抛 `0x80010105` ⇒ **认出错误码 ⇒ 归到架构限制 ⇒ 停**
+               ```
+               ★ 若没有"认出错误码"这一步，会接着试 `distance_angle=45°` / `distance_distance` /
+                 换 `SetAddToDB`…… **每一版都会再失败一次，而根因根本不是参数。**
+            285 ⚠ **处置：如实分裂声明** —— `convert_entities` ⚠未测 · `create_sketch_chamfer` ❌到不了 ·
+               `sketch_mirror` ⚠未测 ⇒ 等级**仍留 `stitched`**（三条里只验了一条前置），
+               但 `limitations` 逐条写清。**已知事实 67** 入库。
+               ⚠ **一个没被裁决的旧冲突**：`swSketchChamferType_e` 的 `distance_distance`
+                 （反射 1 vs md −1）**本轮没能用真机裁决** —— 在"选型"之前调用就报错了
+                 ⇒ 该冲突**仍然悬着**，不要因为"跑过一次"就以为它被验证了。
+               回归 **1108 passed**。
+               下轮候选：① 继续给剩下 3 条 `stitched` 冒烟（`surface_modeling` / `mold_tools` /
+                 `animation_export` —— 前两条已知缺运行期、第三条缺 Motion 插件，预期也是"记下到不了"）；
+               ② 继续补「真缺」；③ A5 的 2 条存疑。
+           286 🎯 **Spec Kit `042`：真机裁断 A5 里唯一悬着的那条 —— 结论推翻了「两边」**（轮 123）——
+               悬案：`sw_hole_features.py` 的 4 处传了 `Object&` 出参，而 `audit_call_arity.py`
+               的新规则把 `Object&` 排除 ⇒ ① 必填（规则错、代码对）还是 ② 不必传（规则对、代码多传）？
+               当时**未做真机实验**，按铁律 5 记「不猜」。
+            287 ★ **四形态实验**（`tools/probe_outparam_object_byref.py`，先拿 `IHoleStandardsData`）：
+               ```
+               A 不传出参                             ⇒ com_error -2147352561「**非选择性的参数**」← 决定性
+               B VARIANT(VT_BYREF|VT_DISPATCH, None)  ⇒ com_error -2147352571「类型不匹配」
+               C 两个裸 None                           ⇒ com_error -2147352571「类型不匹配」
+               D VARIANT(VT_BYREF|VT_VARIANT, None)   ⇒ **返回 True** ✓
+               ```
+            288 ★★ **裁定：`Object&` 必填，传法是 `VT_BYREF|VT_VARIANT` —— 两边都错**：
+               ```
+               ① 工具的规则「Object& / Variant& / Dispatch& 一律排除」 ⇒ **错**（必填）
+               ② sw_hole_features.py 虽然传了，但传的是**裸值**        ⇒ **传法也错**
+               ```
+               ★★ **悬案之所以悬，是因为两个选项都不对** —— 不是二选一，是**两边都要改**。
+            289 ★ **修正按铁律 4**：arity **就是出厂反射的参数个数**（`count = len(_params)`），
+               **不做类型特例**。**判据有效性检验**（事实 62）：
+               ★ 负例**固化进仓库**（`tools/arity_negative_case.py`）——
+                 ⚠ 批次 6/7 那份住在 `%TEMP%` 里、**不可复现**（写着的"检验"只能做一次）；
+               修正后负例**仍全被抓住**（3 个）⇒ **不是把门禁调松**；新增测试 **5 条**。
+               影响可量化：`sw_hole_features` **4 处存疑 → 0**，**25 通过**。
+            290 ⚑ **未查证**：只证了 `GetHoleStandards` **一个**成员（但"以反射为准"不需外推）；
+               ⚠ 那 4 个包装**在仓库里没有调用方**（孤儿）⇒ 正确传法**没有被在跑的功能用到**，
+                 本轮**没有**去接调用方；`Variant&` / `Dispatch&` **未逐个实测**。
+               ★ 一条分支收获：探针第一版用 `pythoncom.VARIANT`（**不存在**）⇒ 改
+                 `win32com.client.VARIANT`；**若没修，B 形态会显示成"探针坏了"而不是"传法不对"**，
+                 那会把一个真实的负面结论掩盖掉。
+               已知事实 **68** 入库 · 回归 **1113 passed**。
+               下轮候选：① 继续给剩下 3 条 `stitched` 冒烟；② 继续补「真缺」；
+               ③ 把 `sw_hole_features` 那 4 个孤儿接上调用方（**新发现**）。
+           291 🎯 **Spec Kit `043`：把那 4 个「孤儿包装」接成能用的 API —— 真机 6/6**（轮 124）——
+               起因（`042` 顺带发现）：`get_hole_standards` 等 4 个包装**在仓库里没有调用方** ——
+               它们把**出参甩给调用方**，而调用方得自己造 by-ref VARIANT ⇒ **没人愿意这么用**。
+            292 ★ **先量再写**：出参里装的是 **`tuple`**，两组**各 15 元、一一对应**：
+               ```
+               Standards = (0, 1, 16, 2, 4, 13, 15, 8, 9, 14, 3, 5, 10, 11, 12)
+               Types     = ('ANSI Inch', 'ANSI Metric', 'AS', 'BSI', 'DIN', 'GB', 'IS', 'ISO', 'JIS', 'KS', …)
+               ```
+               ⇒ 补高层入口 `list_hole_standards(sw, hole_type_id)`（**自己造容器、自己读回来、按位配对**）。
+            293 ★ **真机冒烟 6/6** —— 而且判据是**空操作证伪不了**的那种：
+               ```
+               ✓ 15 条 · ✓ 非空 · ✓ 每条都有非空 name
+               ✓ ★ **不含重复名**（唯一 15 / 共 15）← 正好在测"两组出参有没有真的按位配对"
+               ✓ ★★ **命中 ISO / DIN** ← **空操作给不出这个**
+               ```
+               ★ 与 `035`/`036`/`040` 同一档，**已攒到第 4 例**。
+            294 ★★ **上一轮修的是「口径」，这一轮修的是「没人用」**：
+               ```
+               042：裁断出正确传法 ⇒ 修了**工具的判据**
+               043：那个传法**此前没有任何在跑的功能依赖它** —— 因为这 4 个包装**根本没有调用方**
+               ⇒ ★ **「知道怎么用」与「有人用得上」是两件事。**
+               ```
+            295 ⚠ **本轮踩了两个老坑（都当场修）**：
+               ```
+               ① 判据被自己的文档串误伤（查整段 vs 查**构造行**）—— **与轮 119 同一个坑，这是第二次**
+               ② `check_provenance` 两次红：`覆盖: 后续同级定义` **只覆盖第一个 def**
+                  ⇒ 新加一段同级定义时**必须另起一个来源块**
+               ```
+               ⚑ **未查证**：只证了 `hole_type_id = 0` 一档（其余 8 档未测）；**不证"15 条是全集"**；
+                 `id` 的语义未核；另外 3 个包装**仍是孤儿**；★ **没有**注册成 MCP 工具
+                 （需要 `ISldWorks` 而非 `model`，注册方式另议）。
+               回归 **1119 passed**。
+               下轮候选：① 把剩下 3 个孤儿也接上（同样的做法）；② 继续给剩下 3 条 `stitched` 冒烟；
+               ③ 把 `list_hole_standards` 注册成 MCP 工具（要想清楚 `sw` 从哪来）。
+           296 🎯 **Spec Kit `044`：把剩下 3 个孤儿也接上 —— 顺带查出一条****官方没写**的行为约束****（轮 125）——
+               链路：**标准（15）→ 紧固件类型（14）→ 表类型（`[0,1,2]`）**。
+            297 ★★ **查出的约束：`IHoleStandardsData` 必须先「热身」** ——
+               ```
+               第一版拿到 data 后**直接**调 GetFastenerTypes ⇒ 返回 False
+               （而同一探针早先明明拿到过 True ⇒ 说明有隐藏状态）
+               ⇒ **不猜，量四组对照**：
+                 A 直接调                                  ⇒ False
+                 B **先调 GetHoleStandards** 再调           ⇒ **True** ✓
+                 C 未热身对象上**再调一次**                 ⇒ 仍 False（⇒ 不是"调一次就好"）
+                 D 换标准名 'ISO'                          ⇒ 仍 False（⇒ 不是名字问题）
+               ```
+               ⇒ 官方文档**只写各方法自己的前置**，**没有**这条跨方法顺序约束。
+                 已在 `_hole_standards_data()` 里默认热身（`initialize=False` 可跳过）。
+            298 ★★★ **「反向验证」—— 本项目第一次**：
+               ```
+               以往证据都是「做了 X 之后 Y 成立」
+               本轮的是「**不做 X 就不成立**」（不热身 ⇒ GetFastenerTypes 返回 False）
+               ⇒ ★ 这才证明 X **必要**，而不只是"无害"
+               ```
+               ★ 与事实 62（「门禁『写了』≠『有效』，负例是唯一的证明」）**同一思路**，
+                 只是对象从**门禁**换成了**运行期约束**。真机冒烟 **11/11**。
+            299 ❌ **`get_fastener_table` 到不了** —— 官方第 4 参是 `out IHoleDataTable`，
+               用**同族另外三个已验过**的容器形态传，三个 `TableID` 全报
+               `com_error -2147352571`「类型不匹配」**位置 4**。
+               ★ **同族里只有这一个到不了** ⇒ 按**事实 53** 停手，保留函数作**可复算的证据**。
+               ★ **"接上"不等于"都能用"** —— 本轮把「**能用的**」与「**到不了的**」分开报。
+            300 ⚠ **同一个来源块问题第三次出现** ⇒ **该写进纪律**，不是每次当场发现。
+               ⚠⚠ **轮 126 更正**：上轮这里写的是「`# 覆盖: 后续同级定义` **会被下一个来源块截断**」——
+                 ★ **这句是错的**。轮 126 的**负例测试当场推翻**了它：量到的真实语义是
+                 「覆盖到**下一个来源块之前**，而下一个块**接着往下覆盖** ⇒ **两块接得上**」。
+                 **真因**是 `t.index("\n\n# ── 来源")` 命中了**更靠前**的那个块 ⇒
+                 新函数被插到了它的**上方**（块覆盖的是**下方**）。
+                 ⇒ ★★ **是测试推翻了我的解释，不是我的记忆。**
+               ⚑ **未查证**：只证了 `ANSI Inch` + `hole_type_id=0` 一条组合；**不证 15/14/`[0,1,2]` 是全集**；
+                 `id` 语义未核；`get_fastener_table` 换后端未试；**没有**注册成 MCP 工具。
+               已知事实 **69** 入库 · 回归 **1124 passed**。
+               下轮候选：① 把"来源块覆盖范围"这条写进纪律（**已经三次**）；
+               ② 给剩下 3 条 `stitched` 冒烟；③ 把查到的 API 注册成 MCP 工具（要比清 `sw` 从哪来）。
+           301 🎯 **Spec Kit `045`：把来源块覆盖范围写进纪律 —— **并在过程中更正我上一轮判错的那句****（轮 126）——
+               目标本是「把轮 125 的教训写进格式文档」，结果**写纪律时发现那条教训本身是错的**。
+            302 ★★ **量到的真实语义（四形态）**：
+               | 形态 | 结果 |
+               |---|---|
+               | 不写标记 + 2 个 def | 第一个**覆盖**、第二个**未覆盖** |
+               | `后续同级` + 2 个 def（同块下）| **都覆盖** |
+               | `后续同级` + 另起一块 + def c | **都覆盖**（**两块接得上**）|
+               | ★ **def 插在来源块「上方」** | **未覆盖** ← **这才是真因** |
+               ⇒ **`后续同级定义` 不会被"截断"**；轮 125 的真因是 `t.index("\n\n# ── 来源")`
+                 命中了**更靠前**的块 ⇒ 新代码被插到了它的**上方**（块覆盖的是**下方**）。
+            303 ★★ **拦住它的不是"我更小心了"，而是我先写了负例测试**：
+               ```
+               若我直接照轮 125 的记忆去写文档，就会把一个**错的规矩**固化进格式文档 ——
+               而格式文档是**后来人写代码时读的东西** ⇒ **会持续误导**。
+               ⇒ ★ 「**是测试推翻了我的解释，不是我的记忆。**」
+               ```
+            304 ★ **顺带查出一处文档缺口**：`D:\AI\SW\docs\provenance-format.md`
+               （AGENTS.md §四 4.3 点名的格式文档）本轮之前**只有 28 行、一个字都没讲覆盖范围** ——
+               那条规矩只活在 `check_provenance.py` 的**源码注释**里，而踩坑的人是**写代码的人**。
+               ⇒ 补了「覆盖范围」一节（两个坑各带**做法**）：**28 行 → 87 行**。
+            305 ⚑ **三次同族问题到此有了归属**：
+               ```
+               ① 判据查整段被文档串误伤        ⇒ 写代码时的坑（119/124）→ 已给做法
+               ② 覆盖范围不生效（真因：插在块上方）⇒ 写代码时的坑（124/125）→ 已给做法
+               ③ **对①②的解释本身出错**        ⇒ **认识论问题**（125 → 126 更正）→ 事实 70
+               ```
+               ★ ①② 是**可预防的操作错误**；③ 说明**光有做法还不够** ——
+                 还得有能**把做法本身证伪**的东西，那就是**负例测试**。
+               ⚠ **限度**：文档判据（`assert "上方" in t`）只在**字符串层面**保证文档提到了这件事，
+                 **不保证文义正确** —— 本轮正是"文档写得很具体但内容错了"的实例；
+                 真正的保证来自那 **4 条行为测试**。
+               已知事实 **70** 入库 · 回归 **1130 passed**。
+               下轮候选：① 回到补「真缺」；② 给剩下 3 条 `stitched` 冒烟；
+               ③ 把 `list_hole_standards` 一类查到的 API 注册成 MCP 工具。
+           306 🎯 **Spec Kit `046`：补 `bbox` —— 数值冒烟抓到一处单位错，并查出一条与其它接口不同的单位**（轮 127）——
+               挑它是因为**可以用精确数字验证**：建一个**已知尺寸**的盒子再量。
+            307 ★★ **先读官方文档，改掉了我原本的判据**：
+               ```
+               我原本：「建 80×60×50 的盒子 ⇒ size 应当**完全等于** [80,60,50]」
+               ★ 读了 IMPORTANT 段才发现该值是 **approximate**、**不应用于比较**
+               ⇒ 判据改成「**容差内**」，并**专门去量偏差是多少**（那才是这轮真正想知道的）
+               ```
+               ★ 按原计划写死"完全相等"，将来任何浮点误差都会让它红 ——
+                 而那**不是 bug**，是**把官方的警告当成了精度承诺**。
+            308 ★ 数值冒烟：**先 7/8，修完 8/8**
+               ```
+               ✗ NameError: name 'mm' is not defined          ← 第 1 处（mm 只在文档串示例里出现过）
+               ✗ size got=[0.05,0.06,0.08] want=[50,60,80]     ← 第 2 处
+                   真因：**把 `mm()` 用在了输出上**（它是**输入方向**：毫米→米）
+               ⇒ 修完：size=[80.0, 60.0, 50.0]，**偏差 0.00e+00**
+               ```
+            309 ★★ **顺手查出一条与其它几何接口不同的单位**：直读 COM ⇒
+               `GetBodyBox` 原始返回 `[0.0, 0.0, -50.0, 80.0, 60.0, 0.0]`
+               ⇒ **原始值就是 80/60/50 ⇒ 单位是毫米**（不是惯用的米）。⚠ 官方**没写单位**。
+            310 ★★★ **本轮最微妙的一点：官方说「近似」，实测偏差却是 0** ——
+               ```
+               实测只证：「**这一个盒子、这一次**」的偏差是 0
+               官方说的是：「**不要依赖它**」+「重建后**可能变**」
+               ⇒ ★ **一个有界样本，压不过一条适用范围声明。**
+               ```
+               ★ 与 `035`/`036`/`040`/`043` 的"往返一致"同族但**更进一层**：
+                 那些是**强证据**，而强证据**也有它的适用域** —— 本轮就是
+                 「**证据成立、但不能外推**」的实例。官方的 approximate 原文已**照抄进源码**。
+               ⚑ 三个小坑（都当场修）：① `mm` 导入问题 —— ★ **正确做法是撤回导入**
+                 （单位修正后不需要它），**不是去改测试的桩来迁就代码**；
+                 ② 我加的测试用了 `pytest`+`REPO_ROOT`，而该文件用 `unittest`+`ROOT`；
+                 ③ 判据切片从 `def` 开始 ⇒ 取不到**来源块里**的官方原文 ⇒ 往前扩。
+               ⚠ 限度：只测 **1 个盒子**；旋转体/多实体/装配体未测；**重建后是否真会变未测**；
+                 **没有**注册成 MCP 工具。已知事实 **71** 入库 · 回归 **1133 passed**。
+               下轮候选：① 继续补「真缺」；② 给剩下 3 条 `stitched` 冒烟；
+               ③ 把查到的 API 注册成 MCP 工具（这批已经攒了 5 个可用入口）。
+           311 🎯 **Spec Kit `047`：把轮 123~127 查证并**真机跑过**的 4 个入口接出去（batch10）**（轮 128）——
+               那几个入口此前**只活在 `scripts/` 里**：
+               `bbox`（真机 8/8）· `list_hole_standards`（6/6）· `list_fastener_types`（11/11）·
+               `list_fastener_table_types`。
+               ★ 与 `014`/`015` 的「孤立函数从没跑过」相对：这几个**跑过了**，但**还没接出去** ——
+                 **不接出去，外部使用者拿不到**。
+            312 ★★ **先查有没有现成机制，再动手**：
+               ```
+               需求：`list_*` 三个要的是 `ISldWorks`（不是活动文档）
+               ⇒ 第一反应可以是"给 registry 加一种注入"
+               ⇒ ★ **先查** ⇒ `inject="sw_app"` **本来就支持**，`RESOLVERS` 里也有解析器
+               ⇒ **一行都不加机制**
+               ```
+               ★ 这正是「**不要为了修房子创建公司**」在这一轮的具体落点。
+            313 ★★ **比"直接调函数"更值钱的一步：走**声明层**验证**：
+               ```
+               函数冒烟（已有 2 个）：证 get_bounding_box / list_* 能跑
+               声明冒烟（本轮）   ：证 **手抄的声明**能不能把调用**正确地**送进去
+               ```
+               ★ 参数名抄错 / 注入名搞错 / `read_only` 标错 —— 静态测试**只能查"存不存在"**。
+               ⇒ 真机 **7/7**（`inject=model` 1 条 + `inject=sw_app` 3 条，15/14/3 条结果）。
+               ★★ 而本轮**真的抓到一条**：**`read_only` 忘了标** ⇒ 测试红 ⇒ 补上。
+                 ⚠ **若只跑函数冒烟，这条永远不会被发现**（函数本身完全正常）。
+            314 ★ **暴露面**：`all_specs()` **37 → 41** · 并集 420 → **424 操作** · 独家 71 → **75**。
+               数量守卫测试同步更新（**37 → 41**，保留历史说明）—— 它设计成"变了就红"。
+            315 ⚠ **一条仍未被证的边界**：本轮只证到「**声明 → RESOLVERS → 调用**」；
+               **MCP 协议层**（起 server、经 JSON-RPC 真调一次）**未证**。
+               ⇒ 那句"接出去了"目前是**到这个深度为止**，**不是**"端到端已通"。
+               ★ 与 `014`/`015` 一脉相承：**"接出去"要分层说清楚接到了哪一层。**
+               ⚠ 另：`harvest-report.md` 的**总暴露数**（"工具 83 个"一类）本轮**没有重新统计**。
+               回归 **1149 passed**。
+               下轮候选：① 把 MCP 协议层也验一次（起 server 真调）；② 继续补「真缺」；
+               ③ 给剩下 3 条 `stitched` 冒烟。
+           316 🎯 **Spec Kit `048`：补上 `047` 留下的那条边界 —— **MCP 协议层****（轮 129）——
+               `047` 只证到「声明 → RESOLVERS → 调用」；本轮把 server **真起起来**，
+               用 JSON-RPC 问它「你有哪些工具」。
+               ⚠⚠ **安全设计：一次工具都不调** —— 事实 **24**（多个进程抢同一 COM 会**死锁**）
+               ⇒ 只发 `initialize` + `tools/list` ⇒ **完全不碰 COM**。
+               ★ 这正好也是本轮要证的那一层：**"工具被正确地登记与描述出来了"**。
+            317 ★ **结果 7/7**：起 server · `tools/list` 拿到 **86 个工具** ·
+               batch10 的 4 条**在协议层可见**（4/4）· schema 参数**逐条对上**。
+               ★ **顺带补上 `047` 说"没有重新统计"的那个数**：协议层 **86 个工具**。
+            318 ★★ **本轮抓到的东西：不是缺陷，是我查错了地方**（**两层**）：
+               ```
+               第 1 层：去**顶层** properties 找**展平**的参数名
+                       ⇒ 报「协议里只有一个 `params`」⇒ **看起来像个真缺陷**
+                       ⇒ 打 schema 原文才发现那是**设计**：工具统一收一个 `params` 对象，
+                         参数在 `params.$ref → $defs.<Model>.properties` 里
+               第 2 层：修完第 1 层，又在 `inner["response_format"]` 找 `enum`
+                       ⇒ 它**也是个 `$ref`**（枚举在 `$defs.ResponseFormat`）
+               ```
+               ★★ **红了先别改代码，先打原文** ——
+                 若我先去"修"代码，就会把一个**本来对的设计**改坏，
+                 而改完测试还会变绿（因为判据也错了）⇒ **那才是最难发现的坏结局**。
+            319 ★ **一个正面发现**：框架会**统一补**一个 `response_format`
+               （枚举 `json`/`markdown`）—— **声明里没有它** ⇒ 声明时**不要自己再加一个**。
+            320 ⚑ **未查证**：**没有真调过一次工具** ⇒ **不证调用路径**（那需要 COM）；
+               86 只在此刻成立；协议版本只用了客户端声明的 `2025-06-18`，**其它版本未试**。
+               ★ 同族认识（与事实 51 一脉相承）：这次是**判据的"层"与数据的"层"不匹配**。
+               已知事实 **72** 入库 · 回归 **1153 passed**。
+               下轮候选：① 继续补「真缺」；② 给剩下 3 条 `stitched` 冒烟；
+               ③ 把「协议层」这条也纳入常规回归（已验证 4 条测试、不碰 COM）。
+           321 🎯 **Spec Kit `049`：关掉 A5 的最后 2 条「存疑」—— 查出是****类别错误******（轮 130）——
+               ★ **先量 A 系列现状**（目标自己的尺子）：`final-audit.md` 里
+                 A1 A2 A3 A4 A6 A7 A8 A9 A10 = **达成**，**A5 = 部分达成** ← **全表唯一缺口**。
+               A5 的缺口：711 调用点 / 696 通过 / **2 存疑** / 0 查不到。
+            322 ★ **那 2 条是谁** —— 两条都标着「**需真机确认**」（而**从未确认过**）：
+               ```
+               sw_delivery.py:635  IGetDocumentNames() 传 1 参，官方 2
+               sw_delivery.py:884  OpenDoc6()           传 4 参，官方 6
+               ```
+            323 ★★ **查出的真因：类别错误**：
+               ```
+               两条都走 **comtypes 早绑定**（同文件 35 处 comtypes；L635 所在函数就叫
+                 `_comtypes_document_names()`，注释写着"comtypes 会自动分配 [out] 数组"）
+               ⇒ 而本工具的 arity 规则是在 **pywin32 迟到绑定**上**真机量出来**的（事实 68）
+               ⇒ comtypes 代理**自己分配** `[out]` ⇒ 调用方**只传入参即正确**
+               ⇒ ★ **拿 pywin32 的规矩判 comtypes 的调用点，是类别错误**，不是"代码有问题"
+               ```
+            324 ★ **处置：单独归类，不静默吞掉**（照仓库既有 `MANUAL_MAP` 的"带理由人工表"做法）：
+               新增 `COMTYPES_CALL_SITES`（**每条带理由**）· `audit()` 4 组 → **5 组** ·
+               CLI **打印出来**（标题写明「**不是缺陷**，是有依据的单独归类」）。
+               结果：`通过 24 · comtypes 2 · **存疑 0** · 查不到 0 · 动态 0` ⇒ **A5 → 达成**。
+               ★ 负例测试（4 条）钉住"**不是静默吞掉**"（明细段必须在、理由必须提到 comtypes 与 pywin32）。
+            325 ★★ **与 `048`（轮 129）方向相反，但道理相同**：
+               ```
+               129：判据**红**了 ⇒ 一查是**判据错**（我爬错层）      ⇒ 修判据
+               130：判据"绿"了 2 条 ⇒ 一查是**判据的适用范围错**     ⇒ 单独归类
+               ⇒ ★ 两次都不是"改代码迎合判据"、也不是"改判据迎合代码"，
+                 而是把「**这条判据到底管不管得到这个对象**」问清楚。
+               ```
+               ★ 这是本会话**第三次**「范围/层」类问题（事实 51 是**分析范围**、
+                 `048` 是**判据的层**、本轮是**判据的适用前提**）。
+               ⚠ **克制在哪**：没有把 comtypes 站点从扫描里排除（那就真看不见了）、
+                 没有直接过滤 `doubt`、没有用启发式自动识别 —— 而是**单列 + 写理由 + 仍打印 + 负例钉住**。
+               ⚑ **未查证**：**没有**真机验证 comtypes 下这两个调用的实际行为；
+                 `COMTYPES_CALL_SITES` 是**人工表** ⇒ 新出现的同类站点**不会被自动识别**；
+                 comtypes 与 pywin32 在 `[out]` 上的差异，**官方文档没有对照说明**。
+               ✅ **A1–A10 至此全部「达成」**（⚠ A2 那条是「达成（②空满足）」）。
+               回归 **1157 passed**。
+               下轮候选：① 继续补「真缺」；② 给剩下 3 条 `stitched` 冒烟；③ 刷新 NOTICE 与审计报告。
+           326 🎯 **Spec Kit `050`：刷新 NOTICE 与审计报告 —— 并给 NOTICE 装上****机器检查******（轮 131）——
+               ⚠ 「刷新」**不等于**「改一改」⇒ ★ **先复核，只改真的过时的**。
+            327 ★ **复核 NOTICE 的三条可核断言 —— 三条都成立 ⇒ 一个字没动**：
+               ```
+               ① 「source_verified 条目数 0 ⇒ 尚未有来源派生的能力条目」 ⇒ **仍成立**（实测 0）
+               ② mold_tools 的来源是 Eduardof0nt，**只取思路没抄代码** ⇒ §一.3 写得**准确且详细**
+               ③ §一.4 依赖清单（含 numpy）⇒ 对得上（numpy 在 requirements-mesh/occt.txt 里）
+               ```
+            328 ★ **真正过时的只有 3 处**：`NOTICE 的登记历史只有 1 条`（fork 已 200+ 提交）·
+               `final-audit` 的「215 次本地提交」⇒ 实际 **245** · 「31 条能力」⇒ 实际 **36**。
+            329 ★★ **更重要的是装上机器检查**（A6 此前**只靠人读**）—— 5 条，其中两条最要紧：
+               ```
+               ② 「**能力条目里出现的每个外部 owner，NOTICE 里都必须有登记**」
+                  ⇒ 把「**参考了谁就要登记谁**」从"人记得"变成"**漏了会红**"
+                  ⇒ 而那正是**许可义务最容易漏的地方**
+               ⑤ 「登记历史必须不止一条」—— ★ **故意指向它自己**：
+                  写这条规则的动作**本身也必须被记进历史**，否则测试就红
+                  ⇒ **本轮正是这样红了一次**（先 1 条 ⇒ 红 ⇒ 补历史 ⇒ 绿）
+               ```
+               ★★ 这种做法（**规则管到自己头上**）在本会话是**第一次**。
+            330 ⚠ **一条被门禁自己写明的边界**（值得照抄）：
+               `check_license_redlines` 原文：「本门禁判**声明是否自洽/越界**，**不判声明是否属实**」
+               ⇒ ★ 本轮新增的 5 条**同一边界**：保证「**登记了**」，不保证「**登记属实**」。
+               ★ 与 `029`/`032`（台账不做门禁）、`048`/`049`（判据的层与适用前提）**同一条脉络**：
+                 **把门禁能保证的范围说清楚，不含糊。**
+               ⚑ **未查证**：5 条**不保证登记属实**；`final-audit` 里「31 条存疑未定口径」是
+                 **A3 口径的另一回事**，**本轮不动**；数字类断言**会随提交增长**，
+                 已在更正处写明**重新数的命令**（`git rev-list --count origin/main..HEAD`）。
+               许可门禁 **0 越界** · 回归 **1162 passed**。
+               下轮候选：① 继续补「真缺」；② 给剩下 3 条 `stitched` 冒烟；
+               ③ 把 `048` 的协议层检查接进常规回归（已可跑、不碰 COM）。
+           331 🎯 **Spec Kit `051`：补 `ellipse` —— 顺带量准一件更大的事：长度单位是毫米，而 docstring 写的是米**（轮 132）——
+               挑它的理由：它在「真缺」档里，且**有现成的验证手段** —— 轮 117 已验过
+               `sw_sketch.get_ellipses`（当时返回 **0**，因为没画椭圆）⇒ 本轮可以**造一个再读回来**。
+            332 ★ **走的是**现行入口**（官方有**两级废弃链**）**：
+               ```
+               IModelDoc2.CreateEllipse(Object×3)  ⇒ Obsolete ⇒ IModelDoc2::CreateEllipse2
+               IModelDoc2.CreateEllipse2(Double×9) ⇒ Obsolete ⇒ ISketchManager::CreateEllipse
+               ⇒ 现行 = ISketchManager.CreateEllipse(9 个 double)，返回 SketchSegment（两源一致）
+               ```
+            333 ★★ **顺带量准的一件更大的事**：
+               ```
+               冒烟第 ① 段：sketch_circle(model, 0, 0, **25**)（**未做任何换算**）+ 拉伸 10
+                          ⇒ get_bounding_box 得跨度 **[10, 50, 50]**（**毫米**）
+               ⇒ ★ **传进去的就是毫米** —— 而 sw_part 的 docstring 有 **14 处**写「单位: 米」！
+               ```
+               ⚠ 而且**没有任何门禁会检查它** —— 工具层有规则 2（`_mm` 后缀）守着，
+                 但 `sw_part` 是**脚本层**，**不受那条规则约束**。
+               ⇒ 已**逐条校正为毫米**并在模块头写明是**实测校正**（已知事实 **73**）。
+               ★ 与已知事实 71（`GetBodyBox` 返回毫米）是**同一台机器上互相印证**的两条。
+            334 ★ **真机冒烟 11/11**：量单位那一步 + `sketch_ellipse` 建成 +
+               **★ 往返：`get_ellipses` 读回 22 个**（轮 117 时是 0 —— 那时没画）。
+            335 ★★ **本轮的形状：为了写一个小功能，量出了一件全局的事**：
+               ```
+               目标：补 ellipse（一个"真缺"条目）
+         

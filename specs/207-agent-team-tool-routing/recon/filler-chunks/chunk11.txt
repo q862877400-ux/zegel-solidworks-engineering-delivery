@@ -1,0 +1,1290 @@
+skills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_collect_drawing_views` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::auto_arrange_drawing_dimensions` ×1<br>… 另 6 处 |
+| `CreateDefinition` | `IFeatureManager` | 1 | `scripts/check_member_owner_interface.py::<模块级>` ×1<br>`scripts/sw_pattern.py::<模块级>` ×1<br>`scripts/sw_sheet_metal.py::_create_from_definition` ×1<br>… 另 7 处 |
+| `Add` | `ICustomPropertyManager` / `IEquationMgr` / `IMathVector` | ICustomPropertyManager(3); IEquationMgr(2); IMathVector(1) | ⚠ 疑似撞名（仅出现在非 COM 模块） |
+| `CreateFeature` | `IFeatureManager` | 1 | `scripts/sw_sheet_metal.py::_create_from_definition` ×1<br>`scripts/sw_sheet_metal.py::create_base_flange` ×1<br>`scripts/sw_weldment.py::_create_from_definition` ×1<br>… 另 5 处 |
+| `GraphicsRedraw2` | `IModelDoc` / `IModelDoc2` | 0 | `scripts/sw_import_mesh_reference.py::import_mesh_reference` ×1<br>`scripts/sw_part.py::auto_dimension_sketch` ×1<br>`scripts/sw_review.py::clear_selection_for_preview` ×1<br>… 另 5 处 |
+| `GetDefinition` | `IAttribute` / `IFeature` | 0 | `scripts/sw_assembly.py::configure_mate_feature_data` ×1<br>`scripts/sw_sheet_metal.py::sheet_metal_evidence` ×1<br>`scripts/sw_surface.py::<模块级>` ×1<br>… 另 4 处 |
+| `GetPathName` | `IComponent` / `IComponent2` / `IModelDoc` … 另 1 个接口 | 0 | `scripts/sw_connect.py::save_document` ×1<br>`scripts/sw_delivery.py::_comtypes_active_model` ×1<br>`scripts/sw_delivery.py::collect_assembly_bom` ×1<br>… 另 4 处 |
+| `GetTypeName2` | `IFeature` | 0 | `scripts/sw_sheet_metal.py::_feature_type` ×1<br>`scripts/sw_weldment.py::create_structural_member` ×1<br>`scripts/sw_weldment.py::ensure_cut_list` ×1<br>… 另 4 处 |
+| `InsertFeatureChamfer` | `IFeatureManager` | 8 | `scripts/sw_hole_features.py::_chamfer_hole_entry` ×1<br>`scripts/sw_part.py::chamfer` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::apply_treatment` ×1<br>… 另 4 处 |
+| `SetFaces` | `ISimpleFilletFeatureData2` / `IWeldmentBeadFeatureData` | ISimpleFilletFeatureData2(2); IWeldmentBeadFeatureData(3) | `subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_create_face` ×2<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_create_hold_line` ×2<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_create_surface_combo` ×2<br>… 另 1 处 |
+| `SetValue` | `ICWTopologyDisplacementConstraint` / `ICWTopologyFactorOfSafetyConstraint` / `ICWTopologyMassConstraint` … 另 1 个接口 | 1 | `scripts/sw_topology.py::set_topology_goal` ×3<br>`scripts/sw_topology.py::<模块级>` ×1<br>`scripts/sw_topology.py::create_factor_of_safety_constraint` ×1<br>… 另 2 处 |
+| `FeatureExtrusion3` | `IFeatureManager` / `IPartDoc` | IFeatureManager(23); IPartDoc(18) | `scripts/audit_call_arity.py::direct_call_sites` ×1<br>`scripts/sw_part.py::extrude_boss` ×1<br>`scripts/sw_part.py::extrude_midplane` ×1<br>… 另 3 处 |
+| `FirstFeature` | `IComponent2` / `IModelDoc` / `IModelDoc2` … 另 1 个接口 | 0 | `scripts/sw_review.py::collect_model_summary` ×1<br>`scripts/sw_sheet_metal.py::iter_features` ×1<br>`scripts/sw_weldment.py::create_structural_member` ×1<br>… 另 3 处 |
+| `GetEdges` | `IBody2` / `IFace` / `IFace2` … 另 7 个接口 | IBody2(0); IFace(2) | `scripts/sw_hole_features.py::_find_hole_entry_edge` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::all_edges` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_open_source_bracket.py::_body_stats` ×1<br>… 另 3 处 |
+| `GetFastenerTable` | `IHoleStandardsData` | 4 | `scripts/sw_hole_features.py::get_fastener_table` ×6 |
+| `GetSelectedObjectCount2` | `ISelectionMgr` | 1 | `scripts/sw_simulation.py::select_face_at` ×2<br>`scripts/sw_assembly.py::select_entities_for_mate` ×1<br>`scripts/sw_review.py::clear_selection_for_preview` ×1<br>… 另 2 处 |
+| `GetType` | `IAnnotation` / `IBody` / `IBody2` … 另 12 个接口 | IAnnotation(0); IBody(1) | `scripts/advanced_surface_ocp.py::collect_surface_continuity_evidence` ×2<br>`scripts/sw_connect.py::connect_solidworks` ×1<br>`scripts/sw_delivery.py::collect_assembly_bom` ×1<br>… 另 2 处 |
+| `GetViews` | `IDrawingDoc` / `ISheet` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_collect_drawing_views` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::auto_arrange_drawing_dimensions` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::auto_insert_center_marks` ×1<br>… 另 3 处 |
+| `ViewZoomtofit2` | `IModelDoc` / `IModelDoc2` | 0 | `scripts/sw_import_mesh_reference.py::import_mesh_reference` ×1<br>`scripts/sw_review.py::zoom_to_fit` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::build_model` ×1<br>… 另 3 处 |
+| `CreateCenterRectangle` | `ISketchManager` | 6 | `subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::build_model` ×3<br>`scripts/sw_part.py::sketch_rectangle` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_create_box` ×1 |
+| `GetAddInObject` | `ISldWorks` | 1 | `scripts/sw_simulation.py::ensure_simulation_addin` ×2<br>`scripts/sw_costing.py::get_costing_manager` ×1<br>`scripts/sw_featureworks.py::<模块级>` ×1<br>… 另 1 处 |
+| `GetBodyBox` | `IBody` / `IBody2` | 0 | `scripts/sw_geometry_selectors.py::resolve_point` ×1<br>`scripts/sw_part.py::get_bounding_box` ×1<br>`scripts/sw_simulation.py::resolve_face_selector` ×1<br>… 另 2 处 |
+| `GetCurve` | `ICoEdge` / `IEdge` / `ISilhouetteEdge` … 另 1 个接口 | 0 | `scripts/sw_hole_features.py::_find_hole_entry_edge` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::circle_center_radius` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::edge_direction` ×1<br>… 另 2 处 |
+| `GetPoint` | `IVertex` | 0 | `subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::edge_points` ×2<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_point` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_open_source_complex_case.py::edge_signature` ×1<br>… 另 1 处 |
+| `Initialize` | `IBaseFlangeFeatureData` / `IConvertSolidFeatureData` / `ICornerReliefFeatureData` … 另 3 个接口 | IBaseFlangeFeatureData(9); IConvertSolidFeatureData(3); ICornerReliefFeatureData(1); ILibraryFeatureData(1); IMateControllerFeatureData(1) | `scripts/sw_sheet_metal.py::create_base_flange` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_create_face` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_create_full_round` ×1<br>… 另 2 处 |
+| `Next` | `IEnumBodies` / `IEnumBodies2` / `IEnumCoEdges` … 另 16 个接口 | 3 | ⚠ 疑似撞名（仅出现在非 COM 模块） |
+| `SaveAs` | `IModelDoc` / `IModelDoc2` / `IModelDocExtension` | IModelDoc(1); IModelDoc2(6) | `scripts/sw_connect.py::save_document` ×1<br>`scripts/sw_export.py::_export_generic` ×1<br>`scripts/sw_export.py::export_to_pdf` ×1<br>… 另 2 处 |
+| `SetUserPreferenceToggle` | `IModelDoc` / `IModelDoc2` / `IModelDocExtension` … 另 1 个接口 | IModelDoc(2); IModelDoc2(3) | `scripts/sw_automation_knowledge.py::set_flag` ×1<br>`scripts/sw_connect.py::ensure_default_templates` ×1<br>`scripts/sw_import_mesh_reference.py::configure_mesh_import_preferences` ×1<br>… 另 2 处 |
+| `ActivateDoc2` | `ISldWorks` | 3 | `scripts/sw_export.py::_activate_source_document` ×2<br>`scripts/sw_assembly.py::_activate_model_document` ×1<br>`scripts/sw_review.py::activate_model_for_preview` ×1 |
+| `ActivateDoc3` | `ISldWorks` | 4 | `scripts/sw_export.py::_activate_source_document` ×2<br>`scripts/sw_assembly.py::_activate_model_document` ×1<br>`scripts/sw_review.py::activate_model_for_preview` ×1 |
+| `CreateCircleByRadius` | `IModelDoc` / `IModelDoc2` / `ISketchManager` | IModelDoc(2); IModelDoc2(4) | `scripts/sw_part.py::sketch_circle` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::build_model` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_create_cylinder` ×1<br>… 另 1 处 |
+| `Delete` | `IAttribute` / `IComment` / `ICustomPropertyManager` … 另 2 个接口 | IAttribute(1); IComment(0); ICustomPropertyManager(1); IEquationMgr(1) | `subskills/autocad-automation/scripts/acad_session.py::AutoCADSession` ×3<br>`scripts/sw_equation.py::delete_equation` ×1 |
+| `EndEdit` | `ICWBearingConnector` / `ICWCable` / `ICWGeneralSpringConnector` … 另 12 个接口 | 0 | `scripts/sw_topology.py::<模块级>` ×2<br>`scripts/sw_topology.py::_edit` ×2 |
+| `FeatureFillet3` | `IFeatureManager` / `IModelDoc` / `IModelDoc2` | IFeatureManager(14); IModelDoc(9) | `subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_create_hold_line` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_create_setback` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_create_variable` ×1<br>… 另 1 处 |
+| `GetAnnotation` | `IBlockInstance` / `ICenterLine` / `ICenterMark` … 另 16 个接口 | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_annotation_box` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_note_annotation` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::auto_arrange_drawing_dimensions` ×1<br>… 另 1 处 |
+| `GetFaces` | `IBody2` / `IFeature` / `IMateLoadReference` … 另 4 个接口 | IBody2(0); IFeature(1); IMateLoadReference(3); IMidSurface3(3) | `scripts/sw_hole_features.py::_find_hole_entry_edge` ×1<br>`scripts/sw_review.py::collect_geometry_measurements` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_open_source_bracket.py::_body_stats` ×1<br>… 另 1 处 |
+| `GetModeler` | `ISldWorks` | 0 | `scripts/sw_surface.py::<模块级>` ×3<br>`scripts/sw_surface.py::get_modeler` ×1 |
+| `GetSelectedObject6` | `ISelectionMgr` | 2 | `scripts/sw_selection_spec.py::current_selection` ×1<br>`scripts/sw_sheet_metal.py::create_swept_flange` ×1<br>`scripts/sw_simulation.py::_selected_dispatch_array` ×1<br>… 另 1 处 |
+| `GetSheetNames` | `IDrawingDoc` | 0 | `scripts/sw_export.py::export_to_pdf` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::auto_arrange_drawing_dimensions` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::export_sheet_to_pdf` ×1<br>… 另 1 处 |
+| `GetTextFormat` | `IAnnotation` / `IDetailCircle` / `IDetailingDefaults` … 另 7 个接口 | IAnnotation(1); IDetailCircle(0) | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::estimate_dimension_text_box` ×4 |
+| `OpenDoc6` | `ISldWorks` | 6 | `scripts/sw_connect.py::open_document` ×2<br>`scripts/sw_com_traps.py::byref_long` ×1<br>`scripts/sw_delivery.py::_comtypes_pack_and_go` ×1 |
+| `RevisionNumber` | `ISldWorks` | 0 | `scripts/sw_connect.py::_wait_until_ready` ×1<br>`scripts/sw_connect.py::get_sw_version` ×1<br>`scripts/sw_delivery.py::_active_solidworks_major` ×1<br>… 另 1 处 |
+| `Select4` | `IComponent2` / `IEntity` / `ISketchHatch` … 另 2 个接口 | IComponent2(3); IEntity(2) | `scripts/sw_selection_spec.py::<模块级>` ×2<br>`scripts/sw_part.py::auto_dimension_sketch` ×1<br>`scripts/sw_selection_spec.py::select_object` ×1 |
+| `AccessSelections` | `IAdvancedHoleFeatureData` / `IBaseFlangeFeatureData` / `IBeltChainFeatureData` … 另 122 个接口 | IAdvancedHoleFeatureData(2); IBaseFlangeFeatureData(2); IBeltChainFeatureData(1); IBendsFeatureData(2) | `scripts/sw_surface.py::<模块级>` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/hold_line_bridge.py::create_hold_line_via_native_addin` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_feature_data_evidence` ×1 |
+| `BeginEdit` | `ICWBearingConnector` / `ICWCable` / `ICWGeneralSpringConnector` … 另 12 个接口 | 0 | `scripts/sw_topology.py::<模块级>` ×2<br>`scripts/sw_topology.py::_edit` ×1 |
+| `CreateLine` | `IModelDoc` / `IModelDoc2` / `IModeler` … 另 1 个接口 | IModelDoc(2); IModelDoc2(6) | `scripts/sw_part.py::sketch_line` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_add_projected_hold_line` ×1<br>`subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py::add_visible_thread_helix` ×1 |
+| `CreateMesh` | `ICwAddincallback` / `ICWStudy` | ICwAddincallback(0); ICWStudy(3) | `scripts/sw_topology.py::run_topology_study` ×2<br>`scripts/sw_simulation.py::create_mesh` ×1 |
+| `FeatureCut4` | `IFeatureManager` / `IModelDoc` / `IModelDoc2` | IFeatureManager(27); IModelDoc(17) | `scripts/sw_part.py::extrude_cut` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::cut` ×1<br>`subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py::cut_hole_from_sketch` ×1 |
+| `GetBaseView` | `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_map_native_standard_views` ×2<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_map_standard_views_from_sheet_views` ×1 |
+| `GetEndVertex` | `IEdge` | 0 | `subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::edge_points` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_edge_points` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_open_source_complex_case.py::edge_signature` ×1 |
+| `GetErrorCode` | `IFeature` | 0 | `scripts/sw_sheet_metal.py::_create_from_definition` ×1<br>`scripts/sw_sheet_metal.py::create_base_flange` ×1<br>`scripts/sw_weldment.py::_create_from_definition` ×1 |
+| `GetFaceCount` | `IBody` / `IBody2` / `IChamferFeatureData2` … 另 6 个接口 | IBody(0); IBody2(1) | `subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_create_face` ×2<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_create_full_round` ×1 |
+| `GetFrameCount` | `IGtol` / `IPMIGtolData` | 0 | `scripts/sw_gtol.py::ensure_gtol_frame` ×2<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_collect_view_professional_annotations` ×1 |
+| `GetHoleStandards` | `IHoleStandardsData` | 2 | `scripts/sw_hole_features.py::_hole_standards_data` ×1<br>`scripts/sw_hole_features.py::get_hole_standards` ×1<br>`scripts/sw_hole_features.py::list_hole_standards` ×1 |
+| `GetName` | `IAnnotation` / `IAttribute` / `IDetailCircle` … 另 15 个接口 | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::inspect_drawing_structure` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::setup_current_sheet` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::setup_current_sheet_as_a3` ×1 |
+| `GetNextFeature` | `IFeature` | 0 | `scripts/sw_review.py::collect_model_summary` ×1<br>`scripts/sw_sheet_metal.py::iter_features` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::collect_feature_evidence` ×1 |
+| `GetNextView` | `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_collect_drawing_views` ×2<br>`scripts/sw_drawing_view.py::get_next_view` ×1 |
+| `GetOverrideOptions` | `IMassProperty2` | 0 | `scripts/sw_export.py::get_mass_property_override_options` ×2<br>`scripts/sw_export.py::set_mass_property_override` ×1 |
+| `GetRenderMaterials` | `IComponent2` / `IModelDocExtension` | 0 | `scripts/sw_render_material.py::<模块级>` ×2<br>`scripts/sw_render_material.py::list_render_materials` ×1 |
+| `GetRenderMaterialsCount` | `IComponent2` / `IModelDocExtension` | 0 | `scripts/sw_render_material.py::<模块级>` ×2<br>`scripts/sw_render_material.py::list_render_materials` ×1 |
+| `GetStartVertex` | `IEdge` | 0 | `subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::edge_points` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_edge_points` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_open_source_complex_case.py::edge_signature` ×1 |
+| `GetSurface` | `IFace` / `IFace2` | 0 | `scripts/sw_review.py::collect_geometry_measurements` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_surface_type` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_open_source_bracket.py::_body_stats` ×1 |
+| `IsCircle` | `ICurve` / `ISketchArc` | 0 | `scripts/sw_hole_features.py::_find_hole_entry_edge` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::circle_center_radius` ×1<br>`subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py::circle_center_radius` ×1 |
+| `LoadFile4` | `ISldWorks` | 4 | `scripts/sw_connect.py::open_document` ×2<br>`scripts/sw_import_mesh_reference.py::import_mesh_reference` ×1 |
+| `ReleaseSelectionAccess` | `IAdvancedHoleFeatureData` / `IBaseFlangeFeatureData` / `IBeltChainFeatureData` … 另 122 个接口 | 0 | `scripts/sw_surface.py::<模块级>` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/hold_line_bridge.py::create_hold_line_via_native_addin` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_feature_data_evidence` ×1 |
+| `SetMassPreference` | `ICWTopologyMassConstraint` | 1 | `scripts/sw_topology.py::<模块级>` ×1<br>`scripts/sw_topology.py::create_mass_constraint` ×1<br>`scripts/sw_topology.py::set_topology_goal` ×1 |
+| `ActivateView` | `IDrawingDoc` / `IFeatMgrView` | IDrawingDoc(1); IFeatMgrView(0) | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::auto_insert_center_marks` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::insert_dimensions` ×1 |
+| `AddMate5` | `IAssemblyDoc` | 15 | `scripts/sw_assembly.py::add_mate5_checked` ×1<br>`scripts/sw_assembly_doc.py::add_mate` ×1 |
+| `AddRenderMaterial` | `IModelDocExtension` | 2 | `scripts/sw_render_material.py::<模块级>` ×1<br>`scripts/sw_render_material.py::add_render_material` ×1 |
+| `AddRestraint` | `ICWLoadsAndRestraintsManager` | 4 | `scripts/sw_simulation.py::_selected_dispatch_array` ×1<br>`scripts/sw_simulation_study.py::<模块级>` ×1 |
+| `Close` | `IAnimation` / `IModelDoc` / `IModelDoc2` … 另 1 个接口 | IAnimation(0); IModelDoc(1) | ⚠ 疑似撞名（仅出现在非 COM 模块） |
+| `CloseDoc` | `ISldWorks` | 1 | `scripts/sw_delivery.py::_comtypes_pack_and_go` ×1<br>`scripts/sw_session.py::SolidWorksSession` ×1 |
+| `CreateDrawViewFromModelView3` | `IDrawingDoc` | 5 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::add_view` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::create_adaptive_standard_views` ×1 |
+| `CreateFactorOfSafetyConstraint` | `ICWTopologyStudyManager` | 1 | `scripts/sw_topology.py::create_factor_of_safety_constraint` ×1<br>`scripts/sw_topology.py::set_topology_goal` ×1 |
+| `CreateGoal` | `ICWTopologyStudyManager` | 1 | `scripts/sw_topology.py::<模块级>` ×1<br>`scripts/sw_topology.py::set_topology_goal` ×1 |
+| `CreateMassConstraint` | `ICWTopologyStudyManager` | 1 | `scripts/sw_topology.py::create_mass_constraint` ×1<br>`scripts/sw_topology.py::set_topology_goal` ×1 |
+| `CreateRenderMaterial` | `IModelDocExtension` | 1 | `scripts/sw_render_material.py::<模块级>` ×1<br>`scripts/sw_render_material.py::create_render_material` ×1 |
+| `DeleteRenderMaterial` | `IModelDocExtension` | 2 | `scripts/sw_render_material.py::<模块级>` ×1<br>`scripts/sw_render_material.py::delete_render_material` ×1 |
+| `EvaluateAll` | `IEquationMgr` | 0 | `scripts/sw_equation.py::evaluate_equations` ×2 |
+| `FeatureFillet` | `IFeatureManager` / `IModelDoc` / `IModelDoc2` | IFeatureManager(7); IModelDoc(5) | `scripts/sw_part.py::fillet` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::apply_treatment` ×1 |
+| `Get` | `ICustomPropertyManager` | 1 | ⚠ 疑似撞名（仅出现在非 COM 模块） |
+| `Get6` | `ICustomPropertyManager` | 6 | `scripts/sw_document_data.py::read_custom_property` ×1<br>`scripts/sw_weldment.py::_read_property` ×1 |
+| `GetBox` | `IAssemblyDoc` / `IComponent` / `IComponent2` … 另 3 个接口 | IAssemblyDoc(1); IComponent(2); IComponent2(0); IFace(1) | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_annotation_box` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_face_box` ×1 |
+| `GetDocumentNamesCount` | `IPackAndGo` | 0 | `scripts/sw_delivery.py::_comtypes_pack_and_go` ×1<br>`scripts/sw_delivery.py::_pywin32_pack_and_go` ×1 |
+| `GetEdgeChamferDistance` | `IChamferFeatureData` / `IChamferFeatureData2` | 1 | `subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_feature_data_evidence` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_open_source_complex_case.py::apply_complex_width_width_chamfer` ×1 |
+| `GetExportFileData` | `ISldWorks` | 1 | `scripts/sw_export.py::export_to_pdf` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::export_sheet_to_pdf` ×1 |
+| `GetFastenerTableTypes` | `IHoleStandardsData` | 3 | `scripts/sw_hole_features.py::get_fastener_table_types` ×1<br>`scripts/sw_hole_features.py::list_fastener_table_types` ×1 |
+| `GetFastenerTypes` | `IHoleStandardsData` | 3 | `scripts/sw_hole_features.py::get_fastener_types` ×1<br>`scripts/sw_hole_features.py::list_fastener_types` ×1 |
+| `GetFirstSubFeature` | `IFeature` | 0 | `scripts/sw_weldment.py::iter_features_recursive` ×1<br>`subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py::collect_thread_feature_evidence` ×1 |
+| `GetFirstView` | `IDrawingDoc` | 0 | `scripts/sw_drawing_view.py::get_first_view` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_collect_drawing_views` ×1 |
+| `GetFrame` | `IGtol` | 1 | `scripts/sw_gtol.py::add_gtol_indicator` ×2 |
+| `GetHoldLineCount` | `ISimpleFilletFeatureData2` | 0 | `subskills/solidworks-fillet-chamfer-cnc/scripts/hold_line_bridge.py::create_hold_line_via_native_addin` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_create_hold_line` ×1 |
+| `GetLastFeatureAdded` | `IModelDocExtension` | 0 | `scripts/sw_helix.py::_newest_feature_name` ×2 |
+| `GetLoadsAndRestraints` | `ICWLoadsAndRestraintsManager` | 2 | `scripts/sw_simulation.py::collect_study_evidence` ×1<br>`scripts/sw_simulation_loads.py::_require` ×1 |
+| `GetMassProperties` | `IBody` / `IBody2` / `IModelDoc` … 另 3 个接口 | IBody(1); IBody2(0); IModelDoc(2); IModelDoc2(2) | `scripts/sw_export.py::get_mass_property_override_options` ×2 |
+| `GetMaterial` | `IModelDocExtension` | 2 | `scripts/sw_render_material.py::<模块级>` ×1<br>`scripts/sw_simulation_study.py::<模块级>` ×1 |
+| `GetNames` | `ICustomPropertyManager` | 0 | `scripts/sw_weldment.py::read_property_manager` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/advanced_fillet_strategy.py::inspect_typelib_members` ×1 |
+| `GetNext` | `IAnnotation` / `IBlockInstance` / `ICenterLine` … 另 23 个接口 | 0 | `scripts/sw_view.py::get_next_view` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_view_center_marks` ×1 |
+| `GetOpenDocumentByName` | `ISldWorks` | 1 | `scripts/sw_connect.py::open_document` ×1<br>`scripts/sw_export.py::batch_export_formats` ×1 |
+| `GetOrientationName` | `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_map_native_standard_views` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_map_standard_views_from_sheet_views` ×1 |
+| `GetOutline` | `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_refine_standard_view_spacing` ×2 |
+| `GetPackAndGo` | `IModelDocExtension` | 0 | `scripts/sw_delivery.py::_comtypes_pack_and_go` ×1<br>`scripts/sw_delivery.py::_get_pack_and_go` ×1 |
+| `GetPoints` | `IPrimaryMemberPointLengthFeatureData` / `ISketchSpline` | 0 | `scripts/sketch_relations.py::collect_spline_evidence` ×1<br>`scripts/sketch_relations.py::get_spline_points` ×1 |
+| `GetPosition` | `IAnnotation` / `IBreakLine` / `ICamera` … 另 2 个接口 | IAnnotation(0); IBreakLine(1); ICamera(4) | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_annotation_position` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::estimate_dimension_text_box` ×1 |
+| `GetProcessID` | `ISldWorks` | 0 | `scripts/sw_connect.py::residual_dialogs` ×1<br>`scripts/sw_connect.py::solidworks_process_id` ×1 |
+| `GetRenderMaterials2` | `IComponent2` / `IModelDocExtension` | 2 | `scripts/sw_render_material.py::<模块级>` ×2 |
+| `GetRenderMaterialsCount2` | `IComponent2` / `IModelDocExtension` | 2 | `scripts/sw_render_material.py::<模块级>` ×2 |
+| `GetSketchSegments` | `ISketch` / `ISketchContour` / `ISketchPath` … 另 1 个接口 | ISketch(0); ISketchContour(1) | `scripts/sw_sketch.py::get_sketch_segments` ×1<br>`scripts/sw_sketch_edit.py::create_sketch_chamfer` ×1 |
+| `GetSplitMember` | `IStructureSystemMemberFeatureData` | 0 | `scripts/sw_weldment.py::configure_split_member` ×2 |
+| `GetStudy` | `ICWStudyManager` | 1 | `scripts/sw_simulation.py::iter_studies` ×1<br>`scripts/sw_topology.py::collect_topology_evidence` ×1 |
+| `GetText` | `ICustomSymbol` / `IDisplayDimension` / `IGtol` … 另 5 个接口 | ICustomSymbol(1); IDisplayDimension(0); IGtol(1) | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_dimension_text_evidence` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_note_text` ×1 |
+| `GetVisibilityOfConstructPlanes` | `IModelDoc` / `IModelDoc2` | 0 | `subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::hide_reference_planes` ×1<br>`subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py::hide_reference_planes` ×1 |
+| `Insert3DSketch` | `IModelDoc` / `IModelDoc2` / `ISketchManager` | IModelDoc(0); IModelDoc2(1) | `subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py::add_visible_thread_helix` ×2 |
+| `InsertBomTable4` | `IModelDocExtension` / `IView` | IModelDocExtension(9); IView(10) | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::insert_bom_table` ×2 |
+| `InsertModelAnnotations4` | `IDrawingDoc` | 8 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::insert_dimensions` ×2 |
+| `InsertRefPlane` | `IFeatureManager` | 6 | `subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::offset_front_plane` ×1<br>`subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py::create_offset_plane` ×1 |
+| `InsertWeldmentCutList2` | `IFeatureManager` | 1 | `scripts/sw_weldment.py::create_cut_list` ×2 |
+| `IsCylinder` | `ISurface` | 0 | `scripts/sw_review.py::collect_geometry_measurements` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_open_source_bracket.py::_body_stats` ×1 |
+| `IsLine` | `ICurve` | 0 | `subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::edge_direction` ×1<br>`subskills/solidworks-fillet-chamfer-cnc/scripts/verify_open_source_complex_case.py::edge_signature` ×1 |
+| `PostTrimSurface` | `IFeatureManager` / `IModelDoc` / `IModelDoc2` | 1 | `scripts/sw_surface.py::<模块级>` ×2 |
+| `RunAnalysis` | `ICwAddincallback` / `ICWStudy` | 0 | `scripts/sw_connect.py::call_com_member` ×1<br>`scripts/sw_connect.py::get_com_member` ×1 |
+| `SaveBMP` | `IModelDoc` / `IModelDoc2` | 3 | `scripts/sw_export.py::export_to_bmp` ×1<br>`scripts/sw_review.py::save_preview` ×1 |
+| `SavePackAndGo` | `IModelDocExtension` | 1 | `scripts/sw_delivery.py::_comtypes_pack_and_go` ×1<br>`scripts/sw_delivery.py::_pywin32_pack_and_go` ×1 |
+| `Scale` | `IMathPoint` / `IMathVector` / `IModelDoc` … 另 1 个接口 | IMathPoint(1); IMathVector(0) | `scripts/sw_drawing_view.py::set_view_scale` ×1<br>`scripts/sw_view.py::set_view_scale` ×1 |
+| `Select` | `IAdvancedSelectionCriteria` / `IAnnotation` / `IBody2` … 另 27 个接口 | IAdvancedSelectionCriteria(0); IAnnotation(1); IBody2(2); IBomTable(2); IBreakLine(2); ICenterMark(3); IComponent(5) | `subskills/autocad-automation/scripts/acad_session.py::AutoCADSession` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::auto_arrange_drawing_dimensions` ×1 |
+| `SetSaveToName` | `IPackAndGo` | 2 | `scripts/sw_delivery.py::_comtypes_pack_and_go` ×1<br>`scripts/sw_delivery.py::_pywin32_pack_and_go` ×1 |
+| `SetSheets` | `IExportPdfData` | 2 | `scripts/sw_export.py::export_to_pdf` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::export_sheet_to_pdf` ×1 |
+| `SetSuppression2` | `IComponent2` / `IFeature` | IComponent2(1); IFeature(3) | `scripts/sw_assembly.py::resolve_component` ×2 |
+| `SetUserPreferenceIntegerValue` | `IModelDoc` / `IModelDoc2` / `ISldWorks` | 2 | `scripts/sw_export.py::export_to_stl` ×1<br>`scripts/sw_import_mesh_reference.py::configure_mesh_import_preferences` ×1 |
+| `SetViewPosition` | `IView` | 2 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_apply_view_layout` ×1<br>`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_set_view_center` ×1 |
+| `ShowNamedView2` | `IModelDoc` / `IModelDoc2` | 2 | `scripts/sw_review.py::set_standard_view` ×2 |
+| `UpdateRenderMaterialsInSceneGraph` | `IModelDocExtension` | 1 | `scripts/sw_render_material.py::<模块级>` ×1<br>`scripts/sw_render_material.py::refresh_scene_graph` ×1 |
+| `ViewDispRefplanes` | `IModelDoc` / `IModelDoc2` | 0 | `subskills/solidworks-fillet-chamfer-cnc/scripts/create_cnc_mount_template.py::hide_reference_planes` ×1<br>`subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py::hide_reference_planes` ×1 |
+| `Activate` | `IAnnotationView` / `ICommandGroup` / `IModelView` … 另 4 个接口 | IAnnotationView(0); ICommandGroup(1) | `scripts/sw_connect.py::get_com_member` ×1 |
+| `Add2` | `ICustomPropertyManager` / `IEquationMgr` | 3 | `scripts/sw_equation.py::add_equation` ×1 |
+| `AddComponent4` | `IAssemblyDoc` | 5 | `scripts/sw_assembly.py::_add_component4` ×1 |
+| `AddCurvatureControl` | `ISketchSpline` | 3 | `scripts/sketch_relations.py::add_spline_curvature` ×1 |
+| `AddDefaultRenderMaterial` | `IModelDocExtension` | 2 | `scripts/sw_render_material.py::<模块级>` ×1 |
+| `AddDimension2` | `IModelDoc` / `IModelDoc2` | 3 | `scripts/sw_part.py::add_dimension` ×1 |
+| `AddDisplayStateSpecificRenderMaterial` | `IModelDocExtension` | 5 | `scripts/sw_render_material.py::<模块级>` ×1 |
+| `AddIndicator` | `IGtolFrame` | 3 | `scripts/sw_gtol.py::add_gtol_indicator` ×1 |
+| `AddInitialConditionForDynamicStudy` | `ICWLoadsAndRestraintsManager` | 12 | `scripts/sw_simulation.py::<模块级>` ×1 |
+| `AddRelation` | `IModelDoc` / `IModelDoc2` / `ISketchRelationManager` | IModelDoc(1); IModelDoc2(2) | `scripts/sketch_relations.py::add_relation` ×1 |
+| `AddRevision` | `IRevisionTableAnnotation` | 1 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::add_revision` ×1 |
+| `AddTangencyControl` | `ISketchSpline` | 3 | `scripts/sketch_relations.py::add_spline_tangency` ×1 |
+| `AddText` | `INote` | 4 | ⚠ 疑似撞名（仅出现在非 COM 模块） |
+| `AlignDimensions` | `IModelDoc` / `IModelDoc2` / `IModelDocExtension` | IModelDoc(0); IModelDoc2(2) | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::auto_arrange_drawing_dimensions` ×1 |
+| `AutoDimension2` | `ISketch` | 5 | `scripts/sw_part.py::auto_dimension_sketch` ×1 |
+| `BlankSketch` | `IModelDoc` / `IModelDoc2` | 0 | `subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py::hide_visible_thread_sketch` ×1 |
+| `CanConvertFormat` | `IGtol` | 0 | `scripts/sw_gtol.py::ensure_gtol_frame` ×1 |
+| `ConvertFormat` | `IGtol` | 0 | `scripts/sw_gtol.py::ensure_gtol_frame` ×1 |
+| `Create3rdAngleViews2` | `IDrawingDoc` | 1 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::create_standard_views` ×1 |
+| `CreateArc` | `IModelDoc` / `IModelDoc2` / `IModeler` … 另 1 个接口 | IModelDoc(4); IModelDoc2(5); IModeler(10) | `scripts/sw_part.py::sketch_arc` ×1 |
+| `CreateChamfer` | `ISketchManager` | 3 | `scripts/sw_sketch_edit.py::create_sketch_chamfer` ×1 |
+| `CreateCornerRectangle` | `ISketchManager` | 6 | `scripts/sw_part.py::sketch_corner_rectangle` ×1 |
+| `CreateDemoldControl` | `ICWTopologyStudyManager` | 1 | `scripts/sw_topology.py::create_demold_control` ×1 |
+| `CreateDetailViewAt4` | `IDrawingDoc` | 12 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::add_detail_view` ×1 |
+| `CreateNewStudy2` | `ICWStudyManager` | 3 | `scripts/sw_topology.py::create_topology_study` ×1 |
+| `CreateNewStudy3` | `ICWStudyManager` | 4 | `scripts/sw_connect.py::out_i4` ×1 |
+| `CreatePolygon` | `ISketchManager` | 8 | `scripts/sw_part.py::sketch_polygon` ×1 |
+| `CreatePreservedRegionControl` | `ICWTopologyStudyManager` | 1 | `scripts/sw_topology.py::create_preserved_region` ×1 |
+| `CreateSectionView` | `IDrawingDoc` / `IModelViewManager` | IDrawingDoc(0); IModelViewManager(1) | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::create_feature_manager_section_view` ×1 |
+| `CreateSectionViewAt5` | `IDrawingDoc` | 7 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::add_section_view` ×1 |
+| `CreateSectionViewData` | `IModelViewManager` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::create_section_view_data` ×1 |
+| `CreateSketchSlot` | `ISketchManager` | 14 | `scripts/sw_part.py::sketch_slot` ×1 |
+| `CreateSpline2` | `ISketchManager` | 2 | `scripts/sketch_relations.py::create_spline` ×1 |
+| `CreateStressConstraint` | `ICWTopologyStudyManager` | 1 | `scripts/sw_topology.py::create_stress_constraint` ×1 |
+| `CreateSymmetryControl` | `ICWTopologyStudyManager` | 1 | `scripts/sw_topology.py::create_symmetry_control` ×1 |
+| `CreateThicknessControl` | `ICWTopologyStudyManager` | 1 | `scripts/sw_topology.py::create_thickness_control` ×1 |
+| `DeleteColumn` | `ITableAnnotation` | 1 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::delete_table_column` ×1 |
+| `DeletePoint` | `ISketchSpline` | 1 | `scripts/sketch_relations.py::delete_spline_point` ×1 |
+| `DeleteRevision` | `IRevisionTableAnnotation` | 2 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::delete_revision` ×1 |
+| `DeleteRow` | `ITableAnnotation` | 1 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::delete_table_row` ×1 |
+| `Done` | `IInterferenceDetectionMgr` | 0 | `scripts/sw_assembly.py::get_interference_detection` ×1 |
+| `EditSuppress` | `IModelDoc` / `IModelDoc2` / `IPartDoc` | 0 | `scripts/sw_assembly.py::suppress_component` ×1 |
+| `EditUnsuppress` | `IModelDoc` / `IModelDoc2` / `IPartDoc` | 0 | `scripts/sw_assembly.py::unsuppress_component` ×1 |
+| `ExitApp` | `ISldWorks` | 0 | `scripts/sw_delivery.py::_comtypes_pack_and_go` ×1 |
+| `ExportToDWG2` | `IPartDoc` | 9 | `scripts/sw_export.py::export_flat_pattern_dxf` ×1 |
+| `FaceInSurfaceSense` | `IFace` / `IFace2` | 0 | `scripts/sw_review.py::collect_geometry_measurements` ×1 |
+| `FeatureCircularPattern4` | `IFeatureManager` | 7 | `scripts/sw_part.py::circular_pattern` ×1 |
+| `FeatureLinearPattern3` | `IFeatureManager` | 10 | `scripts/sw_part.py::linear_pattern` ×1 |
+| `FeatureRevolve2` | `IFeatureManager` / `IModelDoc` / `IModelDoc2` … 另 1 个接口 | IFeatureManager(20); IModelDoc(5); IModelDoc2(5) | `scripts/sw_part.py::revolve_boss` ×1 |
+| `ForceBeginEdit` | `ICWForce` | 0 | `scripts/sw_simulation.py::apply_normal_force` ×1 |
+| `ForceEndEdit` | `ICWForce` | 0 | `scripts/sw_simulation.py::apply_normal_force` ×1 |
+| `Get3DExperienceType` | `IConfiguration` | 0 | `scripts/sw_pdm.py::collect_pdm_evidence` ×1 |
+| `GetActiveSketch2` | `IModelDoc` / `IModelDoc2` | 0 | `scripts/sw_sketch_edit.py::create_sketch_chamfer` ×1 |
+| `GetAllowedRelations` | `ISketchRelationManager` | 1 | `scripts/sketch_relations.py::get_allowed_relations` ×1 |
+| `GetAnnotationCount` | `IModelDocExtension` / `IView` | 0 | `scripts/sw_drawing_view.py::get_annotation_count` ×1 |
+| `GetAnnotations` | `IModelDocExtension` / `IView` | 0 | `scripts/sw_drawing_view.py::get_annotations` ×1 |
+| `GetAppearanceSetting` | `IModelDocExtension` | 0 | `scripts/sw_render_material.py::<模块级>` ×1 |
+| `GetArcs2` | `ISketch` / `IView` | 0 | `scripts/sw_sketch.py::get_arcs` ×1 |
+| `GetArea` | `IFace` / `IFace2` | 0 | `scripts/sw_review.py::collect_geometry_measurements` ×1 |
+| `GetBodies` | `IBodyFolder` / `IComponent2` / `IPartDoc` … 另 1 个接口 | IBodyFolder(0); IComponent2(1) | `scripts/check_diff_markers.py::scan` ×1 |
+| `GetCenterLines` | `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_collect_view_professional_annotations` ×1 |
+| `GetCenterMarks` | `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_view_center_marks` ×1 |
+| `GetChildren` | `IComponent` / `IComponent2` / `IConfiguration` … 另 2 个接口 | 0 | `scripts/sw_jlcfa_gui.py::find_node` ×1 |
+| `GetColumnCustomProperty` | `IBomTableAnnotation` / `IRevisionTableAnnotation` / `IWeldmentCutListAnnotation` | 1 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::get_table_custom_property_column` ×1 |
+| `GetComponents` | `IAssemblyDoc` / `IBomTableAnnotation` / `ICollision` … 另 4 个接口 | IAssemblyDoc(1); IBomTableAnnotation(1); ICollision(0) | `scripts/sw_delivery.py::collect_assembly_bom` ×1 |
+| `GetConfigurationNames` | `IComponent2` / `IModelDoc` / `IModelDoc2` … 另 1 个接口 | IComponent2(0); IModelDoc(1) | `scripts/sw_document_data.py::_configuration_names` ×1 |
+| `GetContourEdges` | `ISketch` | 1 | `scripts/sw_sketch.py::get_contour_edges` ×1 |
+| `GetControlPointRadiusAtIndex` | `IVariableFilletFeatureData2` | 3 | `subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_feature_data_evidence` ×1 |
+| `GetCorresponding` | `IComponent2` / `IModelDocExtension` / `IPartDoc` … 另 1 个接口 | 1 | `scripts/sw_assembly.py::get_assembly_entity` ×1 |
+| `GetCostingManager` | `IModelDocExtension` | 0 | `scripts/sw_costing.py::get_costing_manager` ×1 |
+| `GetCount` | `IColorTable` / `IEquationMgr` / `ILayerMgr` | 0 | `scripts/sw_equation.py::list_equations` ×1 |
+| `GetCutListItems` | `IConfiguration` | 0 | `scripts/sw_weldment.py::weldment_evidence` ×1 |
+| `GetDatumIdentifier` | `IGtol` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_collect_view_professional_annotations` ×1 |
+| `GetDatumTags` | `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_collect_view_professional_annotations` ×1 |
+| `GetDefaultElementSizeAndTolerance` | `ICWMesh` | 3 | `scripts/sw_simulation.py::default_element_size_and_tolerance` ×1 |
+| `GetDependencies2` | `IModelDoc` / `IModelDoc2` | 3 | `scripts/sw_delivery.py::_document_dependency_paths` ×1 |
+| `GetDetachSegmentOnDrag` | `ISketch` | 0 | `scripts/sw_sketch.py::collect_sketch_evidence` ×1 |
+| `GetDimension` | `IDisplayDimension` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::inspect_drawing_structure` ×1 |
+| `GetDisplayDimensions` | `IMacroFeatureData` / `ISketchBlockDefinition` / `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_view_display_dimensions` ×1 |
+| `GetEllipses3` | `ISketch` / `IView` | 0 | `scripts/sw_sketch.py::get_ellipses` ×1 |
+| `GetEndPoint2` | `ISketchArc` / `ISketchEllipse` / `ISketchLine` … 另 1 个接口 | 0 | `scripts/sw_part.py::auto_dimension_sketch` ×1 |
+| `GetEquationMgr` | `IModelDoc2` | 0 | `scripts/sw_equation.py::_manager` ×1 |
+| `GetExtent` | `IBomTable` / `INote` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_note_box` ×1 |
+| `GetFirstCenterMark` | `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_view_center_marks` ×1 |
+| `GetFirstCenterMark2` | `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_view_center_marks` ×1 |
+| `GetFirstDisplayDimension` | `IFeature` / `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_view_display_dimensions` ×1 |
+| `GetFirstDisplayDimension5` | `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_view_display_dimensions` ×1 |
+| `GetGTols` | `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_collect_view_professional_annotations` ×1 |
+| `GetHoleStandardsData` | `ISldWorks` | 1 | `scripts/sw_hole_features.py::_hole_standards_data` ×1 |
+| `GetImportFileData` | `ISldWorks` | 1 | `scripts/sw_connect.py::open_document` ×1 |
+| `GetLabel` | `IDatumTag` / `IDetailCircle` / `IDrSection` … 另 1 个接口 | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_collect_view_professional_annotations` ×1 |
+| `GetLines2` | `ISketch` / `IView` | ISketch(1); IView(0) | `scripts/sw_sketch.py::get_lines` ×1 |
+| `GetMassConstraint` | `ICWTopologyStudyManager` | 2 | `scripts/sw_topology.py::set_topology_goal` ×1 |
+| `GetMassProperties2` | `IModelDoc` / `IModelDoc2` / `IModelDocExtension` … 另 1 个接口 | IModelDoc(1); IModelDoc2(3); IModelDocExtension(3) | `scripts/sw_export.py::get_mass_property_override_options` ×1 |
+| `GetMateEntityCount` | `IMate2` / `IMateInPlace` | 0 | `scripts/sw_assembly.py::collect_mate_in_place_evidence` ×1 |
+| `GetMaterialPropertyValues` | `IFeature` / `IModelDocExtension` | IFeature(0); IModelDocExtension(2) | `scripts/sw_appearance.py::get_material_property_values` ×1 |
+| `GetMaximumAvailableSteps` | `ICWResults` | 0 | `scripts/sw_topology.py::collect_topology_numbers` ×1 |
+| `GetModelDoc` | `IComponent` / `IComponent2` / `IDerivedPartFeatureData` … 另 2 个接口 | 0 | `scripts/sw_view.py::get_view_model_doc` ×1 |
+| `GetModelDoc2` | `IComponent2` | 0 | `scripts/sw_delivery.py::collect_assembly_bom` ×1 |
+| `GetNameForSelection` | `IDimension` / `IDisplayDimension` / `IFeature` | IDimension(0); IDisplayDimension(1) | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::inspect_drawing_structure` ×1 |
+| `GetNextDisplayDimension` | `IFeature` | 1 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_view_display_dimensions` ×1 |
+| `GetNoOfFailedComponents` | `ICWMesh` | 0 | `scripts/sw_simulation_results.py::collect_mesh_evidence` ×1 |
+| `GetNotes` | `IBlockDefinition` / `ICustomSymbol` / `IMagneticLine` … 另 3 个接口 | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::inspect_drawing_structure` ×1 |
+| `GetParabolas2` | `ISketch` / `IView` | 0 | `scripts/sw_sketch.py::get_parabolas` ×1 |
+| `GetParameters` | `IConfiguration` / `IMacroFeatureData` | IConfiguration(2); IMacroFeatureData(3) | `scripts/refresh_api_signatures.py::<模块级>` ×1 |
+| `GetPartBox` | `IPartDoc` | 1 | `scripts/sw_review.py::collect_geometry_measurements` ×1 |
+| `GetPlotCount` | `ICWResults` | 0 | `scripts/sw_topology.py::collect_topology_numbers` ×1 |
+| `GetPlotNames` | `ICWResults` | 0 | `scripts/sw_topology.py::collect_topology_numbers` ×1 |
+| `GetPolylines` | `ISketch` / `IView` | 0 | `scripts/sw_sketch.py::get_polylines` ×1 |
+| `GetRelations` | `ISketchPath` / `ISketchPoint` / `ISketchRelationManager` … 另 1 个接口 | ISketchPath(0); ISketchPoint(1) | `scripts/sketch_relations.py::list_relations` ×1 |
+| `GetRelationsCount` | `ISketchPath` / `ISketchPoint` / `ISketchRelationManager` … 另 1 个接口 | ISketchPath(0); ISketchPoint(1) | `scripts/sketch_relations.py::collect_relation_evidence` ×1 |
+| `GetSFSymbols` | `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_collect_view_professional_annotations` ×1 |
+| `GetSectionViewData` | `IModelViewManager` | 1 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::get_feature_manager_section_data` ×1 |
+| `GetSelectionSetFolder` | `IFeatureManager` | 0 | `scripts/sw_topology.py::<模块级>` ×1 |
+| `GetSketchBlockInstances` | `ISketch` | 0 | `scripts/sw_sketch.py::get_sketch_block_instances` ×1 |
+| `GetSketchContours` | `ISketch` | 0 | `scripts/sw_sketch.py::get_sketch_contours` ×1 |
+| `GetSketchHatches` | `ISketch` | 0 | `scripts/sw_sketch.py::get_sketch_hatches` ×1 |
+| `GetSketchPaths` | `ISketch` / `ISketchSegment` | 0 | `scripts/sw_sketch.py::get_sketch_paths` ×1 |
+| `GetSketchPictures` | `ISketch` / `IView` | 0 | `scripts/sw_sketch.py::get_sketch_pictures` ×1 |
+| `GetSketchPoints2` | `ISketch` | 0 | `scripts/sw_sketch.py::get_sketch_points` ×1 |
+| `GetSketchRegions` | `ISketch` | 0 | `scripts/sw_sketch.py::get_sketch_regions` ×1 |
+| `GetSketchSlots` | `ISketch` | 0 | `scripts/sw_sketch.py::get_sketch_slots` ×1 |
+| `GetSpecificFeature2` | `IFeature` | 0 | `scripts/sw_weldment.py::update_cut_list` ×1 |
+| `GetSplines` | `ISketch` / `ISketchBlockDefinition` / `IView` | 0 | `scripts/sw_sketch.py::get_splines` ×1 |
+| `GetStartPoint2` | `ISketchArc` / `ISketchEllipse` / `ISketchLine` … 另 1 个接口 | 0 | `scripts/sw_part.py::auto_dimension_sketch` ×1 |
+| `GetSystemValue2` | `IDimension` | 1 | `scripts/sw_document_data.py::_dimension_value_mm` ×1 |
+| `GetTableAnnotations` | `IBendTable` / `IBomFeature` / `IFamilyTableFeature` … 另 8 个接口 | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::inspect_drawing_structure` ×1 |
+| `GetTemplateName` | `ISheet` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::inspect_drawing_structure` ×1 |
+| `GetTextAtIndex` | `ICustomSymbol` / `IDatumTag` / `IDatumTargetSym` … 另 5 个接口 | 1 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_annotation_text_parts` ×1 |
+| `GetTextCount` | `ICustomSymbol` / `IDatumTag` / `IDatumTargetSym` … 另 5 个接口 | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_annotation_text_parts` ×1 |
+| `GetUserPoints2` | `ISketch` / `IView` | 0 | `scripts/sw_sketch.py::get_user_points` ×1 |
+| `GetUserPreferenceStringValue` | `IModelDoc` / `IModelDoc2` / `ISldWorks` | 1 | `scripts/sw_connect.py::ensure_default_templates` ×1 |
+| `GetUserPreferenceToggle` | `IModelDoc` / `IModelDoc2` / `IModelDocExtension` … 另 1 个接口 | IModelDoc(1); IModelDoc2(2) | `scripts/sw_automation_knowledge.py::get_flag` ×1 |
+| `GetVisibleComponentCount` | `IView` | 0 | `scripts/sw_drawing_view.py::get_visible_component_count` ×1 |
+| `GetWeldSymbols` | `IView` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_collect_view_professional_annotations` ×1 |
+| `GraphicsRedraw` | `IModelDoc` / `IModelDoc2` / `IModelView` | IModelDoc(0); IModelDoc2(1) | `scripts/sw_view.py::redraw_view` ×1 |
+| `HasPerspective` | `IModelView` | 0 | `scripts/sw_view.py::has_perspective` ×1 |
+| `IGetDocumentNames` | `IPackAndGo` | 2 | `scripts/sw_delivery.py::_comtypes_document_names` ×1 |
+| `InitializeShading` | `IModelView` | 0 | `scripts/sw_view.py::initialize_shading` ×1 |
+| `InitializeThreadData` | `IThreadFeatureData` | 0 | `subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py::add_real_thread_feature` ×1 |
+| `InsertCosmeticThread3` | `IFeatureManager` | 7 | `subskills/solidworks-threaded-holes/scripts/create_threaded_hole_template.py::add_cosmetic_thread_feature` ×1 |
+| `InsertFeatureShell` | `IModelDoc` / `IModelDoc2` | 2 | `scripts/sw_part.py::shell` ×1 |
+| `InsertHelix` | `IModelDoc` / `IModelDoc2` | 10 | `scripts/sw_helix.py::insert_helix` ×1 |
+| `InsertMirrorFeature2` | `IFeatureManager` | 5 | `scripts/sw_part.py::mirror_feature` ×1 |
+| `InsertModelAnnotations3` | `IDrawingDoc` | 6 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::insert_dimensions` ×1 |
+| `InsertMoldCoreCavitySolids` | `IFeatureManager` | 4 | `scripts/sw_mold.py::insert_core_cavity_solids` ×1 |
+| `InsertMoldPartingLine` | `IFeatureManager` | 1 | `scripts/sw_mold.py::insert_parting_line` ×1 |
+| `InsertMoldShutOffSurface` | `IFeatureManager` | 0 | `scripts/sw_connect.py::get_com_member` ×1 |
+| `InsertNote` | `IModelDoc` / `IModelDoc2` | 1 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::add_note` ×1 |
+| `InsertRib` | `IFeatureManager` / `IModelDoc` / `IModelDoc2` | IFeatureManager(10); IModelDoc(8) | `scripts/sw_part.py::rib` ×1 |
+| `InsertSplitLineProject` | `IModelDoc` / `IModelDoc2` | 2 | `subskills/solidworks-fillet-chamfer-cnc/scripts/verify_advanced_fillets.py::_add_projected_hold_line` ×1 |
+| `InsertSubWeldFolder2` | `IFeatureManager` | 1 | `scripts/sw_weldment.py::create_sub_weld_folder` ×1 |
+| `Is3D` | `ISketch` | 0 | `scripts/sw_sketch.py::is_3d_sketch` ×1 |
+| `IsPlane` | `ISurface` | 0 | `subskills/solidworks-fillet-chamfer-cnc/scripts/verify_open_source_bracket.py::_body_stats` ×1 |
+| `IsSheetMetal` | `IBody2` | 0 | `scripts/sw_sheet_metal.py::sheet_metal_evidence` ×1 |
+| `LoadAddIn` | `ISldWorks` | 1 | `scripts/sw_simulation.py::ensure_simulation_addin` ×1 |
+| `Lock` | `IModelDoc` / `IModelDoc2` | 0 | ⚠ 疑似撞名（仅出现在非 COM 模块） |
+| `MergePoints` | `ISketch` | 1 | `scripts/sw_sketch.py::merge_points` ×1 |
+| `MoldDraftAnalysis` | `IModelDoc2` | 4 | `scripts/sw_mold.py::mold_draft_analysis` ×1 |
+| `MoldUndercutDetect` | `IFeatureManager` | 6 | `scripts/sw_mold.py::mold_undercut_detect` ×1 |
+| `NewDocument` | `ISldWorks` | 4 | `scripts/sw_connect.py::new_document` ×1 |
+| `NewSheet4` | `IDrawingDoc` | 16 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::add_sheet` ×1 |
+| `Parameter` | `IFeature` / `IModelDoc` / `IModelDoc2` | 1 | `scripts/sw_document_data.py::update_dimension_mm` ×1 |
+| `PutDouble` | `ISafeArrayUtility` | 3 | `scripts/audit_byref_args.py::<模块级>` ×1 |
+| `Quit` | `IModelDoc` / `IModelDoc2` | 0 | ⚠ 疑似撞名（仅出现在非 COM 模块） |
+| `RemoveConstraint` | `ICWTopologyStudyManager` | 1 | `scripts/sw_topology.py::set_topology_goal` ×1 |
+| `RemoveSectionView` | `IModelViewManager` | 0 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::remove_feature_manager_section_view` ×1 |
+| `ReplaceComponents2` | `IAssemblyDoc` | 5 | `scripts/sw_assembly.py::replace_component` ×1 |
+| `ResolveAllLightWeightComponents` | `IAssemblyDoc` | 1 | `scripts/sw_delivery.py::_comtypes_pack_and_go` ×1 |
+| `ResumeSelectionList` | `ISelectionMgr` | 0 | `scripts/sw_selection.py::resume_selection_list` ×1 |
+| `ResumeSelectionList2` | `ISelectionMgr` | 1 | `scripts/sw_selection.py::resume_selection_list` ×1 |
+| `RollBy` | `IModelView` | 1 | `scripts/sw_view.py::roll_view` ×1 |
+| `RotateAboutCenter` | `IModelView` | 2 | `scripts/sw_view.py::rotate_about_center` ×1 |
+| `RunMacro2` | `ISldWorks` | 5 | `subskills/solidworks-fillet-chamfer-cnc/scripts/hold_line_bridge.py::create_hold_line_via_native_addin` ×1 |
+| `Save` | `IBody` / `IBody2` / `IModelDoc` … 另 2 个接口 | IBody(1); IBody2(0); IModelDoc(1) | ⚠ 疑似撞名（仅出现在非 COM 模块） |
+| `Save3` | `IModelDoc2` | 3 | `scripts/sw_connect.py::save_document` ×1 |
+| `Select3` | `IAnnotation` / `IComponent2` / `IEntity` … 另 3 个接口 | IAnnotation(2); IComponent2(3) | `scripts/sw_part.py::auto_dimension_sketch` ×1 |
+| `SelectDemoldDirection` | `ICWTopologyDemoldControl` | 1 | `scripts/sw_topology.py::create_demold_control` ×1 |
+| `SelectSymmetryType` | `ICWTopologySymmetryControl` | 1 | `scripts/sw_topology.py::create_symmetry_control` ×1 |
+| `SendMsgToUser2` | `ISldWorks` | 3 | `scripts/sw_automation_knowledge.py::send_message` ×1 |
+| `SetAutomaticSolve` | `ISketch` | 1 | `scripts/sw_sketch.py::set_automatic_solve` ×1 |
+| `SetCameraByName` | `IModelView` | 1 | `scripts/sw_view.py::set_view_camera_by_name` ×1 |
+| `SetColumnCustomProperty` | `IBomTableAnnotation` / `IRevisionTableAnnotation` / `IWeldmentCutListAnnotation` | 2 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::set_table_custom_property_column` ×1 |
+| `SetComparator` | `ICWTopologyDisplacementConstraint` / `ICWTopologyFactorOfSafetyConstraint` / `ICWTopologyStressConstraint` | 1 | `scripts/sw_topology.py::create_stress_constraint` ×1 |
+| `SetConvergenceCheck` | `ICWTopologyStudyOptions` | 1 | `scripts/sw_topology.py::set_topology_iteration_options` ×1 |
+| `SetIncludeMaxMemberThickness2` | `ICWTopologyThicknessControl` | 1 | `scripts/sw_topology.py::create_thickness_control` ×1 |
+| `SetIncludeMinMemberThickness2` | `ICWTopologyThicknessControl` | 1 | `scripts/sw_topology.py::create_thickness_control` ×1 |
+| `SetIncludeRegionDepth2` | `ICWTopologyPreservedRegionControl` | 1 | `scripts/sw_topology.py::create_preserved_region` ×1 |
+| `SetIterationLimit` | `ICWTopologyStudyOptions` | 1 | `scripts/sw_topology.py::set_topology_iteration_options` ×1 |
+| `SetIterationOption` | `ICWTopologyStudyOptions` | 1 | `scripts/sw_topology.py::set_topology_iteration_options` ×1 |
+| `SetMaterialPropertyName2` | `IJournalManager` / `IPartDoc` | 3 | `scripts/sw_simulation.py::set_material` ×1 |
+| `SetMaxMemberThickness` | `ICWTopologyThicknessControl` | 1 | `scripts/sw_topology.py::create_thickness_control` ×1 |
+| `SetMinimumMemberThickness` | `ICWTopologyThicknessControl` | 1 | `scripts/sw_topology.py::create_thickness_control` ×1 |
+| `SetOverrideMassValue` | `IMassProperty` / `IMassPropertyOverrideOptions` | IMassProperty(3); IMassPropertyOverrideOptions(1) | `scripts/sw_export.py::set_mass_property_override` ×1 |
+| `SetOverrideOptions` | `IMassProperty2` | 3 | `scripts/sw_export.py::set_mass_property_override` ×1 |
+| `SetPosition2` | `IAnnotation` | 3 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::_set_annotation_position` ×1 |
+| `SetSplitReferences` | `IStructureSystemSplitMember` | 1 | `scripts/sw_weldment.py::configure_split_member` ×1 |
+| `SetSystemValue3` | `IDimension` | 3 | `scripts/sw_document_data.py::update_dimension_mm` ×1 |
+| `SetTemplateName` | `ISheet` | 1 | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::set_sheet_format` ×1 |
+| `SetTransformAndSolve2` | `IComponent2` | 1 | `scripts/sw_assembly.py::apply_component_transform_x` ×1 |
+| `SetUserPreferenceStringValue` | `IModelDoc` / `IModelDoc2` / `ISldWorks` | 2 | `scripts/sw_connect.py::ensure_default_templates` ×1 |
+| `ShowConfiguration2` | `IModelDoc` / `IModelDoc2` | 1 | `scripts/sw_document_data.py::activate_configuration` ×1 |
+| `SketchAddConstraints` | `IModelDoc` / `IModelDoc2` | 1 | `scripts/sw_part.py::add_sketch_relation` ×1 |
+| `SketchMirror` | `IModelDoc` / `IModelDoc2` | 0 | `scripts/sw_sketch_edit.py::sketch_mirror` ×1 |
+| `SketchUseEdge3` | `ISketchManager` | 2 | `scripts/sw_sketch_edit.py::convert_entities` ×1 |
+| `Sort` | `IBomTableAnnotation` / `IGeneralTableAnnotation` / `IHoleTableAnnotation` … 另 1 个接口 | IBomTableAnnotation(1); IGeneralTableAnnotation(2) | `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::sort_table` ×1 |
+| `TranslateBy` | `IModelView` | 2 | `scripts/sw_view.py::translate_view` ×1 |
+| `ZoomByFactor` | `IModelView` | 1 | `scripts/sw_view.py::zoom_view` ×1 |
+
+> **宿主接口列**只列前 3 个：某些成员（如 `AccessSelections`）挂在 80+ 个 `*FeatureData` 接口上，全列出来表格就没法读了。
+> 完整接口清单见 `_raw/` 下的反射清单，或跑 `python tools/gen_api_map.py` 时保留的 JSON。
+>
+> 表中「参数」列若显示多个数字且带 ⚠，说明该成员名在**多个接口上参数个数不同**
+> （如 `RunAnalysis`：既在 `ICwAddincallback` 上，也在 `ICWStudy` 上；
+> `CreateMesh`：在 `ICWStudy` 上是 3 参、在 `ICwAddincallback` 上是 0 参）。
+> 此时须结合「本仓库调用点」列判断实际调的是哪一个。
+
+---
+
+## 三、这张表覆盖不到的部分（重要）
+
+| 情况 | 原因 |
+|---|---|
+| 通过 `CreateDefinition` + FeatureData **属性赋值**间接触及的成员 | 属性名出现在赋值左侧而非调用形态中（如 `data.Thickness = 0.001`）。本表只统计「可静态识别形态」的调用，不统计属性赋值。这部分由 `scripts/sw_sheet_metal.py` 的 `SURFACE_CREATION_METHODS`、`scripts/sw_surface.py` 的 `SURFACE_CREATION_METHODS`、`scripts/sw_simulation.py` 的 5 组 `SWS_*` 表**逐条登记**，另有各函数来源块列出所用的官方成员名 |
+| Simulation 域 27 个载荷方法 | 反射清单与两套官方文档都没有签名，本仓库**刻意不提供**入口（AGENTS.md 铁律 5） |
+| 「其他/未归类」域下的成员 | 来自 `subskills/` 与 `scripts/` 里未登记到 DOMAIN_OF_MODULE 的模块（如 advanced_*、fea_*、dfm_* 等），它们不属于 14 个功能域的原生 API 面 |
+
+> ⚠ 因此本表是**下界**而非全集：它只统计「形态可静态识别」的直接调用。完整的签名级核对请看 `docs/signature-audit.md`。
+
+# 并集广度地图
+
+> **本文件是生成物** —— 由 `tools/build_union_map.py` 从
+> `tools/union-sources.json` + `capabilities.yaml` 生成，不要手改。
+>
+> 配套规范：`docs/union-conventions.md`（命名 / 单位 / 选择 / 验证等级 / 出处 / 失败要响）
+
+## 一 来源与许可（读**真实 LICENSE 文件**判定，不采信 README 徽章）
+
+| 来源 | 许可 | 工具数 | 操作数 | 它自己声明跑过的环境 | 能抄吗 |
+|---|---|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | MIT | 187 | 178 | **未声明** | ✅ 可抄改商用 |
+| `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
+| `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
+| `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
+| **本仓库（上游 + 本次）** | MIT | 459 | 459 | 见 capabilities.yaml | — |
+
+> ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
+> `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
+> 详见每家的 `note` 字段（`tools/union-sources.json`）。
+
+## 二 域 × 来源 矩阵
+
+> ⚠ **两列口径不同，不可互相替代**（2026-10-01 加）：
+> - **本仓库（MCP）** = `mcp-server/server.py` 里静态抽出的**工具名**。
+>   「缺口」列是它相对四家并集算出来的 —— 量的是**MCP 暴露面**之差。
+> - **本仓库能力面** = `scripts/sw_*.py` 的**公开函数数**。
+>   本仓库的能力多数**没被暴露成 MCP 工具**（`AGENTS.md` 已知事实 25：
+>   `server.py` 只引用 25 个模块，我们后补的 58+ 个一个都没进）。
+>
+> **⇒ 只看「缺口」列会把已有的域记成「零」**（例：焊件列显示 `·`，
+> 而 `scripts/sw_weldment.py` 有 666 行 / 20 个函数且 `capabilities.yaml` 里是 `verified`）。
+> **判断「该实现哪个域」请看能力面列；判断「该暴露哪个工具」才看 MCP 列。**
+>
+> - 能力面列里的 **`⚠`** = 该域**缺口(MCP) > 0 而我们已有 ≥5 个函数** ⇒ **它多半不是能力缺口，只是没暴露成 MCP 工具**。
+>   ⚠ 这是**启发式标记**（阈值 5），不是判定；**要下结论仍须逐域人工核**。
+
+| 域 | Eduardof0nt | andrewbartels1 | vespo92 | Slacker-LLC | 本仓库(MCP) | 本仓库能力面 | 并集 | 缺口(MCP) |
+|---|---|---|---|---|---|---|---|---|
+| ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 18 | 61⚠ | 51 | **33** |
+| ② 参考几何 | 3 | 3 | · | 3 | 3 | 44⚠ | 5 | **2** |
+| ③ 草图 | 26 | 15 | 16 | 20 | 44 | 107⚠ | 77 | **33** |
+| ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 8 | 32⚠ | 18 | **10** |
+| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 37 | 106⚠ | 61 | **24** |
+| ⑥ 曲面 | 11 | · | 1 | · | 19 | 49⚠ | 27 | **8** |
+| ⑦ 钣金 | 10 | · | 1 | · | 9 | 20⚠ | 20 | **11** |
+| ⑧ 焊件 | 5 | · | · | · | 16 | 19⚠ | 21 | **5** |
+| ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
+| ⑩ 装配 | 13 | 7 | 4 | 3 | 26 | 65⚠ | 45 | **19** |
+| ⑪ 工程图 | 18 | 18 | 15 | 17 | 36 | 74⚠ | 85 | **49** |
+| ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 15 | 28⚠ | 31 | **16** |
+| ⑬ 仿真 / Motion | 3 | · | 1 | · | 49 | 124⚠ | 53 | **4** |
+| ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 16 | 49⚠ | 26 | **10** |
+| ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 9 | 22⚠ | 51 | **42** |
+| ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 40 | 14 | 40 | ✓ |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 107 | 517⚠ | 149 | **42** |
+
+**合计**：并集 770 个操作；**MCP 暴露面**缺 **311** 个（**不是**能力缺口 —— 见上）。
+
+### 缺口按域排序（大 → 小）
+
+| 域 | 缺 |
+|---|---|
+| ⑪ 工程图 | 49 |
+| ⑮ 宏 / 自动化 | 42 |
+| ⑰ 未归类 | 42 |
+| ① 会话 / 文档 / 文件 | 33 |
+| ③ 草图 | 33 |
+| ⑤ 零件特征 | 24 |
+| ⑩ 装配 | 19 |
+| ⑫ 检查 / 测量 / 反馈 | 16 |
+| ⑦ 钣金 | 11 |
+| ④ 尺寸 / 约束 / 参数 | 10 |
+| ⑭ 外观 / 材质 / 配置 | 10 |
+| ⑥ 曲面 | 8 |
+| ⑧ 焊件 | 5 |
+| ⑬ 仿真 / Motion | 4 |
+| ⑨ 模具 | 3 |
+| ② 参考几何 | 2 |
+
+### 不做 + 原因（A1 的另一半）
+
+> `AGENTS.md §一 A1`：「…每一格**都有来源，或写明「不做 + 原因」**」。
+> **有来源**那一半由 `capabilities.yaml` 的 `source`/`source_evidence` 承担（R12/R13 守着）；
+> **本表**承担「不做 + 原因」那一半。数据源 `docs/union-not-doing.json`，形状由 R14 守。
+>
+> ⚠ **本表是显式清单，不是默认放行** —— 没登记在这里、又没在 `capabilities.yaml` 里的，
+> 就仍是**缺口**（见上表的「缺 N」），不是「不做」。
+
+| 不做 | 原因 | 依据（可核） |
+|---|---|---|
+| 动画导出 AVI（Motion 分析算例） | **环境受限** —— 本机没有 SolidWorks Motion 加载项，而 AVI 导出需要 CosmosMotion 系列算例。 | · 真机实测（2026-10-01 轮 66，`D:\AI\SW\probe_motion_addin.py`）：set StudyType=4/8/16（CosmosMotion 家族）⇒ **回读仍是 2，静默失败**；1（Assembly）与 2（PhysicalSimulation）能生效但导出仍失败。<br>· Motion 加载项 4 个 ProgID 全返 None：`CMotionswapi.CMOTIONSWAddin` · `SldWorks.Motion` · `SolidWorks.Motion` · `SWMotionStudy.SWMotionStudyAddin`。<br>· 验收命令 `python tools/verify_motion_avi_e2e.py` ⇒ `verdict: fail`（已排除 6 种条件）。<br>· ⚠ **`AGENTS.md §九.4`：需要用户提供的东西 ⇒ 停下报告，不自行拍板。** 需要用户提供 **SolidWorks Motion 加载项**。<br>· ⓘ **装上即可闭合**：`capabilities.yaml` 的 `animation_export` 现为 `stitched`，装上后跑验收脚本得 `verdict: pass` 即可升 `verified`。 |
+| AGPL / GPL / 无许可 / 全版权保留 来源的**代码移植** | **许可红线**（`AGENTS.md §二 铁律 6`）：那几类**只读思想**，不抄代码、不抄文本。 | · `AGENTS.md §二 铁律 6` 的许可表：MIT「读抄改商用」· Apache-2.0「+ NOTICE」· AGPL/GPL「**只读思想**」· 无许可/全版权保留「**只读思想**」。<br>· `scripts/check_license_redlines.py`（A6 门禁）在核「来源块声明的许可是否在白名单内」。<br>· ⓘ 已评估但**未并入**的 AGPL 类来源见 `THIRD-PARTY-NOTICES.md §二`。 |
+| 破解相关（SolidWorks-CAD / Solidworks-Crack 类投递页、破解指南、序列号） | **零接触红线**（`AGENTS.md §二 铁律 2`）：不碰破解相关任何内容。 | · `AGENTS.md §二 铁律 2` 的红线段明写「破解相关…**零接触**」。<br>· 另两条红线：不动注册表 / 全局环境变量 / 系统层；未经确认不 push / 不建远端 / 不发 release。 |
+| 对外发布（推远端 / 建自建远端 / 提 PR / release） | **未获授权**（用户已明示「GitHub 上的东西不着急，等我们完全开发完毕了再上传」）。 | · 用户原话：「GitHub上的东西不着急，等我们完全开发完毕了再上传」。<br>· `AGENTS.md §七` 的动作批准表：`git push`（任何远端）/ 提 PR / 发布 release **都要先批准**。<br>· ⇒ 本项目至今**只做本地 commit**（两仓库各自提交，已 179 个 commit）。 |
+
+## 三 每个域的**独家来源**（只有一家有 ⇒ 只能抄它，且必须自己测）
+
+| 域 | 独家操作 | 唯一来源 |
+|---|---|---|
+| ① 会话 / 文档 / 文件 | 26 个：`activate_document`, `active_document_info`, `apply_template`, `close_all`, `close_document`, `compare_templates`… | andrewbartels1/SolidworksMCP-python |
+| ② 参考几何 | 1 个：`reference_planes` | Slacker-LLC/solidworks-mcp |
+| ③ 草图 | 16 个：`3d_sketch`, `3point_arc`, `check_sketch_fully_defined`, `close_sketch`, `construction_geometry`, `convert_entities`… | Eduardof0nt/Solidworks-MCP-Server |
+| ④ 尺寸 / 约束 / 参数 | 8 个：`delete_equation`, `design_table_create`, `design_table_refresh`, `diameter_dimension`, `global_var`, `link_dimension_to_equation`… | Eduardof0nt/Solidworks-MCP-Server |
+| ⑤ 零件特征 | 17 个：`combine_bodies`, `curve_driven_pattern`, `delete_body`, `dome`, `fill_pattern`, `helix`… | Eduardof0nt/Solidworks-MCP-Server |
+| ⑥ 曲面 | 8 个：`boundary_boss`, `extend_surface`, `extruded_surface`, `filled_surface`, `knit_surfaces`, `surface_modeling`… | Eduardof0nt/Solidworks-MCP-Server |
+| ⑦ 钣金 | 11 个：`base_flange`, `edge_flange`, `export_flat_pattern`, `flat_pattern_info`, `flatten_sheet_metal`, `hem`… | Eduardof0nt/Solidworks-MCP-Server |
+| ⑧ 焊件 | 5 个：`end_cap`, `gusset`, `structural_member`, `trim_weldment`, `weld_symbol` | Eduardof0nt/Solidworks-MCP-Server |
+| ⑨ 模具 | 3 个：`parting_line`, `shut_off_surface`, `tooling_split` | Eduardof0nt/Solidworks-MCP-Server |
+| ⑩ 装配 | 16 个：`assembly_analysis`, `assembly_components`, `assembly_mates`, `assembly_tree`, `explode_assembly`, `fix_component`… | vespo92/SolidworksMCP-TS |
+| ⑪ 工程图 | 38 个：`activate_drawing_view`, `activate_sheet`, `analyze_drawing_annotations`, `analyze_drawing_comprehensive`, `analyze_drawing_dimensions`, `analyze_drawing_views`… | Slacker-LLC/solidworks-mcp |
+| ⑫ 检查 / 测量 / 反馈 | 9 个：`analyze_geometry`, `calculate_mass_properties`, `check_errors`, `display_mode`, `measure`, `reference_geometry`… | andrewbartels1/SolidworksMCP-python |
+| ⑬ 仿真 / Motion | 4 个：`motion_study`, `run_simulation`, `simulation_setup`, `simulation_study` | Eduardof0nt/Solidworks-MCP-Server |
+| ⑭ 外观 / 材质 / 配置 | 8 个：`activate_display_state`, `appearance_color`, `assembly_configurations`, `background`, `display_states`, `materials`… | Eduardof0nt/Solidworks-MCP-Server |
+| ⑮ 宏 / 自动化 | 37 个：`analyze_macro`, `batch_execute_macros`, `batch_file_operations`, `batch_operations`, `batch_process_files`, `batch_run_macros`… | andrewbartels1/SolidworksMCP-python |
+| ⑰ 未归类 | 31 个：`advanced_features`, `api_automation`, `classify_feature_tree`, `composite_curve`, `edges`, `error_handling`… | vespo92/SolidworksMCP-TS |
+
+## 四 本仓库独家（别人都没有）
+
+共 421 个操作只有本仓库有：
+
+- `activate_model_for_preview`（⑰ 未归类）
+- `active_view`（⑪ 工程图）
+- `addin_host_status`（⑰ 未归类）
+- `api_deprecated_successor`（⑰ 未归类）
+- `appearance_delete_render_material`（⑭ 外观 / 材质 / 配置）
+- `assembly_add_mate_checked`（⑩ 装配）
+- `assembly_add_parallel_mate`（⑩ 装配）
+- `assembly_apply_component_transform_x`（⑩ 装配）
+- `assembly_auto_explode`（⑩ 装配）
+- `assembly_check_interference`（⑩ 装配）
+- `assembly_create_exploded_view`（⑪ 工程图）
+- `assembly_dissolve`（⑩ 装配）
+- `assembly_edit_explode_parameters`（⑩ 装配）
+- `assembly_exit_edit_part_in_context`（⑩ 装配）
+- `assembly_exploded_view_configuration`（⑭ 外观 / 材质 / 配置）
+- `assembly_external_reference_count`（⑩ 装配）
+- `assembly_get_exploded_view_count`（⑩ 装配）
+- `assembly_get_exploded_view_names`（⑩ 装配）
+- `assembly_list_components`（⑩ 装配）
+- `assembly_list_mates`（⑩ 装配）
+- `assembly_replace_component`（⑩ 装配）
+- `assembly_show_exploded`（⑩ 装配）
+- `assembly_suppress_component`（⑩ 装配）
+- `assembly_unsuppress_component`（⑩ 装配）
+- `assembly_view_collapse`（⑩ 装配）
+- `assembly_view_explode`（⑩ 装配）
+- `auto_dimension_sketch`（③ 草图）
+- `automation_enter_command_lock`（⑰ 未归类）
+- `automation_exit_command_lock`（⑰ 未归类）
+- `automation_explain_hresult`（⑰ 未归类）
+- `automation_get_flag`（⑰ 未归类）
+- `automation_is_command_locked`（⑰ 未归类）
+- `automation_set_flag`（⑰ 未归类）
+- `available_direction_selectors`（⑰ 未归类）
+- `available_point_selectors`（⑰ 未归类）
+- `base_flange_params`（⑦ 钣金）
+- `basic_part`（⑰ 未归类）
+- `batch_export_files`（⑮ 宏 / 自动化）
+- `center_of_mass`（⑰ 未归类）
+- `chamfer_circular_rim_volume`（⑤ 零件特征）
+- `chamfer_straight_edge_volume`（⑤ 零件特征）
+- `chamfer_volume_report`（⑤ 零件特征）
+- `check_dfm`（⑯ 高级 / 专项（含护城河候选））
+- `check_routing`（⑯ 高级 / 专项（含护城河候选））
+- `clear_selection_for_preview`（⑰ 未归类）
+- `close_documents`（① 会话 / 文档 / 文件）
+- `coincident_mate`（⑩ 装配）
+- `collect_appearance_evidence`（⑭ 外观 / 材质 / 配置）
+- `collect_assembly_bom`（⑩ 装配）
+- `collect_model_summary`（⑰ 未归类）
+- `collect_view_evidence`（⑰ 未归类）
+- `concentric_mate`（⑩ 装配）
+- `config_activate`（⑭ 外观 / 材质 / 配置）
+- `config_create`（⑭ 外观 / 材质 / 配置）
+- `config_inspect`（⑭ 外观 / 材质 / 配置）
+- `config_read_custom_property`（⑭ 外观 / 材质 / 配置）
+- `config_set_custom_properties`（⑭ 外观 / 材质 / 配置）
+- `config_update_dimension`（⑭ 外观 / 材质 / 配置）
+- `coordinate_system`（⑰ 未归类）
+- `costing_assign_custom_cost`（⑯ 高级 / 专项（含护城河候选））
+- `costing_body_count`（⑯ 高级 / 专项（含护城河候选））
+- `costing_default_template`（⑯ 高级 / 专项（含护城河候选））
+- `costing_defaults`（⑯ 高级 / 专项（含护城河候选））
+- `costing_evidence`（⑯ 高级 / 专项（含护城河候选））
+- `costing_include_body`（⑯ 高级 / 专项（含护城河候选））
+- `costing_list_bodies`（⑯ 高级 / 专项（含护城河候选））
+- `costing_list_templates`（⑯ 高级 / 专项（含护城河候选））
+- `costing_manager`（⑯ 高级 / 专项（含护城河候选））
+- `costing_method_value`（⑯ 高级 / 专项（含护城河候选））
+- `costing_read_analysis`（⑯ 高级 / 专项（含护城河候选））
+- `costing_read_body`（⑯ 高级 / 专项（含护城河候选））
+- `costing_set_default_lot_size`（⑯ 高级 / 专项（含护城河候选））
+- `costing_set_default_manufacturing_method`（⑯ 高级 / 专项（含护城河候选））
+- `costing_set_default_material`（⑯ 高级 / 专项（含护城河候选））
+- `costing_set_default_template`（⑯ 高级 / 专项（含护城河候选））
+- `costing_set_lot_size`（⑯ 高级 / 专项（含护城河候选））
+- `costing_set_markup`（⑯ 高级 / 专项（含护城河候选））
+- `costing_set_method`（⑯ 高级 / 专项（含护城河候选））
+- `costing_update_cost_for_all_bodies`（⑯ 高级 / 专项（含护城河候选））
+- `csys_params`（⑰ 未归类）
+- `current_selection`（⑰ 未归类）
+- `current_sketch_name`（③ 草图）
+- `curve_through_points`（⑰ 未归类）
+- `custom_property_count`（⑰ 未归类）
+- `custom_property_get`（⑰ 未归类）
+- `custom_property_list`（⑰ 未归类）
+- `custom_property_names`（⑰ 未归类）
+- `delivery_bom_traceability`（⑰ 未归类）
+- `delivery_export_bom_csv`（① 会话 / 文档 / 文件）
+- `delivery_pack_and_go_audit_matrix`（⑰ 未归类）
+- `distance_mate`（⑩ 装配）
+- `dome_params`（⑤ 零件特征）
+- `drawing_add_note`（⑪ 工程图）
+- `drawing_collect_view_evidence`（⑪ 工程图）
+- `drawing_create_auxiliary_view`（⑪ 工程图）
+- `drawing_create_broken_view`（⑪ 工程图）
+- `drawing_create_detail_view`（⑪ 工程图）
+- `drawing_create_hole_table`（⑪ 工程图）
+- `drawing_create_projected_view`（⑪ 工程图）
+- `drawing_create_revision_table`（⑪ 工程图）
+- `drawing_create_section_view`（⑪ 工程图）
+- `drawing_create_three_standard_views`（⑪ 工程图）
+- `drawing_current_sheet_info`（⑪ 工程图）
+- `drawing_current_sheet_name`（⑪ 工程图）
+- `drawing_get_current_sheet`（⑪ 工程图）
+- `drawing_insert_center_marks`（⑪ 工程图）
+- `drawing_insert_datum_tag`（⑯ 高级 / 专项（含护城河候选））
+- `drawing_insert_surface_finish_symbol`（⑯ 高级 / 专项（含护城河候选））
+- `drawing_list_sheets`（⑪ 工程图）
+- `drawing_list_views`（⑪ 工程图）
+- `drawing_set_sheet_format`（⑪ 工程图）
+- `drawing_set_sheet_scale`（⑪ 工程图）
+- `drawing_sheet_count`（⑪ 工程图）
+- `drawing_sheet_names`（⑪ 工程图）
+- `drawing_sheet_scale`（⑪ 工程图）
+- `drawing_sheets_summary`（⑪ 工程图）
+- `drawing_view_annotations`（⑪ 工程图）
+- `drawing_view_scale`（⑪ 工程图）
+- `drawing_view_set_scale`（⑪ 工程图）
+- `dxf_preview_scene`（⑰ 未归类）
+- `entities_on_body`（⑤ 零件特征）
+- `equation_add`（④ 尺寸 / 约束 / 参数）
+- `equation_delete`（④ 尺寸 / 约束 / 参数）
+- `equation_evaluate`（④ 尺寸 / 约束 / 参数）
+- `equation_list`（④ 尺寸 / 约束 / 参数）
+- `export_active`（① 会话 / 文档 / 文件）
+- `export_assembly_bom`（⑩ 装配）
+- `export_bmp`（① 会话 / 文档 / 文件）
+- `export_dxf`（① 会话 / 文档 / 文件）
+- `export_parasolid`（① 会话 / 文档 / 文件）
+- `extrude_boss`（⑤ 零件特征）
+- `extrude_depth`（⑤ 零件特征）
+- `extrude_midplane`（⑤ 零件特征）
+- `extrude_params`（⑤ 零件特征）
+- `fastener_table_types`（⑰ 未归类）
+- `fastener_types`（⑰ 未归类）
+- `fea_preflight`（⑰ 未归类）
+- `feature_cosmetic_thread`（⑰ 未归类）
+- `feature_delete`（⑰ 未归类）
+- `feature_info`（⑰ 未归类）
+- `feature_list_names`（⑰ 未归类）
+- `feature_present`（⑰ 未归类）
+- `feature_suppress`（⑰ 未归类）
+- `feature_unsuppress`（⑰ 未归类）
+- `feature_whats_wrong`（⑰ 未归类）
+- `fillet_params`（⑤ 零件特征）
+- `flatten_surface`（⑥ 曲面）
+- `gear_calculate_spur`（⑰ 未归类）
+- `gear_create_spur`（⑰ 未归类）
+- `generate_drawing`（⑪ 工程图）
+- `global_bounding_box`（⑫ 检查 / 测量 / 反馈）
+- `gtol_insert`（⑰ 未归类）
+- `gui_assert_focus`（⑰ 未归类）
+- `gui_assert_no_modal`（⑰ 未归类）
+- `gui_close_modals`（① 会话 / 文档 / 文件）
+- `gui_ensure_focus`（⑰ 未归类）
+- `gui_find_modals`（⑰ 未归类）
+- `gui_focus_state`（⑰ 未归类）
+- `gui_get_foreground_window`（⑰ 未归类）
+- `gui_modal_report`（⑰ 未归类）
+- `gui_screen_png`（⑰ 未归类）
+- `health_check`（⑰ 未归类）
+- `helix_insert`（⑤ 零件特征）
+- `hole_blind_by_selection`（⑤ 零件特征）
+- `hole_counterbore_by_selection`（⑤ 零件特征）
+- `hole_countersink_by_selection`（⑤ 零件特征）
+- `hole_feature`（⑤ 零件特征）
+- `hole_params`（⑤ 零件特征）
+- `hole_pattern`（⑤ 零件特征）
+- `hole_standards`（⑤ 零件特征）
+- `hole_through_by_selection`（⑤ 零件特征）
+- `inspect_configurations`（⑭ 外观 / 材质 / 配置）
+- `inspect_drawing`（⑪ 工程图）
+- `inspect_hole_features`（⑫ 检查 / 测量 / 反馈）
+- `inspect_motion_studies`（⑬ 仿真 / Motion）
+- `loft_params`（⑤ 零件特征）
+- `lofted_ref_surface`（⑥ 曲面）
+- `macro_build_prompt`（⑮ 宏 / 自动化）
+- `macro_extract_vba_code`（⑮ 宏 / 自动化）
+- `macro_fallback_template`（⑮ 宏 / 自动化）
+- `macro_normalize_model_family`（⑮ 宏 / 自动化）
+- `macro_run`（⑮ 宏 / 自动化）
+- `macro_select_template`（⑮ 宏 / 自动化）
+- `macro_validate_vba_code`（⑮ 宏 / 自动化）
+- `macro_write_file`（⑮ 宏 / 自动化）
+- `measure_selection`（⑫ 检查 / 测量 / 反馈）
+- `mesh_configure_import_preferences`（⑭ 外观 / 材质 / 配置）
+- `mesh_restore_import_preferences`（① 会话 / 文档 / 文件）
+- `misumi_suggest_part`（⑰ 未归类）
+- `mold_core_cavity_split`（⑨ 模具）
+- `mold_draft_analysis`（⑨ 模具）
+- `mold_evidence`（⑨ 模具）
+- `mold_parting_line`（⑨ 模具）
+- `mold_parting_surface`（⑨ 模具）
+- `mold_shut_off_surface`（⑨ 模具）
+- `mold_undercut_detect`（⑨ 模具）
+- `motion_calculate_and_play`（⑬ 仿真 / Motion）
+- `motion_collect_summary`（⑬ 仿真 / Motion）
+- `motion_create_study`（⑬ 仿真 / Motion）
+- `motion_ensure_type_library`（⑬ 仿真 / Motion）
+- `motion_export_avi`（⑬ 仿真 / Motion）
+- `motion_study_manager`（⑬ 仿真 / Motion）
+- `motion_validate_studies`（⑬ 仿真 / Motion）
+- `motion_validate_summary`（⑬ 仿真 / Motion）
+- `ocp_loft`（⑥ 曲面）
+- `ocp_surface`（⑥ 曲面）
+- `pack_and_go`（⑰ 未归类）
+- `part_axis`（② 参考几何）
+- `part_bounding_box`（⑫ 检查 / 测量 / 反馈）
+- `part_insert_composite_curve`（⑰ 未归类）
+- `part_insert_dome`（⑤ 零件特征）
+- `part_loft`（⑥ 曲面）
+- `part_mass_properties`（⑫ 检查 / 测量 / 反馈）
+- `part_rib`（⑤ 零件特征）
+- `part_shell`（⑤ 零件特征）
+- `part_sweep`（⑤ 零件特征）
+- `part_wrap`（⑤ 零件特征）
+- `pattern_params`（⑤ 零件特征）
+- `preflight_check_com_dependencies`（⑫ 检查 / 测量 / 反馈）
+- `prepare_fea`（⑰ 未归类）
+- `read_document_units`（① 会话 / 文档 / 文件）
+- `read_sensors`（⑫ 检查 / 测量 / 反馈）
+- `ref_geometry_create_3d_bounding_box`（⑫ 检查 / 测量 / 反馈）
+- `refresh_scene_graph`（⑰ 未归类）
+- `render_materials`（⑭ 外观 / 材质 / 配置）
+- `replace_face`（⑰ 未归类）
+- `repo_find_real_implementations`（⑰ 未归类）
+- `resolve_backend`（⑰ 未归类）
+- `resolve_entity`（⑰ 未归类）
+- `resolve_selection`（⑰ 未归类）
+- `review_active`（⑰ 未归类）
+- `review_advanced_geometry`（⑫ 检查 / 测量 / 反馈）
+- `review_collect_geometry_measurements`（⑫ 检查 / 测量 / 反馈）
+- `review_drawing`（⑪ 工程图）
+- `review_drawing_layout`（⑪ 工程图）
+- `review_evaluate_report`（⑰ 未归类）
+- `review_export_previews`（⑪ 工程图）
+- `review_inspect_bmp`（⑫ 检查 / 测量 / 反馈）
+- `review_pdf_text_layout`（⑰ 未归类）
+- `review_report`（⑰ 未归类）
+- `review_run`（⑰ 未归类）
+- `review_write_report`（⑰ 未归类）
+- `review_write_summary`（⑰ 未归类）
+- `revolve_boss`（⑤ 零件特征）
+- `revolve_cut`（⑤ 零件特征）
+- `revolve_params`（⑤ 零件特征）
+- `rotary_motor`（⑰ 未归类）
+- `routing_preflight`（⑯ 高级 / 专项（含护城河候选））
+- `ruled_surface`（⑥ 曲面）
+- `run_fea`（⑰ 未归类）
+- `run_fea_convergence`（⑰ 未归类）
+- `select_by_selector`（⑰ 未归类）
+- `select_entity_by_index`（⑰ 未归类）
+- `select_face_selector`（⑰ 未归类）
+- `selection_clear_colors`（⑭ 外观 / 材质 / 配置）
+- `selection_collect_evidence`（⑰ 未归类）
+- `selection_count`（⑰ 未归类）
+- `selection_deselect`（⑰ 未归类）
+- `selection_enable`（⑰ 未归类）
+- `selection_enable_contour`（⑰ 未归类）
+- `selection_is_coord_sys_element_selected`（⑰ 未归类）
+- `selection_is_in_edit_target`（⑰ 未归类）
+- `selection_point`（⑰ 未归类）
+- `selection_set_object_mark`（⑰ 未归类）
+- `selection_suspend_list`（⑰ 未归类）
+- `selector_resolve_direction`（⑰ 未归类）
+- `selector_resolve_point`（⑰ 未归类）
+- `session_busy_status`（⑰ 未归类）
+- `session_solver_processes`（⑰ 未归类）
+- `session_stuck_status`（⑰ 未归类）
+- `session_wait_until_idle`（⑰ 未归类）
+- `sheet_metal_create_base_flange`（⑦ 钣金）
+- `sheet_metal_create_draft`（⑦ 钣金）
+- `sheet_metal_create_edge_flange`（⑦ 钣金）
+- `sheet_metal_create_gusset`（⑧ 焊件）
+- `sheet_metal_create_one_bend`（⑦ 钣金）
+- `sheet_metal_create_swept_flange`（⑦ 钣金）
+- `sheet_metal_evidence`（⑦ 钣金）
+- `sheet_metal_insert_closed_corner`（⑦ 钣金）
+- `sheet_metal_insert_miter_flange`（⑦ 钣金）
+- `shell_params`（⑤ 零件特征）
+- `simulation_activate_plot`（⑬ 仿真 / Motion）
+- `simulation_apply_fixed_restraint`（⑬ 仿真 / Motion）
+- `simulation_apply_link_connector`（⑬ 仿真 / Motion）
+- `simulation_apply_normal_force`（⑬ 仿真 / Motion）
+- `simulation_apply_rigid_connector`（⑬ 仿真 / Motion）
+- `simulation_check_mesh_size`（⑬ 仿真 / Motion）
+- `simulation_collect_evidence`（⑬ 仿真 / Motion）
+- `simulation_collect_mesh_evidence`（⑬ 仿真 / Motion）
+- `simulation_configure_buckling_solver`（⑬ 仿真 / Motion）
+- `simulation_configure_frequency_solver`（⑬ 仿真 / Motion）
+- `simulation_configure_static_solver`（⑬ 仿真 / Motion）
+- `simulation_create_mesh`（⑬ 仿真 / Motion）
+- `simulation_create_mesh_for_control`（⑬ 仿真 / Motion）
+- `simulation_create_mesh_safely`（⑬ 仿真 / Motion）
+- `simulation_create_study`（⑬ 仿真 / Motion）
+- `simulation_create_study_by_type`（⑬ 仿真 / Motion）
+- `simulation_default_element_size_and_tolerance`（⑯ 高级 / 专项（含护城河候选））
+- `simulation_default_solve_memory_budget_gb`（⑬ 仿真 / Motion）
+- `simulation_delete_plot`（⑬ 仿真 / Motion）
+- `simulation_ensure_addin`（⑬ 仿真 / Motion）
+- `simulation_find_study`（⑬ 仿真 / Motion）
+- `simulation_generate_report`（⑬ 仿真 / Motion）
+- `simulation_get_buckling_load_factors`（⑬ 仿真 / Motion）
+- `simulation_get_edge_weld_connector`（⑧ 焊件）
+- `simulation_get_loads_manager`（⑬ 仿真 / Motion）
+- `simulation_get_results`（⑬ 仿真 / Motion）
+- `simulation_get_study_manager`（⑬ 仿真 / Motion）
+- `simulation_get_worst_jacobian_ratio`（⑬ 仿真 / Motion）
+- `simulation_is_component_failed`（⑬ 仿真 / Motion）
+- `simulation_list_setter_summary`（⑬ 仿真 / Motion）
+- `simulation_list_studies`（⑬ 仿真 / Motion）
+- `simulation_mesh_settings_report`（⑬ 仿真 / Motion）
+- `simulation_mesh_size`（⑬ 仿真 / Motion）
+- `simulation_run_analysis`（⑬ 仿真 / Motion）
+- `simulation_set_material`（⑬ 仿真 / Motion）
+- `simulation_set_registered_study_option`（⑬ 仿真 / Motion）
+- `simulation_set_study_option`（⑬ 仿真 / Motion）
+- `simulation_set_study_options`（⑬ 仿真 / Motion）
+- `simulation_solve_memory_preflight`（⑬ 仿真 / Motion）
+- `simulation_solver_type`（⑬ 仿真 / Motion）
+- `simulation_study_options`（⑬ 仿真 / Motion）
+- `sketch_add_3point_arc`（③ 草图）
+- `sketch_add_3point_center_rectangle`（③ 草图）
+- `sketch_add_3point_rectangle`（③ 草图）
+- `sketch_add_arc`（③ 草图）
+- `sketch_add_centerline`（⑪ 工程图）
+- `sketch_add_circle`（③ 草图）
+- `sketch_add_conic`（③ 草图）
+- `sketch_add_ellipse`（③ 草图）
+- `sketch_add_line`（③ 草图）
+- `sketch_add_parabola`（③ 草图）
+- `sketch_add_parallelogram`（③ 草图）
+- `sketch_add_partial_ellipse`（③ 草图）
+- `sketch_add_perimeter_circle`（③ 草图）
+- `sketch_add_polygon`（③ 草图）
+- `sketch_add_rectangle`（③ 草图）
+- `sketch_add_slot`（③ 草图）
+- `sketch_add_tangent_arc`（③ 草图）
+- `sketch_count_arcs`（③ 草图）
+- `sketch_count_lines`（③ 草图）
+- `sketch_count_segments`（③ 草图）
+- `sketch_create_chamfer`（③ 草图）
+- `sketch_end`（③ 草图）
+- `sketch_flip_entities`（③ 草图）
+- `sketch_fully_defined_status`（③ 草图）
+- `sketch_insert_chain_dimensions`（③ 草图）
+- `sketch_is_3d`（③ 草图）
+- `sketch_move_entities`（③ 草图）
+- `sketch_relation`（③ 草图）
+- `sketch_rotate_entities`（③ 草图）
+- `sketch_scale_entities`（③ 草图）
+- `sketch_select_segment`（③ 草图）
+- `sketch_start`（③ 草图）
+- `sketch_stretch_entities`（③ 草图）
+- `slot_semicircular_by_selection`（③ 草图）
+- `standard_view`（⑪ 工程图）
+- `surface_create_extruded`（⑥ 曲面）
+- `surface_cut`（⑥ 曲面）
+- `surface_evidence`（⑥ 曲面）
+- `surface_extend`（⑥ 曲面）
+- `surface_fill`（⑥ 曲面）
+- `surface_knit`（⑥ 曲面）
+- `surface_midsurface_create`（⑥ 曲面）
+- `surface_runtime_available`（⑥ 曲面）
+- `sweep_params`（⑤ 零件特征）
+- `thicken`（⑥ 曲面）
+- `toolbox_list_standards`（⑯ 高级 / 专项（含护城河候选））
+- `toolbox_load_index`（⑯ 高级 / 专项（含护城河候选））
+- `toolbox_part_path`（⑯ 高级 / 专项（含护城河候选））
+- `toolbox_search`（⑯ 高级 / 专项（含护城河候选））
+- `topology_create_demold_control`（⑯ 高级 / 专项（含护城河候选））
+- `topology_create_factor_of_safety_constraint`（⑯ 高级 / 专项（含护城河候选））
+- `topology_create_mass_constraint`（⑯ 高级 / 专项（含护城河候选））
+- `topology_create_preserved_region`（⑯ 高级 / 专项（含护城河候选））
+- `topology_create_stress_constraint`（⑯ 高级 / 专项（含护城河候选））
+- `topology_create_study`（⑯ 高级 / 专项（含护城河候选））
+- `topology_create_symmetry_control`（⑯ 高级 / 专项（含护城河候选））
+- `topology_create_thickness_control`（⑯ 高级 / 专项（含护城河候选））
+- `topology_evidence`（⑯ 高级 / 专项（含护城河候选））
+- `topology_run`（⑯ 高级 / 专项（含护城河候选））
+- `update_dimension`（④ 尺寸 / 约束 / 参数）
+- `validate_motion_study`（⑬ 仿真 / Motion）
+- `view_activate`（⑰ 未归类）
+- `view_add_perspective`（⑰ 未归类）
+- `view_get_camera`（⑰ 未归类）
+- `view_get_display_mode`（⑫ 检查 / 测量 / 反馈）
+- `view_get_frame`（⑰ 未归类）
+- `view_get_next`（⑰ 未归类）
+- `view_get_scale`（④ 尺寸 / 约束 / 参数）
+- `view_has_perspective`（⑰ 未归类）
+- `view_initialize_shading`（⑰ 未归类）
+- `view_model_doc`（⑰ 未归类）
+- `view_redraw`（⑰ 未归类）
+- `view_remove_perspective`（⑰ 未归类）
+- `view_roll_view`（⑪ 工程图）
+- `view_rotate_about_center`（⑰ 未归类）
+- `view_set_camera_by_name`（⑰ 未归类）
+- `view_set_display_mode`（⑫ 检查 / 测量 / 反馈）
+- `view_set_frame`（⑰ 未归类）
+- `view_set_scale`（④ 尺寸 / 约束 / 参数）
+- `view_start_dynamics`（⑰ 未归类）
+- `view_stop_dynamics`（⑰ 未归类）
+- `view_translate_view`（⑪ 工程图）
+- `view_zoom_by_factor`（⑫ 检查 / 测量 / 反馈）
+- `view_zoom_to_fit`（⑫ 检查 / 测量 / 反馈）
+- `weldment_create_cut_list`（⑧ 焊件）
+- `weldment_create_profile_center_mate`（⑧ 焊件）
+- `weldment_create_structural_member`（⑧ 焊件）
+- `weldment_create_sub_weld_folder`（⑧ 焊件）
+- `weldment_create_weldment_profile`（⑧ 焊件）
+- `weldment_ensure_cut_list`（⑧ 焊件）
+- `weldment_evidence`（⑧ 焊件）
+- `weldment_export_cut_list_csv`（⑧ 焊件）
+- `weldment_gusset_create`（⑧ 焊件）
+- `weldment_insert_end_cap`（⑧ 焊件）
+- `weldment_iter_features`（⑧ 焊件）
+- `weldment_read_property_manager`（⑧ 焊件）
+- `weldment_set_cut_list_properties`（⑧ 焊件）
+- `weldment_update_cut_list`（⑧ 焊件）
+- `write_open_format`（① 会话 / 文档 / 文件）
+
+## 五 可执行的并入清单（按域）
+
+> **怎么读**：`来源` 列给出该域最有货的家；`来源验证` 列是**该来源自己声明的跑过的环境** —— 空 = **它没声明跑过**，抄进来只能先标 `stitched`，必须我们实测过才能升 `verified`（规则 4）。
+
+### ① 会话 / 文档 / 文件（缺 33）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `andrewbartels1/SolidworksMCP-python` | 22 | MIT | **未声明** |
+| `Eduardof0nt/Solidworks-MCP-Server` | 14 | MIT | **未声明** |
+| `vespo92/SolidworksMCP-TS` | 10 | MIT | **未声明** |
+| `Slacker-LLC/solidworks-mcp` | 7 | Apache-2.0 | SW 2026 SP3.2 简体中文 |
+
+缺口操作：`activate_document`、`active_document_info`、`apply_template`、`close_all`、`close_document`、`close_model`、`compare_templates`、`convert_file_format`、`export_document`、`export_dwg`、`export_file`、`export_pdf`、`export_with_options`、`extract_template`、`manage_file_properties`、`open_documents`、`open_model`、`part`、`rebuild_document`、`rebuild_model`、`referenced_documents`、`save_active_document`、`save_all`、`save_as`
+（还有 9 个，见 `tools/union-sources.json`）
+
+### ② 参考几何（缺 2）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 3 | MIT | **未声明** |
+| `andrewbartels1/SolidworksMCP-python` | 3 | MIT | **未声明** |
+| `Slacker-LLC/solidworks-mcp` | 3 | Apache-2.0 | SW 2026 SP3.2 简体中文 |
+
+缺口操作：`ref_axis`、`reference_planes`
+
+### ③ 草图（缺 33）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 26 | MIT | **未声明** |
+| `Slacker-LLC/solidworks-mcp` | 20 | Apache-2.0 | SW 2026 SP3.2 简体中文 |
+| `vespo92/SolidworksMCP-TS` | 16 | MIT | **未声明** |
+| `andrewbartels1/SolidworksMCP-python` | 15 | MIT | **未声明** |
+
+缺口操作：`3d_sketch`、`3point_arc`、`check_sketch_fully_defined`、`circle`、`close_sketch`、`construction_geometry`、`convert_entities`、`edit_sketch`、`ellipse`、`exit_sketch`、`hide_all_sketches`、`polygon`、`rectangle`、`show_all_sketches`、`sketch`、`sketch_arc`、`sketch_chamfer`、`sketch_circle`、`sketch_constraint`、`sketch_construction`、`sketch_dimension`、`sketch_ellipse`、`sketch_line`、`sketch_polygon`
+（还有 9 个，见 `tools/union-sources.json`）
+
+### ④ 尺寸 / 约束 / 参数（缺 10）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 6 | MIT | **未声明** |
+| `vespo92/SolidworksMCP-TS` | 6 | MIT | **未声明** |
+| `andrewbartels1/SolidworksMCP-python` | 2 | MIT | **未声明** |
+| `Slacker-LLC/solidworks-mcp` | 2 | Apache-2.0 | SW 2026 SP3.2 简体中文 |
+
+缺口操作：`delete_equation`、`design_table`、`design_table_create`、`design_table_refresh`、`diameter_dimension`、`equation`、`global_var`、`link_dimension_to_equation`、`manage_design_table`、`relation`
+
+### ⑤ 零件特征（缺 24）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 23 | MIT | **未声明** |
+| `Slacker-LLC/solidworks-mcp` | 13 | Apache-2.0 | SW 2026 SP3.2 简体中文 |
+| `andrewbartels1/SolidworksMCP-python` | 11 | MIT | **未声明** |
+| `vespo92/SolidworksMCP-TS` | 3 | MIT | **未声明** |
+
+缺口操作：`combine_bodies`、`curve_driven_pattern`、`delete_body`、`dome`、`draft`、`extrude`、`fill_pattern`、`helix`、`intersect`、`linear_pattern`、`loft`、`mirror`、`move_body`、`pattern_circular`、`pattern_features`、`revolve`、`save_body_as_part`、`scale_body`、`shell`、`simple_extrude`、`split_body`、`sweep`、`tutorial_simple_hole`、`wrap`
+
+### ⑥ 曲面（缺 8）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 11 | MIT | **未声明** |
+| `vespo92/SolidworksMCP-TS` | 1 | MIT | **未声明** |
+
+缺口操作：`boundary_boss`、`extend_surface`、`extruded_surface`、`filled_surface`、`knit_surfaces`、`surface_modeling`、`thicken_surface`、`trim_surface`
+
+### ⑦ 钣金（缺 11）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 10 | MIT | **未声明** |
+| `vespo92/SolidworksMCP-TS` | 1 | MIT | **未声明** |
+
+缺口操作：`base_flange`、`edge_flange`、`export_flat_pattern`、`flat_pattern_info`、`flatten_sheet_metal`、`hem`、`jog`、`miter_flange`、`sheet_metal`、`sketched_bend`、`unfold`
+
+### ⑧ 焊件（缺 5）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 5 | MIT | **未声明** |
+
+缺口操作：`end_cap`、`gusset`、`structural_member`、`trim_weldment`、`weld_symbol`
+
+### ⑨ 模具（缺 3）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 3 | MIT | **未声明** |
+
+缺口操作：`parting_line`、`shut_off_surface`、`tooling_split`
+
+### ⑩ 装配（缺 19）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 13 | MIT | **未声明** |
+| `andrewbartels1/SolidworksMCP-python` | 7 | MIT | **未声明** |
+| `vespo92/SolidworksMCP-TS` | 4 | MIT | **未声明** |
+| `Slacker-LLC/solidworks-mcp` | 3 | Apache-2.0 | SW 2026 SP3.2 简体中文 |
+
+缺口操作：`assembly`、`assembly_analysis`、`assembly_components`、`assembly_mates`、`assembly_tree`、`components`、`explode_assembly`、`fix_component`、`hide_component`、`interference`、`load_assembly`、`mirror_component`、`move_component`、`pack_and_go_assembly`、`pattern_component_circular`、`pattern_component_linear`、`replace_component`、`save_assembly`、`suppress_component`
+
+### ⑪ 工程图（缺 49）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 18 | MIT | **未声明** |
+| `andrewbartels1/SolidworksMCP-python` | 18 | MIT | **未声明** |
+| `Slacker-LLC/solidworks-mcp` | 17 | Apache-2.0 | SW 2026 SP3.2 简体中文 |
+| `vespo92/SolidworksMCP-TS` | 15 | MIT | **未声明** |
+
+缺口操作：`activate_drawing_view`、`activate_sheet`、`analyze_drawing_annotations`、`analyze_drawing_comprehensive`、`analyze_drawing_dimensions`、`analyze_drawing_views`、`annotation`、`apply_drawing_template`、`auto_center_marks`、`auto_dimension_view`、`auxiliary_view`、`balloon`、`bom`、`broken_view`、`center_mark`、`centerline`、`check_drawing_compliance`、`check_drawing_standards`、`compare_drawing_templates`、`compare_drawing_versions`、`detail_view`、`drawing`、`drawing_annotations`、`drawing_dimension`
+（还有 25 个，见 `tools/union-sources.json`）
+
+### ⑫ 检查 / 测量 / 反馈（缺 16）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 11 | MIT | **未声明** |
+| `vespo92/SolidworksMCP-TS` | 7 | MIT | **未声明** |
+| `Slacker-LLC/solidworks-mcp` | 6 | Apache-2.0 | SW 2026 SP3.2 简体中文 |
+| `andrewbartels1/SolidworksMCP-python` | 3 | MIT | **未声明** |
+
+缺口操作：`analyze_draft`、`analyze_geometry`、`bbox`、`calculate_mass_properties`、`capture_screenshot`、`check_errors`、`check_geometry`、`display_mode`、`mass_props`、`measure`、`measure_distance`、`reference_geometry`、`sensors`、`status`、`view_orientation`、`zoom_to_fit`
+
+### ⑬ 仿真 / Motion（缺 4）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 3 | MIT | **未声明** |
+| `vespo92/SolidworksMCP-TS` | 1 | MIT | **未声明** |
+
+缺口操作：`motion_study`、`run_simulation`、`simulation_setup`、`simulation_study`
+
+### ⑭ 外观 / 材质 / 配置（缺 10）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 10 | MIT | **未声明** |
+| `vespo92/SolidworksMCP-TS` | 3 | MIT | **未声明** |
+| `Slacker-LLC/solidworks-mcp` | 2 | Apache-2.0 | SW 2026 SP3.2 简体中文 |
+| `andrewbartels1/SolidworksMCP-python` | 1 | MIT | **未声明** |
+
+缺口操作：`activate_display_state`、`appearance_color`、`assembly_configurations`、`background`、`configurations`、`display_states`、`material`、`materials`、`pdm_configure`、`take_photoview_screenshot`
+
+### ⑮ 宏 / 自动化（缺 42）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `andrewbartels1/SolidworksMCP-python` | 22 | MIT | **未声明** |
+| `vespo92/SolidworksMCP-TS` | 21 | MIT | **未声明** |
+| `Eduardof0nt/Solidworks-MCP-Server` | 4 | MIT | **未声明** |
+
+缺口操作：`analyze_macro`、`batch_apply_template`、`batch_execute_macros`、`batch_export`、`batch_file_operations`、`batch_operations`、`batch_process_files`、`batch_run_macros`、`batch_vba`、`configurations_batch`、`convert_text_to_native_macro`、`diagnose_macro_execution`、`drawing_vba`、`edit_macro`、`execute_macro`、`export_vba`、`feature_vba`、`generate_vba_assembly_insert`、`generate_vba_assembly_mates`、`generate_vba_batch_export`、`generate_vba_code`、`generate_vba_drawing_dimensions`、`generate_vba_drawing_views`、`generate_vba_extrusion`
+（还有 18 个，见 `tools/union-sources.json`）
+
+### ⑰ 未归类（缺 42）
+
+| 来源 | 该域有 | 许可 | 来源验证 |
+|---|---|---|---|
+| `Eduardof0nt/Solidworks-MCP-Server` | 18 | MIT | **未声明** |
+| `andrewbartels1/SolidworksMCP-python` | 17 | MIT | **未声明** |
+| `Slacker-LLC/solidworks-mcp` | 16 | Apache-2.0 | SW 2026 SP3.2 简体中文 |
+| `vespo92/SolidworksMCP-TS` | 10 | MIT | **未声明** |
+
+缺口操作：`advanced_features`、`api_automation`、`arc`、`bodies`、`classify_feature_tree`、`composite_curve`、`delete_feature`、`edges`、`error_handling`、`execute_workflow`、`faces`、`features`、`file_properties`、`fold`、`gdt`、`hide_all_planes`、`line`、`load_part`、`mate`、`mates`、`model_info`、`operations`、`optimize_performance`、`pdm_operations`
+（还有 18 个，见 `tools/union-sources.json`）
+
+
+
+# 官方能力矩阵（capability-matrix）
+
+> 生成日期：2026-09-29 · 轮次 1
+> 上游基线：`wzyn20051216/solidworks-automation-skill` @ `8be39ac`（390 文件，MIT）
+> 工作副本：`C:\swprojects\sw-skill-fork\`
+> **本文档由静态检索与元数据反射生成，未启动 SolidWorks、未执行任何 COM 调用。**
+
+## 〇、本轮的三条覆盖来源与各自效力
+
+| 来源 | 覆盖域 | 本轮核实效力 | 依据 |
+|---|---|---|---|
+| `C:\swapi` 结构化 markdown | 域 1–12 | ✅ 可用 | 566 类型 / 963 枚举 / 11,557 成员 / 2,839 示例 / 30.3MB |
+| CHM `sldworksapi` 册 | 域 1–12 | ✅ 可用 | 11,579 文件，单页 38KB，含 `Syntax` 段，Innovasys 静态格式 |
+| CHM `cosworks` 册 | 域 13 | ❌ **空壳，不可作签名源** | 见下 |
+| interop DLL 元数据反射 | 域 13–14 | ✅ 唯一可用源 | 7 个程序集，见 §三 |
+
+> ### ⚠ 重大纠正：CHM `cosworks` 册是空壳
+>
+> 项目文档「已知事实 16」称该册「只覆盖 `ICWLoadsAndRestraintsManager` 一个接口族（34 接口页 + 13 枚举页）」，
+> 暗示其内容可用。**本轮核实：该册全部 34 个接口页均为空壳**：
+> - 页面正文只有 `Learning Resources / My.SolidWorks / Subscription Services / Loading JS...` 等导航栏文字；
+> - 同目录的 `.txt` 伴随文件（`ICWLoadsAndRestraintsManager_members.txt`，502 B）同样只有导航栏；
+> - 唯一有内容的文件是页面里指向线上站的 `Analyze_Part_Example_VBNET.txt` 片段。
+>
+> 根因：该册由新版 JS 模板生成（内容运行时从 help.solidworks.com 拉取），
+> 而 `sldworksapi` 册是旧版 Innovasys 静态格式（`hh.exe -decompile` 能拿到完整正文）。
+> 这与项目文档 §4.1 警告的「不要爬 help.solidworks.com，爬下来是空壳」是同一个坑，只是这次中招的是**解包产物**。
+>
+> **后果：cosworks 的 84 个接口签名只能来自反射，没有第二个交叉来源。**
+
+---
+
+## 一、域 1–12 官方接口族全景
+
+来源：`C:\swapi`（`sw_know.py domain <域>`）。数字为该域「入口类型」成员数合计。
+
+| # | 域 | 入口类型数 | 成员合计 | 官方接口族（入口类型） |
+|---|---|---|---|---|
+| 1 | 应用与会话 | 5 | 1,462 | `ISldWorks`333 · `IModelDoc2`721 · `IModelDocExtension`342 · `ISelectionMgr`62 · `IEnumModelViews`4 |
+| 2 | 草图 | 16 | 442 | `ISketchManager`92 · `ISketch`104 · `ISketchSegment`37 · `ISketchLine`12 · `ISketchArc`18 · `ISketchSlot`8 · `ISketchSpline`34 · `ISketchPoint`27 · `ISketchRelation`13 · `ISketchRelationManager`10 · `ISketchContour`11 · `ISketchHatch`21 · `ISketchText`12 · `ISketchPatternFeatureData`31 等 |
+| 3 | 零件特征 | 19 | 984 | `IFeatureManager`286 · `IFeature`125 · `ISimpleFilletFeatureData2`70 · `IChamferFeatureData2`29 · `ILinearPatternFeatureData`60 · `ICircularPatternFeatureData`45 · `IMirrorPatternFeatureData`21 · `IShellFeatureData`15 · `IRevolveFeatureData2`28 · `ISweepFeatureData`53 · `ILoftFeatureData`48 · `IRibFeatureData2`16 · `IChainPatternFeatureData`24 · `ICurveDrivenPatternFeatureData`44 |
+| 4 | 孔与螺纹 | 11 | 244 | `IWizardHoleFeatureData2`75 · `IAdvancedHoleFeatureData`10 · `ISimpleHoleFeatureData2`30 · `IHoleSeriesFeatureData2`27 · `IHoleStandardsData`4 · `IHoleTable`19 · `IAdvancedHoleElementData`13 · `IStraightTapElementData`7 · `ITaperedTapElementData`5 · `IThreadFeatureData`35 · `ICosmeticThreadFeatureData`19 |
+| 5 | 钣金 | 18 | 388 | `ISheetMetalFeatureData`23 · `IBaseFlangeFeatureData`53 · `IEdgeFlangeFeatureData`42 · `IOneBendFeatureData`33 · `ISketchedBendFeatureData`16 · `IHemFeatureData`18 · `IMiterFlangeFeatureData`24 · `ISweptFlangeFeatureData`31 · `IGussetFeatureData`18 · `ISMGussetFeatureData`30 · `IDraftFeatureData2`24 · `ILoftedBendsFeatureData`18 · `ISurfaceCutFeatureData`12 |
+| 6 | 焊件 | 14 | 170 | `IStructureSystemFolder`4 · `IStructureSystemMemberFeatureData`10 · `IStructureSystemMemberProfile`17 · `IStructureSystemSplitMember`8 · `IProfileCenterMateFeatureData`5 · `IWeldmentCutListFeature`10 · `IWeldBead`3 · `IWeldmentBeadFeatureData`18 · `ICosmeticWeldBeadFeatureData`26 · `IWeldSymbol`45 · `IWeldmentTrimExtendFeatureData`12 |
+| 7 | 曲面 | 13 | 237 | `ISurface`82 · `ISurfaceTrimFeatureData`12 · `ISurfaceExtendFeatureData`18 · `ISurfaceKnitFeatureData`14 · `ISurfaceFlattenFeatureData`10 · `ISurfaceOffsetFeatureData`13 · `ISurfaceCutFeatureData`12 · `ISurfaceRadiateFeatureData`11 · `IFillSurfaceFeatureData`23 · `ISurfacePlanarFeatureData`7 · `ISurfRevolveFeatureData`7 · `IShutOffSurfaceFeatureData`16 ⚠ **这 13 个是「编辑既有特征」用的定义对象，不是创建入口，见下方 §一注** |
+| 8 | 装配 | 24 | 537 | `IAssemblyDoc`196 · `IComponent2`165 · `IEnumComponents2`4 · `IMate2`33 · `IMateEntity2`7 · `IMateFeatureData`2 · `IMateInPlace`5 · `IMateReference`8 · `IExplodeStep`25 · `IPartExplodeStep`8 · `IMirrorComponentFeatureData`25 · `ICoincidentMateFeatureData`3 · `IConcentricMateFeatureData`4 · `IDistanceMateFeatureData`7 |
+| 9 | 工程图 | 21 | 1,456 | `IDrawingDoc`274 · `IView`461 · `IView3D`13 · `ISheet`53 · `IDimension`52 · `IDisplayDimension`141 · `IAnnotation`101 · `IAnnotationView`17 · `ITableAnnotation`85 · `IModelView`75 · `IModelViewManager`42 · `ISectionViewData`35 · `IBomTableAnnotation`25 · `IHoleTableAnnotation`2 · `IWeldmentCutListAnnotation`7 · `IBendTableAnnotation`1 · `IRevisionTableAnnotation`16 · `IDimensionTolerance`23 · `IMultiJogLeader`12 · `IDrawingComponent`19 |
+| 10 | 几何与拓扑 | 15 | 667 | `IBody2`220 · `IFace2`120 · `IEdge`47 · `IVertex`18 · `ICurve`68 · `ISurface`82 · `ILoop2`29 · `IEnumBodies2`4 · `IBoundingBoxFeatureData`10 · `IBoundaryBossFeatureData`36 · `ICenterOfMass`6 · `IMidSurface3`23 · `IEdgePoint`4 ⚠`ISeam2`/`IFeatureRef` **本机库无** |
+| 11 | 质量属性与导出 | 7 | 712 | `IMassProperty2`18 · `IMassPropertyOverrideOptions`13 · `ICenterOfMass`6 · `IModelDocExtension`342 · `ISldWorks`333 ⚠`ISaveAsOptions`/`ISaveAsInfo` **本机库无** |
+| 12 | 配置/材料/自定义属性 | 8 | 1,006 | `IConfiguration`82 · `IConfigurationManager`21 · `ICustomPropertyManager`26 · `IDesignTable`40 · `IMaterialVisualPropertiesData`8 · `IRenderMaterial`103 · `ITextAndCustomProperty`5 · `IModelDoc2`721 |
+
+**域 1–12 合计：157 个入口类型 · 8,131 个成员（去重前，含跨域重复的 `IModelDoc2`/`ISldWorks`/`ISurface`）**
+
+### 跨域复用的核心类型
+
+| 类型 | 出现在 | 说明 |
+|---|---|---|
+| `IModelDoc2` | 域 1、12（全域底座 721 成员） | 所有建模动作的落点 |
+| `IModelDocExtension` | 域 1、11（342） | 质量属性 / 导出 / 外部引用 |
+| `ISldWorks` | 域 1、11（333） | 应用级开关 |
+| `ISurface` | 域 7、10（82） | 曲面与拓扑共用 |
+| `ICenterOfMass` | 域 10、11（6） | 几何查询与质量属性共用 |
+
+### `sw_know.py verify` 报出的缺口
+
+| 域 | 缺失 | 判定 |
+|---|---|---|
+| 几何与拓扑 | `ISeam2`、`IFeatureRef` | **未查证**是官方真缺席还是本机库未收录。`sw_know suggest` 对 `ISeam2` 给出的是 `IFeature`/`IBomFeature`/`IFeatureFolder`，对 `IFeatureRef` 给出 `IAdvancedSaveAsOptions` 等，均非近似命中 → 按铁律 5 记「查不到」，不臆造 |
+| 质量属性与导出 | `ISaveAsOptions`、`ISaveAsInfo` | 同上。suggest 给 `IAdvancedSaveAsOptions`/`IBalloonOptions`/`IStackedBalloonOptions`，非同类 → 记「查不到」 |
+| 配置/材料/自定义属性 | `swCustomPropertyType_e`、`swMaterialPropertyValues_e` | 枚举缺失。suggest 给出的近似名均语义不同 → 记「查不到」 |
+| 仿真（域 13） | `ICWModelDoc`/`ICWResults`/`ICWStudyManager`/`ICWStudy`/`ICWBeam`/`ICWPressure` 等 | **已定位根因**：`C:\swapi` 只收录 12 个程序集，不含 `cosworks`。这些类型在 DLL 里存在（见 §二） |
+
+---
+
+### 域 7 的创建入口纠正（本轮新增）
+
+| 项 | 结论 |
+|---|---|
+| 入口对象 | `ISldWorks.GetModeler()` → `Object`（即 `IModeler`，123 成员 / 123 方法） |
+| 指针版 | `ISldWorks.IGetModeler()` → `Modeler`，**属官方限定的进程内非托管 C++ 接口，pywin32 迟到绑定不可用**，不收录 |
+| 创建方法 | **19 个非指针 `Create*Surface`**：`CreatePlanarSurface(2)` · `PlanarSurface2(3)` · `CylindricalSurface(3)` · `CylindricalSurface2(4)` · `SphericalSurface(2)` · `SphericalSurface2(4)` · `ConicalSurface(4)` · `ConicalSurface2(5)` · `ToroidalSurface(5)` · `OffsetSurface(2)` · `ExtrusionSurface(2)` · `RevolutionSurface(4)` · `RuledSurface(3)` · `SweptSurface(2)` · `BsplineSurface(4)` · `CoonsBSurface(5)` · `SheetFromSurface(2)` · `LoftSurface(18)` · `RuledSurfaceFromEdge(14)` |
+| 落盘清单 | `_raw/reflect_sldworks/iface_sldworks.txt` → `## IModeler` 段 |
+| 实现 | `scripts/sw_surface.py`（19 个登记 + 14 个薄封装） |
+
+> ### ⚠ 为什么上面 §一 域 7 那 13 个 `*FeatureData` 不是入口
+>
+> 对 `sldworks.dll` 全部 **1032 个接口**做扫描，查找「返回这 13 个类型」的方法：
+> **一个都没有。** 它们只能由 `IFeature.GetDefinition()` 在编辑既有特征时取得。
+>
+> ⇒ 靠接口名里的 `FeatureData` 三个字推断入口，会把人带偏一整轮。
+> **接口叫什么不重要，谁返回它才决定它是不是入口。**
+
+---
+
+## 二、域 13 仿真（Simulation）—— 只能靠反射
+
+来源：`SolidWorks.Interop.cosworks.dll` 纯元数据反射（`Assembly.LoadFrom().GetTypes()`，未实例化任何 COM 对象）。
+
+| 程序集 | 公开类型条目 | 枚举 | 成员 | 落盘清单 |
+|---|---|---|---|---|
+| `cosworks` | **168** | **363** | 3,224 | `_raw\reflect\iface_cosworks.txt` / `enum_cosworks.txt` |
+| `SWRoutingLib` | 28 | 26 | 170 | `iface_SWRoutingLib.txt` / `enum_SWRoutingLib.txt` |
+| `sldcostingapi` | 28 | 24 | 410 | `iface_sldcostingapi.txt` / `enum_sldcostingapi.txt` |
+| `fworks`（Toolbox） | 2 | 10 | 7 | `iface_fworks.txt` / `enum_fworks.txt` |
+| `sustainability` | 18 | 8 | 136 | `iface_sustainability.txt` / `enum_sustainability.txt` |
+| `swdocumentmgr`（PDM） | **296** | 65 | 4,683 | `iface_swdocumentmgr.txt` / `enum_swdocumentmgr.txt` |
+| `swmotionstudy` | 20 | 5 | 196 | `iface_swmotionstudy.txt` / `enum_swmotionstudy.txt` |
+
+### 168 的口径问题（待查证）
+
+反射的 168 条目中，`ICW*` 与 `CW*` 成对出现（如 `ICWStudy` / `CWStudy`），
+即 **84 个接口族 + 84 个对应 coclass**。项目文档「168 接口」与本表数字同源，但语义上应理解为 84 个接口族。
+
+**成员数 3,224 与项目文档记载的 9,281 不符。** 差异来源**未查证**——
+本轮的统计口径是 `接口.GetMembers().Count`，可能未展开继承成员或未计入 coclass 侧成员。
+按铁律 5，此处不猜测。**待办**：换 `GetMethods(DeclaredOnly)` / `GetMembers(DeclaredOnly)` 复算，或用 C# 侧 `tlbimp` 交叉核对。
+
+### 接口族归类（按 84 个 `ICW*` 接口）
+
+| 接口族 | 代表接口 | 能力 |
+|---|---|---|
+| 入口 / 文档 | `ICosmosWorks`、`ICWModelDoc` | 加载项 → 应用 → 文档 |
+| 研究管理 | `ICWStudyManager`、`ICWStudy` | 建/复制/重命名/转换研究；网格；求解；结果 |
+| 研究选项 | `ICWStaticStudyOptions`、`ICWFrequencyStudyOptions`、`ICWBucklingStudyOptions`、`ICWNonLinearStudyOptions`、`ICWDynamicStudyOptions`、`ICWFatigueStudyOptions`、`ICWDropTestStudyOptions`、`ICWThermalStudyOptions`、`ICWTopologyStudyOptions`、`ICWCompositeShellOptions` | 各研究类型参数 |
+| 载荷与夹具 | `ICWLoadsAndRestraintsManager`、`ICWLoadsAndRestraints`、`ICWLoadCaseManager` | **载荷/夹具施加（本域核心）** |
+| 载荷实体 | `ICWForce`、`ICWPressure`、`ICWTemperature`、`ICWHeatFlux`、`ICWHeatPower`、`ICWConvection`、`ICWRadiation`、`ICWGravity`、`ICWCWCentriFugalForce`、`ICWCentriFugalForce`、`ICWRemoteLoad`、`ICWDistributedMass`、`ICWRestraint`、`ICWBaseExcitation` | 具体载荷类型 |
+| 连接件 | `ICBearingConnector`… 实际为 `ICWBearingConnector`、`ICBoltConnector`、`ICWEdgeWeldConnector`、`ICWElasticConnector`、`ICWLinkConnector`、`ICWPinConnector`、`ICWRigidConnector`、`ICWSpotWeldConnector`、`ICWSpringConnector`、`ICWGeneralSpringConnector`、`ICWJoints`、`ICWLinkageRod` | 11 类连接件 |
+| 网格 | `ICWMesh`、`ICWMeshControl` | 网格生成与控制 |
+| 结果与后处理 | `ICWResults`、`ICWPlot`、`ICWResultsProbeManager`、`ICWTrendTracker`、`ICWRunStudiesResults`、`ICWRunSpecStudiesRunMeshOptions` | 结果读取、图表、探针、趋势 |
+| 拓扑优化 | `ICWTopologyStudyManager` + 10 个 `ICWTopology*` 约束/控制接口 | 拓扑优化约束与目标 |
+| 接触 | `ICWContactManager`、`ICWContactSet`、`ICWContactComponent`、`ICWMultipleContactSetsEditManager`、`ICWMultipleComponentContactsEditManager` | 接触与接触对 |
+| 材料/质量属性 | `ICWMaterial`、`ICWMassPropertiesManager` | 仿真材料、质量 |
+| 几何体 | `ICWSolidManager`、`ICWSolidBody`、`ICWSolidComponent`、`ICWShellManager`、`ICWShell`、`ICWBeamManager`、`ICWBeamBody` | 网格体/壳/梁管理 |
+| 疲劳/跌落 | `ICWFatigueEvent`、`ICWDropTestSetup`、`ICWDropTestResultOptions` | 疲劳事件与跌落测试 |
+| 阻尼/复合 | `ICWDampingOptions`、`ICWCable`、`ICWSolidComponent` | 阻尼、复合层、线缆 |
+| 回调 | `ICwAddincallback` | 加载项回调 |
+
+### `ICWLoadsAndRestraintsManager` 签名全表（反射，权威）
+
+```
+CWForce          AddForce(Int32, Object, Object, Int32&)
+CWForce          AddForce2(Int32, Int32, Object, Object, Int32&)
+CWForce          AddForce3(Int32, Int32, Int32, Int32, Int32, Int32, Object, Object, Boolean, Boolean,
+                           Int32, Int32, Int32, Double, Object, Boolean, Boolean, Object, Object, Boolean, Int32&)
+CWRestraint      AddRestraint(Int32, Object, Object, Int32&)
+CWDynamicInitialCondition AddInitialConditionForDynamicStudy(Int32, Int32, Object, Object, Int32, Int32, Double, Int32, Double, Int32, Double, Int32&)
+CWDynamicInitialCondition AddInitialConditionForDynamicStudy2(Int32, Int32, Object, Object, Int32, Boolean, Double, Boolean, Double, Boolean, Double, Int32&)
+Int32            CopyLoadsAndRestraintsToStudy(String, Object)
+```
+
+CHM 册里另有 28 个 `Add*` 方法页（`AddBearingLoad`/`AddBoltConnector`/`AddConvection`/`AddPressure`/`AddRemoteLoad`/`AddSpringConnector`/`AddTemperature`/…），
+**但如 §〇 所述这些页面无正文**，其签名**查不到**，本轮未纳入上表。
+⇒ 这是 cosworks 域的**真实覆盖缺口**：34 个载荷/连接件方法中，7 个有反射签名，27 个无签名来源。
+
+---
+
+## 三、域 14 路由 / Composer / PDM / Toolbox
+
+| 域 | 程序集 | 接口 | 落盘 | 本机安装情况 |
+|---|---|---|---|---|
+| Routing | `SWRoutingLib` | 28 | ✅ | 未安装（无实体路由产品） |
+| Costing | `sldcostingapi` | 28 | ✅ | 已装但宿主绑定 |
+| PDM | `swdocumentmgr` | 296 | ✅ | 需 PDM 许可证 |
+| Sustainability | `sustainability` | 18 | ✅ | 需 Sustainability 许可证 |
+| Toolbox / Foundry | `fworks` | 2 | ✅ | 无本体 API，仅 2 接口 |
+| Composer | — | — | ❌ **无独立程序集** | `fworks` 即其载体 |
+
+> 域 14 的 5 个程序集在 `C:\swapi` 中**完全没有收录**（`sw_know.py verify` 报缺失），
+> 官方来源只有反射一条。这些域**全部标记为「需许可证 + 本机不可达」**，
+> 按铁律 2 只能做**签名级**能力声明，不能声称可执行。
+
+---
+
+## 四、随附落盘物
+
+```
+D:\AI\SW\_raw\
+  domain_01..14_*.txt          14 域入口类型与关键枚举
+  swapi_verify.txt             功能域地图校验（含各域缺失项）
+  swapi_stats.txt              规模总览
+  swapi_domain_list.txt        14 域清单
+  reflect\iface_*.txt          7 程序集接口签名清单（<返回> <方法>(<参数类型>, ...)）
+  reflect\enum_*.txt           7 程序集枚举取值清单
+  chm_cosworks\*.txt           47 页（⚠ 全为空壳，见 §〇）
+  audit_batch1_simulation.md   首批签名比对结果（16 项）
+D:\AI\SW\tools\reflect-interop.ps1   反射脚本（可复跑）
+```
+
+
+# 已走死的路（★ 开工前该扫一遍）
+
+> ⚑ **本文件由 `tools/gen_dead_ends.py` 从 `capabilities.yaml` 生成** —— 不要手改。
+> ★ 它只挑**表示「试完了 / 走不通 / 有硬限制」**的 `limitations`，按能力分组。
+> ★★ **为什么有它**：2026-10-02 轮 359–362 我在 `revolve_boss` 的轴上**重走了一遍**
+> 前人早已走死的路（轮 153/155 记的「6 种选法全部失败」）—— 而结论**就在那份清单里**。
+> 轮 35 的定则：**动手核一条路之前，先读该能力的 `limitations`**。
+
+## 统计
+
+| 口径 | 数 |
+|---|---|
+| 「死路」条目 | **68** |
+| 涉及能力 | **39** |
+
+## 逐条（★ 按能力分组；等级 = 该能力当前等级）
+
+### `animation_export`（stitched）
+
+- ★★ 而**旧证据本身是有效的**（★ 保留其**事实**、更正其**推论**）：过去探过 `CMotionswapi.CMOTIONSWAddin` 等 **4 个 ProgID**，**全返 `None`** —— ★ 那条**事实仍成立**（★ `GetAddInObject(ProgID)` 取不到 Motion 加载项对象）；★★ **而"所以 AVI 导不了"那个**推论**已被轮 285 的探测推翻**（★ AVI 三环全通 ⇒ 导出**不依赖**那个 ProgID 路径，★ 它走的是 `IMotionStudyManager` / `IMotionStudy` 那一族）。 ★ ⇒ ★★★ **教训（事实 212 的同一形态）**：★ **一个探测的**结果**与从它推出的**结论**要分开记** —— ★ 结果可以长期有效，★ 而**结论会随新探测失效**；★ 把两者写在一起、结论错了就连结果一起删掉，**那是丢证据**。
+- ⚠ **`AGENTS.md §九.4`：需要用户提供的东西 ⇒ 停下报告，不自行拍板。**
+
+###

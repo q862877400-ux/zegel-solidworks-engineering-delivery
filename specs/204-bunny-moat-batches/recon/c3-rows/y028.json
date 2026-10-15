@@ -1,0 +1,178 @@
+{
+  "idx": 28,
+  "results": [
+    {
+      "name": "costing_readback",
+      "level": "verified",
+      "members_found": [
+        "CostingModel",
+        "CostingDefaults",
+        "GetBodyCount",
+        "GetBodies",
+        "GetCostAnalysis",
+        "GetCostingMethod",
+        "GetTemplatePathnames",
+        "GetTemplateName",
+        "CostingTemplateName",
+        "CurrencyCode",
+        "CurrencyName",
+        "CurrencySeparator",
+        "GetMaterialCost",
+        "GetManufacturingCost",
+        "GetSetupCost",
+        "GetTotalCostToCharge",
+        "GetTotalCostToManufacture",
+        "LotSize",
+        "TotalQuantity",
+        "MarkUpType",
+        "MarkUpPercent",
+        "LengthUnit",
+        "MassUnit",
+        "UnitSystem",
+        "CostingType",
+        "Name",
+        "GetName",
+        "GetBodyType",
+        "BodyStatus",
+        "GetSWBody"
+      ],
+      "examples_used": [
+        "Create_Machining_Costing_Analyses_Example_CSharp.md",
+        "Create_Sheet_Metal_Costing_Analyses_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "官方前置1：须先打开示例指定的 machined_part.sldprt（经 swApp.ActiveDoc）",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方前置2：须先在「工具>选项>系统选项>文件位置」确认 Costing 模板存在",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方前置3：须 Add a reference to SolidWorks.Interop.sldcostingapi.dll",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调用序前置：GetCostingManager() 之后官方立即 WaitForUIUpdate() 才继续",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "CostingModel 须先转成 CostPart，才拿得到 GetBodyCount/GetBodies/GetCostAnalysis",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetTemplatePathnames 入参须是 swcCostingType_e（Machining/Common/SheetMetal）枚举",
+          "from": "Create_Sheet_Metal_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetCostAnalysis 读得到的前提是实体已 Analysed；未分析官方走 CreateCostAnalysis 分支",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "GetBodyCount() > 0 才有实体可列，否则官方示例打印 No bodies 后退出",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "CostingDefaults 上的 GetTemplateName：两个索引里都找不到任何 Costing 示例覆盖",
+          "from": "b3-4-merged.json",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "证据只有一句「5/6 · 四个读数真的读到数据」，模板位置、CostPart 转换、BodyStatus 已分析等示例前置一条未记。"
+    },
+    {
+      "name": "render_material_library",
+      "level": "verified",
+      "members_found": [
+        "Extension",
+        "CreateRenderMaterial",
+        "FileName",
+        "Ambient",
+        "Diffuse",
+        "Specular",
+        "Roughness",
+        "Transparency",
+        "Emission",
+        "AddEntity",
+        "AddDisplayStateSpecificRenderMaterial",
+        "UpdateRenderMaterialsInSceneGraph",
+        "GetRenderMaterialsCount2",
+        "GetRenderMaterials2",
+        "DeleteRenderMaterial",
+        "GetMaterialIds",
+        "GetLinkedDisplayStates",
+        "CreateDisplayState",
+        "GetDisplayStates"
+      ],
+      "examples_used": [
+        "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+        "Get_Appearance_Filename_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "官方前置1：指定的模型文档必须已存在（示例用 OpenDoc6 打开后取 ActiveDoc）",
+          "from": "Get_Appearance_Filename_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方前置2：指定的 .p2m 材质文件必须已存在",
+          "from": "Get_Appearance_Filename_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "`RenderMaterialSpec(file_name=<真实 .p2m>)`"
+        },
+        {
+          "text": "AddEntity 前必须先 SelectByID2 选一个面并 GetSelectedObject6(1,-1) 取出该实体",
+          "from": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Add 之前必须先给活动配置 CreateDisplayState 建显示状态，并传 GetDisplayStates 的名字数组",
+          "from": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "次序：CreateRenderMaterial → AddEntity → AddDisplayStateSpecificRenderMaterial",
+          "from": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "`create` ok · `add_entity` ok · `add_render_material` ok"
+        },
+        {
+          "text": "读 GetMaterialIds / FileName 的前提是 GetRenderMaterialsCount2 > 0，否则走 else 分支",
+          "from": "Get_Appearance_Filename_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "设 `FileName = '<真实 .p2m>'` 之后：`GetMaterialIds` 回 `id1=6`、`GetRenderMaterialsCount2` 回 **2**"
+        },
+        {
+          "text": "示例正文另有一句 Verify that RealView Graphics is set（读 ViewDisplayRealView）",
+          "from": "Get_Appearance_Filename_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "covered 的是 .p2m 绑定与 create→add_entity→add 次序；未提「先选面再 AddEntity」与「先建显示状态/传真实名字数组」。"
+    }
+  ]
+}

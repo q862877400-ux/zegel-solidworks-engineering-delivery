@@ -1,0 +1,85 @@
+{
+  "role": "V3",
+  "my_numbers": {
+    "states": "判不了172 / 换名已有150 / 真缺27 (n=349) —— 与所报 172/150/27 完全一致；349 条 op 无重复、无缺字段、三态互斥且求和=349",
+    "handcheck": "文件实测 24 换名已有 / 3 真缺（任务书说「8 个换名已有」也与文件不符）；我逐条核 mcp-server 后独立判为 15 换名已有 / 12 真缺，其中 4 条结论对但证据指错工具"
+  },
+  "denominator_note": "真缺的分母只有27（词根筛出来的），不是349；172个判不了（49.3%）从未复判，手工仅覆盖7.7%。词根筛把「没同名」当「没能力」，故真缺是上界不是下界。",
+  "mismatch_with_reported": [
+    {
+      "item": "handcheck 里「换名已有」的条数",
+      "reported": "8（任务书）／24（文件实测）",
+      "mine": "15",
+      "why": "文件判换名已有共24条。逐条核459个真工具名的语义，9条站不住：fold/unfold/hem/jog、hide 两个、pdm、balloon、intersect。"
+    },
+    {
+      "item": "handcheck 之后剩下的「真缺」",
+      "reported": "3（rebuild_document / rebuild_model / security）",
+      "mine": "12",
+      "why": "3条我确认（rebuild/security/license 零命中）。另加9条：钣金四操作、可见性隐藏、PDM/vault、balloon、布尔 intersect 均无工具。"
+    },
+    {
+      "item": "注册表快照大小",
+      "reported": "441（文件头 n_mine）／340（why 文本「词根与340个工具名零交集」）",
+      "mine": "459",
+      "why": "扫 mcp-server/*.py 的 name= 字面量，正则与 AST 各得459、互差0。三个数互不相同 ⇒ 三次筛查可能跑在不同快照上。"
+    },
+    {
+      "item": "fold / unfold 的证据（why 指的工具）",
+      "reported": "solidworks_drawing_current_sheet_info 等5条图纸页工具",
+      "mine": "这5条全是误配；真命中是 solidworks_flatten_surface + 9个 sheet_metal_*",
+      "why": "fold/flatten 两个强 key 命中0条，靠最弱的 key「sheet」凑到的是 drawing_current_sheet 类工程图页。字母序取前5把真命中砍光。"
+    },
+    {
+      "item": "hide_all_planes / hide_all_sketches",
+      "reported": "换名已有（证据：assembly_show_exploded / extrude_midplane / insert_ref_plane / 若干 sketch_*）",
+      "mine": "真缺",
+      "why": "assembly_show_exploded 是显示/隐藏爆炸视图，不是隐藏基准面或草图。459个名字里除它以外零个含 hide/visib——没有任何可见性开关工具。"
+    },
+    {
+      "item": "pdm_operations",
+      "reported": "换名已有（唯一证据 solidworks_drawing_create_revision_table）",
+      "mine": "真缺",
+      "why": "该工具只是工程图修订表，靠子串 revision 命中，与 PDM/文档库操作无关。459个名字里 pdm 与 vault 各命中0个。"
+    },
+    {
+      "item": "balloon",
+      "reported": "换名已有（证据 solidworks_drawing_add_note）",
+      "mine": "真缺",
+      "why": "InsertNote 建的是注释，balloon 是独立标注类型。keys 里 balloon 命中0条；459个名字含 balloon 的也为0个，无任何气球标注工具。"
+    },
+    {
+      "item": "intersect",
+      "reported": "换名已有（证据 cut/undercut/knit 一族）",
+      "mine": "真缺",
+      "why": "intersect 与 combine 两个强 key 命中0条，5条证据全靠 cut 子串。cut 不是布尔交集，surface_knit 是缝合也不是。真无工具。"
+    },
+    {
+      "item": "faces（结论对，证据错）",
+      "reported": "换名已有，证据为 create_revolved_surface / surface_finish_symbol 等",
+      "mine": "换名已有成立，但真正的工具是 solidworks_entities_on_body（kind=FACE），未被列出",
+      "why": "cap-5 字母序把 entities_on_body 挤掉了。这属「结论对、证据指错」，与上面9条性质不同：不是漏判，是漏取证。"
+    },
+    {
+      "item": "rebuild_document / rebuild_model 判真缺的理由",
+      "reported": "「词根与340个工具名零交集」",
+      "mine": "作为独立工具确无；但能力以形参存在，理由站不住",
+      "why": "config_activate/activate_configuration 都带 rebuild=True、默认即重建。零交集只证明没叫 rebuild 的工具，不证明没能力。"
+    },
+    {
+      "item": "172 条判不了里可复判的样本",
+      "reported": "判不了（仅给候选列表，无结论）",
+      "mine": "至少 2 条当场可判",
+      "why": "两条当场可判：active_document_info→collect_model_summary、activate_drawing_view→sheets_summary。"
+    }
+  ],
+  "methodology_issues": [
+    "cap-5 字母序截断：27条里17条 hits 恰好5条。fold 的21个候选被砍到只剩5个工程图页工具，语义相关的 flatten_surface 与9个 sheet_metal_* 全丢。⇒ 看前5条下结论会漏。",
+    "判据是纯词根子串，不是语义。fold 的 fold/flatten 两个强 key 命中0条仍判换名已有，靠最弱的 sheet 凑命中；反向同样成立：rebuild 以 rebuild=True 形参存在，词根却报零交集。双向都失真。",
+    "注册表快照有三套数：文件头 n_mine=441、why 文本里的340、我实测459。⇒ 若三次筛查跑在不同快照上，「真缺=0」这类结论不可比，且 459−441=18 个工具对筛查隐形。",
+    "「真缺」只有一次机会：一行必须先被词根筛挑进那27才会有人复核；被判「判不了」的172条永远不会因人工复判而改判。⇒ 终态里 172/349 是冻结常量，不是测量结果。",
+    "任务书与文件都称「27个的两轮判定」，但文件里每个 op 只有单个 verdict 字段，没有 round1/round2。⇒ 无法核两轮是否独立、是否互相污染，「两轮」目前不可证。",
+    "三态互斥但不完备：词根零交集就直接落「真缺」，跳过了「换个命名可能已存在」这一步（rebuild 即此类）。⇒ 真缺是上界；拿 3 或 12 当349的分母算覆盖率，量纲要错。",
+    "8 条换名已有里 4 条证据是子串噪声：edges/vertices 靠 entit、faces 靠 face、bbox 靠 box 命中 toolbox_*、gdt 靠 tolerance 命中仿真工具。结论侥幸成立，证据链不可复现。"
+  ]
+}

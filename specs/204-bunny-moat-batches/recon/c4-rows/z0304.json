@@ -1,0 +1,123 @@
+{
+ "idx": 304,
+ "results": [
+  {
+   "member": "InitializeThreadData",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_a_Thread_Feature_Example_CSharp.md",
+    "Create_a_Thread_Feature_Example_VB.md",
+    "Create_a_Thread_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出前置调用序：必须先 CreateDefinition(swFmSweepThread) 拿到对象、紧接着 InitializeThreadData，再逐项设属性；Remarks 只说初始化为默认值，未提前置。",
+     "example_quote": "swThreadFeatData = (ThreadFeatureData)FeatMgr.CreateDefinition((int)swFeatureNameID_e.swFmSweepThread);",
+     "example_file": "Create_a_Thread_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "三份示例调用序一致，与 Remarks 无矛盾。"
+  },
+  {
+   "member": "Inner",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_DimXpert_Cone_Feature_Example_VB.md",
+    "Get_DimXpert_Cone_Feature_Example_VBNET.md",
+    "Get_DimXpert_Sphere_Feature_Example_VB.md",
+    "Get_DimXpert_Sphere_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 Remarks 段，按纪律跳过。"
+  },
+  {
+   "member": "InnerCornerFilletRadius",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+    "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "两示例均先置 FilletInnerCorners=true、紧接着赋 0.002 再赋 Outer 侧；Remarks 只给有效性条件，未给赋值顺序。",
+     "example_quote": "swFeatData.InnerCornerFilletRadius = 0.002;",
+     "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+    }
+   ],
+   "note": "示例满足 Remarks 的前置条件，无冲突。"
+  },
+  {
+   "member": "InnerRadius",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Fill_Pattern_Example_CSharp.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "- [[IFillPatternFeatureData::FeaturesToPatternType]] = [[swFeaturesToPatternType_e]].swFeaturesToPatternCreateSeedCut",
+     "example_quote": "swFeatData.FeaturesToPatternType = 0;",
+     "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+     "why": "swFeaturesToPatternCreateSeedCut=1、swFeaturesToPatternSelectedFeatures=0；示例给 0 即前提不成立，却仍赋 InnerRadius。"
+    },
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "- [[IFillPatternFeatureData::CreateSeedCutType]] = [[swCreateSeedCutType_e]].swCreateSeedCutPolygon",
+     "example_quote": "swFeatData.CreateSeedCutType = 0;",
+     "example_file": "Create_Fill_Pattern_Example_CSharp.md",
+     "why": "swCreateSeedCutPolygon=4、swCreateSeedCutNone=0；示例给 0，与 Remarks 要求的 4 直接冲突，且随后赋了 InnerRadius。"
+    }
+   ],
+   "example_more_specific": [],
+   "note": "两个有效性条件在示例里都不成立，是同一示例内的实锤冲突。"
+  },
+  {
+   "member": "Insert3DSketch",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Add_Along_X_Dimension_To_3D_Sketch_Example_CSharp.md",
+    "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+    "Add_Along_X_Dimension_To_3D_Sketch_Example_VBNET.md",
+    "Add_Along_Y_Dimension_To_3D_Sketch_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 Remarks 段（正文只有 Obsolete 行），按纪律跳过。"
+  },
+  {
+   "member": "Insert3DSketch2",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Calculate_Closest_Distance_Between_Faces_Example_VB.md",
+    "Calculate_Closest_Distance_Between_Model_Components_Example_VB.md",
+    "Check_Interference_Between_Two_Bodies_Example_VB.md",
+    "Check_Interference_using_Modeler_CheckInterference_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 Remarks 段（正文只有 Obsolete 行），按纪律跳过。"
+  },
+  {
+   "member": "Insert3DSplineCurve",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Curve_Through_Reference_Points_Example_CSharp.md",
+    "Create_Curve_Through_Reference_Points_Example_VB.md",
+    "Create_Curve_Through_Reference_Points_Example_VBNET.md",
+    "Create_Loft_Body_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "参考点实体类型不限：可用模型顶点 VERTEX，也可用外部草图点 EXTSKETCHPOINT；后者示例先 ClearSelection2 再按 mark=1 重选。",
+     "example_quote": "status = swModelDocExt.SelectByID2(\"Point4@Sketch1\", \"EXTSKETCHPOINT\", 0.0234541440502721, 0.0296993303358475, 0, false, 1, null, 0);",
+     "example_file": "Create_Loft_Body_Example_CSharp.md"
+    }
+   ],
+   "note": "四份示例的参考点都用 mark=1，与 Remarks 一致。"
+  }
+ ]
+}

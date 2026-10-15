@@ -1,0 +1,98 @@
+{
+  "idx": 522,
+  "results": [
+    {
+      "member": "ViewExplodeAssembly",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Exploded_Views_Example_CSharp.md",
+        "Create_Exploded_Views_Example_VB.md",
+        "Create_Exploded_Views_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序：先 ShowExploded2 逐个显示爆炸视图，再无参调用 ViewExplodeAssembly()，末尾 ViewCollapseAssembly()。",
+          "example_quote": "swAssembly.ViewExplodeAssembly();\nSystem.Diagnostics.Debugger.Break();\nswAssembly.ViewCollapseAssembly();",
+          "example_file": "Create_Exploded_Views_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例均零参调用并与 ViewCollapseAssembly 成对，与 Remarks 一致，无冲突。"
+    },
+    {
+      "member": "ViewFeatures",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_FeatureManager_Design_Tree_Display_Example_CSharp.md",
+        "Get_and_Set_FeatureManager_Design_Tree_Display_Example_VB.md",
+        "Get_and_Set_FeatureManager_Design_Tree_Display_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出双向切换写法：先读 ViewDependencies，为真则置 ViewFeatures=true，否则置 ViewDependencies=true。",
+          "example_quote": "if ((swFeatMgr.ViewDependencies))\n{\n    swFeatMgr.ViewFeatures = true;\n}\nelse\n{\n    swFeatMgr.ViewDependencies = true;\n}",
+          "example_file": "Get_and_Set_FeatureManager_Design_Tree_Display_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的「互相置 false」在示例里被实现成两分支切换，不矛盾。"
+    },
+    {
+      "member": "ViewId",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Open_Assembly_in_Large_Design_Review_Mode_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns（Snapshot ID），无 Remarks，按纪律跳过。"
+    },
+    {
+      "member": "ViewPdfAfterSaving",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VB.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VBNET.md",
+        "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns，无 Remarks，按纪律跳过；示例均赋 true。"
+    },
+    {
+      "member": "ViewZoomToSheet",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Zoom_Drawing_Sheet_to_Maximum_Size_in_Window_Example_CSharp.md",
+        "Zoom_Drawing_Sheet_to_Maximum_Size_in_Window_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks，按纪律跳过；与下一条指向同一页面。"
+    },
+    {
+      "member": "ViewZoomtoSheet",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Zoom_Drawing_Sheet_to_Maximum_Size_in_Window_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "仅 VBA 示例用小写 t 拼写 ViewZoomtoSheet，页面同为 ViewZoomToSheet.md。"
+    },
+    {
+      "member": "ViewportDisplay",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Model_View_Callouts_Example_CSharp.md",
+        "Create_Model_View_Callouts_Example_VB.md",
+        "Create_Model_View_Callouts_Example_VBNET.md",
+        "Set_Viewports_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns，无 Remarks，按纪律跳过；示例只赋值不读取。"
+    }
+  ]
+}

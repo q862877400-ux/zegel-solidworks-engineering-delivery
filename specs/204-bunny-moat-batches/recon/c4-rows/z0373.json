@@ -1,0 +1,132 @@
+{
+  "idx": 373,
+  "results": [
+    {
+      "member": "NearCounterSinkDiameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md",
+        "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for swCounterSunk and swCounterSunkDrilled holes.",
+          "example_quote": "Debug.Print(\"  NearCounterSinkDiameter      = \" + swWizHole.NearCounterSinkDiameter * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "示例孔型是同文件 63 行的 HoleWizard(swWzdGeneralHoleTypes_e.swWzdCounterBore)，即沉孔而非沉头锥孔，却仍读该属性并按 mm 当有效值打印（VB/VBNET 同）。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出单位：读数乘 1000.0 再拼 \" mm\"，即该值以米为单位；成员页全篇未写单位。",
+          "example_quote": "Debug.Print(\"  NearCounterSinkDiameter      = \" + swWizHole.NearCounterSinkDiameter * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出可写入的具体取值并注明单位为米；成员页只说 get/set，未给示例值。",
+          "example_quote": "FeatureData.NearCounterSinkDiameter = 0.0061;",
+          "example_file": "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_CSharp.md"
+        }
+      ],
+      "note": "仅一处冲突：页面限定只对沉头锥孔有效，示例却在沉孔上读它。"
+    },
+    {
+      "member": "NearSideCounterSink",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_CSharp.md",
+        "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_VB.md",
+        "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "****NOTE:** This property is a get-only property. Set is not implemented.**",
+          "example_quote": "FeatureData.NearSideCounterSink = true;",
+          "example_file": "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_CSharp.md",
+          "why": "页面 NOTE 声明只读、Set 未实现，同页签名却是 {get; set;}；三份示例都直接给它赋 true/false 企图切换选项。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出落地步骤：赋完属性还要把 FeatureData 交给 ModifyDefinition 才生效，成员页只说「无效果」未给这一步。",
+          "example_quote": "boolstatus = Feature.ModifyDefinition(FeatureData, swModel, null);",
+          "example_file": "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页 NOTE 与其自身签名、示例三边打架；单位（米/弧度）两侧一致。"
+    },
+    {
+      "member": "NearSideElementsCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；三份示例只读取该计数打印。"
+    },
+    {
+      "member": "NeedFaceFacetMap",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Convert_Non-manifold_Bodies_Example_CSharp.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VB.md",
+        "Create_and_Convert_Non-manifold_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，跳过；三份示例在 GetTessTriangles 前置 true。"
+    },
+    {
+      "member": "NeedsRebuild",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Are_the_Assembly_Configurations_Loaded_Example_CSharp.md",
+        "Are_the_Assembly_Configurations_Loaded_Example_VB.md",
+        "Are_the_Assembly_Configurations_Loaded_Example_VBNET.md",
+        "Rebuild_All_Configurations_Without_Activating_Each_Configuration_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，跳过；四份示例均按 bool 直接打印。"
+    },
+    {
+      "member": "NeedsRebuild2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Move_Freeze_Bar_Example_CSharp.md",
+        "Move_Freeze_Bar_Example_VB.md",
+        "Move_Freeze_Bar_Example_VBNET.md",
+        "Rebuild_All_Features_in_All_Configurations_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，跳过；四份示例把它赋给 long/bool 变量当返回值用。"
+    },
+    {
+      "member": "NewDocument",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_CSharp.md",
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+        "Add_Along_X_Dimension_To_3D_Sketch_Example_VBNET.md",
+        "Add_Along_Y_Dimension_To_3D_Sketch_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例比成员页多一条前置：模板路径必须事先存在；页面只让用 GetUserPreferenceStringValue 取默认名，未提存在性。",
+          "example_quote": "// Preconditions: Verify that the specified part template exists.",
+          "example_file": "Add_Along_X_Dimension_To_3D_Sketch_Example_CSharp.md"
+        }
+      ],
+      "note": "未找到冲突：示例写死模板路径、PaperSize 传 0（swDwgPaperAsize）均与 Parameters 相容。"
+    }
+  ]
+}

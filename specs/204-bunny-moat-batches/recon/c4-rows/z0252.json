@@ -1,0 +1,134 @@
+{
+  "idx": 252,
+  "results": [
+    {
+      "member": "GetSelectedObjectType3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Objects_to_Selection_List_Example_CSharp.md",
+        "Add_Objects_to_Selection_List_Example_VB.md",
+        "Add_Objects_to_Selection_List_Example_VBNET.md",
+        "Attach_Annotation_to_Entity_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 GetSelectedObjectCount 的返回值直接当 Index 用、取的是末项；成员页只写 1..count 的范围，没说 count 即末项下标。",
+          "example_quote": "Debug.Print \"The last object in the selection list is of swSelectType_e = \" & selMgr.GetSelectedObjectType3(count, -1) & \".\"",
+          "example_file": "Add_Objects_to_Selection_List_Example_VB.md"
+        },
+        {
+          "what": "选区是先选注释、再 Ctrl 加选实体的两项混排，只靠 Mark=-1 与 Index=1 取首项；成员页未给出这种混标取法。",
+          "example_quote": "Debug.Print(\"  Selection Type = \" + swSelMgr.GetSelectedObjectType3(1, -1));",
+          "example_file": "Attach_Annotation_to_Entity_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的「Index=-1 时忽略 Mark、取动态高亮项」在本批示例中未出现；Index 从 1 起、Mark=-1 用法与页面一致。"
+    },
+    {
+      "member": "GetSelectedObjectsComponent",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rotate_Assembly_Component_on_Axis_Example2_CSharp.md",
+        "Rotate_Assembly_Component_on_Axis_Example2_VB.md",
+        "Rotate_Assembly_Component_on_Axis_Example2_VBNET.md",
+        "Transform_Point_from_Component_Space_to_Assembly_Space_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Obsolete 行、签名、单参 AtIndex），按纪律跳过比对。"
+    },
+    {
+      "member": "GetSelectedObjectsComponent2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Material_Properties_Example_VB.md",
+        "Check_Interference_using_AssemblyDoc_ToolsCheckInterference2_Example_VB.md",
+        "Combine_Assembly_Components_into_Part_Example_VB.md",
+        "Get_Material_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Obsolete 行、签名、单参 AtIndex），按纪律跳过比对。"
+    },
+    {
+      "member": "GetSelectedObjectsComponent3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Align_Assembly_Component_to_Assembly_Origin_and_Planes_Example_VB.md",
+        "Change_Name_of_Component_Example_CSharp.md",
+        "Change_Name_of_Component_Example_VB.md",
+        "Change_Name_of_Component_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例走 Mark=0（只取无标记选择）分支，并在返回 Nothing 时提示重选；成员页只列了 0 的含义，未写空返回处置。",
+          "example_quote": "Set swComp = swSelMgr.GetSelectedObjectsComponent3(1, 0)",
+          "example_file": "Change_Name_of_Component_Example_VB.md"
+        },
+        {
+          "what": "示例一律传 Mark=0，而 Remarks 强调的动态高亮分支要传 Index=-1；两种 mark 取法中示例只演示了前者。",
+          "example_quote": "swComp = (Component2)swSelMgr.GetSelectedObjectsComponent3(1, 0);",
+          "example_file": "Change_Name_of_Component_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说 Index 从 1 起、Index=-1 时忽略 Mark；示例传 Index=1 配 Mark=0 或 -1，与页面一致。"
+    },
+    {
+      "member": "GetSelectedObjectsComponent4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Comment_to_Assembly_Component_Example_CSharp.md",
+        "Add_Comment_to_Assembly_Component_Example_VB.md",
+        "Add_Comment_to_Assembly_Component_Example_VBNET.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "该组件是用 SelectByID2 以 mark=0 选中的，示例仍以 Mark=-1 取回；示例给出 -1 覆盖无标记选择的实证。",
+          "example_quote": "swComp = (Component2)swSelectionManager.GetSelectedObjectsComponent4(1, -1);",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 称本方法能返回 IDrawingComponent，本批四个示例都只强转 Component2（装配场景），多态返回无示例佐证。"
+    },
+    {
+      "member": "GetSelectedObjectsDrawingView",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Punch_Table_Example_CSharp.md",
+        "Insert_Punch_Table_Example_VB.md",
+        "Insert_Punch_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Obsolete 行、签名、单参 AtIndex），按纪律跳过比对。"
+    },
+    {
+      "member": "GetSelectedObjectsDrawingView2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Labels_of_Datum_Origin_Example_CSharp.md",
+        "Get_Labels_of_Datum_Origin_Example_VB.md",
+        "Get_Labels_of_Datum_Origin_Example_VBNET.md",
+        "Insert_Bend_Table_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "选区由 mark=1 顶点与 mark=2 面两项构建，示例仍以 Index=1 加 Mark=-1 取到视图；页面未示范混标选区下 -1 的用法。",
+          "example_quote": "swView = (View)swSelectionMgr.GetSelectedObjectsDrawingView2(1, -1);",
+          "example_file": "Get_Labels_of_Datum_Origin_Example_CSharp.md"
+        },
+        {
+          "what": "前置只要求在特征管理器里选中展开图视图、不调 ActivateView，配 Mark=-1 即可取到；页面未写这条前置。",
+          "example_quote": "swView = ((SelectionMgr)(Part.SelectionManager)).GetSelectedObjectsDrawingView2(1, -1);",
+          "example_file": "Insert_Bend_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的「Index=-1 时忽略 Mark、取动态高亮项」在本批示例中未出现；Index=1 配 Mark=-1 与页面一致。"
+    }
+  ]
+}

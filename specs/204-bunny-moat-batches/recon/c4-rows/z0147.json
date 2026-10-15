@@ -1,0 +1,134 @@
+{
+  "idx": 147,
+  "results": [
+    {
+      "member": "GetAttachPos",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "两份 autoballoon 示例是在 SldWorks.Note 上调 GetAttachPos，属 INote 同名成员撞名，按纪律不采用；无可比对示例。"
+    },
+    {
+      "member": "GetAttachedEntities",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Entities_Attached_To_Cosmetic_Thread_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 UBound(数组)+1 取长度，说明返回是 0 基 Variant 数组；成员页对此只字未提。",
+          "example_quote": "entityCount = UBound(entitiesArray) + 1",
+          "example_file": "Get_Entities_Attached_To_Cosmetic_Thread_Example_VB.md"
+        }
+      ],
+      "note": "成员页只有 Obsolete→GetAttachedEntities2，无 Remarks，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetAttachedEntities2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_BOM_Balloon_Properties_Example_CSharp.md",
+        "Get_BOM_Balloon_Properties_Example_VB.md",
+        "Get_BOM_Balloon_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "COM applications can use QueryInterface to obtain the specific object from the LPUNKNOWN pointer.",
+          "example_quote": "swEntity = (Entity)attachedEntityArray[i];",
+          "example_file": "Get_BOM_Balloon_Properties_Example_CSharp.md",
+          "why": "Remarks 说元素是 LPUNKNOWN、须经 QueryInterface 取具体对象；示例把元素直接硬转 Entity 并调 GetComponent()，与 Remarks 的 IFace2/IEdge/IVertex 表不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例按 swSelNOTHING 逐项过滤后才解引用数组元素，比 Remarks 只说「返回 NULL」更具体。",
+          "example_quote": "If swSelNOTHING <> attachedEntityTypeArray(i) Then",
+          "example_file": "Get_BOM_Balloon_Properties_Example_VB.md"
+        }
+      ],
+      "note": "三份 BOM balloon 示例均把返回项直接当 Entity；VB.NET 版为 swEntity = attachedEntityArray(i)。"
+    },
+    {
+      "member": "GetAttachedEntities3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Attach_Annotation_to_Entity_Example_CSharp.md",
+        "Attach_Annotation_to_Entity_Example_VB.md",
+        "Attach_Annotation_to_Entity_Example_VBNET.md",
+        "Get_Types_of_Entities_for_Selected_Dimension_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "COM applications can use QueryInterface to obtain the specific object from the LPUNKNOWN pointer.",
+          "example_quote": "swEntity = (Entity)vAttEntArr[i];",
+          "example_file": "Attach_Annotation_to_Entity_Example_CSharp.md",
+          "why": "Remarks 要求经 QueryInterface 取具体对象；示例把元素直接硬转 Entity 再调 Select4，与 Remarks 的对象类型表不能同时成立。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "To determine the corresponding object type in the IAnnotation::GetAttachedEntites3 array, see [[IAnnotation::GetAttachedEntityTypes]] or [[IAnnotation::IGetAttachedEntityTypes]].",
+          "example_quote": "vAttEntTypeArr = (int[])swAnn.GetAttachedEntityTypes2();",
+          "example_file": "Get_Types_of_Entities_for_Selected_Dimension_Example_CSharp.md",
+          "why": "Remarks 指明配套成员为 GetAttachedEntityTypes/IGetAttachedEntityTypes，示例却调 GetAttachedEntityTypes2；本地类型树 IAnnotation 目录下无该成员页。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "VB 版给出两个数组等长的显式断言，Remarks 未提长度必须对齐。",
+          "example_quote": "Debug.Assert UBound(vAttEntArr) = UBound(vAttEntTypeArr)",
+          "example_file": "Attach_Annotation_to_Entity_Example_VB.md"
+        }
+      ],
+      "note": "四份示例均真调本成员；C# 版配 GetAttachedEntityTypes2，VB/VB.NET 版配 GetAttachedEntityTypes。"
+    },
+    {
+      "member": "GetAttachedEntityTypes",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Attach_Annotation_to_Entity_Example_CSharp.md",
+        "Attach_Annotation_to_Entity_Example_VB.md",
+        "Attach_Annotation_to_Entity_Example_VBNET.md",
+        "Get_BOM_Balloon_Properties_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回数组硬转成 int[]，比 Remarks 的「longs or integers」更具体（32 位口径）。",
+          "example_quote": "attachedEntityTypeArray = (int[])swAnnotation.GetAttachedEntityTypes();",
+          "example_file": "Get_BOM_Balloon_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例均真调本成员，返回形状与 Remarks 一致，未找到不能同时成立的说法。"
+    },
+    {
+      "member": "GetAttributeCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Block_Instance_in_Part_or_Assembly_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "示例只把返回值当整数直接打印，未给出 Remarks 之外的口径；无可判定差异。"
+    },
+    {
+      "member": "GetAttributes",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Block_Information_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说「string notes」；示例显示数组元素是可 Set 的 Note 对象，能读 TagName 与 GetText。",
+          "example_quote": "For\nk = 0 To UBound(vNote)\nSet\nswNote = vNote(k)\nDebug.Print\n\"        Tag\nName         =\n\" & swNote.TagName",
+          "example_file": "Get_Block_Information_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 让用 GetAttributeValue 取值，示例改走 Note.GetText；示例也未先调 GetAttributeCount。"
+    }
+  ]
+}

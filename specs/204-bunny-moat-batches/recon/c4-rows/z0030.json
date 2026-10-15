@@ -1,0 +1,145 @@
+{
+  "idx": 30,
+  "results": [
+    {
+      "member": "BeginDrag",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rotate_Assembly_Component_on_Axis_Example2_CSharp.md",
+        "Rotate_Assembly_Component_on_Axis_Example2_VB.md",
+        "Rotate_Assembly_Component_on_Axis_Example2_VBNET.md",
+        "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整调用序：AddComponent → 设 TransformType/DragMode → BeginDrag → 循环 Drag → EndDrag；成员页只有一句描述。",
+          "example_quote": "bRet = swDragOp.BeginDrag();",
+          "example_file": "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示 BeginDrag 之后必须反复调 Drag 直至累计到目标角度，再调 EndDrag 收尾。",
+          "example_quote": "bRet = swDragOp.EndDrag();",
+          "example_file": "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；4 份示例均为 swDragOp 上的真实调用。"
+    },
+    {
+      "member": "BeginSketchEdit",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Compound_Note_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用文档对象上的 VBA 专用建线成员造几何（Remarks 只列 CreateLine2/CreateArc2 家族）。",
+          "example_quote": "swDrawing.CreateLineVB 0, 0, 0, 0.01, 0.01, 0",
+          "example_file": "Create_Compound_Note_Example_VB.md"
+        },
+        {
+          "what": "示例顺序是 AddText 两段 → BeginSketchEdit → 造几何 → EndSketchEdit，几何窗口被两端夹住。",
+          "example_quote": "swNote.BeginSketchEdit",
+          "example_file": "Create_Compound_Note_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的索引编号说法与示例 GetTextAtIndex(1)/(2) 一致；无矛盾。"
+    },
+    {
+      "member": "BehindSheet",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Place_Note_Behind_Drawing_Sheet_Example_CSharp.md",
+        "Place_Note_Behind_Drawing_Sheet_Example_VB.md",
+        "Place_Note_Behind_Drawing_Sheet_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property places a note on the sheet format behind a drawing sheet, which allows you to display the note as watermark in a drawing. Before calling this property, you must call [[IDrawingDoc::EditTemplate]] and [[IDrawingDoc::EditSheet]].",
+          "example_quote": "swDrawing.EditSheet2",
+          "example_file": "Place_Note_Behind_Drawing_Sheet_Example_VB.md",
+          "why": "Remarks 点名必须调 EditSheet；示例调的是 EditSheet2，而 EditSheet 官方页已标 Obsolete、由 EditSheet2 取代。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例还要求：先选中 SHEET 进图框编辑模式，ClearSelection2 后再按名字选注释对象赋属性。",
+          "example_quote": "swNote.BehindSheet = True",
+          "example_file": "Place_Note_Behind_Drawing_Sheet_Example_VB.md"
+        }
+      ],
+      "note": "三份示例代码一致，仅语言不同；冲突只有前置成员名一处。"
+    },
+    {
+      "member": "BeltLength",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Belt_Chain_Feature_Example_CSharp.md",
+        "Create_Belt_Chain_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 BeltLength 的单位标为米（Remarks 未写单位），初值 0.59492、修改值 0.3。",
+          "example_quote": "Debug.Print(\"Belt length (m) changed to \" + swFeatData.BeltLength);",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例在创建与修改两处都先置 DrivingLength = true，满足 Remarks 的前置。",
+          "example_quote": "beltChainFeatData.DrivingLength = true;",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "前置说法与示例顺序一致，无冲突。"
+    },
+    {
+      "member": "BeltLocationPlane",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Belt_Chain_Feature_Example_CSharp.md",
+        "Create_Belt_Chain_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例的取值来自当前选区第 3 个对象（SelectByRay 选出的滑轮面），不是另建的基准面。",
+          "example_quote": "beltChainFeatData.BeltLocationPlane = selMgr.GetSelectedObject6(3, -1);",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的法向说法与示例无冲突；示例未收窄对象类型，不构成矛盾。"
+    },
+    {
+      "member": "BeltThickness",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Belt_Chain_Feature_Example_CSharp.md",
+        "Create_Belt_Chain_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 BeltThickness 单位标为米（Remarks 未写单位），创建值 0.003、修改值 0.002。",
+          "example_quote": "Debug.Print(\"Belt thickness (m) changed to \" + swFeatData.BeltThickness);",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "修改阶段重设 BeltThickness 时并未再设 UseBeltThickness，说明该开关随特征保留。",
+          "example_quote": "swFeatData.BeltThickness = 0.002d;",
+          "example_file": "Create_Belt_Chain_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "创建阶段 UseBeltThickness = true 在 BeltThickness 之前，与 Remarks 前置一致。"
+    },
+    {
+      "member": "BendAllowance",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 ## Remarks。4 份示例的 .BendAllowance 都挂在 CustomBendAllowance 对象上，非 IBendsFeatureData。"
+    }
+  ]
+}

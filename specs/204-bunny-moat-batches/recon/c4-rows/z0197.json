@@ -1,0 +1,165 @@
+{
+  "idx": 197,
+  "results": [
+    {
+      "member": "GetFirstWeldBead",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Weld_Bead_End_Treatment_Symbol_Data_Example_CSharp.md",
+        "Get_Weld_Bead_End_Treatment_Symbol_Data_Example_VB.md",
+        "Get_Weld_Bead_End_Treatment_Symbol_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：图纸中至少有一个视图带焊接符号注释；成员页无 Remarks，未给任何前置。",
+          "example_quote": "1. Open a drawing that contains at least one view with a weld bead",
+          "example_file": "Get_Weld_Bead_End_Treatment_Symbol_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出配套迭代：首珠之后用 GetNext() 往下走，视图用 GetNextView() 推进。",
+          "example_quote": "swWBead = swWBead.GetNext();",
+          "example_file": "Get_Weld_Bead_End_Treatment_Symbol_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetFitFontHeight",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Dimension_Tolerance_Example_CSharp.md",
+        "Get_Dimension_Tolerance_Example_VB.md",
+        "Get_Dimension_Tolerance_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This value is used only if the [[IDimensionTolerance::GetFitFontUseDimension]] and [[IDimensionTolerance::GetFitFontUseScale]] are false.",
+          "example_quote": "Debug.Print(\"  Height of fit tolerance font: \" + fontHeight * 1000.0 + \" mm\");",
+          "example_file": "Get_Dimension_Tolerance_Example_CSharp.md",
+          "why": "示例先 SetFitFont(true,false,0) 把 UseDimension 置真，再读该值并当 fit tolerance font 打印；Remarks 说它只在两个开关都 false 时生效。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体换算：返回值 ×1000 后标 mm；成员页只写 in system units。",
+          "example_quote": "fontHeight = swDimensionTolerance.GetFitFontHeight();",
+          "example_file": "Get_Dimension_Tolerance_Example_CSharp.md"
+        }
+      ],
+      "note": "VBA / VB.NET / C# 三份示例代码同构，同一处调用。"
+    },
+    {
+      "member": "GetFitFontScale",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Dimension_Tolerance_Example_CSharp.md",
+        "Get_Dimension_Tolerance_Example_VB.md",
+        "Get_Dimension_Tolerance_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出读序：紧跟 SetFitFont 之后读取，且比例值不换算直接打印。",
+          "example_quote": "fontScale = swDimensionTolerance.GetFitFontScale();",
+          "example_file": "Get_Dimension_Tolerance_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只给条件（UseDimension 为 true 时恒为 1.0），示例只打印不回读断言，故不判冲突。"
+    },
+    {
+      "member": "GetFitFontUseDimension",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Dimension_Tolerance_Example_CSharp.md",
+        "Get_Dimension_Tolerance_Example_VB.md",
+        "Get_Dimension_Tolerance_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "True if the fit tolerance font is the same size as the dimension font, false if not",
+          "example_quote": "Debug.Print(\"Dimension fit tolerance font same size as tolerance font? \" + swDimensionTolerance.GetFitFontUseDimension());",
+          "example_file": "Get_Dimension_Tolerance_Example_CSharp.md",
+          "why": "成员页写 dimension font，示例写 tolerance font；GetFontHeight 页单列 tolerance font ⇒ 二者是不同字体，参照对象不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：先放大到直径尺寸并点选它，成员页未写前置。",
+          "example_quote": "Zoom in on the diameter dimension and click it.",
+          "example_file": "Get_Dimension_Tolerance_Example_CSharp.md"
+        }
+      ],
+      "note": "冲突句取自成员页 Returns 行；Remarks 段本身只区分 fit / tolerance 字体，未提 dimension font。"
+    },
+    {
+      "member": "GetFixedFace",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Fixed_Face_of_Flatten-Bends_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出选区前置：先 AccessSelections 把设计树回滚到该特征，读完再 ReleaseSelectionAccess。",
+          "example_quote": "bRet = swBends.AccessSelections(swModel, null);",
+          "example_file": "Get_Fixed_Face_of_Flatten-Bends_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例前置选中的是 Process-Bends 特征，而成员页描述写的是 flatten-bends 特征。",
+          "example_quote": "Select a Process-Bends feature in the FeatureManager design",
+          "example_file": "Get_Fixed_Face_of_Flatten-Bends_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "另两份是同名异接口：Change_Bend_Radius 走 ISketchedBendFeatureData，Create_ConvertSolid 走 IConvertToSolidBodyFeatureData，按纪律不用。"
+    },
+    {
+      "member": "GetFlatPatternCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Flat_Pattern_Folder_Feature_Example_CSharp.md",
+        "Get_Flat_Pattern_Folder_Feature_Example_VB.md",
+        "Get_Flat_Pattern_Folder_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：多体钣金零件且已存在展平图案文件夹；成员页无 Remarks。",
+          "example_quote": "Open a multibody sheet metal part that has a folder",
+          "example_file": "Get_Flat_Pattern_Folder_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例把计数与 GetFlatPatterns() 数组按上下界遍历配对使用。",
+          "example_quote": "featArray = (object[])flatPatternFolder.GetFlatPatterns();",
+          "example_file": "Get_Flat_Pattern_Folder_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetFlatPatternFolder",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Flat_Pattern_Folder_Feature_Example_CSharp.md",
+        "Get_Flat_Pattern_Folder_Feature_Example_VB.md",
+        "Get_Flat_Pattern_Folder_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置：多体钣金零件且已存在展平图案文件夹；成员页无 Remarks。",
+          "example_quote": "Open a multibody sheet metal part that has a folder",
+          "example_file": "Get_Flat_Pattern_Folder_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例把它强转成 FlatPatternFolder 具名接口后再取 GetFeature() 的名字。",
+          "example_quote": "flatPatternFolder = (FlatPatternFolder)featureMgr.GetFlatPatternFolder();",
+          "example_file": "Get_Flat_Pattern_Folder_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+    }
+  ]
+}

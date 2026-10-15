@@ -1,0 +1,118 @@
+{
+  "idx": 6,
+  "pages_read": 14,
+  "rows": [
+    {
+      "iface": "IView",
+      "file": "Bodies.md",
+      "signature": "System.object Bodies {get; set;}",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（无括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetDependentViewCount.md",
+      "signature": "System.int GetDependentViewCount( System.bool AllViews, System.int SpecificViewType )",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetFaceHatchCount.md",
+      "signature": "System.int GetFaceHatchCount()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetPolyLineCount3.md",
+      "signature": "System.int GetPolyLineCount3( out System.int PointCount )",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IView",
+      "file": "GetWeldSymbolCount.md",
+      "signature": "System.int GetWeldSymbolCount()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetDisplayData2.md",
+      "signature": "DisplayData IGetDisplayData2()",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "IGetSplines.md",
+      "signature": "System.double IGetSplines()",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IView",
+      "file": "ReferencedDocument.md",
+      "signature": "ModelDoc2 ReferencedDocument {get;}",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（无括号）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "BreakLineStraightCut.md",
+      "signature": "void BreakLineStraightCut()",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "CreateViewport.md",
+      "signature": "System.string CreateViewport( System.double LowerLeftX, System.double LowerLeftY, System.double UpperRightX, System.double UpperRightY, System.short SketchSize )",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "ICreateBlockDefinition.md",
+      "signature": "BlockDefinition ICreateBlockDefinition( System.string Name, System.string XRefFileName, System.bool Instance, System.int SegmentCount, ref SketchSegment Segments, System.int PointCount, ref SketchPoint Points, System.int NoteCount, ref Note Notes, System.int DimensionCount, ref DisplayDimension Dimensions, System.int BlockCount, ref BlockInstance Blocks )",
+      "obsolete": true,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "InsertModelInPredefinedView.md",
+      "signature": "System.bool InsertModelInPredefinedView( System.string ModelName )",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "否（有形参）"
+    },
+    {
+      "iface": "IDrawingDoc",
+      "file": "UnBreakView.md",
+      "signature": "void UnBreakView()",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（空括号）"
+    },
+    {
+      "iface": "ISheet",
+      "file": "SheetFormatVisible.md",
+      "signature": "System.bool SheetFormatVisible {get; set;}",
+      "obsolete": false,
+      "pointer": false,
+      "zero": "是（无括号）"
+    }
+  ]
+}

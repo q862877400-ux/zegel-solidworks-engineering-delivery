@@ -1,0 +1,116 @@
+{
+  "idx": 260,
+  "results": [
+    {
+      "member": "GetSpecificFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_All_Elements_of_Sketch_Example_VB.md",
+        "Get_Arcs_in_Sketch_Example_VB.md",
+        "Get_Corresponding_Entities_Between_Parts_and_Views_Example_CSharp.md",
+        "Get_Corresponding_Entities_Between_Parts_and_Views_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有一行 Obsolete 声明，无 ## Remarks 段，按纪律跳过。4 份示例经 grep 确认均真实调用该成员。"
+    },
+    {
+      "member": "GetSpecificFeature2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md",
+        "Add_Spotlight_and_Get_Light_Feature_Example_CSharp.md",
+        "Add_Spotlight_and_Get_Light_Feature_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "For some feature types, this method returns Nothing or null because there is no specific object for that type of feature (e.g., features such as extrusions, lofts, fillets, chamfers, etc.). For these types of features, call [[IFeature::GetDefinition]] to get their feature data objects.",
+          "example_quote": "swCornerMgmtFolder = (CornerManagementFolder)swFeat.GetSpecificFeature2();",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md",
+          "why": "Remarks 用一张闭合清单枚举可返回的接口（29 个，含 IStructureSystemFolder，但无 ICornerManagementFolder），并规定无专属对象即回 null；示例却把 CornerManagementFolder 对象接住并直接调用其成员。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说要有 a corresponding selected feature；示例给出取得该 IFeature 的具体前置：SelectByID2 选中后用 GetSelectedObject6(1, -1) 取出 Feature 再调用。",
+          "example_quote": "Set swFeature = swSelectionMgr.GetSelectedObject6(1, -1)",
+          "example_file": "Add_Spotlight_and_Get_Light_Feature_Example_VB.md"
+        },
+        {
+          "what": "Remarks 只抽象说可用 IFeature 赋值回到 IFeature；示例演示完整往返：GetStructureSystemFolder 交回 Feature，再由本方法转成 IStructureSystemFolder。",
+          "example_quote": "swFeat = (Feature)swCornerMgmtFolder.GetStructureSystemFolder();",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+        }
+      ],
+      "note": "4 份示例均真实调用。冲突只一条：接口清单漏 ICornerManagementFolder。"
+    },
+    {
+      "member": "GetSpecificManipulator",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Drag_Arrow_Manipulator_Example_CSharp.md",
+        "Create_Drag_Arrow_Manipulator_Example_VB.md",
+        "Create_Drag_Arrow_Manipulator_Example_VBNET.md",
+        "sldworksapi__Create_Triad_Manipulator_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有 Returns 与 Examples），按纪律跳过。4 份示例经 grep 确认均真实调用。"
+    },
+    {
+      "member": "GetSpecificTransform",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Collapsed_Transform_of_Component_in_Exploded_View_Example_CSharp.md",
+        "Get_Collapsed_Transform_of_Component_in_Exploded_View_Example_VB.md",
+        "Get_Collapsed_Transform_of_Component_in_Exploded_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。三份示例均传 IgnoreExplode=True 取收拢变换，与参数说明一致。"
+    },
+    {
+      "member": "GetSphericalBoxDiameter",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Bounding_Box_Example_CSharp.md",
+        "Create_Bounding_Box_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，故示例里写的 (m) 标签与 Returns 无单位之差未计为 unit_diff。"
+    },
+    {
+      "member": "GetSplineCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Each_Splines_Parameters_Example_CSharp.md",
+        "Get_Each_Splines_Parameters_Example_VB.md",
+        "Get_Each_Splines_Parameters_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说返回值用来给 IGetSplines 的数组定长；三份示例改用它作 GetSplineParams5 的循环上界并以 0 基索引取样条。",
+          "example_quote": "splineCount = swSketch.GetSplineCount(ref splinePointCount);",
+          "example_file": "Get_Each_Splines_Parameters_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 仅一句，三份示例调用形态一致（VB/VB.NET 省略 ref 关键字），未见互相矛盾的说法。"
+    },
+    {
+      "member": "GetSplineHandles",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Spline_Handles_Example_CSharp.md",
+        "Get_and_Set_Spline_Handles_Example_VB.md",
+        "Get_and_Set_Spline_Handles_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。三份示例经 grep 确认均真实调用。"
+    }
+  ]
+}

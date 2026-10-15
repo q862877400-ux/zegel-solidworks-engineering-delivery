@@ -1,0 +1,159 @@
+{
+  "idx": 312,
+  "results": [
+    {
+      "member": "InsertDowelSymbol",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Flip_Dowel_Pin_Symbol_Example_CSharp.md",
+        "Flip_Dowel_Pin_Symbol_Example_VB.md",
+        "Flip_Dowel_Pin_Symbol_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 ## Remarks 段（仅 Returns/Examples/See Also），按纪律跳过。"
+    },
+    {
+      "member": "InsertDwgOrDxfFile2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_DXF_File_and_Add_Dimension_Example_VB.md",
+        "Insert_DXF_File_and_Add_Dimensions_Example_CSharp.md",
+        "Insert_DXF_File_and_Add_Dimensions_Example_VBNET.md",
+        "Insert_and_Position_DXF_File_in_Drawing_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Before calling this method, select a plane or planar surface on which to place the image.",
+          "example_quote": "bRet = swModel.Extension.SelectByID2(\"Sheet1\", \"SHEET\", 0.0, 0.0, 0, false, 0, null, 0);",
+          "example_file": "Insert_and_Position_DXF_File_in_Drawing_Example_CSharp.md",
+          "why": "Remarks 说调用前选「平面或平面曲面」；工程图示例（Preconditions: 1. Open a drawing.）选的是 SHEET 图纸，两者指的不是同一类实体。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把返回的 Feature 再经 GetSpecificFeature2 当 Sketch 用（后置条件写「Adds the DXF/DWG image as a sketch」），页面只写返回 IFeature。",
+          "example_quote": "swSketch = (Sketch)swFeat.GetSpecificFeature2();",
+          "example_file": "Insert_DXF_File_and_Add_Dimensions_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 其余各条（不支持装配体、返回 null 的情形、空 Sheet 参数）示例均未反证。"
+    },
+    {
+      "member": "InsertEndCapFeature2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weldment_Features_Example_CSharp.md",
+        "Insert_Weldment_Features_Example_VB.md",
+        "Insert_Weldment_Features_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Call [[IFeatureManager::InsertEndCapFeature3]] if you want to pre-select the faces to end-cap in the graphics area.",
+          "example_quote": "boolstatus\n= Part.Extension.SelectByID2(\"\", \"FACE\", 0.6023443450227,\n0.6150000000001, -1.013201139555, true, 1, null, 0);\nface1[0]\n= (Face2)selMgr.GetSelectedObject6(1, -1);\nx\n= face1;\nendCapFeature\n= fm.InsertEndCapFeature2(0.005,\nfalse, true, 0.003, 0.5, 0.003, x);",
+          "example_file": "Insert_Weldment_Features_Example_CSharp.md",
+          "why": "Remarks 把「在图形区预选端面」判给 InsertEndCapFeature3；示例却先在图形区 SelectByID2(mark 1) 预选端面、再把该面数组传给 InsertEndCapFeature2。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "C#/VB/VB.NET 三个示例都这样写（VB 见 258-268 行），不是单语言偶然。"
+    },
+    {
+      "member": "InsertEndCapFeature3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Weldment_End_Cap_Example_CSharp.md",
+        "Insert_Weldment_End_Cap_Example_VB.md",
+        "Insert_Weldment_End_Cap_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "端面按 mark 0 选中（append=true，两次都是 0），Remarks 只说「在图形区选中」未给 mark。",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"\", \"FACE\", 0.58771345904097, 0.614999999999952, -1.01293869257864, true, 0, null, 0);",
+          "example_file": "Insert_Weldment_End_Cap_Example_CSharp.md"
+        },
+        {
+          "what": "Depth 传 0.005，回读用 Thickness*1000.0 标 mm ⇒ 该形参单位是米，页面全页未写单位。",
+          "example_quote": "Debug.Print(\"    Thickness of end cap                                   = \" + swEndCap.Thickness * 1000.0 + \" mm\");",
+          "example_file": "Insert_Weldment_End_Cap_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 两句（先选端面 / 改用 Feature2 传数组）与示例一致，未找到矛盾。"
+    },
+    {
+      "member": "InsertExplodeLineSketch",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Explode_Line_Sketch_and_Jog_Line_Example_CSharp.md",
+        "Insert_Explode_Line_Sketch_and_Jog_Line_Example_VB.md",
+        "Insert_Explode_Line_Sketch_and_Jog_Line_Example_VBNET.md",
+        "Insert_Exploded_Line_Sketch_and_Route_Line_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 ## Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "InsertFeatureChamfer",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Edge_Chamfer_Distances_Example_CSharp.md",
+        "Get_Edge_Chamfer_Distances_Example_VB.md",
+        "Get_Edge_Chamfer_Distances_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Angle 形参按弧度传（0.78539816339745≈45°，回读再乘 DegPerRad），页面参数表未写单位。",
+          "example_quote": "swFeat = (Feature)swFeatMgr.InsertFeatureChamfer(4, 1, 0.00254, 0.78539816339745, 0, 0, 0, 0);",
+          "example_file": "Get_Edge_Chamfer_Distances_Example_CSharp.md"
+        },
+        {
+          "what": "距离类形参按米传（0.00254），回读乘 1000.0 标 mm，页面参数表未写单位。",
+          "example_quote": "Debug.Print(\"    EdgeChamferDistance(0)    = \" + swChamfer.GetEdgeChamferDistance(0) * 1000.0 + \" mm\");",
+          "example_file": "Get_Edge_Chamfer_Distances_Example_CSharp.md"
+        },
+        {
+          "what": "示例先按 mark 0 与 mark 1 各选一条 EDGE 才调用；Remarks 段没有任何选择前置。",
+          "example_quote": "bRet = swModelDocExt.SelectByID2(\"\", \"EDGE\", -0.0621980171204655, 0.0394066118978458, -0.000546079442074188, true, 0, null, 0);",
+          "example_file": "Get_Edge_Chamfer_Distances_Example_CSharp.md"
+        }
+      ],
+      "note": "示例传 ChamferType=1，与 swChamferType_e 的 swChamferAngleDistance=1 一致，Remarks 未被反证。"
+    },
+    {
+      "member": "InsertFeatureReplaceFace",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Replace_Face_Example_CSharp.md",
+        "Replace_Face_Example_VB.md",
+        "Replace_Face_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "True if the edges match, false if not",
+          "example_quote": "Part.InsertFeatureReplaceFace();",
+          "example_file": "Replace_Face_Example_CSharp.md",
+          "why": "这句在本页 ## Returns 段（不在 ## Remarks）：它说回 True/False，但同一页签名是 void，示例也按无返回值语句调用。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "替换面按名字选中整个 SURFACEBODY（mark 2），不是逐个曲面实体。",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"Surface-Extrude1\", \"SURFACEBODY\", -0.0189730427370591, 0.0726880897401543, 0.115671174990496, true, 2, null, 0);",
+          "example_file": "Replace_Face_Example_CSharp.md"
+        },
+        {
+          "what": "示例建完特征后回读 ReplaceFaceFeatureData 的 FacesForReplacement 与替换面计数。",
+          "example_quote": "vFacesToReplace = (object[])featData.FacesForReplacement;",
+          "example_file": "Replace_Face_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 mark 1/mark 2 与示例逐字一致，无 mark_diff。"
+    }
+  ]
+}

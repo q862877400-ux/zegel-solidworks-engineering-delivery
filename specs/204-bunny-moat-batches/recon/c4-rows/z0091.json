@@ -1,0 +1,94 @@
+{
+  "idx": 91,
+  "results": [
+    {
+      "member": "DeleteView",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "两份 Add_Buttons 示例调的是 TaskpaneView.DeleteView（ITaskpaneView，见该页自身 Examples 列表），非 IFeatMgrView，按纪律排除。"
+    },
+    {
+      "member": "DeltaX",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；三份示例均经 grep 确认使用 swMeasure.DeltaX。"
+    },
+    {
+      "member": "DeltaY",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；三份示例均经 grep 确认使用 swMeasure.DeltaY。"
+    },
+    {
+      "member": "DeltaZ",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；三份示例均经 grep 确认使用 swMeasure.DeltaZ。"
+    },
+    {
+      "member": "Density",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+        "Get_Mass_Properties_Using_IMassProperty_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先把 UseSystemUnits 置 false（注释写 MKS 文档单位）再读 Density，锁定单位基准；成员页 Returns 只写 Density，未给单位。",
+          "example_quote": "MyMassProp.UseSystemUnits = false;",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        }
+      ],
+      "note": "两份 Multibody 示例走 Extn.CreateMassProperty() 得 MassProperty（非 MassProperty2），属撞名排除；本成员未找到矛盾。"
+    },
+    {
+      "member": "Depth",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Broken_Out_Section_Feature_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例打印标签写明该读数单位为米，而成员页 Returns 只说 see Remarks、Remarks 全段未给单位。",
+          "example_quote": "Debug.Print(\"              Depth of exposure in meters: \" + swFeatData.Depth);",
+          "example_file": "Get_Broken_Out_Section_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 Hole Wizard 示例的 Depth 是 swWizHole.Depth，属另一接口，撞名排除；示例只读不写，与两条 Remarks 前置均不冲突。"
+    },
+    {
+      "member": "DepthDistance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Weldment_End_Cap_Example_CSharp.md",
+        "Insert_Weldment_End_Cap_Example_VB.md",
+        "Insert_Weldment_End_Cap_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；三份示例均以 DepthDistance * 1000.0 后标 mm。"
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "idx": 121,
+  "results": [
+    {
+      "member": "FastenerHoleCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Hole_Series_Information_Example_CSharp.md",
+        "Get_Hole_Series_Information_Example_VB.md",
+        "Get_Hole_Series_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页无条件；示例把「先在 Toolbox 配置孔与紧固件」列为前置，否则紧固件读数出错。",
+          "example_quote": "2. Configure holes and fasteners in the SOLIDWORKS Toolbox.",
+          "example_file": "Get_Hole_Series_Information_Example_VB.md"
+        },
+        {
+          "what": "示例在调用 AccessSelections 之前就读 FastenerHoleCount，说明该计数无需回滚即可取。",
+          "example_quote": "Debug.Print(\"  FastenerHoleCount:\", swFeatData.FastenerHoleCount);",
+          "example_file": "Get_Hole_Series_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "三份同题示例前置措辞不一：VBA 写 holes and fasteners，C#/VB.NET 只写 holes。"
+    },
+    {
+      "member": "FastenerID",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Wizard_Hole_Standards_Data_Example_CSharp.md",
+        "Get_Wizard_Hole_Standards_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页无前置；示例必须先 GetHoleStandardsData 才拿得到标准与紧固件 ID 表。",
+          "example_quote": "holeStandards = (HoleStandardsData)swApp.GetHoleStandardsData((int)swWzdGeneralHoleTypes_e.swWzdCounterBore);",
+          "example_file": "Get_Wizard_Hole_Standards_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示该 ID 既是 GetFastenerTable 的入参也可从表中读回，成员页只说它是 getter。",
+          "example_quote": "ret = holeStandards.GetFastenerTable((string)standardsArray[0], (int)fastenerIDsArray[0], (int)fastenerTableTypeIDsArray[j], out fastenerData);",
+          "example_file": "Get_Wizard_Hole_Standards_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页 Returns 只有 FastenerID；示例把它定位为 ANSI Inch 下 Binding Head Screw 表的键。"
+    },
+    {
+      "member": "FastenerSize",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只读不回滚：FastenerSize 在 AccessSelections 之前就打印，成员页未说是否需回滚。",
+          "example_quote": "Debug.Print(\"  FastenerSize                 = \" + swWizHole.FastenerSize);",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        },
+        {
+          "what": "示例逐个点名需回滚的成员是 Face/Vertex/GetEndConditionReference，FastenerSize 不在其中。",
+          "example_quote": "//    the feature must be rolled back with a call to",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 列的两条设定路径（ChangeStandard、CopyWizardHole）示例都没演示，只演示读。"
+    },
+    {
+      "member": "FastenerTopHoleType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Hole_Series_Information_Example_CSharp.md",
+        "Get_Hole_Series_Information_Example_VB.md",
+        "Get_Hole_Series_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页无条件；示例前置要求先在 Toolbox 配置孔与紧固件，未配置则紧固件相关读数出错。",
+          "example_quote": "2. Configure holes and fasteners in the SOLIDWORKS Toolbox.",
+          "example_file": "Get_Hole_Series_Information_Example_VB.md"
+        },
+        {
+          "what": "示例把顶面与底面紧固件孔类型成对读出，说明它是孔序列层面而非单个紧固件层面的类型。",
+          "example_quote": "Debug.Print(\"  FastenerTopHoleType:\", swFeatData.FastenerTopHoleType);",
+          "example_file": "Get_Hole_Series_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks；Returns 只指向 swWzdHoleStandardFastenerTypes_e，示例未给取值样例。"
+    },
+    {
+      "member": "FastenerType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说紧固件必须与 Standard 匹配；示例每个元素都先赋 Standard 再赋 FastenerType，顺序是硬约束。",
+          "example_quote": "swAdvHole_Near_1.Standard = 0",
+          "example_file": "Create_Advanced_Hole_Example_VBNET.md"
+        },
+        {
+          "what": "示例显示 ElementType 在 CreateAdvancedHoleElementData 时定下，此后 FastenerType 的可选域随之被锁死。",
+          "example_quote": "swAdvHole_Near_3 = (AdvancedHoleElementData)swModel.Extension.CreateAdvancedHoleElementData((int)swAdvWzdGeneralHoleTypes_e.swAdvWzdTaperTap);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 第二句（TaperTap 只配 *TaperedPipeTap）与示例取值一致，不构成冲突。"
+    },
+    {
+      "member": "FastenerType2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例打印标签写 FastenerType，实际读的是 FastenerType2；其值即创建时传入的紧固件类型枚举。",
+          "example_quote": "Debug.Print(\"  FastenerType                 = \" + swWizHole.FastenerType2);",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出第三条来源：创建期由 HoleWizard 实参定下，而 Remarks 只列 ChangeStandard 与 CopyWizardHole。",
+          "example_quote": "swFeat = swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore, (int)swWzdHoleStandards_e.swStandardISO, (int)swWzdHoleStandardFastenerTypes_e.swStandardISOHexCapScrew, \"M6\", (int)swWzdHoleThreadEndCondition_e.swEndThreadTypeBLIND, 0.0066, 0.02, 0.014547, 0.004, 0.0,",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "该页 Remarks 谈的是 fastener size（与 FastenerSize 页同文），未说 FastenerType 本身怎么设定。"
+    },
+    {
+      "member": "FeatEdit",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Editing_Status_of_Features_Example_CSharp.md",
+        "Get_Editing_Status_of_Features_Example_VB.md",
+        "Get_Editing_Status_of_Features_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页只说把当前特征置入编辑；示例给出前置：先 SelectByID2 以 BODYFEATURE 选中该特征。",
+          "example_quote": "retVal = swModelDocExt.SelectByID2(\"Cut-Extrude2\", \"BODYFEATURE\", 0, 0, 0, false, 0, null, 0);",
+          "example_file": "Get_Editing_Status_of_Features_Example_CSharp.md"
+        },
+        {
+          "what": "示例退出编辑用 InsertSketch2；FeatEdit 只负责进入，成员页未提任何退出路径。",
+          "example_quote": "swModel.InsertSketch2(true);",
+          "example_file": "Get_Editing_Status_of_Features_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页 ## Examples 只列 VBNET 与 VBA 两份，但 C# 版同样调用 FeatEdit。"
+    }
+  ]
+}

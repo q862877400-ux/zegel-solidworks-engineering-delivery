@@ -1,0 +1,119 @@
+{
+  "idx": 39,
+  "results": [
+    {
+      "name": "surface_planar_region",
+      "level": "verified",
+      "members_found": [
+        "InsertPlanarRefSurface",
+        "SelectByID2",
+        "ClearSelection2",
+        "GetSelectedObjectCount2"
+      ],
+      "examples_used": [
+        "Create_Planar_Surface_Feature_Example_CSharp.md",
+        "Create_Planar_Surface_Feature_Example_VB.md",
+        "Create_Planar_Surface_Feature_Example_VBNET.md",
+        "Insert_Solid_Body_Boundary_Surface_Feature_Example_CSharp.md",
+        "Create_Surface_Knit_Feature_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "官方示例前置块：指定的文档模板须存在（示例用它 NewDocument 建零件文档）",
+          "from": "Create_Planar_Surface_Feature_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调用前须用 SelectByID2 以 Marks of 1 选中该曲面的边界实体",
+          "from": "Create_Planar_Surface_Feature_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "按 **mark=1 选**那个草图（回读 `sel_count = 1`）"
+        },
+        {
+          "text": "官方示例按坐标选的是 4 条 EDGE（mark=1），即 boundary entities 指边",
+          "from": "Create_Planar_Surface_Feature_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "★ 轮 516 先试**曲面体的边**（12 条 · mark=1）⇒ **0 增量**、返回值 `False`；★ 轮 517 改试**草图**（闭合轮廓 · mark=1）⇒ **返回 `True` · 建成** ✓"
+        },
+        {
+          "text": "另两例（Solid Body Boundary / Surface Knit）都是选 SKETCH mark=1 再调用，草图选法亦为官方示例所用",
+          "from": "Insert_Solid_Body_Boundary_Surface_Feature_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "⇒ ★★ **故它指的是草图**（★ 而官方那句 `Remarks` **两种读法都通**）。"
+        },
+        {
+          "text": "文档里须先存在一张曲面作边界来源（示例先建 Surface-Radiate1）",
+          "from": "Create_Planar_Surface_Feature_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "先建一张曲面，再建**一个闭合草图**"
+        },
+        {
+          "text": "示例前置块另有「Open an Immediate window」——只服务示例的 Debug.Print，非 API 前置",
+          "from": "Create_Planar_Surface_Feature_Example_CSharp.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "选法两条（边 / 草图）与 mark=1 都已实测对照；唯官方前置「文档模板须存在」evidence 未提。"
+    },
+    {
+      "name": "replace_face",
+      "level": "verified",
+      "members_found": [
+        "InsertFeatureReplaceFace",
+        "SelectByID2",
+        "Select4",
+        "ClearSelection2",
+        "GetBodies2",
+        "GetFaces"
+      ],
+      "examples_used": [
+        "Replace_Face_Example_CSharp.md",
+        "Replace_Face_Example_VB.md",
+        "Replace_Face_Example_VBNET.md"
+      ],
+      "preconditions": [
+        {
+          "text": "官方示例前置块：指定的模型文档须存在（示例 OpenDoc6 打开 block20.sldprt）",
+          "from": "Replace_Face_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "先建一个**实体盒** + 一张**曲面**"
+        },
+        {
+          "text": "调用前须 SelectByID2 以 Marks of 1 选「要被替换的面」",
+          "from": "Replace_Face_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "按 **曲面面 mark=1 · 实体面 mark=2** 选两张面（回读 2）"
+        },
+        {
+          "text": "调用前须 SelectByID2 以 Marks of 2 选「替换面（replacement surfaces）」",
+          "from": "Replace_Face_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "按 **曲面面 mark=1 · 实体面 mark=2** 选两张面（回读 2）"
+        },
+        {
+          "text": "官方示例里 mark=2 选的是整个曲面体（按名字 SURFACEBODY），mark=1 选的是实体上的 FACE",
+          "from": "Replace_Face_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "替换前文档里须已有实体面与一张替换曲面（示例先建 Plane1 与 Surface-Extrude1）",
+          "from": "Replace_Face_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "先建一个**实体盒** + 一张**曲面**"
+        },
+        {
+          "text": "示例 NOTE：因该模型另有用途，勿保存改动——非调用前置",
+          "from": "Replace_Face_Example_CSharp.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "两个 mark 的数值已被 evidence 覆盖；但官方示例 mark=2 选整个 SURFACEBODY 的选法 evidence 未提。"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "role": "V2",
+  "attacked": 125,
+  "found_any": false,
+  "counterexamples": [],
+  "overload_cases": [
+    {
+      "member": "FeatureFillet3",
+      "official_overloads": [
+        "IFeatureManager: System.object FeatureFillet3( System.int Options, System.double R1, System.double R2, System.double Rho, System.int Ftyp, System.int OverflowType, System.int ConicRhoType, System.object Radii, System.object Dist2Arr, System.object RhoArr, System.object SetBackDistances, System.object PointRadiusArray, System.object PointDist2Array, System.object PointRhoArray )  [14]",
+        "IModelDoc2: System.int FeatureFillet3( System.double R1, System.bool Propagate, System.int Ftyp, System.bool VarRadTyp, System.int OverflowType, System.int NRadii, System.object Radii, System.bool UseHelpPoint, System.bool UseTangentHoldLine )  [9]"
+      ],
+      "should_be": "cannot_tell",
+      "refuted": true,
+      "actually_should_be": "match",
+      "note": "同一行 argc=9 且 official_argc=9，仍判 argc_mismatch —— 自相矛盾"
+    },
+    {
+      "member": "CustomPropertyManager",
+      "official_overloads": [
+        "IConfiguration/ICutListItem/IFeature: CustomPropertyManager CustomPropertyManager {get;}  [0]",
+        "reflection: IComponent2 / IModelDocExtension CustomPropertyManager  [1]"
+      ],
+      "should_be": "cannot_tell",
+      "refuted": true,
+      "actually_should_be": "match",
+      "note": "调用 model.Extension.CustomPropertyManager('') argc=1；反射有 1 参版，判定器只查了 swapi"
+    },
+    {
+      "member": "GetTextFormat",
+      "official_overloads": [
+        "IAnnotation: System.object GetTextFormat( System.int Index )  [1]",
+        "INote: System.object GetTextFormat()  [0]",
+        "IGtol: System.object GetTextFormat()  [0]"
+      ],
+      "should_be": "cannot_tell",
+      "refuted": true,
+      "note": "调用 argc=0，6 个接口有 0 参重载；判定器只取了 IAnnotation 的 1 参"
+    },
+    {
+      "member": "Calculate",
+      "official_overloads": [
+        "IMeasure: System.bool Calculate( System.object Entities )  [1]",
+        "IMotionStudy: System.bool Calculate()  [0]"
+      ],
+      "should_be": "cannot_tell",
+      "refuted": true,
+      "note": "调用 argc=0，存在同名 0 参重载；接收者类型未记录"
+    },
+    {
+      "member": "SetTextFormat",
+      "official_overloads": [
+        "IAnnotation: System.bool SetTextFormat( System.int Index, System.bool UseDoc, System.object TextFormat )  [3]",
+        "INote: System.bool SetTextFormat( System.int TextFormatType, System.object TextFormat )  [2]",
+        "IGtol: System.bool SetTextFormat( System.int TextFormatType, System.object TextFormat )  [2]"
+      ],
+      "should_be": "cannot_tell",
+      "refuted": true,
+      "note": "调用 argc=3 命中 IAnnotation 三参版；证据接收者是 INote，属接口歧义"
+    },
+    {
+      "member": "AddConfiguration",
+      "official_overloads": [
+        "IConfigurationManager: Configuration AddConfiguration( Name, Comment, AlternateName, System.int Options, ParentConfigName, Description )  [6]",
+        "IModelDoc2: void AddConfiguration( Name, Comment, AlternateName, SuppressByDefault, HideByDefault, MinFeatureManager, InheritProperties, Flags )  [8]"
+      ],
+      "should_be": "cannot_tell",
+      "refuted": true,
+      "note": "official_argc=null 却仍判 argc_mismatch；证据是生成 VBA 字符串非 COM 调用"
+    },
+    {
+      "member": "SetValues",
+      "official_overloads": [
+        "IDimensionTolerance: System.bool SetValues( System.double MinValue, System.double MaxValue )  [2]",
+        "IMateControllerFeatureData: void SetValues( System.string PositionName, System.object Values )  [2]"
+      ],
+      "should_be": "argc_mismatch",
+      "refuted": false,
+      "note": "两个官方重载都是 2 参，调用 3 参 —— 推不翻"
+    },
+    {
+      "member": "CreateCircularSketchStepAndRepeat",
+      "official_overloads": [
+        "IModelDoc2: System.bool CreateCircularSketchStepAndRepeat( ArcRadius, ArcAngle, PatternNum, PatternSpacing, PatternRotate, DeleteInstances )  [6]",
+        "ISketchManager: System.bool CreateCircularSketchStepAndRepeat( ArcRadius, ArcAngle, PatternNum, PatternSpacing, PatternRotate, DeleteInstances, RadiusDim, AngleDim, CreateNumOfInstancesDim )  [9]"
+      ],
+      "should_be": "argc_mismatch",
+      "refuted": false,
+      "note": "官方只有 6/9 参，调用 11 参 —— 推不翻"
+    }
+  ],
+  "conclusion": "两条结论分开：(A) absent_from_all3 的 125 个名字 —— 找不到反例。我把攻击面扩大到全部 125 个（不止 10 个），且用的是官方源的超集（C:\\swapi 全部 16254 个 md / 12364 个唯一名 > 结论所用 8238；_raw 全部 15 个 iface_*.txt、11120 个裸成员名 > 结论所用 11117），零命中；另用 Select-String 独立复核 12 个名字，只有 Depth2 命中一次，逐字是 iface_cosworks.txt:2784 `Void SetIncludeRegionDepth2(Boolean)` 的子串误报。⇒ 125 这条推不翻，方向正确。\n(B) 但标题里的『185 个名字在三个官方源里都查不到』这句话本身错了，两处：① 185 是调用点行数，不是名字数 —— 去重后只有 162 个不同名字；② 那 162 个里有 37 个其实在 swapi 与反射两源里同样查不到（我用全量文件名+内容重扫确认 37/37 双源缺席），它们之所以没进 125 名单，只是因为 in_chm 字段记的是**子串命中数**而不是成员页命中（逐字：SldWorks 15673、Item 3304、Dispatch 142、ZoomToFit 238 —— 明显是子串噪声）。⇒ 保守可辩护的『三源皆无』集合是 162，不是 125，也不是 185；那 37 个的状态是**未判定**，不是『已找到』。\n(C) argc_mismatch 115 行里查到 6 个误判：FeatureFillet3 与 CustomPropertyManager 应判 match（同名的官方重载 arity 与调用完全一致，FeatureFillet3 那行甚至 argc=9 且 official_argc=9 仍判 mismatch，自相矛盾）；GetTextFormat / Calculate / SetTextFormat / AddConfiguration 应判 cannot_tell。另 2 条（SetValues、CreateCircularSketchStepAndRepeat）攻不动，argc_mismatch 成立。根因：判定器对每个名字只取**一个**官方签名（多半是第一个命中的接口），从不枚举同名多接口 / 多 arity —— 这与仓库事实 36 是同一族错误。",
+  "headline_defect": {
+    "claim": "四家 1635 个调用点中 185 个名字在三个官方源里都查不到",
+    "truth": {
+      "rows_with_not_in_checked_sources": 185,
+      "distinct_member_names": 162,
+      "absent_from_all3_listed": 125,
+      "dropped_due_to_chm_substring_hit": 37,
+      "of_those_37_absent_from_swapi_AND_reflection": 37
+    },
+    "note": "185=行数；162=名字数；125 是扣掉 37 个『CHM 子串命中』后的名单。37 个在两个机器可查源里同样查不到，其 CHM 证据只是子串计数，非成员页证据 ⇒ 应记为未判定。"
+  },
+  "attack_surface": {
+    "absent_names_attacked": 125,
+    "swapi_filescanned": 16254,
+    "swapi_unique_stems": 12364,
+    "swapi_types_unique_stems": 8239,
+    "reflection_files_scanned": 15,
+    "reflection_unique_bare_names": 11120,
+    "independent_recheck_names": 12,
+    "argc_mismatch_rows_attacked": 115
+  },
+  "scanned_all_names_not_just_10": true
+}

@@ -1,0 +1,116 @@
+{
+  "idx": 408,
+  "results": [
+    {
+      "member": "RemoveInspectCurvature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_or_Remove_Curvature_Combs_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未做冲突比对。"
+    },
+    {
+      "member": "RemoveMaterialProperty",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Remove_Material_From_Bodies_Example_CSharp.md",
+        "Remove_Material_From_Bodies_Example_VB.md",
+        "Remove_Material_From_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未做冲突比对。"
+    },
+    {
+      "member": "RemoveMaterialProperty2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Remove_Material_Properties_from_Assembly_Component_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先选中组件并由 SelectionManager 取到 IComponent2；Remarks 只说用途，未提选取。",
+          "example_quote": "with changed material properties (for example, color)",
+          "example_file": "Remove_Material_Properties_from_Assembly_Component_Example_VB.md"
+        },
+        {
+          "what": "示例给出实参来源：Config_opt 传 swThisConfiguration，Config_names 取自装配的 GetConfigurationNames；Remarks 无实参指引。",
+          "example_quote": "RemoveMaterialProperty2(swThisConfiguration,",
+          "example_file": "Remove_Material_Properties_from_Assembly_Component_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 仅一句用途说明，与示例一致；示例的选取步骤与实参来源比 Remarks 具体。"
+    },
+    {
+      "member": "RemoveModelColorizer",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Custom_Colorize_a_Model_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未做冲突比对。"
+    },
+    {
+      "member": "RemoveNote",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Magnetic_Line_Example_CSharp.md",
+        "Insert_Magnetic_Line_Example_VB.md",
+        "Insert_Magnetic_Line_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未做冲突比对。"
+    },
+    {
+      "member": "RemovePresentationTransform",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Use_Presentation_Transforms_to_Move_Component_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "After calling IComponent2::RemovePresentationTransfrom, the component is next drawn in a position consistent with its underlying geometry ([[IComponent2::Transform2]]).",
+          "example_quote": "swComp.RemovePresentationTransform\nswComp.PresentationTransform = swMathXform\n' Redraw so it is shown immediately",
+          "example_file": "Use_Presentation_Transforms_to_Move_Component_Example_VB.md",
+          "why": "示例在该调用后立刻重赋 PresentationTransform 并 GraphicsRedraw，下一次绘制是移动后位置而非底层几何位置；Remarks 断言下次绘制必回到几何位置，两者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把该调用放进 100 次循环，每步调用一次后立刻赋新变换；Remarks 未提可重复调用。",
+          "example_quote": "For i = 1 To MaxSteps",
+          "example_file": "Use_Presentation_Transforms_to_Move_Component_Example_VB.md"
+        },
+        {
+          "what": "示例写明启用 presentation transform 会封锁大部分菜单；Remarks 只说事后置 false。",
+          "example_quote": "' * When presentation transforms are enabled,",
+          "example_file": "Use_Presentation_Transforms_to_Move_Component_Example_VB.md"
+        },
+        {
+          "what": "示例前置要求完全解析的装配且先选中组件；Remarks 未提这两项前置。",
+          "example_quote": "' 1. Open a fully resolved assembly.",
+          "example_file": "Use_Presentation_Transforms_to_Move_Component_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 两段分别讲置 EnablePresentation=false 的时机与绘制位置；示例把它当作逐帧重置。"
+    },
+    {
+      "member": "RemoveTexture2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Apply_and_Remove_Texture_By_Configuration_Example_CSharp.md",
+        "Apply_and_Remove_Texture_By_Configuration_Example_VB.md",
+        "Apply_and_Remove_Texture_By_Configuration_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过。Remove_Textures_from_Assembly_Components_Example_VB 调的是 IModelDocExtension.RemoveTexture2，非本成员，未计入。"
+    }
+  ]
+}

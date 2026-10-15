@@ -1,0 +1,118 @@
+{
+ "idx": 78,
+ "results": [
+  {
+   "member": "CustomPropertyName",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_CSharp.md",
+    "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_VB.md",
+    "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出写入路径：经 GetTextAndCustomProperties 取数组，只在 IsCustomProperty 为真的分支里写入一个自造名",
+     "example_quote": "custProp = \"CustomProperty \" + CStr(i)",
+     "example_file": "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_VB.md"
+    },
+    {
+     "what": "示例把该属性当可写字段赋自造串并立即回读，比成员页只描述 UI 对应关系更具体",
+     "example_quote": "swTextAndCustomProperty.CustomPropertyName = custProp",
+     "example_file": "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_VBNET.md"
+    }
+   ],
+   "note": "Remarks 只说它对应主题里的文本框，未与示例相斥；故不判冲突。"
+  },
+  {
+   "member": "CustomSizing",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Create_Advanced_Hole_Example_CSharp.md",
+    "Create_Advanced_Hole_Example_VB.md",
+    "Create_Advanced_Hole_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "页面无 Remarks，按纪律跳过判定；示例另有一处 swTaperedTapNear.CustomSizing 属 ITaperedTapElementData，非本成员，未混入。"
+  },
+  {
+   "member": "CutDirection",
+   "remarks_empty": true,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "唯一列出的示例调的是 SMNormalCutFeatureData2.CutDirection（传 Face2），与本成员不同接口，属名字撞车，未采用。"
+  },
+  {
+   "member": "CutListProperties",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_Mirror_Part_Information_Example_CSharp.md",
+    "Get_Mirror_Part_Information_Example_VB.md",
+    "Get_Mirror_Part_Information_Example_VBNET.md",
+    "Mirror_Sheet-metal_Part_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "页面无 Remarks。四例均在 MirrorPartFeatureData 上调用；另有 swBomTableColumnType_CutListProperties 等同名项，不属本成员。"
+  },
+  {
+   "member": "CutSurfaceBodies",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+    "Create_Section_View_and_Get_Some_Data_Example_VB.md",
+    "Create_Section_View_and_Get_Some_Data_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "页面无 Remarks。三例均先 (DrSection)swView.GetSection() 再调用，确属 IDrSection 本成员。"
+  },
+  {
+   "member": "CuttingLineShoulders",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_CSharp.md",
+    "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_VB.md",
+    "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "页面无 Remarks。三例均把 swSectionView 声明为 DrSection 后调用，确属本接口。"
+  },
+  {
+   "member": "CylinderParams",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Angle_of_Hole_Not_Normal_to_a_Face_Example_VB.md",
+    "Get_Entities_Attached_To_Cosmetic_Thread_Example_VB.md",
+    "Get_Parameters_of_Cylindrical_Surface_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例补了前置：先选中圆柱面，再用 IsCylinder 守卫后才取参数（成员页无前置）",
+     "example_quote": "If swSurf.IsCylinder Then",
+     "example_file": "Get_Parameters_of_Cylindrical_Surface_Example_VB.md"
+    },
+    {
+     "what": "前置更具体：注释第 2 条逐字要求「Select the cylindrical surface.」，且无草图/文档单位前提",
+     "example_quote": "2. Select the cylindrical surface.",
+     "example_file": "Get_Parameters_of_Cylindrical_Surface_Example_VB.md"
+    },
+    {
+     "what": "示例给出第二条取用路径：不选面，经注释附着实体直接取 CylinderParams",
+     "example_quote": "faceParams = attachedEntity.GetSurface.CylinderParams",
+     "example_file": "Get_Entities_Attached_To_Cosmetic_Thread_Example_VB.md"
+    },
+    {
+     "what": "示例把索引 3..5 原样当单位向量用、不换算，印证 axis 三个分量无量纲",
+     "example_quote": "nVector(0) = vCylinder(3): nVector(1) = vCylinder(4): nVector(2) = vCylinder(5)",
+     "example_file": "Get_Angle_of_Hole_Not_Normal_to_a_Face_Example_VB.md"
+    }
+   ],
+   "note": "三例对 radius 处理不同（两处 ×1000、一处直接 Str），但示例未声明单位，不足以判 unit_diff。"
+  }
+ ]
+}

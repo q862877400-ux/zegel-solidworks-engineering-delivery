@@ -1,0 +1,83 @@
+{
+  "idx": 11,
+  "results": [
+    {
+      "name": "autocad_script_backend",
+      "level": "verified",
+      "members_found": [
+        "SendCommand",
+        "ActiveDocument",
+        "DispatchEx(\"AutoCAD.Application\")"
+      ],
+      "examples_used": [],
+      "preconditions": [
+        {
+          "text": "须有活动 AutoCAD 文档：active_document() 取 app.ActiveDocument，取不到即抛错要求先开文档",
+          "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_session.py: active_document",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "命令串须以换行结尾才会被 SendCommand 正确投递；send_command() 自动追加换行符",
+          "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_session.py: send_command",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "只能走 SCRIPT_COMMANDS 白名单（zoom_extents / regen / qsave）；任意脚本文本被判 SCRIPT_COMMAND_NOT_ALLOWED",
+          "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_session.py: run_whitelisted_script_command",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "SendCommand 是异步的 ⇒ 执行后必须保存并复核 DWG/DXF/PDF 产物（模块自述 limitations）",
+          "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_session.py: run_whitelisted_script_command 的 limitations",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "cannot_tell",
+      "note": "AutoCAD ActiveX 实现；两索引对 SendCommand/ActiveDocument 等成员零命中，SaveAs 命中属 SolidWorks 同形异义，无官方示例前置可对账。"
+    },
+    {
+      "name": "autocad_dotnet_backend",
+      "level": "verified",
+      "members_found": [],
+      "examples_used": [],
+      "preconditions": [
+        {
+          "text": "须由 discover_installation 找到 AutoCAD 安装（本机 acad.exe），否则预检无对象",
+          "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_dotnet_preflight.py: run_preflight",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "须有 .NET SDK：_sdk_info 拿到 dotnet 与 sdk_versions，否则报 WINGET_MISSING 或需先装 SDK",
+          "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_dotnet_preflight.py: _sdk_info",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "三个 Autodesk 托管 API DLL 须齐全：accoremgd / acdbmgd / acmgd；缺则 AUTOCAD_MANAGED_API_MISSING",
+          "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_dotnet_preflight.py: REQUIRED_MANAGED_DLLS",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "运行期证据须连续 3 次真机回归 status=pass（plugin_loaded / dwg_saved 等）才升 verified，否则 pilot",
+          "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_dotnet_preflight.py: REQUIRED_CONSECUTIVE_PASSES",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "托管 DLL 的部署目录须可写；writable 检查失败即 blocked，不得交付",
+          "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_dotnet_preflight.py: run_preflight 的 writable 分支",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "cannot_tell",
+      "note": "零 COM 调用，是文件系统+子进程预检，无 AutoCAD 成员可查；两索引对 AcMgd 零命中，AutoCAD 命中属 SolidWorks 样例路径，同串异义已排除。"
+    }
+  ]
+}

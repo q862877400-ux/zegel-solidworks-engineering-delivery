@@ -1,0 +1,53 @@
+{
+ "idx": 21,
+ "results": [
+  {
+   "name": "mesh_create_readback",
+   "level": "verified",
+   "members_found": [
+    "CreateMesh",
+    "CreateMeshForMeshControl",
+    "GetDefaultElementSizeAndTolerance",
+    "Mesh",
+    "ElementCount"
+   ],
+   "examples_used": [],
+   "preconditions": [],
+   "verdict": "cannot_tell",
+   "note": "2839 篇官方示例与两索引对 CreateMesh/CreateMeshForMeshControl/GetDefaultElementSizeAndTolerance 全 0 命中；cosworks CHM 该三页只有签名、无 Example ⇒ 无示例前置可对账。"
+  },
+  {
+   "name": "analysis_run_readback",
+   "level": "verified",
+   "members_found": [
+    "RunAnalysis",
+    "Results",
+    "GetPlotCount",
+    "GetPlotNames",
+    "ActiveDoc",
+    "StudyManager",
+    "StudyCount",
+    "GetStudy",
+    "ActiveStudy",
+    "LoadsAndRestraintsManager",
+    "Count",
+    "GetLoadsAndRestraints",
+    "Name",
+    "Type",
+    "State",
+    "EntityCount",
+    "AnalysisType",
+    "MeshType",
+    "ConfigurationName",
+    "VersionNumber"
+   ],
+   "examples_used": [
+    "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md",
+    "sldworksapi__Create_Simulation_Gravity_Feature_Example_VB.md"
+   ],
+   "preconditions": [],
+   "verdict": "cannot_tell",
+   "note": "GetPlotCount 唯一命中的示例属 SwMotionStudy(Motion API)、非 ICWResults；RunAnalysis/GetPlotNames/ElementCount 0 命中 ⇒ 同名不同族，不计其前置。"
+  }
+ ]
+}

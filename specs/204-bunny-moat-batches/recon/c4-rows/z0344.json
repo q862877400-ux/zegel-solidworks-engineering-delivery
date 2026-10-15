@@ -1,0 +1,119 @@
+{
+  "idx": 344,
+  "results": [
+    {
+      "member": "Italic",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段。四个候选示例里的 Italic 都在 TextFormat 对象上（swTextFormat.Italic），不是 IPropertyManagerPageLabel.Italic，故不算真用到。"
+    },
+    {
+      "member": "ItemGroups",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Sort_Table_Example_CSharp.md",
+        "Sort_Table_Example_VB.md",
+        "Sort_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把枚举数组先装进 Object 变量再赋给 ItemGroups；Remarks 只说『指定数组』，未说经 Object 中转",
+          "example_quote": "object grpArray = null;",
+          "example_file": "Sort_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 Sort_Table 示例一致，且填的正是 Remarks 第二个示例（Parts、Other）那两项。"
+    },
+    {
+      "member": "ItemNumberIncrement",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Autoballoon_to_Face_Example_CSharp.md",
+        "Add_Autoballoon_to_Face_Example_VB.md",
+        "Add_Autoballoon_to_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把增量设为 1（int），且与 Start、Order 同批设完再调 AutoBalloon5；Remarks 只说『见帮助』",
+          "example_quote": "autoballoonParams.ItemNumberIncrement = 1",
+          "example_file": "Add_Autoballoon_to_Face_Example_VB.md"
+        }
+      ],
+      "note": "Insert_BOM_Table_and_Stacked_Balloon 用的是 IStackedBalloonOptions，不计入。Remarks 为样板句。"
+    },
+    {
+      "member": "ItemNumberStart",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Autoballoon_to_Face_Example_CSharp.md",
+        "Add_Autoballoon_to_Face_Example_VB.md",
+        "Add_Autoballoon_to_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例须先由 CreateAutoBalloonOptions() 取到参数对象才能设它；成员页没给这个调用序",
+          "example_quote": "Set autoballoonParams = Part.CreateAutoBalloonOptions()",
+          "example_file": "Add_Autoballoon_to_Face_Example_VB.md"
+        }
+      ],
+      "note": "Insert_BOM_Table_and_Stacked_Balloon 用的是 IStackedBalloonOptions，不计入。三份示例一致。"
+    },
+    {
+      "member": "ItemOrder",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Autoballoon_to_Face_Example_CSharp.md",
+        "Add_Autoballoon_to_Face_Example_VB.md",
+        "Add_Autoballoon_to_Face_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体枚举成员 swBalloonItemNumbers_DoNotChangeItemNumbers；Remarks 只引枚举类型名",
+          "example_quote": "autoballoonParams.ItemOrder = (int)swBalloonItemNumbersOrder_e.swBalloonItemNumbers_DoNotChangeItemNumbers;",
+          "example_file": "Add_Autoballoon_to_Face_Example_CSharp.md"
+        }
+      ],
+      "note": "VBA 写无前缀枚举名、C#/VB.NET 带类型前缀，是语言写法差异，不构成冲突。"
+    },
+    {
+      "member": "JaggedOutline",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Detail_Circle_and_Detail_View_Example_CSharp.md",
+        "Create_Detail_Circle_and_Detail_View_Example_VB.md",
+        "Create_Detail_Circle_and_Detail_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例须先由 swView.GetDetail() 取到 DetailCircle 才谈得上它；成员页没写这个取得路径",
+          "example_quote": "swDetailCircle = (DetailCircle)swView.GetDetail();",
+          "example_file": "Create_Detail_Circle_and_Detail_View_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例一致：均在 NoOutline 为 False 的分支内读它，并随即设 ShapeIntensity，与 Remarks 相符。"
+    },
+    {
+      "member": "JogDimension",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Offset_Dimension_Extension_Lines_Jogs_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 SelectByID2 程序化建立尺寸选区，并按 WitnessIndex 0、1 各调一次；Remarks 只说『交互式选中』",
+          "example_quote": "boolstatus = swModelDocExt.JogDimension(True, 0)",
+          "example_file": "Add_and_Offset_Dimension_Extension_Lines_Jogs_Example_VB.md"
+        }
+      ],
+      "note": "示例末尾确调 GraphicsRedraw，与 Remarks 的要求一致。"
+    }
+  ]
+}

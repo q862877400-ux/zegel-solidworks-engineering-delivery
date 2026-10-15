@@ -1,0 +1,173 @@
+{
+  "idx": 8,
+  "results": [
+    {
+      "member": "AddCornerReliefType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Corner_Relief_Feature_Example_CSharp.md",
+        "Create_Corner_Relief_Feature_Example_VB.md",
+        "Create_Corner_Relief_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在按 Mark=0 SelectByID2 选完钣金体后，下一句就是 ClearSelection2 —— 体选区在调用本方法前已被丢弃",
+          "example_quote": "swModel.ClearSelection2 True",
+          "example_file": "Create_Corner_Relief_Feature_Example_VB.md"
+        },
+        {
+          "what": "页面 Length2/Length3 未写单位；示例传 0.0007366 / 0.00018415，说明是米制量级",
+          "example_quote": "myReliefType = swModel.FeatureManager.AddCornerReliefType(-1, swCornerSquareRelief, 0.0001, 0.0007366, 0.00018415, False, False, False, True, False)",
+          "example_file": "Create_Corner_Relief_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例给出两种 ReliefType 的完整实参组合：方relief 用 AddFilletedCorners=True 配 Length3 圆角半径",
+          "example_quote": "myReliefType = swModel.FeatureManager.AddCornerReliefType(-1, swCornerObroundRelief, 0.0001, 0.0029464, 0.0007366, False, False, False, False, False)",
+          "example_file": "Create_Corner_Relief_Feature_Example_VB.md"
+        }
+      ],
+      "note": "三份示例行为一致；Remarks 六步与示例调用序无矛盾。"
+    },
+    {
+      "member": "AddCurvatureControl",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Spline_Tangency_and_Curvature_Controls_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出唯一的前置：先在图形区选中样条段，再由选区取到 ISketchSpline",
+          "example_quote": "2. Select the spline in the graphics area.",
+          "example_file": "Set_Spline_Tangency_and_Curvature_Controls_Example_VB.md"
+        },
+        {
+          "what": "页面 XPos/YPos/ZPos 无单位；示例用 /1000 换算，说明坐标是米",
+          "example_quote": "Set swSplineH2 = swSpline.AddCurvatureControl(6.3 / 1000, 15.075 / 1000, 0)",
+          "example_file": "Set_Spline_Tangency_and_Curvature_Controls_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "AddCustomButton",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Buttons_to_Task_Pane_Example_CSharp.md",
+        "Add_Buttons_to_Task_Pane_Example_VB.md",
+        "Add_Buttons_to_Task_Pane_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用宏文件夹拼出绝对路径传位图名，Remarks 未说路径要求",
+          "example_quote": "result = swTaskPane.AddCustomButton(folder + \"save.png\", \"Save (custom png)\");",
+          "example_file": "Add_Buttons_to_Task_Pane_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示必须先 AddCustomButton/AddStandardButton 再 AddControl，按钮才出现在顶部",
+          "example_quote": "swTaskPane.AddControl(ctrlName, ctrlLicKey);",
+          "example_file": "Add_Buttons_to_Task_Pane_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示自定义按钮的索引是 0（ButtonIndex+1 落在 case 1）",
+          "example_quote": "Debug.Print(\"Save (custom png) button clicked.\");",
+          "example_file": "Add_Buttons_to_Task_Pane_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说 BMP 或 PNG 均可，示例用 PNG，一致。页面首行标 Obsolete 但示例仍调本成员。"
+    },
+    {
+      "member": "AddDecal",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Decal_Example_CSharp.md",
+        "Add_Decal_Example_VB.md",
+        "Add_Decal_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出页面没有的前置：必须已激活光线追踪渲染引擎",
+          "example_quote": "' 3. Verify that a ray-trace rendering engine is active.",
+          "example_file": "Add_Decal_Example_VB.md"
+        },
+        {
+          "what": "示例要求先 CreateDecal 并给该 Decal 挂上面实体，才能传给本方法",
+          "example_quote": "Set swDecal = swModelDocExt.CreateDecal",
+          "example_file": "Add_Decal_Example_VB.md"
+        },
+        {
+          "what": "示例给出调用后还要 Rebuild，并说明 Decal 用 .p2d + .bmp 两个文件名",
+          "example_quote": "Call swModelDocExt.Rebuild(swRebuildAll)",
+          "example_file": "Add_Decal_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "AddDimension",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "所列 4 份示例调的是 IModelDocExtension::AddDimension（4 参、带 swSmartDimensionDirection），非本页 0 参成员；真用本成员的是 Delete_Instances_and_Dimensions_*，不在本清单。"
+    },
+    {
+      "member": "AddDimension2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Dimension_Edge_in_Drawing_Example_VB.md",
+        "Get_Annotations_Array_Example_VB.md",
+        "Get_Annotations_Arrays_Example_CSharp.md",
+        "Get_Annotations_Arrays_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例没有显式 SelectByID2，选中态直接来自上一句 SketchManager.CreateLine",
+          "example_quote": "swModel.SketchManager.CreateLine 0.01, 0.01, 0, 0.01, 0.01 + Height, 0",
+          "example_file": "Get_Annotations_Array_Example_VB.md"
+        },
+        {
+          "what": "示例把 swInputDimValOnCreate 这个开关设在 ISldWorks（swApp）上，建完再置回 True，Remarks 未说归属对象",
+          "example_quote": "swApp.SetUserPreferenceToggle swInputDimValOnCreate, True",
+          "example_file": "Get_Annotations_Array_Example_VB.md"
+        },
+        {
+          "what": "工程图示例按实体对象选（SelectEntity）而非按名或按坐标，与 Remarks 的「按位置别按名」不矛盾",
+          "example_quote": "= swView.SelectEntity(swEnt, False)",
+          "example_file": "Dimension_Edge_in_Drawing_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 与示例在「先选中」「按位置选」「单位为米」三处都对得上。"
+    },
+    {
+      "member": "AddDisplayEnt",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Replace_Dimension_with_Text_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例的数据坐标（0.12 / 0.09 等）是图纸米制，Remarks 的 data 说明未给单位",
+          "example_quote": "boolstatus = selDim.AddDisplayEnt(2, (vEntData)) ' Filled triangle",
+          "example_file": "Replace_Dimension_with_Text_Example_VB.md"
+        },
+        {
+          "what": "示例对同一尺寸连发 4 次本方法再叠 AddDisplayText，凑成一张替换图形；Remarks 未说可多次叠加",
+          "example_quote": "boolstatus = selDim.AddDisplayEnt(4, (vEntData)) ' Arc",
+          "example_file": "Replace_Dimension_with_Text_Example_VB.md"
+        },
+        {
+          "what": "示例说明取本对象前必须按 DIMENSION 选中并核对 GetSelectedObjectType3 = swSelDIMENSIONS",
+          "example_quote": "If selType = SwConst.swSelDIMENSIONS Then",
+          "example_file": "Replace_Dimension_with_Text_Example_VB.md"
+        }
+      ],
+      "note": "示例的 type=2/4/6 与 Remarks 表里的 9/12/4 个 double 完全对上。"
+    }
+  ]
+}

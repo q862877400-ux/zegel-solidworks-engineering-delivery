@@ -1,0 +1,172 @@
+{
+  "idx": 24,
+  "results": [
+    {
+      "name": "config_and_export",
+      "level": "verified",
+      "members_found": [
+        "GetConfigurationNames",
+        "ConfigurationManager",
+        "ActiveConfiguration",
+        "Name",
+        "ShowConfiguration2",
+        "EditRebuild3",
+        "AddConfiguration3",
+        "GetUnits",
+        "Parameter",
+        "GetSystemValue3",
+        "SetSystemValue3",
+        "Extension.CustomPropertyManager",
+        "Get6",
+        "Add3",
+        "Extension.SaveAs3",
+        "ClearSelection2",
+        "GetPathName",
+        "GetType",
+        "ExportToDWG2",
+        "SaveBMP",
+        "SetUserPreferenceIntegerValue",
+        "Save3"
+      ],
+      "examples_used": [
+        "Save_Model_as_Bitmap_Example_VB.md",
+        "Export_Part_To_DWG_Example_VB.md",
+        "Add_and_Get_Custom_Properties_Example_VB.md",
+        "Get_Custom_Properties_for_Configuration_Example_VB.md",
+        "Add_Derived_Configurations_Example_VB.md",
+        "Are_the_Assembly_Configurations_Loaded_Example_VB.md",
+        "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_VB.md",
+        "Change_Dimension_Example_VB.md",
+        "Change_Dimensions_of_Gear_Mate_Example_VB.md",
+        "Save_Configuration_Data_Example_CSharp.md",
+        "Add_and_Edit_Distance_Mate_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "打开 cstick.sldprt 后再调 SaveBMP；官方示例存的是「当前视图」（宽高 0,0 = 当前窗口尺寸）。",
+          "from": "Save_Model_as_Bitmap_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "须先把 2012-sm.sldprt 拷到 c:\\temp；示例把 GetPathName 结果当 ExportToDWG2 入参（文档须已存盘）。",
+          "from": "Export_Part_To_DWG_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Open a part document.（示例经 GetActiveConfiguration 取 CustomPropertyManager）",
+          "from": "Get_Custom_Properties_for_Configuration_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "须先在特征树选中 Weldment 特征才取其 CustomPropertyManager —— 与本条 Extension 级取法不同族。",
+          "from": "Add_and_Get_Custom_Properties_Example_VB.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Open a part or assembly.（配置族读写的最小前置）",
+          "from": "Add_Derived_Configurations_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "装配文档须存在；ShowConfiguration2 是「激活并加载」配置，激活后才谈 IsLoaded/IsDirty。",
+          "from": "Are_the_Assembly_Configurations_Loaded_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "指定的装配文档须存在；AddConfiguration3 第 4 参用 swConfigurationOptions2_e 位掩码。",
+          "from": "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "改尺寸前须 SelectByID2 选中特征，再 GetSelectedObject6(1,-1).Parameter(\"D3\") 取尺寸对象。",
+          "from": "Change_Dimension_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "NOTE: Most of the SOLIDWORKS API functions operate in meters… 传 2.0 而模型是毫米则显示 2000.0。",
+          "from": "Change_Dimension_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "多配置模型须先打开并逐个 ShowConfiguration2；示例里 Save3 那行被注释掉了。",
+          "from": "Save_Configuration_Data_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "SaveAs3 无导出格式示例：三个示例都走 3 参重载存 .sldprt，其前置属配合例、与导出无关。",
+          "from": "Add_and_Edit_Distance_Mate_Example_VB.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "evidence 仅三行（脚本名 + 10/12 + 8/8 + 静态门禁），无一条提到示例前置；SaveAs3 导出侧官方无示例。"
+    },
+    {
+      "name": "render_materials_and_appearance",
+      "level": "verified",
+      "members_found": [
+        "GetRenderMaterialsCount2",
+        "GetRenderMaterials2",
+        "UpdateRenderMaterialsInSceneGraph",
+        "Ambient",
+        "Diffuse",
+        "Specular",
+        "Roughness",
+        "Transparency",
+        "Emission",
+        "ActiveView"
+      ],
+      "examples_used": [
+        "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+        "Get_Appearance_Filename_Example_VB.md",
+        "Add_Spotlight_and_Get_Light_Feature_Example_VB.md",
+        "Get_and_Set_Model_View_HLR_Quality_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "Specified model exists. + Specified appearance exists.（指定的 .p2m 材质文件须存在）",
+          "from": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "列外观前须先 CreateDisplayState + ForceRebuild3，再 CreateRenderMaterial→选面 AddEntity→AddDisplayState…",
+          "from": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "模型文档与材质文件都须存在；GetRenderMaterialsCount2 第 2 参传 displayStateNames，并先查 ViewDisplayRealView。",
+          "from": "Get_Appearance_Filename_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Open a part or assembly document.（ActiveView 只有在已有打开文档时才返回 ModelView）",
+          "from": "Get_and_Set_Model_View_HLR_Quality_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "UpdateRenderMaterialsInSceneGraph 在 2839 个示例里零命中、recon by_member 也无此键 ⇒ 无官方示例。",
+          "from": "(C:\\swapi\\examples 全目录 + specs/203-bunny-sideline-batches/recon/b3-4-merged.json)",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "evidence 只有两行（脚本名 + 4/4 + 工具清单）；「须先建材质并赋到面」这条外观前置一字未提。"
+    }
+  ]
+}

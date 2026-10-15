@@ -1,0 +1,130 @@
+{
+  "idx": 393,
+  "results": [
+    {
+      "member": "PresetNewDrawingParameters",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Preset_and_Reset_Template_and_Sheet_Parameters_for_New_Drawing_Documents_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没有的前置：指定的图纸文档模板文件必须已存在",
+          "example_quote": "' Preconditions: Verify that the specified drawing document\n' template exists.",
+          "example_file": "Preset_and_Reset_Template_and_Sheet_Parameters_for_New_Drawing_Documents_Example_VB.md"
+        },
+        {
+          "what": "示例给出具体调用形态：真实 .slddrt 路径 + True,0,0，并用 Stop 让人工交互打开图纸后才 Reset",
+          "example_quote": "    swApp.PresetNewDrawingParameters \"C:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\lang\\english\\sheetformat\\a - portrait.slddrt\", True, 0, 0\n    Stop",
+          "example_file": "Preset_and_Reset_Template_and_Sheet_Parameters_for_New_Drawing_Documents_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只约束 Reset 的时序，示例 Preset->人工开图->Reset 与之一致，无冲突"
+    },
+    {
+      "member": "PreviewRenderQuality",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Render_Model_Example_CSharp.md",
+        "Render_Model_Example_VB.md",
+        "Render_Model_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按规则跳过"
+    },
+    {
+      "member": "PrimaryInLowerTier",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在复合位置/复合线轮廓/复合面轮廓三个复合接口上各读一次，成员页只提复合线轮廓",
+          "example_quote": "    strs.Add (\"Composite Datums:\")\n    strs.Add (\"  Repeat Primary: \" + IIf(annotation.PrimaryInLowerTier, \"True\", \"False\"))\n    strs.Add (\"  Repeat Secondary: \" + IIf(annotation.SecondaryInLowerTier, \"True\", \"False\"))\n    strs.Add (\"  Repeat Tertiary: \" + IIf(annotation.TertiaryInLowerTier, \"True\", \"False\"))",
+          "example_file": "Get_DimXpert_Datum_Example_VB.md"
+        },
+        {
+          "what": "示例把「第二行」落成具体操作：第二行选 Profile of Surface 并输入 0.5",
+          "example_quote": "'    b. In the second row, select Profile of Surface from the Symbol dropdown\n'       and type a tolerance of 0.5 next to it.",
+          "example_file": "Get_DimXpert_Tolerance1_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 说第二行即下层，示例一致；仅属性为只读，示例也只读，无冲突"
+    },
+    {
+      "member": "PrimaryMemberType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_VBNET.md",
+        "Create_Path_Segment_SSMember_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按规则跳过"
+    },
+    {
+      "member": "PrincipalMomentsOfInertia",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+        "Get_Mass_Properties_Using_IMassProperty_Example_VBNET.md",
+        "Get_Mass_Properties_using_MassProperty_Object_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "If [[IMassPropertyOverrideOptions::OverrideMomentsOfInertia]] is true or [[IMassProperty2::IncludeHiddenBodiesOrComponents]] is reset, then call [[IMassProperty2::Recalculate]] before using this property.",
+          "example_quote": "       \tpmoi = MyMassProp.PrincipalMomentsOfInertia\n       \tDebug.Print(\"Principal moments of inertia: Px: \" & pmoi(0) & \", Py: \" & pmoi(1) & \", and Pz: \" & pmoi(2))\n       \tvValue = MyMassProp.GetMomentOfInertia(0)\n       \tDebug.Print(\"Moments of inertia: Lxx: \" & vValue(0) & \", Lxy: \" & vValue(1) & \", Lxz: \" & vValue(2) & \", Lyx: \" & vValue(3) & \", Lyy: \" & vValue(4) & \", Lyz: \" & vValue(5) & \", Lzx: \" & vValue(6) & \", Lzy: \" & vValue(7) & \", Lzz: \" & vValue(8))\n       \tMyMassProp.SetOverrideOptions(OvProp, swInConfigurationOpts_e.swThisConfiguration, Nothing)\n       \tMyMassProp.Recalculate",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_VBNET.md",
+          "why": "示例在 OverrideMomentsOfInertia=True 之后未调 Recalculate 就读本属性，Recalculate 排在其后，与 Remarks 前置相反。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的「显式另设」落成 UseSystemUnits=False（改用文档单位），注释标 MKS",
+          "example_quote": "       \t' Use document property units (MKS)\n       \tMyMassProp.UseSystemUnits = False",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_VBNET.md"
+        },
+        {
+          "what": "示例把 System.object 直接强转 double[]，按下标 0/1/2 取 Px/Py/Pz",
+          "example_quote": "               pmoi = (double[])MyMassProp.PrincipalMomentsOfInertia;",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        }
+      ],
+      "note": "冲突1处；C#与VBA两份示例同样是先读后Recalculate；单位与数组形状两侧一致"
+    },
+    {
+      "member": "PrintBackground",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按规则跳过"
+    },
+    {
+      "member": "PrintCrossHatchOnOutOfDateViews",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按规则跳过"
+    }
+  ]
+}

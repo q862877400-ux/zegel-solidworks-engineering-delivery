@@ -1,0 +1,143 @@
+{
+  "idx": 178,
+  "results": [
+    {
+      "member": "GetDisplayEntity",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例对返回对象先做 TypeOf 类型判定再取名，成员页只写返回 [[IAnnotation]]，未给具体类型",
+          "example_quote": "If TypeOf dispEnt Is SldWorks.annotation Then",
+          "example_file": "Get_DimXpert_Tolerance1_Example_VB.md"
+        }
+      ],
+      "note": "无 Remarks。其自带示例只列 Tolerance 两份，但本轮四份均真调用该成员。"
+    },
+    {
+      "member": "GetDisplayManagerTabIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Active_Tab_in_Manager_Pane_Example_CSharp.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VB.md",
+        "Change_Active_Tab_in_Manager_Pane_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在读 tab index 前先显式显示 Manager Pane，成员页未给这一步前置",
+          "example_quote": "'Ensure that Manager Pane is visible",
+          "example_file": "Change_Active_Tab_in_Manager_Pane_Example_VB.md"
+        }
+      ],
+      "note": "无 Remarks。三份示例都只把返回值直接拼进字符串打印。"
+    },
+    {
+      "member": "GetDisplayMode2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Display_Mode_to_Draft_Quality_Example_VB.md",
+        "Get_Whether_HLR_HLV_Edges_Are_Displayed_Faceted_Example_VB.md",
+        "Set_Display_Mode_of_View_Example_CSharp.md",
+        "Set_Display_Mode_of_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值直接当 SetDisplayMode3 的参数回灌，说明该值可原样写回",
+          "example_quote": "bRet = swView.SetDisplayMode3(False, swView.GetDisplayMode2, True, True): Debug.Assert bRet",
+          "example_file": "Change_Display_Mode_to_Draft_Quality_Example_VB.md"
+        }
+      ],
+      "note": "无 Remarks。其自带示例列 C++ COM 与 Polylines 两份，不含本轮这四份。"
+    },
+    {
+      "member": "GetDisplayOnlySpeedPakBodies",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 SetDisplayOnlySpeedPakBodies(true) 再读 getter，读数恒为 True",
+          "example_quote": "swSectionView.SetDisplayOnlySpeedPakBodies(true);",
+          "example_file": "Create_Section_View_and_Get_Some_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "无 Remarks。示例只演示 setter 到 getter 的回读，未覆盖默认值。"
+    },
+    {
+      "member": "GetDisplayOnlySurfaceCut",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 SetDisplayOnlySurfaceCut(false) 再读 getter，两份示例读数均为 False",
+          "example_quote": "swSectionView.SetDisplayOnlySurfaceCut(false);",
+          "example_file": "Create_Section_View_and_Get_Some_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "无 Remarks。读数都紧跟 setter，未覆盖非默认状态。"
+    },
+    {
+      "member": "GetDisplayState",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Display_State_Example_VB.md",
+        "Get_Sectioned_Bodies_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "True if the setting specified is turned on, false if not",
+          "example_quote": "\"  Sectioned = \" & swModView.GetDisplayState(swIsViewSectioned)",
+          "example_file": "Get_Display_State_Example_VB.md",
+          "why": "签名与 Returns 段给出 System.bool；示例把返回值用 & 拼进字符串，VBA 中 Boolean 作 & 操作数报 Type mismatch，两者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 swViewDisplayType_e 各成员的数值写死，成员页只给了枚举链接",
+          "example_quote": "swIsViewPerspective\n= 1\nswIsViewShaded\n= 2",
+          "example_file": "Get_Display_State_Example_VB.md"
+        }
+      ],
+      "note": "本轮唯一有 Remarks 的成员。示例自建枚举只到 6，官方枚举页另有 swIsViewStripe = 7。"
+    },
+    {
+      "member": "GetDisplayStateComponentVisibility",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Display_State_Names_and_Visibilites_of_Components_Example_CSharp.md",
+        "Get_Display_State_Names_and_Visibilites_of_Components_Example_VB.md",
+        "Get_Display_State_Names_and_Visibilites_of_Components_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都把 Onlyhidden 与 ToplevelOnly 传 False，两个 True 分支一次未覆盖",
+          "example_quote": "displayStateVisibilities = swConfig.GetDisplayStateComponentVisibility(displayStateName, False, False, components)",
+          "example_file": "Get_Display_State_Names_and_Visibilites_of_Components_Example_VB.md"
+        },
+        {
+          "what": "C# 示例把返回值强转成 int[]、out 参数强转成 object[]，成员页只说 longs 或 integers",
+          "example_quote": "displayStateVisibilities = (int[])swConfig.GetDisplayStateComponentVisibility(displayStateName, false, false, out oComponents);",
+          "example_file": "Get_Display_State_Names_and_Visibilites_of_Components_Example_CSharp.md"
+        }
+      ],
+      "note": "无 Remarks。三份示例的 Select Case 只处理 0/1，无 Else 分支。"
+    }
+  ]
+}

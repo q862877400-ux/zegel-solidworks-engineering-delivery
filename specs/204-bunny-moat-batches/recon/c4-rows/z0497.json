@@ -1,0 +1,130 @@
+{
+  "idx": 497,
+  "results": [
+    {
+      "member": "ThreadStartAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_a_Thread_Feature_Example_CSharp.md",
+        "Create_a_Thread_Feature_Example_VB.md",
+        "Create_a_Thread_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例改该角前先 AccessSelections，改后须 ModifyDefinition 才提交",
+          "example_quote": "swThreadFeatData.AccessSelections((ModelDoc)swModel, null);\nswThreadFeatData.ThreadStartAngle = 0.04;\nswFeat.ModifyDefinition(swThreadFeatData, swModel, null);",
+          "example_file": "Create_a_Thread_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说可给值或以=开头的方程；示例给纯数值 0.04，落在 0~2π 内，无矛盾"
+    },
+    {
+      "member": "ThruHoleDepth",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例 *1000.0 后标 mm，即属性值按米计；成员页 Returns 未写单位",
+          "example_quote": "Debug.Print(\"  ThruHoleDepth                = \" + swWizHole.ThruHoleDepth * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        },
+        {
+          "what": "示例只 GetDefinition 就直接读本属性，未先调用 AccessSelections",
+          "example_quote": "swWizHole = (WizardHoleFeatureData2)swFeat.GetDefinition();\nDebug.Print(\"  ThruHoleDepth                = \" + swWizHole.ThruHoleDepth * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说 Set 版不可依赖；示例全程只读，未出现相反说法"
+    },
+    {
+      "member": "ThruHoleDiameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例 *1000.0 后标 mm，即属性值按米计；成员页 Returns 未写单位",
+          "example_quote": "Debug.Print(\"  ThruHoleDiameter             = \" + swWizHole.ThruHoleDiameter * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说对 swTapered/swTaperedDrilled 不适用；示例孔型是 swWzdCounterBore，不冲突"
+    },
+    {
+      "member": "ThruTapDrillDepth",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例 *1000.0 后标 mm，即属性值按米计；成员页 Returns 未写单位",
+          "example_quote": "Debug.Print(\"  ThruTapDrillDepth            = \" + swWizHole.ThruTapDrillDepth * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        },
+        {
+          "what": "示例在 swWzdCounterBore 孔上读该属性，该孔型不在 Remarks 的 swTap* 名单内",
+          "example_quote": "swFeat = swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore, (int)swWzdHoleStandards_e.swStandardISO, (int)swWzdHoleStandardFastenerTypes_e.swStandardISOHexCapScrew, \"M6\", (int)swWzdHoleThreadEndCondition_e.swEndThreadTypeBLIND, 0.0066, 0.02, 0.014547, 0.004, 0.0,",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 relevant 名单含 swTapBlind，示例用 BLIND 螺纹端条件，未硬性矛盾"
+    },
+    {
+      "member": "ThruTapDrillDiameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例 *1000.0 后标 mm，即属性值按米计；成员页 Returns 未写单位",
+          "example_quote": "Debug.Print(\"  ThruTapDrillDiameter         = \" + swWizHole.ThruTapDrillDiameter * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        },
+        {
+          "what": "示例在 swWzdCounterBore 孔上读该属性，该孔型不在 Remarks 的 swTap* 名单内",
+          "example_quote": "swFeat = swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore, (int)swWzdHoleStandards_e.swStandardISO, (int)swWzdHoleStandardFastenerTypes_e.swStandardISOHexCapScrew, \"M6\", (int)swWzdHoleThreadEndCondition_e.swEndThreadTypeBLIND, 0.0066, 0.02, 0.014547, 0.004, 0.0,",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "同上；Remarks 只说 relevant 于 swTap*，未禁止在沉孔上读取"
+    },
+    {
+      "member": "TimePerUnitLength",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Cosmetic_Weld_Bead_Example_CSharp.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VB.md",
+        "Insert_Cosmetic_Weld_Bead_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过比对；示例仅 Debug.Print 读取该属性"
+    },
+    {
+      "member": "Title",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份候选示例均未用该成员；Export BOMs 里的 Title 属 ITableAnnotation，非本成员"
+    }
+  ]
+}

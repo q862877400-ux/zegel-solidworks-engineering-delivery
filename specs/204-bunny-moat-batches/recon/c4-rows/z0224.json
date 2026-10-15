@@ -1,0 +1,139 @@
+{
+  "idx": 224,
+  "results": [
+    {
+      "member": "GetNextFace",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IFace2.GetNextFace.md 无 ## Remarks 段，按规则 3 跳过，未读示例。"
+    },
+    {
+      "member": "GetNextFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Objects_to_Selection_List_Example_CSharp.md",
+        "Add_Objects_to_Selection_List_Example_VB.md",
+        "Add_Objects_to_Selection_List_Example_VBNET.md",
+        "Autodimension_All_Sketches_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "When traversing the FeatureManager design tree, your application should use [[IFeature::GetTypeName2]] and [[IFeature::GetSpecificFeature2]] to identify specific features instead of relying solely on [[IFeature::Name]].",
+          "example_quote": "typeName = feat.Name\ntypeName = UCase(typeName)\nIf \"SKETCH\" = Left(typeName, 6) Then",
+          "example_file": "Add_Objects_to_Selection_List_Example_VB.md",
+          "why": "Remarks 明令勿只靠 Name 识别特征；三份 Add_Objects 示例（C#/VB/VBNET）恰恰只看名字前缀判草图。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "any feature has a specific name. Because features can be renamed, you cannot assume that the first reference plane feature is named Plane1.",
+          "example_quote": "boolstatus = swModel.Extension.SelectByID2(\"Sketch2\", \"SKETCH\", 0, 0, 0, False, 0, Nothing, 0)",
+          "example_file": "Add_Objects_to_Selection_List_Example_VB.md",
+          "why": "Remarks 说特征名不可假定；示例把 Sketch2 这个名字写死当固定标识来选中与进入编辑。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例用 while(swFeat != null) 终止遍历，不用 GetFeatureCount 计数循环",
+          "example_quote": "while ((swFeat != null)) {",
+          "example_file": "Autodimension_All_Sketches_Example_CSharp.md"
+        },
+        {
+          "what": "同一示例按 GetTypeName2 判 ProfileFeature，正是 Remarks 推荐的做法",
+          "example_quote": "if (swTnProfileFeature == swFeat.GetTypeName2()) {",
+          "example_file": "Autodimension_All_Sketches_Example_CSharp.md"
+        }
+      ],
+      "note": "冲突集中在 Add_Objects 三例按 Name 识别特征；Autodimension 一例合规。"
+    },
+    {
+      "member": "GetNextSegment",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Curve_Segments_Example_VB.md",
+        "Get_Reference_Curve_Information_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Because edges returned by this method are not selectable; you should not call any Select methods to get them. Select methods return NULL for any returned edges.",
+          "example_quote": "'Select each edge\nDo While Not swEdge Is Nothing\nSet swEntity = swEdge\n    status = swEntity.Select4(True, Nothing)",
+          "example_file": "Get_Curve_Segments_Example_VB.md",
+          "why": "Remarks 说返回边不可选且 Select 回 NULL；示例循环体整段就是 Select4，注释还写「Select each edge」。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "另一例把返回边只读消费，曲线参数要 ×1000 才是 mm",
+          "example_quote": "Debug.Print \" Start = (\" & vCurveParam(0) * 1000# & \", \"",
+          "example_file": "Get_Reference_Curve_Information_Example_VB.md"
+        }
+      ],
+      "note": "「返回边能否 Select」是正面冲突；同族另一例只读不选，与 Remarks 一致。"
+    },
+    {
+      "member": "GetNextSubFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_All_Sheet_Metal_Feature_Data_Example_CSharp.md",
+        "Get_All_Sheet_Metal_Feature_Data_Example_VB.md",
+        "Get_All_Sheet_Metal_Feature_Data_Example_VBNET.md",
+        "Get_Bodies_in_Body_Folders_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回 System.object，C# 必须显式转型才能当 Feature 用",
+          "example_quote": "nextSubFeat = (Feature)subfeat.GetNextSubFeature();",
+          "example_file": "Get_Bodies_in_Body_Folders_Example_CSharp.md"
+        },
+        {
+          "what": "兄弟链推进调用在子特征自己身上，不回到父特征",
+          "example_quote": "Set swSubFeat = swSubFeat.GetNextSubFeature()",
+          "example_file": "Get_All_Sheet_Metal_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都以 null/Nothing 终止，与「无子特征返回 NULL」一致，找不到冲突。"
+    },
+    {
+      "member": "GetNextView",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IView.GetNextView.md 无 ## Remarks 段，按规则 3 跳过，未读示例。"
+    },
+    {
+      "member": "GetNominalBottomPlane",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IDimXpertCompoundClosedSlot3DFeature 页无 ## Remarks，按规则 3 跳过。"
+    },
+    {
+      "member": "GetNominalCircle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_DimXpert_Intersect_Features_Example_VB.md",
+        "Get_DimXpert_Intersect_Features_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "前置更具体：Intersect Circle1 要先用 DimXpert 界面建好，代码只按名字取",
+          "example_quote": "Set\niCircleFeature = swDXPart.GetFeature(\"Intersect Circle1\")",
+          "example_file": "Get_DimXpert_Intersect_Features_Example_VB.md"
+        },
+        {
+          "what": "示例用 bool 返回做读取门，并按 R,X,Y,Z,I,J,K 顺序传 out",
+          "example_quote": "boolstatus\n= iCircleFeature.GetNominalCircle(radius,\nx, y, z, i, j, k)\nIf\nboolstatus Then",
+          "example_file": "Get_DimXpert_Intersect_Features_Example_VB.md"
+        }
+      ],
+      "note": "示例把 I/J/K 当 pierce vector 打印，与 Remarks 语义一致；只多给了前置与门控。"
+    }
+  ]
+}

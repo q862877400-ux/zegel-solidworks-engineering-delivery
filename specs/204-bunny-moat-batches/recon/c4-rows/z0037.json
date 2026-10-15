@@ -1,0 +1,158 @@
+{
+  "idx": 37,
+  "results": [
+    {
+      "member": "CalloutString",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[IAdvancedHoleFeatureData::CustomizeCallout]] is set to true.",
+          "example_quote": "Set feat = swFeatureMgr.AdvancedHole2((advHoleNearArr), (advHoleFarArr), False, True, False, ResultArray)",
+          "example_file": "Create_Advanced_Hole_Example_VB.md",
+          "why": "备注把开关挂在 AdvancedHoleFeatureData 的 CustomizeCallout 上；示例改用 AdvancedHole2 第4参，且赋值时特征尚未创建。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体串：两个带尖括号的符号各跟一个变量、空格分隔",
+          "example_quote": "CalloutString = \"<MOD-DIAM> \" & StrDiam & \" \" & \"<HOLE-DEPTH> \" & strDepth",
+          "example_file": "Create_Advanced_Hole_Example_VB.md"
+        }
+      ],
+      "note": "三份示例均真在 AdvancedHoleElementData 上读写该属性。"
+    },
+    {
+      "member": "CalloutText",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示只能在遍历 PMIDimensionData 的尺寸项时拿到本属性",
+          "example_quote": "swPMIDataDimItem = (PMIDimensionItem)swPMIDataDim.GetDimensionItemAtIndex(k);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 Remarks 段；页内自相矛盾：注明 get-only，签名却是 {get; set;}。"
+    },
+    {
+      "member": "Camera",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Turn_Cameras_On_and_Off_Example_CSharp.md",
+        "Turn_Cameras_On_and_Off_Example_VB.md",
+        "Turn_Cameras_On_and_Off_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回的 Camera 可直接转成 Feature 取名字（相机本身即特征）",
+          "example_quote": "swFeature = (Feature)swCamera;",
+          "example_file": "Turn_Cameras_On_and_Off_Example_CSharp.md"
+        },
+        {
+          "what": "同一个 null 也用作写侧开关：赋 null 即关闭相机视图",
+          "example_quote": "swModelView.Camera = null;",
+          "example_file": "Turn_Cameras_On_and_Off_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只描述读侧 null 的含义，示例把它同时用于写侧。"
+    },
+    {
+      "member": "CanBeFlipped",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Mate_Example_CSharp.md",
+        "Edit_Mate_Example_VB.md",
+        "Edit_Mate_Example_VBNET.md",
+        "Get_Mate_Definition_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 Type 限定：仅 ANGLE/DISTANCE 才读 MaximumVariation/MinimumVariation",
+          "example_quote": "If swMateANGLE = swMate.Type Or swMateDISTANCE = swMate.Type Then",
+          "example_file": "Get_Mate_Definition_Example_VB.md"
+        },
+        {
+          "what": "示例指出 GEAR 类型不允许改对齐，直接 return",
+          "example_quote": "// Cannot change alignment on these mate types",
+          "example_file": "Edit_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只说用 Type 判类型，未说限定哪些类型，也未提 GEAR 的限制。"
+    },
+    {
+      "member": "CanConvertFormat",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "除 true 外，示例还要求当前格式是 GTOL_SW2021 才去转换",
+          "example_quote": "if (lFormatType1 == (int)swGtolFormatType_e.GTOL_SW2021)",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        },
+        {
+          "what": "转换成功后文档应变脏，GetSaveFlag 应返回 True",
+          "example_quote": "boolstatus = swModel.GetSaveFlag(); // if successful, converted Gtol",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说 true 就调 ConvertFormat；示例在此之外再加一层格式判断。"
+    },
+    {
+      "member": "CanShowInAnnotationView",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Where_Annotations_Can_Be_Shown_Example_CSharp.md",
+        "Get_Where_Annotations_Can_Be_Shown_Example_VB.md",
+        "Get_Where_Annotations_Can_Be_Shown_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "取某视图的标注前必须先 Activate 该视图",
+          "example_quote": "swAnnView.Activate();",
+          "example_file": "Get_Where_Annotations_Can_Be_Shown_Example_CSharp.md"
+        },
+        {
+          "what": "视图对象要先转成 Feature，才拿得到传入本方法的 Name",
+          "example_quote": "swFeat = (Feature)swAnnView;",
+          "example_file": "Get_Where_Annotations_Can_Be_Shown_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 与示例一致，未找到冲突。"
+    },
+    {
+      "member": "CanShowInMultipleAnnotationViews",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Where_Annotations_Can_Be_Shown_Example_CSharp.md",
+        "Get_Where_Annotations_Can_Be_Shown_Example_VB.md",
+        "Get_Where_Annotations_Can_Be_Shown_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它紧接在逐视图 CanShowInAnnotationView 之后，作为同一标注的汇总判断",
+          "example_quote": "Debug.Print(\"              multiple = \" + swAnn.CanShowInMultipleAnnotationViews());",
+          "example_file": "Get_Where_Annotations_Can_Be_Shown_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 Remarks 段，按纪律跳过冲突判定。"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{"idx": 58, "pages_read": 13, "rows": [
+{"iface": "IView", "file": "GetDatumOrigins.md", "signature": "System.object GetDatumOrigins()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetDowelSymbolCount.md", "signature": "System.int GetDowelSymbolCount()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetNotes.md", "signature": "System.object GetNotes()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetVisibleComponents.md", "signature": "System.object GetVisibleComponents()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetDimensionInfo4.md", "signature": "System.double IGetDimensionInfo4()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetSectionLineInfo2.md", "signature": "System.double IGetSectionLineInfo2( System.int ArraySize )", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IView", "file": "MergeBendTags.md", "signature": "System.bool MergeBendTags( System.bool Merge, System.object BendNotes )", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "AutoBalloon2.md", "signature": "System.object AutoBalloon2( System.int Layout, System.bool IgnoreMultiple )", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "CreateSectionViewAt3.md", "signature": "View CreateSectionViewAt3( System.double X, System.double Y, System.double Z, System.bool NotAligned, System.bool IsOffsetSection, System.string Label, System.bool Chgdirection, System.bool Scwithmodel, System.bool Partial, System.bool Dispsurfcut, System.object ExcludedComponents )", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "IActiveDrawingView.md", "signature": "View IActiveDrawingView {get;}", "obsolete": false, "pointer": false, "zero": "是（无括号）"},
+{"iface": "IDrawingDoc", "file": "InsertGroup.md", "signature": "void InsertGroup()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "SheetNext.md", "signature": "void SheetNext()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "ISheet", "file": "SetProperties2.md", "signature": "void SetProperties2( System.int PaperSz, System.int Templ, System.double Scale1, System.double Scale2, System.bool FirstAngle, System.double Width, System.double Height, System.bool SameCustomPropAsSheetInDocProp )", "obsolete": false, "pointer": false, "zero": "否（有形参）"}
+]}

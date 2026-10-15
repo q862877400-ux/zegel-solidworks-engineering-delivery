@@ -1,0 +1,149 @@
+{
+  "idx": 50,
+  "results": [
+    {
+      "member": "ConstructionGeometry",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md",
+        "Create_Sketch_Path_Example_CSharp.md",
+        "Create_Sketch_Path_Example_VBNET.md",
+        "Find_Total_Length_of_Sketch_Segments_in_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按规则跳过冲突判定；四份示例均以布尔值过滤构造线。"
+    },
+    {
+      "member": "Consume",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Intersect_Feature_Data_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份 Create_Split-body 示例的 swSplitBodyFeat 是 SplitBodyFeatureData，调的是 ISplitBodyFeatureData::Consume，同名不同接口，不计。"
+    },
+    {
+      "member": "ContactComponents",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_3DContact_Feature_Example_VB.md",
+        "Create_3D_Contact_Feature_Example_CSharp.md",
+        "Create_3D_Contact_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出数组怎么来：先按 COMPONENT 选中组件，再用 GetSelectedObject6 按序号取成 Component[]。",
+          "example_quote": "ContactObj[0] = (Component)swSelMgr.GetSelectedObject6(1, -1);\n                ContactObj[1] = (Component)swSelMgr.GetSelectedObject6(2, -1);",
+          "example_file": "Create_3D_Contact_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks；三份示例的 swContFeat 均为 Simulation3DContactFeatureData，全库无同名成员冲突。"
+    },
+    {
+      "member": "ContourCartoonRenderingEnabled",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Render_Model_Example_CSharp.md",
+        "Render_Model_Example_VB.md",
+        "Render_Model_Example_VBNET.md",
+        "Update_Graphics_After_Changing_Render_Options_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 RenderType 的取值映射（0 = cartoon、1 = contour），Remarks 只说「either contour or cartoon」。",
+          "example_quote": "Debug.Print(\"  Render type (0 = cartoon; 1 = contour) = \" + swRayTraceRenderOptions.RenderType);",
+          "example_file": "Update_Graphics_After_Changing_Render_Options_Example_CSharp.md"
+        },
+        {
+          "what": "改完渲染选项后还要调 UpdateGraphics() 才刷新图形区，Remarks 未提这一步。",
+          "example_quote": "swRayTraceRenderOptions.UpdateGraphics();",
+          "example_file": "Update_Graphics_After_Changing_Render_Options_Example_CSharp.md"
+        },
+        {
+          "what": "示例用枚举 swRayTraceRenderingType_e.swRayTraceContour 指定 contour 渲染类型。",
+          "example_quote": "swRayTraceRenderOptions.RenderType = (int)swRayTraceRenderingType_e.swRayTraceContour;",
+          "example_file": "Render_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例都在设完本属性后紧接着设 RenderType，与 Remarks 一致，无冲突。"
+    },
+    {
+      "member": "ContourLineColor",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Render_Model_Example_CSharp.md",
+        "Render_Model_Example_VB.md",
+        "Render_Model_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is only available when [[IRayTraceRendererOptions::ContourCartoonRenderingEnabled]] is true.",
+          "example_quote": "Debug.Print(\"  Contour line color = \" + swRayTraceRenderOptions.ContourLineColor);",
+          "example_file": "Render_Model_Example_CSharp.md",
+          "why": "Remarks 把该属性的可用性挂在开关上；示例在「取当前值」段就读它，而 ContourCartoonRenderingEnabled = true 出现在同文件第 95 行、读之后。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把颜色写成单个 int 255（0x0000FF 蓝），未出现三通道构造。",
+          "example_quote": "swRayTraceRenderOptions.ContourLineColor = 255;",
+          "example_file": "Render_Model_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 Render_Model 形态一致：先读后开；读的那一步不满足 Remarks 写下的前提。"
+    },
+    {
+      "member": "ContourLineThickness",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Render_Model_Example_CSharp.md",
+        "Render_Model_Example_VB.md",
+        "Render_Model_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is only available when [[IRayTraceRendererOptions::ContourCartoonRenderingEnabled]] is true.",
+          "example_quote": "Debug.Print(\"  Contour line thickness = \" + swRayTraceRenderOptions.ContourLineThickness);",
+          "example_file": "Render_Model_Example_CSharp.md",
+          "why": "Remarks 说仅在开关为 true 时可用；示例先在「取当前值」段读本属性，开关赋值 ContourCartoonRenderingEnabled = true 在其后第 95 行。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "与 ContourLineColor 同型：示例读取早于开关置位，Returns 已写明单位为像素，无单位冲突。"
+    },
+    {
+      "member": "Contours",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Extrude_Feature_Using_Sketch_Contours_Example_CSharp.md",
+        "Create_Extrude_Feature_Using_Sketch_Contours_Example_VBNET.md",
+        "Determine_if_Sketch_Contour_or_Sketch_Region_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例读本属性前都先 AccessSelections(模型, Nothing)、读完 ReleaseSelectionAccess；Remarks 只外链文档未给调用序。",
+          "example_quote": "Extrudefeature_DEF.AccessSelections Part, Nothing\n        ContourArray = Extrudefeature_DEF.Contours\n    Extrudefeature_DEF.ReleaseSelectionAccess",
+          "example_file": "Determine_if_Sketch_Contour_or_Sketch_Region_Example_VB.md"
+        },
+        {
+          "what": "示例用 GetContoursCount() 取循环上界，而不是返回数组的长度。",
+          "example_quote": "nbrContours = swExtrudeFeatureData.GetContoursCount();",
+          "example_file": "Create_Extrude_Feature_Using_Sketch_Contours_Example_CSharp.md"
+        },
+        {
+          "what": "建拉伸前要先 EnableContourSelection，且选轮廓用 mark=4；Remarks 未涉及选择方式。",
+          "example_quote": "swSelectionMgr.EnableContourSelection = true;",
+          "example_file": "Create_Extrude_Feature_Using_Sketch_Contours_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的「可含 SketchContour 与 SketchRegion」与示例一致（VBA 另用 TypeOf 判定），无冲突。"
+    }
+  ]
+}

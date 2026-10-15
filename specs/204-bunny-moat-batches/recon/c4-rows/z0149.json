@@ -1,0 +1,145 @@
+{
+  "idx": 149,
+  "results": [
+    {
+      "member": "GetBCurveParams",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Curve_Spline_Points_Example_VB.md",
+        "Get_Length_of_Spline_or_Elliptical_Edge_Example_VB.md",
+        "Get_Parameters_and_Spline_Points_for_Curve_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出拆 packedDouble 的具体手法：DoubleRec/Long2Rec + LSet，且假定 C int 占 4 字节；成员页只说「integer pair」，未说怎么拆。",
+          "example_quote": "' Assuming that a C int has 4 bytes",
+          "example_file": "Get_Length_of_Spline_or_Elliptical_Edge_Example_VB.md"
+        },
+        {
+          "what": "示例调用前先断言该 Curve 是 B 曲线（IsBcurve）；成员页的前置里没有这条。",
+          "example_quote": "Set swCurve = swEdge.GetCurve: Debug.Assert swCurve.IsBcurve",
+          "example_file": "Get_Length_of_Spline_or_Elliptical_Edge_Example_VB.md"
+        },
+        {
+          "what": "示例把返回值 ×1000 后按 mm 打印，说明控制点/结点坐标以米计；成员页全篇未给单位。",
+          "example_quote": "Debug.Print \" Ctrl(\" & (i - 2 - nNumKnots) / 3 & \") = (\" & vBCurveParam(i + 0) * 1000# & \", \" & vBCurveParam(i + 1) * 1000# & \", \" & vBCurveParam(i + 2) * 1000# & \") mm\"",
+          "example_file": "Get_Parameters_and_Spline_Points_for_Curve_Example_VB.md"
+        }
+      ],
+      "note": "三份示例的拆包顺序（维数/阶、控制点数/周期性）与 Remarks 的数组布局逐项一致，未见冲突。"
+    },
+    {
+      "member": "GetBCurveParams5",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Spline_Example_VB.md",
+        "Get_BCurve_Spline_Points_Example_CSharp.md",
+        "Get_BCurve_Spline_Points_Example_VB.md",
+        "Get_BCurve_Spline_Points_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只让取控制点/结点/维数/阶/周期性，示例还读了 Color、Layer、LayerOverride、LineStyle、LineWidth 这些显示属性。",
+          "example_quote": "Debug.Print \"COLORREF of spline: \" & swSplineParaData.Color",
+          "example_file": "Get_BCurve_Spline_Points_Example_VB.md"
+        },
+        {
+          "what": "示例给出取控制点与结点的具体方法名 GetControlPoints / GetKnotPoints，Remarks 只说「call the methods」。",
+          "example_quote": "boolstatus = swSplineParamData.GetControlPoints(varCtrlPoints)",
+          "example_file": "Edit_Spline_Example_VB.md"
+        },
+        {
+          "what": "Remarks 只分条件描述闭合/周期两态，示例直接给了取值：三份 GetBCurveParams5 传 ForceNonPeriodic/IsClosed=True（闭合非周期、接缝有尖点），Edit_Spline 传 False/False（开放）。",
+          "example_quote": "Set swSplineParaData = swCurveIn.GetBCurveParams5(False, False, True, True)",
+          "example_file": "Get_BCurve_Spline_Points_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都走 ISplineParamData 对象路线，与 Remarks「instead of an array」一致，未见冲突。"
+    },
+    {
+      "member": "GetBSurfParams3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补齐了 ISurface 的来路：选中面 → swFace.GetSurface，再取 Parameterization2；Remarks 只说调 Parameterization2，没说从哪拿 Surface。",
+          "example_quote": "Set swSurf = swFace.GetSurface",
+          "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md"
+        },
+        {
+          "what": "C# 示例用 out 取那个 out 形参 Sense；Remarks 只描述 Sense 的语义，未给绑定形式。",
+          "example_quote": "swBSurfParam = (BSurfParamData)swSurf.GetBSurfParams3(false, false, swSurfParam, 0.01, out sense);",
+          "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都先调 Parameterization2 再传 VP0，Tolerance 传 0.01（= Remarks 所述默认值），与 Remarks 一致。"
+    },
+    {
+      "member": "GetBalloonPadding",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_BOM_Balloon_Properties_Example_CSharp.md",
+        "Get_BOM_Balloon_Properties_Example_VB.md",
+        "Get_BOM_Balloon_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例演示了怎么满足前置：在 CreateBalloonOptions 上先把 Size 设为 swBF_Tightest，InsertBOMBalloon2 之后再读；Remarks 只给前置条件，不给满足步骤。",
+          "example_quote": "swBomBalloonParams.Size = swBalloonFit_e.swBF_Tightest",
+          "example_file": "Get_BOM_Balloon_Properties_Example_VB.md"
+        }
+      ],
+      "note": "三份示例都先置 swBF_Tightest 再调本成员，前置成立，未见冲突。"
+    },
+    {
+      "member": "GetBalloonSize",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_BOM_Balloon_Properties_Example_CSharp.md",
+        "Get_BOM_Balloon_Properties_Example_VB.md",
+        "Get_BOM_Balloon_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（Returns 之后直接是 Examples），按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetBalloonStack",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md",
+        "Add_Balloon_to_Stacked_Balloon_Example_VB.md",
+        "Add_Balloon_to_Stacked_Balloon_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出守卫的先后次序：先 IsStackedBalloon、再判 Nothing，才调 GetBalloonStack 并接 AddTo；Remarks 只说可用 IsStackedBalloon 判断。",
+          "example_quote": "If swNote.IsStackedBalloon Then",
+          "example_file": "Add_Balloon_to_Stacked_Balloon_Example_VBNET.md"
+        }
+      ],
+      "note": "示例严格照 Remarks 建议先用 IsStackedBalloon 判定再取栈，返回 None 一支未被触碰，未见冲突。"
+    },
+    {
+      "member": "GetBalloonStyle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_BOM_Balloon_Properties_Example_CSharp.md",
+        "Get_BOM_Balloon_Properties_Example_VB.md",
+        "Get_BOM_Balloon_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定；成员页 Examples 只列 VBA，实际 C#/VB.NET 也调用了它。"
+    }
+  ]
+}

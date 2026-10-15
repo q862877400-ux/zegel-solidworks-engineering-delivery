@@ -1,0 +1,168 @@
+{
+  "idx": 168,
+  "results": [
+    {
+      "member": "GetCostingManager",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Machining_Costing_Analyses_Example_CSharp.md",
+        "Create_Machining_Costing_Analyses_Example_VBNET.md",
+        "Create_Sheet_Metal_Costing_Analyses_Example_CSharp.md",
+        "Create_Sheet_Metal_Costing_Analyses_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没写的前置：须先在系统选项 File Locations 里确认 Costing 模板存在。",
+          "example_quote": "// 2. Verify that the Costing templates exist by clicking Tools > Options >",
+          "example_file": "Create_Machining_Costing_Analyses_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出另一条前置：必须引用 SolidWorks.Interop.sldcostingapi.dll。",
+          "example_quote": "// 3. Add a reference to SolidWorks.Interop.sldcostingapi.dll.",
+          "example_file": "Create_Machining_Costing_Analyses_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出返回对象的实际用法：取回后须先 WaitForUIUpdate 才能取模板数。",
+          "example_quote": "swCosting = (CostManager)swModelDocExt.GetCostingManager();",
+          "example_file": "Create_Machining_Costing_Analyses_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只讲版本可用性（Professional/Premium）；示例的模板前置是补充，无矛盾。"
+    },
+    {
+      "member": "GetCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例全调 IEquationMgr.GetCount（同文件 MyEqu / swEquationMgr），与 IColorTable 无关，按要求弃用。"
+    },
+    {
+      "member": "GetCreatedVersion",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_SOLIDWORKS_Version_Number_in_Which_Feature_Was_Created_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：先打开零件并选中一个特征。",
+          "example_quote": "' 1. Open a part and select a feature.",
+          "example_file": "Get_SOLIDWORKS_Version_Number_in_Which_Feature_Was_Created_Example_VB.md"
+        },
+        {
+          "what": "示例给出该 Feature 的取法：从选区第 1 个对象 GetSelectedObject5(1)。",
+          "example_quote": "Set swFeat = swSelMgr.GetSelectedObject5(1)",
+          "example_file": "Get_SOLIDWORKS_Version_Number_in_Which_Feature_Was_Created_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 给版本号对照表，示例只打印原始整数；无矛盾。"
+    },
+    {
+      "member": "GetCurrentGaugeNumber",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md",
+        "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例界定返回值域：当前规格串就是 GetAvailableGaugeNumbers() 数组里的元素。",
+          "example_quote": "gaugeNumbers = (string[])smGaugeTableParam.GetAvailableGaugeNumbers();",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出改值与校验路径：SetCurrentGaugeNumber 后经 ModifyDefinition 再读回。",
+          "example_quote": "smGaugeTableParam.SetCurrentGaugeNumber(\"Gauge 3\");",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        },
+        {
+          "what": "VBNET 版同一序列：先计数再列可用规格，与 C# 版一致。",
+          "example_quote": "gaugeNumbers = smGaugeTableParam.GetAvailableGaugeNumbers()",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+        }
+      ],
+      "note": "成员页无 Remarks；示例显示返回串形如 \"Gauge 3\"，与签名 System.string 相符。"
+    },
+    {
+      "member": "GetCurrentLanguage",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Language_and_Localized_Menu_Names_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的「用于本地资源」落成用法：与 GetLocalizedMenuName 配对取菜单名。",
+          "example_quote": "Debug.Print \" File Menu = \" + swApp.GetLocalizedMenuName(swFileMenu)",
+          "example_file": "Get_Language_and_Localized_Menu_Names_Example_VB.md"
+        },
+        {
+          "what": "示例给出返回串的实际输出样例（全小写，与 Remarks 取值表一致）。",
+          "example_quote": "'Language = spanish",
+          "example_file": "Get_Language_and_Localized_Menu_Names_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 列 14 个取值，示例出现的 6 个全在其中，无冲突。"
+    },
+    {
+      "member": "GetCurrentLayer",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Layers_Example_CSharp.md",
+        "Get_Layers_Example_VB.md",
+        "Get_Layers_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没写的前置：必须先打开工程图文档。",
+          "example_quote": "// 1. Open a drawing document.",
+          "example_file": "Get_Layers_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出取 ILayerMgr 的入口：由 ModelDoc2 先 GetLayerManager。",
+          "example_quote": "swLayerMgr = (LayerMgr)swModel.GetLayerManager();",
+          "example_file": "Get_Layers_Example_CSharp.md"
+        },
+        {
+          "what": "示例按 GetLayerList 遍历后逐名 GetLayer，与 Remarks 的 GetLayer 用法一致。",
+          "example_quote": "swLayer = (Layer)swLayerMgr.GetLayer(vLayer.ToString());",
+          "example_file": "Get_Layers_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说的空串 / -None- 分支三份示例都未覆盖，不构成冲突。"
+    },
+    {
+      "member": "GetCurrentMacroPathFolder",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Buttons_to_Task_Pane_Example_CSharp.md",
+        "Add_Buttons_to_Task_Pane_Example_VB.md",
+        "Add_Buttons_to_Task_Pane_Example_VBNET.md",
+        "Create_Macro_Feature_Subfeature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示返回值是不含尾分隔符的文件夹名，分隔符由调用方自己补。",
+          "example_quote": "folder = swApp.GetCurrentMacroPathFolder + \"\\\"",
+          "example_file": "Add_Buttons_to_Task_Pane_Example_VB.md"
+        },
+        {
+          "what": "C# 版同样自补双反斜杠，语义与 VBA 版一致。",
+          "example_quote": "folder = swApp.GetCurrentMacroPathFolder() + \"\\\\\";",
+          "example_file": "Add_Buttons_to_Task_Pane_Example_CSharp.md"
+        },
+        {
+          "what": "示例把它与 GetCurrentMacroPathName 配对：前者给文件夹、后者给宏文件全名。",
+          "example_quote": "ThisFile = swApp.GetCurrentMacroPathName",
+          "example_file": "Create_Macro_Feature_Subfeature_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks；示例只把它当路径基名用。另注意成员页 Examples 段列的是 Save Solid Body，与本任务给的清单不同。"
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "idx": 277,
+  "results": [
+    {
+      "member": "GetUserPreferenceInteger",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Drafting_Standard_to_Custom_Example_VB.md",
+        "Get_and_Set_User_Preferences_Example_CSharp.md",
+        "Get_and_Set_User_Preferences_Example_VB.md",
+        "Get_and_Set_User_Preferences_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "This method is equivalent to interactively setting document properties in the SOLIDWORKS Design software.",
+          "example_quote": "Select Case ModelDocExtension.GetUserPreferenceInteger(swUserPreferenceIntegerValue_e.swDetailingDimensionStandard, swUserPreferenceOption_e.swDetailingNoOptionSpecified)",
+          "example_file": "Get_and_Set_User_Preferences_Example_VB.md",
+          "why": "Remarks 说它等价于交互式『设置』文档属性，四份示例却全把它当读取器（返回值进 Select Case/Debug.Print）；同族 GetUserPreferenceString 页写的是 getting。两说不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值按 1..8 映射成 ANSI/ISO/DIN/JIS/BS/GOST/GB/User Defined，成员页 Returns 只写 Value of UserPref",
+          "example_quote": "Debug.Print sText & \"ISO\"",
+          "example_file": "Get_and_Set_User_Preferences_Example_VB.md"
+        },
+        {
+          "what": "Change Drafting 示例用不带枚举前缀的 SwConst.swDetailingDimensionStandard 作 UserPref，成员页只说『as defined in swUserPreferenceIntegerValue_e』",
+          "example_quote": "Debug.Print \"  (Standard, NoOptionSpecified) before = \" & swModExt.GetUserPreferenceInteger(SwConst.swDetailingDimensionStandard, SwConst.swDetailingNoOptionSpecified)",
+          "example_file": "Change_Drafting_Standard_to_Custom_Example_VB.md"
+        }
+      ],
+      "note": "四份示例接收者都是 ModelDocExtension（VB 为 Set swModExt As SldWorks.ModelDocExtension），确属本成员。"
+    },
+    {
+      "member": "GetUserPreferenceIntegerValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Material_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把读数归入 Model Default 段、用 swDocumentColorShading 这一具体偏好，落定它是文档级默认色",
+          "example_quote": "Write #1, \" ColorRef = \" & swModel.GetUserPreferenceIntegerValue(swDocumentColorShading)",
+          "example_file": "Get_Material_Properties_Example_VB.md"
+        }
+      ],
+      "note": "清单里 4 份只有 Get_Material_Properties 真打在 ModelDoc2 上；Get_DXF 与 Get_and_Set 两份都调 swApp(ISldWorks) 同名成员。成员页首行标 Obsolete。"
+    },
+    {
+      "member": "GetUserPreferenceString",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Drafting_Standard_to_Custom_Example_VB.md",
+        "Get_and_Set_User_Preferences_Example_CSharp.md",
+        "Get_and_Set_User_Preferences_Example_VB.md",
+        "Get_and_Set_User_Preferences_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "第二实参可传 swUserPreferenceOption_e.swDetailingBalloon 指定作用范围；成员页只写了不需要时传 swDetailingNoOptionSpecified",
+          "example_quote": "Debug.Print \"Tools > Options > Document Properties > Annotations > Balloons > Layer: \" & ModelDocExtension.GetUserPreferenceString(swUserPreferenceStringValue_e.swDetailingLayer, swUserPreferenceOption_e.swDetailingBalloon)",
+          "example_file": "Get_and_Set_User_Preferences_Example_VB.md"
+        },
+        {
+          "what": "同一方法被用来取草图标准的『名字』并与 Standard 并列打印 before/after，成员页未区分这两类偏好",
+          "example_quote": "Debug.Print \"  (StandardName, NoOptionSpecified) before = \" & swModExt.GetUserPreferenceString(SwConst.swDetailingDimensionStandardName, SwConst.swDetailingNoOptionSpecified)",
+          "example_file": "Change_Drafting_Standard_to_Custom_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 写 getting，与示例读法一致；实参 swDetailingLayer / swDetailingBOMUpperCustomProperty / swDetailingDimensionStandardName 均在 swUserPreferenceStringValue_e 内。"
+    },
+    {
+      "member": "GetUserPreferenceStringListValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Save_Drawing_Sheets_as_DXF_Example_VB.md",
+        "Save_Drawing_as_DXF_Example_CSharp.md",
+        "Save_Drawing_as_DXF_Example_VB.md",
+        "Save_Drawing_as_DXF_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "- **UserPreference**: User preference as defined in [[swUserPreferenceStringValue_e]]",
+          "example_quote": "Debug.Print(\"DxfMappingFiles        = \" + swApp.GetUserPreferenceStringListValue((int)swUserPreferenceStringListValue_e.swDxfMappingFiles));",
+          "example_file": "Save_Drawing_as_DXF_Example_CSharp.md",
+          "why": "成员页参数行说实参取自 swUserPreferenceStringValue_e，四份示例传的都是 swUserPreferenceStringListValue_e.swDxfMappingFiles，而该枚举页逐字写 'Use this enumeration with ISldWorks::GetUserPreferenceStringListValue'。不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "两份 C#/VB.NET 把实参显式写成 (int)swUserPreferenceStringListValue_e.swDxfMappingFiles，两份 VBA 只写裸常量 swDxfMappingFiles",
+          "example_quote": "Debug.Print \"DxfMappingFiles = \" & swApp.GetUserPreferenceStringListValue(swDxfMappingFiles)",
+          "example_file": "Save_Drawing_Sheets_as_DXF_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 段本身只有一条 System Options 交叉引用；冲突落在成员页 Parameters 行与示例实参的枚举族上。"
+    },
+    {
+      "member": "GetUserPreferenceStringValue",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "清单 4 份示例全部把调用打在 iSwApp 上（C# 为 ISldWorks iSwApp、VB.NET 为 WithEvents iSwApp As SldWorks），无一调用 IModelDoc2 版本 ⇒ 无可对照。"
+    },
+    {
+      "member": "GetUserPreferenceTextFormat",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Format_of_Note_Text_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "本成员只收 1 个实参并把返回的 System.object 转成 SldWorks.TextFormat 读 .Italic；同批 Get_and_Set 三份对 ModelDocExtension 版本传了 2 个",
+          "example_quote": "Set TextFormatObj = swModel.GetUserPreferenceTextFormat(swDetailingNoteTextFormat)",
+          "example_file": "Get_Format_of_Note_Text_Example_VB.md"
+        }
+      ],
+      "note": "Get_and_Set 三份示例写的是 ModelDocExtension.GetUserPreferenceTextFormat(pref, 0)，属 IModelDocExtension 的 2 参版本，不算本成员。"
+    },
+    {
+      "member": "GetUserPreferenceToggle",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "清单 4 份都调 swApp(ISldWorks)；另：Remarks 内嵌的 m_ModelDoc2.GetUserPreferenceToggle( swIgnoreFeatureColors ) 在示例里对应 Get_Material_Properties_Example_VB.md，但它不在本成员清单内。"
+    }
+  ]
+}

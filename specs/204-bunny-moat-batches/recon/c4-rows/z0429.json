@@ -1,0 +1,152 @@
+{
+  "idx": 429,
+  "results": [
+    {
+      "member": "SelectByRay",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Explode_Step_Example_VB.md",
+        "Add_and_Edit_Distance_Mate_Example_VB.md",
+        "Add_and_Edit_Distance_Mate_Example_CSharp.md",
+        "Add_and_Edit_Distance_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Defines a cylindrical region of infinite length that begins at pointIn, runs parallel to VectorIn, and has a radius of RadiusIn.",
+          "example_quote": "boolstatus = Part.Extension.SelectByRay(-0.0108900020093756, 0.0655319999998483, -0.00515652172191494, -0.400036026779312, -0.515038074910024, -0.758094294050284, 0.00167637314537445, 2, False, 1, 0)",
+          "example_file": "Add_and_Edit_Distance_Mate_Example_VBNET.md",
+          "why": "本页仅 2 参（7 个 double 的数组 DoubleInfoIn + TypeWanted）；示例把 7 个量拆成独立实参并多出 Append/Mark/Option，且挂在 Extension 上，2 参形态容不下后三个。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例实参半径约 6.3e-4~1.1e-2（米制量级），本页对 RadiusIn 未给任何上限。",
+          "example_quote": "0.00167637314537445, 2, False, 1, 0)",
+          "example_file": "Add_and_Edit_Distance_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "示例用 TypeWanted=2 取面、=1 取边，注释亦按此命名实体。",
+          "example_quote": "' Select two cylindrical entities",
+          "example_file": "Add_and_Edit_Distance_Mate_Example_VB.md"
+        }
+      ],
+      "note": "4 份示例调的都是后继者 IModelDocExtension::SelectByRay，本页 obsolete 成员本身无示例。"
+    },
+    {
+      "member": "SelectChain",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Select_Chain_of_Entities_Example_VB.md",
+        "Select_Chain_of_Entities_Example_VBNET.md",
+        "Select_Chain_of_Entities_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按名 Line3@Sketch2 + 类型 EXTSKETCHSEGMENT 取段，非普通 SKETCHSEGMENT。",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"Line3@Sketch2\", \"EXTSKETCHSEGMENT\", -0.01022262320328, 0.01646364019604, 0, False, 0, Nothing, 0)",
+          "example_file": "Select_Chain_of_Entities_Example_VB.md"
+        },
+        {
+          "what": "示例自己用 Append=False 重选该段，取代前置里「先选中一段」这一步。",
+          "example_quote": "' 2. Select one sketch segment of the rectangle.",
+          "example_file": "Select_Chain_of_Entities_Example_VBNET.md"
+        }
+      ],
+      "note": "三份示例完全同构；Remarks 的 CreateSelectData 前置与右键 Select Chain 语义均未被示例否定。"
+    },
+    {
+      "member": "SelectComponentsBySize",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Select_Assembly_Components_by_Size_Example_VB.md",
+        "Select_Assembly_Components_by_Size_Example_VBNET.md",
+        "Select_Assembly_Components_by_Size_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 30 解释为「占装配尺寸 30% 或更小的组件」，即按占比筛而非绝对尺寸。",
+          "example_quote": "' Postconditions: Selects components that are 30% of the size of the",
+          "example_file": "Select_Assembly_Components_by_Size_Example_VB.md"
+        },
+        {
+          "what": "三语示例都传 30（30# / 30.0# / 30.0），印证量纲是 0~100 百分数而非 0~1 比例。",
+          "example_quote": "bool = assem.SelectComponentsBySize(30#)",
+          "example_file": "Select_Assembly_Components_by_Size_Example_VB.md"
+        }
+      ],
+      "note": "页的 0.0~100.0 范围与示例传 30 完全一致，未发现冲突。"
+    },
+    {
+      "member": "SelectEntity",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IView.SelectEntity 页只有签名与参数表、无 ## Remarks，按纪律跳过，未读其示例。"
+    },
+    {
+      "member": "SelectMidpoint",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Put_a_Midpoint_on_an_Edge_Example_VB.md",
+        "Put_a_Midpoint_on_an_Edge_Example_VBNET.md",
+        "Put_a_Midpoint_on_an_Edge_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 GetSelectedObjectType3(1,-1) 在调用前后打印选择类型来自检，且未定义 swSelMIDPOINTS。",
+          "example_quote": "nSelType = swSelMgr.GetSelectedObjectType3(1, -1)",
+          "example_file": "Put_a_Midpoint_on_an_Edge_Example_VB.md"
+        },
+        {
+          "what": "示例靠人工预选边触发，未走 Remarks 说的 SelectByID2 重选那条「两者都留」例外分支。",
+          "example_quote": "' 2. Select an edge.",
+          "example_file": "Put_a_Midpoint_on_an_Edge_Example_VBNET.md"
+        }
+      ],
+      "note": "页两条 Remarks（默认移除边 / SelectByID2 重选例外）互不矛盾，示例只走默认分支。"
+    },
+    {
+      "member": "SelectTangency",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IModelDoc2.SelectTangency 页无 ## Remarks 也无 ## Returns，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "SelectedFaceProperties",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Color_of_Face_Example_VB.md",
+        "Get_Component_Face_By_Name_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Specify the reflectivity properties (*Diffuse*, *Specular*, *Shininess* (1.0 - Specular spread/Blurriness)), each with a value greater than 0.0 and less than or equal to 1.0.",
+          "example_quote": "boolstatus = swModel.SelectedFaceProperties(0, 0, 0, 0, 0, 0, 0, True, \"SideFace\")",
+          "example_file": "Get_Component_Face_By_Name_Example_VB.md",
+          "why": "Remarks 与参数表都要求 Diffuse/Specular/Shininess 严格大于 0.0，示例三者全传 0，并靠此调用生效去取名。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例用 ClearSelection2 去选来看颜色，而不是 Remarks 说的刷新图形区域。",
+          "example_quote": "' Deselect face to see new color",
+          "example_file": "Change_Color_of_Face_Example_VB.md"
+        },
+        {
+          "what": "给出 FaceName 的可用调用序：按点选面 → 传名字调用 → GetEntityName 回读。",
+          "example_quote": "faceName = swModel.GetEntityName(swFace)",
+          "example_file": "Get_Component_Face_By_Name_Example_VB.md"
+        }
+      ],
+      "note": "另两条 Remarks（已有名字返回 false / 先查名字）示例未检查，但属建议性表述，不计冲突。"
+    }
+  ]
+}

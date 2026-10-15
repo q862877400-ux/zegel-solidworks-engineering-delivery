@@ -1,0 +1,107 @@
+{
+  "idx": 472,
+  "results": [
+    {
+      "member": "Simplify",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Equation-driven_Curve_Example_VB.md",
+        "Create_Equation-driven_Curve_Example_VBNET.md",
+        "Create_Equation-driven_Curve_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "The sketch must be in edit mode and a spline must be preselected.",
+          "example_quote": "skSpline = skSegment",
+          "example_file": "Create_Equation-driven_Curve_Example_VBNET.md",
+          "why": "成员页把「样条曲线必须预先选中」列为硬前置；三份官方示例在调用前没有任何选中样条的动作，而是把 CreateEquationSpline2 返回的 Segment 强转成 SketchSpline 直接调用。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ToleranceIn 实参为 0（米），且调用后紧跟 InsertSketch(True) 退出编辑模式。",
+          "example_quote": "skSpline.Simplify(0.0#)",
+          "example_file": "Create_Equation-driven_Curve_Example_VBNET.md"
+        }
+      ],
+      "note": "「草图处于编辑模式」这半个前置示例是满足的，冲突只在「预选中」。"
+    },
+    {
+      "member": "SimplifyBends",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_All_Sheet_Metal_Feature_Data_Example_VB.md",
+        "Get_All_Sheet_Metal_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取法：遍历特征树，GetTypeName 为 FlatPattern 的顶层特征 GetDefinition 后直接读，未调 AccessSelections。",
+          "example_quote": "Debug.Print \"      Simplify bends? \" & swFlatPatt.SimplifyBends",
+          "example_file": "Get_All_Sheet_Metal_Feature_Data_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只讲界面复选框归属，未给取用方式；示例补上读取路径。"
+    },
+    {
+      "member": "SimplifySpline",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Simplify_Spline_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段（Obsolete），按纪律跳过。"
+    },
+    {
+      "member": "SingleDirection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Projection_Split_Line_Example_CSharp.md",
+        "Create_Projection_Split_Line_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补出成员页未写的前置：先 AccessSelections(Part, null)，读后 ReleaseSelectionAccess。",
+          "example_quote": "boolstatus = swSplitLine.AccessSelections(Part, null);",
+          "example_file": "Create_Projection_Split_Line_Example_CSharp.md"
+        }
+      ],
+      "note": "示例建的正是投影分割线，满足 Remarks 的 Projection 限定，不构成冲突。"
+    },
+    {
+      "member": "SingleEntityOnly",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Show_Bubble_ToolTip_for_PropertyManager_Page_Control_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在构造函数里 AddControl 之后、pm_Page.Show() 之前赋值为 false，并同时打开 AllowMultipleSelectOfSameEntity。",
+          "example_quote": "pm_Selection.SingleEntityOnly = false;",
+          "example_file": "Show_Bubble_ToolTip_for_PropertyManager_Page_Control_Example_CSharp.md"
+        }
+      ],
+      "note": "赋值时机在 Show() 之前，与 Remarks 的「显示前或关闭时」一致。"
+    },
+    {
+      "member": "Size",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例的 .Size 属 AutoBalloonOptions/StackedBalloons（int 枚举），非本页 string：成员名撞车。"
+    },
+    {
+      "member": "Sketch",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "所列示例读的是 SketchPatternFeatureData / ProjectionCurveFeatureData 的同名 Sketch，非本接口成员。"
+    }
+  ]
+}

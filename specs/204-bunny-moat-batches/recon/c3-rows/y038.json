@@ -1,0 +1,126 @@
+{
+  "idx": 38,
+  "results": [
+    {
+      "name": "curve_and_split",
+      "level": "verified",
+      "members_found": [
+        "InsertSplitLineProject",
+        "InsertSplitLineSil",
+        "InsertCurveFileBegin",
+        "InsertCurveFilePoint",
+        "InsertCurveFileEnd",
+        "InsertMateReference2",
+        "SelectByID2",
+        "ClearSelection2",
+        "InsertRefPlane"
+      ],
+      "examples_used": [
+        "Create_Projection_Split_Line_Example_VB.md",
+        "Insert_Free_Point_Curve_Feature_Example_VB.md",
+        "Edit_Mate_Reference_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "示例前置：先确认指定文档模板存在（示例用 NewDocument + Part.prtdot 建新零件）",
+          "from": "Create_Projection_Split_Line_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调用序：InsertSplitLineProject 前须选中投影草图（SKETCH，mark 4）与要切的面（FACE，mark 1）",
+          "from": "Create_Projection_Split_Line_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "投影型 = **草图 mark 4 + 面 mark 1**；轮廓型 = **方向项 mark 2 + 面 mark 1**"
+        },
+        {
+          "text": "示例在草图与面之前还先按 mark 0 选中实体特征 Boss-Extrude1（BODYFEATURE）",
+          "from": "Create_Projection_Split_Line_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "几何前提：投影草图所在面须在实体之外、与目标面平行、沿投影方向隔开",
+          "from": "Create_Projection_Split_Line_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "投影型要求**投影草图所在面在实体之外**、与目标面平行、沿投影方向隔开"
+        },
+        {
+          "text": "示例前置：先确认指定零件模板存在（新建零件后直接建自由点曲线）",
+          "from": "Insert_Free_Point_Curve_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调用序：InsertCurveFileBegin → InsertCurveFilePoint → InsertCurveFileEnd 三步成对，不可只调中间那个",
+          "from": "Insert_Free_Point_Curve_Feature_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "（`InsertCurveFileBegin/Point/End` 三步式）"
+        },
+        {
+          "text": "示例前置：先存在指定零件 knob.sldprt，配合参考是在该零件上插入",
+          "from": "Edit_Mate_Reference_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调用序：InsertMateReference2 前须先按 mark 1 选基准面、按 mark 2 选面，再取对象显式传 PrimaryReferenceEntity",
+          "from": "Edit_Mate_Reference_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "InsertSplitLineSil 在两个官方示例索引里均无示例 ⇒ 轮廓型分割线的前置无法由官方示例判定",
+          "from": "docs/recon/member-to-example-index.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "草图/面 mark 与三步式已被 evidence 逐字覆盖；模板存在、Boss-Extrude1 mark 0、配合参考 mark 1+2 未提；轮廓型无官方示例。"
+    },
+    {
+      "name": "surface_offset",
+      "level": "verified",
+      "members_found": [
+        "InsertOffsetSurface",
+        "SelectByID2",
+        "ClearSelection2",
+        "FeatureExtruRefSurface3",
+        "CreateCornerRectangle"
+      ],
+      "examples_used": [
+        "Create_Thicken_Feature_Example_VB.md",
+        "Insert_Extruded_Reference_Surface_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "示例前置：先打开多体零件 multi_local.sldprt（示例取 ActiveDoc，不新建文档）",
+          "from": "Create_Thicken_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调用序：InsertOffsetSurface 前须用 SelectByID2 逐张选面，示例两条都用 mark 0、append 依次 False/True",
+          "from": "Create_Thicken_Feature_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调用 InsertOffsetSurface 前必须先选中曲面（官方 Remarks 要求调用前用 SelectByID2 做好选择）",
+          "from": "Create_Thicken_Feature_Example_VB.md",
+          "state": "covered",
+          "evidence_quote": "先建一张曲面（`曲面-拉伸1`）⇒ **4 张面选中** ⇒ `InsertOffsetSurface(5.0 mm, False)"
+        },
+        {
+          "text": "建曲面那步：须先 InsertSketch 进草图画轮廓，退出后 SelectByID2 选中该草图再调 FeatureExtruRefSurface3",
+          "from": "Insert_Extruded_Reference_Surface_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "evidence 只写到「先建一张曲面⇒4 张面选中」；多体零件前置、示例的 mark 0 逐张选法、建曲面那步的草图选中均未提。"
+    }
+  ]
+}

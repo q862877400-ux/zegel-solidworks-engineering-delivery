@@ -1,0 +1,130 @@
+{
+ "idx": 33,
+ "results": [
+  {
+   "name": "surface_features",
+   "level": "verified",
+   "members_found": [
+    "FeatureExtruRefSurface3",
+    "InsertSewRefSurface",
+    "InsertExtendSurface",
+    "InsertFillSurface2",
+    "SelectByID2",
+    "Select2",
+    "Select4",
+    "CreateSelectData",
+    "ClearSelection2",
+    "GetSelectedObjectCount2",
+    "GetBodies2",
+    "GetFaces",
+    "GetEdges",
+    "GetStartVertex",
+    "GetEndVertex",
+    "GetPoint",
+    "FeatureByName",
+    "GetActiveSketch2",
+    "FirstFeature",
+    "GetNextFeature",
+    "GetTypeName2"
+   ],
+   "examples_used": [
+    "Insert_Extruded_Reference_Surface_Example_VB.md",
+    "Create_Surface_Knit_Feature_Example_VB6.md",
+    "Fill_Holes_in_Part_Example_VB.md",
+    "Insert_Fill-surface_Feature_Example_VB.md",
+    "Get_and_Fill_Gaps_in_Body_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "调用 FeatureExtruRefSurface3 前须用 SelectByID2 选中草图：SelectByID2(\"Sketch1\",\"SKETCH\",0,0,0,False,0,...)",
+     "from": "Insert_Extruded_Reference_Surface_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "缝合前须先把要缝的曲面按 mark = 1 选中（示例：Surface-Extrude1 mark 1 + Surface-Plane1 mark 1；Fill_Holes 另用 Select2(True,1)）",
+     "from": "Create_Surface_Knit_Feature_Example_VB6.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "选曲面之前须先 swSelectionManager.EnableContourSelection = False",
+     "from": "Create_Surface_Knit_Feature_Example_VB6.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "InsertExtendSurface 的调用前置：两份索引与示例目录零命中，无官方示例可查",
+     "from": "b3-4-merged.json#by_member（无该键）+ C:\\swapi\\examples 零命中",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "InsertFillSurface2 须先按官方 mark 表 Boundary curves = 1 用 SelectByID2 选中要填的边界边",
+     "from": "IFeatureManager/InsertFillSurface2.md#Remarks",
+     "state": "covered",
+     "evidence_quote": "边界边必须用 `SelectByID2` 带 **mark = 1**（官方 Remarks 的 Boundary curves）"
+    },
+    {
+     "text": "官方示例把选区当第3参 VPatchBoundaries 传入（SelectData Mark=257 / selObj 草图），本实现传 None",
+     "from": "Get_and_Fill_Gaps_in_Body_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例前置：模型须含带缺口的实体，并用 IBody2::Diagnose → GetCoEdgesAtGap 取边界边",
+     "from": "Get_and_Fill_Gaps_in_Body_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 只覆盖 mark=1 边界边；草图 mark0 选中、缝合 mark=1、EnableContourSelection=False、VPatchBoundaries 都没提；InsertExtendSurface 无官方示例。"
+  },
+  {
+   "name": "geometry_measurement",
+   "level": "verified",
+   "members_found": [
+    "CreateMeasure",
+    "ArcOption",
+    "Calculate",
+    "GetSelectedObjectCount2",
+    "Length",
+    "Area",
+    "Perimeter",
+    "DeltaX",
+    "DeltaY",
+    "DeltaZ",
+    "Angle",
+    "IsParallel",
+    "IsIntersect",
+    "IsPerpendicular"
+   ],
+   "examples_used": [
+    "Measure_Selected_Entities_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "CreateMeasure 前须先选中要量的实体（示例 SelectByID2(\"\",\"FACE\",...,mark 0) 选两面），未选中即无效组合",
+     "from": "Measure_Selected_Entities_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "未选中 ⇒ 显式拒绝"
+    },
+    {
+     "text": "须在 CreateMeasure 之后先设 ArcOption（示例注释 0=中心到中心 / 1=最小距离 / 2=最大距离）再 Calculate",
+     "from": "Measure_Selected_Entities_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方以 Calculate(Nothing) 调用，并以其 bool 返回值决定读数是否有效，否则打印 Invalid combination",
+     "from": "Measure_Selected_Entities_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "只有「未选中 ⇒ 拒绝」被 evidence 提到；ArcOption 取值表与 Calculate(Nothing)/status 判读都没提。"
+  }
+ ]
+}

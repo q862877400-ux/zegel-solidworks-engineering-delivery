@@ -1,0 +1,132 @@
+{
+ "role": "V1",
+ "sampled": 12,
+ "findings": [
+  {
+   "project": "Eduardof0nt",
+   "member": "CreateMassProperty2",
+   "verdict_claimed": "member_not_found",
+   "your_verdict": "match",
+   "who_is_right": "他们",
+   "why": "三源都有（swapi 有页／反射 CreateMassProperty2()／CHM 有页）；自审字段标了 swapi_has_page 却没改 verdict",
+   "evidence": "swapi types\\IModelDocExtension\\CreateMassProperty2.md 逐字「**Signature**: `System.object CreateMassProperty2()`」；反射 iface_sldworks.txt:10882「Object CreateMassProperty2()」；调用处 sw_client.py:1126「val = getattr(doc.Extension, method)」（无实参）"
+  },
+  {
+   "project": "Eduardof0nt",
+   "member": "StartRecordingMacro",
+   "verdict_claimed": "member_not_found",
+   "your_verdict": "member_not_found",
+   "who_is_right": "我们",
+   "why": "三源逐字全无（swapi 全树 0 命中、反射 0 命中、CHM 无页且正文 0），项目确在调一个不存在的名字",
+   "evidence": "sw_client.py:1454 逐字「app.StartRecordingMacro(output_path, True)  # True = VBA」；对照 :1448 用的是真成员「app.RunMacro2(tmp_path, \"sw_mcp_temp_macro\", \"main\", False, errors)」"
+  },
+  {
+   "project": "SolidworksMCP-TS",
+   "member": "CreateNewStudy3",
+   "verdict_claimed": "member_not_found",
+   "your_verdict": "match",
+   "who_is_right": "他们",
+   "why": "名字在出厂类型库里、形参也对：反射 4 参 ↔ 调用 4 实参；我们只查了 swapi 的页",
+   "evidence": "反射 iface_cosworks.txt:2598 逐字「CWStudy CreateNewStudy3(String, Int32, Int32, Int32&)」；vba-advanced.ts:391 逐字「Set swStudy = swStudyMgr.CreateNewStudy3( _」"
+  },
+  {
+   "project": "Slacker-LLC",
+   "member": "ViewZoomtofit2",
+   "verdict_claimed": "member_not_found",
+   "your_verdict": "match",
+   "who_is_right": "他们",
+   "why": "真成员且 0 形参，只是 swapi 没有这一页；反射与 CHM 都有成员页",
+   "evidence": "反射 iface_sldworks.txt:10046 逐字「Void ViewZoomtofit2()」；CHM 成员页 SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDoc2~ViewZoomtofit2.html；sw_inspect.py:368 逐字「invoke_no_arg(doc, \"ViewZoomtofit2\")」"
+  },
+  {
+   "project": "Eduardof0nt",
+   "member": "AddComponent5",
+   "verdict_claimed": "argc_mismatch",
+   "your_verdict": "argc_mismatch",
+   "who_is_right": "我们",
+   "why": "官方三源一致 8 形参、调用只给 7 个，缺 ExistingConfigName 且其后实参整体错位，会真出错",
+   "evidence": "sw_client.py:971 逐字「comp = doc.AddComponent5(file_path, 0, \"\", fixed, _m(x), _m(y), _m(z))」；swapi types\\IAssemblyDoc\\AddComponent5.md 逐字「Component2 AddComponent5( System.string CompName, System.int ConfigOption, System.string NewConfigName, System.bool UseConfigForPartReferences, System.string ExistingConfigName, System.double X, System.double Y, System.double Z )」"
+  },
+  {
+   "project": "andrewbartels1",
+   "member": "SaveAs2",
+   "verdict_claimed": "argc_mismatch",
+   "your_verdict": "argc_mismatch（差的是尾部两个 out）",
+   "who_is_right": "我们",
+   "why": "字面成立：6 实参 vs 8 形参；但少的正是 out Errors/out Warnings，该单列一档，不该与「实参错位」混算",
+   "evidence": "pywin32_adapter.py:2387 逐字「ext.SaveAs2(resolved_path, 0, 2, stl_data, None, \"\")」；swapi types\\IModelDocExtension\\SaveAs2.md 逐字「... out System.int Errors, out System.int Warnings )」"
+  },
+  {
+   "project": "SolidworksMCP-TS",
+   "member": "CreateDetailViewAt4",
+   "verdict_claimed": "argc_mismatch",
+   "your_verdict": "argc_mismatch",
+   "who_is_right": "我们",
+   "why": "11 实参 vs 官方 12：第 6 位 Scale2 被 True 占、缺 ShapeIntensity，参数整体错位会真出错",
+   "evidence": "vba-drawing.ts:126-132 逐字「Set swView = swDraw.CreateDetailViewAt4( _ ... swDetCircleShowType_e.swDetCircleCIRCLE, _ / True, False, False)」；反射 iface_sldworks.txt:5407「Object CreateDetailViewAt4(Double, Double, Double, Int32, Double, Double, String, Int32, Boolean, Boolean, Boolean, Int32)」"
+  },
+  {
+   "project": "Eduardof0nt",
+   "member": "GetCount",
+   "verdict_claimed": "cannot_tell",
+   "your_verdict": "match",
+   "who_is_right": "他们",
+   "why": "接收者就在上一行 _get(doc,'GetEquationMgr')，官方 GetCount() 0 形参 ↔ 0 实参，判得出来；cannot_tell 把 match 藏了",
+   "evidence": "sw_client.py:1305-1306 逐字「eqn_mgr = _get(doc, 'GetEquationMgr')」/「count = _get(eqn_mgr, 'GetCount')」；swapi types\\IEquationMgr\\GetCount.md 逐字「System.int GetCount()」"
+  },
+  {
+   "project": "Eduardof0nt",
+   "member": "Sheet",
+   "verdict_claimed": "cannot_tell",
+   "your_verdict": "判不了",
+   "who_is_right": "判不了",
+   "why": "swapi 页只有 front-matter、无 Signature；反射给 get_Sheet() 0 参。形参对得上，但 property 写成 Sheet() 能否真跑要真机",
+   "evidence": "swapi types\\IDrawingDoc\\Sheet.md 全文逐字只有「type: IDrawingDoc / member: Sheet / kind: property ...」+「# IDrawingDoc.Sheet」；sw_client.py:1089 逐字「doc.Sheet().ReloadTemplate(True)」；反射 iface_sldworks.txt:17360「Sheet get_Sheet()」"
+  },
+  {
+   "project": "andrewbartels1",
+   "member": "GetNames",
+   "verdict_claimed": "cannot_tell",
+   "your_verdict": "cannot_tell",
+   "who_is_right": "我们",
+   "why": "接收者是 typeinfo（COM 类型库对象）、不是 SW 接口；同名页属 ICustomPropertyManager（0 形参）⇒ 归不到，判对了",
+   "evidence": "docs_discovery.py:212 逐字「names = typeinfo.GetNames(funcdesc.memid)」；swapi types\\ICustomPropertyManager\\GetNames.md 逐字「System.object GetNames()」"
+  },
+  {
+   "project": "Slacker-LLC",
+   "member": "SelectByID2",
+   "verdict_claimed": "match",
+   "your_verdict": "match",
+   "who_is_right": "我们",
+   "why": "9 实参 = 官方 9 形参（swapi/反射/CHM 三源一致），Callout 位传 nothing() 空 Dispatch，判对了",
+   "evidence": "sw_core.py:654 逐字「return bool(target.SelectByID2(name, object_type, 0, 0, 0, append, mark, nothing(), 0))」；swapi types\\IModelDocExtension\\SelectByID2.md 逐字 9 个形参、以「System.int SelectOption )」收尾"
+  },
+  {
+   "project": "andrewbartels1",
+   "member": "ActiveDoc",
+   "verdict_claimed": "match",
+   "your_verdict": "match（但这是它生成的 VBA 文本）",
+   "who_is_right": "我们",
+   "why": "形参对（属性 0 实参）；但该行在 f-string 里，是它输出给 SW 跑的 VBA 文本，不是它自己的 COM 调用",
+   "evidence": "vba_generation.py:268 逐字「vba_code = f\"\"\"Sub CreateAdvancedExtrusion()」；:276 逐字「    Set swModel = swApp.ActiveDoc」；swapi types\\ISldWorks\\ActiveDoc.md 逐字「System.object ActiveDoc {get;}」"
+  }
+ ],
+ "criterion_defects": [
+  "cannot_tell 混装四种原因：125 条「调用处实参个数数不出来」（*args、模板变量）、52 条「接收者接口归不到」、9 条「swapi 页无 Signature」、1 条官方无页 ⇒ 11.4% 不是单一含义。",
+  "官方源优先级有洞：swapi 页缺 **Signature** 行（或只有 front-matter）就直接 cannot_tell，而铁律 4 说冲突以出厂类型库为准 —— 反射里形参个数明明可用（GetCount、Sheet）。",
+  "缺一档 verdict：「名字存在、但不是被调用接口的成员」（DimensionType→IDisplayDimension、ID→IEdmFolder5）无处可放、被塞进 member_not_found；这比「名字不存在」更常见。",
+  "argc_mismatch 不区分「只少传尾部 out 形参」：3 条 has_out_variant=true（SaveAs2 6vs8），少传 out 在 pywin32 下是常见写法；该标志也不可靠。",
+  "verdict 不随复核回写：22 条名字在官方源里查得到（3 条 swapi 有页 + 19 条只在反射）仍写 member_not_found，且被计入缺陷率 ⇒ 自审字段 _mnf_class 与 verdict 自相矛盾。",
+  "抽取层把非调用当调用：${methodName} 这种模板占位、getattr/属性名元组探测、生成给 SW 跑的 VBA 字符串都进了账（TS 593 条里 192 条来自 vba-*.ts）⇒「一次调用」的口径没定义。",
+  "evidence 逐字判据太硬：36 条未命中里 16 条只是换行/空白差异（归一化后原样就在文件里）⇒「那些要作废」会连带作废 16 条其实站得住的记录。",
+  "接收者归属没有独立判据：52 条「归不到接口」里多数在同一个函数上文就能定名（GetCount 的 eqn_mgr），且里面藏着 3 条实参个数真不等的（GetNames 1vs0、GetMaterial 1vs2、Edit 0vs3）。"
+ ],
+ "chm_claim_assessment": "那 37 个是子串文件计数、不是成员判定（复现：SldWorks 15673↔15679、ZoomToFit 238↔243）。逐名核 0/37 是成员：34 个全树无页；3 个是 title 逐字「SldWorks Object」的对象页。",
+ "counts_i_dispute": [
+  "四家缺陷率 40.8/11.6/24.6/2.9% 与 1599/1635 我逐条复现一致；但那是按现 verdict 算的、含 22 条名字查得到的 member_not_found，扣掉后是 37.7/11.2/22.6/2.5%。",
+  "member_not_found=207（ev 命中 203）是未回写的旧值：其中 22 条名字在官方源查得到、14 条按形参比对应判 match ⇒ 真「名字不存在」只有 185 条。",
+  "185→去重 162→37 在 CHM / 125 三源全无：数字复现一致，但 CHM 缺 41.4% 的页且没有 Simulation/Costing/PDM 文档集 ⇒「三源全无」只能读成「三个索引里没有」。",
+  "36 条 evidence 未命中不宜整体作废：16 条归一化空白后就在文件里（只是换行/缩进差异），真找不到的 20 条里还有从属性名元组里抄来的名字。",
+  "「与官方签名不一致」的分寸本身对（只陈述可核事实、不指控他们）；两处要补：① 对那 22 条名字查得到的行这话是假的；② member_not_found 是「索引里没这个名字」，措辞需分两档。"
+ ]
+}

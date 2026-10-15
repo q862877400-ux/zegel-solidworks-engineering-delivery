@@ -1,0 +1,120 @@
+{
+  "idx": 263,
+  "results": [
+    {
+      "member": "GetStringValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Find_Attribute_Example_CSharp.md",
+        "Find_Attribute_Example_VB.md",
+        "Find_Attribute_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 AddParameter(...,swParamTypeString) 把该参数声明为字符串型才读；成员页没写这条前置",
+          "example_quote": "bRet = swAttDef.AddParameter(AttLenDimName, swParamTypeString, 0#, 0)",
+          "example_file": "Find_Attribute_Example_VB.md"
+        },
+        {
+          "what": "示例先用 SetStringValue2 以 swAllConfiguration 写入才回读；成员页未说读之前必须已赋值",
+          "example_quote": "bRet = swParamName.SetStringValue2(AttName & \" - \" & AttLenDimName, swAllConfiguration, \"\")",
+          "example_file": "Find_Attribute_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只有一句 \"Value of the parameter\"，无实质说法可与示例对照"
+    },
+    {
+      "member": "GetStructureSystemFolder",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先由 FeatureManager.GetCornerManagementFolders 取 IFeature，再 GetSpecificFeature2 转成 ICornerManagementFolder 才能调本方法；成员页未写这段前置",
+          "example_quote": "Set swCornerMgmtFolder = swFeat.GetSpecificFeature2",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md"
+        },
+        {
+          "what": "C# 侧把 System.object 返回值显式转成 Feature 才继续用；成员页只说得到 IFeature，未提这个强转",
+          "example_quote": "swFeat = (Feature)swCornerMgmtFolder.GetStructureSystemFolder();",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+        }
+      ],
+      "note": "示例与 Remarks 一致：返回 IFeature，再 GetSpecificFeature2"
+    },
+    {
+      "member": "GetStructureSystemMemberCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_VBNET.md",
+        "Create_Path_Segment_SSMember_Example_CSharp.md",
+        "Create_Path_Segment_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks；示例在 ProfileGroupFolder 上调用，与 Returns 一致"
+    },
+    {
+      "member": "GetStructureSystemMembers",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_VBNET.md",
+        "Create_Path_Segment_SSMember_Example_CSharp.md",
+        "Create_Path_Segment_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；示例转 object[] 后元素转 StructureSystemMemberFeatureData"
+    },
+    {
+      "member": "GetStyle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Detail_Circle_and_Detail_View_Example_CSharp.md",
+        "Create_Detail_Circle_and_Detail_View_Example_VB.md",
+        "Create_Detail_Circle_and_Detail_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；三份示例只打印返回值，未出现 swDetViewStyle_e 字面量"
+    },
+    {
+      "member": "GetSubAssemblyExplodeSteps",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Explode_Step_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Array of [[IExplodeSteps]] in the subassembly explode view",
+          "example_quote": "Set nestedStep = steps(j)",
+          "example_file": "Add_Explode_Step_Example_VB.md",
+          "why": "页面称元素为 IExplodeSteps（本机官方类型树无此接口）；示例把元素当 SldWorks.ExplodeStep 取并读 .Name。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例里子装配爆炸步来自 AutoExplode()+config.GetExplodeStep(0)，而非 Remarks 说的 Reuse Subassembly Explode 按钮",
+          "example_quote": "Set explStep = config.GetExplodeStep(0)",
+          "example_file": "Add_Explode_Step_Example_VB.md"
+        }
+      ],
+      "note": "Returns 里的 [[IExplodeSteps]] 在 C:\\swapi\\types 下无对应目录"
+    },
+    {
+      "member": "GetSubFeatureCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例调的都是 Extrude/CompoundHole 上的同名成员，无一份调 BestfitPlane"
+    }
+  ]
+}

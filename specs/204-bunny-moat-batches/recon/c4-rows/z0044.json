@@ -1,0 +1,132 @@
+{
+  "idx": 44,
+  "results": [
+    {
+      "member": "CmdID",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Flyouts_in_the_CommandManager_Example_CSharp.md",
+        "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把读出的 CmdID 直接当作 CommandTabBox.AddCommands 的命令 ID 数组首元素，成员页只说“取命令 ID”。",
+          "example_quote": "cmdIDs[0] = flyoutGroup.CmdID;",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；C# 与 VB.NET 两版都是 GetFlyoutGroup(91) 之后读 CmdID。"
+    },
+    {
+      "member": "CoilDiameter",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "sldworksapi__Add_Spring_to_Motion_Study_Example_CSharp.md",
+        "swmotionstudyapi__Add_Spring_to_Motion_Study_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体赋值 0.0102，并按 SetEndPoints → CoilDiameter → NumberOfCoils → WireDiameter → FreeLength → CreateFeature 的顺序设置；成员页未给任何顺序或取值信息。",
+          "example_quote": "swSpringFeat.CoilDiameter = 0.0102;",
+          "example_file": "sldworksapi__Add_Spring_to_Motion_Study_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，清单里另两个示例名在本机不存在，只用了存在的两份（内容一致）。"
+    },
+    {
+      "member": "Collapse",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Dissolve_Subassembly_in_a_BOM_Table_Example_CSharp.md",
+        "Dissolve_Subassembly_in_a_BOM_Table_Example_VB.md",
+        "Dissolve_Subassembly_in_a_BOM_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例以字面量 1 作 CollapseType、8 作 Index 调用 Collapse，并把同两参数原样传给 Expand 还原，成员页只分别描述两个参数。",
+          "example_quote": "swBOMAnnotation.Collapse(1, 8);",
+          "example_file": "Dissolve_Subassembly_in_a_BOM_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 讲 CutList 分支；示例走的是另一分支 RowIndex+行号 8，与 Remarks 不矛盾，故不记冲突。"
+    },
+    {
+      "member": "Collate",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都只在 GetPrintSpecification() 之后用 Debug.Print 回读 Collate，全篇没有演示写侧路径。",
+          "example_quote": "Debug.Print(\"  Collate: \" + printSpec.Collate);",
+          "example_file": "Print_Drawing_as_High_Quality_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；属性名在本例中未被误用到别的对象上。"
+    },
+    {
+      "member": "CollectAllCorners",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_SM_Corner_Relief_Feature_Example_CSharp.md",
+        "Create_SM_Corner_Relief_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例说明 SetBodyScope 的 Body2 从哪来：先按 SOLIDBODY 选中实体特征「Sketched Bend4」再取选中对象；成员页只要求“调用 SetBodyScope”。",
+          "example_quote": "boolstatus = swModel.Extension.SelectByID2(\"Sketched Bend4\", \"SOLIDBODY\", 0, 0, 0, false, 0, null, 0);",
+          "example_file": "Create_SM_Corner_Relief_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 SetBodyScope 前置，两份示例都严格照做且顺序相同（先 Initialize 再 SetBodyScope 再 CollectAllCorners）。"
+    },
+    {
+      "member": "CollectAllSupportiveMates",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Mate_Controller_Example_CSharp.md",
+        "Create_Mate_Controller_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回的 object[] 先包成 DispatchWrapper[]，才能传给 MateControllerFeatureData.Initialize，成员页只说返回 supportive mates 数组。",
+          "example_quote": "dArray = ObjectArrayToDispatchWrapperArray(var);",
+          "example_file": "Create_Mate_Controller_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出比成员页更具体的前置：装配须含机械槽特征，且槽配合带 Distance Along Slot 或 Percent Along Slot 约束之一。",
+          "example_quote": "// - Distance Along Slot",
+          "example_file": "Create_Mate_Controller_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 IsSupportedMatesAvailable 前置，示例读了该属性但未据其分支；这不是与 Remarks 的相反说法，故不记冲突。"
+    },
+    {
+      "member": "CollectIdenticalBodies",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Features_of_Multibody_Sheet_Metal_Part_Example_CSharp.md",
+        "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VB.md",
+        "Get_Features_of_Multibody_Sheet_Metal_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例说明该属性所在对象由 BodyFolder.GetCutListSortOptions 取得，且设完必须把整个对象再传给 SortCutList 才生效；成员页未提这条生效路径。",
+          "example_quote": "CutListSortOptions = (CutListSortOptions)swBodyFolder.GetCutListSortOptions();",
+          "example_file": "Get_Features_of_Multibody_Sheet_Metal_Part_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 第二句讲焊件例外；示例前置只写打开 weldment_box3.sldprt，未声称与该例外相反，故不记冲突。"
+    }
+  ]
+}

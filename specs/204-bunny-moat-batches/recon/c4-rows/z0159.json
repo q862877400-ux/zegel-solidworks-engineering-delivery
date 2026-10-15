@@ -1,0 +1,162 @@
+{
+  "idx": 159,
+  "results": [
+    {
+      "member": "GetColumnCustomProperty",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Custom_Properties_for_BOM_Table_Columns_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用宿主对象：必须是 InsertBomTable4 返回的 BomTableAnnotation 实例（另存一份 TableAnnotation 只为取 ColumnCount）",
+          "example_quote": "        Debug.Print \" Column(\" & i & \") = \" & swBOMTableAnnotation.GetColumnCustomProperty(i)",
+          "example_file": "Get_Custom_Properties_for_BOM_Table_Columns_Example_VB.md"
+        },
+        {
+          "what": "示例给出索引上界写法 0 To ColumnCount（含端点），成员页未说明索引范围",
+          "example_quote": "    For i = 0 To swTableAnnotation.ColumnCount",
+          "example_file": "Get_Custom_Properties_for_BOM_Table_Columns_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 两条与示例一致，无冲突；示例额外补了宿主对象与索引上界。"
+    },
+    {
+      "member": "GetColumnNames",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Wizard_Hole_Standards_Data_Example_CSharp.md",
+        "Get_Wizard_Hole_Standards_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 示例把 out 结果强转为 object[]，说明返回是可索引的对象数组而非字符串数组",
+          "example_quote": "                columnNamesArray = (object[])columnNames;",
+          "example_file": "Get_Wizard_Hole_Standards_Data_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 示例说明返回 0 基一维 Variant 数组，用 UBound 取上界",
+          "example_quote": "        For i = 0 To UBound(columnNames)",
+          "example_file": "Get_Wizard_Hole_Standards_Data_Example_VB.md"
+        }
+      ],
+      "note": "IHoleDataTable::GetColumnNames 成员页没有 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetColumnTitle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VB.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VBNET.md",
+        "Insert_Part_Number_Column_in_BOM_Table_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「第二个列」的 0 基索引写成字面量 1，比成员页的 0-based 说明更具体",
+          "example_quote": "    columnNames(0) = swTableAnnotation.GetColumnTitle(1)",
+          "example_file": "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VB.md"
+        },
+        {
+          "what": "C# 示例说明返回值按 string 使用，且与 GetColumnType 在同一循环里成对取值",
+          "example_quote": "            columnNames[0] = swTableAnnotation.GetColumnTitle(1);",
+          "example_file": "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定。页面首行标 Obsolete 而示例仍在用，只记不判。"
+    },
+    {
+      "member": "GetColumnTitle2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Export_BOMs_to_XML_Example_CSharp.md",
+        "Export_BOMs_to_XML_Example_VB.md",
+        "Export_BOMs_to_XML_Example_VBNET.md",
+        "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 IncludeHidden 恒传 True，并逐列循环 0 到 ColumnCount-1",
+          "example_quote": "        sHeaderText(j) = swTableAnn.GetColumnTitle2(j, True)",
+          "example_file": "Export_BOMs_to_XML_Example_VB.md"
+        },
+        {
+          "what": "VBA 示例的 DisplayTableColumnProps 中与 GetColumnType3 配对使用，标题取自可见列索引",
+          "example_quote": "        ColTitle = theTableAnnotation.GetColumnTitle2(i, True)",
+          "example_file": "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定；示例补充了 IncludeHidden 的实际传值与用法。"
+    },
+    {
+      "member": "GetColumnType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Part_Number_Column_in_BOM_Table_Example_CSharp.md",
+        "Insert_Part_Number_Column_in_BOM_Table_Example_VB.md",
+        "Insert_Part_Number_Column_in_BOM_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例演示单参调用，返回值直接赋给 swTableColumnTypes_e 枚举变量，循环 0 到 ColumnCount-1",
+          "example_quote": "        ColType = theTableAnnotation.GetColumnType(i)",
+          "example_file": "Insert_Part_Number_Column_in_BOM_Table_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定；页面首行标 Obsolete 而三份示例仍用它。"
+    },
+    {
+      "member": "GetColumnType2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Column_in_BOM_Table_Example_CSharp.md",
+        "Insert_Column_in_BOM_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "VBA 示例 IncludeHidden 恒传 True，返回赋给 swTableColumnTypes_e 枚举变量",
+          "example_quote": "        ColType = theTableAnnotation.GetColumnType2(i, True)",
+          "example_file": "Insert_Column_in_BOM_Table_Example_VB.md"
+        },
+        {
+          "what": "C# 示例用 bool 字面量 true 传 IncludeHidden，返回值赋给 int 后再 Convert.ToString",
+          "example_quote": "            ColType = theTableAnnotation.GetColumnType2(i, true);",
+          "example_file": "Insert_Column_in_BOM_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定；页面首行标 Obsolete 而示例仍用它。"
+    },
+    {
+      "member": "GetColumnType3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用形态：IncludeHidden 传 True，PropertyData 与 Status 作 ByRef 出参复用同一个 Variant",
+          "example_quote": "        ColType = theTableAnnotation.GetColumnType3(i, True, PropData, status)",
+          "example_file": "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md"
+        },
+        {
+          "what": "ItemNumber 类型列的 PropertyData 是按下标取的数组，印证 Remarks 说的 varies by type",
+          "example_quote": "            start = PropData(0)",
+          "example_file": "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md"
+        },
+        {
+          "what": "ComponentReference 类型列的 PropertyData 回 Nothing，示例据此打印 NULL Property data",
+          "example_quote": "            If PropData Is Nothing Then",
+          "example_file": "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只把 PropertyData 形态推给 SetColumnType3 的 Remarks，示例逐类型给出实际形状，不构成矛盾。"
+    }
+  ]
+}

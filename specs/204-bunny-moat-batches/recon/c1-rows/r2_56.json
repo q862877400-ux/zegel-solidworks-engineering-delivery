@@ -1,0 +1,15 @@
+{"idx": 56, "pages_read": 13, "rows": [
+{"iface": "IView", "file": "GetCThreads.md", "signature": "System.object GetCThreads()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetDisplayTangentEdges.md", "signature": "System.bool GetDisplayTangentEdges()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetNextView.md", "signature": "System.object GetNextView()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetVisible.md", "signature": "System.bool GetVisible()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetDimensionInfo2.md", "signature": "System.double IGetDimensionInfo2()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetSection.md", "signature": "DrSection IGetSection()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "LinkParentConfiguration.md", "signature": "System.bool LinkParentConfiguration {get; set;}", "obsolete": false, "pointer": false, "zero": "是（无括号）"},
+{"iface": "IDrawingDoc", "file": "AttachDimensions.md", "signature": "void AttachDimensions()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "CreateSectionViewAt.md", "signature": "System.bool CreateSectionViewAt( System.double X, System.double Y, System.double Z, System.bool NotAligned, System.bool IsOffsetSection )", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "HideShowDimensions.md", "signature": "void HideShowDimensions()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "InsertDatumTag.md", "signature": "void InsertDatumTag()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "SetupSheet6.md", "signature": "System.bool SetupSheet6( System.string Name, System.int PaperSize, System.int TemplateIn, System.double Scale1, System.double Scale2, System.bool FirstAngle, System.string TemplateName, System.double Width, System.double Height, System.string PropertyViewName, System.bool RemoveModifiedNotes, System.double ZoneLeftMargin, System.double ZoneRightMargin, System.double ZoneTopMargin, System.double ZoneBottomMargin, System.int ZoneRow, System.int ZoneCol )", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "ISheet", "file": "SetName.md", "signature": "void SetName( System.string NameIn )", "obsolete": false, "pointer": false, "zero": "否（有形参）"}
+]}

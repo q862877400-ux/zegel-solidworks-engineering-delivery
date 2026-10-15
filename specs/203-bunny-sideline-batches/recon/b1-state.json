@@ -1,0 +1,22 @@
+{
+ "missing": [],
+ "parse_bad": [],
+ "disagree": [
+  [
+   68,
+   "preview_and_review_report",
+   "output/review-tools-evidence.json#total",
+   "查不到（顶层无 total 键，实际用键 of，值 = 4）",
+   "查不到"
+  ]
+ ],
+ "unreach": [
+  [
+   "mesh_size_sanity_gate",
+   "verified",
+   "output/simulation-evidence.json",
+   "★ **对照证据**：tools/capture_simulation_evidence.py 的 `output/simulation-evidence.json`（`sugge"
+  ]
+ ],
+ "pairs": 314
+}

@@ -1,0 +1,91 @@
+{
+  "idx": 248,
+  "results": [
+    {
+      "member": "GetScale",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "ICavityFeatureData/GetScale.md 无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetScaleWithModelChanges",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IDrSection/GetScaleWithModelChanges.md 无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetScanto3D",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IModelDocExtension/GetScanto3D.md 无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetScene",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IConfiguration/GetScene.md 无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetSearchData",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IModelDocExtension/GetSearchData.md 无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetSearchFolders",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Search_Folders_Example_CSharp.md",
+        "Get_and_Set_Search_Folders_Example_VB.md",
+        "Get_and_Set_Search_Folders_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在调用前先把 Remarks 点名的那个开关 swUseFolderSearchRules 置为 false，成员页未说调用前需先动它。",
+          "example_quote": "swApp.SetUserPreferenceToggle((int)swUserPreferenceToggle_e.swUseFolderSearchRules, false);",
+          "example_file": "Get_and_Set_Search_Folders_Example_CSharp.md"
+        },
+        {
+          "what": "示例前后各调一次 GetSearchFolders 做读回，成员页未提读回用法；分号分隔与页面 Returns 一致。",
+          "example_quote": "searchFolders = \"c:\\\\;\" + searchFolders;",
+          "example_file": "Get_and_Set_Search_Folders_Example_VBNET.md"
+        }
+      ],
+      "note": "三语示例一致。Remarks 的 ignored 管的是引用解析行为，不是 Get/Set 本身的读回，故不判冲突。"
+    },
+    {
+      "member": "GetSearchPath",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Rename_Component_and_Update_References_Example_CSharp.md",
+        "Rename_Component_and_Update_References_Example_VB.md",
+        "Rename_Component_and_Update_References_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三语示例都在调用前先置 UpdateWhereUsedReferences=True 再置 IncludeFileLocations=True，页面只在 See Also 列出后者。",
+          "example_quote": "swRenamedDocumentReferences.UpdateWhereUsedReferences = true;\n            swRenamedDocumentReferences.IncludeFileLocations = true;\n            searchPaths = (object[])swRenamedDocumentReferences.GetSearchPath();",
+          "example_file": "Rename_Component_and_Update_References_Example_CSharp.md"
+        },
+        {
+          "what": "页面未说数组怎么取长度；VBA 用 UBound，C# 用 Length - 1，两侧都假定非空。",
+          "example_quote": "nbr = UBound(searchPaths);",
+          "example_file": "Rename_Component_and_Update_References_Example_VB.md"
+        }
+      ],
+      "note": "页面前提被示例逐条满足，三语示例一致，只补具体调用序与返回值取法。"
+    }
+  ]
+}

@@ -1,0 +1,196 @@
+{
+  "idx": 207,
+  "results": [
+    {
+      "member": "GetInstances",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Visibility_of_Sketch_Block_Instances_Example_CSharp.md",
+        "Change_Visibility_of_Sketch_Block_Instances_Example_VB.md",
+        "Change_Visibility_of_Sketch_Block_Instances_Example_VBNET.md",
+        "Get_Block_Definitions_in_Part_or_Assembly_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "C# 把返回值直接转成 object[]、元素转 SketchBlockInstance，页面只写 System.object",
+          "example_quote": "blocks = (object[])swBlockDefinition.GetInstances();",
+          "example_file": "Change_Visibility_of_Sketch_Block_Instances_Example_CSharp.md"
+        },
+        {
+          "what": "无实例时返回 Empty，示例用 IsEmpty 把守，页面未提可返回空",
+          "example_quote": "False = IsEmpty(vInstances) Then",
+          "example_file": "Get_Block_Definitions_in_Part_or_Assembly_Example_VB.md"
+        },
+        {
+          "what": "前置：须先在特征树选中块，再 GetSpecificFeature2 取本接口",
+          "example_quote": "The sketch block is selected in the FeatureManager design tree.",
+          "example_file": "Change_Visibility_of_Sketch_Block_Instances_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按纪律不判冲突；三条更具体项均来自实际调用点。"
+    },
+    {
+      "member": "GetInterferenceCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Run_Interference_Detection_Example_CSharp.md",
+        "Run_Interference_Detection_Example_VB.md",
+        "Run_Interference_Detection_Example_VBNET.md",
+        "Set_Components_and_Transforms_for_Interference_Detection_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call this method before calling [[IInterferenceDetectionMgr::IGetInterferences]] to determine the size of the array for the interferences.",
+          "example_quote": "vInts = (object[])pIntMgr.GetInterferences();\nDebug.Print(\"Number of interferences: \" + pIntMgr.GetInterferenceCount());",
+          "example_file": "Run_Interference_Detection_Example_CSharp.md",
+          "why": "Remarks 规定 count 必须先于 interferences；Run 例三种语言全为反序，Set_Components 例则同 Remarks。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "前置：须先开干涉窗取 manager，页面无任何前置",
+          "example_quote": "swAssemblyDoc.ToolsCheckInterference();",
+          "example_file": "Run_Interference_Detection_Example_CSharp.md"
+        },
+        {
+          "what": "须先在 manager 上设好检测选项，才调用计数与取干涉",
+          "example_quote": "pIntMgr.TreatCoincidenceAsInterference = false;",
+          "example_file": "Run_Interference_Detection_Example_CSharp.md"
+        }
+      ],
+      "note": "唯一有 Remarks 者；顺序冲突由三个语言变体共同佐证，非孤例。"
+    },
+    {
+      "member": "GetInterferences",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Run_Interference_Detection_Example_CSharp.md",
+        "Run_Interference_Detection_Example_VB.md",
+        "Run_Interference_Detection_Example_VBNET.md",
+        "Set_Components_and_Transforms_for_Interference_Detection_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "无干涉时返回 null，示例按 null 判定，页面只写「Array of the interferences」",
+          "example_quote": "if ((vInterferences == null))",
+          "example_file": "Set_Components_and_Transforms_for_Interference_Detection_Example_CSharp.md"
+        },
+        {
+          "what": "数组下界非零假设不成立，须 GetLowerBound/GetUpperBound 自算长度",
+          "example_quote": "numInterferences = vInterferences.GetUpperBound(0) - vInterferences.GetLowerBound(0) + 1;",
+          "example_file": "Set_Components_and_Transforms_for_Interference_Detection_Example_CSharp.md"
+        },
+        {
+          "what": "前置同族：先 ToolsCheckInterference 取 manager",
+          "example_quote": "swAssemblyDoc.ToolsCheckInterference();",
+          "example_file": "Run_Interference_Detection_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks，不判冲突；null 返回一节来自 Set_Components 例。"
+    },
+    {
+      "member": "GetIntersectFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Intersect_Features_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "取得本接口的路径：按名字 GetFeature，页面未说从哪拿",
+          "example_quote": "iCircleFeature = swDXPart.GetFeature(\"Intersect Circle1\")",
+          "example_file": "Get_DimXpert_Intersect_Features_Example_VB.md"
+        },
+        {
+          "what": "GetFeature 可回一般接口也可回更具体接口，出参按一般 IDimXpertFeature 用",
+          "example_quote": "which can return a general IDimXpertFeature or a more specific interface",
+          "example_file": "Get_DimXpert_Intersect_Features_Example_VB.md"
+        },
+        {
+          "what": "前置：须先在指定零件上用 DimXpert 工具栏建出该特征",
+          "example_quote": "Open the DimXpert toolbar from View > Toolbars.",
+          "example_file": "Get_DimXpert_Intersect_Features_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks；示例唯一一份，且确为同一接口对象。"
+    },
+    {
+      "member": "GetIntersectionsCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Intersect_Feature_Data_Example_CSharp.md",
+        "Get_Intersect_Feature_Data_Example_VB.md",
+        "Get_Intersect_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "前置：先 PreIntersect/PostIntersect 建相交特征，再 GetDefinition 取本接口",
+          "example_quote": "featData = (IntersectFeatureData)swFeat.GetDefinition();",
+          "example_file": "Get_Intersect_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例中排在 GetIntersectionsToolsCount 之后调用",
+          "example_quote": "Debug.Print(\"Number of intersect regions: \" + featData.GetIntersectionsCount());",
+          "example_file": "Get_Intersect_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks；GetDefinition 取接口这一前置页面完全未写。"
+    },
+    {
+      "member": "GetIntersectionsToolsCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Intersect_Feature_Data_Example_CSharp.md",
+        "Get_Intersect_Feature_Data_Example_VB.md",
+        "Get_Intersect_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "同一 GetDefinition 前置，三份示例一致",
+          "example_quote": "featData = (IntersectFeatureData)swFeat.GetDefinition();",
+          "example_file": "Get_Intersect_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例把它当作相交工具数量读出并直接打印，计数为纯 int 无单位",
+          "example_quote": "Debug.Print(\"Number of solids, surfaces, or planes used to create the intersect feature: \" + featData.GetIntersectionsToolsCount());",
+          "example_file": "Get_Intersect_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks；与 GetIntersectionsCount 同文件同 Sub，两例一致。"
+    },
+    {
+      "member": "GetIntraFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VB.md",
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VB.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "调用方类型写明为 DimXpertCompositeDistanceBetweenDimTol，确认同接口非同名",
+          "example_quote": "Private Sub CompositeDistanceBetweenData(annotation As DimXpertCompositeDistanceBetweenDimTol)",
+          "example_file": "Get_DimXpert_Datum_Example_VB.md"
+        },
+        {
+          "what": "FosUsage 取值就是 min/max/center 三种，页面只让查枚举",
+          "example_quote": "' the origin and tolerance feature along with their feature of size usage (min, max, center)",
+          "example_file": "Get_DimXpert_Tolerance1_Example_VB.md"
+        },
+        {
+          "what": "页面称 feature-locating portion，示例明确叫 pattern locating feature",
+          "example_quote": "' the pattern locating feature",
+          "example_file": "Get_DimXpert_Tolerance1_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都真用本成员，且都在同一 Sub、同一声明类型下，非撞名。"
+    }
+  ]
+}

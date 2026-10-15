@@ -1,0 +1,93 @@
+{
+  "idx": 420,
+  "results": [
+    {
+      "member": "SaveAs",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无Remarks。所列4份示例调的是swModelDocExt.SaveAs，即IModelDocExtension成员，非本成员。"
+    },
+    {
+      "member": "SaveAs3",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_and_Edit_Distance_Mate_Example_CSharp.md",
+        "Add_and_Edit_Distance_Mate_Example_VB.md",
+        "Add_and_Edit_Distance_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无Remarks段，仅标Obsolete；按纪律跳过。"
+    },
+    {
+      "member": "SaveAs4",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_and_Save_as_PDF_Example_VB.md",
+        "Save_As_Tiff_Example_VB.md",
+        "Save_Drawing_Sheets_as_DXF_Example_VB.md",
+        "Save_Drawing_as_DXF_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无Remarks段，仅标Obsolete；4份示例均直调swModel.SaveAs4。"
+    },
+    {
+      "member": "SaveAsExcel",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Save_Table_to_Microsoft_Excel_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无Remarks段，只有Parameters/Returns；按纪律跳过。"
+    },
+    {
+      "member": "SaveAsExcelFile",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Save_Design_Table_as_Microsoft_Excel_File_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无Remarks段，只有Parameters/Returns；按纪律跳过。"
+    },
+    {
+      "member": "SaveAsPDF",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Save_Table_Annotation_to_PDF_Example_CSharp.md",
+        "Save_Table_Annotation_to_PDF_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先选中表格注释并经GetSelectedObject6取对象，Remarks只讲文件名要求",
+          "example_quote": "// 2. Select the table annotation.",
+          "example_file": "Save_Table_Annotation_to_PDF_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks只约束路径/扩展名与覆盖行为，示例完全吻合，无矛盾。"
+    },
+    {
+      "member": "SaveBMP",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Save_Model_as_Bitmap_Example_CSharp.md",
+        "Save_Model_as_Bitmap_Example_VB.md",
+        "Save_Model_as_Bitmap_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把宽高同时传0以取当前窗口尺寸，并从ActiveDoc取模型",
+          "example_quote": "returnVal = swModel.SaveBMP(fileName, 0, 0);",
+          "example_file": "Save_Model_as_Bitmap_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例一致，路径与≤0回落规则均吻合Remarks，无矛盾。"
+    }
+  ]
+}

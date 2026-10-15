@@ -1,0 +1,168 @@
+{
+  "idx": 108,
+  "results": [
+    {
+      "member": "EditUnsuppress2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Library_Feature_With_References_Example_CSharp.md",
+        "Create_Library_Feature_With_References_Example_VB.md",
+        "Create_Library_Feature_With_References_Example_VBNET.md",
+        "Exclude_Faces_Before_Flattening_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没写的前置：先按 mark 0 选中该特征（BODYFEATURE 类型串），再零参调用；成员页只说 the selected feature。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"straight slot<1>\", \"BODYFEATURE\", 0, 0, 0, false, 0, null, 0);",
+          "example_file": "Create_Library_Feature_With_References_Example_CSharp.md"
+        },
+        {
+          "what": "示例把返回值当成功判据并弹错误，成员页 Returns 只描述真假语义、未给用法。",
+          "example_quote": "if (boolstatus == false) { ErrorMsg(swApp, \"EditUnsuppress Failed\");  }",
+          "example_file": "Exclude_Faces_Before_Flattening_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页 Examples 点名的 Sheet Metal 三例不在本批；本批四例都真调用该成员，无矛盾。"
+    },
+    {
+      "member": "ElectricalPinID",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Connection_Point_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Connection_Point_Feature_Data_Example_VB.md",
+        "Get_and_Set_Connection_Point_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取对象路径：SelectByID2 用 CONNECTIONPOINT 类型串选中，再校验选中类型，最后转 IConnectionPointFeatureData；成员页只说 get/set。",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"CPoint1\", \"CONNECTIONPOINT\", 0, 0, 0, false, 0, null, 0);",
+          "example_file": "Get_and_Set_Connection_Point_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例写完 ElectricalPinID 不调 ModifyDefinition，只用 ForceRebuild3(false) 落地。",
+          "example_quote": "Part.ForceRebuild3(false);",
+          "example_file": "Get_and_Set_Connection_Point_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按规则跳过冲突判定。"
+    },
+    {
+      "member": "ElementType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先 AccessSelections 回滚取访问权才读 ElementType；成员页只写 Gets the type。",
+          "example_quote": "featdata.AccessSelections(swModel, null);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        },
+        {
+          "what": "示例须把具体子接口（CountersinkElementData / StraightElementData）强制转回 AdvancedHoleElementData 才读得到该属性。",
+          "example_quote": "Debug.Print(\"   Hole element type as defined in swAdvWzdGeneralHoleTypes_e: \" + ((AdvancedHoleElementData)swCounterSinkNear).ElementType);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "无 Remarks 段；三份示例都只读不写，未见矛盾。"
+    },
+    {
+      "member": "Elevation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Display_Elevation_Symbol_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出赋值顺序：先把 EndSymbol 设成 swOrdDimEndSymbol_Dowel，再置 Elevation = True；成员页只说受 EndSymbol 控制、未说先后。",
+          "example_quote": "swDisplayDim.EndSymbol = swOrdDimEndSymbol_Dowel",
+          "example_file": "Display_Elevation_Symbol_Example_VB.md"
+        },
+        {
+          "what": "示例只对选中对象类型为 swSelDIMENSIONS 的项设置该属性。",
+          "example_quote": "selType = swSelDIMENSIONS Then",
+          "example_file": "Display_Elevation_Symbol_Example_VB.md"
+        }
+      ],
+      "note": "无 Remarks 段；仅一份示例，页面与示例都未给单位或返回值细节。"
+    },
+    {
+      "member": "Elliptical",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Height_of_Dome_Feature_Example_VB.md",
+        "Create_and_Modify_Dome_Feature_Example_CSharp.md",
+        "Create_and_Modify_Dome_Feature_Example_VB.md",
+        "Create_and_Modify_Dome_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置比成员页多一步：改 Elliptical 前先 AccessSelections 回滚取访问权，Remarks 只提 ModifyDefinition。",
+          "example_quote": "swDome.AccessSelections(swModel,",
+          "example_file": "Change_Height_of_Dome_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例写出 ModifyDefinition 的三参调用形态，并对返回值做 Debug.Assert。",
+          "example_quote": "swFeat.ModifyDefinition(swDome,",
+          "example_file": "Change_Height_of_Dome_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例显式给出成员页没写的前置：圆顶特征须已被选中，再从选区对象取 GetDefinition。",
+          "example_quote": "Dome feature for which a distance was",
+          "example_file": "Change_Height_of_Dome_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只要求 ModifyDefinition；示例完全遵守且多一步 AccessSelections，不构成冲突。"
+    },
+    {
+      "member": "EmphasizeOutline",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取用对象：是 CreateSectionViewAt5 刚建出的剖视图 IView；成员页说 Gets or sets 但未指明对象来源。",
+          "example_quote": "swView = swDrawing.CreateSectionViewAt5(0.1604082711061, 0.2048687170364, 0, \"D\", 32, (excludedComponents), 0.00835)",
+          "example_file": "Create_Section_View_and_Get_Some_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例只演示读取该属性做打印，未演示写入。",
+          "example_quote": "Debug.Print(\" Emphasize outlines of section views? \" + swView.EmphasizeOutline);",
+          "example_file": "Create_Section_View_and_Get_Some_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "无 Remarks 段；两份示例语言版本调用一致，无差异。"
+    },
+    {
+      "member": "EnableAssemblyRebuild",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Suspend_Automatic_Rebuilds_of_an_Assembly_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出极性字面说明，且与成员页 Returns 同向（True=挂起重建），并演示先读后取反写。",
+          "example_quote": "Debug.Print \"State (False = rebuilds enabled; True = rebuilds suspended)\"",
+          "example_file": "Suspend_Automatic_Rebuilds_of_an_Assembly_Example_VB.md"
+        },
+        {
+          "what": "示例要求先 OpenDoc6 打开装配文档再取该属性。",
+          "example_quote": "Set swAssemblyDoc = swApp.OpenDoc6(fileName, swDocumentTypes_e.swDocASSEMBLY, swOpenDocOptions_e.swOpenDocOptions_Silent, \"\", errors, warnings)",
+          "example_file": "Suspend_Automatic_Rebuilds_of_an_Assembly_Example_VB.md"
+        }
+      ],
+      "note": "无 Remarks 段；属性名 Enable 与 True=挂起语义相反，但示例与成员页一致，故不记冲突。"
+    }
+  ]
+}

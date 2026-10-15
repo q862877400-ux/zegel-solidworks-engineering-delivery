@@ -1,0 +1,156 @@
+{
+  "idx": 202,
+  "results": [
+    {
+      "member": "GetGaugeTableParameters",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md",
+        "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显式先写 UseGaugeTable=true 并立即回读打印，之后才取 gauge table 参数对象",
+          "example_quote": "swSweptFlangeFeatureData.UseGaugeTable = true;",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        },
+        {
+          "what": "特征建成后再次取参数前，示例先取选区访问权，读完再 ReleaseSelectionAccess；成员页未提",
+          "example_quote": "boolstatus = featData.AccessSelections(swModel, null);",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页只给 UseGaugeTable 前置；示例另加 AccessSelections / ReleaseSelectionAccess 的取选区前置。"
+    },
+    {
+      "member": "GetGaugeTablePath",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md",
+        "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用首次调用的返回值判断是否要改设表路径，为 false 则 Set 后再读一次",
+          "example_quote": "boolstatus = smGaugeTableParam.GetGaugeTablePath(gaugePath);\nif (boolstatus == false)",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_CSharp.md"
+        },
+        {
+          "what": "VB.NET 示例把 out 形参绑定到事先初始化为 Nothing 的 String 变量上再传值",
+          "example_quote": "Dim gaugePath As String = Nothing",
+          "example_file": "Create_Swept_Flange_Using_Gauge_Table_Example_VBNET.md"
+        }
+      ],
+      "note": "该页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetGeneralTableAnnotation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_General_Table_for_SOLIDWORKS_3D_PDF_Example_CSharp.md",
+        "Create_General_Table_for_SOLIDWORKS_3D_PDF_Example_VB.md",
+        "Create_General_Table_for_SOLIDWORKS_3D_PDF_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都走 TableTemplate 为空那支：UseAnchorPoint=true、X/Y 仍传 0（被忽略）、Rows/Columns=2",
+          "example_quote": "swTable = swModelDocExt.GetGeneralTableAnnotation(True, 0, 0, swBOMConfigurationAnchorType_e.swBOMConfigurationAnchor_TopLeft, \"\", 2, 2)",
+          "example_file": "Create_General_Table_for_SOLIDWORKS_3D_PDF_Example_VBNET.md"
+        },
+        {
+          "what": "示例以返回对象为 Nothing 判失败；成员页 Returns 只给 ITableAnnotation，未说失败形态",
+          "example_quote": "If (swTable Is Nothing) Then",
+          "example_file": "Create_General_Table_for_SOLIDWORKS_3D_PDF_Example_VBNET.md"
+        }
+      ],
+      "note": "Remarks 的两条分支与示例调用参数一致，未见不能同时成立处。"
+    },
+    {
+      "member": "GetGraphicsBody",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Inspect_Facets_Example_CSharp.md",
+        "Inspect_Facets_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method is valid only if [[IBody2::IsGraphicsBody]] is true.",
+          "example_quote": "swThisGraphicsBody = (GraphicsBody)swCurBod.GetGraphicsBody();\nif (swThisGraphicsBody == null)",
+          "example_file": "Inspect_Facets_Example_CSharp.md",
+          "why": "Remarks 以 IsGraphicsBody 为硬前置；示例却对 GetBodies2 遍历到的每个体（含网格体）无条件调用，IsGraphicsBody 结果只被打印、不做门禁，并按返回 null 兜底。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "返回值可反向取回 IBody2，构成 GraphicsBody→Body2 往返；成员页未提",
+          "example_quote": "swBodyFromGraphics = (Body2)swGraphicsBody.GetBody();",
+          "example_file": "Inspect_Facets_Example_CSharp.md"
+        }
+      ],
+      "note": "同一示例 SelectGraphicsBody() 先判 GetType()==swGraphicsBody 才调用，TestBodies() 不判——两处口径相反。"
+    },
+    {
+      "member": "GetGroupByName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Normal_Cut_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 GetGroupNames/GetGroupByName 之前先取选区访问权；成员页只说用 GetGroupNames 取名",
+          "example_quote": "swNormalCutFeatData.AccessSelections(swModel, null);",
+          "example_file": "Create_Normal_Cut_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "返回的组数据取 .Faces 得到该组面数组，示例逐面读 GetArea",
+          "example_quote": "object[] varFaces = (object[])grpData.Faces;",
+          "example_file": "Create_Normal_Cut_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 要求的「先用 GetGroupNames 取名」被示例逐字照做，无冲突。"
+    },
+    {
+      "member": "GetGroupDataFromRegistry",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Flyouts_in_the_CommandManager_Example_CSharp.md",
+        "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 out 数组转 int[] 与已知 ID 逐一比对，只有不匹配才把 ignorePrevious 置 true",
+          "example_quote": "if (!CompareIDs((int[])registryIDs, knownIDs))",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        },
+        {
+          "what": "VB.NET 示例拿到的是 Object，须 DirectCast 成 Integer() 才能遍历",
+          "example_quote": "userIDs = DirectCast(objIDs, Integer())",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+        }
+      ],
+      "note": "Remarks 的「在 CreateCommandGroup2 之前调用」被 C# 示例逐字照做；VB.NET 片段未出现该调用。"
+    },
+    {
+      "member": "GetGroupNames",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Normal_Cut_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 AccessSelections 再取名，且返回值须转 object[] 后按索引遍历",
+          "example_quote": "varGrpNames = (object[])swNormalCutFeatData.GetGroupNames();",
+          "example_file": "Create_Normal_Cut_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "该页无 ## Remarks 段，按纪律跳过冲突判定。"
+    }
+  ]
+}

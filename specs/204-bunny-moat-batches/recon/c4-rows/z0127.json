@@ -1,0 +1,119 @@
+{
+  "idx": 127,
+  "results": [
+    {
+      "member": "FieldOfViewDepth",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Camera_Example_CSharp.md",
+        "Insert_Camera_Example_VB.md",
+        "Insert_Camera_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把本读数 ×1000 后标 mm，说明返回值是米；成员页 Returns/Remarks 都没给单位。",
+          "example_quote": "Debug.Print \"Depth of the field of view = \" & swCamera.FieldOfViewDepth * 1000# & \" mm\"",
+          "example_file": "Insert_Camera_Example_VB.md"
+        }
+      ],
+      "note": "三份示例一致：先打印 Perspective 再打印本值；Remarks 只说「只对透视相机有意义」，未给顺序与单位。"
+    },
+    {
+      "member": "FieldOfViewHeight",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Camera_Example_CSharp.md",
+        "Insert_Camera_Example_VB.md",
+        "Insert_Camera_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把本读数 ×1000 后标 mm，说明返回值是米；成员页 Returns/Remarks 都没给单位。",
+          "example_quote": "Debug.Print \"Height of the field of view = \" & swCamera.FieldOfViewHeight * 1000# & \" mm\"",
+          "example_file": "Insert_Camera_Example_VB.md"
+        }
+      ],
+      "note": "同 FieldOfViewDepth：三份示例只读不写，与页头「get-only」一致；Remarks 未提单位。"
+    },
+    {
+      "member": "FileName",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "本页无 Remarks。四份候选示例写的都是 RenderMaterial.FileName（贴花/外观），不是 IDesignTable 的。"
+    },
+    {
+      "member": "FilePath",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "本页无 Remarks。四份候选示例写的都是 MBD3DPdfData.FilePath，不是 IEquationMgr 的。"
+    },
+    {
+      "member": "FillPath",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_and_Modify_Distance_Chain_Pattern_Feature_Example_CSharp.md",
+        "Create_and_Modify_Distance_Chain_Pattern_Feature_Example_VB.md",
+        "Create_and_Modify_Distance_Chain_Pattern_Feature_Example_VBNET.md",
+        "Modify_Chain_Pattern_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体调用序：AccessSelections → Spacing → FillPath=True → 读 InstanceCount；Remarks 只说去 Spacing 设间距，没给顺序。",
+          "example_quote": "status = swChainPatternFeatureData.AccessSelections(swModel, Nothing)\n    swChainPatternFeatureData.Spacing = 0.078\n    swChainPatternFeatureData.FillPath = True",
+          "example_file": "Create_and_Modify_Distance_Chain_Pattern_Feature_Example_VB.md"
+        }
+      ],
+      "note": "无冲突。两示例赋值顺序相反（Create 例先 Spacing 后 FillPath；Modify 例先 FillPath 后 Spacing），Remarks 未规定。"
+    },
+    {
+      "member": "FillVolume",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Thicken_Surface_and_Generate_Boss_Example_CSharp.md",
+        "Thicken_Surface_and_Generate_Boss_Example_VB.md",
+        "Thicken_Surface_and_Generate_Boss_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示本属性就是 FeatureBossThicken 第 4 个位置参数（示例传 False），并在建特征后回读；成员页只写 get/set 语义。",
+          "example_quote": "Set swFeat = swFeatMgr.FeatureBossThicken(0.001, swThickenSideOne, 0, False, True, True, True)",
+          "example_file": "Thicken_Surface_and_Generate_Boss_Example_VB.md"
+        }
+      ],
+      "note": "本页无 Remarks。示例先用 SetSelectedObjectMark 把面标为 mark 1，再建加厚特征，吻合该方法自身的前置。"
+    },
+    {
+      "member": "FilletGussetEdges",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[ISMGussetFeatureData::GussetType]] is set to 1.",
+          "example_quote": "swFeatData.GussetType = (int)swSheetMetalRibGussetType_e.swSheetMetalRibGussetType_Rounded;\n                \tswFeatData.FilletGussetEdges = false;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+          "why": "官方枚举 swSheetMetalRibGussetType_Rounded=0、_Flat=1；示例在 GussetType=0 下设本属性，与「仅当设为 1 时有效」不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 里的数字「1」落到具名枚举 swSheetMetalRibGussetType_Flat；成员页只写 1，没说是哪个枚举值。",
+          "example_quote": "swFeatData.GussetType = (int)swSheetMetalRibGussetType_e.swSheetMetalRibGussetType_Flat;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+        }
+      ],
+      "note": "VB.NET 版与 C# 版同形；示例后段改成 Flat 时并未再设本属性。Remarks 的第二步序 EdgeFilletRadius 被遵守。"
+    }
+  ]
+}

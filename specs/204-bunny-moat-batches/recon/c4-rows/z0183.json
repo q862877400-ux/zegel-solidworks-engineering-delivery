@@ -1,0 +1,116 @@
+{
+  "idx": 183,
+  "results": [
+    {
+      "member": "GetEditStatus",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Editing_Status_of_Features_Example_CSharp.md",
+        "Get_Editing_Status_of_Features_Example_VB.md",
+        "Get_Editing_Status_of_Features_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把「sketch 在编辑态 ⇒ 其下依赖项全不可编辑」落到具体树节点上",
+          "example_quote": "'All of the features beneath Extrude1 cannot be edited because\n'Extrude2's Sketch2 is in edit mode",
+          "example_file": "Get_Editing_Status_of_Features_Example_VB.md"
+        },
+        {
+          "what": "示例用 Select Case 精确匹配 0/1/2 并各自打印一句话",
+          "example_quote": "Select Case (editStatus)\n            Case 0\n                Debug.Print(swFeat.Name & \" can be edited.\")\n            Case 1\n                Debug.Print(swFeat.Name & \" cannot currently be edited.\")\n            Case 2\n                Debug.Print(swFeat.Name & \" is already being edited.\")\n        End Select",
+          "example_file": "Get_Editing_Status_of_Features_Example_VB.md"
+        }
+      ],
+      "note": "C# 版存进 long、签名是 System.int，属合法加宽，未计为冲突；Remarks 说枚举不可组合，示例等值分支与之相容。"
+    },
+    {
+      "member": "GetEditTarget",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Suppress_Component_Feature_Example_CSharp.md",
+        "Suppress_Component_Feature_Example_VB.md",
+        "Suppress_Component_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出完整次序：先 EditPart2 成功，再取 GetEditTarget，按 GetType 分 PART/ASSEMBLY",
+          "example_quote": "status = swAssy.EditPart2(True, False, info): Debug.Assert swEditPartSuccessful = status\n    Set swEditModel = swAssy.GetEditTarget\n    Select Case swEditModel.GetType\n        Case swDocPART",
+          "example_file": "Suppress_Component_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例把特征类 API 直接调在 GetEditTarget 返回的文档上，收尾再 EditAssembly",
+          "example_quote": "retVal = swEditModel.EditSuppress2: Debug.Assert retVal\n    swAssy.EditAssembly",
+          "example_file": "Suppress_Component_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只劝「不要用它做特征创建」，示例做的是特征压缩，且从不判 Nothing，与「总返回非空」相容，故不判冲突。"
+    },
+    {
+      "member": "GetEditTargetComponent",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Reorganize_Components_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显式把返回值当 Nothing 判空后才继续",
+          "example_quote": "If Not (selTarget Is Nothing) Then",
+          "example_file": "Reorganize_Components_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetEllipseCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四个候选示例调的是 IView.GetEllipseCount 与 ISketch.GetEllipseCount；全文无 DisplayData，均为同名不同接口。"
+    },
+    {
+      "member": "GetEllipseParams",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Temporary_Elliptical_Extrusion_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先用 IsEllipse 挡一道，再按下标 0..10 逐项读出 11 个 double",
+          "example_quote": "If (Not (swCurve(0).IsEllipse = False)) Then\n            vEllipseParams = swCurve(0).GetEllipseParams\n            Debug.Print \"  centre       = (\" & vEllipseParams(0) & \", \" & vEllipseParams(1) & \", \" & vEllipseParams(2) & \")\"",
+          "example_file": "Create_Temporary_Elliptical_Extrusion_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 说非椭圆返回空 VARIANT，示例正好先 IsEllipse 判真，两者一致；Remarks 未写单位，也无单位冲突。"
+    },
+    {
+      "member": "GetEllipses3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Ellipse_Example_CSharp.md",
+        "Create_Ellipse_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只把返回值当创建校验，几何改走 ISketchEllipse 的取点接口，未按下标解析数组",
+          "example_quote": "vEllipse = swSketch.GetEllipses3();\n            if (swSketch.GetEllipseCount() == 0)\n            {\n                MessageBox.Show(\"An ellipse was not created. Please make sure that the sketch contains two points.\");",
+          "example_file": "Create_Ellipse_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 写数组长度 = NumEllipses * 20，但所列字段合计 22 个 double；示例从不按下标取值，不构成两侧矛盾。"
+    },
+    {
+      "member": "GetEndCondition",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份示例的变量声明为 SldWorks.SurfExtrudeFeatureData（KnitResult 只属 ISurfExtrudeFeatureData），调的是同名另一接口。"
+    }
+  ]
+}

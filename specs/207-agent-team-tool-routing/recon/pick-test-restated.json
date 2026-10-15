@@ -1,0 +1,43 @@
+{
+ "n": 48,
+ "cands_dist": {
+  "2": 46,
+  "0": 1,
+  "1": 1
+ },
+ "picker_visible_guess": {
+  "min": 0,
+  "max": 700,
+  "median": 420
+ },
+ "rates": {
+  "p_label": 0.8541666666666666,
+  "p_vA": 0.8541666666666666,
+  "p_vB": 0.8958333333333334,
+  "p_vAB": 0.8541666666666666,
+  "any_A": 0.9375,
+  "any_B": 0.9375
+ },
+ "by_stratum": {
+  "C3_non_api_selfmade": {
+   "n": 18,
+   "yes": 13
+  },
+  "C1_cold_no_cn_doc_small_domain": {
+   "n": 18,
+   "yes": 17
+  },
+  "H_hot_baseline": {
+   "n": 10,
+   "yes": 9
+  },
+  "C2_cold_thin_doc": {
+   "n": 2,
+   "yes": 2
+  }
+ },
+ "judge_agreement": {
+  "n": 46,
+  "agree": 44
+ }
+}

@@ -1,0 +1,198 @@
+{
+  "idx": 6,
+  "results": [
+    {
+      "member": "AddCommands",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md",
+        "Create_CommandManager_Tab_and_Tab_Boxes_Example_VB.NET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "**TextDisplayStyles**: Array of the text display styles for the buttons as defined in [[swCommandTabButtonTextDisplay_e]]",
+          "example_quote": "TextType[0] = (int)swCommandTabButtonTextDisplay_e.swCommandTabButton_TextBelow | (int)swCommandTabButtonFlyoutStyle_e.swCommandTabButton_ActionFlyout;",
+          "example_file": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+          "why": "该引文出自成员页 Parameters 段（非 Remarks）：它限定元素只取自文本显示枚举；示例却把 FlyoutStyle 枚举按位或进同一元素。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Remarks 写 CommandID 或 ToolbarId 二选一；示例把两者混装进同一个 cmdIDs 数组（前两项 CommandID、第三项 ToolbarId）。",
+          "example_quote": "cmdIDs[2] = cmdGroup.ToolbarId;",
+          "example_file": "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md"
+        },
+        {
+          "what": "给出可跑的调用序：CreateCommandGroup→AddCommandItem2→HasToolbar/HasMenu→Activate→GetCommandTab→AddCommandTab→AddCommandTabBox→AddCommands。",
+          "example_quote": "bResult = cmdBox.AddCommands(cmdIDs, TextType);",
+          "example_file": "Create_CommandManager_Tab_and_Tab_Boxes_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例均真调 AddCommands；Activate 前置与 Remarks 一致，无矛盾。"
+    },
+    {
+      "member": "AddComment",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Comments_in_Comments_Folder_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "要拿到 CommentFolder 必须先遍历设计树、匹配 GetTypeName() 为 CommentsFolder 的特征再 GetSpecificFeature2()；成员页没说这个 folder 怎么取。",
+          "example_quote": "swCommentFolder = (CommentFolder)swFeat.GetSpecificFeature2();",
+          "example_file": "Get_Comments_in_Comments_Folder_Example_CSharp.md"
+        },
+        {
+          "what": "示例补充了可见性时序：加批注前 Comments folder 在设计树里不显示，UpdateFeatureTree 之后才显示，需按 F5 复核。",
+          "example_quote": "// so that Comments folder is shown",
+          "example_file": "Get_Comments_in_Comments_Folder_Example_CSharp.md"
+        }
+      ],
+      "note": "另三份 Add_Comment_to_Assembly_Component_* 调的是 IModelDocExtension::AddComment，已按规则排除。"
+    },
+    {
+      "member": "AddComponent",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Make_Smart_Component_with__Mate_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "X/Y/Z 实为米制数值（6.253e-3 约 6.25 mm）；成员页 Parameters 只写 X coordinate，未给单位。",
+          "example_quote": "status = swAssembly.AddComponent(\"C:\\temp\\RevolveComponent.SLDPRT\", 6.25313657656079E-03, 1.63811589345642E-04, -3.41098612290125E-03)",
+          "example_file": "Make_Smart_Component_with__Mate_Example_VB.md"
+        },
+        {
+          "what": "返回值按 Boolean 接收，且同一零件连调三次插入三个实例。",
+          "example_quote": "Dim status As Boolean",
+          "example_file": "Make_Smart_Component_with__Mate_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段（只有 Obsolete 行），按规则跳过冲突判定。Rotate_Assembly_Component_on_Axis_Example2_* 调的是 IDragOperator::AddComponent，已排除。"
+    },
+    {
+      "member": "AddComponent4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Component_and_Mate_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先用 OpenDoc6 把零件载入内存再调用，印证 Remarks 的必须已载入这条前置不是空话。",
+          "example_quote": "swApp->OpenDoc6(sCompName,",
+          "example_file": "Add_Component_and_Mate_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "X/Y/Z 全传 -1 作哨兵；示例自己说该方法只适合粗定位。",
+          "example_quote": "sDefaultConfiguration, -1, -1, -1, &swComponent);",
+          "example_file": "Add_Component_and_Mate_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "Remarks 说精确定位用 IComponent2::Transform2；示例改用选两个基准面 + AddMate3 定位，全程不调 Transform2。",
+          "example_quote": "swAssy->AddMate3(swMateCOINCIDENT,",
+          "example_file": "Add_Component_and_Mate_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "ConfigName 传 Default，与 Remarks 的空串回落条款不冲突，无矛盾。"
+    },
+    {
+      "member": "AddComponent5",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Component_and_Mate_Example_VB.md",
+        "Add_and_Edit_Distance_Mate_Example_CSharp.md",
+        "Add_and_Edit_Distance_Mate_Example_VB.md",
+        "Add_and_Edit_Distance_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "**IMPORTANT:** X, Y, and Z are relative to the bounding box of the component. Use this method to approximately position the component.",
+          "example_quote": "Set swcomponent = swAssy.AddComponent5(strCompModelname, swAddComponentConfigOptions_CurrentSelectedConfig, \"\", False, \"\", -1, -1, -1)",
+          "example_file": "Add_Component_and_Mate_Example_VB.md",
+          "why": "Remarks 说这三个参数就是定位用的坐标；示例却把 -1,-1,-1 当「不关心」哨兵，定位改由后面的配合完成。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 CompName 传成裸文件名 camtest.sldprt 而非全路径，同时另用 OpenDoc6 按全路径载入满足前置。",
+          "example_quote": "strCompModelname = \"camtest.sldprt\"",
+          "example_file": "Add_Component_and_Mate_Example_VB.md"
+        },
+        {
+          "what": "X/Y/Z 实为米制数值（0.1196 约 120 mm）；成员页只写 coordinate of the component center，未给单位。",
+          "example_quote": "swInsertedComponent = swAssembly.AddComponent5(\"C:\\\\Users\\\\Public\\\\Documents\\\\SOLIDWORKS\\\\SOLIDWORKS 2018\\\\samples\\\\tutorial\\\\api\\\\cylinder20_shell.sldprt\", 0, \"\", false, \"\", 0.119562469422817, -0.0102308109635487, -0.0474663286004215);",
+          "example_file": "Add_and_Edit_Distance_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 指定用 IComponent2::Transform2 精确定位；示例改用配合定位，全程不调 Transform2。",
+          "example_quote": "Set matefeature = swAssy.AddMate5(swMateCOINCIDENT, swMateAlignALIGNED, False, 0, 0, 0, 0, 0, 0, 0, 0, False, False, 0, mateError)",
+          "example_file": "Add_Component_and_Mate_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都先 OpenDoc6 再调用，Remarks 的「必须已载入内存」前置均满足。"
+    },
+    {
+      "member": "AddComponents3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Components_Example_CSharp.md",
+        "Add_Components_Example_VB.md",
+        "Add_Components_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 16 个元素的具体排布：0-8 旋转、9-11 平移、12 缩放、末三个不用；成员页只说 16 doubles 并转引 IMathTransform。",
+          "example_quote": "// The last three elements in the transformation matrix are unused",
+          "example_file": "Add_Components_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 的矩阵为 null 这条，示例落成一行被注释掉的 Nothing，并说明同样得到零旋转零平移。",
+          "example_quote": "//vcompXforms = Nothing",
+          "example_file": "Add_Components_Example_CSharp.md"
+        }
+      ],
+      "note": "示例自相矛盾：缩放项 C# 写 0.0、VB 写 1#；属示例之间差异，成员页未给排布口径，故不计为冲突。"
+    },
+    {
+      "member": "AddConcentricMateWithTolerance",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VB.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "ErrorStatus 等于 1 即成功（swAddMateError_NoError）；成员页只说见 swAddMateError_e，未给成功值。",
+          "example_quote": "if (errors == 1)",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "选两个实体用 SelectByRay，Append=true、Mark=1；成员页只说 select the two entities，未说怎么选、要用什么 mark。",
+          "example_quote": "SelectByRay(-0.0362917984178921, -0.0292363280984205, 0.194521666713399, -0.400036026779312, -0.515038074910024, -0.758094294050284, 0.000877710636365774, 2, true, 1, 0)",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "调用前要先清选区、移动组件制造错位、再重选两个面；成员页没写这套时序，而错位正是本方法的前提。",
+          "example_quote": "//Move a component in order to add another mate",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 要求父标准同心配合「必须已存在」；示例是在同一步流程里先用 AddMate5 现建的。",
+          "example_quote": "swMate = (Mate2)swAssembly.AddMate5((int)swMateType_e.swMateCONCENTRIC,",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "示例确实先选两个实体（Mark=1）且父配合已建，Remarks 两条前置都满足，无矛盾。"
+    }
+  ]
+}

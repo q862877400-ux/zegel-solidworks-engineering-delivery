@@ -1,0 +1,221 @@
+{
+  "idx": 27,
+  "results": [
+    {
+      "name": "topology_constraints_and_controls",
+      "level": "verified",
+      "members_found": [
+        "TopologyStudyManager",
+        "TopologyStudyOptions",
+        "BeginEdit",
+        "EndEdit",
+        "CreateGoal",
+        "MinimizeMaximumDisplacementGoal",
+        "GetMassConstraint",
+        "GetStressConstraint",
+        "GetFactorOfSafetyConstraint",
+        "GetPreservedRegionControl",
+        "GetThicknessControl",
+        "GetDemoldControl",
+        "GetSymmetryControl",
+        "CreateMassConstraint",
+        "CreateStressConstraint",
+        "CreateFactorOfSafetyConstraint",
+        "CreatePreservedRegionControl",
+        "CreateDemoldControl",
+        "CreateSymmetryControl",
+        "CreateThicknessControl",
+        "RemoveConstraint",
+        "SetMassPreference",
+        "SetValue",
+        "SetComparator",
+        "SelectSymmetryType",
+        "SelectDemoldDirection",
+        "SetIncludeRegionDepth2",
+        "SetIncludeMinMemberThickness2",
+        "SetMinimumMemberThickness",
+        "SetIncludeMaxMemberThickness2",
+        "SetMaxMemberThickness"
+      ],
+      "examples_used": [
+        "Create_Topology_Study_Example_VBA.txt"
+      ],
+      "preconditions": [
+        {
+          "text": "须先把 SOLIDWORKS Simulation 作为加载项启用（Tools > Add-ins），否则 GetAddInObject 返回空",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "须在 IDE 里添加 SOLIDWORKS Simulation 类型库引用",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "须打开一个零件（示例用 tutor1.sldprt）；拓扑优化只对单实体零件做",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "须先有以类型 13 建出的拓扑研究，否则 TopologyStudyManager 为空",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方每次改设置都套 BeginEdit/EndEdit（管理器与约束/控制各一对）",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Create* 之后须先 GetName 拿真实名，再 Get<Kind>(name,Err) 回取才可编辑",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "CreateGoal 后须在目标对象上 SetComponent/SetVertices（须先选顶点）再两层 EndEdit",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "质量约束须已存在才能 GetMassConstraint（由 CreateGoal 带出）；官方第一次就是取而非建",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "建 FOS 前须 RemoveConstraint(\"Stress Constraint 1\")——FOS 与应力约束互斥",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "保留区：须先选中面，再 SelectFaces(DispArray)",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "脱模控制：须先选面/边/基准面，再 SelectPlaneForDirection 或 SelectEdgeForPullDirection",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "对称控制：须先选对称面，再 SelectFirst/Second/ThirdSymmetryPlane",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "厚度控制：须先 SetIncludeMinMemberThickness / SetIncludeMaxMemberThickness2 再设数值",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "官方拓扑示例全文 881 行只此一份，13 条前置全来自它；evidence 仅一句「8 项过 7」+计数对照，一条都没写到。"
+    },
+    {
+      "name": "topology_readback",
+      "level": "verified",
+      "members_found": [
+        "StudyManager",
+        "StudyCount",
+        "GetStudy",
+        "Name",
+        "AnalysisType",
+        "CreateNewStudy3",
+        "CreateNewStudy2",
+        "DeleteStudy",
+        "TopologyStudyManager",
+        "TopologyStudyOptions",
+        "GetMassConstraint",
+        "GetStressConstraint",
+        "GetFactorOfSafetyConstraint",
+        "GetDisplacementConstraint",
+        "GetFrequencyConstraint",
+        "GetPreservedRegionControl",
+        "GetThicknessControl",
+        "GetDemoldControl",
+        "GetSymmetryControl",
+        "Results",
+        "GetPlotCount",
+        "GetPlotNames",
+        "GetMaximumAvailableSteps",
+        "MeshAndRun",
+        "CreateMesh",
+        "RunAnalysis"
+      ],
+      "examples_used": [
+        "Create_Topology_Study_Example_VBA.txt",
+        "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md（已排除：讲 Motion 非拓扑）"
+      ],
+      "preconditions": [
+        {
+          "text": "须先把 SOLIDWORKS Simulation 作为加载项启用（Tools > Add-ins），否则拿不到 CWAddinCallBack",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "须在 IDE 里添加 SOLIDWORKS Simulation 类型库引用",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "入口链：GetAddInObject(\"CosmosWorks.CosmosWorks\")→COSMOSWORKS.ActiveDoc→StudyManager→GetStudy(n)",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "同名研究须先 DeleteStudy 再 CreateNewStudy3（官方逐字这两行连着写）",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "CreateNewStudy3 的研究类型须传 13（拓扑静态）",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "官方调用序：夹具 AddRestraint 与载荷 AddPressure 都在目标与约束之前",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "读约束/控制须先取到 TopologyStudyManager；非拓扑类型研究它为 None",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "covered",
+          "evidence_quote": "`manager_report` / `options_report` ✓（`CDispatch`）"
+        },
+        {
+          "text": "求解前须先给实体赋材料（示例走 SolidManager.SetFavLibraryMaterialToSelectedEntities）",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "covered",
+          "evidence_quote": "`material` = `AISI 1020` ✓"
+        },
+        {
+          "text": "跑网格/求解与读结果（CreateMesh→RunAnalysis、Results.GetPlotCount/GetPlotNames/GetMaximumAvailableSteps）",
+          "from": "member-to-example-index.md 与 b3-4-merged.json 均无拓扑示例（GetPlotCount 只命中 Motion 示例，已排除）",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "2 条 covered 靠逐字片段；加载项/类型库/DeleteStudy/类型 13 等前置 evidence 均未提；求解与读结果无相关示例。"
+    }
+  ]
+}

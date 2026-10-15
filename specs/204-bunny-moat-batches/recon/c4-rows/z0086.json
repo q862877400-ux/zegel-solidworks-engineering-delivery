@@ -1,0 +1,105 @@
+{
+  "idx": 86,
+  "results": [
+    {
+      "member": "DatumLinkedModifierValue2",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_PMI_Data_Example_CSharp.md", "Get_PMI_Data_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例打印串写明「if present」，即该值可能不存在；成员页 Returns 只说「Value of the second linked datum modifier」，未提存在性",
+          "example_quote": "Debug.Print(\"      Value, if present, of material modifier of second linked datum: \" + swPMIGtolFrameDatum.DatumLinkedModifierValue2);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "页面无 ## Remarks，也无 ## Examples；两份示例均在 GetGtolDatumAtIndex 循环里紧跟 DatumLinkedModifier2 读取"
+    },
+    {
+      "member": "DatumModifier",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_PMI_Data_Example_CSharp.md", "Get_PMI_Data_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 指向的 DatumModifierValue 与本成员紧邻成对打印，落成具体调用序",
+          "example_quote": "Debug.Print(\"      Material modifier value if present: \" + swPMIGtolFrameDatum.DatumModifierValue);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 与示例一致，无冲突。页面自身 NOTE(get-only) 与签名 {get; set;} 相互矛盾，属页内问题非页-示例冲突"
+    },
+    {
+      "member": "DatumModifierValue",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_PMI_Data_Example_CSharp.md", "Get_PMI_Data_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例打印串「value if present」限定了该值可能缺失；成员页 Returns「Value of the datum modifier」未提存在性",
+          "example_quote": "Debug.Print(\"      Material modifier value if present: \" + swPMIGtolFrameDatum.DatumModifierValue);",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "页面无 ## Remarks；被 DatumModifier 的 Remarks 明确指为取值途径，但本成员页自身未写"
+    },
+    {
+      "member": "DatumOrigin",
+      "remarks_empty": true,
+      "examples_actually_used": ["Get_Labels_of_Datum_Origin_Example_CSharp.md", "Get_Labels_of_Datum_Origin_Example_VB.md", "Get_Labels_of_Datum_Origin_Example_VBNET.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取得链：HoleTableAnnotation.HoleTable → IHoleTable.DatumOrigin，强转 DatumOrigin 后读 XLabel/YLabel",
+          "example_quote": "swDatumOrigin = (DatumOrigin)swHoleTable.DatumOrigin;",
+          "example_file": "Get_Labels_of_Datum_Origin_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例均真调用 swHoleTable.DatumOrigin（非名字撞车）。页面无 ## Remarks，只按纪律跳过冲突判定"
+    },
+    {
+      "member": "DeSelect",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "清单所列三份示例全是名字撞车：Get_Section_Properties 里 swFaceEnt 是 Entity、swFeat 是 Feature；Inspect_Facets 两份里 swCurBod 是 Body2"
+    },
+    {
+      "member": "DeSelect2",
+      "remarks_empty": false,
+      "examples_actually_used": ["Apply_and_Remove_Texture_By_Body_Display_State_Example_VB.md", "Apply_and_Remove_Texture_By_Configuration_Example_CSharp.md", "Apply_and_Remove_Texture_By_Configuration_Example_VB.md", "Apply_and_Remove_Texture_By_Configuration_Example_VBNET.md"],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "If running SOLIDWORKS x64, then you must declare AtIndex as a Long in VBA.\n\nAtIndex should be either an array of 32-bit integers or a single 32-bit integer. See Long vs. Integer for details about data types.",
+          "example_quote": "Dim atIndex(1) As Integer",
+          "example_file": "Apply_and_Remove_Texture_By_Configuration_Example_VBNET.md",
+          "why": "Remarks 要求 32 位数组元素（VBA 侧须 Long），该 VB.NET 示例声明 As Integer = 16 位；同族另两份用 As Long、C# 用 int[]"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例实传二元素数组且只写 atIndex(1)=1，未写的 atIndex(0) 为 0，落在页所述 1..count 之外",
+          "example_quote": "atIndex(1) = 1",
+          "example_file": "Apply_and_Remove_Texture_By_Configuration_Example_VBNET.md"
+        }
+      ],
+      "note": "两份 VBA 示例把返回 1/0 存入 Dim status As Boolean；C# 示例存进 int errors。VBA 有强制转换，未按 return_shape_diff 记冲突"
+    },
+    {
+      "member": "DeSelectByID",
+      "remarks_empty": false,
+      "examples_actually_used": ["Change_Sketch_of_Plane_Example.md", "Change_Sketch_of_Plane_Example_CSharp.md", "Change_Sketch_of_Plane_Example_VBNET.md", "Rotate_Scale_Copy_Sketch_Example_CSharp.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例对非原点基准面用 SelID+SelParams 全名、坐标全传 0 即取消选中；页面 Parameters 未说坐标可省",
+          "example_quote": "boolstatus = Part.DeSelectByID(\"Top Plane\", \"PLANE\", 0, 0, 0)",
+          "example_file": "Change_Sketch_of_Plane_Example.md"
+        }
+      ],
+      "note": "Remarks 仅一句指向 SelectByID2，示例未与之矛盾。页面 Parameters 把 Y 误写成 Z selection location；Change_Sketch_of_Plane 三份未列在页面 Examples 段"
+    }
+  ]
+}

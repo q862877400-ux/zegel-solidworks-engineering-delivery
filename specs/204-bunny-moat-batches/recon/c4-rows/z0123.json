@@ -1,0 +1,139 @@
+{
+  "idx": 123,
+  "results": [
+    {
+      "member": "FeatureCut4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_CSharp.md",
+        "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_VB.md",
+        "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 27 个位置实参的可运行取值：NormalCut=True、OptimizeGeometry=True，且 UseFeatScope/UseAutoSelect/AssemblyFeatureScope/AutoSelectComponents 四者全 True；Remarks 只说「仅钣金件有效」，未给这组组合",
+          "example_quote": "Set swFeature = swFeatureManager.FeatureCut4(True, False, False, 1, 0, 0.01, 0.01, False, False, False, False, 1.74532925199433E-02, 1.74532925199433E-02, False, False, False, False, True, True, True, True, True, False, 0, 0, False, True)",
+          "example_file": "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 四段与三份示例逐条对得上，无冲突；示例多用枚举名，VB6/C# 用裸值 1。"
+    },
+    {
+      "member": "FeatureCutThin2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Thin_Cut_Extrude_Example_CSharp.md",
+        "Insert_Thin_Cut_Extrude_Example_VBNET.md",
+        "Insert_Thin_cut_Extrude_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只讲方向与 UseAutoSelect，未说该喂哪种实体；示例明确先按名字选草图段 Arc1（SKETCHSEGMENT，mark 0）再调用，并给 RevThinDir=0/CapEnds=0/AddBends=False/T0=swStartSketchPlane",
+          "example_quote": "Set swFeature = swFeatureManager.FeatureCutThin2(True, False, False, swEndCondBlind, swEndCondBlind, 0.01, 0.01, False, False, False, False, 0.01745329251994, 0.01745329251994, False, False, False, False, 0.01, 0.01, 0.01, 0, 0, False, 0.005, True, True, swStartSketchPlane, 0, False)",
+          "example_file": "Insert_Thin_cut_Extrude_Example_VB.md"
+        }
+      ],
+      "note": "三份示例均为 29 个实参，与签名一致；UseAutoSelect 传 True，避开 Remarks 的选体分支。"
+    },
+    {
+      "member": "FeatureExtruRefSurface2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Surface_Knit_Feature_Example_CSharp.md",
+        "Create_Surface_Knit_Feature_Example_VB6.md",
+        "Create_Surface_Knit_Feature_Example_VBNET.md",
+        "Create_Temporary_Bodies_by_Offsetting_Surface_Body_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "mark_diff",
+          "remarks_quote": "Sketch; call [[IModelDocExtension::SelectByID2]] with selection mark 0.",
+          "example_quote": "boolstatus = swModelDocExt.SelectByID2(\"Sketch1\", \"SKETCH\", 0, 0, 0, false, 4, null, 0);",
+          "example_file": "Create_Surface_Knit_Feature_Example_CSharp.md",
+          "why": "Remarks 规定「Sketch」只用 mark 0，mark 4 仅属「Sketch segments」；示例实体类型正是 SKETCH 却用 mark 4，两条规则不能同时为真。"
+        },
+        {
+          "kind": "mark_diff",
+          "remarks_quote": "Sketch; call [[IModelDocExtension::SelectByID2]] with selection mark 0.",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Sketch1\", \"SKETCH\", 0, 0, 0, false, 4, null, 0);",
+          "example_file": "Create_Temporary_Bodies_by_Offsetting_Surface_Body_Example_CSharp.md",
+          "why": "第二份官方示例独立复现同一写法：整草图按名称选中、mark 仍为 4，与 Remarks 给「Sketch」的 mark 0 直接矛盾。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只规定选择约定；示例给出配套取值：Sd=True 单向、T1=T2=0、DeleteOriginalFace 与 KnitResult 均 False，调用无返回值",
+          "example_quote": "swFeatureManager.FeatureExtruRefSurface2 True, False, False, 0, 0, 0.05, 0.01, False, False, False, False, 1.74532925199433E-02, 1.74532925199433E-02, False, False, False, False, False, False, False, False",
+          "example_file": "Create_Surface_Knit_Feature_Example_VB6.md"
+        }
+      ],
+      "note": "成员页自身「Examples」段列的是 Create_Trimmed_Surface_*，与本任务给的清单不同；两者都用 mark 4。"
+    },
+    {
+      "member": "FeatureExtruRefSurface3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Extruded_Reference_Surface_Example_CSharp.md",
+        "Insert_Extruded_Reference_Surface_Example_VB.md",
+        "Insert_Extruded_Reference_Surface_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 的 mark 表列出 4 种 base 情形；三份示例只演示其中一种（整草图、单一 mark 0），并给出 Sd=False 双向、StartCond=swStartSketchPlane、D1=D2=0.01、Dchk1=True/Dang1=0.4",
+          "example_quote": "swFeatureManager.FeatureExtruRefSurface3 False, False, swStartConditions_e.swStartSketchPlane, 0, swEndConditions_e.swEndCondBlind, swEndConditions_e.swEndCondBlind, 0.01, 0.01, True, False, False, False, 0.4, 0, False, False, False, False, False, False, False, False",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_VB.md"
+        }
+      ],
+      "note": "示例的 mark 0 与 Remarks 表一致，三份互证；22 个实参与签名相同。"
+    },
+    {
+      "member": "FeatureExtrusion",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "本页无 Remarks。给的 3 份示例都调 featMan.FeatureExtrusion(带参)，那是 IFeatureManager 的另一个成员，不是本 IAssemblyDoc 零参成员，按纪律不算已用。"
+    },
+    {
+      "member": "FeatureExtrusion2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Cylinder_Example_CPlusPlus_COM.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_VBNET.md",
+        "Create_Hole_Wizard_Hole_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "四份示例一律传 UseAutoSelect=True，Remarks 描述的「必须另选体」分支无示例；C++ 示例另给出双端圆柱形态：Sd=false 且 D1=D2=0.100、Merge=true",
+          "example_quote": "swFeatMgr->FeatureExtrusion2(VARIANT_FALSE,\nVARIANT_FALSE, VARIANT_FALSE,\n0, 0, 0.100, 0.100,",
+          "example_file": "Create_Cylinder_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "三份示例实参个数均为 23，与签名一致；Remarks 四段（含 3D 草图 mark 0/16）均未被示例违反。"
+    },
+    {
+      "member": "FeatureExtrusion3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Linear_Pattern_Example_CSharp.md",
+        "Change_Linear_Pattern_Example_VB.md",
+        "Change_Linear_Pattern_Example_VBNET.md",
+        "Create_Curvature_Continuous_Variable_Fillet_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 的 mark 表限定于「extrude a 3D sketch」；两份示例都只拉伸 2D 草图段，按名 SelectByID2(...,SKETCHSEGMENT,...,0) 选段，并传 T0/T1/T2 全 0、UseAutoSelect=True",
+          "example_quote": "swFeature = (Feature)swFeatureManager.FeatureExtrusion3(true, false, false, 0, 0, 0.04064, 0.00254, false, false, false,",
+          "example_file": "Create_Curvature_Continuous_Variable_Fillet_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 mark 8（UseAutoSelect=false 时）在四份示例中均未触发，示例都传 True，故无可判冲突。"
+    }
+  ]
+}

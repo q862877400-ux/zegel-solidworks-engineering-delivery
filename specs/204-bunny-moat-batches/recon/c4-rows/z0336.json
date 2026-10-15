@@ -1,0 +1,127 @@
+{
+  "idx": 336,
+  "results": [
+    {
+      "member": "IsHeightSpecifiedInPts",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VB.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md",
+        "Get_All_Elements_of_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 ITextFormat 的取得路径之一：Callout.TextFormat，成员页未交代对象来源。",
+          "example_quote": "TextFormat swTextFormat = myCallout.TextFormat;",
+          "example_file": "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md"
+        },
+        {
+          "what": "另一条取得路径：草图文字的 SketchText.GetTextFormat。",
+          "example_quote": "ProcessTextFormat swApp, swModel, swSkText.GetTextFormat",
+          "example_file": "Get_All_Elements_of_Sketch_Example_VB.md"
+        }
+      ],
+      "note": "示例只把 CharHeight/CharHeightInPts 与本方法一并打印，未与 Remarks 对照表冲突。"
+    },
+    {
+      "member": "IsHidden",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Material_Properties_Example_VB.md",
+        "Get_Component_State_Example_CSharp.md",
+        "Get_Component_State_Example_VB.md",
+        "Get_Component_State_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 IsHidden(False) 与单独打印的 IsSuppressed 并列；Remarks 表里两条 Shown 行都回 False，须靠 IsSuppressed 才分得开。",
+          "example_quote": "Debug.Print \" Suppressed = \" & swComp.IsSuppressed",
+          "example_file": "Change_Material_Properties_Example_VB.md"
+        }
+      ],
+      "note": "Get Component State 三例传 true，Change Material Properties 传 false，都落在 Remarks 表内。"
+    },
+    {
+      "member": "IsHiddenLock",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Move_Freeze_Bar_Example_CSharp.md",
+        "Move_Freeze_Bar_Example_VB.md",
+        "Move_Freeze_Bar_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call this property during FeatureManager tree traversal to locate the position of the freeze bar. During a traversal, the freeze bar has been located if:",
+          "example_quote": "Debug.Print(feat.Name + \" has a hidden lock? \" + feat.IsHiddenLock());",
+          "example_file": "Move_Freeze_Bar_Example_CSharp.md",
+          "why": "Remarks 用 and 把 Name 返回 \"Freeze***\" 与本方法连成两个条件；三份示例都只读 IsHiddenLock，不对 Name 做该判定。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "三份示例写法一致，只用 IsHiddenLock，无 Name 过滤。"
+    },
+    {
+      "member": "IsIntersect",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先选两个实体、CreateMeasure 后 Calculate 成功，否则走无效组合分支，才读本属性。",
+          "example_quote": "Debug.Print(\"Invalid combination of selected entities.\");",
+          "example_file": "Measure_Selected_Entities_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "IsLinked",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Linked_Dimensions_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把本属性当布尔用 If 判定，成立时紧接 GetLinkedText 取链接文本。",
+          "example_quote": "If swDispDim.IsLinked Then",
+          "example_file": "Get_Linked_Dimensions_Example_VB.md"
+        }
+      ],
+      "note": "另三份指派示例用的是 IOleObject.IsLinked，不是 IDisplayDimension.IsLinked。"
+    },
+    {
+      "member": "IsLoaded",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "指派的四份都没调 IComponent2.IsLoaded：前三份是 IConfiguration.IsLoaded，Get_Loaded_Sheets 是 ISheet.IsLoaded。"
+    },
+    {
+      "member": "IsMeshBody",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Inspect_Facets_Example_CSharp.md",
+        "Inspect_Facets_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先调本方法再 GetMeshBody() 并判 null，给出取网格体的调用序；成员页只有一句布尔说明。",
+          "example_quote": "bIsMesh = swCurBod.IsMeshBody();",
+          "example_file": "Inspect_Facets_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定。"
+    }
+  ]
+}

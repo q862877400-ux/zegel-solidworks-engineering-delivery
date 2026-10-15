@@ -1,0 +1,154 @@
+{
+  "idx": 49,
+  "results": [
+    {
+      "member": "ConfigurationOption",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Traverse_All_Cosmetic_Threads_Example_CSharp.md",
+        "Traverse_All_Cosmetic_Threads_Example_VB.md",
+        "Traverse_All_Cosmetic_Threads_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只读取、从不赋值，Signature 里的 set 面在示例中没出现",
+          "example_quote": "Debug.Print(\"      ConfigurationOption as defined in swCosmeticConfigOptions_e = \" + swCosThread.ConfigurationOption);",
+          "example_file": "Traverse_All_Cosmetic_Threads_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出取它的前置：遍历子特征、GetTypeName2 命中 CosmeticThread 后 GetDefinition",
+          "example_quote": "swCosThread = (CosmeticThreadFeatureData)swSubFeat.GetDefinition();",
+          "example_file": "Traverse_All_Cosmetic_Threads_Example_CSharp.md"
+        }
+      ],
+      "note": "页面无 Remarks 段，Returns 只指 swCosmeticConfigOptions_e。"
+    },
+    {
+      "member": "ConicTypeForCrossSectionProfile",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Partial_Chamfer_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "写路径：CreateDefinition(swFmFillet)+Initialize 之后赋它把圆角特化成倒角",
+          "example_quote": "swFilletData.ConicTypeForCrossSectionProfile = (int)swFeatureFilletProfileType_e.swFeatureFilletConicRhoZeroChamfer;",
+          "example_file": "Create_Partial_Chamfer_Example_CSharp.md"
+        },
+        {
+          "what": "示例全程未设 CurvatureContinuous，Remarks 的前置靠默认值隐式满足",
+          "example_quote": "swFilletData.Initialize((int)swSimpleFilletType_e.swConstRadiusFillet);",
+          "example_file": "Create_Partial_Chamfer_Example_CSharp.md"
+        }
+      ],
+      "note": "两个 Asymmetric_Elliptic_Fillets 示例的 swFeatData 是 VariableFilletFeatureData2，属 IVariableFilletFeatureData2 同名成员，按撞名规则不采用。"
+    },
+    {
+      "member": "ConnectionLines",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "List_Center_Marks_in_Drawing_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "取它不需 AccessSelections：经 View.GetFirstCenterMark2 链直接读",
+          "example_quote": "swCenterMark = swView.GetFirstCenterMark2",
+          "example_file": "List_Center_Marks_in_Drawing_Example_VB.md"
+        },
+        {
+          "what": "同段示例把 RotationAngle 乘 57.3 转成度，ConnectionLines 原样输出，说明它无量纲",
+          "example_quote": "* 57.3 & \" degrees\"",
+          "example_file": "List_Center_Marks_in_Drawing_Example_VB.md"
+        }
+      ],
+      "note": "页面无 Remarks；Returns 只指 swCenterMarkConnectionLine_e。"
+    },
+    {
+      "member": "ConstantWidth",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Data_for_Simple_Fillet_Example_CSharp.md",
+        "Get_Data_for_Simple_Fillet_Example_VB.md",
+        "Get_Data_for_Simple_Fillet_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "读它的前置：先选中圆角特征，再从 SelectionMgr 取对象",
+          "example_quote": "swFeat = (Feature)swSelMgr.GetSelectedObject6(1, -1);",
+          "example_file": "Get_Data_for_Simple_Fillet_Example_CSharp.md"
+        },
+        {
+          "what": "示例 GetDefinition 后直接读该属性，未调 AccessSelections",
+          "example_quote": "swFillet = (SimpleFilletFeatureData2)swFeat.GetDefinition();",
+          "example_file": "Get_Data_for_Simple_Fillet_Example_CSharp.md"
+        }
+      ],
+      "note": "页面无 Remarks，Returns 只说 True/False。"
+    },
+    {
+      "member": "Constraint",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "Create_Slot_Mate 里那句 MateData.Constraint = 0 属 SlotMateFeatureData，即 ISlotMateFeatureData::Constraint，撞名不用。"
+    },
+    {
+      "member": "ConstraintPointOrSketch",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Constraint_for_Dome_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "实际对象是 SketchPoint（按 Point1@Sketch1 以 EXTSKETCHPOINT 选出），比 Returns 的 point 或 sketch 具体",
+          "example_quote": "\"EXTSKETCHPOINT\", 0, 0, 0, False, 0, Nothing, swSelectOptionDefault)",
+          "example_file": "Get_and_Set_Constraint_for_Dome_Feature_Example_VB.md"
+        },
+        {
+          "what": "赋值之后必须 ModifyDefinition 才落到特征上，页面没写这一步",
+          "example_quote": "= dome.ModifyDefinition(dome_featData,",
+          "example_file": "Get_and_Set_Constraint_for_Dome_Feature_Example_VB.md"
+        },
+        {
+          "what": "读它之前先调 AccessSelections(Part, component)",
+          "example_quote": "= dome_featData.AccessSelections(Part,",
+          "example_file": "Get_and_Set_Constraint_for_Dome_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 只指向 Selections that Define Features，没给具体形态。"
+    },
+    {
+      "member": "ConstraintType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Width_Mate_Example_CSharp.md",
+        "Create_Width_Mate_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出枚举实际取值 swMateWidth_Dimension",
+          "example_quote": "swWidthMateData.ConstraintType = (int)swMateWidthOptions_e.swMateWidth_Dimension;",
+          "example_file": "Create_Width_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "它决定用哪个距离属性：Dimension 分支里才设 DistanceFromEnd",
+          "example_quote": "if (swWidthMateData.ConstraintType == (int)swMateWidthOptions_e.swMateWidth_Dimension)",
+          "example_file": "Create_Width_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "设完须 CreateMate 才落到特征上；编辑路径改走 ModifyDefinition",
+          "example_quote": "feat = (Feature)swAssy.CreateMate(swWidthMateData);",
+          "example_file": "Create_Width_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "页面无 Remarks，Returns 只指 swMateWidthOptions_e。"
+    }
+  ]
+}

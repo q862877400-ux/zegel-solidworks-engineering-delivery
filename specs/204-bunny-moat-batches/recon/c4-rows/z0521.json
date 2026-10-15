@@ -1,0 +1,141 @@
+{
+  "idx": 521,
+  "results": [
+    {
+      "member": "ViewCollapseAssembly",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Exploded_Views_Example_CSharp.md",
+        "Create_Exploded_Views_Example_VB.md",
+        "Create_Exploded_Views_Example_VBNET.md",
+        "Access_Assembly_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Collapses the selected exploded view on the Configuration tab of the FeatureManager design tree.",
+          "example_quote": "hres = swAssemblyDoc->ViewCollapseAssembly();",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md",
+          "why": "页面描述句要求先选中某个爆炸视图；C++ 示例直接调用，选区里只有 bracket-1 组件，无爆炸视图选中。四份示例均无选中。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Use this method with [[IAssemblyDoc::ViewExplodeAssembly]] to toggle the display of the exploded assembly view.",
+          "example_quote": "hres = swAssemblyDoc->AutoExplode(&retVal);\nhres = swAssemblyDoc->ViewCollapseAssembly();",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md",
+          "why": "Remarks 指定配对成员是 ViewExplodeAssembly；该示例改用 AutoExplode 作前序，全程未调 ViewExplodeAssembly。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "三份 Create_Exploded_Views 把 ViewExplodeAssembly 与 ViewCollapseAssembly 成对连续调用，并夹 Debugger.Break 供目视确认切换",
+          "example_quote": "swAssembly.ViewExplodeAssembly();",
+          "example_file": "Create_Exploded_Views_Example_CSharp.md"
+        }
+      ],
+      "note": "See Also 列 GetExplodedViewNames2/GetExplodedViewCount2，示例却调无 2 的 GetExplodedViewNames/GetExplodedViewCount"
+    },
+    {
+      "member": "ViewDependencies",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_FeatureManager_Design_Tree_Display_Example_CSharp.md",
+        "Get_and_Set_FeatureManager_Design_Tree_Display_Example_VB.md",
+        "Get_and_Set_FeatureManager_Design_Tree_Display_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例锁死工作文档为装配体并以 swDocASSEMBLY 打开，Remarks 未提任何文档类型前置",
+          "example_quote": "document = \"C:\\\\Users\\\\Public\\\\Documents\\\\SOLIDWORKS\\\\SOLIDWORKS 2018\\\\samples\\\\tutorial\\\\advdrawings\\\\bladed shaft.sldasm\";",
+          "example_file": "Get_and_Set_FeatureManager_Design_Tree_Display_Example_CSharp.md"
+        },
+        {
+          "what": "给出可运行切换写法：从不写 ViewDependencies=false，而靠写 ViewFeatures=true 把它关掉（即 Remarks 的 vice versa）",
+          "example_quote": "swFeatMgr.ViewFeatures = true;",
+          "example_file": "Get_and_Set_FeatureManager_Design_Tree_Display_Example_CSharp.md"
+        }
+      ],
+      "note": "示例在改前改后各读回两属性，与 Remarks 的互斥规则一致，未见矛盾"
+    },
+    {
+      "member": "ViewDisplayHidden",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Display_Hidden_Lines_in_Drawing_Example_CSharp.md",
+        "Display_Hidden_Lines_in_Drawing_Example_VB.md",
+        "Display_Hidden_Lines_in_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对"
+    },
+    {
+      "member": "ViewDisplayHiddengreyed",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Display_Hidden_Lines_in_Drawing_Example_CSharp.md",
+        "Display_Hidden_Lines_in_Drawing_Example_VB.md",
+        "Display_Hidden_Lines_in_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置明写先选中一个视图，Remarks 只说隐藏线画成灰色、未提任何选择前置",
+          "example_quote": "// 2. Select a view.",
+          "example_file": "Display_Hidden_Lines_in_Drawing_Example_CSharp.md"
+        },
+        {
+          "what": "示例把四个 ViewDisplay* 按去隐藏→灰显→线框→着色固定次序连调， Remarks 未说明它们互斥同一显示模式槽位",
+          "example_quote": "swDraw.ViewDisplayHiddengreyed();",
+          "example_file": "Display_Hidden_Lines_in_Drawing_Example_CSharp.md"
+        }
+      ],
+      "note": "示例自身 Description 写 view、Postcondition 写 document，内部就不一致，不宜据此判页面冲突"
+    },
+    {
+      "member": "ViewDisplayRealView",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Appearance_Filename_Example_CSharp.md",
+        "Get_Appearance_Filename_Example_VB.md",
+        "Get_Appearance_Filename_Example_VBNET.md",
+        "Get_Surface-finish_Image_Path_and_Filename_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "四份示例一律只读不写，仅在施加外观前打印验证；get/set 属性的 set 侧无任何官方示例",
+          "example_quote": "Debug.Print(\"RealView Graphics set? \" + swModelDocExt.ViewDisplayRealView);",
+          "example_file": "Get_Appearance_Filename_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 声明需 supported graphics cards，四份示例的 Preconditions 均未列该硬件条件"
+    },
+    {
+      "member": "ViewDisplayShaded",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Display_Hidden_Lines_in_Drawing_Example_CSharp.md",
+        "Display_Hidden_Lines_in_Drawing_Example_VB.md",
+        "Display_Hidden_Lines_in_Drawing_Example_VBNET.md",
+        "Get_Annotations_Array_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对"
+    },
+    {
+      "member": "ViewDisplayWireframe",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Display_Hidden_Lines_in_Drawing_Example_CSharp.md",
+        "Display_Hidden_Lines_in_Drawing_Example_VB.md",
+        "Display_Hidden_Lines_in_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对"
+    }
+  ]
+}

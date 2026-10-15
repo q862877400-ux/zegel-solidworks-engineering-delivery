@@ -1,0 +1,85 @@
+{
+  "idx": 240,
+  "results": [
+    {
+      "member": "GetProjectedZone",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Parameters/Returns/Examples/See Also，无 ## Remarks 段，按纪律 3 跳过。"
+    },
+    {
+      "member": "GetProjectionArrow",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（Returns 只有 [[Projection arrow]] 链接），按纪律 3 跳过。"
+    },
+    {
+      "member": "GetProperties",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IMotionStudy.GetProperties 成员页无 ## Remarks 段，按纪律 3 跳过；注意勿与 ISheet.GetProperties2 混淆。"
+    },
+    {
+      "member": "GetProperties2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Drawing_Sheet_Properties_Example_CSharp.md",
+        "Set_Drawing_Sheet_Properties_Example_VB.md",
+        "Set_Drawing_Sheet_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置要求先勾文档级选项 Tools>Options>Document Properties>Drawing Sheets>Use custom property values from the sheet；Remarks 全篇未提这个总开关，它决定第 8 个元素是否可用。",
+          "example_quote": "3. Select the Tools > Options > Document Properties >\n//    Drawing Sheets > Use custom property values from the sheet\n//    check box if it is not selected.",
+          "example_file": "Set_Drawing_Sheet_Properties_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出把索引 0/1 解包成 int、索引 4/7 解包成 bool 的具体写法；Remarks 只用散文说“packed into a double”。",
+          "example_quote": "prop1 = (int)System.Convert.ToInt32(sheetProperties[0]);\nprop5 = (bool)System.Convert.ToBoolean(sheetProperties[4]);",
+          "example_file": "Set_Drawing_Sheet_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的八元素次序与三示例索引 0..7 逐位对齐，返回形状与单位无冲突。"
+    },
+    {
+      "member": "GetPropertyExtension",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IBody2.GetPropertyExtension 页正文写 Obsolete/Superseded，不构成 ## Remarks 段，按纪律 3 跳过。"
+    },
+    {
+      "member": "GetPropertyManagerTabIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（Returns 只有字面“1”），按纪律 3 跳过。"
+    },
+    {
+      "member": "GetPunchID",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Forming_Tool_Feature_Example_CSharp.md",
+        "Create_Forming_Tool_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例是在 CreateFeature 之后、对 swFeat.GetDefinition() 取回的 definition 对象上调用；Remarks 未说必须经 GetDefinition 才能读。",
+          "example_quote": "swLibFormFeatData1 = (LibraryFormToolFeatureData)swFeat.GetDefinition();\nDebug.Print(\"Forming tool punch ID: \" + swLibFormFeatData1.GetPunchID());",
+          "example_file": "Create_Forming_Tool_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 全文一句（punch ID 显示于展开图冲孔表）；两示例均只读取不写入，无矛盾。"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "idx": 307,
+  "results": [
+    {
+      "member": "InsertCamera",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Camera_Example_CSharp.md",
+        "Insert_Camera_Example_VB.md",
+        "Insert_Camera_Example_VBNET.md",
+        "Insert_and_Rotate_Camera_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有签名/Returns/Examples，无 ## Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "InsertCavity4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Cavity_Example_CSharp.md",
+        "Insert_Cavity_Example_VB.md",
+        "Insert_Cavity_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说在装配体上下文执行，未说需先 EditPart2 进入被编辑零件上下文",
+          "example_quote": "nRetval = swAssy.EditPart2(true, true, ref nInfo);",
+          "example_file": "Insert_Cavity_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 只写「见 swCavityScaleType_e」未给具体取值；示例给出 swAboutCentroid 与恒等缩放 0.0",
+          "example_quote": "swAssy.InsertCavity4(0.0, 0, 0.0, true, (int)swCavityScaleType_e.swAboutCentroid, 0);",
+          "example_file": "Insert_Cavity_Example_CSharp.md"
+        }
+      ],
+      "note": "示例传的 0.0 缩放落在 Remarks 的 -20..+20 内、KeepPieceIndex=0 落在 0..n-1 内，不构成矛盾"
+    },
+    {
+      "member": "InsertCenterLine2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Centerlines_in_Drawing_Example_CSharp.md",
+        "Get_Centerlines_in_Drawing_Example_VB.md",
+        "Get_Centerlines_in_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段（只有签名/Returns/Examples），按纪律跳过"
+    },
+    {
+      "member": "InsertCenterOfMass",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Center_of_Mass_Feature_Example_CSharp.md",
+        "Insert_Center_of_Mass_Feature_Example_VB.md",
+        "Insert_Center_of_Mass_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "InsertCenterOfMassReferencePoint",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Center_of_Mass_Feature_Example_CSharp.md",
+        "Insert_Center_of_Mass_Feature_Example_VB.md",
+        "Insert_Center_of_Mass_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段；与 InsertCenterOfMass 共用同一份示例"
+    },
+    {
+      "member": "InsertChainDimensions",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Chain_Dimensions_Example_CSharp.md",
+        "Get_Visible_Drawing_Components_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 未说调用前要切到具体视图；示例先激活 Drawing View3",
+          "example_quote": "boolstatus = ((DrawingDoc)Part).ActivateView(\"Drawing View3\");",
+          "example_file": "Insert_Chain_Dimensions_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 只说 Entities 是实体数组；示例给出按 SelectByRay 选中后用序号取实体的组装法",
+          "example_quote": "entityArray[0] = selectMgr.GetSelectedObject6(1, -1);",
+          "example_file": "Insert_Chain_Dimensions_Example_CSharp.md"
+        }
+      ],
+      "note": "两份 C# 示例仅 Source 行不同、标题却都叫 Insert Chain Dimensions；4 实体→3 尺寸与 Remarks 一致"
+    },
+    {
+      "member": "InsertCircularNotePattern",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Linear_and_Circular_Note_Patterns_Example_CSharp.md",
+        "Insert_Linear_and_Circular_Note_Patterns_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有签名/Parameters/Returns/Examples，无 ## Remarks 段，按纪律跳过"
+    }
+  ]
+}

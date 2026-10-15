@@ -1,0 +1,96 @@
+{
+  "idx": 45,
+  "results": [
+    {
+      "member": "CollisionDetectionEnabled",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rotate_Assembly_Component_on_Axis_Example_CSharp.md",
+        "Rotate_Assembly_Component_on_Axis_Example_VB.md",
+        "Rotate_Assembly_Component_on_Axis_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三例给出唯一调用序：AddComponent 之后设本属性与 DynamicClearanceEnabled，再设 TransformType/DragMode，最后 BeginDrag—Drag—EndDrag；成员页无 Remarks，完全未提调用序。",
+          "example_quote": "            bRet = swDragOp.AddComponent(swComp, false);\n            swDragOp.CollisionDetectionEnabled = false;\n            swDragOp.DynamicClearanceEnabled = false;\n            // Axial rotation\n            swDragOp.TransformType = 1;\n            // Solve by relaxation\n            swDragOp.DragMode = 2;\n            bRet = swDragOp.BeginDrag();",
+          "example_file": "Rotate_Assembly_Component_on_Axis_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定。swDragOp 声明为 DragOperator，命中正确。"
+    },
+    {
+      "member": "Color",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 例全为同名撞车：分别用 AppearanceSetting.Color、SketchSegment.Color、SketchHatch.Color，无一调 IAnnotation.Color；全库亦无。成员页本身无 Examples 段。"
+    },
+    {
+      "member": "ColumnCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Export_BOMs_to_XML_Example_CSharp.md",
+        "Export_BOMs_to_XML_Example_VB.md",
+        "Export_BOMs_to_XML_Example_VBNET.md",
+        "Get_Custom_Properties_for_BOM_Table_Columns_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Export_BOMs 三例把 ColumnCount 当作 0 基列索引的「开区间」上界：nNumCol = ColumnCount 后一律 For j = 0 To nNumCol - 1，用于 GetColumnTitle2/Text2。成员页只说“列数”，未给边界口径。",
+          "example_quote": "    ReDim sHeaderText(nNumCol - 1)\n    For j = 0 To nNumCol - 1\n        sHeaderText(j) = swTableAnn.GetColumnTitle2(j, True)",
+          "example_file": "Export_BOMs_to_XML_Example_VB.md"
+        },
+        {
+          "what": "同一成员另一族示例反而写成「闭区间」上界 For i = 0 To ColumnCount（比 Export_BOMs 多一格）。此为示例族之间写法不一致，非与成员页冲突，仅如实记录。",
+          "example_quote": "    For i = 0 To swTableAnnotation.ColumnCount\n        Debug.Print \" Column(\" & i & \") = \" & swBOMTableAnnotation.GetColumnCustomProperty(i)\n    Next i",
+          "example_file": "Get_Custom_Properties_for_BOM_Table_Columns_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，跳过冲突判定。4 例变量均声明为 TableAnnotation，命中正确。"
+    },
+    {
+      "member": "ColumnHidden",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页仅 10 行标题、无签名/Returns/Remarks。4 例全调 swTableAnnotation.ColumnHidden(0)，该变量声明为 TableAnnotation ⇒ 命中 ITableAnnotation::ColumnHidden，非本成员。"
+    },
+    {
+      "member": "ColumnIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Sort_Table_Example_VB.md",
+        "Sort_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示本属性是带索引的数组属性（三个排序级 0/1/2 各一列），且 -1 是「该级不排序」的哨兵；两例均如此。成员页仅 10 行标题，无签名与 Returns。",
+          "example_quote": "    swSortData.ColumnIndex(0) = 1  ' primary sort on column 1\n    swSortData.Ascending(0) = True ' sort ascending\n    swSortData.ColumnIndex(1) = 3  ' secondary sort on column 3\n    swSortData.Ascending(1) = True ' sort ascending\n    swSortData.ColumnIndex(2) = -1 ' no tertiary sort",
+          "example_file": "Sort_Table_Example_VB.md"
+        }
+      ],
+      "note": "成员页仅 10 行标题、无 Remarks，跳过冲突判定。swSortData 来自 IBomTableAnnotation.GetBomTableSortData，命中正确。"
+    },
+    {
+      "member": "CombineSameSize",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "2 例把 MyTable 声明为 PunchTable（IPunchTable），命中 IPunchTable::CombineSameSize；IPunchTable 与 IHoleTable 是不同接口，成员列表也不同，故按撞车排除。"
+    },
+    {
+      "member": "CombineTags",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "同上：2 例的 MyTable 为 PunchTable，命中 IPunchTable::CombineTags，非 IHoleTable::CombineTags。"
+    }
+  ]
+}

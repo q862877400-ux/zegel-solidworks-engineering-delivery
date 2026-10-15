@@ -1,0 +1,154 @@
+{
+  "idx": 199,
+  "results": [
+    {
+      "member": "GetFocalDistance",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Camera_Example_CSharp.md",
+        "Insert_Camera_Example_VB.md",
+        "Insert_Camera_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都把返回值 ×1000 才标 mm，等于把页面完全没写单位的 focal distance 落成米制。",
+          "example_quote": "swCamera.GetFocalDistance() * 1000.0 + \" mm\"",
+          "example_file": "Insert_Camera_Example_CSharp.md"
+        },
+        {
+          "what": "示例的文档前置是『尚无相机』，即新建未锁定参考的状态——正是页面那条锁定参考才读数可能不同的例外之外。",
+          "example_quote": "1. Open a model document that does not have any cameras inserted.",
+          "example_file": "Insert_Camera_Example_CSharp.md"
+        }
+      ],
+      "note": "页面只提醒锁定参考时读数可能与属性管理器不同，示例从未声称二者相等，故不判冲突。"
+    },
+    {
+      "member": "GetFocalPoint2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Parabola_Example_CSharp.md",
+        "Create_Parabola_Example_VB.md",
+        "Create_Parabola_Example_VBNET.md",
+        "Get_All_Elements_of_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例强转 SketchPoint 并把 X/Y/Z ×1000 标 mm，说明返回的是草图空间点且坐标为米制；页面 Returns 只写 Focal sketch point。",
+          "example_quote": "pFocal = (SketchPoint)SkParabola.GetFocalPoint2();",
+          "example_file": "Create_Parabola_Example_CSharp.md"
+        },
+        {
+          "what": "示例把该点再经 TransformSketchPointToModelSpace 转到模型空间后一并打印，页面未提坐标系这一层。",
+          "example_quote": "Set swFocalModPt = TransformSketchPointToModelSpace(swApp, swModel, swSketch, swFocalPt)",
+          "example_file": "Get_All_Elements_of_Sketch_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；两份 Create_Parabola 与 Get_All_Elements 均真实调用该成员。"
+    },
+    {
+      "member": "GetFontHeight",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Dimension_Tolerance_Example_CSharp.md",
+        "Get_Dimension_Tolerance_Example_VB.md",
+        "Get_Dimension_Tolerance_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值 ×1000.0 后标 mm，比页面单说 in system units 更具体——它把 system units 落成米制。",
+          "example_quote": "Debug.Print(\"  Height of font: \" + fontHeight * 1000.0 + \" mm\");",
+          "example_file": "Get_Dimension_Tolerance_Example_CSharp.md"
+        }
+      ],
+      "note": "不判 unit 冲突：同源 IMassProperty2/UseSystemUnits 写明 system units 即 meters，与 ×1000 相符。"
+    },
+    {
+      "member": "GetFontScale",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Dimension_Tolerance_Example_CSharp.md",
+        "Get_Dimension_Tolerance_Example_VB.md",
+        "Get_Dimension_Tolerance_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 scale 原样打印、不作任何换算，与同页 GetFontHeight 的 ×1000 形成对照，坐实它是无量纲比值。",
+          "example_quote": "Debug.Print(\"  Scale of font: \" + fontScale);",
+          "example_file": "Get_Dimension_Tolerance_Example_CSharp.md"
+        },
+        {
+          "what": "改完 fit 字体后示例读的是 GetFitFontScale / GetFitFontUseDimension，落实页面『只管 tolerance 不管 fit 字体』的界线。",
+          "example_quote": "fontScale = swDimensionTolerance.GetFitFontScale();",
+          "example_file": "Get_Dimension_Tolerance_Example_CSharp.md"
+        }
+      ],
+      "note": "页面与示例在 GetFontUseDimension 为真时返回 1.0、以及 tolerance/fit 分族上均无冲突。"
+    },
+    {
+      "member": "GetFormat",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例拿返回值与 swGtolFormatType_e.GTOL_SW2021 比较以判是否 2021 格式，并在 ConvertFormat 之后重读确认其改变。",
+          "example_quote": "if (lFormatType1 == (int)swGtolFormatType_e.GTOL_SW2021)",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，跳过冲突判定；示例另把本 Gtol 的 GetFormat 与 swApp.GetGtolFormatData 分作两值。"
+    },
+    {
+      "member": "GetFrame",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 1..FrameCount 循环取帧，并把 GetFrameCount() 直接当末帧下标传入，坐实 FrameIndex 是一基且可等于计数。",
+          "example_quote": "for (iFrame = 1; iFrame <= FrameCount; iFrame++)",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        },
+        {
+          "what": "为满足页面『仅 2022 及以后有效』，示例先 CanConvertFormat、值为 GTOL_SW2021 时 ConvertFormat，再去取帧；页面只给结论不给做法。",
+          "example_quote": "swConversionError = (swGtolFormatConversionError_e)swGtol.ConvertFormat();",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "示例 Preconditions 允许 2021 的 Gtol，但代码先转换再取帧，与页面的 2022 有效性条件相容，故不判 precondition 冲突。"
+    },
+    {
+      "member": "GetFrameAtIndex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的规则落成零基上界 j 从 0 到 GetFrameCount()-1，正是『用 GetFrameCount 定 Index』。",
+          "example_quote": "for (j = 0; j <= swPMIDataGtol.GetFrameCount() - 1; j++)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例显式判空并打印出错分支，页面 Returns 只列 IPMIFrameData、未提可能返回 null。",
+          "example_quote": "Debug.Print(\"Gtol frame retrieval error\");",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "零基下标与 Remarks 的 GetFrameCount 规则一致；页面并未承诺非 null，故不判 return_shape 冲突。"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{"idx":24,"pages_read":13,"rows":[
+{"iface":"IView","file":"GetAnnotations.md","signature":"System.object GetAnnotations()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetDimensionDisplayInfo5.md","signature":"System.object GetDimensionDisplayInfo5()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetFirstDisplayDimension3.md","signature":"System.object GetFirstDisplayDimension3()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetRevisionCloudCount.md","signature":"System.int GetRevisionCloudCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetBreakLines.md","signature":"BreakLine IGetBreakLines( System.int Count )","obsolete":false,"pointer":true,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetFirstDisplayDimension2.md","signature":"DisplayDimension IGetFirstDisplayDimension2()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"InsertBendTable.md","signature":"BendTableAnnotation InsertBendTable( System.bool UseAnchorPoint, System.double X, System.double Y, System.int AnchorType, System.string StartValue, System.string TableTemplate )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"SetKeepLinkedToBOM.md","signature":"System.bool SetKeepLinkedToBOM( System.bool Linked, System.string Name )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"CreateBlockDefinition.md","signature":"System.object CreateBlockDefinition( System.string Name, System.string XRefFileName, System.bool Instance, System.object Segments, System.object Points, System.object Notes, System.object Dimensions, System.object Blocks )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"EndDrawing.md","signature":"void EndDrawing()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"ICreateSectionViewAt4.md","signature":"View ICreateSectionViewAt4( System.double X, System.double Y, System.double Z, System.string SectionLabel, System.int Options, System.int NumExcludedComponents, ref System.object ExcludedComponents )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"IsolateChangedDimensions.md","signature":"void IsolateChangedDimensions()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"ISheet","file":"GetName.md","signature":"System.string GetName()","obsolete":false,"pointer":false,"zero":"是（空括号）"}
+]}

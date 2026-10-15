@@ -1,0 +1,134 @@
+{
+  "idx": 424,
+  "results": [
+    {
+      "member": "ScaleMethod",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出成员页推给 Help 的那条完整调用序：先 AddPrintRange(1,1)，再 FromScale/ToScale，最后才赋 ScaleMethod。",
+          "example_quote": "            printSpec.AddPrintRange(1, 1);\n            printSpec.FromScale = 1.5;\n            printSpec.ToScale = 0.5;\n            printSpec.ScaleMethod = (int)swPrintSelectionScaleFactor_e.swPrintSelection;",
+          "example_file": "Print_Drawing_as_High_Quality_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只指向 Help；示例与 Returns 的枚举口径一致，无冲突。"
+    },
+    {
+      "member": "ScaleOrCopy",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Rotate_Scale_Copy_Sketch_Example_CSharp.md",
+        "Rotate_Scale_Copy_Sketch_Example_VB.md",
+        "Rotate_Scale_Copy_Sketch_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把可选实体落到「SKETCHSEGMENT」类型串 + append=True 连选四段后立即调用；成员页只说用 SelectByID2 选中实体。",
+          "example_quote": "            status = swModelDocExt.SelectByID2(\"Line3\", \"SKETCHSEGMENT\", -0.0630770706086407, 0.0172671115438625, 0.0215538897292735, true, 0, null, 0);",
+          "example_file": "Rotate_Scale_Copy_Sketch_Example_CSharp.md"
+        },
+        {
+          "what": "BaseY=0.063635716435882 与同文件 CreateCornerRectangle 角点 Y 同值 ⇒ Base 点与草图坐标同量纲；成员页 Parameters 未给单位。",
+          "example_quote": "            swModelDocExt.ScaleOrCopy(true, 2, 0, 0.063635716435882, 0, 2);",
+          "example_file": "Rotate_Scale_Copy_Sketch_Example_CSharp.md"
+        }
+      ],
+      "note": "前置（先 SelectByID2）与 void 返回两处示例都照做，未见互斥说法。"
+    },
+    {
+      "member": "ScaleRatio",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_View_Scale_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "给出成员页未写的副作用：改比例会把 IView::UseSheetScale 置 false（示例前后各打印一次做对照）。",
+          "example_quote": "    ' Changing scale sets IView::UseSheetScale to false",
+          "example_file": "Set_View_Scale_Example_VB.md"
+        }
+      ],
+      "note": "二元素数组、分子在前、改后 EditRebuild3 三点示例与 Remarks 完全一致。"
+    },
+    {
+      "member": "ScaleType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Modify_Cavity_Feature_Example_CSharp.md",
+        "Create_and_Modify_Cavity_Feature_Example_VB.md",
+        "Create_and_Modify_Cavity_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过比对；示例是否用到该成员已 grep 确认。"
+    },
+    {
+      "member": "ScaleUniform",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Data_for_Scale_Feature_Example_CSharp.md",
+        "Get_Data_for_Scale_Feature_Example_VB.md",
+        "Get_Data_for_Scale_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "**NOTE:** If uniform scaling is disabled, then use these properties to get or set the individual scaling values:",
+          "example_quote": "            Debug.Print(\"   Is uniform = \" + swScale.IsUniform);\n            Debug.Print(\"   Uniform scaling factor = \" + swScale.ScaleUniform);\n            Debug.Print(\"   X scaling factor = \" + swScale.ScaleX);",
+          "example_file": "Get_Data_for_Scale_Feature_Example_CSharp.md",
+          "why": "成员页把 ScaleUniform（uniform 启用时）与 ScaleX/Y/Z（未启用时）定成二选一；示例前置只要求选中特征，未设 IsUniform 就把两组值连续读出，无分支。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "唯一分歧点：成员页的适用条件与示例的无条件连读不能同时成立。"
+    },
+    {
+      "member": "ScaleX",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Data_for_Scale_Feature_Example_CSharp.md",
+        "Get_Data_for_Scale_Feature_Example_VB.md",
+        "Get_Data_for_Scale_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "**NOTE:** To get or set the scaling factor when uniform scaling is enabled, use [[IScaleFeatureData::ScaleUniform]].",
+          "example_quote": "            Debug.Print(\"   Uniform scaling factor = \" + swScale.ScaleUniform);\n            Debug.Print(\"   X scaling factor = \" + swScale.ScaleX);",
+          "example_file": "Get_Data_for_Scale_Feature_Example_CSharp.md",
+          "why": "成员页以 uniform 是否启用限定 ScaleX 的适用性；示例前置未要求关闭 uniform，读完 ScaleUniform 即直接读 ScaleX，未走成员页要求的分支。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "示例只读 ScaleX，从不设置它；分歧纯在适用条件上。"
+    },
+    {
+      "member": "ScaleY",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Data_for_Scale_Feature_Example_CSharp.md",
+        "Get_Data_for_Scale_Feature_Example_VB.md",
+        "Get_Data_for_Scale_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "**NOTE:** To get or set the scaling factor when uniform scaling is enabled, use [[IScaleFeatureData::ScaleUniform]].",
+          "example_quote": "            Debug.Print(\"   X scaling factor = \" + swScale.ScaleX);\n            Debug.Print(\"   Y scaling factor = \" + swScale.ScaleY);",
+          "example_file": "Get_Data_for_Scale_Feature_Example_CSharp.md",
+          "why": "同 ScaleX：成员页把 ScaleY 限定在 uniform 关闭时可用，示例却在未设置 IsUniform 的前提下与 ScaleX、ScaleUniform 一起连读。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "三个 IScaleFeatureData 成员的分歧同源，形状一致。"
+    }
+  ]
+}

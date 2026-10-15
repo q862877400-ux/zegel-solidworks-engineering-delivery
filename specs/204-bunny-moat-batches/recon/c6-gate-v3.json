@@ -1,0 +1,90 @@
+{
+  "role": "V3",
+  "my_numbers": {
+    "verified": "6385",
+    "count": "3496",
+    "groups": "3180",
+    "multi": "85",
+    "conflict": "21"
+  },
+  "my_classification": {
+    "真分歧": 0,
+    "时序更新": 11,
+    "假阳性": 10,
+    "非分歧": 2
+  },
+  "denominator_note": "分母=过闸后 verified=True 的 6385 条中 kind=count 的 3496 条（未过闸 kind=count 另有 5 条）。1988 条 status、184 条 percent、106 条 size 等带数值的 claim 全在分母外。",
+  "mismatch_with_reported": [
+    {
+      "item": "过闸数 / kind=count 数",
+      "reported": "6385 / 3496",
+      "mine": "6385 / 3496",
+      "why": "完全一致。verified=False 仅 5 条且全在 count 类；未过闸 count 总数 3501。"
+    },
+    {
+      "item": "话题组数",
+      "reported": "3332",
+      "mine": "3180（剥接口名）/ 3353（保留接口名）",
+      "why": "归一化配方未随结果落盘。三种同样合理的配方给出 3180–3353，跨度 173 组大于结论本身的分辨率。"
+    },
+    {
+      "item": "≥2 条的组数",
+      "reported": "92",
+      "mine": "85（区间 74–85）",
+      "why": "「≥2 条」是否要求跨文档未定义。我按组内 claim≥2 计得 85；若只算跨文档组则更低。三配方上限 85 也够不到 92。"
+    },
+    {
+      "item": "跨文档且数值不同的组数",
+      "reported": "23",
+      "mine": "21（区间 12–21）",
+      "why": "保留接口名得 20；再把文档名里的实体并入话题键得 12。差值 9 全是 IDrawingDoc/IView/ISheet 被并组。"
+    },
+    {
+      "item": "23 组的分类",
+      "reported": "真分歧 4 / 时序 7 / 假阳性 11 / 非分歧 1",
+      "mine": "真分歧 0 / 时序 11 / 假阳性 10 / 非分歧 2",
+      "why": "我找不到任何一组是「同一时点同一口径的互斥断言」：要么主体不同（假阳性），要么是累计量的两个快照（时序）。"
+    }
+  ],
+  "classification_detail": [
+    {"i": 1, "topic": "编进目录但从未直接调 291族/2324成员 vs 256族/2114成员", "verdict": "时序更新", "evidence": "harvest-digest.md(最后提交 10-04，工具生成的清单) 仍是 291/2324；ROADMAP.md(10-03) 与 known-facts.md 同为 256/2114 ⇒ 新快照对旧手写快照。"},
+    {"i": 2, "topic": "共成员数 274/461/53", "verdict": "假阳性", "evidence": "分别是 IDrawingDoc/IView/ISheet 三个不同接口的成员数；claim 文本里根本没有接口名。"},
+    {"i": 3, "topic": "按页头 kind 统计 method 268/427/45", "verdict": "假阳性", "evidence": "同 i2，三个接口各自的 method 数。"},
+    {"i": 4, "topic": "drawing_workflow.py 2033 行 vs 2112 行", "verdict": "时序更新", "evidence": "同一文件行数随提交增长；函数数两边都是 53，未矛盾。"},
+    {"i": 5, "topic": "全量回归 1274 passed vs 1260 passed", "verdict": "时序更新", "evidence": "用例累计量，只增不减；两处 skipped/failed 相同。"},
+    {"i": 6, "topic": "可复用套路增至 16 条 vs 17 条", "verdict": "时序更新", "evidence": "claim 自带「增至」，是累计量。"},
+    {"i": 7, "topic": "all_specs 128→139→144→152→158→164→178→180", "verdict": "时序更新", "evidence": "六个变体本身构成单调链，同一文档不同切片。"},
+    {"i": 8, "topic": "能力 75 条 verified 53 vs 能力 38 条 verified 32", "verdict": "时序更新", "evidence": "known-facts 第 217 条写「能力 69 → 75」，ROADMAP 的 38 是更早快照。"},
+    {"i": 9, "topic": "negative_input_selfproof 扫 223 个 .py vs 102 个 .py", "verdict": "非分歧", "evidence": "ROADMAP 原文是「扫 …/tools（102 个 .py）」＝ 只扫 tools 目录；两边口径不同，不是矛盾。known-facts 现行文本已无 223，无法反证同口径。"},
+    {"i": 10, "topic": "门禁数由 22 增至 23 vs 由 15 增至 16", "verdict": "时序更新", "evidence": "门禁是只增的累计量，claim 自带「由…增至」。"},
+    {"i": 11, "topic": "非废弃且非指针成员 160 vs 267", "verdict": "假阳性", "evidence": "IDrawingDoc 的 160 与 IView 的 267。"},
+    {"i": 12, "topic": "其中零参成员 78 vs 200", "verdict": "假阳性", "evidence": "IDrawingDoc 的 78 与 IView 的 200。"},
+    {"i": 13, "topic": "空括号真·零参方法 73 个 vs 11 个", "verdict": "假阳性", "evidence": "IDrawingDoc 的 73 与 ISheet 的 11。"},
+    {"i": 14, "topic": "其余有形参的可用成员 81 个 vs 20 个", "verdict": "假阳性", "evidence": "IDrawingDoc 的 81 与 ISheet 的 20。"},
+    {"i": 15, "topic": "按页头 kind 统计 property 6 个 vs 34 个", "verdict": "假阳性", "evidence": "IDrawingDoc 的 6 与 IView 的 34。"},
+    {"i": 16, "topic": "无 ## Returns 段的成员 162 vs 14", "verdict": "假阳性", "evidence": "drawingdoc 文档内部两切片自洽(162=162)，与 ISheet 的 14 无冲突。"},
+    {"i": 17, "topic": "无 ## Remarks 段的成员 174 vs 29", "verdict": "假阳性", "evidence": "drawingdoc 两切片自洽(174=174)，与 ISheet 的 29 无冲突。"},
+    {"i": 18, "topic": "主表收录非废弃且非指针的 160 个成员 vs 267 个成员", "verdict": "假阳性", "evidence": "与 i11 同源数据的另一种措辞；仍是 IDrawingDoc 160 / IView 267。"},
+    {"i": 19, "topic": "签名审计 696 通过/2 存疑 vs 696 通过/0 存疑", "verdict": "时序更新", "evidence": "final-audit.md 第 19 行原文自己写着「696 通过 / 0 存疑 / 0 查不到。★ 原「2 存疑」」⇒ 2→0 是显式作废，ROADMAP 停在旧值。另注：两边的分项都加不到 711，本身就是残缺分解。"},
+    {"i": 20, "topic": "能力 37→38 / 75→76 / 76→77", "verdict": "时序更新", "evidence": "箭头链本身即时间序列。"},
+    {"i": 21, "topic": "能力清单 31 条 vs 110 条", "verdict": "时序更新", "evidence": "harvest-report 是首轮清点(31)，final-report-24h 是 24 小时后收敛报告(110)。"},
+    {"i": 22, "topic": "证据文件 151 份/pass 97 vs 123 份/pass 82", "verdict": "时序更新", "evidence": "plan-200r-v3 文档内部第 197 行自带 139(89) → 143(92) → 第 18 行 151(97) 的推进链。"},
+    {"i": 23, "topic": "IView 零参可读候选 约200 vs 201", "verdict": "非分歧", "evidence": "「约 200」是取整表述，与 201 不构成冲突。"}
+  ],
+  "recipe_spread": {
+    "A_strip_iface": {"groups": 3180, "multi": 85, "conflict": 21},
+    "B_keep_iface": {"groups": 3353, "multi": 74, "conflict": 20},
+    "C_strip_iface_plus_doc_entity": {"groups": 3192, "multi": 77, "conflict": 12},
+    "note": "A=剥接口名+数字替<N>+去标点(与所报口径最接近)；C 再把文档名里的实体(iview/idrawingdoc/isheet)并入话题键 ⇒ 假阳性 9 组当场消失。"
+  },
+  "methodology_issues": [
+    "话题键只吃 claim 文本，而这些 claim 几乎不含接口名（原文是「共成员数 N = 274」），主体只存在于文档路径 iview-read-members.md ⇒ 剥不停用词根本没用；把文档名的实体并进键，我实测冲突 21→12。",
+    "归一化配方没随结果落盘 ⇒ 3332/92/23 不可复现。我三种同样合理的配方给出 3180–3353 / 74–85 / 12–21，配方跨度比结论本身大，说明这三个数是配方产物不是数据事实。",
+    "只判 kind=count 把分母自我收窄：1988 条 status、184 条 percent、106 条 size 里同样有可比的数值主张（如覆盖率、字节数），它们一条都没进冲突检测。",
+    "「数值不同」= claim 内数字集合不同，没区分三种成因：口径不同（扫 tools 的 102 vs 全仓 223）、取整（约 200 vs 201）、快照先后 ⇒ 这两类被错记成分歧，我判到的 2 组非分歧全属此列。",
+    "累计型度量（门禁数/回归用例/能力条数/证据文件份数/门禁扫描 .py 数）结构性单调，跨快照必然不同 ⇒ 对这类度量做分歧检测是结构性高报，应先按「累计量」分流再比对。",
+    "过闸 6385 里 verified=False 只有 5 条（0.08%）⇒ 这道闸筛的是「有没有引文」不是「数值核没核对」。把它当质量闸读，会高估下游全部计数。",
+    "同一数字的不同措辞会分裂成两组：「非废弃且非指针成员 M = 160」与「主表收录非废弃且非指针的 160 个成员」是同源数据却各成一组（i11 与 i18），既重复计又掩盖真正的并组问题。",
+    "「假阳性」的定义没写（是话题错并，还是数值口径不同），逐组判定就不可复核：我数到 10 组假阳性、Lead 数到 11 组，差的 1 组无法判定是谁的判据宽了。"
+  ]
+}

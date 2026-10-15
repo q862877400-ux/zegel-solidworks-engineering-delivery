@@ -1,0 +1,115 @@
+{
+  "idx": 384,
+  "results": [
+    {
+      "member": "Parameterization2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md",
+        "Return_Untrimmed_Curve_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "ISurface/Parameterization2.md 全 33 行无 ## Remarks，按规则 3 跳过。"
+    },
+    {
+      "member": "PartLevel",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Color_of_Component_in_Specific_Display_State_Example_VB.md",
+        "Change_Color_of_Component_in_Specific_Display_State_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IDisplayStateSetting/PartLevel.md 全 27 行无 ## Remarks，按规则 3 跳过。"
+    },
+    {
+      "member": "PartName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Part's_Feature_Statistics_Example_CSharp.md",
+        "Get_Part's_Feature_Statistics_Example_VB.md",
+        "Get_Part's_Feature_Statistics_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IFeatureStatistics/PartName.md 全 27 行无 ## Remarks，按规则 3 跳过。"
+    },
+    {
+      "member": "PartType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Auto_Dimension_Scheme_Example_CSharp.md",
+        "Auto_Dimension_Scheme_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IDimXpertAutoDimSchemeOption/PartType.md 全 26 行无 ## Remarks，按规则 3 跳过。"
+    },
+    {
+      "member": "PartingSurfaces",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Tooling_Split_Feature_Data_Example_CSharp.md",
+        "Get_Tooling_Split_Feature_Data_Example_VB.md",
+        "Get_Tooling_Split_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只指向通用文档；示例给出该文档三步法在本成员上的具体第一步",
+          "example_quote": "bRet = swToolingSplitFeatData.AccessSelections(swModel, null);",
+          "example_file": "Get_Tooling_Split_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例在读完本属性后调用 ReleaseSelectionAccess 释放，成员页未写此步",
+          "example_quote": "swToolingSplitFeatData.ReleaseSelectionAccess();",
+          "example_file": "Get_Tooling_Split_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出 Returns「Array of parting surface bodies」的落地形态：object[] 元素转 Body2",
+          "example_quote": "partSurf = (object[])swToolingSplitFeatData.PartingSurfaces;",
+          "example_file": "Get_Tooling_Split_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 仅为指向《Selections that Define Features》的交叉引用，与示例无相互否证。"
+    },
+    {
+      "member": "PartingType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Parting_Surface_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Parting_Surface_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出本属性的具体判用法：与枚举 Perpendicular 逐值比较（成员页只列枚举）",
+          "example_quote": "if (swPartingSurfaceFeatureData.PartingType == (int)swPartingSurfaceMoldParmType_e.swPartingSurfaceMoldParmPerpendicular)",
+          "example_file": "Get_and_Set_Parting_Surface_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例把分支结果落到 OffsetAngle 上；成员页只说 Tangent 的几何限制，未给分支",
+          "example_quote": "Debug.Print(\"    Offset angle not available for this parting surface type.\");",
+          "example_file": "Get_and_Set_Parting_Surface_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 讲 Tangent 可用性；示例的分支讲 Perpendicular 下 OffsetAngle 不可用，属另一成员，不构成冲突。"
+    },
+    {
+      "member": "Paste",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Copy_and_Paste_Feature_Example_CSharp.md",
+        "Copy_and_Paste_Feature_Example_VB.md",
+        "Copy_and_Paste_Feature_Example_VBNET.md",
+        "Cut_and_Paste_Sketch_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IModelDoc2/Paste.md 全 28 行无 ## Remarks，按规则 3 跳过。"
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "idx": 430,
+  "results": [
+    {
+      "member": "SelectedFeatureProperties",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Thicken_Feature_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This method requires that the feature to be selected.",
+          "example_quote": "swModel.ClearSelection2 True\n    ' Set the property values for the selected feature\n    swModel.SelectedFeatureProperties 0, 0, 0, 0, 0, 0, 0, 1, 0, \"Thicken1\"",
+          "example_file": "Create_Thicken_Feature_Example_VB.md",
+          "why": "Remarks 说调用前必须已选中特征；示例却先 ClearSelection2 清空选区，紧接着把 FeatureName 传成 Thicken1 调用。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "To select the feature programmatically, you can use [[IModelDocExtension::SelectByID2]] and pass in the feature name and the appropriate object type (for example, \"BODYFEATURE\", \"ATTRIBUTE\", \"PLANE\", \"SKETCH\", and so on) and the selection coordinates 0,0,0.",
+          "example_quote": "swModel.ClearSelection2 True\n    swModel.SelectedFeatureProperties 0, 0, 0, 0, 0, 0, 0, 1, 0, \"Thicken1\"",
+          "example_file": "Create_Thicken_Feature_Example_VB.md",
+          "why": "Remarks 指定用 SelectByID2 按特征名+类型选中；示例全程无 SelectByID2，直接把名字当最后一个实参传进去。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 RgbColor 与 Ambient/Diffuse/Specular/Shininess/Transparency/Emission 全传 0，只靠末位 FeatureName 改名。",
+          "example_quote": "swModel.SelectedFeatureProperties 0, 0, 0, 0, 0, 0, 0, 1, 0, \"Thicken1\"",
+          "example_file": "Create_Thicken_Feature_Example_VB.md"
+        },
+        {
+          "what": "Remarks 第 3 步要求 Refresh the graphics area，示例无该调用；该要求同样被限定在「看到颜色变化」时。",
+          "example_quote": "' Set the property values for the selected feature\n    swModel.SelectedFeatureProperties 0, 0, 0, 0, 0, 0, 0, 1, 0, \"Thicken1\"\n    ' Get the thicken feature definition object",
+          "example_file": "Create_Thicken_Feature_Example_VB.md"
+        }
+      ],
+      "note": "示例在空选区下调此方法；成员页的两处前置（须已选中、须先 SelectByID2）都不成立。"
+    },
+    {
+      "member": "SelectionAddNewGroup",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Tab_And_Slot_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规则跳过。"
+    },
+    {
+      "member": "SelectionGetGroups",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Tab_And_Slot_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规则跳过。"
+    },
+    {
+      "member": "SelectionManager",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_and_Release_Access_to_Edges_Example_CSharp.md",
+        "Access_and_Release_Access_to_Edges_Example_VB.md",
+        "Access_and_Release_Access_to_Edges_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "[[ISelectionMgr]] objects are transient because they are invalid as soon as another selection is made. So, do not hold on to these pointers for any length of time.",
+          "example_quote": "Set swSelMgr = swModel.SelectionManager\n    bRet = swModel.Extension.SelectByID2(\"Rip1\", \"BODYFEATURE\", 0, 0, 0, False, 0, Nothing, 0)\n    Set swFeat = swSelMgr.GetSelectedObject6(1, -1)",
+          "example_file": "Access_and_Release_Access_to_Edges_Example_VB.md",
+          "why": "指针在任何选择之前取得，中间跨过 3 次 SelectByID2 才使用；C# 与 VB.NET 两份同型。"
+        },
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "[[ISelectionMgr]] objects are transient because they are invalid as soon as another selection is made. So, do not hold on to these pointers for any length of time.",
+          "example_quote": "Set swSelMgr = modDoc.SelectionManager\n    Set segments(0) = swSelMgr.GetSelectedObject6(1, 0)\n    Set segments(5) = swSelMgr.GetSelectedObject6(6, 0)",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md",
+          "why": "指针在尚未做任何选择时取走，其后连续 6 次 SelectByID2，再回头用它取 6 个路径段。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 GetSelectedObject6 的具体实参形态 (1, -1) 取当前选中特征；成员页只说指针会失效，未给调用序。",
+          "example_quote": "Set swFeat = swSelMgr.GetSelectedObject6(1, -1)",
+          "example_file": "Access_and_Release_Access_to_Edges_Example_VB.md"
+        }
+      ],
+      "note": "四份示例全部先取指针后改变选择；与 Remarks 的「不要持有」直接对立。"
+    },
+    {
+      "member": "SelectionSlotFace",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Tab_And_Slot_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规则跳过。"
+    },
+    {
+      "member": "SelectionTabEdge",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Tab_And_Slot_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规则跳过。"
+    },
+    {
+      "member": "Selections",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份示例接收者逐字为 RefPointFeatureData，属 IRefPointFeatureData.Selections，未用到本成员"
+    }
+  ]
+}

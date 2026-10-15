@@ -1,0 +1,134 @@
+{
+ "idx": 455,
+ "results": [
+  {
+   "member": "SetScale",
+   "remarks_empty": true,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 ## Remarks 段，按纪律跳过。三份示例调的是 swSheet.SetScale(4 参)，即 ISheet 成员，非本成员。"
+  },
+  {
+   "member": "SetScaleWithModelChanges",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+    "Create_Section_View_and_Get_Some_Data_Example_VB.md",
+    "Create_Section_View_and_Get_Some_Data_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 ## Remarks 段，按纪律跳过。三份示例均在 swSectionView 上调用该成员。"
+  },
+  {
+   "member": "SetSearchFolders",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_and_Set_Search_Folders_Example_VB.md",
+    "Get_and_Set_Search_Folders_Example_CSharp.md",
+    "Get_and_Set_Search_Folders_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出增量添加的具体做法：先 GetSearchFolders，再把 \"c:\\;\" 拼到串首，最后 SetSearchFolders 覆盖写回。",
+     "example_quote": "searchFolders = \"c:\\;\" & searchFolders",
+     "example_file": "Get_and_Set_Search_Folders_Example_VB.md"
+    },
+    {
+     "what": "示例先调用 SetUserPreferenceToggle(swUseFolderSearchRules, False)，给出 Remarks 里那个总开关的具体 API 与位置。",
+     "example_quote": "swApp.SetUserPreferenceToggle swUserPreferenceToggle_e.swUseFolderSearchRules, False",
+     "example_file": "Get_and_Set_Search_Folders_Example_VB.md"
+    }
+   ],
+   "note": "Remarks 三句与三份示例均可同时成立，未找到冲突。"
+  },
+  {
+   "member": "SetSelectedObjectMark",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_and_Set_Pattern_Example_CSharp.md",
+    "Get_and_Set_Pattern_Example_VB.md",
+    "Get_and_Set_Pattern_Example_VBNET.md",
+    "Thicken_Surface_and_Generate_Boss_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 ## Remarks 段，按纪律跳过。示例 mark 取值两种：51 与 1。"
+  },
+  {
+   "member": "SetSelectionFilter",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Inspect_Facets_Example_CSharp.md",
+    "Inspect_Facets_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 ## Remarks 段，按纪律跳过。两份示例里的 swApp.SetSelectionFilters 是 ISldWorks 同名成员，非本成员。"
+  },
+  {
+   "member": "SetSelectionFilters",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Show_Bubble_ToolTip_for_PropertyManager_Page_Control_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例传入 7 个值，含 Remarks 表格从未提及的 swSelREFEDGES，比表格三类更全。",
+     "example_quote": "filters[1] = (int)swSelectType_e.swSelREFEDGES;",
+     "example_file": "Show_Bubble_ToolTip_for_PropertyManager_Page_Control_Example_CSharp.md"
+    },
+    {
+     "what": "调用点在 PropMgrHdlr 构造函数内，Show() 之后页面才显示，具体落实了「显示前或关闭时才可设」。",
+     "example_quote": "pm = new PropMgrHdlr(swApp);\n            pm.Show();",
+     "example_file": "Show_Bubble_ToolTip_for_PropertyManager_Page_Control_Example_CSharp.md"
+    }
+   ],
+   "note": "本成员是 IPropertyManagerPageSelectionbox 上的；清单另三份示例用的是 ISldWorks 同名成员。"
+  },
+  {
+   "member": "SetSheetScale",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_DXF_File_and_Add_Dimension_Example_VB.md",
+    "Insert_DXF_File_and_Add_Dimensions_Example_CSharp.md",
+    "Insert_DXF_File_and_Add_Dimensions_Example_VBNET.md",
+    "Insert_and_Position_DXF_File_in_Drawing_Example_CSharp.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "This method only supports importing to a drawing; it does not support importing to a part sketch.",
+     "example_quote": "importData.set_ImportMethod(\"\", (int)swImportDxfDwg_ImportMethod_e.swImportDxfDwg_ImportToExistingPart);",
+     "example_file": "Insert_DXF_File_and_Add_Dimensions_Example_CSharp.md",
+     "why": "示例前置写 Open a part，且按 ImportToExistingPart 导入零件，正是 Remarks 说不支持的那一侧。"
+    },
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "This method only supports importing to a drawing; it does not support importing to a part sketch.",
+     "example_quote": "importData.ImportMethod(\"\") = swImportDxfDwg_ImportMethod_e.swImportDxfDwg_ImportToExistingPart",
+     "example_file": "Insert_DXF_File_and_Add_Dimension_Example_VB.md",
+     "why": "VBA 版同样在「Open a part」前提下设图纸比例，与 Remarks 的「仅支持导入工程图」直接相反。"
+    },
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "This method only supports importing to a drawing; it does not support importing to a part sketch.",
+     "example_quote": "importData.ImportMethod(\"\") = swImportDxfDwg_ImportMethod_e.swImportDxfDwg_ImportToExistingPart",
+     "example_file": "Insert_DXF_File_and_Add_Dimensions_Example_VBNET.md",
+     "why": "VB.NET 版同型：零件 + ImportToExistingPart。三份冲突示例都不在成员页 Examples 列表里。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例把长度单位设为 swINCHES 而比例仍写 1.0/2.0，说明比例是无量纲比、不随 LengthUnit 变。",
+     "example_quote": "importData.set_LengthUnit(\"\", (int)swLengthUnit_e.swINCHES);",
+     "example_file": "Insert_and_Position_DXF_File_in_Drawing_Example_CSharp.md"
+    }
+   ],
+   "note": "唯一真冲突：Remarks 说零件不支持，另三份零件示例照调。"
+  }
+ ]
+}

@@ -1,0 +1,151 @@
+{
+  "idx": 216,
+  "results": [
+    {
+      "member": "GetMaterialVisualProperties",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns/Examples/See Also，无 ## Remarks；按纪律 3 跳过示例比对。"
+    },
+    {
+      "member": "GetMates",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mates_Example_VB.md",
+        "Get_Mates_Example_VBNET.md",
+        "Get_Mates_Example_CSharp.md",
+        "Insert_Join_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出三种空返回判空写法：VBA 用 IsEmpty、VB.NET 用 Is Nothing、C# 用 != null；成员页只说返回数组，未提可空。",
+          "example_quote": "If (Not IsEmpty(Mates)) Then",
+          "example_file": "Get_Mates_Example_VB.md"
+        },
+        {
+          "what": "示例显示运行期形状可直接强转为 Object[]（签名声明的是 System.object，页面未说实际类型）。",
+          "example_quote": "Mates = (Object[])swComponent.GetMates();",
+          "example_file": "Get_Mates_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只讲性能；示例与之相容，未找到不能同时成立的说法。"
+    },
+    {
+      "member": "GetMathUtility",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（只有 Returns/Examples/See Also）；按纪律 3 跳过示例比对。"
+    },
+    {
+      "member": "GetMaxValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Dimension_Tolerance_in_Configuration_Example_VB.md",
+        "Change_Dimension_Tolerance_in_Configuration_Example_VBNET.md",
+        "Change_Dimension_Tolerance_in_Configuration_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "- set the tolerance values, use [[IDimensionTolerance::SetValues]].",
+          "example_quote": "status = swDimensionTolerance.SetValues2(0.01, 0.015, swSetValueInConfiguration_e.swSetValue_InThisConfiguration, \"\")",
+          "example_file": "Change_Dimension_Tolerance_in_Configuration_Example_VB.md",
+          "why": "Remarks 指名用 SetValues 写容差，三份示例实际都调 SetValues2（多带配置参数），两侧指向不同设置入口。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例前置：先按 DIMENSION 选中并校验 GetSelectedObjectType3 为 swSelDIMENSIONS，再经 GetDimension2(0).Tolerance 取对象；成员页未写。",
+          "example_quote": "if (swSelMgr.GetSelectedObjectType3(1, -1) != (int)swSelectType_e.swSelDIMENSIONS)",
+          "example_file": "Change_Dimension_Tolerance_in_Configuration_Example_CSharp.md"
+        },
+        {
+          "what": "示例先设 Type=swTolBASIC 再设值，并跨配置回读比较；成员页只说“取决于公差类型可能不显示”，未给调用序。",
+          "example_quote": "swDimensionTolerance.Type = (int)swTolType_e.swTolBASIC;",
+          "example_file": "Change_Dimension_Tolerance_in_Configuration_Example_CSharp.md"
+        }
+      ],
+      "note": "冲突仅一条（SetValues vs SetValues2）；页首 Obsolete 声明不算 Remarks 侧冲突。"
+    },
+    {
+      "member": "GetMaxValue2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Dimension_Tolerance_Example_VB.md",
+        "Get_Dimension_Tolerance_Example_VBNET.md",
+        "Get_Dimension_Tolerance_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置：必须先在图纸上点选一个直径尺寸（成员页无任何前置说明）。",
+          "example_quote": "' 3. Zoom in on the diameter dimension and click it.",
+          "example_file": "Get_Dimension_Tolerance_Example_VB.md"
+        },
+        {
+          "what": "示例把返回值当有效性状态打印（0 = valid），与 Returns 指向的 swDimensionToleranceWarning_e 一致，不构成冲突。",
+          "example_quote": "Debug.Print (\"Maximum dimension tolerance of \" & maxValue & \" valid (0 = valid)? \" & maxValueValid)",
+          "example_file": "Get_Dimension_Tolerance_Example_VB.md"
+        }
+      ],
+      "note": "查过 swDimensionToleranceWarning_e（0=ValidForType），确认“0=valid”不与 Returns 冲突。"
+    },
+    {
+      "member": "GetMaximumMisalignedDeviation",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VB.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VBNET.md",
+        "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例取值前先调 SetUseMisalignedDeviationDocumentProperty(false)；成员页未写此前置顺序。",
+          "example_quote": "swMate.SetUseMisalignedDeviationDocumentProperty(false);",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出实测量级 SetMaximumMisalignedDeviation 0.102；成员页与 Set 页都未标单位或给数值。",
+          "example_quote": "swMate.SetMaximumMisalignedDeviation(0.102);",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 Remarks 说的“孔组里两个同心配合”具体化：当前偏差取自 linked mate，最大偏差设在本 mate 上。",
+          "example_quote": "Set swLinkedMate = swMate.GetLinkedMate",
+          "example_file": "Add_and_Edit_Misaligned_Symmetric_Concentric_Mate_Example_VB.md"
+        }
+      ],
+      "note": "三份示例一致，且与 Remarks 的累积/求解失败条件相容；无冲突。"
+    },
+    {
+      "member": "GetMenuStrings",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Remove_Menu_Commands_Menus_and_Toolbar_Buttons_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Use this method with methods that require you to supply the name of the menu, such as [[ISldWorks::RemoveMenu]], [[IFrame::RenameMenu]] and [[IFrame::RemoveMenu]].",
+          "example_quote": "swApp.RemoveFromMenu swCommands_Suppress, 1, 3, False",
+          "example_file": "Remove_Menu_Commands_Menus_and_Toolbar_Buttons_Example_VB.md",
+          "why": "Remarks 点名的三个消费方法示例一个都没用；示例改调 RemoveFromMenu/RemoveFromPopupMenu（收命令 ID 而非菜单串），取回的 name/parentName 此后从未使用。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把两个出口区分开：返回值是菜单名，第三个（out）参数才是父菜单名；成员页 Returns 只笼统写 Menu string。",
+          "example_quote": "name = swApp.GetMenuStrings(swCommands_Suppress, 1, parentName)",
+          "example_file": "Remove_Menu_Commands_Menus_and_Toolbar_Buttons_Example_VB.md"
+        }
+      ],
+      "note": "已核 ISldWorks::RemoveMenu 确实收 MenuItemString，Remarks 侧自洽；冲突在示例侧。"
+    }
+  ]
+}

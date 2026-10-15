@@ -1,0 +1,152 @@
+{
+  "idx": 401,
+  "results": [
+    {
+      "member": "RecordLine",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Equations_Example_CSharp.md",
+        "Add_Equations_Example_VB.md",
+        "Add_Equations_Example_VBNET.md",
+        "Create_Asymmetric_Elliptic_Fillets_Example_CSharp.md",
+        "Record_Macros_Example_CSharp.md",
+        "Record_Macros_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出「字面量被解析两次」的具体后果：同一路径写进 VBA/VB 目标用单反斜杠，写进 C# 目标要双写",
+          "example_quote": "swApp.RecordLine(\"MsgBox(\" & Chr(34) & \"C:\\Test\\\" & Chr(34) & \")\")",
+          "example_file": "Record_Macros_Example_VBNET.md"
+        },
+        {
+          "what": "示例给出空行与注释行的写法（'*** 前缀 + 一个空串行），成员页未给任何字面量范例",
+          "example_quote": "SwApp.RecordLine \"'*** \" & Message",
+          "example_file": "Add_Equations_Example_VB.md"
+        }
+      ],
+      "note": "四条官方示例均未开启宏录制就调用 RecordLine 写日志；Remarks 只限定「写入宏」的条件，journal 分支不受限，故不判冲突。"
+    },
+    {
+      "member": "RecordLineCSharp",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Record_Macros_Example_CSharp.md",
+        "Record_Macros_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 C# 目标的具体字面量：注释用 //，路径反斜杠双写（VBA/VB 目标则为单写）",
+          "example_quote": "swApp.RecordLineCSharp(\"System.Windows.Forms.MessageBox.Show(\" + Chr(34) + \"C:\\\\Test\\\\\" + Chr(34) + \");\")",
+          "example_file": "Record_Macros_Example_VBNET.md"
+        },
+        {
+          "what": "示例说明录制会话必须先用 RunCommand(swCommands_RecordPauseMacro) 起、StopMacro 收，与 Remarks 的顺序一致",
+          "example_quote": "swApp.RunCommand((int)swCommands_e.swCommands_RecordPauseMacro, \"\");",
+          "example_file": "Record_Macros_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 RecordLine* 的 Remarks 正文相同，只在末段把自身标为「本成员」；示例对三者一视同仁，未见两侧互斥。"
+    },
+    {
+      "member": "RecordLineVBnet",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Record_Macros_Example_CSharp.md",
+        "Record_Macros_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示 VB.NET 目标与 VBA 目标写法完全一致（单反斜杠、单引号注释），只有 C# 目标才需双写反斜杠",
+          "example_quote": "swApp.RecordLineVBnet(\"MsgBox(\" & Chr(34) & \"C:\\Test\\\" & Chr(34) & \")\")",
+          "example_file": "Record_Macros_Example_VBNET.md"
+        }
+      ],
+      "note": "成员页末段把自身写成「ISldWorks::RecordLineVBne」（少一个 t），是页内笔误；不构成与示例的冲突，故不列。"
+    },
+    {
+      "member": "Redraw",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按 Remarks 的语义给返回值命名，直接证实 Redraw=True 后返回的是剖切实体是否有效",
+          "example_quote": "Debug.Print \" Section bodies are valid: \" & boolstatus",
+          "example_file": "Create_Section_View_in_Model_Example_VB.md"
+        },
+        {
+          "what": "示例给出调用序：属性在 CreateSectionViewData() 之后、CreateSectionView 之前设，且与 GraphicsOnlySection 同开",
+          "example_quote": "data.Redraw = True",
+          "example_file": "Create_Section_View_in_Model_Example_VB.md"
+        }
+      ],
+      "note": "三份示例逐行一致（同一份代码的三种语言移植），Redraw 均置 True，无第二种取值可比对，不构成冲突。"
+    },
+    {
+      "member": "ReferToEndPoint",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Lofted_Bend_Feature_Example_CSharp.md",
+        "Insert_Lofted_Bend_Feature_Example_VB.md",
+        "Insert_Lofted_Bend_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示有效性前提在调用处如何被满足：BFormed 传 False、BReferToEndPoint 传 True，随后用 GetDefinition 读回",
+          "example_quote": "Set feat = Part.FeatureManager.InsertSheetMetalLoftedBend2(0, 0.0007366, False, 0.0007366, True, swBendsPerTransitionSegment, 0, 2, 0, 0)",
+          "example_file": "Insert_Lofted_Bend_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例给出该属性的读取位置：紧跟在 FormedMethod 之后打印，说明两者成对读",
+          "example_quote": "Debug.Print \"Calculate facet transitions using vertexes? \" & lbfd.ReferToEndPoint",
+          "example_file": "Insert_Lofted_Bend_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的前提「FormedMethod 为 false」在示例中成立（第 3 参 False），两侧可同时成立，故不判 precondition_diff。"
+    },
+    {
+      "member": "Reference",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Mate_Example_CSharp.md",
+        "Edit_Mate_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Mate references can be one or more entities of a component used for automatic mating.",
+          "example_quote": "swEnt = (Entity)swMateEnt.Reference;",
+          "example_file": "Edit_Mate_Example_CSharp.md",
+          "why": "成员页 Returns 写「Mate reference」（IMateReference，可含一个或多个实体），示例却把返回值直接当单个 Entity 用并 Select4；VB.NET 版同样赋给 Dim swEnt As Entity。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例按 ReferenceType 分派：只有点/线/圆/面/柱面/球面/锥面/扫掠面八类才取 Reference 去选中，其余（含 Set）直接放弃",
+          "example_quote": "bRet = swEnt.Select4(true, swSelData);",
+          "example_file": "Edit_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页只列了 Edit Mate (VBA) 一份示例，任务给的 C#/VB.NET 两份同样实调本成员，已一并采用。"
+    },
+    {
+      "member": "ReferenceAlignment",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Mate_Reference_Properties_Example_VB.md",
+        "Get_Mate_Reference_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有前置元数据与标题，无签名、无 Returns、无 Remarks，按规则跳过；示例显示它带索引调用 ReferenceAlignment(0)。"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{"idx":53,"pages_read":13,"rows":[
+{"iface":"IView","file":"GetCorrespondingEntity.md","signature":"System.object GetCorrespondingEntity( System.object Entity )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"GetDisplayEdgesInShadedMode.md","signature":"System.bool GetDisplayEdgesInShadedMode()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetMultiJogLeaderCount.md","signature":"System.int GetMultiJogLeaderCount()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetUserPoints2.md","signature":"System.object GetUserPoints2()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetDimensionIds3.md","signature":"System.string IGetDimensionIds3()","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"IGetProjectionLines.md","signature":"ProjectionArrow IGetProjectionLines( System.int Count )","obsolete":false,"pointer":true,"zero":"否（有形参）"},
+{"iface":"IView","file":"IsModelLoaded.md","signature":"System.bool IsModelLoaded()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"AlignOrdinate.md","signature":"void AlignOrdinate()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"CreateOrdinateDim4.md","signature":"System.object CreateOrdinateDim4( System.object P0, System.object P1, System.object P2, System.object P3, System.object P4, System.object P5, System.double Val, System.double Angle, System.double TextHeight )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"GetViews.md","signature":"System.object GetViews()","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"InsertCircularNotePattern.md","signature":"System.bool InsertCircularNotePattern( System.double ArcRadius, System.double ArcAngle, System.int PatternNum, System.double PatternSpacing, System.bool PatternRotate, System.string DeleteInstances )","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"SetupSheet3.md","signature":"System.bool SetupSheet3( System.string Name, System.int PaperSize, System.int TemplateIn, System.double Scale1, System.double Scale2, System.bool FirstAngle, System.string TemplateName, System.double Width, System.double Height )","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"ISheet","file":"RevisionTable.md","signature":"RevisionTableAnnotation RevisionTable {get;}","obsolete":false,"pointer":false,"zero":"是（无括号）"}
+]}

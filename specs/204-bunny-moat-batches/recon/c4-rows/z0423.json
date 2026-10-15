@@ -1,0 +1,95 @@
+{
+  "idx": 423,
+  "results": [
+    {
+      "member": "SaveVirtualComponent",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_New_Virtual_Component_Example_CSharp.md",
+        "Insert_New_Virtual_Component_Example_VB.md",
+        "Insert_New_Virtual_Component_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有摘要+签名+Returns，无 ## Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "Scale",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IFaceHatch.Scale 无 ## Remarks（仅 NOTE 行）；job 列的 Capture_3DView 调 sw3DView.Scale、Create_Ellipse 调 MathVector.Scale，都不是本成员。"
+    },
+    {
+      "member": "Scale2",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IDisplayDimension.Scale2 有 Remarks，但全 examples 树无一份调用它：job 列的 4 份命中的是 ISketchBlockInstance/ISketchHatch 的同名 Scale2。"
+    },
+    {
+      "member": "ScaleDecimal",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_View_Scale_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Changing this property can cause changes to the graphics of the drawing. After making all the of the view-related changes, call the [[IModelDoc2::EditRebuild2]] method to regenerate the drawing to see these changes.",
+          "example_quote": "bRet = swModel.EditRebuild3: Debug.Assert bRet",
+          "example_file": "Set_View_Scale_Example_VB.md",
+          "why": "Remarks 指名 EditRebuild2，示例调 EditRebuild3；types 树无 EditRebuild2 页，同族 IView 页全写 EditRebuild3。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "改比例的副作用：ScaleDecimal 被改后 UseSheetScale 变 false，Remarks 未提这条连带影响",
+          "example_quote": "' Changing scale sets IView::UseSheetScale to false",
+          "example_file": "Set_View_Scale_Example_VB.md"
+        }
+      ],
+      "note": "Ratio/Decimal 换算关系（3:2→1.5）与示例打印一致，不算冲突；冲突只在重建成员名。"
+    },
+    {
+      "member": "ScaleDraftEdges",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Whether_Draft_Edges_Scaled_in_Printed_Drawing_Example_CSharp.md",
+        "Get_Whether_Draft_Edges_Scaled_in_Printed_Drawing_Example_VB.md",
+        "Get_Whether_Draft_Edges_Scaled_in_Printed_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "把前置变成可执行守卫：先判 HighQuality，为假走 else 分支并打印明确提示语",
+          "example_quote": "Debug.Print(\"Drawing not set to print in high quality. Can only scale draft edges when drawing set to print in high quality.\");",
+          "example_file": "Get_Whether_Draft_Edges_Scaled_in_Printed_Drawing_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都以 If HighQuality 包住读，与 Remarks 的前置同向，不构成矛盾。"
+    },
+    {
+      "member": "ScaleFactor",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Texture_on_Face_in_Specified_Configuration_Example_CSharp.md",
+        "Change_Texture_on_Face_in_Specified_Configuration_Example_VB.md",
+        "Change_Texture_on_Face_in_Specified_Configuration_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 ## Remarks 段，按纪律跳过；示例赋值 25，落在 Returns 的 0.001~1000000 内。"
+    },
+    {
+      "member": "ScaleHatchPattern",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IDetailCircle.ScaleHatchPattern 无 ## Remarks；job 列的示例都调在 IView 对象上（另有 IView\\ScaleHatchPattern.md），非本成员。"
+    }
+  ]
+}

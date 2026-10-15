@@ -1,0 +1,97 @@
+{
+  "idx": 264,
+  "results": [
+    {
+      "member": "GetSubFeatures",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_DimXpert_Width_And_BestFitPlane_Features_Example_VB.md",
+        "Get_DimXpert_Width_And_BestFitPlane_Features_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "All of the sub-features returned by this method do not appear on the DimXpertManager tab of the Management Panel.",
+          "example_quote": "Postconditions: Compare the output in the Immediate Window with the features displayed on the DimXpertManager tab of the Management Panel.",
+          "example_file": "Get_DimXpert_Width_And_BestFitPlane_Features_Example_VB.md",
+          "why": "成员页说本方法返回的子特征一律不出现在 DimXpertManager 页签/树里；该示例的后置条件却要求把 Immediate 窗口输出（其中正逐条打印子特征名与类型）与该页签对照 —— 一边说看不见，一边要求照着对。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先用 GetSubFeatureCount 取子特征个数，再遍历 GetSubFeatures 返回的数组；成员页只说「返回全部子特征」，未提要先取个数。",
+          "example_quote": "featureCount = bestfitPlaneFeature.GetSubFeatureCount",
+          "example_file": "Get_DimXpert_Width_And_BestFitPlane_Features_Example_VB.md"
+        }
+      ],
+      "note": "job 列的 4 份只在 Extrude/Pattern/Hole 接口上调用同名 GetSubFeatures；真正调用本成员的是成员页自己列的 Width_And_BestFitPlane 两份（VB 已读原文，VBNET 见 :361）。"
+    },
+    {
+      "member": "GetSunLightAdvancedPropertyValues",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetSunLightSourcePropertyValues",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetSupportedStudyTypes",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetSupportingFaces",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetSupportsGenericText",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未读示例。"
+    },
+    {
+      "member": "GetSuppression",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Assembly_Example_CPlusPlus_COM.md",
+        "Change_Material_Properties_Example_VB.md",
+        "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_CSharp.md",
+        "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "Suppression state of this component instance as defined in [[swComponentSuppressionState_e]]",
+          "example_quote": "hres = swComponent->GetSuppression(&lComponentSuppressState);",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md",
+          "why": "成员页签名是 `System.int GetSuppression()`，零参、状态即返回值；C++ 示例却传一个 long 出参、把返回值当 hres(HRESULT)，状态从参数取 —— 两种调用形状不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把状态逐一分派成 FullyResolved / Lightweight / Suppressed 三个分支；成员页只说「按 swComponentSuppressionState_e 定义」。",
+          "example_quote": "case (int)swComponentSuppressionState_e.swComponentFullyResolved:",
+          "example_file": "Expand_and_Collapse_FeatureManager_Design_Tree_Nodes_Example_CSharp.md"
+        }
+      ],
+      "note": "VB、VB.NET、C# 三份示例按零参返回值用法调用，与成员页一致；只有 C++ COM 那份用出参形状。"
+    }
+  ]
+}

@@ -1,0 +1,184 @@
+{
+  "idx": 315,
+  "results": [
+    {
+      "member": "InsertHoleTable2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Labels_of_Datum_Origin_Example_CSharp.md",
+        "Get_Labels_of_Datum_Origin_Example_VB.md",
+        "Get_Labels_of_Datum_Origin_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "取 IView 的办法：按 mark 选完后用 GetSelectedObjectsDrawingView2(1,-1)，页里没写",
+          "example_quote": "swView = (View)swSelectionMgr.GetSelectedObjectsDrawingView2(1, -1);",
+          "example_file": "Get_Labels_of_Datum_Origin_Example_CSharp.md"
+        },
+        {
+          "what": "先用 mark 0 试选一遍再 ClearSelection2 清空重选带 mark 的固定套路",
+          "example_quote": "swModel.ClearSelection2(true);",
+          "example_file": "Get_Labels_of_Datum_Origin_Example_CSharp.md"
+        },
+        {
+          "what": "AnchorType 实参写死 1，与页里 AnchorType 由枚举定义不冲突（示例未展开枚举名）",
+          "example_quote": "swHoleTableAnnotation = (HoleTableAnnotation)swView.InsertHoleTable2(false, 0.0540658670033671, 0.253819263748597, 1, \"A\", holeTableTemplate);",
+          "example_file": "Get_Labels_of_Datum_Origin_Example_VBNET.md"
+        }
+      ],
+      "note": "Remarks 的 mark 表与示例 mark1/mark2 完全一致，未见不能同时成立的说法"
+    },
+    {
+      "member": "InsertHoleTable3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Hole_Table_Example_CSharp.md",
+        "Insert_Hole_Table_Example_VB.md",
+        "Insert_Hole_Table_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "视图要先 Create3rdAngleViews2 再 ActivateView，页里只说选中、不说激活视图",
+          "example_quote": "boolstatus = Part.ActivateView(\"Drawing View1\");",
+          "example_file": "Insert_Hole_Table_Example_CSharp.md"
+        },
+        {
+          "what": "取 IView 用 GetSelectedObjectsDrawingView2(1,-1)，索引 1 即 mark1 的基准顶点",
+          "example_quote": "myView = selMgr.GetSelectedObjectsDrawingView2(1, -1);",
+          "example_file": "Insert_Hole_Table_Example_CSharp.md"
+        },
+        {
+          "what": "TagOrder/TagType 实参组合为 1/1 且 ManualTags 传 null 的具体形态",
+          "example_quote": "(int)swBOMConfigurationAnchorType_e.swBOMConfigurationAnchor_TopLeft, \"A\", \"C:\\\\Program Files\\\\SolidWorks Corp\\\\SOLIDWORKS\\\\lang\\\\english\\\\standard hole table--letters.sldholtbt\", 1, 1, null);",
+          "example_file": "Insert_Hole_Table_Example_CSharp.md"
+        }
+      ],
+      "note": "示例注释写 0.07m/0.175m 而代码实参 0.153/-0.0377，是示例内部不符，非与 Remarks 冲突"
+    },
+    {
+      "member": "InsertIndent",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Indent_Feature_Example_CSharp.md",
+        "Insert_Indent_Feature_Example_VB.md",
+        "Insert_Indent_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Thickness/Clearance 以米传（0.01 m）；成员页 Parameters 只写名称未给单位",
+          "example_quote": "swFeature = (Feature)swFeatureMgr.InsertIndent(0.01, 0, true, true, false, false);",
+          "example_file": "Insert_Indent_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "target body 用 SOLIDBODY 按名字选（mark 1），tool region 用按坐标选的面（mark 4）",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Boss-Extrude1\", \"SOLIDBODY\", 0, 0, 0, false, 1, null, 0);",
+          "example_file": "Insert_Indent_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "IndentFeatureData.Thickness 读回同为 0.01、改 0.011，同一接口也是米",
+          "example_quote": "swIndentFeatureData.Thickness = 0.011;",
+          "example_file": "Insert_Indent_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "mark 1/4 与 Remarks 逐字一致；冲突只可能出在长度单位，而页里根本没写单位"
+    },
+    {
+      "member": "InsertJoin2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Join_Feature_Example_CSharp.md",
+        "Insert_Join_Feature_Example_VB.md",
+        "Insert_Join_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "被合并的组件全部用 mark 0 预选，Remarks 未给任何 mark 要求",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"secondGrip-1@arm2\", \"COMPONENT\", 0, 0, 0, true, 0, null, 0);",
+          "example_file": "Insert_Join_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "Join 特征挂在 Edit Part 里新建的 Part1^arm2-1@arm2 上，按 BODYFEATURE 名回选",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"Join1@Part1^arm2-1@arm2\", \"BODYFEATURE\", 0, 0, 0, false, 0, null, 0);",
+          "example_file": "Insert_Join_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "进 Edit Part 的具体序：EditPart2 → InsertNewPart2 → InsertSketch → EditUndo2",
+          "example_quote": "swAssemblyDoc.EditPart2(true, false, ref info);",
+          "example_file": "Insert_Join_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Edit Part 模式 + 预选组件两条前置，示例都照做，未见不能同时成立的说法"
+    },
+    {
+      "member": "InsertLinearNotePattern",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Linear_and_Circular_Note_Patterns_Example_CSharp.md",
+        "Insert_Linear_and_Circular_Note_Patterns_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Parameters/Returns/Examples/See Also，无 Remarks 段，按纪律跳过"
+    },
+    {
+      "member": "InsertLoadReference",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Mate_Load_Reference_Example_CSharp.md",
+        "Insert_Mate_Load_Reference_Example_VB.md",
+        "Insert_Mate_Load_Reference_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Mate2 由 Feature.GetSpecificFeature2() 取得后显式传入，不走 NULL+选中分支",
+          "example_quote": "swMate = (Mate2)swFeat.GetSpecificFeature2();",
+          "example_file": "Insert_Mate_Load_Reference_Example_CSharp.md"
+        },
+        {
+          "what": "补充面用 append=true、mark 0 追加；此时那个 MATE 仍留在同一选区里",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", 0.087090587167495, -0.00524931403344908, 0.00483048001655106, true, 0, null, 0);",
+          "example_file": "Insert_Mate_Load_Reference_Example_CSharp.md"
+        },
+        {
+          "what": "回读用 GetFacesCount(0) 与 get_Component(0)，索引 0 对应 Component1",
+          "example_quote": "Debug.Print(\"Number of supplemental faces of the mate load reference for Component1 = \" + swMateLoadRef.GetFacesCount(0));",
+          "example_file": "Insert_Mate_Load_Reference_Example_CSharp.md"
+        }
+      ],
+      "note": "先选补充面再调用，与 Remarks 一致；示例只建一个，未演示 EnableFeatureTree 建议"
+    },
+    {
+      "member": "InsertLocationDimension",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Location_Dimension_Example_CSharp.md",
+        "Get_and_Set_Location_Dimension_Example_VB.md",
+        "Get_and_Set_Location_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "DimensionPositionOption=0 即沿面法线；示例注明该选项只对线性位置尺寸有效",
+          "example_quote": "dimOption.DimensionPositionOption = 0; // Specify a dimension aint the normal to the face",
+          "example_file": "Get_and_Set_Location_Dimension_Example_CSharp.md"
+        },
+        {
+          "what": "两个被选面是否共边决定得到 AngleBetween 还是 DistanceBetween 尺寸",
+          "example_quote": "//    a. share a common edge to get the angle-between dimension.",
+          "example_file": "Get_and_Set_Location_Dimension_Example_CSharp.md"
+        },
+        {
+          "what": "取 IDimXpertPart 的路径：DimXpertManager(...).DimXpertPart，页里没写",
+          "example_quote": "dimXpertPartObj = (DimXpertPart)dimXpertMgr.DimXpertPart;",
+          "example_file": "Get_and_Set_Location_Dimension_Example_VBNET.md"
+        }
+      ],
+      "note": "Origin+Tolerance 两项多选与 Remarks 一致；示例只走 distance-between 分支"
+    }
+  ]
+}

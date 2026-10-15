@@ -1,0 +1,157 @@
+{
+ "idx": 62,
+ "results": [
+  {
+   "member": "CreateDisplayState",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+    "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_CSharp.md",
+    "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_VB.md",
+    "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例先 GetConfigurationByName 取到 IConfiguration 再建显示状态，并在创建后 ForceRebuild3；成员页未写这一调用序",
+     "example_quote": "    Set swConfig = swModel.GetConfigurationByName(\"Default\")\n    boolstatus = swConfig.CreateDisplayState(\"Display State 2\")",
+     "example_file": "Create,_Unlink,_and_Purge_Display_States_in_Part_Example_VB.md"
+    }
+   ],
+   "note": "成员页无 Remarks 段，按纪律跳过冲突判定；四个示例确为 swConfig.CreateDisplayState（IConfiguration 全局仅此一成员）"
+  },
+  {
+   "member": "CreateDrawViewFromModelView3",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_Annotations_Array_Example_VB.md",
+    "Get_Annotations_Arrays_Example_CSharp.md",
+    "Get_Annotations_Arrays_Example_VBNET.md",
+    "Get_Labels_of_Datum_Origin_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出米制实数落位值并把 LocZ 固定为 0（图纸平面不用 Z）；成员页只写单位未给取值",
+     "example_quote": "        LocX = 0.2635088599471\n        LocY = 0.1934578136726\n        ' Create isometric drawing view\n        swDraw.CreateDrawViewFromModelView3 swModel.GetPathName, \"*Isometric\", LocX, LocY, 0",
+     "example_file": "Get_Annotations_Array_Example_VB.md"
+    },
+    {
+     "what": "示例给出 Remarks 那句「no views on the sheet」的实例：新建图纸后图上无视图即直接调用本方法",
+     "example_quote": "            swDrawingDoc = (DrawingDoc)swApp.NewDocument(drawingDocTemplate, (int)swDwgPaperSizes_e.swDwgPaperBsize, 0.2794, 0.4318);\n            swView = (View)swDrawingDoc.CreateDrawViewFromModelView3(fileName, \"*Front\", 0.193046827497194, 0.155595183164983, 0);",
+     "example_file": "Get_Labels_of_Datum_Origin_Example_CSharp.md"
+    }
+   ],
+   "note": "四例 LocX/LocY 均与 Remarks 的 meters 一致，ModelName 含 .sldprt、ViewName 带星号，均与 Remarks 相符"
+  },
+  {
+   "member": "CreateEllipse",
+   "remarks_empty": true,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "四个示例都调 SketchManager.CreateEllipse（9 参数）或 IModeler.CreateEllipse（5 参数），非本成员（3 参数 Object 版）；名字撞车，不采用"
+  },
+  {
+   "member": "CreateEquationSpline2",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Equation-driven_Curve_Example_CSharp.md",
+    "Create_Equation-driven_Curve_Example_VB.md",
+    "Create_Equation-driven_Curve_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例把返回值先接进 SketchSegment 变量、再强转 SketchSpline；成员页 Returns 未说清落点类型",
+     "example_quote": "\t            SketchSpline skSpline = default(SketchSpline);\n\t            skSpline = (SketchSpline)skSegment;",
+     "example_file": "Create_Equation-driven_Curve_Example_CSharp.md"
+    },
+    {
+     "what": "示例前置是先选基准面再 InsertSketch，本方法在草图打开期间调用；成员页未提草图前置",
+     "example_quote": "    boolstatus = swExt.SelectByID2(\"Front Plane\", \"PLANE\", 0, 0, 0, False, 0, Nothing, 0)\n    swModel.SketchManager.InsertSketch True",
+     "example_file": "Create_Equation-driven_Curve_Example_VB.md"
+    },
+    {
+     "what": "RangeEnd 传纯十进制串 6.28（约 2π），未用 Remarks 举例的 pi；说明范围串可写普通数字",
+     "example_quote": "    Set skSegment = swModel.SketchManager.CreateEquationSpline2(\"\", \"sin(x)\", \"\", \"0\", \"6.28\", False, 0, 0, 0, True, True)",
+     "example_file": "Create_Equation-driven_Curve_Example_VB.md"
+    }
+   ],
+   "note": "XExpression 传空串、YExpression 传 sin(x)、IsAngleRange=False、偏移全 0，逐条与 Remarks 相符"
+  },
+  {
+   "member": "CreateExplodedView",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Exploded_Views_Example_VB.md",
+    "Create_Exploded_Views_Example_CSharp.md",
+    "Create_Exploded_Views_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例连调五次后不取 bool 返回值，改用 GetExplodedViewCount/GetExplodedViewNames 回读数量",
+     "example_quote": "        For i = 0 To 4\n            swAssembly.CreateExplodedView\n        Next i\n        vViewName = swAssembly.GetExplodedViewNames\n        Debug.Print \"Number of exploded views created:  \" & swAssembly.GetExplodedViewCount",
+     "example_file": "Create_Exploded_Views_Example_VB.md"
+    },
+    {
+     "what": "示例的前置只要求打开装配体，不构造任何配合；Remarks 却说结果基于 current mate conditions",
+     "example_quote": "' Preconditions: Open an assembly document.",
+     "example_file": "Create_Exploded_Views_Example_VB.md"
+    }
+   ],
+   "note": "Add_Multibody_Part_Explode_Step_Example_CSharp.md 调的是 IPartDoc::CreateExplodedView（同名的另一个成员），已排除"
+  },
+  {
+   "member": "CreateExtrudedBody",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Temporary_Elliptical_Extrusion_Example_VB.md",
+    "Create_Temporary_Extruded_Body_Example_CSharp.md",
+    "Create_Temporary_Extruded_Body_Example_VB.md",
+    "Create_Temporary_Extruded_Body_Example_VBNET.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "3. Call [[ISurface::CreateTrimmedSheet4]] or [[ISurface::ICreateTrimmedSheet4]] to create the profile body, passing in either trimmed arcs and lines or untrimmed elliptical curves.",
+     "example_quote": "    Set profileBody = planeSurf.CreateTrimmedSheet((trimCurves))",
+     "example_file": "Create_Temporary_Extruded_Body_Example_VB.md",
+     "why": "Remarks 第 3 步只许 CreateTrimmedSheet4/ICreateTrimmedSheet4；示例调的是无 4 的 CreateTrimmedSheet（官方另页标注 Obsolete）"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "同一成员的另一份示例确实照 Remarks 走 CreateTrimmedSheet4，两份官方示例在此互不一致",
+     "example_quote": "        Set profileBody = planeSurf.CreateTrimmedSheet4((swCurve), True)",
+     "example_file": "Create_Temporary_Elliptical_Extrusion_Example_VB.md"
+    }
+   ],
+   "note": "CreateExtrudedBody 四例均真调用；Display3 与 Length 用 0.01（米制）均与 Remarks 无冲突"
+  },
+  {
+   "member": "CreateFastenersFolder",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Run_Interference_Detection_Example_CSharp.md",
+    "Run_Interference_Detection_Example_VB.md",
+    "Run_Interference_Detection_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例必须先 ToolsCheckInterference 开面板、再取 InterferenceDetectionManager 才能设本属性；Remarks 未给这个取对象序",
+     "example_quote": "    swAssemblyDoc.ToolsCheckInterference\n    Set pIntMgr = swAssemblyDoc.InterferenceDetectionManager",
+     "example_file": "Run_Interference_Detection_Example_VB.md"
+    },
+    {
+     "what": "三份示例一律置 false，无一份演示 true 分支或 Fasteners 文件夹实际被建出来的样子",
+     "example_quote": "    pIntMgr.CreateFastenersFolder = False",
+     "example_file": "Run_Interference_Detection_Example_VB.md"
+    }
+   ],
+   "note": "Remarks 三条讲的都只是「设了不持久」；示例是同会话内一次性设置，与之相容，判不出矛盾"
+  }
+ ]
+}

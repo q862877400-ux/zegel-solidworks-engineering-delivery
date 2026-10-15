@@ -1,0 +1,100 @@
+{
+  "idx": 269,
+  "results": [
+    {
+      "member": "GetText",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_Block_Information_Example_VB.md"],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "swDimensionTextParts_e.swDimensionTextAll is not a valid value for the WhichText parameter for this method.",
+          "example_quote": "swDispDim.GetText(swDimensionTextAll)",
+          "example_file": "Get_Block_Information_Example_VB.md",
+          "why": "Remarks 点名该枚举值对本方法非法；示例恰把它当 WhichText 传入并当 TextAll 打印。枚举页 swDimensionTextParts_e 另注 swDimensionTextAll 仅 IDisplayDimension::SetText 可用，两侧不可同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例逐一枚举 Prefix/Suffix/CalloutAbove/CalloutBelow 四个 WhichText 取值，成员页只点名哪个非法，未给可用清单。",
+          "example_quote": "swDispDim.GetText(swDimensionTextCalloutAbove)",
+          "example_file": "Get_Block_Information_Example_VB.md"
+        }
+      ],
+      "note": "另三份示例调的是 INote::GetText，同名不同接口，已排除。"
+    },
+    {
+      "member": "GetTextAndCustomProperties",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_CSharp.md",
+        "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_VB.md",
+        "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出三语各自的空值判据（VBA 判 IsEmpty、C# 判 null、VB.NET 判 IsNothing），成员页 Returns 未说无数据时返回什么。",
+          "example_quote": "If Not IsEmpty(textAndCustomProperties) Then",
+          "example_file": "Publish_Text_and_Custom_Properties_from_Theme_to_MBD_3D_PDF_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的七步自称 typical；示例未调 GetStandardViews/GetMoreViews 且 FilePath 只在开头设一次，不全但非矛盾。"
+    },
+    {
+      "member": "GetTextAtIndex",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。所列 4 份示例调的是 INote::GetTextAtIndex 与 IGtol::GetTextAtIndex，无一份用 IDatumTag 的。"
+    },
+    {
+      "member": "GetTextBelowFrames",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过；两份示例确在 PMIGtolData 上调用。"
+    },
+    {
+      "member": "GetTextCount",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过。所列 4 份示例调的是 INote::GetTextCount 与 IGtol::GetTextCount，无一份用 IDatumTag 的。"
+    },
+    {
+      "member": "GetTextFormat",
+      "remarks_empty": false,
+      "examples_actually_used": ["Change_Text_Format_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出与 GetTextFormatCount 联用的取法：i 走 0..Count-1；Remarks 只说非块类符号 index 须为 0。",
+          "example_quote": "For i = 0 To swAnn.GetTextFormatCount - 1",
+          "example_file": "Change_Text_Format_Example_VB.md"
+        }
+      ],
+      "note": "另三份示例调的是 IProjectionArrow::GetTextFormat 与 ISketchText::GetTextFormat，同名不同接口。"
+    },
+    {
+      "member": "GetTextFormatCount",
+      "remarks_empty": false,
+      "examples_actually_used": ["Change_Text_Format_Example_VB.md"],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值当循环上界 0..Count-1，正落在 Remarks「index 必须小于返回值」内，成员页本身未附示例。",
+          "example_quote": "For i = 0 To swAnn.GetTextFormatCount - 1",
+          "example_file": "Change_Text_Format_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 称非块类恒返回 1；示例前置未限定符号类型，由 Count 收敛，与 Remarks 不冲突。"
+    }
+  ]
+}

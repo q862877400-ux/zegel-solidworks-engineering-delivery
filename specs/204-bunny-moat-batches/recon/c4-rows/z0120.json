@@ -1,0 +1,164 @@
+{
+  "idx": 120,
+  "results": [
+    {
+      "member": "FacetingOption",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Lofted_Bend_Feature_Example_CSharp.md",
+        "Insert_Lofted_Bend_Feature_Example_VB.md",
+        "Insert_Lofted_Bend_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例钉死了具体枚举值，并把第 3 参 BFormed 传 false 后才读该属性",
+          "example_quote": "InsertSheetMetalLoftedBend2(0, 0.0007366, false, 0.0007366, true, (int)swLoftedBendFacetOptions_e.swBendsPerTransitionSegment",
+          "example_file": "Insert_Lofted_Bend_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例紧接着读 FacetValue，正对 Remarks 的「设完本属性要设 FacetValue」",
+          "example_quote": "Debug.Print(\"Faceting option value: \" + lbfd.FacetValue);",
+          "example_file": "Insert_Lofted_Bend_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "示例 BFormed=false 与 Remarks 的前置一致，未构成冲突。"
+    },
+    {
+      "member": "FarCounterSinkAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md",
+        "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for swCounterSunk and swCounterSunkDrilled holes.",
+          "example_quote": "(int)swWzdGeneralHoleTypes_e.swWzdCounterBore",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "成员页限定只对沉头/沉头钻孔有效，示例却在沉孔类型上读它并按弧度换算打印。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例写值时注释直接标出单位 radians，而成员页未给单位",
+          "example_quote": "FeatureData.FarCounterSinkAngle = 1.57 ' radians",
+          "example_file": "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_VB.md"
+        },
+        {
+          "what": "示例读值时乘 57.3 换算成 deg 打印，印证弧度口径",
+          "example_quote": "swWizHole.FarCounterSinkAngle * 57.3 + \" deg\"",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "三份 Hole Wizard 示例的孔型都是 swWzdCounterBore，不在 Remarks 列出的两类内。"
+    },
+    {
+      "member": "FarCounterSinkDiameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md",
+        "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for swCounterSunk and swCounterSunkDrilled holes.",
+          "example_quote": "(int)swWzdGeneralHoleTypes_e.swWzdCounterBore",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "同上：成员页限定只对两种沉头孔有效，示例却在沉孔特征上读该直径并乘 1000 打印。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例写值时注释直接标出单位 meters，而成员页未给单位",
+          "example_quote": "FeatureData.FarCounterSinkDiameter = 0.0061 ' meters",
+          "example_file": "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_VB.md"
+        },
+        {
+          "what": "示例读值时乘 1000 当毫米打印，印证米口径",
+          "example_quote": "swWizHole.FarCounterSinkDiameter * 1000.0 + \" mm\"",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "同 Angle：示例孔型落在 Remarks 的适用范围之外。"
+    },
+    {
+      "member": "FarSideCounterSink",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_CSharp.md",
+        "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_VB.md",
+        "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先读该布尔、再决定置 true/false，最后 ModifyDefinition 落盘",
+          "example_quote": "Debug.Print \"Far side countersink option is selected: \" & FeatureData.FarSideCounterSink",
+          "example_file": "Select_Near_and_Far_Side_Countersink_Hole_Options_Example_VB.md"
+        }
+      ],
+      "note": "页无 Remarks（只有 Returns/Examples/See Also），按纪律跳过冲突判定。另注：页内 NOTE 称 get-only，而三份示例都对其赋值，未计入冲突。"
+    },
+    {
+      "member": "FarSideElementsCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在读该计数之前先调 AccessSelections 回滚选择，成员页未提这一步",
+          "example_quote": "featdata.AccessSelections(swModel, null);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "页无 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "FastenerBottomHoleType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Hole_Series_Information_Example_CSharp.md",
+        "Get_Hole_Series_Information_Example_VB.md",
+        "Get_Hole_Series_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 AccessSelections 之前就读该属性，说明是不需回滚的标量读数",
+          "example_quote": "Debug.Print(\"  FastenerBottomHoleType:\", swFeatData.FastenerBottomHoleType);",
+          "example_file": "Get_Hole_Series_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "页无 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "FastenerDefaultUnits",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Hole_Series_Information_Example_CSharp.md",
+        "Get_Hole_Series_Information_Example_VB.md",
+        "Get_Hole_Series_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先按特征类型名 HoleSeries 过滤特征，再读这个字符串属性",
+          "example_quote": "if (swFeat.GetTypeName() == \"HoleSeries\")",
+          "example_file": "Get_Hole_Series_Information_Example_CSharp.md"
+        }
+      ],
+      "note": "页无 Remarks 段，按纪律跳过冲突判定。"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "idx": 369,
+  "results": [
+    {
+      "member": "ModelToViewTransform",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Dimension_Edge_in_Drawing_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过两侧比对；示例第 312 行确有用到该成员。"
+    },
+    {
+      "member": "ModelViewManager",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+        "Add_ActiveX_Tab_to_FeatureManager_Design_Tree_Example_VB.md",
+        "Add_ActiveX_Tab_to_FeatureManager_Design_Tree_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，跳过；四份示例均实测含 pDoc.ModelViewManager / swModel.ModelViewManager。"
+    },
+    {
+      "member": "ModelWindows",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Switch_Documents_Example_CSharp.md",
+        "Switch_Documents_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，跳过；两份示例分别含 (object[])swFrame.ModelWindows 与 swFrame.ModelWindows。"
+    },
+    {
+      "member": "Modifier",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_DimXpert_Datum_Example_VBNET.md",
+        "Get_DimXpert_Tolerance1_Example_VBNET.md",
+        "Get_DimXpert_Tolerance2_Example_VBNET.md",
+        "Get_DimXpert_Tolerance3_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，跳过；四份示例均有 CompositePositionData(ByVal annotation As DimXpertCompositePositionTolerance) 并读 annotation.Modifier。"
+    },
+    {
+      "member": "ModifyControlPoint",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Spline_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只要求先调 ISplineParamData::GetControlPoints；示例补出该 SplineParamData 的来源：SketchSegment.GetCurve → Curve.GetBCurveParams5",
+          "example_quote": "Set swSplineParamData = swCurve.GetBCurveParams5(False, False, False, False)",
+          "example_file": "Edit_Spline_Example_VB.md"
+        },
+        {
+          "what": "Remarks 只说调用后 must call ForceRebuild3，未给实参；示例给出实参 True",
+          "example_quote": "Part.ForceRebuild3 True",
+          "example_file": "Edit_Spline_Example_VB.md"
+        },
+        {
+          "what": "页 Parameters 对 X/Y/Z 只写 \"coordinate\" 未给单位；示例实参是米级数量（-0.0907 / 0.0569 / 0）",
+          "example_quote": "boolstatus = swSkSpl.ModifyControlPoint(3, -9.06980622069201E-02, 5.69034826745842E-02, 0#)",
+          "example_file": "Edit_Spline_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 两条前置在示例中均被满足：先 ControlPointsCount/GetControlPoints，后 ModifyControlPoint 再 ForceRebuild3，无矛盾。"
+    },
+    {
+      "member": "ModifyD1SpacingValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Vary_Linear_Pattern_Instances_Example_CSharp.md",
+        "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只给 I=n2*(i-1)+(j-1)；示例把实例号 #3 标注为 (2,2)，且 D2TotalInstances=2，可逐项对上 n2/i/j",
+          "example_quote": "'Get current D1 and D2 modified spacing value for patten instance #3 (2,2)",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+        },
+        {
+          "what": "页 Parameters 只说 Value 是 \"Spacing value in Direction 1\"；示例用 GetD1ModifiedSpacingValue(3) 读回绝对值再加 0.02，是改绝对值而非增量",
+          "example_quote": "boolstatus = swInstOpts.ModifyD1SpacingValue(3, swInstOpts.GetD1ModifiedSpacingValue(3) + 0.02)",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+        }
+      ],
+      "note": "示例建特征时即设 D2PatternSeedOnly=False，满足 Remarks 前置；#3 与 (2,2) 符合公式，未发现矛盾。"
+    },
+    {
+      "member": "ModifyD2SpacingValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Vary_Linear_Pattern_Instances_Example_CSharp.md",
+        "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只给 I=n2*(i-1)+(j-1)；示例把实例号 #3 标注为 (2,2)，且 D2TotalInstances=2，可逐项对上 n2/i/j",
+          "example_quote": "'Get current D1 and D2 modified spacing value for patten instance #3 (2,2)",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+        },
+        {
+          "what": "页 Parameters 只说 Value 是 \"Spacing value in Direction 2\"；示例用 GetD2ModifiedSpacingValue(3) 读回绝对值再加 0.02，是改绝对值而非增量",
+          "example_quote": "boolstatus = swInstOpts.ModifyD2SpacingValue(3, swInstOpts.GetD2ModifiedSpacingValue(3) + 0.02)",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+        }
+      ],
+      "note": "同 D1：示例设 D2PatternSeedOnly=False 满足前置，#3 与 (2,2) 符合公式，未发现矛盾。"
+    }
+  ]
+}

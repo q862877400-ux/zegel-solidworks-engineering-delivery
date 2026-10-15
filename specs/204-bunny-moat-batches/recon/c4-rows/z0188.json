@@ -1,0 +1,145 @@
+{
+  "idx": 188,
+  "results": [
+    {
+      "member": "GetExplodedViewNames2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Exploded_Views_for_Configuration_Example_CSharp.md",
+        "Get_Collapsed_Transform_of_Component_in_Exploded_View_Example_CSharp.md",
+        "Get_Collapsed_Transform_of_Component_in_Exploded_View_Example_VB.md",
+        "Get_Collapsed_Transform_of_Component_in_Exploded_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回值须向下转型为 string[] 才能取 Length 逐个遍历，成员页只写 Array of strings",
+          "example_quote": "viewNames = (string[])swAssembly.GetExplodedViewNames2(activeConfigName);",
+          "example_file": "Get_Exploded_Views_for_Configuration_Example_CSharp.md"
+        },
+        {
+          "what": "示例先连调 5 次 CreateExplodedView() 建出视图，再取名字",
+          "example_quote": "swAssembly.CreateExplodedView();",
+          "example_file": "Get_Exploded_Views_for_Configuration_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段；4 份示例经 grep 核实均为 IAssemblyDoc 同一成员"
+    },
+    {
+      "member": "GetExportFileData",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Save_File_as_PDF_Example_CSharp.md",
+        "Save_File_as_PDF_Example_VB.md",
+        "Save_File_as_PDF_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回的 System.object 必须强转成 ExportPdfData 才可用，成员页只写 Data interface",
+          "example_quote": "swExportPDFData = (ExportPdfData)swApp.GetExportFileData((int)swExportDataFileType_e.swExportPdfData);",
+          "example_file": "Save_File_as_PDF_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 示例把 FileType 传成字面量 1 而不用枚举名",
+          "example_quote": "Set swExportPDFData = swApp.GetExportFileData(1)",
+          "example_file": "Save_File_as_PDF_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetExtendedLength",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Center_Marks_Set_Example_CSharp.md",
+        "Get_and_Set_Center_Marks_Set_Example_VBA.md",
+        "Get_and_Set_Center_Marks_Set_Example_VBNET.md",
+        "Extend_Arms_of_Center_Mark_Examples_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "You can use a value from 0 to ICenterMark::GroupCount for the GroupID parameter.",
+          "example_quote": "for (i = 0; i <= nbrInGroup - 1; i++)",
+          "example_file": "Get_and_Set_Center_Marks_Set_Example_CSharp.md",
+          "why": "示例 nbrInGroup=GroupCount，循环上界写成 GroupCount-1，实际最大 GroupID 比成员页给的上界少 1"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "对未确认分组的单个中心标记直接传 GroupID=0，不调 GroupCount 也不调 IsGrouped（该源文件行被折行，此处只摘可核片段）",
+          "example_quote": "= swCenterMark.GetExtendedLength(0,",
+          "example_file": "Extend_Arms_of_Center_Mark_Examples_VB.md"
+        },
+        {
+          "what": "示例以 0.005 作扩展量并用本方法回读打印，成员页对返回长度未标单位",
+          "example_quote": "status = swCenterMark.SetExtendedLength(i, (int)swCenterMarkHandle_e.swCenterMarkHandle_Right, 0.005);",
+          "example_file": "Get_and_Set_Center_Marks_Set_Example_CSharp.md"
+        }
+      ],
+      "note": "唯一冲突在 GroupID 上界的差一；其余示例细节归 more_specific"
+    },
+    {
+      "member": "GetExtractionDirection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Core_Feature_Example_CSharp.md",
+        "Get_Core_Feature_Example_VB.md",
+        "Get_Core_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "调用前须 AccessSelections、调用后须 ReleaseSelectionAccess，成员页未提选择访问",
+          "example_quote": "b = swCoreFeat.AccessSelections(swModel, null);",
+          "example_file": "Get_Core_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例只打印返回的实体个数，未读取四个 out 值，Remarks 的六类实体表未被示例体现",
+          "example_quote": "Debug.Print(\"Number of entities that define extraction = \" + ct);",
+          "example_file": "Get_Core_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "两侧不矛盾；示例补了选择访问前后序"
+    },
+    {
+      "member": "GetFace",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例全为同名不同对象：IFaceLoop::GetFace、ISketchHatch::GetFace，故一律不采用"
+    },
+    {
+      "member": "GetFaceArrayCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Projected_Curve_Feature_Data_Example_CSharp.md",
+        "Get_Projected_Curve_Feature_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值直接当目标面个数打印，之后并未调用 IGetFaceArray",
+          "example_quote": "Debug.Print(\"Number of targeted faces = \" + swProjectionCurveFeatureData.GetFaceArrayCount());",
+          "example_file": "Get_Projected_Curve_Feature_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例在调用前后各做一次选择访问进出，Remarks 未提",
+          "example_quote": "swProjectionCurveFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Get_Projected_Curve_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "无冲突；示例比 Remarks 少了 IGetFaceArray 那一步"
+    },
+    {
+      "member": "GetFaceCount",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例全为同名不同对象：DimXpertFeature.GetFaceCount（三份）、DomeFeatureData2.GetFaceCount，故一律不采用"
+    }
+  ]
+}

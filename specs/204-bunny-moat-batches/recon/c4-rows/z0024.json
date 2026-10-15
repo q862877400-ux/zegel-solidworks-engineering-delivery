@@ -1,0 +1,120 @@
+{
+  "idx": 24,
+  "results": [
+    {
+      "member": "ArcOption",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例逐字给出 0/1/2 三值含义（中心到中心/最小距离/最大距离），成员页只指向枚举名",
+          "example_quote": "'Can set this to 0\n    ' 0 = center to center\n    ' 1 = minimum distance\n    ' 2 = maximum distance\n    swMeasure.ArcOption = 0",
+          "example_file": "Measure_Selected_Entities_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，只有 Returns 指向 swMeasureArcCircleOption_e；按纪律跳过冲突判定"
+    },
+    {
+      "member": "ArcRadius",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Revision_Cloud_into_Drawing_Example_CSharp.md",
+        "Insert_Revision_Cloud_into_Drawing_Example_VB.md",
+        "Insert_Revision_Cloud_into_Drawing_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出实际赋值 0.00508 与调用序：InsertRevisionCloud→GetAnnotation→SetPosition→ArcRadius→SetPathPointAtIndex→Finalize",
+          "example_quote": "RevCloud.ArcRadius = 0.00508",
+          "example_file": "Insert_Revision_Cloud_into_Drawing_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；页未写单位，示例亦未声明，故不判 unit_diff"
+    },
+    {
+      "member": "Area",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Measure_Selected_Entities_Example_CSharp.md",
+        "Measure_Selected_Entities_Example_VB.md",
+        "Measure_Selected_Entities_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出读值前置：必须先 CreateMeasure 并设 ArcOption，再 Calculate 返回 True 后各量才有意义",
+          "example_quote": "status = swMeasure.Calculate(Nothing)",
+          "example_file": "Measure_Selected_Entities_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段；-1 无效语义页里已有，不算示例更具体"
+    },
+    {
+      "member": "AreaStyle",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取到该属性的对象链：须先 GetPMIData→GetDatumTarget 得 PMIDatumTarget，前置 IAnnoType=2 且 IAnnoPMIType=2",
+          "example_quote": "Debug.Print \"  Area style as defined in swPMIDatumTargetAreaStyle_e: \" & swPMIDatumTarget.AreaStyle",
+          "example_file": "Get_PMI_Data_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks；页内自相矛盾（NOTE 说 get-only，签名却写 {get;set;}）属页内问题，不计为跨源冲突"
+    },
+    {
+      "member": "ArrangeWindows",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Assembly_Example_CPlusPlus_COM.md",
+        "Create_and_Arrange_Windows_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出调用序：先 CreateNewWindow 再 ArrangeWindows，且实际传 1；C++ 示例用局部变量 lWindowStyle=2",
+          "example_quote": "swApp.ArrangeWindows 1",
+          "example_file": "Create_and_Arrange_Windows_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，只有 Parameters 的 0/1/2；两示例取值与该表一致，无矛盾"
+    },
+    {
+      "member": "ArrayData",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例全是名字撞车：swXfm/swXform 声明为 MathTransform，调用的是 IMathTransform::ArrayData，非 IMathPoint::ArrayData"
+    },
+    {
+      "member": "ArrowSide",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Dimension_Values_in_Drawing_Example_CSharp.md",
+        "Get_Dimension_Values_in_Drawing_Example_VB.md",
+        "Get_Dimension_Values_in_Drawing_Example_VBNET.md",
+        "Get_Display_Dimension_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取值路径：须先 View.GetFirstDisplayDimension 取到 DisplayDimension 再逐个 GetNext 遍历后读该属性",
+          "example_quote": "Debug.Print \" Arrow side: \" & swDisplayDimension.ArrowSide",
+          "example_file": "Get_Display_Dimension_Properties_Example_VB.md"
+        }
+      ],
+      "note": "唯一有 Remarks 的成员；Remarks 讲改值后要 WindowRedraw，4 份示例都只读不写，不构成前置冲突"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+ "idx": 305,
+ "results": [
+  {
+   "member": "InsertAlternateView",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_Alternate_Position_View_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出返回视图的 Type 码应为 10；成员页 Returns 只写 Alternate drawing view",
+     "example_quote": "Print the type of view; should be 10, which",
+     "example_file": "Insert_Alternate_Position_View_Example_VB.md"
+    },
+    {
+     "what": "示例用不存在过的配置名 Configxxx 调用，印证「不存在则被创建」",
+     "example_quote": "create the configuration called Configxxx",
+     "example_file": "Insert_Alternate_Position_View_Example_VB.md"
+    },
+    {
+     "what": "示例用 GetSelectedObject6 取当前选中的那个视图，成员页只说要选中",
+     "example_quote": "swView = swSelMgr.GetSelectedObject6(1,",
+     "example_file": "Insert_Alternate_Position_View_Example_VB.md"
+    }
+   ],
+   "note": "Remarks 与示例的前置、返回值、配置名行为一致，未见冲突"
+  },
+  {
+   "member": "InsertAxis2",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Create_Revolve_Features_Example_CSharp.md",
+    "Create_Revolve_Features_Example_VB.md",
+    "Create_Revolve_Features_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 ## Remarks 段，按纪律跳过"
+  },
+  {
+   "member": "InsertBOMBalloon",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Insert_BOM_Table_and_BOM_Balloon_Example_VB.md",
+    "Insert_BOM_Table_and_BOM_Balloon_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "Remarks 空故跳过；但示例调的是带 10 参的 IModelDocExtension 版，与本页 void InsertBOMBalloon() 不一致"
+  },
+  {
+   "member": "InsertBOMBalloon2",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Insert_BOM_Balloon_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "Remarks 空故跳过；另 3 份示例调的是 IModelDocExtension.InsertBOMBalloon2，非本页 6 参成员"
+  },
+  {
+   "member": "InsertBomTable6",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例的模板绝对路径比成员页所举多一层 SOLIDWORKS Corp 目录",
+     "example_quote": "C:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\lang\\english\\bom-standard.sldbomtbt",
+     "example_file": "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VB.md"
+    },
+    {
+     "what": "示例以空串调用并回读 BomFeature.Configuration，印证空串=建图时激活的配置",
+     "example_quote": "Debug.Print \"Name of configuration used for BOM table: \" & swBOMFeature.Configuration",
+     "example_file": "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VB.md"
+    },
+    {
+     "what": "示例先 ActivateView/ActiveDrawingView 取目标视图；成员页未写这条前置",
+     "example_quote": "boolstatus = swDrawing.ActivateView(\"Drawing View1\")",
+     "example_file": "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VB.md"
+    }
+   ],
+   "note": "BomType/编号类型/三个布尔实参与 Remarks 的适用范围逐条一致，未见冲突"
+  },
+  {
+   "member": "InsertBasicDimension",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_and_Set_Basic_Dimension_Example_CSharp.md",
+    "Get_and_Set_Basic_Dimension_Example_VB.md",
+    "Get_and_Set_Basic_Dimension_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例把两次 SelectByID2（Append=false/true）放在设置 TextPosition 之前，与成员页 2→4 编号顺序相反",
+     "example_quote": "boolstatus = Part.Extension.SelectByID2(\"\", \"FACE\", 7.51728497303361E-02, 8.95850622406916E-04, 1.90499999998792E-02, True, 0, Nothing, 0)",
+     "example_file": "Get_and_Set_Basic_Dimension_Example_VB.md"
+    },
+    {
+     "what": "示例只设 TextPosition（distance-between），未触及 DimensionPositionOption",
+     "example_quote": "swDimXPertDimOpt.TextPosition = varDimXPertTextPos",
+     "example_file": "Get_and_Set_Basic_Dimension_Example_VB.md"
+    },
+    {
+     "what": "示例的 TextPosition 用米制量级数值（约 0.083 m），成员页未给单位",
+     "example_quote": "dblDimXPertTextPos(0) = 0.083208",
+     "example_file": "Get_and_Set_Basic_Dimension_Example_VB.md"
+    }
+   ],
+   "note": "三份示例一致；Append 取值与 Remarks 逐条吻合，只是多选与赋值次序不同，未见冲突"
+  },
+  {
+   "member": "InsertBelowFrameTextAt",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Set_Text_in_Datum_Tags_and_GTols_Example_CSharp.md",
+    "Set_Text_in_Datum_Tags_and_GTols_Example_VB.md",
+    "Set_Text_in_Datum_Tags_and_GTols_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 ## Remarks 段，按纪律跳过"
+  }
+ ]
+}

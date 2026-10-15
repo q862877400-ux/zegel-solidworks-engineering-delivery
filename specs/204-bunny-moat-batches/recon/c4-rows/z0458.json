@@ -1,0 +1,173 @@
+{
+  "idx": 458,
+  "results": [
+    {
+      "member": "SetSystemValue3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Dimension_Example_CSharp.md",
+        "Change_Dimension_Example_VB.md",
+        "Change_Dimension_Example_VBNET.md",
+        "Change_Dimensions_of_Gear_Mate_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "unit_diff",
+          "remarks_quote": "Sets the value of this dimension in system units (meters) in the specified configuration.",
+          "example_quote": "' Change D3 of LocalCirPattern1 from 360 degrees to 270 degrees (4.72 radians)",
+          "example_file": "Change_Dimension_Example_VB.md",
+          "why": "成员页称该入参一律以米计（Parameters 亦写 NewValue: Dimension value in meters），示例却把同一入参当弧度用（4.72 rad=270°，把 360° 改为 270°）；两者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例每次调用后立即 EditRebuild3，Remarks 未提重建要求。",
+          "example_quote": "swModel.EditRebuild3();",
+          "example_file": "Change_Dimension_Example_CSharp.md"
+        },
+        {
+          "what": "齿轮配合示例在 InThisConfiguration 分支仍传 Empty 作 Config_names。",
+          "example_quote": "errors = swDim_1.SetSystemValue3(dimValue_1(0), swSetValueInConfiguration_e.swSetValue_InThisConfiguration, Empty)",
+          "example_file": "Change_Dimensions_of_Gear_Mate_Example_VB.md"
+        }
+      ],
+      "note": "冲突一处：米 vs 弧度。四份示例均真用该成员。"
+    },
+    {
+      "member": "SetTargetPoint",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Model_View_Callouts_Example_CSharp.md",
+        "Create_Model_View_Callouts_Example_VB.md",
+        "Create_Model_View_Callouts_Example_VBNET.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过，不产冲突。四份示例均真调用 SetTargetPoint。"
+    },
+    {
+      "member": "SetTemplateName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_CSharp.md",
+        "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_VB.md",
+        "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "a custom template name, before calling this method, call [[ISheet::SetProperties]] and specify swDwgTemplates_e.swDwgTemplateCustom for the Templ parameter.",
+          "example_quote": "swSheet.SetProperties2 swDwgPaperSizes_e.swDwgPapersUserDefined, swDwgTemplates_e.swDwgTemplateCustom, 1, 2, False, swSheetWidth, swSheetHeight, True",
+          "example_file": "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_VB.md",
+          "why": "Remarks 点名的前置成员 ISheet::SetProperties 自身页写 Obsolete、后继为 SetProperties2；三份官方示例一律调 SetProperties2。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例在 SetTemplateName 之后紧跟 ReloadTemplate 让新图框生效，Remarks 未提。",
+          "example_quote": "swSheet.ReloadTemplate(true);",
+          "example_file": "Get_and_Set_Whether_to_Hide_Cutting_Line_Shoulders_Example_CSharp.md"
+        }
+      ],
+      "note": "冲突一处：前置点名已废弃的 SetProperties。"
+    },
+    {
+      "member": "SetText",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Text_in_Datum_Tags_and_GTols_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 GraphicsRedraw 放在四次 SetText 之后统一刷新，不是每调一次刷一次。",
+          "example_quote": "swModelView.GraphicsRedraw (Rect)",
+          "example_file": "Set_Text_in_Datum_Tags_and_GTols_Example_VB.md"
+        },
+        {
+          "what": "示例给出 WhichText 的四个实际取值，Remarks 只说见枚举。",
+          "example_quote": "swDatumTag.SetText swDatumTagTextCalloutBelow, \"below\"",
+          "example_file": "Set_Text_in_Datum_Tags_and_GTols_Example_VB.md"
+        }
+      ],
+      "note": "任务给的 4 份示例均未调用本成员（分别用 INote::SetText 与 IDisplayDimension::SetText）；真用的是成员页自列的 Set_Text_in_Datum_Tags_and_GTols_Example_VB.md。该示例遵守 Remarks 的 GraphicsRedraw 要求，故无冲突。"
+    },
+    {
+      "member": "SetTextAtIndex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Note_Text_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "After completing any note changes, you must perform an [[IModelDoc2::EditRebuild3]].",
+          "example_quote": "' 4. Examine the title block again to verify step 3.",
+          "example_file": "Change_Note_Text_Example_VB.md",
+          "why": "Remarks 写明改注记后必须 EditRebuild3；示例全文无该调用，且后置条件称不重建即可在标题栏看到结果。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例仅在 IsCompoundNote 为真时调用本方法，标准注记走 SetText 分支。",
+          "example_quote": "If swNote.IsCompoundNote Then",
+          "example_file": "Change_Note_Text_Example_VB.md"
+        }
+      ],
+      "note": "冲突一处：漏掉强制的 EditRebuild3。索引 1 起与 Remarks 一致。"
+    },
+    {
+      "member": "SetTextFormat",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Text_Format_Example_VB.md",
+        "Get_Corresponding_Objects_in_Assembly_Component_Example_CSharp.md",
+        "Get_Corresponding_Objects_in_Assembly_Component_Example_VB.md",
+        "Get_Corresponding_Objects_in_Assembly_Component_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按 GetTextFormatCount 0 起循环，UseDoc=False，先改取回的 TextFormat 再回写。",
+          "example_quote": "bRet = swAnn.SetTextFormat(i, False, swTextFormat)",
+          "example_file": "Change_Text_Format_Example_VB.md"
+        },
+        {
+          "what": "装配上下文示例传 UseDoc=True 且 TextFormat=null、Index=0，即回文档默认。",
+          "example_quote": "status = swAnnotation.SetTextFormat(0, true, swTextFormat);",
+          "example_file": "Get_Corresponding_Objects_in_Assembly_Component_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 CharHeight 设为 0.01 表示 10mm，示例自身注明米制口径。",
+          "example_quote": "'Change text to be 10mm, bold, italic, and Comic Sans MS font",
+          "example_file": "Change_Text_Format_Example_VB.md"
+        }
+      ],
+      "note": "未找到不能同时成立的说法：索引基准、UseDoc 语义、bool 返回三处两侧一致。"
+    },
+    {
+      "member": "SetTextSegmentFormat",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Paragraph_Properties_Example_CSharp.md",
+        "Get_and_Set_Paragraph_Properties_Example_VB.md",
+        "Get_and_Set_Paragraph_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例的 Format 取自 GetTextSegmentFormat(iseg)，不是另建 TextFormat 对象。",
+          "example_quote": "paragraphs.SetTextSegmentFormat(iseg, textFormat)",
+          "example_file": "Get_and_Set_Paragraph_Properties_Example_CSharp.md"
+        },
+        {
+          "what": "示例改完该段继续循环，每轮段落末尾只调一次 UpdateParagraph。",
+          "example_quote": "paragraphs.UpdateParagraph();",
+          "example_file": "Get_and_Set_Paragraph_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "无冲突：示例严格按 Remarks 的 CurrentParagraph → GetTextSegmentCount → 0 起索引 → UpdateParagraph 顺序。"
+    }
+  ]
+}

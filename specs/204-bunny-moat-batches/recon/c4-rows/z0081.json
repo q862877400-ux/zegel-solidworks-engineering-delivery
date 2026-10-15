@@ -1,0 +1,114 @@
+{
+  "idx": 81,
+  "results": [
+    {
+      "member": "D1OffsetType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 D1OffsetType 与 D1OffsetDistance=0.04 成对设置，并注明这些值须按顺序设置；页面未提顺序要求。",
+          "example_quote": "featDef.D1OffsetType = 1",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        }
+      ],
+      "note": "页面无 ## Remarks（顶部标 Obsolete→D1EndConditionType），按规则跳过冲突判定；示例仍在用该成员。"
+    },
+    {
+      "member": "D1ReferencePoint",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Local_Curve-driven_Pattern_Example_CSharp.md",
+        "Create_Local_Curve-driven_Pattern_Example_VB.md",
+        "Create_Local_Curve-driven_Pattern_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体枚举值 1，并与 D1CurveMethod=1、D1AlignmentMethod=1、D1IsEqualSpaced=true 同组设置。",
+          "example_quote": "swLocalCurvePatternFeat.D1ReferencePoint = 1;",
+          "example_file": "Create_Local_Curve-driven_Pattern_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 两句都是交叉引用与 UI 帮助指引，没有可证伪的前置或取值说法，故不判冲突。"
+    },
+    {
+      "member": "D1ReverseDirection",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 ## Remarks。所分配 4 份示例分别用 LinearPatternFeatureData 与 LocalCurvePatternFeatureData，均非本接口。"
+    },
+    {
+      "member": "D1ReverseOffset",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 gauge-table 流程里把 D1/D2 的 OffsetDistance、OffsetType 与 ReverseOffset 一并设置，页面只讲单个布尔。",
+          "example_quote": "featDef.D1ReverseOffset = True",
+          "example_file": "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+        }
+      ],
+      "note": "页面无 ## Remarks，按规则跳过冲突判定；Returns 只说 True 反转、false 不反转。"
+    },
+    {
+      "member": "D1ReverseTwistDir",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 要求 bidirectional；示例用 Direction = 1，查 swSweepDirection_e 恰为 swSweepBidirectional。",
+          "example_quote": "swSweep.Direction = 1 ' Bidirectional sweep",
+          "example_file": "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md"
+        },
+        {
+          "what": "Remarks 点名 swTwistControlConstantTwistAlongPath；示例用 TwistControlType = 8，查枚举恰为该值。",
+          "example_quote": "swSweep.TwistControlType = 8",
+          "example_file": "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 两个有效性条件示例都满足，故不构成冲突；示例额外给出具体枚举值。"
+    },
+    {
+      "member": "D1Spacing",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 ## Remarks。所分配 4 份示例的 D1Spacing 属 LinearPatternFeatureData / LocalCurvePatternFeatureData。"
+    },
+    {
+      "member": "D1SpacingIncrement",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Vary_Linear_Pattern_Instances_Example_CSharp.md",
+        "Vary_Linear_Pattern_Instances_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例须先 AccessSelections 再取 InstanceToVaryOptions，改完用 SetInstanceToVaryOptions + ModifyDefinition 提交。",
+          "example_quote": "swInstOpts = (InstanceToVaryOptions)LPFeatData.GetInstanceToVaryOptions();",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出的具体增量值 0.05；页面 Returns 只写 Spacing increment in Direction 1，无取值与单位。",
+          "example_quote": "swInstOpts.D1SpacingIncrement = 0.05;",
+          "example_file": "Vary_Linear_Pattern_Instances_Example_CSharp.md"
+        }
+      ],
+      "note": "页面无 ## Remarks，按规则跳过冲突判定；两份示例都是同一段代码的 C#/VB.NET 移植。"
+    }
+  ]
+}

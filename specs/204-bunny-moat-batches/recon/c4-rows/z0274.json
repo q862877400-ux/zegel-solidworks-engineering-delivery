@@ -1,0 +1,188 @@
+{
+  "idx": 274,
+  "results": [
+    {
+      "member": "GetTypeName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Activate_Feature_Example_VB.md",
+        "Add_and_Get_Custom_Properties_Example_VB.md",
+        "Change_Imported_File_Associated_with_an_Imported_Feature_Example_VB.md",
+        "Create_Extruded_Thin_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 GetTypeName 用在薄壁拉伸（BossThin）上，随即 GetDefinition 拿到 ExtrudeFeatureData2 —— 印证表里 BossThin → IExtrudeFeatureData2。",
+          "example_quote": "Debug.Print myFeature.Name & \" [\" & myFeature.GetTypeName & \"]\"",
+          "example_file": "Create_Extruded_Thin_Feature_Example_VB.md"
+        },
+        {
+          "what": "示例前置要求在设计树里选中 Weldment 特征，且只把返回值当字符串打印 —— 正是尾部 NOTE 说的「只回字符串、不回接口」的那类特征。",
+          "example_quote": "Debug.Print \" \" & swFeat.Name & \" [\" & swFeat.GetTypeName & \"]\"",
+          "example_file": "Add_and_Get_Custom_Properties_Example_VB.md"
+        },
+        {
+          "what": "示例对导入特征（表里 Imported 标注 None／无接口）同样只取字符串打印，之后改走 SetBody2 换实体。",
+          "example_quote": "Debug.Print \" FeatTypeName = \" & swFeat.GetTypeName",
+          "example_file": "Change_Imported_File_Associated_with_an_Imported_Feature_Example_VB.md"
+        }
+      ],
+      "note": "四份示例都只把返回值当字符串打印，与 Remarks 的类型表不冲突。"
+    },
+    {
+      "member": "GetTypeName2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Auto_Dimension_Scheme_Example_CSharp.md",
+        "Auto_Dimension_Scheme_Example_VB.md",
+        "Auto_Dimension_Scheme_Example_VBNET.md",
+        "Autodimension_All_Sketches_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份 DimXpert 示例都在调用前判空 —— GetModelFeature() 可能返回 Nothing／null，Remarks 未提这个前置。",
+          "example_quote": "If Not (swFeature Is Nothing) Then",
+          "example_file": "Auto_Dimension_Scheme_Example_VBNET.md"
+        },
+        {
+          "what": "示例用返回值 == \"ProfileFeature\" 判草图，再 GetSpecificFeature2 取 Sketch —— 走的正是 Remarks 的 otherwise 分支（该行接口是 ISketch、非 FeatureData）。",
+          "example_quote": "if (swTnProfileFeature == swFeat.GetTypeName2()) {",
+          "example_file": "Autodimension_All_Sketches_Example_CSharp.md"
+        }
+      ],
+      "note": "四个示例读的是同一张类型表，未见与 Remarks 冲突的说法。"
+    },
+    {
+      "member": "GetUDirection2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用同一组 As Double 变量连续接收 GetCenterPoint2 / GetUDirection2 / GetVDirection2 的三个 out 返回值。",
+          "example_quote": "swRenderMaterial.GetUDirection2 xcoord, ycoord, zcoord",
+          "example_file": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md"
+        },
+        {
+          "what": "示例在 .p2m 材质刚由 CreateRenderMaterial 建出、并 Apply 到各显示状态之后立即取 U 方向。",
+          "example_quote": "Set swRenderMaterial = swModelDocExt.CreateRenderMaterial(materialName)",
+          "example_file": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 说改调 GetVDirection2，示例正是照做；两侧无冲突。"
+    },
+    {
+      "member": "GetUIState",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Display_of_Item_in_Feature_Manager_Example_CPlusPlus_COM.md",
+        "Hide_Feature_in_FeatureManager_Design_Tree_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "To see your changes in the FeatureManager design tree, call [[IModelDoc2::EditRebuild3]].",
+          "example_quote": "pPartDoc->EditRebuild();",
+          "example_file": "Display_of_Item_in_Feature_Manager_Example_CPlusPlus_COM.md",
+          "why": "Remarks 指定用 IModelDoc2::EditRebuild3 刷新；C++ 示例改用 IPartDoc／IAssemblyDoc／IDrawingDoc 的 EditRebuild，两侧指定的成员不同。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "C++ 示例先按 SelType 白名单过滤选区，只处理 9 种实体类型；VBA 示例则直接取第 1 个选中对象。",
+          "example_quote": "SelType == swSelBODYFEATURES ||",
+          "example_file": "Display_of_Item_in_Feature_Manager_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "两份示例都是「先读 Hidden → SetUIState 翻转 → 再重建」，印证 True 就是「在设计树里隐藏」。",
+          "example_quote": "Debug.Print \" Hidden = \" & swFeat.GetUIState(swIsHiddenInFeatureMgr)",
+          "example_file": "Hide_Feature_in_FeatureManager_Design_Tree_Example_VB.md"
+        }
+      ],
+      "note": "隐藏语义两侧一致；分歧只在「用什么成员让改动显形」。"
+    },
+    {
+      "member": "GetUVBounds",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Find_Minimum_Radius_Curvature_of_Surface_Example_VB.md",
+        "Get_UV_Parameters_For_XYZ_Location_Example_CSharp.md",
+        "Return_Untrimmed_Curve_Example_CSharp.md",
+        "Return_Untrimmed_Curve_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "两份 Return_Untrimmed_Curve 示例改用 Parameterization2 取曲面 UV，拿到 SurfaceParameterizationData 对象读 .UMin/.UMax；Remarks 只列了 Parameterization / IParameterization。",
+          "example_quote": "Set surfParam = swSurf.Parameterization2",
+          "example_file": "Return_Untrimmed_Curve_Example_VB.md"
+        },
+        {
+          "what": "C# 示例把返回值直接强转 double[]，并按 [0]=minU [1]=maxU [2]=minV [3]=maxV 取用（与 Remarks 逐字一致）。",
+          "example_quote": "vFaceUV = (double[])swFace.GetUVBounds();",
+          "example_file": "Return_Untrimmed_Curve_Example_CSharp.md"
+        },
+        {
+          "what": "C# 示例另加了成员页没有的前置：Solid Bodies 下拉须设为 Show，并选中 Split Line1。",
+          "example_quote": "Tools > System Options > Options > FeatureManager > Solid Bodies",
+          "example_file": "Get_UV_Parameters_For_XYZ_Location_Example_CSharp.md"
+        }
+      ],
+      "note": "数组长度与元素顺序两侧完全吻合（4 个 double），未见硬冲突。"
+    },
+    {
+      "member": "GetUnderlyingMemberFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出四个 ICornerMember 来源：GetCornerGroupMembers、GetBodyTrimMembers、GetTrimToolMember、GetPlanarTrimMembers；Remarks 没 CornerMember 从哪来。",
+          "example_quote": "crnrMbrArr = twoMbrCrnr.GetCornerGroupMembers",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md"
+        },
+        {
+          "what": "两份示例都只直接取返回 IFeature 的 .Name，并未走 Remarks 说的 GetSpecificFeature2 → IStructureSystemMemberFeatureData。",
+          "example_quote": "Set feat1 = crnrMbr.GetUnderlyingMemberFeature()",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md"
+        }
+      ],
+      "note": "返回类型与示例一致（Feature／IFeature）；Remarks 的第二步在示例里未被演示。"
+    },
+    {
+      "member": "GetUniqueName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Unique_Name_of_Section_View_Example_CSharp.md",
+        "Get_Unique_Name_of_Section_View_Example_VB.md",
+        "Get_Unique_Name_of_Section_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出了 SelectByID2 的实体类型串 \"DRAWINGVIEW\"，Remarks 只说「用 SelectByID2 选中」，没给类型串。",
+          "example_quote": "boolstat = swModel.Extension.SelectByID2(swView.GetUniqueName(), \"DRAWINGVIEW\", 0, 0, 0, false, 0, null, 0);",
+          "example_file": "Get_Unique_Name_of_Section_View_Example_CSharp.md"
+        },
+        {
+          "what": "示例先用 Type==swDrawingSectionView 过滤才调本方法，且每轮先 ClearSelection2；Remarks 未说这一层筛选。",
+          "example_quote": "if ((swView.Type == (int)swDrawingViewTypes_e.swDrawingSectionView))",
+          "example_file": "Get_Unique_Name_of_Section_View_Example_CSharp.md"
+        },
+        {
+          "what": "示例前置点明用途：两个剖视图显示名相同，所以 SelectByID2 必须改用唯一名。",
+          "example_quote": "// 1. Open a drawing document with three views,\n// two of which are section views with the\n// same display name.",
+          "example_file": "Get_Unique_Name_of_Section_View_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的用途（供 SelectByID2 用）在三份示例里都成立，无冲突。"
+    }
+  ]
+}

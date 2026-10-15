@@ -1,0 +1,31 @@
+{
+ "task": "曲面 · 延伸曲面",
+ "pool": [
+  "solidworks_part_insert_dome",
+  "solidworks_sketch_spline",
+  "solidworks_add_component",
+  "solidworks_drawing_create_revision_table",
+  "cadstudio_prepare_fea",
+  "solidworks_part_insert_composite_curve",
+  "solidworks_surface_knit",
+  "solidworks_slot_semicircular_by_selection",
+  "solidworks_insert_replace_face",
+  "solidworks_simulation_configure_buckling_solver",
+  "solidworks_equation_evaluate",
+  "solidworks_insert_planar_surface",
+  "solidworks_collect_model_summary",
+  "solidworks_export_stl",
+  "solidworks_sketch_add_ellipse",
+  "solidworks_sketch_flip_entities",
+  "solidworks_automation_explain_hresult",
+  "solidworks_mesh_restore_import_preferences",
+  "solidworks_drawing_insert_center_marks",
+  "solidworks_undo",
+  "solidworks_gear_create_spur",
+  "solidworks_assembly_list_mates",
+  "solidworks_macro_validate_vba_code",
+  "solidworks_extrude_midplane",
+  "solidworks_list_render_materials"
+ ],
+ "n_items": 10
+}

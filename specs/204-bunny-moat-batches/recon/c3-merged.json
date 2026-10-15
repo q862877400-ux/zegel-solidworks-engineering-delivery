@@ -1,0 +1,5782 @@
+{
+ "results": [
+  {
+   "name": "requirements_planning",
+   "level": "verified",
+   "members_found": [],
+   "examples_used": [],
+   "preconditions": [],
+   "verdict": "cannot_tell",
+   "note": "实现是 apps/desktop 编排层纯 Python，零 COM 成员 ⇒ 无官方示例前置可核，不编前置。",
+   "_idx": 1
+  },
+  {
+   "name": "solidworks_addin_host",
+   "level": "verified",
+   "members_found": [
+    "ConnectToSW",
+    "SetAddinCallbackInfo2",
+    "GetCommandManager",
+    "CreateCommandGroup2",
+    "FileNewNotify2",
+    "IPropertyManagerPage2Handler9"
+   ],
+   "examples_used": [
+    "Load_and_Unload_Add-in_Example_CSharp.md",
+    "Add_Menu_and_Menu_Item_Example_CSharp.md",
+    "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+    "Create_TaskPaneView_Add-in_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "先在 Visual Studio 2010+ 里建好 C# add-in 工程（示例固定在 C:\\test\\SwCSharpAddin1），并打开 Immediate 窗口",
+     "from": "Load_and_Unload_Add-in_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "The SldWorks swApp variable is pre-assigned for you.（⇒ 调用时 SOLIDWORKS 已运行并已连接）",
+     "from": "Load_and_Unload_Add-in_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "SOLIDWORKS API SDK add-in templates 已安装；用 SwCSharpAddin 模板建 C# 工程",
+     "from": "Add_Menu_and_Menu_Item_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "add-in must be built and loaded: class SwAddin implements ISwAddin（须被 SOLIDWORKS 装入并实例化）",
+     "from": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "must call iSwApp.SetAddinCallbackInfo before creating the command group（回调注册必须先于命令组创建）",
+     "from": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "command tab boxes are only added when iCmdMgr.GetCommandTab returns null",
+     "from": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "The addin _must_ call GC.Collect() here in order to retrieve all managed code pointers",
+     "from": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "ComRegisterFunction 须写 HKLM Addins\\{GUID} 与 HKCU AddInsStartup\\{GUID}（DWord）",
+     "from": "Create_TaskPaneView_Add-in_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "ConnectToSW(object ThisSW, int cookie) 由 SolidWorks 主动调用并回 bool；本条前置是否成立取决于索引中是否存在示例",
+     "from": "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "工具 probe_addin_host 自身零 COM 调用（winreg/ctypes），COM 成员在进程内 C# Add-in；evidence 一句 pytest 未提任一前置。",
+   "_idx": 1
+  },
+  {
+   "name": "part_and_features",
+   "level": "verified",
+   "members_found": [
+    "IFeatureManager.FeatureCircularPattern4",
+    "IModelDocExtension.SelectByID2",
+    "IFeatureManager.InsertMirrorFeature2",
+    "IFeatureManager.FeatureRevolve2",
+    "ISketch.GetSketchSegments",
+    "IEntity.Select4",
+    "IFeatureManager.InsertWrapFeature2",
+    "ISelectionMgr.GetSelectedObjectCount2",
+    "IModelDoc2.FirstFeature",
+    "IFeature.GetNextFeature",
+    "IFeature.GetSpecificFeature2",
+    "ISensor.SensorType",
+    "ISensor.GetSensorValue",
+    "IModelDoc2.GetUnits",
+    "ISldWorks.GetUserPreferenceIntegerValue",
+    "IModelDoc2.EditUndo2",
+    "IModelDoc2.AddDimension2"
+   ],
+   "examples_used": [
+    "Create_Circular_Pattern_Example_CSharp.md",
+    "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+    "Create_360-degree_Revolve_Feature_Example_VBNET.md",
+    "Get_Mirror_Feature_Data_Example_VB.md",
+    "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md",
+    "Fire_Undo_and_Redo_Pre-_and_Post-notifications_in_Part_Document_Example_CSharp.md",
+    "Get_Annotations_Array_Example_VB.md",
+    "Dimension_Edge_in_Drawing_Example_VB.md",
+    "Get_and_Set_Units_Example_CPlusPlus_COM.md",
+    "Get_and_Set_User_Preferences_Example_VB.md",
+    "Get_and_Set_Sensor_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "种子特征 BODYFEATURE 按 mark=4 选、方向边按 mark=1 选，才调 FeatureCircularPattern4",
+     "from": "Create_Circular_Pattern_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "零件内须已有 Axis1 与轮廓 Sketch1；轴须由矩形的一条边创建（轴的存在与类型）",
+     "from": "Create_360-degree_Revolve_Feature_Example_VBNET.md",
+     "state": "covered",
+     "evidence_quote": "轴 = **草图里的线段**，类型名 **`EXTSKETCHSEGMENT`**（★ **不是** `SKETCHSEGMENT`），mark **4 或 16**（★ 两个都能建）⇒ 建成 **`旋转1`** · type=**`Revolution`**"
+    },
+    {
+     "text": "官方调用序：先 SelectByID2 选 Axis（mark 16、Callout 传 Nothing），再选轮廓 Sketch（mark 0）",
+     "from": "Create_360-degree_Revolve_Feature_Example_VBNET.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "镜像前先 ClearSelection2；被镜像特征 mark=1、镜像平面（面或平面）mark=2；参考平面须用 Feature 选而非 Entity",
+     "from": "Get_Mirror_Feature_Data_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "包覆前先在面上 InsertSketch 画圆草图并退出，再选草图 mark=4 与目标面 mark=1，才调 InsertWrapFeature2",
+     "from": "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "包覆用的草图必须是 2D，官方原话 3D sketches are invalid",
+     "from": "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "EditUndo2 之前必须有可撤的动作（官方示例是刚建好的圆），否则无处可撤",
+     "from": "Fire_Undo_and_Redo_Pre-_and_Post-notifications_in_Part_Document_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "前置 `凸台-拉伸1`（树 **7**）· 负例 `steps=0` 被入口拒"
+    },
+    {
+     "text": "AddDimension2 调用前实体须处于选中态（官方示例先 CreateLine 画出该线再直接标注）",
+     "from": "Get_Annotations_Array_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "唯一差别是本轮**每次选之前都 `ClearSelection2(True)`**"
+    },
+    {
+     "text": "AddDimension2 只在可见文档上使用，且尺寸按给定位置放置",
+     "from": "Dimension_Edge_in_Drawing_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "官方另注「only use on visible documents」且尺寸**按位置**放置"
+    },
+    {
+     "text": "该示例另设两条：装配体须完全解算；边若无法转成工程图视图则不建尺寸",
+     "from": "Dimension_Edge_in_Drawing_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetUnits 须有活动模型文档（官方示例先取 IActiveDoc2，指针为 NULL 就直接 return）",
+     "from": "Get_and_Set_Units_Example_CPlusPlus_COM.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "该用户偏好示例的前置是「打开工程图并建名为 test 的图层」，与读 swUnitsLinear 不是同一件事",
+     "from": "Get_and_Set_User_Preferences_Example_VB.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "零件里须已存在 Measurement(dimension) 传感器（该示例前提是一个 2.5 英寸尺寸 + 对应传感器）",
+     "from": "Get_and_Set_Sensor_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方示例还要求先在特征树 Sensors 文件夹里选中该传感器，再经 GetSelectedObject6 取出",
+     "from": "Get_and_Set_Sensor_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "旋转、撤销、加尺寸三条前置被 evidence 逐字覆盖；包覆/镜像/圆形阵列的 mark 与调用序、旋转选序、单位与传感器的文档前置均未出现在 evidence 里（只在 limitations）。",
+   "_idx": 2
+  },
+  {
+   "name": "external_spur_gear_geometry",
+   "level": "verified",
+   "members_found": [
+    "solidworks_gear_calculate_spur -> 纯 Python，无 COM 成员",
+    "ISketchManager.CreateLine",
+    "ISketchManager.CreateCircle",
+    "IFeatureManager.FeatureExtrusion3",
+    "IModelDocExtension.SelectByID2",
+    "ISketchManager.InsertSketch",
+    "IModelDoc2.ClearSelection2",
+    "IModelDoc2.ForceRebuild3"
+   ],
+   "examples_used": [
+    "Create_Extrude_Feature_Using_Sketch_Contours_Example_CSharp.md",
+    "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "InsertSketch(true) 进草图画轮廓 → 退出 → 按名选中草图（mark 4）才调 FeatureExtrusion3",
+     "from": "Create_Extrude_Feature_Using_Sketch_Contours_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "建草图前先用 SelectByID2 选中基准面（\"PLANE\"、mark 0）再 InsertSketch",
+     "from": "Create_Wrap_Feature_on_Multiple_Faces_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "算齿轮那条是纯几何计算、不碰 COM，两份 recon 里也没有它的官方示例",
+     "from": "(无适用示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "唯一 evidence 只有一行 pytest（tests/test_cad_reliability.py），未提任何官方前置；建模链的选面-建草图-选草图序列一条都没覆盖。",
+   "_idx": 2
+  },
+  {
+   "name": "holes_and_finishing",
+   "level": "verified",
+   "members_found": [
+    "IModelDoc2.ClearSelection2",
+    "IModelDocExtension.SelectByID2",
+    "ISketchManager.InsertSketch",
+    "ISketchManager.CreateCircleByRadius",
+    "ISketchManager.CreateSketchSlot",
+    "IFeatureManager.FeatureCut4",
+    "IFeatureManager.InsertFeatureChamfer",
+    "IEntity.Select4",
+    "ISelectionMgr.GetSelectionPoint2",
+    "ISldWorks.GetHoleStandardsData",
+    "IHoleStandardsData.GetHoleStandards",
+    "IHoleStandardsData.GetFastenerTypes",
+    "IHoleStandardsData.GetFastenerTableTypes",
+    "IModelDoc2.SketchAddConstraints"
+   ],
+   "examples_used": [
+    "Get_Wizard_Hole_Standards_Data_Example_CSharp.md",
+    "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_CSharp.md",
+    "Insert_and_Resize_Sketch_Slot_Example_CSharp.md",
+    "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_CSharp.md",
+    "Get_Edge_Chamfer_Distances_Example_CSharp.md",
+    "Insert_Sketch_Text_and_Hole_Example_CSharp.md",
+    "Constrain_Sketch_Example_CSharp.md",
+    "Create_Drag_Arrow_Manipulator_Example_CSharp.md",
+    "Create_Hole_Wizard_Hole_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "示例前置：SolidWorks Design 必须已启动（官方 Preconditions 第 1 条 Open SOLIDWORKS Design.）",
+     "from": "Get_Wizard_Hole_Standards_Data_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "python tools/verify_hole_standards_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1"
+    },
+    {
+     "text": "调用序：先 GetHoleStandards 取标准名（示例 standardsArray[0]），再传给 GetFastenerTypes",
+     "from": "Get_Wizard_Hole_Standards_Data_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "`list_hole_standards` → 15 条 · `list_fastener_types('ANSI Inch')` → 14 条 · `list_fastener_table_types` → [0,1,2]，**11/11 通过**，含「**去掉热身就会失败**」的反向验证"
+    },
+    {
+     "text": "建草图槽前须已打开新零件文档并进入草图：SelectByID2 选 Front Plane → InsertSketch(true) → CreateSketchSlot",
+     "from": "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CreateSketchSlot 首两参须用 swSketchSlotCreationType_line 与 swSketchSlotLengthType_CenterCenter",
+     "from": "Insert_and_Resize_Sketch_Slot_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调 FeatureCut4 前须先选面/基准面并画出封闭圆形轮廓（示例序：SelectByRay 选面 → CreateCircle → FeatureCut4）",
+     "from": "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调 InsertFeatureChamfer 前须先选中要倒角的边（示例两次 SelectByID2 EDGE，第二次 append=true）",
+     "from": "Get_Edge_Chamfer_Distances_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "插入角度倒角时角度以弧度给出（示例第 4 参 0.78539816339745 即 45°）",
+     "from": "Get_Edge_Chamfer_Distances_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "读孔位点前须打开模型文档并已选中一个面，示例逐字 Open a model document and select a face",
+     "from": "Insert_Sketch_Text_and_Hole_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "★ 声明式建通孔 **verdict: pass** —— 特征树 7→9（新增 草图2 + 通孔）· center_sent_m=[-0.02, 0.0]"
+    },
+    {
+     "text": "加几何关系前须存在草图、活动文档须是零件文档、目标图元须已选中（示例三处 SendMsgToUser2 检查）",
+     "from": "Constrain_Sketch_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "证据只覆盖孔标准链与读点两处；槽、倒角、切除轮廓、草图关系的前置均未被证据提及。HoleWizard5 示例不计入（本族走画圆+FeatureCut4）。",
+   "_idx": 3
+  },
+  {
+   "name": "parameter_updates",
+   "level": "verified",
+   "members_found": [
+    "IModelDoc2.Parameter",
+    "IDimension.GetSystemValue3",
+    "IDimension.SetSystemValue3",
+    "IModelDoc2.EditRebuild3",
+    "IModelDoc2.GetUnits"
+   ],
+   "examples_used": [
+    "Change_Dimension_Example_CSharp.md",
+    "Change_Dimensions_of_Gear_Mate_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方说明逐字：API 多以米计，传 2.0 而模型单位为毫米会显示成 2000.0，须按文档单位换算",
+     "from": "Change_Dimension_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "★ 那次调用的 `before_mm.current` 是 **20000.0**，★ 而该模型那个尺寸的**本意是 20 mm**（★ `extrude_boss(..., 20.0)`）⇒ ★★ **20 → 20000 正好是 ×1000 两次**"
+    },
+    {
+     "text": "必须用带特征名的精确尺寸名：示例先选中特征再 feature.Parameter(名字)，全名形如 D3@LocalCirPattern1",
+     "from": "Change_Dimension_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "改 `D1@凸台-拉伸1` 为 **35.0** ⇒ ★ `set_status: **0**` · ★ `after_mm.current = **35.0**` ⇒ ★★ **回读等于所要求的值** ✓"
+    },
+    {
+     "text": "GetSystemValue3 回的是数组/Variant，须取第 (0) 项；示例逐字 dimValue_1(0)",
+     "from": "Change_Dimensions_of_Gear_Mate_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "SetSystemValue3 第 3 参须传 Empty（VB Empty / C# null），第 2 参用 swSetValue_InThisConfiguration",
+     "from": "Change_Dimensions_of_Gear_Mate_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "SetSystemValue3 之后必须调 EditRebuild3 才生效（示例两处均在设值后重建）",
+     "from": "Change_Dimension_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "证据覆盖了单位换算疑点与精确尺寸名；GetSystemValue3 的数组形态、Empty 出参与 EditRebuild3 三项前置证据未提。",
+   "_idx": 3
+  },
+  {
+   "name": "custom_properties_and_bom",
+   "level": "verified",
+   "members_found": [
+    "Extension",
+    "CustomPropertyManager",
+    "Count",
+    "GetNames",
+    "Get6",
+    "GetType2",
+    "IsCustomPropertyEditable",
+    "GetType",
+    "GetComponents",
+    "GetExcludeFromBOM2",
+    "GetPathName",
+    "ReferencedConfiguration",
+    "Name2",
+    "GetModelDoc2"
+   ],
+   "examples_used": [
+    "Add_and_Get_Custom_Properties_Example_VB.md",
+    "Get_Custom_Properties_for_Configuration_Example_CSharp.md",
+    "Get_Custom_Properties_of_Referenced_Part_Example_VB.md",
+    "Get_Paths_and_Titles_of_Parents_of_Virtual_Component_Example_VBNET.md",
+    "Get_Whether_Components_Are_Loaded_Example_CSharp.md",
+    "Get_Components_in_Each_BOM_Table_Row_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "先打开一个零件文档作活动文档，取其活动配置后再由配置拿 CustomPropertyManager",
+     "from": "Get_Custom_Properties_for_Configuration_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "先打开含被引用零件的零件，再打开被引用零件，然后切回第 1 步的零件；配置串传空 \"\"",
+     "from": "Get_Custom_Properties_of_Referenced_Part_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "文档类型必须是 swDocASSEMBLY，否则示例立即退出（对应实现里 GetType != 2 直接抛错）",
+     "from": "Get_Paths_and_Titles_of_Parents_of_Virtual_Component_Example_VBNET.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "每个组件文档必须已加载，GetModelDoc2 不得返回 Nothing",
+     "from": "Get_Paths_and_Titles_of_Parents_of_Virtual_Component_Example_VBNET.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "指定的装配体文档必须存在；组件的加载/压缩状态（LightWeight、Selective 打开）影响枚举",
+     "from": "Get_Whether_Components_Are_Loaded_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "先由装配体生成工程图并插入 BOM 表：Bom Type 选 Parts only，同零件不同配置须分组",
+     "from": "Get_Components_in_Each_BOM_Table_Row_Example_CSharp.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "两条 evidence 只证 set/read_custom_property 三条属性往返；未提活动配置、装配体文档类型、组件已加载。BOM 表前置不适用：本实现走 IAssemblyDoc.GetComponents，不读 BOM 表，故记 cannot_tell。Add_and_Get_Custom_Properties 走 IFeature 级管理器，前置未计入。",
+   "_idx": 4
+  },
+  {
+   "name": "pack_and_go",
+   "level": "verified",
+   "members_found": [
+    "GetPathName",
+    "Extension",
+    "GetDependencies",
+    "GetPackAndGo",
+    "GetDocumentNamesCount",
+    "SetSaveToName2",
+    "IncludeDrawings",
+    "IncludeSimulationResults",
+    "IncludeToolboxComponents",
+    "IncludeSuppressed",
+    "FlattenToSingleFolder",
+    "SavePackAndGo"
+   ],
+   "examples_used": [
+    "Pack_and_Go_an_Assembly_Example_CSharp.md",
+    "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md",
+    "Pack_and_Go_Part_and_Linked_Equation_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "指定的装配体必须存在，并以 swDocASSEMBLY 静默打开（OpenDoc6 … swOpenDocOptions_Silent）",
+     "from": "Pack_and_Go_an_Assembly_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "目标文件夹必须事先存在（示例用 c:\\temp）",
+     "from": "Pack_and_Go_an_Assembly_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用序：先 SetSaveToName，再设 FlattenToSingleFolder / AddPrefix / AddSuffix",
+     "from": "Pack_and_Go_an_Assembly_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "目标目录须先创建，且 SaveToName 路径带尾部反斜杠 \"c:\\PackAndGo\\\"",
+     "from": "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "指定的零件与其链接方程文档必须存在于磁盘，目标 c:\\temp 须存在",
+     "from": "Pack_and_Go_Part_and_Linked_Equation_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "两条 evidence 皆为 pytest 名，未提源文档已存盘、目标目录存在，也未提 SetSaveToName 先于 Flatten 的调用序（本实现顺序相反）。",
+   "_idx": 4
+  },
+  {
+   "name": "motion_study",
+   "level": "verified",
+   "members_found": [
+    "GetMotionStudyManager",
+    "CreateMotionStudy",
+    "Activate",
+    "SetDuration",
+    "GetMotionStudyCount",
+    "GetMotionStudyNames",
+    "GetMotionStudy",
+    "StudyType",
+    "GetResults",
+    "GetNumOfExternalMotors",
+    "GetNumOfExternalForces",
+    "GetMotionFeatures",
+    "GetMotionFeaturesCount",
+    "GetTypeName2",
+    "GetDuration",
+    "IsActive",
+    "IsPlaying",
+    "IsOutOfDate",
+    "Name"
+   ],
+   "examples_used": [
+    "sldworksapi__Create_Motion_Studies_Example_VB.md",
+    "Add_Damper_to_Motion_Study_Example_VB.md",
+    "Get_Motion_Study_Example_VB.md",
+    "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+    "sldworksapi__Add_Spring_to_Motion_Study_Example_VBNET.md"
+   ],
+   "preconditions": [
+    {
+     "text": "打开一个尚无用户自建运动算例的零件或装配体",
+     "from": "sldworksapi__Create_Motion_Studies_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "MotionManager 选项卡必须可见，否则点 View > MotionManager",
+     "from": "sldworksapi__Create_Motion_Studies_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "必须添加对 SOLIDWORKS MotionStudy 类型库的引用",
+     "from": "sldworksapi__Create_Motion_Studies_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "必须启用 SOLIDWORKS Motion 加载项（Tools > Add-ins > SOLIDWORKS Motion）",
+     "from": "Add_Damper_to_Motion_Study_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "打开的装配体要有名为 Motion Study 1 的算例与折叠的爆炸视图",
+     "from": "sldworksapi__Duplicate,_Delete,_and_Create_Motion_Study_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "打开的模型要有名为 PhysSim 的 Physical Simulation 运动算例",
+     "from": "Get_Motion_Study_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "读 GetResults / IsOutOfDate 前必须先 Calculate 并等算完（示例轮询 IsPlaying）",
+     "from": "Get_Motion_Study_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "实现读自 scripts/sw_motion.py（tool_specs_batch40 挂载）。evidence 只有一句 pytest 名称，未提任何示例前置。",
+   "_idx": 5
+  },
+  {
+   "name": "drawings_and_bom",
+   "level": "verified",
+   "members_found": [
+    "GetType",
+    "GetComponents",
+    "GetExcludeFromBOM2",
+    "GetPathName",
+    "ReferencedConfiguration",
+    "Name2",
+    "GetModelDoc2"
+   ],
+   "examples_used": [
+    "Activate_Smart_Features_in_an_Assembly_Example_VB.md",
+    "Change_Referenced_Configuration_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "GetComponents 前必须打开一个装配体文档（示例前置是打开 testSmartAssembly.sldasm）",
+     "from": "Activate_Smart_Features_in_an_Assembly_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "读 ReferencedConfiguration 要求装配体文档已打开（组件级成员）",
+     "from": "Change_Referenced_Configuration_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetExcludeFromBOM2 / ExcludeFromBOM 的前置：两个索引 by_member 均为 None，无官方示例可查",
+     "from": "member-to-example-index.md + b3-4-merged.json",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "实现读自 scripts/sw_delivery.py。collect_assembly_bom 走 GetComponents 遍历组件，非 BOM 表；BOM 表官方示例用的是 ITableAnnotation 成员，未被本条工具调用，故未计入。",
+   "_idx": 5
+  },
+  {
+   "name": "export_delivery",
+   "level": "verified",
+   "members_found": [
+    "Extension",
+    "SaveAs3",
+    "SaveBMP",
+    "ExportToDWG2",
+    "GetType",
+    "GetPathName",
+    "SetUserPreferenceIntegerValue"
+   ],
+   "examples_used": [
+    "Save_Model_as_Bitmap_Example_VB.md",
+    "Save_Model_as_Bitmap_Example_VBNET.md",
+    "Export_Part_To_DWG_Example_VB.md",
+    "Export_Part_To_DWG_Example_VBNET.md",
+    "Add_and_Edit_Distance_Mate_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "SaveBMP 前必须先打开一个零件文档作为活动文档（示例前置：打开 cstick.sldprt）",
+     "from": "Save_Model_as_Bitmap_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "`export_to_bmp(model, path, 800, 600)` 建成"
+    },
+    {
+     "text": "示例注释：宽高传 0 表示用当前窗口尺寸（use current window size）",
+     "from": "Save_Model_as_Bitmap_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "宽高 ≤ 0 ⇒ 读回 (1460, 1049) 即**窗口尺寸**"
+    },
+    {
+     "text": "ExportToDWG2 前置：须是已保存到磁盘的钣金零件（示例把 2012-sm.sldprt 复制到 c:\\temp）",
+     "from": "Export_Part_To_DWG_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "★ 另记前置条件：**零件路径要求「钣金件 + 必须先保存」**"
+    },
+    {
+     "text": "调用前须准备 12 个双精度的 3×4 对齐数组（示例 dataAlignment(0..11)）",
+     "from": "Export_Part_To_DWG_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "SaveAs3 在官方示例里只出现于保存零件场景，与本导出能力无关 ⇒ 其前置无从判定",
+     "from": "Add_and_Edit_Distance_Mate_Example_VB.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "SaveBMP 与 ExportToDWG2 的示例前置已被 evidence 覆盖；ExportToDWG2 的 12 个对齐参数未见覆盖；SaveAs3 覆盖 5 个导出工具但无对口官方示例。",
+   "_idx": 6
+  },
+  {
+   "name": "headless_open_format_writing",
+   "level": "verified",
+   "members_found": [],
+   "examples_used": [],
+   "preconditions": [
+    {
+     "text": "该工具经 scripts/headless_cad_writer.py，无任何 SolidWorks COM 成员 ⇒ 无官方示例可对账",
+     "from": "（无）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "cannot_tell",
+   "note": "实现是纯 Python/ezdxf/matplotlib/可选 OCP，不碰 COM；两份证据均为 pytest 且 OCP 后端被 monkeypatch，无官方示例前置可核。",
+   "_idx": 6
+  },
+  {
+   "name": "geometry_and_delivery_review",
+   "level": "verified",
+   "members_found": [
+    "GetTitle",
+    "GetPathName",
+    "GetType",
+    "FirstFeature",
+    "GetNextFeature",
+    "GetTypeName2",
+    "Name",
+    "ActiveDoc",
+    "ActivateDoc3",
+    "ActivateDoc2",
+    "SelectionManager",
+    "ClearSelection2",
+    "GetSelectedObjectCount2",
+    "ActiveView",
+    "GraphicsRedraw",
+    "ViewZoomtofit2",
+    "ShowNamedView2",
+    "SaveBMP",
+    "ForceRebuild3",
+    "GetPartBox",
+    "GetBodies2",
+    "GetFaces",
+    "GetSurface",
+    "IsCylinder",
+    "CylinderParams",
+    "FaceInSurfaceSense",
+    "GetArea",
+    "GetLoopCount",
+    "GetEdgeCount",
+    "GetModeler"
+   ],
+   "examples_used": [
+    "Save_Model_as_Bitmap_Example_CSharp.md",
+    "Get_Part_Bounding_Box_Example_VB.md",
+    "Select_Plane_Example_VBNET.md"
+   ],
+   "preconditions": [
+    {
+     "text": "SaveBMP 前置：模型文档须已打开（示例打开 cstick.sldprt，并从 swApp.ActiveDoc 取模型）",
+     "from": "Save_Model_as_Bitmap_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetPartBox 前置逐字：' Preconditions: Part is open.'（零件须处于打开状态）",
+     "from": "Get_Part_Bounding_Box_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetPartBox 官方注明返回近似包围盒，cannot be relied upon to be used in calculations",
+     "from": "Get_Part_Bounding_Box_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例分两轮调 GetBodies2(swSolidBody, False) 与 GetBodies2(swSheetBody, False) 遍历体",
+     "from": "Get_Part_Bounding_Box_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "遍历 FirstFeature/GetNextFeature 前置逐字：' Preconditions: Open a new part document.'",
+     "from": "Select_Plane_Example_VBNET.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "唯一 evidence 是一句 pytest 调用，不含任何官方示例前置字样，5 条前置全未覆盖。BMP 与包围盒两例都要求文档已打开。",
+   "_idx": 7
+  },
+  {
+   "name": "dfm_checks",
+   "level": "verified",
+   "members_found": [],
+   "examples_used": [],
+   "preconditions": [],
+   "verdict": "cannot_tell",
+   "note": "cadstudio_check_dfm 走 scripts/dfm_review.write_dfm_report，load_automation=False，零 COM 成员，故无官方示例可查，前置无从判定。",
+   "_idx": 7
+  },
+  {
+   "name": "configurations_and_design_tables",
+   "level": "verified",
+   "members_found": [
+    "GetConfigurationNames",
+    "ConfigurationManager",
+    "ActiveConfiguration",
+    "Name",
+    "ShowConfiguration2",
+    "EditRebuild3",
+    "AddConfiguration3",
+    "Parameter",
+    "GetSystemValue3",
+    "SetSystemValue3",
+    "GetUnits",
+    "CustomPropertyManager",
+    "Get6",
+    "Add3"
+   ],
+   "examples_used": [
+    "Add_Derived_Configurations_Example_CSharp.md",
+    "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_CSharp.md",
+    "Are_the_Assembly_Configurations_Loaded_Example_CSharp.md",
+    "Change_Dimension_Example_CSharp.md",
+    "Get_Custom_Properties_for_Configuration_Example_CSharp.md",
+    "Change_Dimensions_of_Gear_Mate_Example_VB.md",
+    "Add_and_Get_Custom_Properties_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "读配置清单/活动配置的前置：先打开一个零件或装配体文档，经 ConfigurationManager 取 ActiveConfiguration、用 GetConfigurationNames 遍历。",
+     "from": "Add_Derived_Configurations_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "AddConfiguration3 的官方示例前置：指定的装配体文档必须存在；且该文档别处在用，关闭时不要保存改动。",
+     "from": "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "ShowConfiguration2 的官方示例前置：要打开的装配体文档必须存在；示例用活动配置回读来判定是否切成功。",
+     "from": "Are_the_Assembly_Configurations_Loaded_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "改尺寸的前置：先 SelectByID2 按名字选到特征，再 swFeature.Parameter(\"D3\")；示例的装配体文档须存在。",
+     "from": "Change_Dimension_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方注明 API 多以米为单位喂尺寸值，要按模型实际单位换算（IModelDoc2::LengthUnit）。",
+     "from": "Change_Dimension_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "自定义属性的前置：先打开一个零件文档，取活动配置的 CustomPropertyManager，再 Add3（DeleteAndAdd）后 Get6 回读。",
+     "from": "Get_Custom_Properties_for_Configuration_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetSystemValue3 的另一官方示例讲的是齿轮配合尺寸（配合维度），其装配体+选面+加配合的前置是否适用于本能力说不清。",
+     "from": "Change_Dimensions_of_Gear_Mate_Example_VB.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 只有一条 pytest，7 条前置里 6 条未被提及；官方属性示例走 config.CustomPropertyManager，本实现走 model.Extension.CustomPropertyManager(配置名)。",
+   "_idx": 8
+  },
+  {
+   "name": "sheet_metal",
+   "level": "verified",
+   "members_found": [
+    "SelectByID2",
+    "CreateDefinition",
+    "CreateFeature",
+    "CreateCustomBendAllowance",
+    "Initialize",
+    "Thickness",
+    "BendRadius",
+    "KFactor",
+    "D1EndConditionType",
+    "D1EndConditionDistance",
+    "D2EndConditionType",
+    "D2EndConditionDistance",
+    "OverrideDefaultSheetMetalParameters",
+    "ReverseDirection",
+    "ReverseThickness",
+    "UseDefaultBendRadius",
+    "UseDefaultBendAllowance",
+    "BendAngle",
+    "Angle",
+    "ProfileDimensionScheme",
+    "GussetThickness",
+    "UseAngleDimForProfile",
+    "ProfileLengthDim",
+    "ProfileHeightDim",
+    "ProfileAngleDim",
+    "UseOffset",
+    "OffsetDistance",
+    "EndOffset",
+    "StartOffset",
+    "FlangePosition",
+    "FlattenAlongPath",
+    "TrimSideBends",
+    "UseDefaultBendRelief",
+    "UseGaugeTable",
+    "UseMaterialSheetMetalParameters",
+    "Path",
+    "Profile",
+    "GetErrorCode",
+    "GetDefinition",
+    "GetTypeName2",
+    "Name",
+    "FirstFeature",
+    "GetNextFeature",
+    "GetBodies2",
+    "IsSheetMetal"
+   ],
+   "examples_used": [
+    "Create_Base_Flange_Feature_Example_CSharp.md",
+    "Create_Edge_Flange_Example_CSharp.md",
+    "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+    "Create_Swept_Flange_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "基体法兰的前置：零件模板须存在；先在基准面上画闭合轮廓草图并结束草图、选中该草图，再 CreateDefinition/CreateFeature。",
+     "from": "Create_Base_Flange_Feature_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "★ **闭轮廓**真机建成：特征树出现「钣金6 / 基体-法兰1 / 平展型式6」"
+    },
+    {
+     "text": "基体法兰还须先建 CustomBendAllowance 并设 Type/KFactor，再 Initialize(...) 后才 CreateFeature。",
+     "from": "Create_Base_Flange_Feature_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "边线法兰的前置：先打开 cover.sldprt 选中边，且必须调 FeatData.AddEdges(边数组, 草图数组) 把边与草图喂进 FeatureData。",
+     "from": "Create_Edge_Flange_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "钣金加强筋的前置：先打开 SMGussetAPI.sldprt，创建前必须先选中该折弯的两个支撑面，再用 ISMGussetFeatureData 的三件套。",
+     "from": "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "放样折弯的前置：零件模板须存在，且必须先用 InsertSheetMetalBaseFlange2 建出基体法兰，再把 Path/Profile 对象赋进数据。",
+     "from": "Create_Swept_Flange_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "钣金拔模（create_draft）没有对应的官方创建示例，相关前置无从查证。",
+     "from": "",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "只有「闭轮廓」这条前置被 evidence 逐字点到；边线法兰的 AddEdges、加强筋的两个支撑面、放样折弯的先有基体法兰均未提；拔模无官方示例。",
+   "_idx": 8
+  },
+  {
+   "name": "weldments",
+   "level": "verified",
+   "members_found": [
+    "InsertWeldmentFeature",
+    "CreateStructuralMemberGroup",
+    "InsertStructuralWeldment5",
+    "InsertWeldmentCutList2",
+    "InsertSubWeldFolder2",
+    "CreateDefinition",
+    "CreateFeature",
+    "UpdateCutList",
+    "CustomPropertyManager.GetNames",
+    "CustomPropertyManager.Get6",
+    "CustomPropertyManager.Add3",
+    "GetBodies2",
+    "GetBodyCount",
+    "GetSpecificFeature2",
+    "GetSketchSegments",
+    "FeatureByName",
+    "ClearSelection2",
+    "EditRebuild3",
+    "Extension.SaveAs",
+    "SelectByID2"
+   ],
+   "examples_used": [
+    "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md",
+    "Create_Structural_Member_Group_Example_CSharp.md",
+    "Insert_Weldment_Features_Example_CSharp.md",
+    "Insert_Weldment_Cut_List2_Example_CSharp.md",
+    "Save_Solid_Body_to_File_Example_CSharp.md",
+    "Get_Custom_Property_Values_On_Cut_List_Folders_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "指定的焊件轮廓库特征(.sldlfp)与零件模板必须存在",
+     "from": "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "下有 **111 个** `.sldlfp`"
+    },
+    {
+     "text": "指定的焊件轮廓与路径必须存在",
+     "from": "Create_Structural_Member_Group_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "前视基准面上一段 100 mm 直线作路径 + **GB 方管轮廓**"
+    },
+    {
+     "text": "路径草图线段须先 SelectByID2(EXTSKETCHSEGMENT)选中再赋给 StructuralMemberGroup.Segments",
+     "from": "Create_Structural_Member_Group_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "工具不读选区也不依赖选中状态：它自己按**草图名**取线段"
+    },
+    {
+     "text": "须先按默认零件模板 NewDocument 新建一个零件文档",
+     "from": "Create_Structural_Member_Group_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "传给 InsertStructuralWeldment5 的配置名须存在于该 .sldlfp(示例先 AddConfiguration 再 SaveAs)",
+     "from": "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例前置要求先建好保存自定义轮廓的目录 C:\\Test\\Pipes",
+     "from": "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "InsertWeldmentCutList2 须先打开零件并在选项里显示 Solid Bodies 文件夹",
+     "from": "Insert_Weldment_Cut_List2_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "InsertSubWeldFolder2 须在已打开的焊件零件(weldment_box2.sldprt)中进行",
+     "from": "Insert_Weldment_Features_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "UpdateCutList 须先找到 SolidBodyFolder 特征并把切割清单设为自动并更新",
+     "from": "Save_Solid_Body_to_File_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "读切割清单文件夹自定义属性须先打开 weldment_box3.sldprt 并右键 Cut list 点 Update",
+     "from": "Get_Custom_Property_Values_On_Cut_List_Folders_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CreateDefinition(swFmMateProfileCenter=101)+CreateFeature 建型材中心配合的前置",
+     "from": "(无相关官方示例：两个索引均无 swFmMateProfileCenter)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "结构构件那半前置齐（轮廓文件、路径草图、选区）；切割清单/焊接文件夹/更新清单/读属性四族的前置未提。",
+   "_idx": 9
+  },
+  {
+   "name": "simulation_and_fea",
+   "level": "verified",
+   "members_found": [
+    "ICWStudy.GenerateReport",
+    "ICWStudy.StaticStudyOptions",
+    "ICWStudy.FrequencyStudyOptions",
+    "ICWStudy.BucklingStudyOptions",
+    "ICWStaticStudyOptions.set_ComputeFreeBodyForce2",
+    "ICWStaticStudyOptions.set_ContactPenaltyStiffnessScaleFactor",
+    "ICWStaticStudyOptions.set_DefinedReferencePressure",
+    "ICWFrequencyStudyOptions.set_CheckDecouple",
+    "ICWFrequencyStudyOptions.set_DefinedReferencePressure",
+    "ICWBucklingStudyOptions.set_BucklingModes",
+    "ICWBucklingStudyOptions.set_ExtractPositiveBucklingFactorsOnly",
+    "ICWBucklingStudyOptions.set_DefinedReferencePressure"
+   ],
+   "examples_used": [],
+   "preconditions": [
+    {
+     "text": "ICWStudy.GenerateReport(template,path,append) 的调用前置",
+     "from": "(无相关官方示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "从 ICWStudy 取 Static/Frequency/BucklingStudyOptions 并写各 setter 的前置",
+     "from": "(无相关官方示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "cannot_tell",
+   "note": "8 个工具全落在 CosWorks ICWStudy/StudyOptions 成员上；索引与 2839 份示例 grep 零命中。",
+   "_idx": 9
+  },
+  {
+   "name": "autocad_headless_preview",
+   "level": "verified",
+   "members_found": [],
+   "examples_used": [],
+   "preconditions": [],
+   "verdict": "cannot_tell",
+   "note": "不调任何 COM 成员（load_automation=False），纯 Python + 第三方 ezdxf；两份 recon 索引 grep 工具名/ezdxf/PreviewScene 均 0 命中 ⇒ 无官方示例可对照，前置集为空。",
+   "_idx": 10
+  },
+  {
+   "name": "dxf_preview_scene",
+   "level": "verified",
+   "members_found": [],
+   "examples_used": [],
+   "preconditions": [],
+   "verdict": "cannot_tell",
+   "note": "同一工具，同样 0 个 COM 成员；evidence 里的 tools/verify_dxf_preview_e2e.py 也只用 ezdxf+subprocess；recon 索引 0 命中 ⇒ 前置集为空。",
+   "_idx": 10
+  },
+  {
+   "name": "autocad_script_backend",
+   "level": "verified",
+   "members_found": [
+    "SendCommand",
+    "ActiveDocument",
+    "DispatchEx(\"AutoCAD.Application\")"
+   ],
+   "examples_used": [],
+   "preconditions": [
+    {
+     "text": "须有活动 AutoCAD 文档：active_document() 取 app.ActiveDocument，取不到即抛错要求先开文档",
+     "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_session.py: active_document",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "命令串须以换行结尾才会被 SendCommand 正确投递；send_command() 自动追加换行符",
+     "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_session.py: send_command",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "只能走 SCRIPT_COMMANDS 白名单（zoom_extents / regen / qsave）；任意脚本文本被判 SCRIPT_COMMAND_NOT_ALLOWED",
+     "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_session.py: run_whitelisted_script_command",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "SendCommand 是异步的 ⇒ 执行后必须保存并复核 DWG/DXF/PDF 产物（模块自述 limitations）",
+     "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_session.py: run_whitelisted_script_command 的 limitations",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "cannot_tell",
+   "note": "AutoCAD ActiveX 实现；两索引对 SendCommand/ActiveDocument 等成员零命中，SaveAs 命中属 SolidWorks 同形异义，无官方示例前置可对账。",
+   "_idx": 11
+  },
+  {
+   "name": "autocad_dotnet_backend",
+   "level": "verified",
+   "members_found": [],
+   "examples_used": [],
+   "preconditions": [
+    {
+     "text": "须由 discover_installation 找到 AutoCAD 安装（本机 acad.exe），否则预检无对象",
+     "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_dotnet_preflight.py: run_preflight",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "须有 .NET SDK：_sdk_info 拿到 dotnet 与 sdk_versions，否则报 WINGET_MISSING 或需先装 SDK",
+     "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_dotnet_preflight.py: _sdk_info",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "三个 Autodesk 托管 API DLL 须齐全：accoremgd / acdbmgd / acmgd；缺则 AUTOCAD_MANAGED_API_MISSING",
+     "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_dotnet_preflight.py: REQUIRED_MANAGED_DLLS",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "运行期证据须连续 3 次真机回归 status=pass（plugin_loaded / dwg_saved 等）才升 verified，否则 pilot",
+     "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_dotnet_preflight.py: REQUIRED_CONSECUTIVE_PASSES",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "托管 DLL 的部署目录须可写；writable 检查失败即 blocked，不得交付",
+     "from": "无匹配官方示例（示例语料仅 SolidWorks）；读自 subskills/autocad-automation/scripts/acad_dotnet_preflight.py: run_preflight 的 writable 分支",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "cannot_tell",
+   "note": "零 COM 调用，是文件系统+子进程预检，无 AutoCAD 成员可查；两索引对 AcMgd 零命中，AutoCAD 命中属 SolidWorks 样例路径，同串异义已排除。",
+   "_idx": 11
+  },
+  {
+   "name": "topology_optimization",
+   "level": "verified",
+   "members_found": [
+    "StudyManager",
+    "DeleteStudy",
+    "CreateNewStudy3",
+    "CreateNewStudy2",
+    "MeshAndRun",
+    "CreateMesh",
+    "RunAnalysis",
+    "Results",
+    "GetPlotCount",
+    "GetPlotNames",
+    "GetMaximumAvailableSteps"
+   ],
+   "examples_used": [
+    "Create_Topology_Study_Example_VBA.txt"
+   ],
+   "preconditions": [
+    {
+     "text": "必须先把 SOLIDWORKS Simulation 作为加载项启用（Tools > Add-ins > SOLIDWORKS Simulation > OK）",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "必须把 SOLIDWORKS Simulation 版本类型库加为引用（IDE Tools > References）",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "必须先打开一个零件文档（官方示例打开 public_documents\\samples\\Simulation Examples\\tutor1.sldprt）",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方调用序：先 DeleteStudy 同名研究，再 CreateNewStudy3(name, 13, 0, err)",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "MeshAndRun / CreateMesh+RunAnalysis 的官方示例前置：两个索引里这两个成员均无命中，说不清",
+     "from": "member-to-example-index.md + b3-4-merged.json",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "结果读数 GetPlotCount/GetPlotNames：GetPlotCount 只命中 COSMOSMotion 示例（讲 Motion 非拓扑），按规则排除",
+     "from": "b3-4-merged.json",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 三条只写了脚本名、证据文件缺失、契约测试；加载项、类型库、开文档、DeleteStudy 调用序一条都没提到。",
+   "_idx": 12
+  },
+  {
+   "name": "costing",
+   "level": "verified",
+   "members_found": [
+    "Extension",
+    "GetCostingManager",
+    "CostingModel",
+    "CostingDefaults",
+    "GetTemplatePathnames",
+    "GetTemplateName",
+    "GetCostingMethod",
+    "GetBodyCount",
+    "GetBodies",
+    "GetCostAnalysis",
+    "GetName",
+    "GetBodyType",
+    "BodyStatus",
+    "GetSWBody",
+    "CostingTemplateName",
+    "CostingType",
+    "GetMaterialCost",
+    "GetManufacturingCost",
+    "GetSetupCost",
+    "GetTotalCostToManufacture",
+    "GetTotalCostToCharge"
+   ],
+   "examples_used": [
+    "Create_Machining_Costing_Analyses_Example_CSharp.md",
+    "Create_Sheet_Metal_Costing_Analyses_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "必须先打开一个零件文档（machined_part.sldprt / sheet_metal_part.sldprt）",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "必须确认 Costing 模板存在（Options > System Options > File Locations > Costing templates）",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "必须引用 SolidWorks.Interop.sldcostingapi.dll（GetTemplatePathnames 等成员所在程序集）",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方调用序：GetCostingManager() 之后必须先 WaitForUIUpdate() 才读模板清单",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "读成本分析读数前必须先有成本分析（官方先 CreateCostAnalysis(模板路径)，GetCostAnalysis 只在已分析分支）",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "逐实体成本数据只对 GetBodyType()==swcBodyType_Machined 的实体成立（官方 if 判据）",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetBodyCount() 必须大于 0，否则官方示例 No bodies in part 直接 return，不读实体",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 只有一条（verify_costing_e2e.py 的 partial 5/6）；官方 Costing 示例的前置一条都没出现在里面。",
+   "_idx": 12
+  },
+  {
+   "name": "helix_and_spiral",
+   "level": "verified",
+   "members_found": [
+    "InsertHelix",
+    "GetLastFeatureAdded"
+   ],
+   "examples_used": [
+    "Create_Spiral_Example_VB.md",
+    "Create_Spiral_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "示例前置：需有可用的零件模板并新建零件文档（Preconditions: Specified part template exists / Opens a new part）",
+     "from": "Create_Spiral_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "新零件 → 进草图 → 画圆 → 选中 → 建螺旋线"
+    },
+    {
+     "text": "示例第 2-3 步：先 SelectByID2 选中基准面，再在该面所在草图里 CreateCircle —— 即调用前须处于草图编辑态并能画圆",
+     "from": "Create_Spiral_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "进草图 → 画圆"
+    },
+    {
+     "text": "示例第 4 步 Creates a spiral using the circle：螺旋线以刚建的圆为直径基准，该圆须处于选中态",
+     "from": "Create_Spiral_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "画圆 → 选中 → 建螺旋线"
+    }
+   ],
+   "verdict": "all_covered",
+   "note": "GetLastFeatureAdded 的官方示例全是配合类、与螺旋无关，按纪律未计入；三条螺旋前置均由 verify_helix_smoke 逐字覆盖。",
+   "_idx": 13
+  },
+  {
+   "name": "sketch_edit_ops",
+   "level": "verified",
+   "members_found": [
+    "SketchUseEdge3",
+    "SketchMirror",
+    "ActiveSketch"
+   ],
+   "examples_used": [
+    "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md",
+    "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_CSharp.md",
+    "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VBNET.md"
+   ],
+   "preconditions": [
+    {
+     "text": "示例前置：必须打开一个已存在的零件文档（Preconditions: Open public_documents\\...\\cover_plate.slprt），因为要转换的是模型上的几何",
+     "from": "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例第 2 步：先在基准面（示例用偏置基准面 Plane1）上 InsertSketch 开启草图 —— 调用前须处于草图编辑态",
+     "from": "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "新零件 → 进草图 → 画两条相接直线"
+    },
+    {
+     "text": "示例第 3 步：调 SketchUseEdge3 前必须先选中模型上的面/边（示例用 SelectByID2 按点选 FACE）",
+     "from": "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "SketchMirror 的选中标记前置（要镜像的线段 mark=1 / 中心线 mark=2）：两份官方示例索引里 SketchMirror 均无命中，无示例可依据",
+     "from": "(无相关示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 数组只写了 create_sketch_chamfer 那次冒烟（选中两条是草图线段、非模型边/面）；convert_entities 与 sketch_mirror 的真机读数写在 limitations 里，不在 evidence 数组。",
+   "_idx": 13
+  },
+  {
+   "name": "standard_parts_toolbox",
+   "level": "verified",
+   "members_found": [],
+   "examples_used": [],
+   "preconditions": [],
+   "verdict": "cannot_tell",
+   "note": "实现 scripts/sw_toolbox_index.py 全 97 行只 import json/pathlib/typing，无一处 get_com_member ⇒ COM 成员为空；两索引与 C:\\swapi\\examples 内无对应示例 ⇒ 无前置可对账。",
+   "_idx": 15
+  },
+  {
+   "name": "sketch_chamfer",
+   "level": "verified",
+   "members_found": [
+    "SketchManager",
+    "CreateChamfer",
+    "GetActiveSketch2",
+    "ActiveSketch",
+    "GetSketchSegments"
+   ],
+   "examples_used": [
+    "Offset_Selected_Edges_in_Active_Sketch_Example_VB.md",
+    "Dynamically_Mirror_Sketch_Entities_Example_VB.md",
+    "Constrain_Sketch_Example_VBNET.md",
+    "Autodimension_All_Sketches_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "必须在草图编辑态、活动草图存在（示例：ActiveSketch 为 Nothing 则报 No active sketch 直接 Exit Sub）",
+     "from": "Constrain_Sketch_Example_VBNET.md",
+     "state": "covered",
+     "evidence_quote": "新零件 → 进草图 → 两条相接直线 → 选中两条（选区计数 **2**）"
+    },
+    {
+     "text": "必须先选中草图实体（示例逐字：Select one or more edges in the part coincident to the plane）",
+     "from": "Offset_Selected_Edges_in_Active_Sketch_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "选中两条（选区计数 **2**）"
+    },
+    {
+     "text": "活动文档必须是零件文档（示例逐字：A part document must be open and the active document，GetType≠swDocPART 即 Exit Sub）",
+     "from": "Constrain_Sketch_Example_VBNET.md",
+     "state": "covered",
+     "evidence_quote": "新零件 → 进草图 → 两条相接直线"
+    },
+    {
+     "text": "须先开草图再选中实体（示例逐字：Select the top planar face on the part and open a sketch / Select an edge on the planar face）",
+     "from": "Dynamically_Mirror_Sketch_Entities_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "两条相接直线 → 选中两条（选区计数 **2**）"
+    },
+    {
+     "text": "ISketchManager.CreateChamfer 描述行逐字 Creates a chamfer between two selected sketch entities；该成员在两索引与 examples 内 0 份示例",
+     "from": "C:\\swapi\\types\\ISketchManager\\CreateChamfer.md（examples 内无该成员示例）",
+     "state": "covered",
+     "evidence_quote": "选中两条（选区计数 **2**）"
+    }
+   ],
+   "verdict": "all_covered",
+   "note": "CreateChamfer 本体无官方示例，前置取自三个同族草图操作示例；evidence 逐字命中「进草图」「选中两条（选区计数 2）」。",
+   "_idx": 15
+  },
+  {
+   "name": "gtol_insert",
+   "level": "verified",
+   "members_found": [
+    "InsertGtol",
+    "CanConvertFormat",
+    "ConvertFormat",
+    "GetFrameCount",
+    "AddFrame",
+    "GetFrame"
+   ],
+   "examples_used": [
+    "Insert_GTol_Example_VB.md",
+    "Get_Gtol_Frame_Information_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "Preconditions: 1. Verify that the drawing exists.（须是已存在的工程图）",
+     "from": "Insert_GTol_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Open a drawing that contains a GTol created with SolidWorks 2021 or 2022/2022+.",
+     "from": "Get_Gtol_Frame_Information_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例不新建：须在图形区选中已存在的 Gtol，用 GetSelectedObject6(1,-1) 取对象",
+     "from": "Get_Gtol_Frame_Information_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "ConvertFormat 只在 CanConvertFormat() 为真且 GetFormat()==GTOL_SW2021 时才调，调用前先 Save()",
+     "from": "Get_Gtol_Frame_Information_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "AddFrame 只对 2022+ 格式的 GTol 有效 ⇒ 必须先 ConvertFormat 再 AddFrame",
+     "from": "Get_Gtol_Frame_Information_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "`ConvertFormat()` ⇒ 0 → **`AddFrame()` ⇒ True**"
+    },
+    {
+     "text": "取帧须先 AddFrame 让帧数涨上去，再按 1 基帧号 GetFrame(FrameCount)",
+     "from": "Get_Gtol_Frame_Information_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "**`AddFrame()` ⇒ True** → `GetFrameCount` ⇒ **2** → `GetFrame(1)/(2)` **有对象**"
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "两条官方示例都以「已存在的工程图 + 已存在的 GTol」为前提；本条证据是在「新零件」上现建对象，工程图与 GTol 来源前提未覆盖。",
+   "_idx": 16
+  },
+  {
+   "name": "drawing_current_sheet_query",
+   "level": "verified",
+   "members_found": [
+    "GetType",
+    "GetCurrentSheet",
+    "GetSheetCount",
+    "GetSheetNames",
+    "GetSheetByName",
+    "GetFirstView",
+    "GetNextView",
+    "ISheet.GetName",
+    "ISheet.GetProperties",
+    "ISheet.GetProperties2",
+    "ISheet.GetSheetFormatName",
+    "ISheet.SetScale",
+    "IView.Type",
+    "IView.GetName2"
+   ],
+   "examples_used": [
+    "Get_Drawing_View_Names_and_Types_Example_VB.md",
+    "Get_Names_of_Annotations_Example_VB.md",
+    "Get_Sheet_Numbers_and_Names_Example_VB.md",
+    "Get_Loaded_Sheets_Example_VB.md",
+    "Get_Annotations_Array_Example_VB.md",
+    "Get_and_Set_Sheet_Properties_Example_VB.md",
+    "Set_Drawing_Sheet_Properties_Example_VB.md",
+    "Custom_Check_Document_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "Preconditions: 1. Open a drawing document.（取图纸前先判 GetType()==swDocDRAWING）",
+     "from": "Get_Drawing_View_Names_and_Types_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "新建空工程图 ⇒ 三个读数 + 在零件上的负例"
+    },
+    {
+     "text": "'First drawing view is the sheet, so get first drawing view' —— GetFirstView 首个是图纸本身",
+     "from": "Get_Names_of_Annotations_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "空图纸 GetFirstView() 回的是图纸本身"
+    },
+    {
+     "text": "Preconditions: 1. Open a drawing that has multiple sheets.",
+     "from": "Get_Sheet_Numbers_and_Names_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetSheetNames 示例前置：打开 foodprocessor.slddrw，按「选择要打开的图纸」只加载 Sheet1",
+     "from": "Get_Loaded_Sheets_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方顺序：模板建图→ActivateSheet→GetCurrentSheet→SetSize→SetScale→之后才建视图",
+     "from": "Get_Annotations_Array_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetProperties 示例前置：先由 block1.sldprt 建出含前视/侧视/俯视三视图的图纸",
+     "from": "Get_and_Set_Sheet_Properties_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetProperties2 示例前置：勾 Use custom property values from the sheet，并清掉 Sheet2 的 Same as sheet",
+     "from": "Set_Drawing_Sheet_Properties_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "「必须是工程图」与「首个视图即图纸本身」两条已覆盖；多图纸、需按选择加载图纸、有视图、文档属性开关等前置只验过空图纸，均未覆盖。",
+   "_idx": 16
+  },
+  {
+   "name": "file_custom_property_read",
+   "level": "verified",
+   "members_found": [
+    "CustomPropertyManager",
+    "Get6",
+    "GetNames",
+    "GetType2",
+    "IsCustomPropertyEditable",
+    "Count"
+   ],
+   "examples_used": [
+    "Get_Custom_Properties_for_Configuration_Example_VB.md",
+    "Add_and_Get_Custom_Properties_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方 Preconditions 逐字：先打开一个零件文档（Open a part document）",
+     "from": "Get_Custom_Properties_for_Configuration_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "新建零件 ⇒ Add3 写一个属性（count 28→29）"
+    },
+    {
+     "text": "读可编辑性须先取活动配置、并把 config.Name 传给 IsCustomPropertyEditable（第二参）",
+     "from": "Get_Custom_Properties_for_Configuration_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "Add_and_Get 那份是焊件【特征】级属性，与文件级不同，未计其前置；示例的 Open the Immediate window 属 VBA 脚手架未计入。",
+   "_idx": 17
+  },
+  {
+   "name": "sketch_build",
+   "level": "verified",
+   "members_found": [
+    "InsertSketch",
+    "SelectByID2",
+    "ClearSelection2",
+    "CreateLine",
+    "CreateCornerRectangle",
+    "CreateCircleByRadius",
+    "CreateArc",
+    "CreatePolygon",
+    "CreateSketchSlot",
+    "CreateEllipse",
+    "CreateCenterLine",
+    "AutoDimension2",
+    "GetSketchSegments",
+    "GetStartPoint2",
+    "GetEndPoint2",
+    "Select3",
+    "Select4",
+    "GraphicsRedraw"
+   ],
+   "examples_used": [
+    "Autodimension_a_Sketch_Example_VB.md",
+    "Autodimension_All_Sketches_Example_VB.md",
+    "Insert_and_Resize_Sketch_Slot_Example_VB.md",
+    "Create_Polygon_Example_VB.md",
+    "Get_Sketch_Arc_Data_Example_VB.md",
+    "Create_Ellipse_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方 Preconditions 逐字：先打开一个零件文档（Open a part document）",
+     "from": "Create_Polygon_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "新建零件 → start（前视）→ 画线 → 画圆 → 画矩形 → end"
+    },
+    {
+     "text": "调用序：先 SelectByID2 选中基准面、再 InsertSketch 进草图，才能画图元",
+     "from": "Insert_and_Resize_Sketch_Slot_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "另记两条：不 start 就画线 = 静默 · 坏基准面名 = ValueError"
+    },
+    {
+     "text": "AutoDimension2 前须先按 mark 选出两条草图段（一条水平基准、一条垂直基准）",
+     "from": "Autodimension_a_Sketch_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "真机：有活动草图时 ⇒ **status=pass · status_code=0 · selected=2**"
+    },
+    {
+     "text": "草图须含水平线与垂直线，否则官方回 swAutodimStatusDatumLineNotHorizontal/NotVertical",
+     "from": "Autodimension_All_Sketches_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "须处于草图编辑态、有活动草图（官方逐字：an active sketch）",
+     "from": "Create_Ellipse_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "负例（**没有活动草图**）⇒ **status=blocked · error_code=SKETCH_NOT_ACTIVE**"
+    },
+    {
+     "text": "官方 CreateEllipse 示例要求草图内已有两个草图点；本工具直接传坐标，是否覆盖判不出",
+     "from": "Create_Ellipse_Example_CSharp.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "模板存在/Immediate window 属 VBA 脚手架未计入；CreateCenterLine 的官方示例只出现在 3D 草图与角度尺寸里，未计前置。",
+   "_idx": 17
+  },
+  {
+   "name": "feature_build_extrude",
+   "level": "verified",
+   "members_found": [
+    "FeatureExtrusion3",
+    "FeatureCut4",
+    "SelectByID2",
+    "FeatureByName",
+    "ClearSelection2"
+   ],
+   "examples_used": [
+    "Insert_Feature_Extrusion_Example_CSharp.md",
+    "Insert_Feature_Extrusion_Example_VB.md",
+    "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_VB.md",
+    "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_VBNET.md"
+   ],
+   "preconditions": [
+    {
+     "text": "指定的零件模板 Part.prtdot 必须存在，新建零件成为活动文档",
+     "from": "Insert_Feature_Extrusion_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "新建零件 → batch21 建草图（矩形 40×20）→ extrude_boss(10)"
+    },
+    {
+     "text": "草图必须用 InsertSketch(true) 闭合退出后，才能被选中用于拉伸",
+     "from": "Insert_Feature_Extrusion_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "batch21 建草图（矩形 40×20）→ extrude_boss(10)"
+    },
+    {
+     "text": "起止条件引用面须按 mark=32 / mark=1 选中（官方示例用 OffsetFromSurface）",
+     "from": "Insert_Feature_Extrusion_Example_CSharp.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "要打开的钣金零件 2012-sm.sldprt 必须存在并静默打开",
+     "from": "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_VBNET.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "起止面 mark=32/1 与轮廓选择属本工具未暴露的端条件，判 cannot_tell；唯一硬缺口是证据从未打开过任何零件文件。",
+   "_idx": 18
+  },
+  {
+   "name": "chamfer_fillet_on_selection",
+   "level": "verified",
+   "members_found": [
+    "InsertFeatureChamfer",
+    "FeatureFillet3",
+    "Select4",
+    "GetEdges",
+    "GetSelectedObjectCount2"
+   ],
+   "examples_used": [
+    "Get_Edge_Chamfer_Distances_Example_CSharp.md",
+    "Get_Edge_Chamfer_Distances_Example_VBNET.md",
+    "Create_Asymmetric_Elliptic_Fillets_Example_VBNET.md",
+    "Create_Curvature_Continuous_Variable_Fillet_Feature_Example_VBNET.md"
+   ],
+   "preconditions": [
+    {
+     "text": "倒角前必须先选中要倒的边；官方示例用 SelectByID2 空名+坐标选两条 EDGE，第二条 mark=1",
+     "from": "Get_Edge_Chamfer_Distances_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "建草图→拉伸成盒 → 选 `index:0` → `chamfer(2mm)` ⇒ 特征「**倒角1**」（19→20）"
+    },
+    {
+     "text": "FeatureFillet3 之前必须选中一条 EDGE（SelectByID2, append=True, mark = 1）",
+     "from": "Create_Asymmetric_Elliptic_Fillets_Example_VBNET.md",
+     "state": "covered",
+     "evidence_quote": "再选 `index:1` → `fillet(3mm)` ⇒ 特征「**圆角1**」（→21）"
+    },
+    {
+     "text": "An EDGE must be selected with mark 1 before FeatureFillet3",
+     "from": "Create_Curvature_Continuous_Variable_Fillet_Feature_Example_VBNET.md",
+     "state": "covered",
+     "evidence_quote": "再选 `index:1` → `fillet(3mm)` ⇒ 特征「**圆角1**」（→21）"
+    },
+    {
+     "text": "零件 block.sldprt / block20.sldprt 必须存在并已打开",
+     "from": "Create_Asymmetric_Elliptic_Fillets_Example_VBNET.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "官方用 SelectByID2 按点选边、本仓走 IEntity.Select4，机制不同但前置（先选中）已被证据覆盖；AccessSelections 属读数能力，未计入。",
+   "_idx": 18
+  },
+  {
+   "name": "mass_property_read",
+   "level": "verified",
+   "members_found": [
+    "GetType",
+    "Extension",
+    "CreateMassProperty2",
+    "CreateMassProperty",
+    "Mass",
+    "Volume",
+    "SurfaceArea",
+    "CenterOfMass",
+    "Density"
+   ],
+   "examples_used": [
+    "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+    "Get_Mass_Properties_using_MassProperty_Object_Example_VB.md",
+    "Get_Mass_Properties_of_Multibody_Assembly_Component_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "示例前置：先 OpenDoc6 打开一个已存在的文档，再对其 Extension 取 CreateMassProperty2",
+     "from": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "建草图（矩形 40×20）→ 拉伸 10mm → 读质量属性"
+    },
+    {
+     "text": "示例显式设 UseSystemUnits=false（注释 Use document property units）才按文档单位给读数",
+     "from": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "要读指定组件/体的质量属性须先选中该组件并 AddBodies，再读 CenterOfMass/Volume",
+     "from": "Get_Mass_Properties_of_Multibody_Assembly_Component_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "「文档已存在并可读」被 evidence 覆盖；UseSystemUnits 单位开关与 AddBodies（组件级读数）两条官方示例前置在 evidence 里一字未提。",
+   "_idx": 19
+  },
+  {
+   "name": "assembly_read",
+   "level": "verified",
+   "members_found": [
+    "GetComponents",
+    "Name2",
+    "GetPathName",
+    "IsSuppressed",
+    "Visible",
+    "FirstFeature",
+    "GetNextFeature",
+    "GetFirstSubFeature",
+    "GetNextSubFeature",
+    "GetTypeName2",
+    "InterferenceDetectionManager",
+    "TreatSubAssembliesAsComponents",
+    "TreatCoincidenceAsInterference",
+    "Done",
+    "GetInterferenceCount",
+    "GetInterferences",
+    "Volume",
+    "GetComponentCount"
+   ],
+   "examples_used": [
+    "Run_Interference_Detection_Example_CSharp.md",
+    "Run_Interference_Detection_Example_VB.md",
+    "Set_Components_and_Transforms_for_Interference_Detection_Example_CSharp.md",
+    "Activate_Smart_Features_in_an_Assembly_Example_CSharp.md",
+    "Get_Mates_Example_CSharp.md",
+    "Get_Mates_and_Mate_Entities_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "示例前置：必须打开一个装配文档（ActiveDoc 强转 AssemblyDoc）才可取 InterferenceDetectionManager",
+     "from": "Run_Interference_Detection_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "造临时零件（40×20×10 盒）存到 output/_fixtures/ → 建装配 → 同一零件加两次"
+    },
+    {
+     "text": "两例冲突：Run_Interference 先调 ToolsCheckInterference() 打开面板，Set_Components… 直接取 manager",
+     "from": "Run_Interference_Detection_Example_CSharp.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "配合是 MateGroup 的子特征：须先按 GetTypeName()==MateGroup 定位，再下钻其子特征取 Mate2",
+     "from": "Get_Mates_and_Mate_Entities_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "装配文档已打开这条被 evidence 覆盖；MateGroup/子特征下钻这条前置没被提到；ToolsCheckInterference 是否必须，两份官方示例互相矛盾。",
+   "_idx": 19
+  },
+  {
+   "name": "simulation_loads_wiring",
+   "level": "verified",
+   "members_found": [
+    "ICWLoadsAndRestraintsManager.AddRestraint",
+    "ICWLoadsAndRestraintsManager.AddForce",
+    "ICWForce.ForceBeginEdit",
+    "ICWForce.ForceEndEdit",
+    "ICWForce.ForceType",
+    "ICWForce.Unit",
+    "ICWForce.NormalForceOrTorqueValue",
+    "ICWStudy.LoadsAndRestraintsManager",
+    "ISelectionMgr.GetSelectedObject6"
+   ],
+   "examples_used": [
+    "Create_Topology_Study_Example_VBA.txt"
+   ],
+   "preconditions": [
+    {
+     "text": "Add the SOLIDWORKS Simulation as an add-in (Tools > Add-ins > SOLIDWORKS Simulation > OK).",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Add the SOLIDWORKS Simulation type library as a reference (IDE Tools > References).",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Open public_documents\\samples\\Simulation Examples\\tutor1.sldprt.",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用前须先把面选进文档选区，用 GetSelectedObject6 组装 DispArray 传第 2 参",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "covered",
+     "evidence_quote": "★ **走工具真实路径**（`inject`(resolve_study) + `pre_call`(选面) + `derived_args`(补 model)）⇒ 夹具「**固定-1**」· 载荷「**力-1**」· 选区计数 **1/1**"
+    },
+    {
+     "text": "调用前须先取研究对象的 LoadsAndRestraintsManager（示例逐字调用序）",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "covered",
+     "evidence_quote": "`LoadsAndRestraintsManager.Count == 2`"
+    },
+    {
+     "text": "官方示例只演示 AddRestraint/AddPressure，未演示 AddForce ⇒ 法向力前置无从判定",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "两份 recon 索引对 cosworks 成员零命中；该官方 Simulation 示例由实现自身来源块逐字指向，见 D:\\AI\\SW\\_raw\\cworksapi\\。",
+   "_idx": 20
+  },
+  {
+   "name": "simulation_study_create",
+   "level": "verified",
+   "members_found": [
+    "ICWModelDoc.StudyManager",
+    "ICWStudyManager.CreateNewStudy3",
+    "ICWStudyManager.CreateNewStudy2",
+    "ICWStudyManager.CreateNewStudy",
+    "ICWStudyManager.StudyCount",
+    "ICWStudyManager.GetStudy",
+    "ICWStudy.Name",
+    "ICWStudy.CreateMeshForMeshControl",
+    "IModelDoc2.SetMaterialPropertyName2",
+    "IModelDoc2.MaterialIdName"
+   ],
+   "examples_used": [
+    "Create_Topology_Study_Example_VBA.txt",
+    "Get_and_Set_Material_Visual_Properties_Example_VB.md",
+    "Set_Material_Property_Name_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "Add the SOLIDWORKS Simulation as an add-in (Tools > Add-ins > SOLIDWORKS Simulation > OK).",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Add the SOLIDWORKS Simulation type library as a reference (IDE Tools > References).",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Open public_documents\\samples\\Simulation Examples\\tutor1.sldprt.",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "先 GetAddInObject→COSMOSWORKS.ActiveDoc()→StudyManager() 才能 CreateNewStudy3",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CreateNewStudy3 之后须经 StudyManagerObj.GetStudy(1) 取回研究对象（示例调用序）",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "covered",
+     "evidence_quote": "★ **建完回读**名字逐字相等；★ **列出** count 1 且含该名字"
+    },
+    {
+     "text": "1. Open a part.",
+     "from": "Get_and_Set_Material_Visual_Properties_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "2. Open the Immediate window.",
+     "from": "Get_and_Set_Material_Visual_Properties_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "1. Open a part.",
+     "from": "Set_Material_Property_Name_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "2. Open the Immediate window.",
+     "from": "Set_Material_Property_Name_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CreateMeshForMeshControl 在两份索引与官方示例库中均无先例 ⇒ 前置无从判定",
+     "from": "（两份 recon 索引 0 命中）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "材料两条前置来自 sldworks 侧示例（SetMaterialPropertyName2 同形调用），与仿真研究建链是否同源存疑；cosworks 侧索引覆盖为零。",
+   "_idx": 20
+  },
+  {
+   "name": "mesh_create_readback",
+   "level": "verified",
+   "members_found": [
+    "CreateMesh",
+    "CreateMeshForMeshControl",
+    "GetDefaultElementSizeAndTolerance",
+    "Mesh",
+    "ElementCount"
+   ],
+   "examples_used": [],
+   "preconditions": [],
+   "verdict": "cannot_tell",
+   "note": "2839 篇官方示例与两索引对 CreateMesh/CreateMeshForMeshControl/GetDefaultElementSizeAndTolerance 全 0 命中；cosworks CHM 该三页只有签名、无 Example ⇒ 无示例前置可对账。",
+   "_idx": 21
+  },
+  {
+   "name": "analysis_run_readback",
+   "level": "verified",
+   "members_found": [
+    "RunAnalysis",
+    "Results",
+    "GetPlotCount",
+    "GetPlotNames",
+    "ActiveDoc",
+    "StudyManager",
+    "StudyCount",
+    "GetStudy",
+    "ActiveStudy",
+    "LoadsAndRestraintsManager",
+    "Count",
+    "GetLoadsAndRestraints",
+    "Name",
+    "Type",
+    "State",
+    "EntityCount",
+    "AnalysisType",
+    "MeshType",
+    "ConfigurationName",
+    "VersionNumber"
+   ],
+   "examples_used": [
+    "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md",
+    "sldworksapi__Create_Simulation_Gravity_Feature_Example_VB.md"
+   ],
+   "preconditions": [],
+   "verdict": "cannot_tell",
+   "note": "GetPlotCount 唯一命中的示例属 SwMotionStudy(Motion API)、非 ICWResults；RunAnalysis/GetPlotNames/ElementCount 0 命中 ⇒ 同名不同族，不计其前置。",
+   "_idx": 21
+  },
+  {
+   "name": "simulation_load_family_breadth",
+   "level": "verified",
+   "members_found": [
+    "AddPressure",
+    "AddForce",
+    "AddGravity",
+    "AddCentrifugalForce",
+    "AddConvection",
+    "AddHeatFlux",
+    "AddHeatPower",
+    "AddTemperature",
+    "AddRadiation",
+    "AddDistributedMass",
+    "AddRemoteLoad",
+    "AddElasticConnector",
+    "AddRigidConnector",
+    "ICWLoadsAndRestraintsManager.Count",
+    "ICWStudy.LoadsAndRestraintsManager",
+    "ICWModelDoc.StudyManager",
+    "ISldWorks.GetAddInObject",
+    "ISldWorks.LoadAddIn",
+    "IModelDoc2.ClearSelection2",
+    "IBody2.GetFaces"
+   ],
+   "examples_used": [
+    "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt"
+   ],
+   "preconditions": [
+    {
+     "text": "必须先把 SolidWorks Simulation 作为加载项装上（示例前置 1：Tools > Add-ins > SolidWorks Simulation）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "必须把 Simulation 主互操作程序集 SolidWorks.Interop.cosworks.dll 作为引用加入（示例前置 2）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "covered",
+     "evidence_quote": "→ `SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）"
+    },
+    {
+     "text": "需按需修改 solidworks materials.sldmat 路径（示例前置 3；示例先给模型赋材料再加载荷）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "算例必须先由 StudyManager.CreateNewStudy 建出（本示例建 Static_solid 静力算例）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "covered",
+     "evidence_quote": "改成**带时间戳的唯一名**后立刻 pass"
+    },
+    {
+     "text": "必须先取到 Study.LoadsAndRestraintsManager，否则示例报 No loads and restraints manager.",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "covered",
+     "evidence_quote": "`LoadsAndRestraintsManager.Count` ⇒ **3**"
+    },
+    {
+     "text": "第 2 参 DispArray 必须是实体数组 Object()（示例先 GetObjectByPersistReference3 取面再 Dim varArray2 As Object() = {pointer3}）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "第 3 参 RegGeom 传 Nothing（空 Dispatch）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "covered",
+     "evidence_quote": "`RegGeom`/`RefGeom` **不能裸传 `None`**"
+    },
+    {
+     "text": "末尾第 4 参是 ByRef ErrorCode，调用后必须判 errCode <> 0（示例两处都判）",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "covered",
+     "evidence_quote": "末尾 `ByRef ErrorCode` 统一补 `out_i4()`"
+    },
+    {
+     "text": "压力值要经 PressureBeginEdit → 设 Unit/Value → PressureEndEdit(errCode) 提交才真正生效",
+     "from": "_raw/chm_cosworks/06_Analyze_Part_Example_VBNET.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "其余 13 个工具所调 Add*（重力/离心/热载荷/连接件/远程/分布质量）在两份 recon 索引与 C:\\swapi\\examples 里 0 命中",
+     "from": "（两份 recon 索引 + C:\\swapi\\examples，均无官方示例）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "只有 AddPressure 有官方示例（重载+参数形状已对上）；加载项、材料、DispArray 数组形状、压力值提交四项证据未提。",
+   "_idx": 22
+  },
+  {
+   "name": "mesh_size_sanity_gate",
+   "level": "verified",
+   "members_found": [
+    "IPartDoc.GetBodies2",
+    "IBody2.GetBodyBox",
+    "IPartDoc.GetPartBox（仅示例用到，本能力未调）"
+   ],
+   "examples_used": [
+    "Get_Part_Bounding_Box_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "零件文档必须处于打开状态（示例逐字：Preconditions: Part is open.）",
+     "from": "Get_Part_Bounding_Box_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetBodies2 要分别传 swSolidBody 与 swSheetBody 取实体体与曲面体；返回可能为空，示例用 IsEmpty(vBodies) Then Exit Sub 兜底",
+     "from": "Get_Part_Bounding_Box_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方明写包围盒为近似值：返回的框通常更大且非最小框，不可用于计算——本闸门恰用它做 element_size 比较",
+     "from": "Get_Part_Bounding_Box_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "本能力实际调的是 IBody2.GetBodyBox，而它在 C:\\swapi\\examples 里 0 命中，没有对应官方示例",
+     "from": "（C:\\swapi\\examples 无 GetBodyBox 示例）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "该闸门只经 GetBodies2+GetBodyBox 量包围盒；四条 evidence 全是过数与静态门禁，没提零件已打开、GetBodies2 口径或近似值警告。",
+   "_idx": 22
+  },
+  {
+   "name": "feature_readback_criterion",
+   "level": "verified",
+   "members_found": [
+    "FirstFeature",
+    "GetNextFeature",
+    "Name",
+    "GetTypeName2",
+    "EditRebuild3",
+    "Extension",
+    "GetWhatsWrongCount",
+    "GetWhatsWrong"
+   ],
+   "examples_used": [
+    "Get_What's_Wrong_Example_CSharp.md",
+    "Get_Type_of_Instant3D_Feature_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "Preconditions: Model document is active. —— 读 What's Wrong 前须有活动模型文档",
+     "from": "Get_What's_Wrong_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "② 改用 `Extension.GetWhatsWrongCount` ⇒ 取到（0 条错）"
+    },
+    {
+     "text": "Preconditions: 1. Verify that the specified part exists. —— FirstFeature/GetNextFeature 遍历特征树前须先打开零件",
+     "from": "Get_Type_of_Instant3D_Feature_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "③ 过滤从「枚举容器名」改成「`GetTypeName2` 非空」（★ 与 UI 语言无关）"
+    },
+    {
+     "text": "示例第 47–48 行：GetWhatsWrong 只在 GetWhatsWrongCount() > 0 时才调（三个平行 out 数组）",
+     "from": "Get_What's_Wrong_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "EditRebuild3 当作「建特征后回读重建」判据：索引里 7 个示例全是配合/爆炸/水印/工程图语境",
+     "from": "member-to-example-index.md（无相关示例）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "两条活动文档/打开零件前置有逐字证据；三参 GetWhatsWrong 的「count>0 才调」条件 evidence 未提；EditRebuild3 无对口示例。",
+   "_idx": 23
+  },
+  {
+   "name": "modeling_feature_readback_tools",
+   "level": "verified",
+   "members_found": [
+    "GetBodies2",
+    "GetBodyBox",
+    "InsertFeatureShell",
+    "InsertRib",
+    "InsertDome",
+    "InsertCompositeCurve",
+    "EditRebuild3",
+    "GetWhatsWrongCount",
+    "GetTypeName2",
+    "FirstFeature",
+    "GetNextFeature",
+    "Name"
+   ],
+   "examples_used": [
+    "Create_Shell_Feature_Example_CSharp.md",
+    "Create_and_Modify_Dome_Feature_Example_CSharp.md",
+    "Get_Rib_Feature_Data_Example_CSharp.md",
+    "Insert_a_Composite_Curve_Example_CSharp.md",
+    "Get_Part_Bounding_Box_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "shell：须有已打开的模型文档（示例 OpenDoc6 打开 block20.sldprt）才有可抽壳实体",
+     "from": "Create_Shell_Feature_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "t=2 ⇒ 空腔 96×56×18；t=4 ⇒ 92×52×16"
+    },
+    {
+     "text": "shell：InsertFeatureShell 前必须先 SelectByID2 选一个要移除的面（示例用 mark=1）",
+     "from": "Create_Shell_Feature_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "dome：须有已打开的零件文档（示例 OpenDoc6 打开 box.sldprt）",
+     "from": "Create_and_Modify_Dome_Feature_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "边界框逐分量变了 [20,60,100]→[34.2222,60,100]"
+    },
+    {
+     "text": "dome：InsertDome 前必须先 SelectByID2 选面且 mark=1（示例第 74 行）",
+     "from": "Create_and_Modify_Dome_Feature_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "rib：Preconditions 1. Verify that the specified model document exists.（示例打开 block20.sldprt）",
+     "from": "Get_Rib_Feature_Data_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "rib：官方示例先 InsertFeatureShell 抽壳、再建基准面，才 InsertRib（Creates Shell1, Plane1, and Rib1）",
+     "from": "Get_Rib_Feature_Data_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "rib：InsertRib 前先 SelectByID2 选中 Sketch2，且轮廓为 CreateLine ×3 的折线而非一条直线",
+     "from": "Get_Rib_Feature_Data_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "复合曲线：Preconditions 1. Verify that the part document template exists.（NewDocument Part.prtdot）",
+     "from": "Insert_a_Composite_Curve_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "复合曲线：InsertCompositeCurve 前必须 SelectByID2 以 mark=1 选两条草图（示例第 90–91 行）",
+     "from": "Insert_a_Composite_Curve_Example_CSharp.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "包围盒：Preconditions: Part is open.（读包围盒前零件须已打开）",
+     "from": "Get_Part_Bounding_Box_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "边界框逐分量变了 [20,60,100]→[34.2222,60,100]"
+    },
+    {
+     "text": "本工具实际调的 GetBodyBox 在两份索引与示例库里均无示例，其前置无从判定",
+     "from": "member-to-example-index.md + b3-4-merged.json（无示例）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "shell/dome/包围盒的「先有文档」有逐字证据；选面 mark=1、筋的抽壳+折线+选草图、模板前置全未提；复合曲线前置 evidence 只说「前置成立」未指名。",
+   "_idx": 23
+  },
+  {
+   "name": "config_and_export",
+   "level": "verified",
+   "members_found": [
+    "GetConfigurationNames",
+    "ConfigurationManager",
+    "ActiveConfiguration",
+    "Name",
+    "ShowConfiguration2",
+    "EditRebuild3",
+    "AddConfiguration3",
+    "GetUnits",
+    "Parameter",
+    "GetSystemValue3",
+    "SetSystemValue3",
+    "Extension.CustomPropertyManager",
+    "Get6",
+    "Add3",
+    "Extension.SaveAs3",
+    "ClearSelection2",
+    "GetPathName",
+    "GetType",
+    "ExportToDWG2",
+    "SaveBMP",
+    "SetUserPreferenceIntegerValue",
+    "Save3"
+   ],
+   "examples_used": [
+    "Save_Model_as_Bitmap_Example_VB.md",
+    "Export_Part_To_DWG_Example_VB.md",
+    "Add_and_Get_Custom_Properties_Example_VB.md",
+    "Get_Custom_Properties_for_Configuration_Example_VB.md",
+    "Add_Derived_Configurations_Example_VB.md",
+    "Are_the_Assembly_Configurations_Loaded_Example_VB.md",
+    "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_VB.md",
+    "Change_Dimension_Example_VB.md",
+    "Change_Dimensions_of_Gear_Mate_Example_VB.md",
+    "Save_Configuration_Data_Example_CSharp.md",
+    "Add_and_Edit_Distance_Mate_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "打开 cstick.sldprt 后再调 SaveBMP；官方示例存的是「当前视图」（宽高 0,0 = 当前窗口尺寸）。",
+     "from": "Save_Model_as_Bitmap_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "须先把 2012-sm.sldprt 拷到 c:\\temp；示例把 GetPathName 结果当 ExportToDWG2 入参（文档须已存盘）。",
+     "from": "Export_Part_To_DWG_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Open a part document.（示例经 GetActiveConfiguration 取 CustomPropertyManager）",
+     "from": "Get_Custom_Properties_for_Configuration_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "须先在特征树选中 Weldment 特征才取其 CustomPropertyManager —— 与本条 Extension 级取法不同族。",
+     "from": "Add_and_Get_Custom_Properties_Example_VB.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Open a part or assembly.（配置族读写的最小前置）",
+     "from": "Add_Derived_Configurations_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "装配文档须存在；ShowConfiguration2 是「激活并加载」配置，激活后才谈 IsLoaded/IsDirty。",
+     "from": "Are_the_Assembly_Configurations_Loaded_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "指定的装配文档须存在；AddConfiguration3 第 4 参用 swConfigurationOptions2_e 位掩码。",
+     "from": "Add_Configuration_and_Promote_Child_Components_in_BOM_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "改尺寸前须 SelectByID2 选中特征，再 GetSelectedObject6(1,-1).Parameter(\"D3\") 取尺寸对象。",
+     "from": "Change_Dimension_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "NOTE: Most of the SOLIDWORKS API functions operate in meters… 传 2.0 而模型是毫米则显示 2000.0。",
+     "from": "Change_Dimension_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "多配置模型须先打开并逐个 ShowConfiguration2；示例里 Save3 那行被注释掉了。",
+     "from": "Save_Configuration_Data_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "SaveAs3 无导出格式示例：三个示例都走 3 参重载存 .sldprt，其前置属配合例、与导出无关。",
+     "from": "Add_and_Edit_Distance_Mate_Example_VB.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 仅三行（脚本名 + 10/12 + 8/8 + 静态门禁），无一条提到示例前置；SaveAs3 导出侧官方无示例。",
+   "_idx": 24
+  },
+  {
+   "name": "render_materials_and_appearance",
+   "level": "verified",
+   "members_found": [
+    "GetRenderMaterialsCount2",
+    "GetRenderMaterials2",
+    "UpdateRenderMaterialsInSceneGraph",
+    "Ambient",
+    "Diffuse",
+    "Specular",
+    "Roughness",
+    "Transparency",
+    "Emission",
+    "ActiveView"
+   ],
+   "examples_used": [
+    "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+    "Get_Appearance_Filename_Example_VB.md",
+    "Add_Spotlight_and_Get_Light_Feature_Example_VB.md",
+    "Get_and_Set_Model_View_HLR_Quality_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "Specified model exists. + Specified appearance exists.（指定的 .p2m 材质文件须存在）",
+     "from": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "列外观前须先 CreateDisplayState + ForceRebuild3，再 CreateRenderMaterial→选面 AddEntity→AddDisplayState…",
+     "from": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "模型文档与材质文件都须存在；GetRenderMaterialsCount2 第 2 参传 displayStateNames，并先查 ViewDisplayRealView。",
+     "from": "Get_Appearance_Filename_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Open a part or assembly document.（ActiveView 只有在已有打开文档时才返回 ModelView）",
+     "from": "Get_and_Set_Model_View_HLR_Quality_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "UpdateRenderMaterialsInSceneGraph 在 2839 个示例里零命中、recon by_member 也无此键 ⇒ 无官方示例。",
+     "from": "(C:\\swapi\\examples 全目录 + specs/203-bunny-sideline-batches/recon/b3-4-merged.json)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 只有两行（脚本名 + 4/4 + 工具清单）；「须先建材质并赋到面」这条外观前置一字未提。",
+   "_idx": 24
+  },
+  {
+   "name": "selection_helpers",
+   "level": "verified",
+   "members_found": [
+    "IModelDoc2.SelectionManager",
+    "ISelectionMgr.GetSelectedObjectCount2",
+    "ISelectionMgr.GetSelectedObject6",
+    "ISelectionMgr.GetSelectionPoint2",
+    "ISelectionMgr.GetSelectionPoint",
+    "IModelDoc2.ClearSelection2",
+    "IEntity.Select4",
+    "IPartDoc.GetBodies2",
+    "IBody2.GetEdges",
+    "IBody2.GetFaces",
+    "IBody2.GetVertices",
+    "IBody2.GetBodyBox",
+    "IMathUtility.CenterOfMass"
+   ],
+   "examples_used": [
+    "Access_and_Release_Access_to_Edges_Example_VB.md",
+    "Create_Library_Feature_With_References_Example_VB.md",
+    "Select_Bodies_Example_VB.md",
+    "Create_Drag_Arrow_Manipulator_Example_VB.md",
+    "Get_Selection_Specification_Example_VB.md",
+    "Add_Attribute_to_Feature_and_Include_In_Library_Feature_Example_VB.md",
+    "Get_Maximum_Edge_and_Vertex_Gaps_Example_VB.md",
+    "Check_Edges_for_Faults_Example_VB.md",
+    "Evaluate_Points_on_Surface_Example_VB.md",
+    "Get_Mass_Properties_of_Multibody_Assembly_Component_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "SelectByID2 选面建抽壳后，示例须 ActivateDoc2 并取 ActiveDoc 才用 SelectionManager",
+     "from": "Access_and_Release_Access_to_Edges_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "读特征数据的边前须先 AccessSelections(swModel, Nothing)，Select4 作用在其返回的实体上",
+     "from": "Access_and_Release_Access_to_Edges_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "读实体前须 ClearSelection2(True) 清空选区（示例中用于释放选择访问）",
+     "from": "Access_and_Release_Access_to_Edges_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetSelectionPoint2 前置：Open a part or assembly and select a face（须先选中一个面）",
+     "from": "Create_Drag_Arrow_Manipulator_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "`GetSelectionPoint2` 对**面**有效（返回坐标）而对**顶点**的 6 种 (Index, Mark) 组合**全部回 None**"
+    },
+    {
+     "text": "GetSelectionPoint 前置：Open a part. / Select a face.（须先选中一个面）",
+     "from": "Evaluate_Points_on_Surface_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "没选中 ⇒ ok=False + 明确原因；选中面 ⇒ ok=True + point"
+    },
+    {
+     "text": "GetSelectedObjectCount2 前置：Verify that the specified part template and library feature exist.",
+     "from": "Create_Library_Feature_With_References_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetBodies2 前置：Open a part or assembly.（须先打开零件或装配）",
+     "from": "Select_Bodies_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetFaces 前置：先开新零件并拉伸；NOTE: The cut-extrude feature must be named Cut-Extrude1.",
+     "from": "Add_Attribute_to_Feature_and_Include_In_Library_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetEdges 前置：Open a part document.",
+     "from": "Check_Edges_for_Faults_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetVertices 前置：Open public_documents\\samples\\tutorial\\assemblymates\\head.sldprt",
+     "from": "Get_Maximum_Edge_and_Vertex_Gaps_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetSelectedObject6 前置：打开含两个特征的模型，并在特征树里选中它们",
+     "from": "Get_Selection_Specification_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CenterOfMass 前置：指定多体零件文档与装配模板须存在",
+     "from": "Get_Mass_Properties_of_Multibody_Assembly_Component_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetBodyBox 在 member-to-example-index.md 与 b3-4-merged.json 均无官方示例条目",
+     "from": "(无示例：两个索引都查不到 GetBodyBox)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "13 工具共用选择族成员。evidence 只覆盖 GetSelectionPoint2/GetSelectionPoint 的「须选中面」；文档存在、AccessSelections、ClearSelection2、特征树选中、特征命名等前置均未提；GetBodyBox 无官方示例。",
+   "_idx": 25
+  },
+  {
+   "name": "declarative_hole_creation",
+   "level": "verified",
+   "members_found": [
+    "IModelDocExtension.SelectByID2",
+    "ISketchManager.InsertSketch",
+    "ISketchManager.CreateCircleByRadius",
+    "IFeatureManager.FeatureCut4",
+    "IFeatureManager.InsertFeatureChamfer",
+    "IModelDoc2.ClearSelection2",
+    "IEntity.Select4",
+    "IPartDoc.GetBodies2",
+    "IBody2.GetEdges",
+    "IBody2.GetFaces",
+    "IBody2.GetVertices",
+    "IEdge.GetCurve",
+    "ICurve.IsCircle",
+    "ICurve.CircleParams",
+    "ISelectionMgr.GetSelectionPoint2",
+    "ISelectionMgr.GetSelectionPoint",
+    "ISelectionMgr.GetSelectedObjectCount2"
+   ],
+   "examples_used": [
+    "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_CSharp.md",
+    "Get_Edge_Chamfer_Distances_Example_VB.md",
+    "Get_Entities_Attached_To_Cosmetic_Thread_Example_VB.md",
+    "Select_Bodies_Example_VB.md",
+    "Check_Edges_for_Faults_Example_VB.md",
+    "Add_Attribute_to_Feature_and_Include_In_Library_Feature_Example_VB.md",
+    "Access_and_Release_Access_to_Edges_Example_VB.md",
+    "Create_Drag_Arrow_Manipulator_Example_VB.md",
+    "Insert_and_Resize_Sketch_Slot_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "FeatureCut4 前置：须先 SelectByRay 选中一个面 → CreateCircle 画圆，调用后须 ClearSelection2(true)",
+     "from": "Create_Cut_Extrude_in_Sheet_Metal_Part_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "InsertFeatureChamfer 前置：须先用 SelectByID2 空名+坐标选中两条 EDGE（mark 0/1）再调用",
+     "from": "Get_Edge_Chamfer_Distances_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetCurve/CircleParams 前置：先打开含装饰螺纹的模型工程图并选中一个视图",
+     "from": "Get_Entities_Attached_To_Cosmetic_Thread_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetBodies2 / GetEdges 前置：Open a part document. / Open a part or assembly.",
+     "from": "Select_Bodies_Example_VB.md；Check_Edges_for_Faults_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "**5 个孔型全部在全新文档里建成**"
+    },
+    {
+     "text": "GetFaces 前置：NOTE: The cut-extrude feature must be named Cut-Extrude1.",
+     "from": "Add_Attribute_to_Feature_and_Include_In_Library_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "SelectByID2 前置：\"Front Plane\" must be selected before InsertSketch(true)",
+     "from": "Insert_and_Resize_Sketch_Slot_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CreateSketchSlot 前置：the sketch must still be active when the slot's LengthType / Length 设定",
+     "from": "Insert_and_Resize_Sketch_Slot_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetSelectionPoint2 前置：Open a part or assembly and select a face（选区须是面）",
+     "from": "Create_Drag_Arrow_Manipulator_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Select4/ClearSelection2 前置：取边前须 AccessSelections(swModel, Nothing)，实体须来自活动文档",
+     "from": "Access_and_Release_Access_to_Edges_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CreateCircleByRadius 在 member-to-example-index.md 与 b3-4-merged.json 均无官方示例条目",
+     "from": "(无示例：两个索引都查不到 CreateCircleByRadius)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "5 个孔工具链为 SelectByID2 选面 → InsertSketch → CreateCircleByRadius → FeatureCut4。示例前置（先选面/先选两边/AccessSelections/草图须活动）evidence 均未提；CreateCircleByRadius 无官方示例。",
+   "_idx": 25
+  },
+  {
+   "name": "weldment_cut_list",
+   "level": "verified",
+   "members_found": [
+    "InsertWeldmentCutList2",
+    "GetBodies2",
+    "GetBodyBox",
+    "FeatureManager",
+    "EditRebuild3",
+    "FirstFeature",
+    "GetNextFeature",
+    "GetFirstSubFeature",
+    "GetNextSubFeature",
+    "GetTypeName2",
+    "Name",
+    "GetSpecificFeature2",
+    "UpdateCutList",
+    "GetBodyCount",
+    "CustomPropertyManager",
+    "Add3",
+    "Get6",
+    "GetNames",
+    "GetCutListItems",
+    "ConfigurationManager",
+    "ActiveConfiguration"
+   ],
+   "examples_used": [
+    "Insert_Weldment_Cut_List2_Example_CSharp.md",
+    "Insert_Weldment_Cut_List2_Example_VB.md",
+    "Get_Custom_Property_Values_On_Cut_List_Folders_Example_VB.md",
+    "Get_Solid_Bodies_from_Cut-list_Folders_and_Get_Custom_Properties_Example_VB.md",
+    "Get_Custom_Properties_for_Cut-list_Item_Example_VB.md",
+    "Save_Solid_Body_to_File_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "必须先打开一个已含焊缝/结构构件的焊件零件（bracket.sldprt / weldment_box3.sldprt）",
+     "from": "Insert_Weldment_Cut_List2_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "**焊件切割清单那条链**（先建结构构件、再走切割清单）"
+    },
+    {
+     "text": "系统选项 FeatureManager > Solid Bodies > Show 必须打开，树里才有 Solid Bodies 文件夹",
+     "from": "Insert_Weldment_Cut_List2_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "文档属性 > 焊件 > “用 Description 属性值重命名切割清单文件夹”须设为 OK",
+     "from": "Get_Custom_Property_Values_On_Cut_List_Folders_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "读文件夹属性前必须先在树上对 Cut list 右键 Update（更新切割清单）",
+     "from": "Get_Custom_Property_Values_On_Cut_List_Folders_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "`update_cut_list` 报 \"切割清单项目1\"（type=CutListFolder, body_count=1）"
+    },
+    {
+     "text": "官方示例调用序：GetSpecificFeature2→BodyFolder 先 SetAutomaticCutList(True) 再 UpdateCutList()",
+     "from": "Save_Solid_Body_to_File_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CutListFolder 的 GetBodyCount 为 0 时该文件夹不在树中显示，示例跳过它",
+     "from": "Get_Solid_Bodies_from_Cut-list_Folders_and_Get_Custom_Properties_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "（type=CutListFolder, body_count=1）"
+    },
+    {
+     "text": "遍历须按 GetFirstSubFeature/GetNextSubFeature 递归并匹配类型名 CutListFolder，且 GetSpecificFeature2 非空",
+     "from": "Get_Custom_Property_Values_On_Cut_List_Folders_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "`CutListFolder` = **['切割清单项目1', '切割清单项目1']**"
+    },
+    {
+     "text": "GetCutListItems（Configuration 上的清单项枚举）在官方示例语料中零命中，前置无从比对",
+     "from": "(无官方示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "官方示例的 Solid Bodies>Show、Description 重命名、SetAutomaticCutList 三项前置，evidence 均未提及。",
+   "_idx": 26
+  },
+  {
+   "name": "simulation_solver_options",
+   "level": "verified",
+   "members_found": [
+    "StaticStudyOptions",
+    "FrequencyStudyOptions",
+    "BucklingStudyOptions",
+    "ComputeFreeBodyForce2",
+    "ContactPenaltyStiffnessScaleFactor",
+    "DefinedReferencePressure",
+    "CheckDecouple",
+    "BucklingModes",
+    "ExtractPositiveBucklingFactorsOnly",
+    "GetAddInObject",
+    "LoadAddIn",
+    "CosmosWorks",
+    "ActiveDoc",
+    "StudyManager",
+    "StudyCount",
+    "GetStudy",
+    "Name"
+   ],
+   "examples_used": [
+    "Load_and_Unload_Add-in_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "LoadAddIn 前置：加载项 DLL 必须先编译存在且按完整路径传入",
+     "from": "Load_and_Unload_Add-in_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "ICWStudy.StaticStudyOptions/Frequency/Buckling 及各 setter 在官方示例语料零命中，无前置可比对",
+     "from": "(无官方示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "CosmosWorks 族无任何官方示例；唯一相关示例是通用加载项的 Load_and_Unload_Add-in，其 DLL 存在性前置 evidence 未提。",
+   "_idx": 26
+  },
+  {
+   "name": "topology_constraints_and_controls",
+   "level": "verified",
+   "members_found": [
+    "TopologyStudyManager",
+    "TopologyStudyOptions",
+    "BeginEdit",
+    "EndEdit",
+    "CreateGoal",
+    "MinimizeMaximumDisplacementGoal",
+    "GetMassConstraint",
+    "GetStressConstraint",
+    "GetFactorOfSafetyConstraint",
+    "GetPreservedRegionControl",
+    "GetThicknessControl",
+    "GetDemoldControl",
+    "GetSymmetryControl",
+    "CreateMassConstraint",
+    "CreateStressConstraint",
+    "CreateFactorOfSafetyConstraint",
+    "CreatePreservedRegionControl",
+    "CreateDemoldControl",
+    "CreateSymmetryControl",
+    "CreateThicknessControl",
+    "RemoveConstraint",
+    "SetMassPreference",
+    "SetValue",
+    "SetComparator",
+    "SelectSymmetryType",
+    "SelectDemoldDirection",
+    "SetIncludeRegionDepth2",
+    "SetIncludeMinMemberThickness2",
+    "SetMinimumMemberThickness",
+    "SetIncludeMaxMemberThickness2",
+    "SetMaxMemberThickness"
+   ],
+   "examples_used": [
+    "Create_Topology_Study_Example_VBA.txt"
+   ],
+   "preconditions": [
+    {
+     "text": "须先把 SOLIDWORKS Simulation 作为加载项启用（Tools > Add-ins），否则 GetAddInObject 返回空",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "须在 IDE 里添加 SOLIDWORKS Simulation 类型库引用",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "须打开一个零件（示例用 tutor1.sldprt）；拓扑优化只对单实体零件做",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "须先有以类型 13 建出的拓扑研究，否则 TopologyStudyManager 为空",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方每次改设置都套 BeginEdit/EndEdit（管理器与约束/控制各一对）",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Create* 之后须先 GetName 拿真实名，再 Get<Kind>(name,Err) 回取才可编辑",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CreateGoal 后须在目标对象上 SetComponent/SetVertices（须先选顶点）再两层 EndEdit",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "质量约束须已存在才能 GetMassConstraint（由 CreateGoal 带出）；官方第一次就是取而非建",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "建 FOS 前须 RemoveConstraint(\"Stress Constraint 1\")——FOS 与应力约束互斥",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "保留区：须先选中面，再 SelectFaces(DispArray)",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "脱模控制：须先选面/边/基准面，再 SelectPlaneForDirection 或 SelectEdgeForPullDirection",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "对称控制：须先选对称面，再 SelectFirst/Second/ThirdSymmetryPlane",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "厚度控制：须先 SetIncludeMinMemberThickness / SetIncludeMaxMemberThickness2 再设数值",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "官方拓扑示例全文 881 行只此一份，13 条前置全来自它；evidence 仅一句「8 项过 7」+计数对照，一条都没写到。",
+   "_idx": 27
+  },
+  {
+   "name": "topology_readback",
+   "level": "verified",
+   "members_found": [
+    "StudyManager",
+    "StudyCount",
+    "GetStudy",
+    "Name",
+    "AnalysisType",
+    "CreateNewStudy3",
+    "CreateNewStudy2",
+    "DeleteStudy",
+    "TopologyStudyManager",
+    "TopologyStudyOptions",
+    "GetMassConstraint",
+    "GetStressConstraint",
+    "GetFactorOfSafetyConstraint",
+    "GetDisplacementConstraint",
+    "GetFrequencyConstraint",
+    "GetPreservedRegionControl",
+    "GetThicknessControl",
+    "GetDemoldControl",
+    "GetSymmetryControl",
+    "Results",
+    "GetPlotCount",
+    "GetPlotNames",
+    "GetMaximumAvailableSteps",
+    "MeshAndRun",
+    "CreateMesh",
+    "RunAnalysis"
+   ],
+   "examples_used": [
+    "Create_Topology_Study_Example_VBA.txt",
+    "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md（已排除：讲 Motion 非拓扑）"
+   ],
+   "preconditions": [
+    {
+     "text": "须先把 SOLIDWORKS Simulation 作为加载项启用（Tools > Add-ins），否则拿不到 CWAddinCallBack",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "须在 IDE 里添加 SOLIDWORKS Simulation 类型库引用",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "入口链：GetAddInObject(\"CosmosWorks.CosmosWorks\")→COSMOSWORKS.ActiveDoc→StudyManager→GetStudy(n)",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "同名研究须先 DeleteStudy 再 CreateNewStudy3（官方逐字这两行连着写）",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CreateNewStudy3 的研究类型须传 13（拓扑静态）",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方调用序：夹具 AddRestraint 与载荷 AddPressure 都在目标与约束之前",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "读约束/控制须先取到 TopologyStudyManager；非拓扑类型研究它为 None",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "covered",
+     "evidence_quote": "`manager_report` / `options_report` ✓（`CDispatch`）"
+    },
+    {
+     "text": "求解前须先给实体赋材料（示例走 SolidManager.SetFavLibraryMaterialToSelectedEntities）",
+     "from": "Create_Topology_Study_Example_VBA.txt",
+     "state": "covered",
+     "evidence_quote": "`material` = `AISI 1020` ✓"
+    },
+    {
+     "text": "跑网格/求解与读结果（CreateMesh→RunAnalysis、Results.GetPlotCount/GetPlotNames/GetMaximumAvailableSteps）",
+     "from": "member-to-example-index.md 与 b3-4-merged.json 均无拓扑示例（GetPlotCount 只命中 Motion 示例，已排除）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "2 条 covered 靠逐字片段；加载项/类型库/DeleteStudy/类型 13 等前置 evidence 均未提；求解与读结果无相关示例。",
+   "_idx": 27
+  },
+  {
+   "name": "costing_readback",
+   "level": "verified",
+   "members_found": [
+    "CostingModel",
+    "CostingDefaults",
+    "GetBodyCount",
+    "GetBodies",
+    "GetCostAnalysis",
+    "GetCostingMethod",
+    "GetTemplatePathnames",
+    "GetTemplateName",
+    "CostingTemplateName",
+    "CurrencyCode",
+    "CurrencyName",
+    "CurrencySeparator",
+    "GetMaterialCost",
+    "GetManufacturingCost",
+    "GetSetupCost",
+    "GetTotalCostToCharge",
+    "GetTotalCostToManufacture",
+    "LotSize",
+    "TotalQuantity",
+    "MarkUpType",
+    "MarkUpPercent",
+    "LengthUnit",
+    "MassUnit",
+    "UnitSystem",
+    "CostingType",
+    "Name",
+    "GetName",
+    "GetBodyType",
+    "BodyStatus",
+    "GetSWBody"
+   ],
+   "examples_used": [
+    "Create_Machining_Costing_Analyses_Example_CSharp.md",
+    "Create_Sheet_Metal_Costing_Analyses_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方前置1：须先打开示例指定的 machined_part.sldprt（经 swApp.ActiveDoc）",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方前置2：须先在「工具>选项>系统选项>文件位置」确认 Costing 模板存在",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方前置3：须 Add a reference to SolidWorks.Interop.sldcostingapi.dll",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用序前置：GetCostingManager() 之后官方立即 WaitForUIUpdate() 才继续",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CostingModel 须先转成 CostPart，才拿得到 GetBodyCount/GetBodies/GetCostAnalysis",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetTemplatePathnames 入参须是 swcCostingType_e（Machining/Common/SheetMetal）枚举",
+     "from": "Create_Sheet_Metal_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetCostAnalysis 读得到的前提是实体已 Analysed；未分析官方走 CreateCostAnalysis 分支",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetBodyCount() > 0 才有实体可列，否则官方示例打印 No bodies 后退出",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CostingDefaults 上的 GetTemplateName：两个索引里都找不到任何 Costing 示例覆盖",
+     "from": "b3-4-merged.json",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "证据只有一句「5/6 · 四个读数真的读到数据」，模板位置、CostPart 转换、BodyStatus 已分析等示例前置一条未记。",
+   "_idx": 28
+  },
+  {
+   "name": "render_material_library",
+   "level": "verified",
+   "members_found": [
+    "Extension",
+    "CreateRenderMaterial",
+    "FileName",
+    "Ambient",
+    "Diffuse",
+    "Specular",
+    "Roughness",
+    "Transparency",
+    "Emission",
+    "AddEntity",
+    "AddDisplayStateSpecificRenderMaterial",
+    "UpdateRenderMaterialsInSceneGraph",
+    "GetRenderMaterialsCount2",
+    "GetRenderMaterials2",
+    "DeleteRenderMaterial",
+    "GetMaterialIds",
+    "GetLinkedDisplayStates",
+    "CreateDisplayState",
+    "GetDisplayStates"
+   ],
+   "examples_used": [
+    "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+    "Get_Appearance_Filename_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方前置1：指定的模型文档必须已存在（示例用 OpenDoc6 打开后取 ActiveDoc）",
+     "from": "Get_Appearance_Filename_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方前置2：指定的 .p2m 材质文件必须已存在",
+     "from": "Get_Appearance_Filename_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "`RenderMaterialSpec(file_name=<真实 .p2m>)`"
+    },
+    {
+     "text": "AddEntity 前必须先 SelectByID2 选一个面并 GetSelectedObject6(1,-1) 取出该实体",
+     "from": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Add 之前必须先给活动配置 CreateDisplayState 建显示状态，并传 GetDisplayStates 的名字数组",
+     "from": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "次序：CreateRenderMaterial → AddEntity → AddDisplayStateSpecificRenderMaterial",
+     "from": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "`create` ok · `add_entity` ok · `add_render_material` ok"
+    },
+    {
+     "text": "读 GetMaterialIds / FileName 的前提是 GetRenderMaterialsCount2 > 0，否则走 else 分支",
+     "from": "Get_Appearance_Filename_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "设 `FileName = '<真实 .p2m>'` 之后：`GetMaterialIds` 回 `id1=6`、`GetRenderMaterialsCount2` 回 **2**"
+    },
+    {
+     "text": "示例正文另有一句 Verify that RealView Graphics is set（读 ViewDisplayRealView）",
+     "from": "Get_Appearance_Filename_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "covered 的是 .p2m 绑定与 create→add_entity→add 次序；未提「先选面再 AddEntity」与「先建显示状态/传真实名字数组」。",
+   "_idx": 28
+  },
+  {
+   "name": "mold_analysis",
+   "level": "verified",
+   "members_found": [
+    "FeatureManager",
+    "MoldDraftAnalysis",
+    "MoldUndercutDetect2"
+   ],
+   "examples_used": [],
+   "preconditions": [
+    {
+     "text": "无法从官方示例确定前置：两个索引与 C:\\swapi\\examples 全树都没有用 MoldDraftAnalysis 的示例",
+     "from": "（无相关示例：member-to-example-index.md 与 b3-4-merged.json 的 by_member 均无该成员）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "无法从官方示例确定前置：没有任何示例用 MoldUndercutDetect2（旧 6 参 MoldUndercutDetect 也没有）",
+     "from": "（无相关示例：grep C:\\swapi\\examples 的 Mold* 只命中分型面/型腔族，非本条能力）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "cannot_tell",
+   "note": "成员读自 scripts/sw_mold.py。MoldDraftAnalysis 在 IModelDoc2，底切走后继 IFeatureManager.MoldUndercutDetect2。",
+   "_idx": 29
+  },
+  {
+   "name": "preview_and_review_report",
+   "level": "verified",
+   "members_found": [
+    "ShowNamedView2",
+    "ViewZoomtofit2",
+    "ActiveView",
+    "GraphicsRedraw",
+    "SaveBMP",
+    "FirstFeature",
+    "GetNextFeature",
+    "GetTypeName2",
+    "Name",
+    "GetTitle",
+    "GetPathName",
+    "GetType",
+    "ForceRebuild3",
+    "ClearSelection2",
+    "GetSelectedObjectCount2",
+    "ActivateDoc3"
+   ],
+   "examples_used": [
+    "Change_to_Isometric_and_Zoom_to_Fit_View_Mode_Example_VB.md",
+    "Show_Named_View_Example_VB.md",
+    "Roll_Model_View_Example_VB.md",
+    "Get_Error_Codes_for_Features_Example_VB.md",
+    "Get_Type_of_Instant3D_Feature_Example_CSharp.md",
+    "Save_Model_as_Bitmap_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "「Preconditions: Model document is open.」—— ShowNamedView2/ViewZoomtofit2 前须有已打开的模型文档",
+     "from": "Change_to_Isometric_and_Zoom_to_Fit_View_Mode_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例注释逐字：单调 ShowNamedView2「model is zoomed out a bit further」，须紧跟 ViewZoomtofit2 才与 UI 一致",
+     "from": "Change_to_Isometric_and_Zoom_to_Fit_View_Mode_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "「Preconditions: Open a part or assembly.」—— 取 ActiveView 并用其成员前须已打开零件或装配",
+     "from": "Roll_Model_View_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "「Preconditions: 1. Open a part.」；遍历须由 FirstFeature 起、GetNextFeature 回 Nothing 收尾",
+     "from": "Get_Error_Codes_for_Features_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "「Preconditions: 1. Verify that the specified part exists.」；遍历到 null 为止",
+     "from": "Get_Type_of_Instant3D_Feature_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "「Preconditions: 1. Open: …cstick.sldprt 2. Run macro.」—— SaveBMP 前须有已打开文档",
+     "from": "Save_Model_as_Bitmap_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "证据只有一行 PASS 读数（ok=true / 20 个特征 / 4 个非空 BMP / ActiveView 报 <unknown>），六条官方前置一条都没提到。",
+   "_idx": 29
+  },
+  {
+   "name": "motion_validation_and_preconditions",
+   "level": "verified",
+   "members_found": [
+    "GetMotionStudyManager",
+    "GetMotionStudyCount",
+    "GetMotionStudyNames",
+    "GetMotionStudy",
+    "StudyType",
+    "GetDuration",
+    "GetMotionFeaturesCount",
+    "GetMotionFeatures",
+    "GetResults",
+    "IsOutOfDate",
+    "IsActive",
+    "IsPlaying",
+    "GetNumOfExternalMotors",
+    "GetNumOfExternalForces",
+    "GetTypeName2",
+    "GetTypeName",
+    "GetType",
+    "Name",
+    "pythoncom.LoadTypeLib+gencache.EnsureModule（swmotionstudy.tlb）"
+   ],
+   "examples_used": [
+    "Get_Motion_Study_Example_VB.md",
+    "Add_Damper_to_Motion_Study_Example_VB.md",
+    "sldworksapi__Create_Motion_Studies_Example_VB.md",
+    "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md",
+    "swmotionstudyapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "Open a model that has a Physical Simulation motion study named PhysSim",
+     "from": "Get_Motion_Study_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "load the SOLIDWORKS Motion Study add-in (Tools > Add-Ins > SOLIDWORKS Motion)",
+     "from": "Get_Motion_Study_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "add a reference to the SolidWorks MotionStudy type library",
+     "from": "Get_Motion_Study_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "MotionManager 选项卡可见（View > MotionManager）",
+     "from": "Add_Damper_to_Motion_Study_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetMotionStudyManager() 返回 Nothing 即 End（必须先拿到 manager）",
+     "from": "sldworksapi__Create_Motion_Studies_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "算例不是活动态时要先 Activate",
+     "from": "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetResults 第 1 参须与 StudyType 对应（示例传 4 取 COSMOSMotion 槽位）",
+     "from": "sldworksapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "先 Calculate 并等 IsPlaying 变 False，再 GetResults / IsOutOfDate",
+     "from": "Get_Motion_Study_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Motion Study 1 存在且 Type of Study 设为 Motion Analysis",
+     "from": "swmotionstudyapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 仅 1 句、不含任何前置文字；tlb 只出现在 limitations，故 9 项全 not_covered。",
+   "_idx": 30
+  },
+  {
+   "name": "drawing_views_and_summary",
+   "level": "verified",
+   "members_found": [
+    "GetType",
+    "GetSheetCount",
+    "GetSheetNames",
+    "GetCurrentSheet",
+    "GetName",
+    "GetProperties2",
+    "GetSheetFormatName",
+    "GetFirstView",
+    "GetNextView",
+    "Type",
+    "GetName2"
+   ],
+   "examples_used": [
+    "Activate_Each_View_on_Current_Sheet_Example_VB.md",
+    "Get_Solid-fill_Hatch_Information_Example_VB6.md",
+    "Get_Names_of_Annotations_Example_VB.md",
+    "Set_Drawing_Sheet_Properties_Example_VB.md",
+    "Get_Sheet_Numbers_and_Names_Example_VB.md",
+    "Get_Loaded_Sheets_Example_CSharp.md",
+    "Custom_Check_Document_Example_VB.md",
+    "Print_Drawing_Document_to_File_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "Open a drawing with one or more drawing views.",
+     "from": "Activate_Each_View_on_Current_Sheet_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "`bolt-assembly.slddrw` ⇒ `list_views` **5 个视图**"
+    },
+    {
+     "text": "First view is the current drawing sheet；遍历前先 GetNextView 一次",
+     "from": "Get_Solid-fill_Hatch_Information_Example_VB6.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Create a new drawing document.（GetProperties2 读的是当前图纸页）",
+     "from": "Set_Drawing_Sheet_Properties_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "`current_sheet_info` 真机回 `paper_size` / `scale_num` / `scale_den` / `first_angle` / `height_mm`"
+    },
+    {
+     "text": "Open a drawing that has multiple sheets.",
+     "from": "Get_Sheet_Numbers_and_Names_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "要先 ActivateSheet 再 GetCurrentSheet（读指定图纸页前必须先切页）",
+     "from": "Get_Loaded_Sheets_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "活动文档必须是工程图（swDocDRAWING）",
+     "from": "Custom_Check_Document_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "`box.slddrw` ⇒ `list_views` **4 个视图**"
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "多图纸、图纸页伪视图、先切页三项 evidence 未提；GetSheetFormatName 两索引零命中。",
+   "_idx": 30
+  },
+  {
+   "name": "weldment_profile_and_curve",
+   "level": "verified",
+   "members_found": [
+    "SelectByID2",
+    "IModelDocExtension.SaveAs",
+    "IModelDoc2.ConfigurationManager",
+    "IConfigurationManager.ActiveConfiguration",
+    "IFeatureManager.CreateDefinition",
+    "IFeatureManager.CreateFeature",
+    "IProfileCenterMateFeatureData.EntitiesToMate",
+    "IProfileCenterMateFeatureData.MateAlignment",
+    "IProfileCenterMateFeatureData.OffsetDistance",
+    "IProfileCenterMateFeatureData.FlipDimension",
+    "IProfileCenterMateFeatureData.LockRotation",
+    "IFeature.GetErrorCode2"
+   ],
+   "examples_used": [
+    "Create_Profile_Center_Mate_Example_CSharp.md",
+    "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "活动文档须为装配体（含型材构件）：示例先打开 AdvancedMateDemo2.sldasm",
+     "from": "Create_Profile_Center_Mate_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "须先选中两个实体（Face2）并取回后赋给 EntitiesToMate（示例用 SelectByRay 取 2 个面）",
+     "from": "Create_Profile_Center_Mate_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "本仓走 CreateDefinition(101)+CreateFeature，官方该入口无示例（示例走 CreateMateData(24)+CreateMate）",
+     "from": "Create_Profile_Center_Mate_Example_CSharp.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "建自定义型材前：库特征与零件模板须存在、Parts 默认模板路径有效、目标目录先建好",
+     "from": "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用序：打开 .sldlfp 库特征→SelectByID2 选构件→AddConfiguration→再 Extension.SaveAs 出新 .sldlfp",
+     "from": "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 只证 create_weldment_profile 建出 .sldlfp；配合的装配体/双实体前置与官方 CreateDefinition 入口均未提。",
+   "_idx": 31
+  },
+  {
+   "name": "costing_templates_and_defaults",
+   "level": "verified",
+   "members_found": [
+    "ICostManager.GetTemplatePathnames",
+    "ICostManager.CostingDefaults",
+    "ICostingDefaults.GetTemplateName"
+   ],
+   "examples_used": [
+    "Create_Machining_Costing_Analyses_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "打开零件文档 machined_part.sldprt（CostManager 由活动文档 Extension.GetCostingManager 取）",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "确认 Costing 模板存在：系统选项 > 文件位置里显示 Costing templates 文件夹",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "回了真实模板路径 `…\\lang\\chinese-simplified\\costing templates\\…`"
+    },
+    {
+     "text": "取到 CostManager 后先 WaitForUIUpdate，再读模板数与模板路径",
+     "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "取默认模板走 CostingDefaults.GetTemplateName，官方示例无该成员用例",
+     "from": "docs/recon/member-to-example-index.md（GetTemplateName 条目全属 ISheet 图纸格式，无关）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "只覆盖「模板存在」一条；打开零件文档与 WaitForUIUpdate 调用序未提，GetTemplateName 无相关示例。",
+   "_idx": 31
+  },
+  {
+   "name": "pattern_and_mirror",
+   "level": "verified",
+   "members_found": [
+    "SelectByID2",
+    "FeatureCircularPattern4",
+    "InsertMirrorFeature2"
+   ],
+   "examples_used": [
+    "Create_Circular_Pattern_Example_CSharp.md",
+    "Create_Circular_Pattern_Example_VB.md",
+    "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+    "Get_Mirror_Pattern_Feature_Data_Example_CSharp.md",
+    "Get_Mirror_Feature_Data_Example_VB.md",
+    "Create_Revolve_Features_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方前置：先打开含种子特征的零件文档（varyinstance.sldprt / holecube.sldprt）",
+     "from": "Create_Circular_Pattern_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "FeatureCircularPattern4 前必须 SelectByID2 选中种子特征：Type=BODYFEATURE、mark=4",
+     "from": "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "必须再追加选中方向 1 的轴/边（示例 EDGE、mark=1）；本仓改用 InsertAxis2 建的基准轴",
+     "from": "Create_Circular_Pattern_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "前置 `基准轴1` 由 `IModelDoc2.InsertAxis2` 建"
+    },
+    {
+     "text": "InsertMirrorFeature2 前须 SelectByID2 选待镜像特征：BODYFEATURE、mark=1（示例先 ClearSelection2）",
+     "from": "Get_Mirror_Pattern_Feature_Data_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "镜像的 mark **原本是反的**（特征 4→1 · 平面 1→2"
+    },
+    {
+     "text": "镜像平面/面须按 mark=2 选中（官方示例按点选 FACE）",
+     "from": "Get_Mirror_Pattern_Feature_Data_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "特征 4→1 · 平面 1→2"
+    },
+    {
+     "text": "InsertAxis2 的官方示例要求先选两张 PLANE 再建轴 —— 但那是旋转特征示例，不属本条能力",
+     "from": "Create_Revolve_Features_Example_CSharp.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "镜像两条 mark 前置有逐字证据；圆周阵列的种子特征 mark=4 与样件文档未提；InsertAxis2 示例属旋转域，不计入。Get_Mirror_Solid 例子走的是 SOLIDBODY mark=256（镜体非镜特征），不计。",
+   "_idx": 32
+  },
+  {
+   "name": "drawing_view_operations",
+   "level": "verified",
+   "members_found": [
+    "GetFirstView",
+    "GetNextView",
+    "GetName2",
+    "Name",
+    "Type",
+    "ScaleRatio",
+    "ScaleDecimal",
+    "UseSheetScale",
+    "GetAnnotationCount",
+    "GetVisibleComponentCount",
+    "Rotation",
+    "Xform",
+    "GetType"
+   ],
+   "examples_used": [
+    "Set_View_Scale_Example_VB.md",
+    "Activate_Each_View_on_Current_Sheet_Example_VB.md",
+    "Get_Names_of_Annotations_Example_VB.md",
+    "Get_Visible_Components_and_Entities_in_Drawing_View_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "打开的工程图上必须已有一个或多个视图（官方 bolt-assembly.slddrw / 一张带视图的图）",
+     "from": "Set_View_Scale_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "有视图的图（3 视图）—— list/collect ok count=3"
+    },
+    {
+     "text": "官方前置 2：Select a drawing view —— 先选中一个视图，才 GetSelectedObject6(1,-1) 取对象",
+     "from": "Set_View_Scale_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "ScaleRatio 是 n:n 两个数（vScaleRatio(0):vScaleRatio(1)），与 ScaleDecimal 是同一信息的两种读法",
+     "from": "Set_View_Scale_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "ScaleRatio 回 (1.0,500.0)=1:500"
+    },
+    {
+     "text": "改比例前要处理 UseSheetScale（官方注释：Changing scale sets UseSheetScale to false）",
+     "from": "Set_View_Scale_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "关掉 UseSheetScale 后赋值仍不变"
+    },
+    {
+     "text": "改完比例调 EditRebuild3 重算才看得到（官方示例里 Debug.Assert bRet）",
+     "from": "Set_View_Scale_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetFirstView 返回的第一个视图是图纸本身，必须先 GetNextView 一次再遍历",
+     "from": "Get_Names_of_Annotations_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "GetVisibleComponentCount 前：打开 foodprocessor.slddrw、Select Drawing View2，并断言 CompCount <> 0",
+     "from": "Get_Visible_Components_and_Entities_in_Drawing_View_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "比例与 UseSheetScale 前置有逐字证据；选视图、EditRebuild3、首视图是图纸、可见件数断言均未提；Get_Annotations 例子宿主是 ModelDocExtension，非 IView，不计。",
+   "_idx": 32
+  },
+  {
+   "name": "surface_features",
+   "level": "verified",
+   "members_found": [
+    "FeatureExtruRefSurface3",
+    "InsertSewRefSurface",
+    "InsertExtendSurface",
+    "InsertFillSurface2",
+    "SelectByID2",
+    "Select2",
+    "Select4",
+    "CreateSelectData",
+    "ClearSelection2",
+    "GetSelectedObjectCount2",
+    "GetBodies2",
+    "GetFaces",
+    "GetEdges",
+    "GetStartVertex",
+    "GetEndVertex",
+    "GetPoint",
+    "FeatureByName",
+    "GetActiveSketch2",
+    "FirstFeature",
+    "GetNextFeature",
+    "GetTypeName2"
+   ],
+   "examples_used": [
+    "Insert_Extruded_Reference_Surface_Example_VB.md",
+    "Create_Surface_Knit_Feature_Example_VB6.md",
+    "Fill_Holes_in_Part_Example_VB.md",
+    "Insert_Fill-surface_Feature_Example_VB.md",
+    "Get_and_Fill_Gaps_in_Body_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "调用 FeatureExtruRefSurface3 前须用 SelectByID2 选中草图：SelectByID2(\"Sketch1\",\"SKETCH\",0,0,0,False,0,...)",
+     "from": "Insert_Extruded_Reference_Surface_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "缝合前须先把要缝的曲面按 mark = 1 选中（示例：Surface-Extrude1 mark 1 + Surface-Plane1 mark 1；Fill_Holes 另用 Select2(True,1)）",
+     "from": "Create_Surface_Knit_Feature_Example_VB6.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "选曲面之前须先 swSelectionManager.EnableContourSelection = False",
+     "from": "Create_Surface_Knit_Feature_Example_VB6.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "InsertExtendSurface 的调用前置：两份索引与示例目录零命中，无官方示例可查",
+     "from": "b3-4-merged.json#by_member（无该键）+ C:\\swapi\\examples 零命中",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "InsertFillSurface2 须先按官方 mark 表 Boundary curves = 1 用 SelectByID2 选中要填的边界边",
+     "from": "IFeatureManager/InsertFillSurface2.md#Remarks",
+     "state": "covered",
+     "evidence_quote": "边界边必须用 `SelectByID2` 带 **mark = 1**（官方 Remarks 的 Boundary curves）"
+    },
+    {
+     "text": "官方示例把选区当第3参 VPatchBoundaries 传入（SelectData Mark=257 / selObj 草图），本实现传 None",
+     "from": "Get_and_Fill_Gaps_in_Body_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例前置：模型须含带缺口的实体，并用 IBody2::Diagnose → GetCoEdgesAtGap 取边界边",
+     "from": "Get_and_Fill_Gaps_in_Body_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 只覆盖 mark=1 边界边；草图 mark0 选中、缝合 mark=1、EnableContourSelection=False、VPatchBoundaries 都没提；InsertExtendSurface 无官方示例。",
+   "_idx": 33
+  },
+  {
+   "name": "geometry_measurement",
+   "level": "verified",
+   "members_found": [
+    "CreateMeasure",
+    "ArcOption",
+    "Calculate",
+    "GetSelectedObjectCount2",
+    "Length",
+    "Area",
+    "Perimeter",
+    "DeltaX",
+    "DeltaY",
+    "DeltaZ",
+    "Angle",
+    "IsParallel",
+    "IsIntersect",
+    "IsPerpendicular"
+   ],
+   "examples_used": [
+    "Measure_Selected_Entities_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "CreateMeasure 前须先选中要量的实体（示例 SelectByID2(\"\",\"FACE\",...,mark 0) 选两面），未选中即无效组合",
+     "from": "Measure_Selected_Entities_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "未选中 ⇒ 显式拒绝"
+    },
+    {
+     "text": "须在 CreateMeasure 之后先设 ArcOption（示例注释 0=中心到中心 / 1=最小距离 / 2=最大距离）再 Calculate",
+     "from": "Measure_Selected_Entities_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方以 Calculate(Nothing) 调用，并以其 bool 返回值决定读数是否有效，否则打印 Invalid combination",
+     "from": "Measure_Selected_Entities_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "只有「未选中 ⇒ 拒绝」被 evidence 提到；ArcOption 取值表与 Calculate(Nothing)/status 判读都没提。",
+   "_idx": 33
+  },
+  {
+   "name": "loft_and_sweep",
+   "level": "verified",
+   "members_found": [
+    "GetSelectedObjectCount2",
+    "ClearSelection2",
+    "SelectByID2",
+    "InsertProtrusionBlend2",
+    "CreateDefinition",
+    "AccessSelections",
+    "CreateFeature",
+    "FeatureByName",
+    "GetTypeName2"
+   ],
+   "examples_used": [
+    "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+    "Insert_Protrusion_Blend_Example_CSharp.md",
+    "Select_Multiple_Splines_for_Loft_Guide_Curves_Example_CSharp.md",
+    "Get_Guide_Curves_in_Sweep_Feature_Example_CSharp.md",
+    "Insert_Swept-boss_Feature_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "放样：轮廓草图必须先选中（示例 SelectByID2 按 mark=1 选 Sketch1/Sketch2）后才成立",
+     "from": "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "未选中 ⇒ 显式拒绝"
+    },
+    {
+     "text": "放样：轮廓选中顺序即语义（示例 Sketch1 先、Sketch2 append）；引导线另给 4098 等 mark",
+     "from": "Insert_Protrusion_Blend_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "放样：各轮廓草图须先建好并 InsertSketch(true) 关闭草图，之后才能被选中",
+     "from": "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "扫描：轮廓与路径草图必须先选中；示例先 ClearSelection2 再逐个 append",
+     "from": "Insert_Swept-boss_Feature_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "未选中 ⇒ 显式拒绝"
+    },
+    {
+     "text": "扫描：mark 取值 轮廓=1 · 路径=4 · 引导线=2（示例三行 SelectByID2 的 mark 实参）",
+     "from": "Insert_Swept-boss_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "扫描：官方 CreateDefinition→CreateFeature 路线在 CreateFeature 之前不调用 AccessSelections",
+     "from": "Insert_Swept-boss_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "扫描：CreateDefinition 之后先设 ISweepFeatureData 属性（Tangency/ThinFeature/Merge）再 CreateFeature",
+     "from": "Insert_Swept-boss_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 只覆盖「必须选中→未选则显式拒绝」；mark 取值、轮廓顺序、草图关闭、AccessSelections 调用序均未出现在 evidence。",
+   "_idx": 34
+  },
+  {
+   "name": "reference_axis",
+   "level": "verified",
+   "members_found": [
+    "GetSelectedObjectCount2",
+    "InsertAxis2"
+   ],
+   "examples_used": [
+    "Create_Revolve_Features_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "建轴前必须已选中要建轴的几何；示例先 SelectByID2 选 Right Plane 与 Top Plane 再 InsertAxis2(true)",
+     "from": "Create_Revolve_Features_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "轴的几何来源：官方示例用的是两个平面的交线（Right Plane ∩ Top Plane）这一变体",
+     "from": "Create_Revolve_Features_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "入口必须在 IModelDoc2 上（官方示例在 swModel 上调 InsertAxis2），不是 FeatureManager",
+     "from": "Create_Revolve_Features_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "而 `FeatureManager.InsertAxis2` 报 `<unknown>.InsertAxis2`（★ 入口层级错）"
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "选区前置完全未进 evidence（limitations 提到「未验两点/两平面交线」，但按纪律只认 evidence）；仅入口层级被覆盖。",
+   "_idx": 34
+  },
+  {
+   "name": "sketch_primitives_b1",
+   "level": "verified",
+   "members_found": [
+    "SketchManager",
+    "Create3PointCornerRectangle",
+    "Create3PointCenterRectangle",
+    "CreateParallelogram",
+    "CreateTangentArc",
+    "Create3PointArc",
+    "CreateEllipticalArc",
+    "CreateParabola",
+    "CreateConic",
+    "PerimeterCircle"
+   ],
+   "examples_used": [
+    "Create_Tangent_Arc_Example_CSharp.md",
+    "Create_3_Point_Arc_Example_CSharp.md",
+    "Create_Parabola_Example_CSharp.md",
+    "Insert_Conic_Curve_Example_CSharp.md",
+    "Translate_Sketch_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方示例先 CreateLine 建一条线段并 ClearSelection2(true)，才调 CreateTangentArc（弧需有可相切的既有段）",
+     "from": "Create_Tangent_Arc_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例调用序：InsertSketch(true)→SelectByID2 选基准面→ClearSelection2(true)→Create3PointArc",
+     "from": "Create_3_Point_Arc_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CreateParabola 示例：先用 CreatePoint 建焦点/顶点/起点/终点四点，再调 CreateParabola（点数不足官方直接报错）",
+     "from": "Create_Parabola_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CreateParabola 示例断言必须 2D 草图（四点 Z 须为 0），否则提示 Need a 2D sketch.",
+     "from": "Create_Parabola_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CreateParabola 示例断言活动文档须为零件（GetType==swDocPART），且须先选中一个 RefPlane 才 InsertSketch",
+     "from": "Translate_Sketch_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CreateConic 示例头部唯一前置：指定零件模板须存在（Preconditions 一句）",
+     "from": "Insert_Conic_Curve_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方示例库 by_member 查不到 Create3PointCornerRectangle，无示例可读出其前置",
+     "from": "(无对应示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方示例库 by_member 查不到 Create3PointCenterRectangle，无示例可读出其前置",
+     "from": "(无对应示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方示例库 by_member 查不到 CreateParallelogram，无示例可读出其前置",
+     "from": "(无对应示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方示例库 by_member 查不到 CreateEllipticalArc，无示例可读出其前置",
+     "from": "(无对应示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方示例库 by_member 查不到 PerimeterCircle，无示例可读出其前置",
+     "from": "(无对应示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 数组只有一个产物路径；示例揭示的前置（既有相切段、四点、2D 草图、零件文档）在 evidence 里无任何逐字提及。",
+   "_idx": 35
+  },
+  {
+   "name": "sketch_edit_ops_b3",
+   "level": "verified",
+   "members_found": [
+    "SketchManager",
+    "ActiveSketch",
+    "SelectionManager",
+    "Select4",
+    "GetSelectedObjectCount2",
+    "SketchTrim",
+    "SketchExtend",
+    "SketchOffset2",
+    "CreateFillet",
+    "CreateLinearSketchStepAndRepeat",
+    "CreateCircularSketchStepAndRepeat",
+    "IntersectCurves"
+   ],
+   "examples_used": [
+    "Trim_Sketch_Entities_Example_CSharp.md",
+    "Extend_Sketch_Entity_Example_CSharp.md",
+    "Sketch_Offset_Example_CSharp.md",
+    "Create_and_Edit_Linear_Sketch_Pattern_Example_CSharp.md",
+    "Create_and_Edit_Circular_Sketch_Pattern_Example_CSharp.md",
+    "Edit_Radial_Dimension_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "Trim 示例：先用 SelectByID2 以 SKETCHSEGMENT 选中两条线，才调 SketchTrim(swSketchTrimCorner,0,0,0)",
+     "from": "Trim_Sketch_Entities_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Trim/Offset 示例：均先 InsertSketch(true) 建草图并清选区，之后才调编辑或阵列成员（草图处于编辑态）",
+     "from": "Sketch_Offset_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Extend 示例调用序：InsertSketch(false)→CreateLine 两条非平行线→SetPickMode()→选中 Line1→SketchExtend",
+     "from": "Extend_Sketch_Entity_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Offset 示例：要用 SelectByID2 以 SKETCHSEGMENT、mark=1 选中 Line3，才调 SketchOffset2",
+     "from": "Sketch_Offset_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Linear Pattern 示例：先 CreateCornerRectangle 建矩形作种子，并在拉伸特征前视面开的草图内才调阵列",
+     "from": "Create_and_Edit_Linear_Sketch_Pattern_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Circular Pattern 示例：先 CreateCircle + CreateCornerRectangle 作种子；ArcRadius/ArcAngle 按弧度传",
+     "from": "Create_and_Edit_Circular_Sketch_Pattern_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "唯一含 CreateFillet 的示例是 Edit_Radial_Dimension，主题为半径尺寸且只选了 SKETCHPOINT，不讲草图圆角前置",
+     "from": "Edit_Radial_Dimension_Example_CSharp.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方示例库 by_member 查不到 IntersectCurves，无示例可读出其前置",
+     "from": "(无对应示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 数组只有产物路径；SketchOffset2 需 mark=1 选段、Trim 需两条段等官方前置在 evidence 里无逐字提及。",
+   "_idx": 35
+  },
+  {
+   "name": "sketch_modify_ops",
+   "level": "verified",
+   "members_found": [
+    "SketchModifyTranslate",
+    "SketchModifyRotate",
+    "SketchModifyScale",
+    "SketchModifyFlip",
+    "Stretch"
+   ],
+   "examples_used": [
+    "Translate_Sketch_Example_VB.md",
+    "Rotate_Scale_Copy_Sketch_Example_VB.md",
+    "Flip_Sketch_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "先 SelectByID2 选中基准面再 InsertSketch 建草图",
+     "from": "Rotate_Scale_Copy_Sketch_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "移动/旋转前草图须是活动草图（示例注释：Make sure a sketch is active）",
+     "from": "Translate_Sketch_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "镜像前须先打开模型文档并选中一个草图（示例前置行原文）",
+     "from": "Flip_Sketch_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "SketchModifyScale 前示例按名字选中 Sketch1（SKETCH）",
+     "from": "Rotate_Scale_Copy_Sketch_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "必须先有活动的零件文档（示例 GetType<>swDocPART 即退出）",
+     "from": "Translate_Sketch_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "IModelDocExtension.Stretch 的前置：两索引与 examples 目录均无该成员示例",
+     "from": "(无示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "三个官方示例的前置（选基准面、活动/选中草图、零件文档）evidence 全未提；Stretch 无示例可对账。",
+   "_idx": 36
+  },
+  {
+   "name": "surface_edit_ops",
+   "level": "verified",
+   "members_found": [
+    "InsertPlanarRefSurface",
+    "InsertOffsetSurface",
+    "InsertRuledSurfaceFromEdge2",
+    "InsertDeleteFace",
+    "InsertFeatureReplaceFace"
+   ],
+   "examples_used": [
+    "Create_Planar_Surface_Feature_Example_VB.md",
+    "Insert_Solid_Body_Boundary_Surface_Feature_Example_VB.md",
+    "Create_Thicken_Feature_Example_VB.md",
+    "Insert_and_Change_DeleteFace_Feature_Example_VB.md",
+    "Replace_Face_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "这批 4/5 条调用前都要先选面或边",
+     "from": "Insert_and_Change_DeleteFace_Feature_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "而本批 4/5 都要先选面/边"
+    },
+    {
+     "text": "等距曲面示例先选两个参考面再调 InsertOffsetSurface",
+     "from": "Create_Thicken_Feature_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "而本批 4/5 都要先选面/边"
+    },
+    {
+     "text": "平面区域要选一整圈闭合边界边（示例按 mark=1 选 4 条边）",
+     "from": "Create_Planar_Surface_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "替换面须按 mark=1 选被替换的面、mark=2 选替换面",
+     "from": "Replace_Face_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "替换面的替换目标须是曲面体（示例选 Surface-Extrude1 SURFACEBODY）",
+     "from": "Replace_Face_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "删除面示例前置：先打开已有实体零件 knob.sldprt",
+     "from": "Insert_and_Change_DeleteFace_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "等距曲面示例前置：在多实体零件 multi_local.sldprt 里",
+     "from": "Create_Thicken_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "InsertRuledSurfaceFromEdge2 的示例前置：两索引与 examples 均无该成员",
+     "from": "(无示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "Create_Ruled_Surface_From_Edge_Example_VB 调的是 IModeler.CreateRuledSurfaceFromEdge，非本条成员，未计入。",
+   "_idx": 36
+  },
+  {
+   "name": "surface_ref_ops",
+   "level": "verified",
+   "members_found": [
+    "IFeatureManager.InsertRevolvedRefSurface",
+    "IModelDoc2.InsertLoftRefSurface2"
+   ],
+   "examples_used": [],
+   "preconditions": [
+    {
+     "text": "官方示例库无 InsertRevolvedRefSurface 的示例 ⇒ 其前置（选轮廓/中心线）无从由示例取得",
+     "from": "无示例：member-to-example-index.md + b3-4-merged.json(by_member) + C:\\swapi\\examples 全零命中",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方示例库无 InsertLoftRefSurface2 的示例 ⇒ 其前置（profile mark=1、≥2 轮廓）无从由示例取得",
+     "from": "无示例：member-to-example-index.md + b3-4-merged.json(by_member) + C:\\swapi\\examples 全零命中",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "cannot_tell",
+   "note": "两个成员在示例索引与 examples 目录均零命中（Insert_Extruded_Reference_Surface / Create_360-degree_Revolve 用的是别的成员，未计入）。evidence 只有真机建成读数。",
+   "_idx": 37
+  },
+  {
+   "name": "ref_geometry",
+   "level": "verified",
+   "members_found": [
+    "IFeatureManager.InsertRefPlane",
+    "IFeatureManager.InsertCoordinateSystem",
+    "IFeatureManager.InsertReferencePoint",
+    "IFeatureManager.InsertCenterOfMass",
+    "IFeatureManager.InsertGlobalBoundingBox2",
+    "IModelDocExtension.Create3DBoundingBox"
+   ],
+   "examples_used": [
+    "Insert_Reference_Plane_Example_VB.md",
+    "Insert_Reference_Points_Example_VB.md",
+    "Insert_Center_of_Mass_Feature_Example_VB.md",
+    "Insert_Coordinate_System_Feature_at_Center_of_Mass_Example_VB.md",
+    "Insert_Coordinate_System_at_Center_of_Mass_Example_VB.md",
+    "Create_3D_Bounding_Box_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "示例 Preconditions 逐字：Verify that the specified part exists（示例打开 plate.sldprt）",
+     "from": "Insert_Reference_Plane_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用前须先用 SelectByID2 选中参考实体（示例先选 FACE mark 0、再选 EDGE mark 1）",
+     "from": "Insert_Reference_Plane_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "★ **调用前按 `mark` 选一个参考实体**"
+    },
+    {
+     "text": "示例注释逐字 An edge must be preselected：须先开零件/装配并在图形区选中一条边",
+     "from": "Insert_Reference_Points_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "★ **调用前按 `mark` 选一个参考实体**。★ 真机：基准面 `预选 ok=True {face_index:0, mark:0, sel_count:1}` ⇒ 树新增 **`基准面1`**；点同样 `mark=0` ⇒ 树新增 **`点1`**"
+    },
+    {
+     "text": "示例只覆盖 swRefPointAlongCurve（选边）这一路；本条走 FaceCenter ⇒ 该路径前置无示例",
+     "from": "Insert_Reference_Points_Example_VB.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例 Preconditions 逐字：Open a part（零参数 InsertCenterOfMass 的文档前置）",
+     "from": "Insert_Center_of_Mass_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例先用 SelectData 按 mark 1/2/4 选中 3D 草图的点/X 轴线/Y 轴线三个实体，再调 InsertCoordinateSystem",
+     "from": "Insert_Coordinate_System_Feature_at_Center_of_Mass_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例 Preconditions 逐字：Open a part or assembly",
+     "from": "Insert_Coordinate_System_Feature_at_Center_of_Mass_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方示例库无 InsertGlobalBoundingBox2 的示例 ⇒ 其前置（CustomPlane 时先选面/基准面）无从由示例取得",
+     "from": "无示例：member-to-example-index.md + b3-4-merged.json(by_member) + C:\\swapi\\examples 全零命中",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "坐标系那条示例要求先按 mark 选 3 个草图实体，evidence 只写了 InsertCoordinateSystem 一句 ⇒ 未覆盖。Create_3D_Bounding_Box_Example_VB（焊件切割清单）已读但不计入：本条已声明不用该成员。",
+   "_idx": 37
+  },
+  {
+   "name": "curve_and_split",
+   "level": "verified",
+   "members_found": [
+    "InsertSplitLineProject",
+    "InsertSplitLineSil",
+    "InsertCurveFileBegin",
+    "InsertCurveFilePoint",
+    "InsertCurveFileEnd",
+    "InsertMateReference2",
+    "SelectByID2",
+    "ClearSelection2",
+    "InsertRefPlane"
+   ],
+   "examples_used": [
+    "Create_Projection_Split_Line_Example_VB.md",
+    "Insert_Free_Point_Curve_Feature_Example_VB.md",
+    "Edit_Mate_Reference_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "示例前置：先确认指定文档模板存在（示例用 NewDocument + Part.prtdot 建新零件）",
+     "from": "Create_Projection_Split_Line_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用序：InsertSplitLineProject 前须选中投影草图（SKETCH，mark 4）与要切的面（FACE，mark 1）",
+     "from": "Create_Projection_Split_Line_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "投影型 = **草图 mark 4 + 面 mark 1**；轮廓型 = **方向项 mark 2 + 面 mark 1**"
+    },
+    {
+     "text": "示例在草图与面之前还先按 mark 0 选中实体特征 Boss-Extrude1（BODYFEATURE）",
+     "from": "Create_Projection_Split_Line_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "几何前提：投影草图所在面须在实体之外、与目标面平行、沿投影方向隔开",
+     "from": "Create_Projection_Split_Line_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "投影型要求**投影草图所在面在实体之外**、与目标面平行、沿投影方向隔开"
+    },
+    {
+     "text": "示例前置：先确认指定零件模板存在（新建零件后直接建自由点曲线）",
+     "from": "Insert_Free_Point_Curve_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用序：InsertCurveFileBegin → InsertCurveFilePoint → InsertCurveFileEnd 三步成对，不可只调中间那个",
+     "from": "Insert_Free_Point_Curve_Feature_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "（`InsertCurveFileBegin/Point/End` 三步式）"
+    },
+    {
+     "text": "示例前置：先存在指定零件 knob.sldprt，配合参考是在该零件上插入",
+     "from": "Edit_Mate_Reference_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用序：InsertMateReference2 前须先按 mark 1 选基准面、按 mark 2 选面，再取对象显式传 PrimaryReferenceEntity",
+     "from": "Edit_Mate_Reference_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "InsertSplitLineSil 在两个官方示例索引里均无示例 ⇒ 轮廓型分割线的前置无法由官方示例判定",
+     "from": "docs/recon/member-to-example-index.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "草图/面 mark 与三步式已被 evidence 逐字覆盖；模板存在、Boss-Extrude1 mark 0、配合参考 mark 1+2 未提；轮廓型无官方示例。",
+   "_idx": 38
+  },
+  {
+   "name": "surface_offset",
+   "level": "verified",
+   "members_found": [
+    "InsertOffsetSurface",
+    "SelectByID2",
+    "ClearSelection2",
+    "FeatureExtruRefSurface3",
+    "CreateCornerRectangle"
+   ],
+   "examples_used": [
+    "Create_Thicken_Feature_Example_VB.md",
+    "Insert_Extruded_Reference_Surface_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "示例前置：先打开多体零件 multi_local.sldprt（示例取 ActiveDoc，不新建文档）",
+     "from": "Create_Thicken_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用序：InsertOffsetSurface 前须用 SelectByID2 逐张选面，示例两条都用 mark 0、append 依次 False/True",
+     "from": "Create_Thicken_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用 InsertOffsetSurface 前必须先选中曲面（官方 Remarks 要求调用前用 SelectByID2 做好选择）",
+     "from": "Create_Thicken_Feature_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "先建一张曲面（`曲面-拉伸1`）⇒ **4 张面选中** ⇒ `InsertOffsetSurface(5.0 mm, False)"
+    },
+    {
+     "text": "建曲面那步：须先 InsertSketch 进草图画轮廓，退出后 SelectByID2 选中该草图再调 FeatureExtruRefSurface3",
+     "from": "Insert_Extruded_Reference_Surface_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 只写到「先建一张曲面⇒4 张面选中」；多体零件前置、示例的 mark 0 逐张选法、建曲面那步的草图选中均未提。",
+   "_idx": 38
+  },
+  {
+   "name": "surface_planar_region",
+   "level": "verified",
+   "members_found": [
+    "InsertPlanarRefSurface",
+    "SelectByID2",
+    "ClearSelection2",
+    "GetSelectedObjectCount2"
+   ],
+   "examples_used": [
+    "Create_Planar_Surface_Feature_Example_CSharp.md",
+    "Create_Planar_Surface_Feature_Example_VB.md",
+    "Create_Planar_Surface_Feature_Example_VBNET.md",
+    "Insert_Solid_Body_Boundary_Surface_Feature_Example_CSharp.md",
+    "Create_Surface_Knit_Feature_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方示例前置块：指定的文档模板须存在（示例用它 NewDocument 建零件文档）",
+     "from": "Create_Planar_Surface_Feature_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用前须用 SelectByID2 以 Marks of 1 选中该曲面的边界实体",
+     "from": "Create_Planar_Surface_Feature_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "按 **mark=1 选**那个草图（回读 `sel_count = 1`）"
+    },
+    {
+     "text": "官方示例按坐标选的是 4 条 EDGE（mark=1），即 boundary entities 指边",
+     "from": "Create_Planar_Surface_Feature_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "★ 轮 516 先试**曲面体的边**（12 条 · mark=1）⇒ **0 增量**、返回值 `False`；★ 轮 517 改试**草图**（闭合轮廓 · mark=1）⇒ **返回 `True` · 建成** ✓"
+    },
+    {
+     "text": "另两例（Solid Body Boundary / Surface Knit）都是选 SKETCH mark=1 再调用，草图选法亦为官方示例所用",
+     "from": "Insert_Solid_Body_Boundary_Surface_Feature_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "⇒ ★★ **故它指的是草图**（★ 而官方那句 `Remarks` **两种读法都通**）。"
+    },
+    {
+     "text": "文档里须先存在一张曲面作边界来源（示例先建 Surface-Radiate1）",
+     "from": "Create_Planar_Surface_Feature_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "先建一张曲面，再建**一个闭合草图**"
+    },
+    {
+     "text": "示例前置块另有「Open an Immediate window」——只服务示例的 Debug.Print，非 API 前置",
+     "from": "Create_Planar_Surface_Feature_Example_CSharp.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "选法两条（边 / 草图）与 mark=1 都已实测对照；唯官方前置「文档模板须存在」evidence 未提。",
+   "_idx": 39
+  },
+  {
+   "name": "replace_face",
+   "level": "verified",
+   "members_found": [
+    "InsertFeatureReplaceFace",
+    "SelectByID2",
+    "Select4",
+    "ClearSelection2",
+    "GetBodies2",
+    "GetFaces"
+   ],
+   "examples_used": [
+    "Replace_Face_Example_CSharp.md",
+    "Replace_Face_Example_VB.md",
+    "Replace_Face_Example_VBNET.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方示例前置块：指定的模型文档须存在（示例 OpenDoc6 打开 block20.sldprt）",
+     "from": "Replace_Face_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "先建一个**实体盒** + 一张**曲面**"
+    },
+    {
+     "text": "调用前须 SelectByID2 以 Marks of 1 选「要被替换的面」",
+     "from": "Replace_Face_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "按 **曲面面 mark=1 · 实体面 mark=2** 选两张面（回读 2）"
+    },
+    {
+     "text": "调用前须 SelectByID2 以 Marks of 2 选「替换面（replacement surfaces）」",
+     "from": "Replace_Face_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "按 **曲面面 mark=1 · 实体面 mark=2** 选两张面（回读 2）"
+    },
+    {
+     "text": "官方示例里 mark=2 选的是整个曲面体（按名字 SURFACEBODY），mark=1 选的是实体上的 FACE",
+     "from": "Replace_Face_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "替换前文档里须已有实体面与一张替换曲面（示例先建 Plane1 与 Surface-Extrude1）",
+     "from": "Replace_Face_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "先建一个**实体盒** + 一张**曲面**"
+    },
+    {
+     "text": "示例 NOTE：因该模型另有用途，勿保存改动——非调用前置",
+     "from": "Replace_Face_Example_CSharp.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "两个 mark 的数值已被 evidence 覆盖；但官方示例 mark=2 选整个 SURFACEBODY 的选法 evidence 未提。",
+   "_idx": 39
+  },
+  {
+   "name": "surface_revolve",
+   "level": "verified",
+   "members_found": [
+    "IFeatureManager.InsertRevolvedRefSurface",
+    "IModelDoc2.InsertRevolvedRefSurface",
+    "ISketchManager.CreateCenterLine",
+    "IModelDocExtension.SelectByID2",
+    "IFeature.GetTypeName2"
+   ],
+   "examples_used": [],
+   "preconditions": [
+    {
+     "text": "调用前须用 SelectByID2 选好轮廓（官方 Remarks；且官方未给 mark）",
+     "from": "无对应示例：InsertRevolvedRefSurface 在 member-to-example-index.md 与 b3-4-merged.json 均 0 命中；C:\\swapi\\types\\IFeatureManager\\InsertRevolvedRefSurface.md 无 ## Examples 段",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "轮廓须绕一条中心线（centerline）旋转；且不支持 3D 草图",
+     "from": "无对应示例：CreateCenterLine 的示例只有 Create_3D_Sketch_Plane_*（3D 草图，与本能力前提相反）与 Create_Full_Symmetrical_Angular_Dimension_*（角尺寸），均属巧合",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "cannot_tell",
+   "note": "InsertRevolvedRefSurface 在两索引与官方页均 0 命中 ⇒ 示例侧前置无从取得；同族 InsertPlanar/Sew/ExtruRefSurface 示例属巧合，未计入。",
+   "_idx": 40
+  },
+  {
+   "name": "sketch_dimension_horizontal",
+   "level": "verified",
+   "members_found": [
+    "IModelDoc2.AddHorizontalDimension2",
+    "IModelDoc2.AddVerticalDimension2",
+    "IEntity.Select4",
+    "IFeature.GetFirstDisplayDimension",
+    "IAnnotation.GetNext2"
+   ],
+   "examples_used": [
+    "Dimension_Edge_in_Drawing_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "A straight edge is selected in the SOLIDWORKS Design graphics area.（调用前必须先选中实体）",
+     "from": "Dimension_Edge_in_Drawing_Example_VB.md（Preconditions 第 (3) 条）",
+     "state": "covered",
+     "evidence_quote": "★ **按对象选中它**（或选两个端点）后调那两个方法：**草图尺寸 0 → H:1 → V:1**（★ 两条**都建成**）"
+    },
+    {
+     "text": "Part or assembly is open.",
+     "from": "Dimension_Edge_in_Drawing_Example_VB.md（Preconditions 第 (1) 条）",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "If an assembly, it is fully resolved.",
+     "from": "Dimension_Edge_in_Drawing_Example_VB.md（Preconditions 第 (2) 条）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "NOTE: The dimension is not created if the edge cannot be converted in a drawing view.",
+     "from": "Dimension_Edge_in_Drawing_Example_VB.md（Postconditions 后 NOTE 与代码三分支：竖直→AddVerticalDimension2 / 水平→AddHorizontalDimension2 / 否则→AddDimension2）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "唯一官方示例属工程图语境。实质前置「先选中实体」被 evidence 逐字覆盖；「零件或装配体已打开」evidence 未提 ⇒ not_covered；装配与图纸转换两条属该示例语境。",
+   "_idx": 40
+  },
+  {
+   "name": "sketch_dimension_vertical",
+   "level": "verified",
+   "members_found": [
+    "AddVerticalDimension2",
+    "AddHorizontalDimension2",
+    "Select4",
+    "GetFirstDisplayDimension",
+    "GetNext2"
+   ],
+   "examples_used": [
+    "Dimension_Edge_in_Drawing_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "调用前必须在图形区先选中一条直边（示例前置 3：A straight edge is selected）",
+     "from": "Dimension_Edge_in_Drawing_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "★ 故**前置就是“**必须先选中实体**”**"
+    },
+    {
+     "text": "被选实体须为直线段：示例对非直线直接 Exit Sub，并按水平/竖直分派不同的 Add*2",
+     "from": "Dimension_Edge_in_Drawing_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Part or assembly is open（示例前置 1）；草图语境下即须有打开的零件文档",
+     "from": "Dimension_Edge_in_Drawing_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "：在前视面画**一条水平线段**"
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "官方唯一示例是工程图语境（尺寸加在视图里的边）；前置 2「装配体需完全解析」不适用于本条故未计。evidence 未提直线/朝向要求，且竖直尺寸加在水平线上也成。",
+   "_idx": 41
+  },
+  {
+   "name": "feature_revolve_cut",
+   "level": "verified",
+   "members_found": [
+    "FeatureRevolve2",
+    "SelectByID2",
+    "Select4"
+   ],
+   "examples_used": [
+    "Create_Revolve_Features_Example_VB.md",
+    "Create_360-degree_Revolve_Feature_Example_VB.md",
+    "Create_Thin_Feature_Revolve_in_Two_Directions_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "Preconditions: Open a new part document",
+     "from": "Create_Revolve_Features_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "：实体盒 + 前视面上的**中心线 + 剖面**"
+    },
+    {
+     "text": "打开一个已含 Axis1 与 Sketch1 特征的零件文档",
+     "from": "Create_360-degree_Revolve_Feature_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "：实体盒 + 前视面上的**中心线 + 剖面**"
+    },
+    {
+     "text": "Sketch1 须是矩形，且 Axis1 须用矩形的一条边创建（InsertAxis2 那条路）",
+     "from": "Create_360-degree_Revolve_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用前 SelectByID2：剖面草图 mark = 0、旋转轴 mark = 4 或 16（示例均按 mark 16 选轴）",
+     "from": "Create_360-degree_Revolve_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "选区顺序：示例是先选轮廓草图（append=False, mark 0），再追加轴（append=True, mark 16）",
+     "from": "Create_360-degree_Revolve_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "若用上至面/顶点/等距面作端条件，须再按 mark = 32 选中该实体（示例按 32 选面）",
+     "from": "Create_Thin_Feature_Revolve_in_Two_Directions_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "两向到同一实体时须 BothDirectionUpToSameEntity=True 且该实体只选一次，重复选会抵消、特征不建成",
+     "from": "Create_Thin_Feature_Revolve_in_Two_Directions_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "evidence 只覆盖「文档里已有轴+剖面」；mark 表、mark=32、同实体只选一次、选区顺序均未提。示例顺序与本仓「轴先于轮廓」相反。受影响体 mark=1 不适用（UseFeatScope/UseAutoSelect 均为 True）。",
+   "_idx": 41
+  },
+  {
+   "name": "sketch_slot_types",
+   "level": "verified",
+   "members_found": [
+    "CreateSketchSlot",
+    "SketchManager",
+    "InsertSketch",
+    "SelectByID2",
+    "ClearSelection2",
+    "GetActiveSketch2",
+    "GetSketchSegments"
+   ],
+   "examples_used": [
+    "Insert_and_Resize_Sketch_Slot_Example_VB.md",
+    "Insert_and_Resize_Sketch_Slot_Example_CSharp.md",
+    "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "先打开一个新零件文档（Preconditions: 1. Open a new part document.）",
+     "from": "Insert_and_Resize_Sketch_Slot_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用前必须先 SelectByID2 选中基准面（\"Front Plane\",\"PLANE\"）再 InsertSketch 进草图",
+     "from": "Insert_and_Resize_Sketch_Slot_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "SlotCreationType / SlotLengthType 必须传官方枚举成员（line · CenterCenter），非任意整数",
+     "from": "Get_Sketch_Slot_Using_Sketch_Point_and_Segment_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "证据只给参数表与段数 0→5；官方示例三条前置（新建零件、选面进草图、传官方枚举）evidence 全未提。",
+   "_idx": 42
+  },
+  {
+   "name": "surface_flatten",
+   "level": "verified",
+   "members_found": [
+    "InsertFlattenSurface2",
+    "SelectByID2",
+    "Select4",
+    "ClearSelection2",
+    "GetBodies2",
+    "GetFaces",
+    "GetEdges",
+    "GetStartVertex",
+    "GetEndVertex",
+    "GetTypeName2"
+   ],
+   "examples_used": [
+    "Get_Data_for_Surface_Flatten_Feature_Example_VB.md",
+    "Get_Data_for_Surface_Flatten_Feature_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "先打开要展平的零件（Preconditions: 1. Verify that the part to open exists.）",
+     "from": "Get_Data_for_Surface_Flatten_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "注释「Select face, point, and curves」：面 mark=1 + 锚点顶点 mark=16 必选",
+     "from": "Get_Data_for_Surface_Flatten_Feature_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "一张直线拉出的曲面 **+ 选它的面（mark=1）+ 它的一个顶点（mark=16）**"
+    },
+    {
+     "text": "示例传 ShouldUseTears=True，先连选 9 条 EDGE mark=8 撕裂边",
+     "from": "Get_Data_for_Surface_Flatten_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例用 Hemisphere.SLDPRT（半球实体），未明说几何必须为曲面体或可展",
+     "from": "Get_Data_for_Surface_Flatten_Feature_Example_VB.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "面(1)+锚点(16) 有逐字证据；打开零件、撕裂边 mark=8 未提，几何类型那条示例说不清。",
+   "_idx": 42
+  },
+  {
+   "name": "surface_untrim",
+   "level": "verified",
+   "members_found": [
+    "InsertUntrimSurface2",
+    "PreTrimSurface",
+    "PostTrimSurface",
+    "SelectByID2",
+    "Select4"
+   ],
+   "examples_used": [
+    "Create_Trimmed_Surface_Feature_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "需先有可剪裁曲面体；官方建法：两张相交曲面拉伸 → PreTrimSurface → 选 SURFACEBODY → PostTrimSurface(true)",
+     "from": "Create_Trimmed_Surface_Feature_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "**先造出一张真被剪裁过的曲面**（`PreTrimSurface` + 选 `SURFACEBODY` + `PostTrimSurface` —— 面数 8→7）"
+    },
+    {
+     "text": "选曲面体只能按点走空名 SelectByID2 + SURFACEBODY（实体不能按名字选）",
+     "from": "Create_Trimmed_Surface_Feature_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "★ **再选它的边 · `EdgeUntrimType = 2`**"
+    },
+    {
+     "text": "InsertUntrimSurface2 前须先选中它的面或边（Remarks 逐字 face or edges）—— 该成员无示例可核",
+     "from": "(无官方示例 · InsertUntrimSurface2 在两份示例索引均无命中)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例前置块：Verify that the specified document template exists",
+     "from": "Create_Trimmed_Surface_Feature_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "只覆盖「先造出真被剪裁曲面」这一步；InsertUntrimSurface2 自身前置（face or edges）无示例 ⇒ cannot_tell。",
+   "_idx": 43
+  },
+  {
+   "name": "feature_loft_cut",
+   "level": "verified",
+   "members_found": [
+    "InsertCutBlend",
+    "InsertProtrusionBlend2",
+    "SelectByID2",
+    "GetSelectedObjectCount2",
+    "FeatureByName"
+   ],
+   "examples_used": [
+    "Insert_Protrusion_Blend_Example_CSharp.md",
+    "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+    "Select_Multiple_Splines_for_Loft_Guide_Curves_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "轮廓草图按期望顺序选中，mark=1（示例 Sketch1→Sketch2、append、mark=1）",
+     "from": "Insert_Protrusion_Blend_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "一个实体 + 两个平行剖面（**按顺序**选中 · **mark=1**）"
+    },
+    {
+     "text": "引导线要预先建好并按 mark=2 选中；多根先合成 SELOBJGROUP 再以 mark=2 选",
+     "from": "Select_Multiple_Splines_for_Loft_Guide_Curves_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "中心线要按 mark=4 选中（示例 Curve5 以 mark=4 追加）",
+     "from": "Insert_Protrusion_Blend_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "第二个剖面建在偏移出的参考基准面上（示例先 InsertRefPlane(8,0.07)）",
+     "from": "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "InsertCutBlend 前须有可切实体、剖面按顺序 mark=1 —— 该成员在两份索引零示例命中",
+     "from": "(无官方示例 · InsertCutBlend 在两份示例索引均无命中)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例前置块：Verify that the specified part template exists",
+     "from": "Insert_Protrusion_Blend_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "InsertCutBlend 无官方示例 ⇒ 自身前置只能 cannot_tell；证据只覆盖 mark=1 与顺序，引导线/中心线/参考基准面三项未提。",
+   "_idx": 43
+  },
+  {
+   "name": "surface_delete_hole",
+   "level": "verified",
+   "members_found": [
+    "InsertDeleteHoleForSurface",
+    "InsertDeleteHole",
+    "InsertPlanarRefSurface",
+    "SelectByID2",
+    "Select4",
+    "InsertSketch",
+    "CreateCornerRectangle",
+    "CreateCircleByRadius",
+    "GetBodies2",
+    "GetFaces",
+    "GetLoops",
+    "GetEdges"
+   ],
+   "examples_used": [
+    "Create_Planar_Surface_Feature_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "「删除孔（曲面）」本身：两份示例索引 by_member 均无 InsertDeleteHole*，examples 目录 grep DeleteHole 零命中 ⇒ 无官方示例可读",
+     "from": "(未找到官方示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "InsertPlanarRefSurface 前置：先 SelectByID2 选中曲面边界实体并用 Marks of 1，再调 InsertPlanarRefSurface()",
+     "from": "Create_Planar_Surface_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "核心成员官方无示例，前置无法对账；证据只写「真正的带孔平面」，未提平面区域的 mark=1 边界选择。",
+   "_idx": 44
+  },
+  {
+   "name": "sketch_line2",
+   "level": "verified",
+   "members_found": [
+    "CreateLine2",
+    "CreateSpline",
+    "SelectByID2",
+    "InsertSketch",
+    "GetActiveSketch2",
+    "GetSketchSegments"
+   ],
+   "examples_used": [
+    "Open_and_Exit_Sketch_Example_VB.md",
+    "Dynamically_Mirror_Sketch_Entities_Example_VB.md",
+    "Create_Sketch_Line_with_Visual_Properties_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "调用前须打开草图：示例前置写 Select a planar face or a sketch / open a sketch，InsertSketch2 True 后才调 CreateLine2",
+     "from": "Open_and_Exit_Sketch_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "★ **无活动草图**时调它 ⇒ **回 `None`**、草图段数**不可读（-1）**"
+    }
+   ],
+   "verdict": "all_covered",
+   "note": "CreateSpline 同探针但属另一能力，只记入 members；Open a part 属文档上下文未单列；Create_Sketch_Line 示例前置写 None。",
+   "_idx": 44
+  },
+  {
+   "name": "feature_cosmetic_thread",
+   "level": "verified",
+   "members_found": [
+    "ClearSelection2",
+    "GetBodies2",
+    "GetFaces",
+    "GetSurface",
+    "IsCylinder",
+    "GetEdges",
+    "Select2",
+    "Select4",
+    "CreateSelectData",
+    "InsertCosmeticThread3",
+    "GetTypeName2",
+    "Name",
+    "FirstFeature",
+    "GetNextFeature"
+   ],
+   "examples_used": [
+    "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+    "Traverse_All_Cosmetic_Threads_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "打开一个含圆孔的零件文档（官方示例指定 holecube.sldprt）",
+     "from": "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "一个带圆孔的实体"
+    },
+    {
+     "text": "调用 InsertCosmeticThread3 前必须先选中一条 EDGE（示例用 SelectByID2(\"\", \"EDGE\", x,y,z) 按点选边）",
+     "from": "Get_Cosmetic_Threads_in_a_Part_Document_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "★ 选**圆柱面的边**   ⇒ **成** ✓\n       ★ 选**圆柱面本身**   ⇒ 不成 ✗\n       ★ **什么都不选**     ⇒ 不成 ✗"
+    },
+    {
+     "text": "螺纹线是孔/切除特征的子特征，须 FirstFeature→GetFirstSubFeature 遍历才找得到",
+     "from": "Traverse_All_Cosmetic_Threads_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "选边前置已被三格对照覆盖；但示例里螺纹线挂在孔的子特征下、须 GetFirstSubFeature 才找得到，证据未提。",
+   "_idx": 45
+  },
+  {
+   "name": "sketch_spline",
+   "level": "verified",
+   "members_found": [
+    "ClearSelection2",
+    "SelectByID2",
+    "InsertSketch",
+    "SketchManager",
+    "CreateSpline2"
+   ],
+   "examples_used": [
+    "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+    "Add_Along_X_Dimension_To_3D_Sketch_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "Preconditions: Verify that the specified part template exists.",
+     "from": "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CreateSpline2 之前草图必须已处于编辑态（示例先 Insert3DSketch(True) 再建样条）",
+     "from": "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "先 `start_sketch`，再 `CreateSpline2(VARIANT(VT_ARRAY|VT_R8, [x,y,z,…]), False)` ⇒ **草图段数 0 → 1**"
+    },
+    {
+     "text": "PointData 须扁平一维 double 数组、按 X,Y,Z 交替（示例 new double[12]，4 组三元）",
+     "from": "Add_Along_X_Dimension_To_3D_Sketch_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "② ★ **数组形态 = `VARIANT(VT_ARRAY|VT_R8, 扁平 list)`** （★ 而**扁平 list / list of tuples 都回 `None`**）"
+    },
+    {
+     "text": "示例三份都把 SimulateNaturalEnds 传 true，证据定为 False；示例未就此写前置",
+     "from": "Add_Along_X_Dimension_To_3D_Sketch_Example_VB.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "官方示例在 3D 草图内建样条且 SimulateNaturalEnds=true；证据用 start_sketch 的草图 + False，示例未就此写前置。",
+   "_idx": 45
+  },
+  {
+   "name": "sketch_spline3_2d",
+   "level": "verified",
+   "members_found": [
+    "CreateSpline3",
+    "SketchManager",
+    "GetActiveSketch2",
+    "GetSketchSegments",
+    "InsertPlanarRefSurface",
+    "CreateCornerRectangle",
+    "SelectByID2",
+    "GetBodies2",
+    "GetFaces",
+    "GetSurface",
+    "GetMathUtility",
+    "CreateVector",
+    "ClearSelection2",
+    "CloseDoc"
+   ],
+   "examples_used": [
+    "Create_On-surface_Spline_Example_VB.md",
+    "Create_On-surface_Spline_Example_CSharp.md",
+    "Create_On-surface_Spline_Example_VBNET.md"
+   ],
+   "preconditions": [
+    {
+     "text": "示例前置逐字：先打开 public_documents\\samples\\tutorial\\api\\cstick.sldprt（Part = swApp.ActiveDoc，须已有活动零件文档）",
+     "from": "Create_On-surface_Spline_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "surfs 数组须先 SelectByRay 选到一个面、经 GetSelectedObjectType3 判为 swSelFACES、GetSelectedObject6 后 GetSurface() 才能组装",
+     "from": "Create_On-surface_Spline_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例注释：Direction 参数传 Nothing（VB）/ 一组空 DispatchWrapper（C#），用当前视图向量把点投影到曲面",
+     "from": "Create_On-surface_Spline_Example_VBNET.md",
+     "state": "covered",
+     "evidence_quote": "★ 而官方 Remarks 逐字：**2D 要至少 6 个坐标；其余参数全给 `null`/`Nothing`** ✓"
+    },
+    {
+     "text": "示例调用形态为 12 个坐标（4 个 3D 点）且 SimulateNaturalEnds 传 True，调用后再 InsertSketch(True) 退出草图",
+     "from": "Create_On-surface_Spline_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例注记：该模型别处还要用，故不得保存改动（NOTE: do not save changes）",
+     "from": "Create_On-surface_Spline_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "CreateSpline3 官方只有 on-surface 示例；探针只做 2D 两格对照，面选取/surfs 组装与示例文档前置均未在 evidence 提及。",
+   "_idx": 46
+  },
+  {
+   "name": "sketch_rotate_or_copy_3d",
+   "level": "verified",
+   "members_found": [
+    "RotateOrCopy3DAboutXYZ",
+    "Insert3DSketch",
+    "CreateLine",
+    "SketchManager",
+    "GetActiveSketch2",
+    "GetSketchSegments",
+    "CloseDoc"
+   ],
+   "examples_used": [
+    "Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_VB.md",
+    "Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_CSharp.md",
+    "Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_VBNET.md"
+   ],
+   "preconditions": [
+    {
+     "text": "示例前置逐字：先打开或新建含两个 3D 草图（3DSketch1、3DSketch2）的零件文档",
+     "from": "Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "`Insert3DSketch(True)` 开一个 **3D 草图**"
+    },
+    {
+     "text": "调用前须 SelectByID2(\"3DSketch2\",\"SKETCH\",…) 按名字选中目标 3D 草图，再 EditSketch 进入编辑模式并确认 ActiveSketch 非 Nothing",
+     "from": "Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用前须把该 3D 草图内全部图元 GetSketchSegments() 逐个 Select4(True, selData) 选中",
+     "from": "Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用后须 ClearSelection2(True) 清选区并 InsertSketch(True) 退出该 3D 草图",
+     "from": "Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_VBNET.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例开头先判 SOLIDWORKS 是否在运行、ActiveDoc 是否为 Nothing，失败即退出宏",
+     "from": "Rotate_and_Copy_3D_Sketch_About_Coordinates_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "示例强调「选中草图→EditSketch→全部图元 Select4」才调用；探针只 Insert3DSketch+CreateLine 后直接调，选区与进出草图序未在 evidence 提及。",
+   "_idx": 46
+  },
+  {
+   "name": "sketch_equation_curve",
+   "level": "verified",
+   "members_found": [
+    "CreateEquationSpline2",
+    "InsertSketch",
+    "ClearSelection2",
+    "SelectByID2",
+    "GetActiveSketch2",
+    "GetSketchSegments"
+   ],
+   "examples_used": [
+    "Create_Equation-driven_Curve_Example_VB.md",
+    "Create_Equation-driven_Curve_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "Preconditions 1：先 Open a new part document（示例在空白新零件上操作）",
+     "from": "Create_Equation-driven_Curve_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Preconditions 2：Open the Immediate window（VBA 调试步骤，自动化是否需要，示例未说）",
+     "from": "Create_Equation-driven_Curve_Example_VB.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "调用前须已在活动草图内：示例 SelectByID2(\"Front Plane\",\"PLANE\") → InsertSketch(true)，且 Postconditions 写 Creates a 2D sketch",
+     "from": "Create_Equation-driven_Curve_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "先 `start_sketch`，再 `CreateEquationSpline2(\"\", \"exp(x)\""
+    },
+    {
+     "text": "InsertSketch 之后要先 ClearSelection2(true) 清空选区，再调 CreateEquationSpline2",
+     "from": "Create_Equation-driven_Curve_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "结束前再 InsertSketch(true) 退出草图收尾（示例末行）",
+     "from": "Create_Equation-driven_Curve_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "显式曲线：XExpression 传 \"\"、YExpression 是 x 的函数、RangeStart/RangeEnd 是 x 的范围（示例 \"0\",\"6.28\"）",
+     "from": "Create_Equation-driven_Curve_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "**显式** `y=exp(x)`（**X 给 `\"\"`**） ⇒ **段 0 → 1** ✓"
+    },
+    {
+     "text": "参数曲线：XExpression 与 YExpression 都给 t 的表达式（示例 x=sin(t) / y=cos(t)）",
+     "from": "Create_Equation-driven_Curve_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "参数 `x=sin(t)`/`y=cos(t)`"
+    },
+    {
+     "text": "建成后用 SketchSpline.GetEquationParameters/SetEquationParameters 改写表达式、Simplify 减点",
+     "from": "Create_Equation-driven_Curve_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "证据只覆盖「先 start_sketch」与两种表达式形态（参数那格实测 0→0）；新零件文档、ClearSelection2、收尾 InsertSketch、改写表达式四项前置证据未提。",
+   "_idx": 47
+  },
+  {
+   "name": "curve_through_xyz",
+   "level": "verified",
+   "members_found": [
+    "InsertCurveFileBegin",
+    "InsertCurveFilePoint",
+    "InsertCurveFileEnd",
+    "InsertCurveFile",
+    "FirstFeature",
+    "GetNextFeature",
+    "GetTypeName2"
+   ],
+   "examples_used": [
+    "Insert_Free_Point_Curve_Feature_Example_VB.md",
+    "Insert_Free_Point_Curve_Feature_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "Preconditions 1：Verify that the specified part template exists.（示例按 .prtdot 路径 NewDocument）",
+     "from": "Insert_Free_Point_Curve_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Preconditions 2：Create c:\\temp, if this folder does not exist.（示例往该目录写曲线文件）",
+     "from": "Insert_Free_Point_Curve_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Preconditions 3：Open the Immediate window（VBA 调试步骤，自动化是否需要，示例未说）",
+     "from": "Insert_Free_Point_Curve_Feature_Example_VB.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "Begin/End 必须夹住所有 Point：先 InsertCurveFileBegin，再 InsertCurveFilePoint × N，最后 InsertCurveFileEnd",
+     "from": "Insert_Free_Point_Curve_Feature_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "★ **三步式**：`Begin()` → `Point(x,y,z)` × **4** → `End()` ⇒ **特征 5 → 6**"
+    },
+    {
+     "text": "Point 的 X/Y/Z 按米传（示例给 0.0127 / 0.0254 / 0.0381）",
+     "from": "Insert_Free_Point_Curve_Feature_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "InsertCurveFile(FileName) 从文件用法的前置：官方示例里查不到该成员，前置说不清",
+     "from": "（member-to-example-index.md 与 b3-4-merged.json 均无 InsertCurveFile 条目）",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "证据只覆盖三步式顺序与特征树判据；模板存在、c:\\temp 目录、坐标按米三项前置证据未提；InsertCurveFile 无官方示例故 cannot_tell。",
+   "_idx": 47
+  },
+  {
+   "name": "select_by_ray",
+   "level": "verified",
+   "members_found": [
+    "SelectByRay",
+    "Extension"
+   ],
+   "examples_used": [
+    "Select_Face_Using_Intersecting_Ray_Example_VB.md",
+    "Select_Face_Using_Intersecting_Ray_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "示例前置1：先打开一个有实体的零件文档（示例取 swApp.ActiveDoc，box.sldrpt，脚本自己不建）",
+     "from": "Select_Face_Using_Intersecting_Ray_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "先造一块板，再 `SelectByRay(0, 0, +0.05, 0, 0, **-1**, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)`"
+    },
+    {
+     "text": "示例前置2：打开 Immediate 窗口（示例靠 Debug.Print 回读 SelectByRay 的返回）",
+     "from": "Select_Face_Using_Intersecting_Ray_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例调用约定：TypeWanted=swSelFACES、Append=False、Mark=0、末参 swSelectOptionDefault",
+     "from": "Select_Face_Using_Intersecting_Ray_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "**swSelFACES=2**, False, **Mark=0**, 0)` ⇒ **选中计数 1 → 2**（增 1）· 返回 `True`"
+    },
+    {
+     "text": "示例用单位方向向量且只命中第一个被相交的面（rayVec=-1,0,0）",
+     "from": "Select_Face_Using_Intersecting_Ray_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "再 `SelectByRay(0, 0, +0.05, 0, 0, **-1**, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)` ⇒ **选中计数 1 → 2**（增 1）"
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "唯一相关示例是 Select_Face_Using_Intersecting_Ray；mates/wrap 等只是碰巧同名成员，已排除。唯一 not_covered 是 Immediate 窗口。",
+   "_idx": 48
+  },
+  {
+   "name": "feature_hole_wizard5",
+   "level": "verified",
+   "members_found": [
+    "HoleWizard5",
+    "SelectByRay",
+    "ClearSelection2",
+    "Extension",
+    "SelectionManager",
+    "GetSelectedObjectCount2",
+    "FeatureManager"
+   ],
+   "examples_used": [
+    "Create_Hole_Wizard_Hole_Example_VB.md",
+    "Create_Hole_Wizard_Hole_Example_CSharp.md",
+    "Insert_Hole_Wizard_Slot_and_Hole_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "示例前置1：指定的零件模板 Part.prtdot 必须存在（示例从模板新建零件后画草图拉伸）",
+     "from": "Create_Hole_Wizard_Hole_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例前置1：指定要打开的零件文档 block20.sldprt 必须存在",
+     "from": "Insert_Hole_Wizard_Slot_and_Hole_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例前置2：打开 Immediate 窗口",
+     "from": "Insert_Hole_Wizard_Slot_and_Hole_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "孔位前置：调用前必须已有 Mark=0 的选中实体——示例按坐标点选 FACE（mark=0）或选基准面 Plane1（mark=0）",
+     "from": "Insert_Hole_Wizard_Slot_and_Hole_Example_VB.md（Create_Hole_Wizard_Hole_Example_VB.md 同）",
+     "state": "covered",
+     "evidence_quote": "`SelectByRay(0,0,+0.05, 0,0,-1, 1e-4, **swSelFACES=2**, False, **Mark=0**, 0)` 定孔位"
+    },
+    {
+     "text": "SSize 必须是该紧固件类型的合法尺寸；官方示例传 \"M2\" / \"#97\" / \"#12\"",
+     "from": "Create_Hole_Wizard_Hole_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "故 **`SSize` 要的是“**规格串**”**（★ 如 `M8`），★ **而不是空串、也不是纯数字** —— ★ 正是官方那句“**必须是该紧固件类型的合法尺寸**”。"
+    },
+    {
+     "text": "FastenerTypeIndex 必须与所选 StandardIndex 配对（示例：ANSI Metric ↔ FlatHead82）",
+     "from": "Create_Hole_Wizard_Hole_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "不用的 Value 参数要传 -1（官方示例逐字：SOLIDWORKS 会忽略设为 -1 的参数；Value8-Value12 全 -1）",
+     "from": "Insert_Hole_Wizard_Slot_and_Hole_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "末 6 个布尔参数（RevDir/FeatureScope/AutoSelect 等）两个官方示例取值互相矛盾，说不清",
+     "from": "Create_Hole_Wizard_Hole_Example_VB.md 与 Insert_Hole_Wizard_Slot_and_Hole_Example_VB.md",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "SSize 规格串与 Mark=0 定位已逐字覆盖；未覆盖：-1 未用参数约定、FastenerType 与 Standard 配对、模板/文档必须存在、Immediate 窗口。",
+   "_idx": 48
+  },
+  {
+   "name": "sketch_offset_on_surface",
+   "level": "verified",
+   "members_found": [
+    "SketchOffsetOnSurface",
+    "SelectByID2",
+    "ClearSelection2",
+    "Select4",
+    "SetSelectedObjectMark",
+    "GetSelectedObjectCount2",
+    "CreateCornerRectangle",
+    "FeatureExtrusion3",
+    "InsertSketch",
+    "GetActiveSketch2",
+    "Is3D",
+    "GetSketchSegments",
+    "FirstFeature",
+    "GetNextFeature"
+   ],
+   "examples_used": [
+    "Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方 Remarks：调用前对每条要偏移的边调 SelectByID2，Append=true、Mark=1",
+     "from": "IModelDocExtension/SketchOffsetOnSurface.md ## Remarks 2 + Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "按对象选 4 条边（补设 mark=1）"
+    },
+    {
+     "text": "官方 Remarks：调用后调 ISketchManager::InsertSketch 用 3D 草图重建模型",
+     "from": "IModelDocExtension/SketchOffsetOnSurface.md ## Remarks 3 + Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "★ **故那一步是必需的**（★ 与官方 Remarks 第 ③ 条完全对应）✓"
+    },
+    {
+     "text": "官方参数表：UseFront「Although not currently used, must be set to true」",
+     "from": "IModelDocExtension/SketchOffsetOnSurface.md ## Parameters",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方 Remarks：要测地线偏移须改用 GeodesicSketchOffset（本成员只做欧氏偏移）",
+     "from": "IModelDocExtension/SketchOffsetOnSurface.md ## Remarks 1",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方例子调用序：先 SelectByID2(mark=0) 选一遍 → ClearSelection2 → 再 SelectByID2(mark=1) 选第二遍",
+     "from": "Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "tools 为空；实现是 tools/prove_offset_on_surface_per_example.py。UseFront 与 Geodesic 两条只写在 limitations，未进 evidence。",
+   "_idx": 49
+  },
+  {
+   "name": "coverage_gap_batch1",
+   "level": "verified",
+   "members_found": [
+    "InsertRevolvedRefSurface",
+    "SelectByID2",
+    "ClearSelection2",
+    "GetBodies2",
+    "CreateCenterLine",
+    "CreateCornerRectangle",
+    "FeatureExtrusion3",
+    "GetSelectedObjectCount2",
+    "SelectByRay",
+    "HoleWizard5",
+    "GetActiveSketch2",
+    "ActiveSketch",
+    "GetConstrainedStatus",
+    "GetSketchSegments",
+    "Select4",
+    "AddRelation",
+    "FirstFeature",
+    "GetNextFeature"
+   ],
+   "examples_used": [
+    "Create_Hole_Wizard_Hole_Example_VB.md",
+    "Autodimension_All_Sketches_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方 Remarks：孔位要对每个位置调 SelectByRay 且 Mark = 0",
+     "from": "IFeatureManager/HoleWizard5.md ## Remarks + Create_Hole_Wizard_Hole_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方 Remarks：FastenerTypeIndex 必须与 standard 匹配且对该孔型合法，否则报错",
+     "from": "IFeatureManager/HoleWizard5.md ## Remarks",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方 Remarks：SSize 必须是该紧固件类型的合法规格，否则报错",
+     "from": "IFeatureManager/HoleWizard5.md ## Remarks",
+     "state": "covered",
+     "evidence_quote": "② **孔向导** ⇒ 树新增 **`异型孔向导`**（`M8`）"
+    },
+    {
+     "text": "官方 Remarks：用参考平面建孔前须按材料在平面哪一侧确定 RevDir",
+     "from": "IFeatureManager/HoleWizard5.md ## Remarks",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "官方 Remarks：调用前须用 SelectByID2 选好轮廓（旋转曲面）",
+     "from": "IFeatureManager/InsertRevolvedRefSurface.md ## Remarks（官方索引里该成员无示例）",
+     "state": "covered",
+     "evidence_quote": "① **旋转曲面** ⇒ 树新增 **`曲面-旋转1`** · **曲面体 0→1** · 选中轮廓 1"
+    },
+    {
+     "text": "官方 Remarks：旋转曲面不支持 3D 草图",
+     "from": "IFeatureManager/InsertRevolvedRefSurface.md ## Remarks（官方索引里该成员无示例）",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "该成员在官方示例索引与 C:\\swapi\\examples 中均无示例 ⇒ 示例揭示的前置无从核对",
+     "from": "b3-4-merged.json by_member 无命中 + examples 目录 grep 无命中",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    },
+    {
+     "text": "示例前置：GetConstrainedStatus 的 ISketch 须由树里 ProfileFeature 经 GetSpecificFeature2 取，且草图已 InsertSketch 收尾",
+     "from": "Autodimension_All_Sketches_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "三条成员分别落在 sw_surface_ref_ops、sw_hole_features、sw_sketch_status；证据只报「树增量/回 int」，未交代选位与取草图对象的前置。",
+   "_idx": 49
+  },
+  {
+   "name": "assembly_exploded_views",
+   "level": "verified",
+   "members_found": [
+    "CreateExplodedView",
+    "AutoExplode",
+    "ViewExplodeAssembly",
+    "ViewCollapseAssembly",
+    "ShowExploded2",
+    "GetExplodedViewNames2",
+    "GetExplodedViewCount2",
+    "GetExplodedViewConfigurationName",
+    "EditExplodeParameters"
+   ],
+   "examples_used": [
+    "Create_Exploded_Views_Example_VB.md",
+    "Create_Exploded_Views_Example_CSharp.md",
+    "Get_Exploded_Views_for_Configuration_Example_VB.md",
+    "Get_Exploded_Views_for_Configuration_Example_VBNET.md",
+    "Get_Collapsed_Transform_of_Component_in_Exploded_View_Example_VB.md",
+    "Access_Assembly_Example_CPlusPlus_COM.md"
+   ],
+   "preconditions": [
+    {
+     "text": "官方示例前置逐字「Preconditions: Open an assembly document.」——须先打开装配文档（示例把 ActiveDoc 直接 Set 成 AssemblyDoc）",
+     "from": "Create_Exploded_Views_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "打开**装配副本**（`GetType=2` · 活动配置 `默认`）"
+    },
+    {
+     "text": "官方示例前置逐字「Preconditions: 2. Open the Immediate window.」——须先打开 Immediate 调试窗口才能读结果",
+     "from": "Get_Exploded_Views_for_Configuration_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "须先经 ConfigurationManager.ActiveConfiguration.Name 取活动配置名，再把它传给 GetExplodedViewNames2 / GetExplodedViewCount2",
+     "from": "Get_Exploded_Views_for_Configuration_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "活动配置 `默认`"
+    },
+    {
+     "text": "GetExplodedViewConfigurationName 的实参示例传的是**爆炸视图名**（GetExplodedViewConfigurationName(viewName)），不是配置名",
+     "from": "Get_Exploded_Views_for_Configuration_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "ShowExploded2 第二实参须取自 GetExplodedViewNames2（示例先建 5 个视图、取名，再逐个 ShowExploded2(True/False, name)）",
+     "from": "Create_Exploded_Views_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "`get_exploded_view_names` 回 **['爆炸视图1']**"
+    },
+    {
+     "text": "官方示例以「回读计数」为建视图的判据：CreateExplodedView 后须 GetExplodedViewCount2 回读（示例建 5 个再计数）",
+     "from": "Get_Exploded_Views_for_Configuration_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "**回读计数 0 → 1**"
+    },
+    {
+     "text": "AutoExplode / ViewCollapseAssembly 须成对使用（示例 ExplodeAssembly→CollapseAssembly）",
+     "from": "Access_Assembly_Example_CPlusPlus_COM.md",
+     "state": "covered",
+     "evidence_quote": "`view_explode_assembly` / `view_collapse_assembly` 两次调用**都没抛**"
+    },
+    {
+     "text": "示例前置逐字「ujoint.sldasm exists in the specified folder and contains a component named bracket-1」——须打开含该指定组件的装配",
+     "from": "Access_Assembly_Example_CPlusPlus_COM.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "EditExplodeParameters：官方示例库无任何示例（member-to-example-index.md 无该行、b3-4-merged.json by_member 为 null）⇒ 前置无从提取",
+     "from": "(无示例文件)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "8 个成员有官方示例。未覆盖：Immediate 窗口；GetExplodedViewConfigurationName 实参应为**视图名**——示例给了答案，而本仓 limitation 记为「含义未知」。EditExplodeParameters 无示例。",
+   "_idx": 50
+  },
+  {
+   "name": "macro_execution",
+   "level": "verified",
+   "members_found": [
+    "RunMacro2"
+   ],
+   "examples_used": [],
+   "preconditions": [
+    {
+     "text": "RunMacro2 在官方示例库无任何示例：member-to-example-index.md 无该行、b3-4-merged.json by_member 为 null、C:\\swapi\\examples 全目录 grep 0 命中 ⇒ 前置无从提取",
+     "from": "(无示例文件)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "cannot_tell",
+   "note": "8 个工具中只有 macro_run 碰 COM（RunMacro2）；另 7 个是 sw_macro_guard 纯文本函数（该文件无 COM 导入，已核）。无官方示例可对账 ⇒ 全条 cannot_tell。",
+   "_idx": 50
+  }
+ ],
+ "pre_states": {
+  "not_covered": 322,
+  "cannot_tell": 81,
+  "covered": 131
+ },
+ "verdicts": {
+  "cannot_tell": 15,
+  "has_uncovered": 80,
+  "all_covered": 3
+ },
+ "quote_ok": 131,
+ "quote_bad": 0,
+ "missing": [
+  14
+ ]
+}

@@ -1,0 +1,598 @@
+{
+ "10": [
+  {
+   "W": 10,
+   "k": 0,
+   "gold": "solidworks_surface_fill",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 1,
+   "gold": "solidworks_feature_suppress",
+   "pick": "solidworks_feature_suppress",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 10,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_surface_fill",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 11,
+   "gold": "solidworks_current_selection",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 12,
+   "gold": "solidworks_feature_suppress",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 13,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_drawing_create_revision_table",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 14,
+   "gold": "solidworks_surface_fill",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 15,
+   "gold": "solidworks_current_selection",
+   "pick": "solidworks_current_selection",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 16,
+   "gold": "solidworks_build_review_report",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 17,
+   "gold": "solidworks_sheet_metal_create_base_flange",
+   "pick": "solidworks_sheet_metal_create_base_flange",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 18,
+   "gold": "solidworks_surface_fill",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 19,
+   "gold": "solidworks_mold_parting_line",
+   "pick": "solidworks_mold_parting_line",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 2,
+   "gold": "solidworks_sheet_metal_create_base_flange",
+   "pick": "solidworks_insert_replace_face",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 3,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_insert_replace_face",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 4,
+   "gold": "solidworks_topology_evidence",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 5,
+   "gold": "solidworks_sheet_metal_create_base_flange",
+   "pick": "solidworks_sketch_spline",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 6,
+   "gold": "solidworks_build_review_report",
+   "pick": "solidworks_sketch_spline",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 7,
+   "gold": "solidworks_feature_suppress",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 8,
+   "gold": "solidworks_surface_fill",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 10
+  },
+  {
+   "W": 10,
+   "k": 9,
+   "gold": "solidworks_current_selection",
+   "pick": "solidworks_current_selection",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 10
+  }
+ ],
+ "414": [
+  {
+   "W": 414,
+   "k": 0,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_sketch_linear_pattern",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 1,
+   "gold": "solidworks_feature_suppress",
+   "pick": "solidworks_feature_suppress",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 10,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_current_selection",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 12,
+   "gold": "solidworks_feature_suppress",
+   "pick": "solidworks_add_dimension",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 13,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_inspect_drawing",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 14,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_add_rotary_motor",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 15,
+   "gold": "solidworks_current_selection",
+   "pick": "solidworks_drawing_add_note",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 16,
+   "gold": "solidworks_build_review_report",
+   "pick": "solidworks_mold_core_cavity_split",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 17,
+   "gold": "solidworks_sheet_metal_create_base_flange",
+   "pick": "solidworks_sheet_metal_create_base_flange",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 18,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_surface_fill",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 19,
+   "gold": "solidworks_mold_parting_line",
+   "pick": "solidworks_feature_list_names",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 2,
+   "gold": "solidworks_sheet_metal_create_base_flange",
+   "pick": "solidworks_insert_replace_face",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 3,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_insert_offset_surface",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 4,
+   "gold": "solidworks_topology_evidence",
+   "pick": "solidworks_extrude_depth",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 5,
+   "gold": "solidworks_sheet_metal_create_base_flange",
+   "pick": "solidworks_sketch_spline",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 6,
+   "gold": "solidworks_build_review_report",
+   "pick": "solidworks_sketch_add_parabola",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 7,
+   "gold": "solidworks_feature_suppress",
+   "pick": "solidworks_drawing_view_annotations",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 8,
+   "gold": "solidworks_surface_fill",
+   "pick": "cadstudio_create_ocp_loft",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 414
+  },
+  {
+   "W": 414,
+   "k": 9,
+   "gold": "solidworks_current_selection",
+   "pick": "solidworks_current_selection",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 414
+  }
+ ],
+ "50": [
+  {
+   "W": 50,
+   "k": 0,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_pattern_params",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 1,
+   "gold": "solidworks_feature_suppress",
+   "pick": "solidworks_feature_suppress",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 10,
+   "gold": "solidworks_surface_fill",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 11,
+   "gold": "solidworks_current_selection",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 12,
+   "gold": "solidworks_feature_suppress",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 13,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_drawing_create_revision_table",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 14,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_simulation_apply_force",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 15,
+   "gold": "solidworks_current_selection",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 16,
+   "gold": "solidworks_build_review_report",
+   "pick": "solidworks_mold_undercut_detect",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 17,
+   "gold": "solidworks_sheet_metal_create_base_flange",
+   "pick": "solidworks_sheet_metal_create_base_flange",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 18,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_pattern_params",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 19,
+   "gold": "solidworks_mold_parting_line",
+   "pick": "solidworks_collect_model_summary",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 2,
+   "gold": "solidworks_sheet_metal_create_base_flange",
+   "pick": "solidworks_insert_replace_face",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 3,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_insert_replace_face",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 4,
+   "gold": "solidworks_topology_evidence",
+   "pick": "solidworks_extrude_midplane",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 5,
+   "gold": "solidworks_sheet_metal_create_base_flange",
+   "pick": "solidworks_sketch_spline",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 6,
+   "gold": "solidworks_build_review_report",
+   "pick": "NONE",
+   "in_pool": false,
+   "strict": false,
+   "none": true,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 7,
+   "gold": "solidworks_feature_suppress",
+   "pick": "solidworks_collect_model_summary",
+   "in_pool": true,
+   "strict": false,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 8,
+   "gold": "solidworks_surface_fill",
+   "pick": "solidworks_surface_fill",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 50
+  },
+  {
+   "W": 50,
+   "k": 9,
+   "gold": "solidworks_current_selection",
+   "pick": "solidworks_current_selection",
+   "in_pool": true,
+   "strict": true,
+   "none": false,
+   "pool_size": 50
+  }
+ ]
+}

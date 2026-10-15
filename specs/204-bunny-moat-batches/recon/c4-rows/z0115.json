@@ -1,0 +1,122 @@
+{
+  "idx": 115,
+  "results": [
+    {
+      "member": "Evaluate",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Determine_Type_of_Face_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 Param 的取法：先 GetCurveParams 拿参数区 6/7，算出中点再传 Evaluate",
+          "example_quote": "    varParams = swCoEdge.GetCurveParams\n    If varParams(6) > varParams(7) Then\n        dblMidParam = (varParams(6) - varParams(7)) / 2 + varParams(7)\n    Else\n        dblMidParam = (varParams(7) - varParams(6)) / 2 + varParams(6)\n    End If\n    varParams = swCoEdge.Evaluate(dblMidParam)",
+          "example_file": "Determine_Type_of_Face_Example_VB.md"
+        }
+      ],
+      "note": "四例中只有此例真调 ICoEdge；取点用 0-2、切向用 3-5，与 Remarks 一致"
+    },
+    {
+      "member": "Evaluate2",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三例变量均声明为 Curve（VB 第 73 行 / C# 第 42 行），调 ICurve.Evaluate2，非 ICoEdge"
+    },
+    {
+      "member": "EvaluateAll",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Equation_And_Evaluate_All_Example_VB.md",
+        "Use_IIf_Function_When_Adding_an_Equation_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例明写不要看那个 -1 返回值，改读 Status 取结果索引",
+          "example_quote": "    Dim ret As Integer\n    ret = swEqnMgr.EvaluateAll\n    Debug.Print \" Value = \" & swEqnMgr.Value(i)\n    Debug.Print \" Index of equation = \" & swEqnMgr.Status",
+          "example_file": "Use_IIf_Function_When_Adding_an_Equation_Example_VB.md"
+        }
+      ],
+      "note": "两例都调 EquationMgr.EvaluateAll，也都未检查返回值；Add2 传 False 与 Remarks 一致"
+    },
+    {
+      "member": "EvaluateAtPoint",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Determine_Type_of_Face_Example_VB.md",
+        "Evaluate_Points_on_Surface_Example_VB.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_CSharp.md",
+        "Select_Edges_of_All_Holes_on_Face_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的 11 个量紧凑记法展开成实际下标 0..10 的逐项打印",
+          "example_quote": "    Debug.Print \" Normal = (\" & vEval(0) & \", \" & vEval(1) & \", \" & vEval(2) & \")\"\n    Debug.Print \" Dirn 1 = (\" & vEval(3) & \", \" & vEval(4) & \", \" & vEval(5) & \")\"\n    Debug.Print \" Dirn 2 = (\" & vEval(6) & \", \" & vEval(7) & \", \" & vEval(8) & \")\"\n    Debug.Print \" Curvat 1 = \" & vEval(9)\n    Debug.Print \" Curvat 2 = \" & vEval(10)",
+          "example_file": "Evaluate_Points_on_Surface_Example_VB.md"
+        },
+        {
+          "what": "示例先把选点用 GetClosestPointOn 贴到曲面上，再传进 EvaluateAtPoint",
+          "example_quote": "    vClosePt = swSurf.GetClosestPointOn(vSelPt(0), vSelPt(1), vSelPt(2))\n    vEval = swSurf.EvaluateAtPoint(vClosePt(0), vClosePt(1), vClosePt(2))",
+          "example_file": "Evaluate_Points_on_Surface_Example_VB.md"
+        }
+      ],
+      "note": "四例都真调 ISurface.EvaluateAtPoint；返回 11 个量与 Remarks 完全对得上，未见矛盾"
+    },
+    {
+      "member": "EvaluateCellEquation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例的 Equation 取自 GetCellEquation 回读，并给出 0 基行列 (4,2)",
+          "example_quote": "    ' Evaluate the cell equation\n    longstatus = theTableAnnotation.EvaluateCellEquation(4, 2, True, cellequation, solvedval)",
+          "example_file": "Get_and_Set_Column_Types_and_Cell_Equations_Example_VB.md"
+        }
+      ],
+      "note": "本页无 ## Remarks 段，按规则跳过冲突判定；示例对象确为 TableAnnotation"
+    },
+    {
+      "member": "ExcludeSelectedItems",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Selectively_and_Transparently_Section_a_Section_View_Example_CSharp.md",
+        "Selectively_and_Transparently_Section_a_Section_View_Example_VB.md",
+        "Selectively_and_Transparently_Section_a_Section_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出满足两条 Remarks 前置的具体顺序，以及 selArray 的来源",
+          "example_quote": "    swSectionViewData.SelectiveSection = True\n    swSectionViewData.SelectiveSectioningList = selArray\n    swSectionViewData.SectionedZones = 16 'swZonalSectionViewZones_e.swZonalSectionViewZones_swZonalSectionViewZone_5\n    swSectionViewData.ExcludeSelectedItems = True",
+          "example_file": "Selectively_and_Transparently_Section_a_Section_View_Example_VB.md"
+        }
+      ],
+      "note": "三例顺序均为 SelectiveSection→SelectiveSectioningList→ExcludeSelectedItems，无矛盾"
+    },
+    {
+      "member": "ExcludeSliceSectionBodies",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Section_View_and_Get_Some_Data_Example_CSharp.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VB.md",
+        "Create_Section_View_and_Get_Some_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例说明对象来源：CreateSectionViewAt5 后 GetSection，且同轮 set 再 get 回读",
+          "example_quote": "    Set swSectionView = swView.GetSection\n        ' Set some section-view settings\n    swSectionView.SetAutoHatch True\n    swSectionView.SetLabel2 \"ABCD\"\n    swSectionView.SetDisplayOnlySurfaceCut False\n    swSectionView.SetPartialSection False\n    swSectionView.SetReversedCutDirection False\n    swSectionView.SetScaleWithModelChanges True\n    swSectionView.CutSurfaceBodies = True\n    swSectionView.DisplaySurfaceBodies = True\n    swSectionView.ExcludeSliceSectionBodies = False",
+          "example_file": "Create_Section_View_and_Get_Some_Data_Example_VB.md"
+        }
+      ],
+      "note": "本页既无 ## Remarks 也无 ## Examples 段，跳过冲突判定；三例对象均声明 DrSection"
+    }
+  ]
+}

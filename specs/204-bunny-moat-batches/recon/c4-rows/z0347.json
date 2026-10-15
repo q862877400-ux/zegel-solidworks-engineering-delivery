@@ -1,0 +1,149 @@
+{
+ "idx": 347,
+ "results": [
+  {
+   "member": "KnitResult",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Insert_Extruded_Reference_Surface_Example_CSharp.md",
+    "Insert_Extruded_Reference_Surface_Example_VB.md",
+    "Insert_Extruded_Reference_Surface_Example_VBNET.md"
+   ],
+   "conflicts": [
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "This property is only available if:\n\n- [[ISurfExtrudeFeatureData::BothDirections]] = false.",
+     "example_quote": "    swFeatureManager.FeatureExtruRefSurface3 False, False, swStartConditions_e.swStartSketchPlane, 0, swEndConditions_e.swEndCondBlind, swEndConditions_e.swEndCondBlind, 0.01, 0.01, True, False, False, False, 0.4, 0, False, False, False, False, False, False, False, False",
+     "example_file": "Insert_Extruded_Reference_Surface_Example_VB.md",
+     "why": "首参 Sd=False 即双端（FeatureExtruRefSurface3 页：Sd=True 才单端）⇒BothDirections 为 true，与「=false」互斥；示例却仍读 KnitResult。"
+    },
+    {
+     "kind": "precondition_diff",
+     "remarks_quote": "- [[ISurfExtrudeFeatureData::DeleteOriginalFace]] = true.",
+     "example_quote": "    swFeatureManager.FeatureExtruRefSurface3 False, False, swStartConditions_e.swStartSketchPlane, 0, swEndConditions_e.swEndCondBlind, swEndConditions_e.swEndCondBlind, 0.01, 0.01, True, False, False, False, 0.4, 0, False, False, False, False, False, False, False, False",
+     "example_file": "Insert_Extruded_Reference_Surface_Example_VB.md",
+     "why": "第 21 个实参 DeleteOriginalFace 传 False，且该形参仅在 Sd=true 时有效；另一条前置同样不成立。"
+    }
+   ],
+   "example_more_specific": [
+    {
+     "what": "示例给出完整调用序：选 BODYFEATURE → GetDefinition → AccessSelections → 读 → ReleaseSelectionAccess，成员页只泛指 Selections 文档。",
+     "example_quote": "    swSurfExtrudeFeature.AccessSelections swModel, Nothing",
+     "example_file": "Insert_Extruded_Reference_Surface_Example_VB.md"
+    },
+    {
+     "what": "示例把 KnitResult 与 DeleteOriginalFace 成对打印——后者恰是前者的前置。",
+     "example_quote": "    Debug.Print \" Knit extrusion result? \" & swSurfExtrudeFeature.KnitResult",
+     "example_file": "Insert_Extruded_Reference_Surface_Example_VB.md"
+    }
+   ],
+   "note": "三份示例代码一致，两条前置在其创建调用下均不成立。"
+  },
+  {
+   "member": "KnitTolerance",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Surface_Knit_Feature_Example_CSharp.md",
+    "Create_Surface_Knit_Feature_Example_VB6.md",
+    "Create_Surface_Knit_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例按 *1000 后才标 mm，说明该属性与 InsertSewRefSurface 的 KnitTolerance 形参都是米；成员页只给以 mm 写的上下限，未说属性本身单位。",
+     "example_quote": "    Debug.Print \" Knit tolerance: \" & swSurfaceKnitFeature.KnitTolerance * 1000 & \" mm\"",
+     "example_file": "Create_Surface_Knit_Feature_Example_VB6.md"
+    },
+    {
+     "what": "示例的 InsertSewRefSurface 首个实参 UseGapFilters=True，正是 Remarks 要求的前置；两个公差实参同传 0.0001（米制即 0.1mm，恰在上限）。",
+     "example_quote": "    Set swFeature = swFeatureManager.InsertSewRefSurface(True, False, False, 0.0001, 0.0001)",
+     "example_file": "Create_Surface_Knit_Feature_Example_VB6.md"
+    }
+   ],
+   "note": "两读法在米制下自洽，无硬冲突；单位与前置仅由示例给出。"
+  },
+  {
+   "member": "KnotPointsCount",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Edit_Spline_Example_VB.md",
+    "Get_BCurve_Spline_Points_Example_CSharp.md",
+    "Get_BCurve_Spline_Points_Example_VB.md",
+    "Get_BCurve_Spline_Points_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例用 GetBCurveParams5 的 ForceNonPeriodic 实参（True=转非周期）来定位 Remarks 表里 periodic 那一行。",
+     "example_quote": "    Set swSplineParaData = swCurveIn.GetBCurveParams5(False, False, True, True)",
+     "example_file": "Get_BCurve_Spline_Points_Example_VB.md"
+    },
+    {
+     "what": "Edit_Spline 在改控制点/改 knot 前后各读一次 KnotPointsCount，并用 GetKnotPoints 逐点打印。",
+     "example_quote": "    Debug.Print \"The knot point count is: \" & swSplineParamData.KnotPointsCount",
+     "example_file": "Edit_Spline_Example_VB.md"
+    }
+   ],
+   "note": "示例只打印不校验数值，未见与 Remarks 公式互斥之处。"
+  },
+  {
+   "member": "Label",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_PMI_Data_Example_CSharp.md",
+    "Get_PMI_Data_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "无 Remarks 段故跳过；页内 NOTE 称只读而签名写 {get; set;}。"
+  },
+  {
+   "member": "Label2",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Create_Model_View_Callouts_Example_VB.md",
+    "Create_Model_View_Callouts_Example_VBNET.md",
+    "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md",
+    "sldworksapi__Create_Multi-row_Callouts_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页是空壳（仅标题）；示例显示 Label2(下标) 是带下标的写入口。"
+  },
+  {
+   "member": "KnitSurface",
+   "remarks_empty": true,
+   "examples_actually_used": [
+    "Get_Mirror_Solid_Data_Example_VB.md",
+    "Get_Mirror_Solid_Feature_Data_Example_CSharp.md",
+    "Get_Mirror_Solid_Feature_Data_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 Remarks 段，按纪律跳过；三示例都只 Debug.Print 读取。"
+  },
+  {
+   "member": "LargeDesignReviewMark",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Get_and_Set_Large_Design_Review_Marks_for_Configurations_Example_CSharp.md",
+    "Get_and_Set_Large_Design_Review_Marks_for_Configurations_Example_VB.md",
+    "Get_and_Set_Large_Design_Review_Marks_for_Configurations_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出满足「多配置」前置的具体文档，并按 GetConfigurationNames 逐配置读写。",
+     "example_quote": "// 1. Open public_documents\\samples\\tutorial\\driveworksxpress\\mobile gantry.sldasm.",
+     "example_file": "Get_and_Set_Large_Design_Review_Marks_for_Configurations_Example_CSharp.md"
+    },
+    {
+     "what": "示例 NOTE 明确不保存改动，而成员页把该属性描述为「文档保存时」加入显示数据。",
+     "example_quote": "// NOTE: Because the assembly is used elsewhere, do not save changes.",
+     "example_file": "Get_and_Set_Large_Design_Review_Marks_for_Configurations_Example_CSharp.md"
+    }
+   ],
+   "note": "示例只演示装配体分支，未覆盖 Remarks 里的零件分支。"
+  }
+ ]
+}

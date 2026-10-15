@@ -1,0 +1,47 @@
+{
+ "role": "V2",
+ "attacked": 788,
+ "counterexamples": [],
+ "truth_may_be_wrong": [
+  {
+   "key": "IDrawingDoc,CreateCompoundNote.md",
+   "field": "obsolete_strict",
+   "truth_says": "obsolete_strict=false / obsolete_loose=true",
+   "you_say": "Contestable, NOT refuted: the summary's first sentence is not literally 'Obsolete.' so truth's own strict rule holds; but the word 'Obsolete' IS verbatim in the summary, so any reading of strict as 'carries the Obsolete marker' would make truth under-report. A(r2)=True and B(r3)=True.",
+   "evidence": "Obsolete for documents created in SOLIDWORKS 2016 and later. Superseded by [[ISketchBlockDefinition]] and [[ISketchBlockInstance]]. Creates and returns a compound note."
+  },
+  {
+   "key": "IDrawingDoc,ICreateCompoundNote.md",
+   "field": "obsolete_strict",
+   "truth_says": "obsolete_strict=false / obsolete_loose=true",
+   "you_say": "Same edge as above; note this page has NO 'Superseded by', yet truth.loose=true, so truth.loose is keyed on the literal word 'Obsolete' alone - which my independent rule reproduces 788/788.",
+   "evidence": "Obsolete for documents created in SOLIDWORKS 2016 and later. Creates and returns a compound note."
+  }
+ ],
+ "conclusion": "找不到反例",
+ "verification_detail": {
+  "attacked_cells": 3152,
+  "method": "独立写脚本从 C:\\swapi\\types 的 788 个官方页重抽 signature/obsolete/pointer/zero，与 truth.json、r2(A)、r3(B) 三方对账；键集三边完全相同（788/788，无多无缺）。",
+  "page_count": "IView 461 + IDrawingDoc 274 + ISheet 53 = 788；磁盘共 791 个 .md，差的 3 个正是各接口的 _overview.md —— 页数口径成立。",
+  "headline_reproduced": {
+   "A_vs_B_after_normalization": "3152/3152 = 100%",
+   "A_vs_truth": "3152/3152 = 100%",
+   "B_vs_truth": "3152/3152 = 100%（用与 A 同一套归一化）",
+   "B_vs_truth_as_99_75": "3144/3152 = 99.746%，= ab_agreement.json 的数，即那 8 条 zero 同形字错字未修时的口径",
+   "normalization_inferred": "signature 去掉首尾反引号并压空白；zero 把 B 的同形字错字 '否（有形号）' 还原为 '否（有形参）'。原始未归一化时 A-vs-B 的 signature 只有 644/788（反引号）、zero 只有 780/788（错字）。两个数字都自洽，但 '788/788 一致' 这个说法只在归一化后成立。"
+  },
+  "independent_rule_fits": {
+   "signature": "truth.signature 与磁盘 **Signature** 行【逐字节相同】788/788（0 处空白差异、0 处真实差异）；A 去反引号后 788/788；B 同 788/788 ⇒ 三方与官方字节全等，签名栏无可推翻之处。",
+   "zero": "按签名括号配对重解析，788/788 与 truth.zero 相同，0 处分歧。3 个无 **Signature** 行的页（IDrawingDoc/Sheet.md、ISheet/TableAnchor.md、IView/RootDrawingComponent2.md）确为 180~200 字符的空壳页，只有 YAML 头和标题，truth 记 signature='' / zero='查不到' 符合铁律 5。",
+   "obsolete_loose": "我独立用「摘要块含 Obsolete 一词」重算，与 truth.obsolete_loose 逐行相同 788/788（274 True / 514 False）。",
+   "obsolete_strict": "truth.obsolete_strict=True 的 272 条，首句【全部】恰好是 'Obsolete.'；strict⊆loose 不变式 0 违反；strict=False & loose=True 恰好 2 条（即 truth_may_be_wrong 列出的两条）。",
+   "pointer": "规律锁定为『in-process / Not supported 提示出现在 ## Returns 段内』，与 truth.pointer 逐行相同 788/788，0 例外。"
+  },
+  "why_no_counterexample": "A 与 B 在 obsolete 788/788、pointer 788/788、signature、zero 归一化后全部逐行一致，且与 truth 全部一致 —— 不存在『A、B 都对而 truth 错』的行。反向核（truth 错而三方一致）已做完：signature 与磁盘逐字节相等（A、B、truth 三方全等，不可能有错）；zero 重解析 0 分歧；obsolete_loose 与我的独立规则 788/788 相等；pointer 与 Returns 段规则 788/788 相等。",
+  "self_corrections_during_attack": [
+   "我最初用『页面任意位置出现 Pointer to an array』判 pointer，得 10 处分歧并一度怀疑 truth；读原页后发现是我规则太宽 —— ICreate*Dim4 的指针短语在 Parameters 里描述 ref double 数组，且整页无 in-process/Not supported 提示，属正常 COM 可调用方法，truth.pointer=False 正确。",
+   "我曾把 IDrawingDoc/IGetPenInfo.md 与 IView/IGetSectionLines.md 误判为 truth 的假阳性；读原页发现是【官方文档自身错字】导致我的正则失配：前者写 'in-porcess, unmanaged C++'（porcess），后者写 'VB.NET, C#, or C++/CLI'（or 而非 and）。truth.pointer=True 正确。"
+  ],
+  "borderline_not_a_counterexample": "IView/ISetBodies.md：它是 I 前缀进程内方法，Parameters 段里确有 'in-process, unmanaged C++: Pointer to an array of [[bodies]]' 与 'Not supported'，但整页【没有 ## Returns 段】（返回 void），故按已验证的 Returns 段规则 truth.pointer=False。A 与 B 同样写 False，因此不构成『A、B 对而 truth 错』；仅提示 pointer 栏判的是『Returns 段回指针』而非『是否进程内独占方法』，若按后者理解这 1 条会翻。"
+ }
+}

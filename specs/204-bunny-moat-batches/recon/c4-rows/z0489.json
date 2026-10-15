@@ -1,0 +1,144 @@
+{
+  "idx": 489,
+  "results": [
+    {
+      "member": "TangentDriving",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Spline_Handles_Example_CSharp.md",
+        "Get_and_Set_Spline_Handles_Example_VB.md",
+        "Get_and_Set_Spline_Handles_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把开关读写限定在第 4 个手柄（i==3）上，且置位后紧接一次 Reset()，成员页未提 Reset 步骤",
+          "example_quote": "if ((swSplineHandle.TangentDriving))\n                    {\n                        swSplineHandle.TangentDriving = false;\n                    }\n                    else\n                    {\n                        swSplineHandle.TangentDriving = true;\n                    }\n                    swSplineHandle.Reset();",
+          "example_file": "Get_and_Set_Spline_Handles_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；三份示例均真用到该成员。"
+    },
+    {
+      "member": "TangentMagnitude",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Spline_Handles_Example_CSharp.md",
+        "Get_and_Set_Spline_Handles_Example_VB.md",
+        "Get_and_Set_Spline_Handles_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例显示它是带 swTangentMagnitudeDirection_e 方向参数的索引属性（get_/set_ 带参），成员页除标题外无签名",
+          "example_quote": "Debug.Print(\" Tangent magnitude: \" + swSplineHandle.get_TangentMagnitude((int)swTangentMagnitudeDirection_e.swTangentMagnitudeDirection1));",
+          "example_file": "Get_and_Set_Spline_Handles_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页只有标题（无签名/Returns/Remarks），冲突判定跳过；C# 那份虽不在给定清单内但确实用到。"
+    },
+    {
+      "member": "TangentPropagation",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks；给定的 4 份示例里该成员都挂在 Sweep / CosmeticWeldBead 对象上，没有一份用 IChamferFeatureData2 的。"
+    },
+    {
+      "member": "TangentRadialDirection",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Spline_Handles_Example_CSharp.md",
+        "Get_and_Set_Spline_Handles_Example_VB.md",
+        "Get_and_Set_Spline_Handles_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它当 double 标量读出、加 0.5 后写回，且只在第 3 个手柄（i==2）上改，成员页未给用法",
+          "example_quote": "swSplineHandle.TangentRadialDirection = swSplineHandle.TangentRadialDirection + 0.5;",
+          "example_file": "Get_and_Set_Spline_Handles_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；三份示例均真用到该成员。"
+    },
+    {
+      "member": "TangentToBend",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_SM_Corner_Relief_Feature_Example_CSharp.md",
+        "Create_SM_Corner_Relief_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "- [[ISMCornerReliefData::ReliefType]] is set to [[swCornerReliefType_e]].:\n\n  - swCornerCircularRelief\n\n  - swCornerRectangularRelief",
+          "example_quote": "cornerItr.TangentToBend = True\n            cornerItr.ReliefType = swCornerReliefType_e.swCornerRectangularRelief",
+          "example_file": "Create_SM_Corner_Relief_Feature_Example_VBNET.md",
+          "why": "置位 TangentToBend 时 ReliefType 仍是 CollectAllCorners 设的 swCornerTearRelief（该值不在 Remarks 允许的两个里），示例把合法值放到下一行才赋值；C# 版第 167/168 行同序。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例经 PrintReliefData 用 GetCornerAtIndex 回读 TangetToBend，成员页只说 get/set",
+          "example_quote": "Debug.Print(\"Tangent to bend? \" + ((SMCornerReliefData)smCornerReliefData1).TangentToBend);",
+          "example_file": "Create_SM_Corner_Relief_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "CornerType 侧两侧一致（均 TwoBend）；冲突只在 ReliefType 一侧。"
+    },
+    {
+      "member": "TapDrillDepth",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for:\n\n- swTapBlind\n\n- swTapBlindCounterSinkTop\n\n- swTapThru\n\n- swTapThruCounterSinkBottom\n\n- swTapThruCounterSinkTop\n\n- swTapThruCounterSinkTopBottom",
+          "example_quote": "swFeat = swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore, (int)swWzdHoleStandards_e.swStandardISO, (int)swWzdHoleStandardFastenerTypes_e.swStandardISOHexCapScrew, \"M6\", (int)swWzdHoleThreadEndCondition_e.swEndThreadTypeBLIND, 0.0066, 0.02, 0.014547, 0.004, 0.0,",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "Remarks 列的适用孔型全是 swTap*；示例建的是 swWzdCounterBore，却在同文件第 103 行照样读出并打印 TapDrillDepth。VB/VBNET 同型。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例按 ×1000 后缀 mm 打印，说明返回的 double 原始单位是米",
+          "example_quote": "Debug.Print(\"  TapDrillDepth                = \" + swWizHole.TapDrillDepth * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "适用性冲突三份示例一致复现；单位信息只在示例里给出。"
+    },
+    {
+      "member": "TapDrillDiameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for:\n\n- swTapBlind\n\n- swTapBlindCounterSinkTop\n\n- swTapThru\n\n- swTapThruCounterSinkBottom\n\n- swTapThruCounterSinkTop\n\n- swTapThruCounterSinkTopBottom",
+          "example_quote": "swFeat = swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore, (int)swWzdHoleStandards_e.swStandardISO, (int)swWzdHoleStandardFastenerTypes_e.swStandardISOHexCapScrew, \"M6\", (int)swWzdHoleThreadEndCondition_e.swEndThreadTypeBLIND, 0.0066, 0.02, 0.014547, 0.004, 0.0,",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "Remarks 列的适用孔型全是 swTap*；示例建的是 swWzdCounterBore，却在同文件第 104 行照样读出并打印 TapDrillDiameter。VB/VBNET 同型。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例按 ×1000 后缀 mm 打印，说明返回的 double 原始单位是米",
+          "example_quote": "Debug.Print(\"  TapDrillDiameter             = \" + swWizHole.TapDrillDiameter * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "与 TapDrillDepth 同源冲突；两份 Remarks 适用清单逐字相同。"
+    }
+  ]
+}

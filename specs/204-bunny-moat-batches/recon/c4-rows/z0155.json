@@ -1,0 +1,122 @@
+{
+  "idx": 155,
+  "results": [
+    {
+      "member": "GetBuildNumbers2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Build_Numbers_Example_CSharp.md",
+        "Get_Build_Numbers_Example_VB.md",
+        "Get_Build_Numbers_Example_VBNET.md",
+        "Get_Version_History_of_Future_Version_Document_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例打印第三项 hot fix；成员页 Remarks 的示例输出只列 major revision 与 build 两行",
+          "example_quote": "Debug.Print(\"SOLIDWORKS hot fix numbers: \" + HotFixes);",
+          "example_file": "Get_Build_Numbers_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例均真调用；out 顺序与打印标签与 Parameters/Remarks 一致，未见冲突"
+    },
+    {
+      "member": "GetBulletsAndNumbering",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Paragraph_Properties_Example_CSharp.md",
+        "Get_and_Set_Paragraph_Properties_Example_VB.md",
+        "Get_and_Set_Paragraph_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用字面量 1 门控后四个 out 值；页面只说 valid only if ParagraphType is swParagraphNumbered",
+          "example_quote": "if (paraType == 1)",
+          "example_file": "Get_and_Set_Paragraph_Properties_Example_CSharp.md"
+        }
+      ],
+      "note": "示例调用前先设 CurrentParagraph，证实 Remarks 前置；out 顺序与页面 5 参数一致"
+    },
+    {
+      "member": "GetButtonState",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Buttons_to_Task_Pane_Example_CSharp.md",
+        "Add_Buttons_to_Task_Pane_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例以 0 为 ButtonIndex 取首个按钮状态；页面只写 Index of Task Pane button，未给取值",
+          "example_quote": "if (swTaskPane.GetButtonState(0) == false)",
+          "example_file": "Add_Buttons_to_Task_Pane_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetByte",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Object_s_Persistent_Reference_ID_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "raw_interfaces_only 下按第 3 个 out 参取字节，页面签名只列 2 参并写成返回值 byte",
+          "example_quote": "swSafeArray->GetByte(varPersist, i, &byteValue);",
+          "example_file": "Get_Object_s_Persistent_Reference_ID_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定；out 形参形态差异仅作 more_specific 记录"
+    },
+    {
+      "member": "GetCThreadQuality",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Display_Mode_of_View_Example_CSharp.md",
+        "Set_Display_Mode_of_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例以 SetDisplayMode4 第 5 参 true 取精度品质；页面只在 See Also 提到 SetDisplayMode4",
+          "example_quote": "swView.SetDisplayMode4(false, 3, true, false, true);",
+          "example_file": "Set_Display_Mode_of_View_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetCalloutVariableString",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "返回值被当作 <MOD-DIAM>/<HOLE-DEPTH> 记号拼进 CalloutString；页面只写 Callout variable string",
+          "example_quote": "CalloutString = \"<MOD-DIAM> \" + StrDiam + \" \" + \"<HOLE-DEPTH> \" + strDepth;",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetCameraById",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Turn_Cameras_On_and_Off_Example_CSharp.md",
+        "Turn_Cameras_On_and_Off_Example_VB.md",
+        "Turn_Cameras_On_and_Off_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "示例注释逐字复述 Remarks 的 ID 范围与重编号规则，三份一致，未见冲突"
+    }
+  ]
+}

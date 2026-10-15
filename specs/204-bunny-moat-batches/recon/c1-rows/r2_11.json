@@ -1,0 +1,15 @@
+{"idx": 11, "pages_read": 13, "rows": [
+{"iface": "IView", "file": "CropViewJaggedShapeIntensity.md", "signature": "System.int CropViewJaggedShapeIntensity {get; set;}", "obsolete": false, "pointer": false, "zero": "是（无括号）"},
+{"iface": "IView", "file": "GetDetailCircleCount2.md", "signature": "System.int GetDetailCircleCount2( out System.int Size )", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IView", "file": "GetFirstAnnotation3.md", "signature": "Annotation GetFirstAnnotation3()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "GetPolylines3.md", "signature": "System.object GetPolylines3()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "HasDesignTable.md", "signature": "System.bool HasDesignTable()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetEllipses2.md", "signature": "System.double IGetEllipses2()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "IGetUserPoints.md", "signature": "System.double IGetUserPoints()", "obsolete": true, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IView", "file": "RootDrawingComponent.md", "signature": "DrawingComponent RootDrawingComponent {get;}", "obsolete": true, "pointer": false, "zero": "是（无括号）"},
+{"iface": "IDrawingDoc", "file": "ChangeOrdDir.md", "signature": "void ChangeOrdDir()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "Dimensions.md", "signature": "void Dimensions()", "obsolete": false, "pointer": false, "zero": "是（空括号）"},
+{"iface": "IDrawingDoc", "file": "ICreateDiamDim2.md", "signature": "void ICreateDiamDim2( System.double DimValue, ref System.double P0, ref System.double P1, ref System.double P2, ref System.double P3, System.double ArrowSize, System.string Text, System.double TextHeight, System.double WitnessGap, System.double WitnessOvershoot, ref System.double TextPoint )", "obsolete": true, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "InsertNewNote2.md", "signature": "void InsertNewNote2( System.string UpperText, System.string LowerText, System.bool NoLeader, System.bool BentLeader, System.short ArrowStyle, System.short LeaderSide, System.double Angle, System.short BalloonStyle, System.short BalloonFit, System.short UpperNoteContent, System.short LowerNoteContent )", "obsolete": false, "pointer": false, "zero": "否（有形参）"},
+{"iface": "IDrawingDoc", "file": "ViewDisplayWireframe.md", "signature": "void ViewDisplayWireframe()", "obsolete": false, "pointer": false, "zero": "是（空括号）"}
+]}

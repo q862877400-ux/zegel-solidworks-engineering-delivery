@@ -1,0 +1,123 @@
+{
+  "idx": 518,
+  "results": [
+    {
+      "member": "UserReadableVariableName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md",
+        "Get_and_Set_Hole_Callout_Variables_Example_VB.md",
+        "Get_and_Set_Hole_Callout_Variables_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置:须先选中孔标注,再经 GetHoleCalloutVariables() 逐个取变量才能读到该名",
+          "example_quote": "holeVariables = (object[])swDisplayDimension.GetHoleCalloutVariables();",
+          "example_file": "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md"
+        },
+        {
+          "what": "示例把 VariableName 与 UserReadableVariableName 并列打印成两条不同字符串,印证 Remarks 的分工",
+          "example_quote": "str1 = \"  Callout variable name = \" + swCalloutVariable.VariableName;",
+          "example_file": "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md"
+        },
+        {
+          "what": "示例前置明写文档类型必须是工程图且已选中孔标注,成员页未提任何前置",
+          "example_quote": "// 1. Open a drawing document containing a hole callout.\n// 2. Select the hole callout.",
+          "example_file": "Get_and_Set_Hole_Callout_Variables_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只区分 Callout value 与 Dimension Text 两个位置,示例标签与之相容,未见矛盾"
+    },
+    {
+      "member": "VKnots",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出实际返回形状:System.object 取出后可强转 double[],比页面的 Array of knot doubles 更具体",
+          "example_quote": "vknots = (double[])VKnots;",
+          "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出前置:须先调 GetBSurfParams3(false,false,swSurfParam,0.01,sense) 拿到 BSurfParamData",
+          "example_quote": "swBSurfParam = (BSurfParamData)swSurf.GetBSurfParams3(false, false, swSurfParam, 0.01, out sense);",
+          "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 侧以 0 基 Variant 数组遍历同一属性,印证返回是可下标的一维数组而非标量",
+          "example_quote": "For i = 0 To UBound(VKnots)",
+          "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的 knot 条数与周期化转换说明,示例未给相反说法;单位两侧都没写"
+    },
+    {
+      "member": "VMax",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md",
+        "Return_Untrimmed_Curve_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Description/Returns,无 ## Remarks 段,按纪律跳过比对"
+    },
+    {
+      "member": "VMaxBoundType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段,按纪律跳过比对"
+    },
+    {
+      "member": "VMin",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md",
+        "Return_Untrimmed_Curve_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段,按纪律跳过比对"
+    },
+    {
+      "member": "VMinBoundType",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段,按纪律跳过比对"
+    },
+    {
+      "member": "VOrder",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段,按纪律跳过比对"
+    }
+  ]
+}

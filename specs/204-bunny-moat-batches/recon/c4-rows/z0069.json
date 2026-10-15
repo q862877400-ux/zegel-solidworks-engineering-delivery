@@ -1,0 +1,129 @@
+{
+  "idx": 69,
+  "results": [
+    {
+      "member": "CreatePropertyManagerPage",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md",
+        "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+        "Set_Focus_on_PropertyManager_Page_Control_Example_VB.md",
+        "Show_Bubble_ToolTip_for_PropertyManager_Page_Control_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Specify swPropertyManagerPageOptions_e.swPropertyManagerOptions_LockedPage in the Options parameter when you create your PropertyManager page.",
+          "example_quote": "Dim options As Integer = swPropertyManagerPageOptions_e.swPropertyManagerOptions_OkayButton Or swPropertyManagerPageOptions_e.swPropertyManagerOptions_CancelButton",
+          "example_file": "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md",
+          "why": "Remarks 要求建页时指定 LockedPage；该示例只给 OkayButton|CancelButton。另两份示例反而加了 LockedPage，官方示例集自身不一致。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值直接转成 IPropertyManagerPage2，成员页只写 PropertyManager page",
+          "example_quote": "swPropertyPage = DirectCast(iSwApp.CreatePropertyManagerPage(\".Net PMP control\", options, handler, errors), IPropertyManagerPage2)",
+          "example_file": "Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md"
+        }
+      ],
+      "note": "Options 旗标分歧，非硬前置；CSharp 版同样只给 Okay|Cancel。"
+    },
+    {
+      "member": "CreateRelativeView",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Relative_Drawing_View_Example_CSharp.md",
+        "Create_Relative_Drawing_View_Example_VB.md",
+        "Create_Relative_Drawing_View_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 里含糊的 orientation component 落成 FACE，并给出 mark=1 的 SelectByID2 写法",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", 0.0466263268498324, 0.00558799999987514, -0.00617351393179888, false, 1, null, 0);",
+          "example_file": "Create_Relative_Drawing_View_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出 XPos/YPos 的具体实值量级，成员页对这两个坐标未写单位",
+          "example_quote": "swView = (View)swDrawing.CreateRelativeView(fileName, 0.203608914116486, 0.493530187561698, (int)swRelativeViewCreationDirection_e.swRelativeViewCreationDirection_FRONT, (int)swRelativeViewCreationDirection_e.swRelativeViewCreationDirection_RIGHT);",
+          "example_file": "Create_Relative_Drawing_View_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都用 mark 1/2 选两张 FACE，与 Remarks 的 mark 1/2 完全一致，无冲突。"
+    },
+    {
+      "member": "CreateRenderMaterial",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+        "Get_Appearance_Filename_Example_CSharp.md",
+        "Get_Appearance_Filename_Example_VB.md",
+        "Get_Appearance_Filename_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 PathName 落成 data\\graphics 下 .p2m 材质文件的完整路径",
+          "example_quote": "materialName = \"C:\\Program Files\\SolidWorks Corp\\SolidWorks\\data\\graphics\\Materials\\plastic\\low gloss\\blue low gloss plastic.p2m\"",
+          "example_file": "Get_Appearance_Filename_Example_VB.md"
+        }
+      ],
+      "note": "该页无 Remarks 段（Parameters/Returns 之后直接进 Examples），按纪律跳过冲突判定。"
+    },
+    {
+      "member": "CreateRuledSurface",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "指定示例第 45 行是 swModeler.CreateRuledSurface（IModeler），非 IBody2 同名成员，名字相撞但对象不同，故不采用。"
+    },
+    {
+      "member": "CreateRuledSurfaceFromEdge",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Ruled_Surface_From_Edge_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Length: Distance at which to create the surface; valid for Tangent to Surface, Tapered to Vector, Perpendicular to Vector, and Sweep types only",
+          "example_quote": "error = swModel.CreateRuledSurfaceFromEdge(swDoc, swEdgeList, 1, 0.02, True, False, True, 0#, False, 1#, 0#, 0#, False, swRuledBody)",
+          "example_file": "Create_Ruled_Surface_From_Edge_Example_VB.md",
+          "why": "引文出自 Parameters 的 Length 行（非 Remarks 段）：页面称 Length 只对 Type 0/2/3/4 有效，官方示例却在 Type=1（Normal to Surface）时传入 0.02。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "Remarks 的 mark 4/6 面选择在示例中未出现；示例前置只说「已选中一条边」。"
+    },
+    {
+      "member": "CreateSaveBodyFeature",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Save_Bodies_Feature_and_Create_Assembly_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出 Bodies 的真实取法：遍历特征树找 SolidBodyFolder 再取 GetBodies 变体数组",
+          "example_quote": "bodyList = swBodyFolder.GetBodies",
+          "example_file": "Create_Save_Bodies_Feature_and_Create_Assembly_Example_VB.md"
+        },
+        {
+          "what": "示例给出整条调用的实参形态：两个数组变体加两个 -1，成员页只写「数组」",
+          "example_quote": "swFeatMgr.CreateSaveBodyFeature v1, fileNameVar, \"c:\\temp\\assem.sldasm\", -1, -1",
+          "example_file": "Create_Save_Bodies_Feature_and_Create_Assembly_Example_VB.md"
+        }
+      ],
+      "note": "示例把 ConsumeBody 与 CopyCustomProperty 都传 -1，与 Remarks 的 VARIANT_TRUE 一致，不构成冲突。"
+    },
+    {
+      "member": "CreateSectionView",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "4 份示例全部调 swModelViewMgr.CreateSectionView(svData)（IModelViewManager，带 SectionViewData），不是 IDrawingDoc 的零参版。"
+    }
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "idx": 365,
+  "results": [
+    {
+      "member": "MergeArcSegmentBodies",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Merge_Arc_Segment_Bodies_With_Adjacent_Bodies_Example_CSharp.md",
+        "Merge_Arc_Segment_Bodies_With_Adjacent_Bodies_Example_VB.md",
+        "Merge_Arc_Segment_Bodies_With_Adjacent_Bodies_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出生效时机：属性须在 InsertStructuralWeldment5 之前写在 StructuralMemberGroup 上；回读须先对特征数据 AccessSelections、读后 ReleaseSelectionAccess。Remarks 只说语义、没说时机。",
+          "example_quote": "Debug.Print(\" Arc segment merged? \" + group.MergeArcSegmentBodies);",
+          "example_file": "Merge_Arc_Segment_Bodies_With_Adjacent_Bodies_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例一致；相切前置由 CreateTangentArc 满足，每组均为一弧一线。"
+    },
+    {
+      "member": "MergeBendTags",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Merge_and_Unmerge_Bend_Tags_Example_CSharp.md",
+        "Merge_and_Unmerge_Bend_Tags_Example_VB.md",
+        "Merge_and_Unmerge_Bend_Tags_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Unmerge a merged bend tag\n\n1. Select the drawing view in which the merged bend tag exists.\n\n2. Activate the drawing view in which the merged bend tag exists.\n\n3. Select the merged bend tag to unmerge.",
+          "example_quote": "status = swDrawingDoc.ActivateView(\"Drawing View1\");\n            status = swModelDocExt.SelectByID2(\"DetailItem38@Drawing View1\", \"NOTE\", 0.098037379978424, 0.245097849056604, 0, false, 0, null, 0);",
+          "example_file": "Merge_and_Unmerge_Bend_Tags_Example_CSharp.md",
+          "why": "Remarks 把『先选中该图纸视图』列为解除合并第 1 步；示例 unmerge 段直接从 ActivateView 跳到选注释，全程未 SelectByID2 选视图（只有 merge 段选了）。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "**BendNotes**: Array of two or more bend tags to merge or an array of one merged bend tag to unmerge",
+          "example_quote": "swNote = (Note)swSelectionMgr.GetSelectedObject6(1, 0);\n            noteList[0] = swNote;\n            // Unmerge the merged bend tag\n            swView.MergeBendTags(false, noteList);",
+          "example_file": "Merge_and_Unmerge_Bend_Tags_Example_CSharp.md",
+          "why": "成员页 Parameters 段写解除合并传『一个已合并 bend tag 的数组』；示例传的是合并用的同一个 Note[2]，只覆盖 [0]，[1] 仍是上一个 bend tag。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例说明 bend tag 是 Note，须先用 IsBendLineNote 判真伪；且合并后其余标签会被重命名（A/B 合并、B、C 依次改名），Remarks 未提。",
+          "example_quote": "Debug.Print(\"Is a bendline note? \" + swNote.IsBendLineNote);",
+          "example_file": "Merge_and_Unmerge_Bend_Tags_Example_CSharp.md"
+        }
+      ],
+      "note": "合并段四步示例全做到；解除合并段少一步，且 BendNotes 形状不符。"
+    },
+    {
+      "member": "MergeSmoothFaces",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Properties_of_Sweep_Feature_Example_VB.md",
+        "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md",
+        "Insert_Sweep_Cut_Feature_Example_CSharp.md",
+        "Insert_Sweep_Cut_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property corresponds to the **Merge smooth faces** check box on the **Guide Curves** group box on the **Sweep** PropertyManager.",
+          "example_quote": "boolstatus = swModel.Extension.SelectByID2(\"Sketch4\", \"SKETCH\", 3.68377611840314E-02, -1.01247230141019E-02, 0, False, 1, Nothing, 0)\n    boolstatus = swModel.Extension.SelectByID2(\"Sketch3\", \"SKETCH\", -0.030956245593495, -0.018624786459474, 0, True, 4, Nothing, 0)",
+          "example_file": "Insert_Bidirectional_Swept-cut_Feature_Example_VB.md",
+          "why": "Remarks 把该属性限定在 Guide Curves 组（用引导线的 sweep）；该示例只选轮廓 mark=1 与路径 mark=4，无引导线，仍执行 swSweep.MergeSmoothFaces = True。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "读该属性须在 AccessSelections 之后、ReleaseSelectionAccess 之前；且示例读出时另行用 GetGuideCurvesType 判断有无引导线。Remarks 未说读取时机。",
+          "example_quote": "Debug.Print \" Merge smooth faces if using guide curves? \" & swSweep.MergeSmoothFaces",
+          "example_file": "Get_Properties_of_Sweep_Feature_Example_VB.md"
+        }
+      ],
+      "note": "四份示例均真实用到该成员；只有双向扭转那份存在引导线前置冲突。"
+    },
+    {
+      "member": "MergeTangentMembers",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_VBNET.md",
+        "Create_Path_Segment_SSMember_Example_CSharp.md",
+        "Create_Path_Segment_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks 段，按纪律跳过比对。"
+    },
+    {
+      "member": "MidCounterSinkAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for swCounterSunk and swCounterSunkDrilled holes.",
+          "example_quote": "(int)swWzdGeneralHoleTypes_e.swWzdCounterBore, (int)swWzdHoleStandards_e.swStandardISO, (int)swWzdHoleStandardFastenerTypes_e.swStandardISOHexCapScrew, \"M6\", (int)swWzdHoleThreadEndCondition_e.swEndThreadTypeBLIND",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "Remarks 说只对沉头孔有效；示例建的是沉孔 swWzdCounterBore（Postconditions 亦写 Inserts counterbore hole features），却在同一个孔上读该属性。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例定出单位口径：该属性返回值是弧度（×57.3 才得 deg）。成员页 Returns 只写 Middle countersink angle，未给单位。",
+          "example_quote": "Debug.Print(\"  MidCounterSinkAngle          = \" + swWizHole.MidCounterSinkAngle * 57.3 + \" deg\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例同型（都建沉孔），冲突一致成立。"
+    },
+    {
+      "member": "MidCounterSinkDiameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for swCounterSunk and swCounterSunkDrilled holes.",
+          "example_quote": "(int)swWzdGeneralHoleTypes_e.swWzdCounterBore, (int)swWzdHoleStandards_e.swStandardISO, (int)swWzdHoleStandardFastenerTypes_e.swStandardISOHexCapScrew, \"M6\", (int)swWzdHoleThreadEndCondition_e.swEndThreadTypeBLIND",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "Remarks 说只对沉头孔有效；示例建的是沉孔 swWzdCounterBore，却在同一个孔上读该属性，与『只对沉头孔相关』不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例定出单位口径：该属性返回值是米（×1000 才得 mm）。成员页 Returns 只写 Middle countersink diameter，未给单位。",
+          "example_quote": "Debug.Print(\"  MidCounterSinkDiameter       = \" + swWizHole.MidCounterSinkDiameter * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "与 MidCounterSinkAngle 同型冲突；两者的单位口径不同（弧度 vs 米）。"
+    },
+    {
+      "member": "MinVal",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Hinge_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出比 Remarks 更全的前置：除 AngleSelection=true，还须把角度实体放进 EntitiesToMate[2]；MinVal/MaxVal 与 Angle 同取 0.5235987755983 弧度。",
+          "example_quote": "MateData.EntitiesToMate[2] = AngleEntitiesToMateVar;",
+          "example_file": "Create_Hinge_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "示例先置 AngleSelection=true 再置 MinVal，前置成立；Returns 的弧度与示例值一致。"
+    }
+  ]
+}

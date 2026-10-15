@@ -1,0 +1,19 @@
+{
+  "idx": 58,
+  "project": "andrewbartels1",
+  "files_read": 6,
+  "calls": [
+    {
+      "member": "CloseAllDocuments",
+      "file": "docs/getting-started/tutorial-parts/list_features_assembly_demo.py",
+      "argc": 1,
+      "has_out_variant": false,
+      "evidence": "if raw is not None and raw.swApp is not None:\n            raw.swApp.CloseAllDocuments(True)",
+      "official_found": true,
+      "official_signature": "System.bool CloseAllDocuments( System.bool IncludeUnsaved )",
+      "official_argc": 1,
+      "verdict": "match",
+      "note": "实参 1 个；官方签名 1 个形参 IncludeUnsaved"
+    }
+  ]
+}

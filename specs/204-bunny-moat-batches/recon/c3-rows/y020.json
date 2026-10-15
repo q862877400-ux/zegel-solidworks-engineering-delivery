@@ -1,0 +1,148 @@
+{
+  "idx": 20,
+  "results": [
+    {
+      "name": "simulation_loads_wiring",
+      "level": "verified",
+      "members_found": [
+        "ICWLoadsAndRestraintsManager.AddRestraint",
+        "ICWLoadsAndRestraintsManager.AddForce",
+        "ICWForce.ForceBeginEdit",
+        "ICWForce.ForceEndEdit",
+        "ICWForce.ForceType",
+        "ICWForce.Unit",
+        "ICWForce.NormalForceOrTorqueValue",
+        "ICWStudy.LoadsAndRestraintsManager",
+        "ISelectionMgr.GetSelectedObject6"
+      ],
+      "examples_used": [
+        "Create_Topology_Study_Example_VBA.txt"
+      ],
+      "preconditions": [
+        {
+          "text": "Add the SOLIDWORKS Simulation as an add-in (Tools > Add-ins > SOLIDWORKS Simulation > OK).",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Add the SOLIDWORKS Simulation type library as a reference (IDE Tools > References).",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Open public_documents\\samples\\Simulation Examples\\tutor1.sldprt.",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调用前须先把面选进文档选区，用 GetSelectedObject6 组装 DispArray 传第 2 参",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "covered",
+          "evidence_quote": "★ **走工具真实路径**（`inject`(resolve_study) + `pre_call`(选面) + `derived_args`(补 model)）⇒ 夹具「**固定-1**」· 载荷「**力-1**」· 选区计数 **1/1**"
+        },
+        {
+          "text": "调用前须先取研究对象的 LoadsAndRestraintsManager（示例逐字调用序）",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "covered",
+          "evidence_quote": "`LoadsAndRestraintsManager.Count == 2`"
+        },
+        {
+          "text": "官方示例只演示 AddRestraint/AddPressure，未演示 AddForce ⇒ 法向力前置无从判定",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "两份 recon 索引对 cosworks 成员零命中；该官方 Simulation 示例由实现自身来源块逐字指向，见 D:\\AI\\SW\\_raw\\cworksapi\\。"
+    },
+    {
+      "name": "simulation_study_create",
+      "level": "verified",
+      "members_found": [
+        "ICWModelDoc.StudyManager",
+        "ICWStudyManager.CreateNewStudy3",
+        "ICWStudyManager.CreateNewStudy2",
+        "ICWStudyManager.CreateNewStudy",
+        "ICWStudyManager.StudyCount",
+        "ICWStudyManager.GetStudy",
+        "ICWStudy.Name",
+        "ICWStudy.CreateMeshForMeshControl",
+        "IModelDoc2.SetMaterialPropertyName2",
+        "IModelDoc2.MaterialIdName"
+      ],
+      "examples_used": [
+        "Create_Topology_Study_Example_VBA.txt",
+        "Get_and_Set_Material_Visual_Properties_Example_VB.md",
+        "Set_Material_Property_Name_Example_VB.md"
+      ],
+      "preconditions": [
+        {
+          "text": "Add the SOLIDWORKS Simulation as an add-in (Tools > Add-ins > SOLIDWORKS Simulation > OK).",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Add the SOLIDWORKS Simulation type library as a reference (IDE Tools > References).",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "Open public_documents\\samples\\Simulation Examples\\tutor1.sldprt.",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "先 GetAddInObject→COSMOSWORKS.ActiveDoc()→StudyManager() 才能 CreateNewStudy3",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "CreateNewStudy3 之后须经 StudyManagerObj.GetStudy(1) 取回研究对象（示例调用序）",
+          "from": "Create_Topology_Study_Example_VBA.txt",
+          "state": "covered",
+          "evidence_quote": "★ **建完回读**名字逐字相等；★ **列出** count 1 且含该名字"
+        },
+        {
+          "text": "1. Open a part.",
+          "from": "Get_and_Set_Material_Visual_Properties_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "2. Open the Immediate window.",
+          "from": "Get_and_Set_Material_Visual_Properties_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "1. Open a part.",
+          "from": "Set_Material_Property_Name_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "2. Open the Immediate window.",
+          "from": "Set_Material_Property_Name_Example_VB.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "CreateMeshForMeshControl 在两份索引与官方示例库中均无先例 ⇒ 前置无从判定",
+          "from": "（两份 recon 索引 0 命中）",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "材料两条前置来自 sldworks 侧示例（SetMaterialPropertyName2 同形调用），与仿真研究建链是否同源存疑；cosworks 侧索引覆盖为零。"
+    }
+  ]
+}

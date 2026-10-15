@@ -1,0 +1,15 @@
+{"idx":28,"pages_read":13,"rows":[
+{"iface":"IView","file":"GetArcs2.md","signature":"`System.object GetArcs2()`","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetDimensionDisplayString2.md","signature":"`System.object GetDimensionDisplayString2()`","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetFirstDowelSymbol.md","signature":"`System.object GetFirstDowelSymbol()`","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"GetSectionLineCount2.md","signature":"`System.int GetSectionLineCount2( out System.int Size )`","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetCenterMarks.md","signature":"`CenterMark IGetCenterMarks( System.int Count )`","obsolete":false,"pointer":true,"zero":"否（有形参）"},
+{"iface":"IView","file":"IGetFirstMultiJogLeader.md","signature":"`MultiJogLeader IGetFirstMultiJogLeader()`","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IView","file":"InsertBomTable4.md","signature":"`BomTableAnnotation InsertBomTable4( System.bool UseAnchorPoint, System.double X, System.double Y, System.int AnchorType, System.int BomType, System.string Configuration, System.string TableTemplate, System.bool Hidden, System.int IndentedNumberingType, System.bool DetailedCutList )`","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IView","file":"SetResolvedToLightweight.md","signature":"`void SetResolvedToLightweight()`","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"CreateCustomSymbol.md","signature":"`System.object CreateCustomSymbol( System.object Segments, System.object Points, System.object Notes )`","obsolete":true,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"FlipSectionLine.md","signature":"`void FlipSectionLine()`","obsolete":false,"pointer":false,"zero":"是（空括号）"},
+{"iface":"IDrawingDoc","file":"IFeatureByName.md","signature":"`Feature IFeatureByName( System.string Name )`","obsolete":false,"pointer":false,"zero":"否（有形参）"},
+{"iface":"IDrawingDoc","file":"MakeCustomSymbol2.md","signature":"`System.object MakeCustomSymbol2()`","obsolete":true,"pointer":false,"zero":"是（空括号）"},
+{"iface":"ISheet","file":"GetProperties.md","signature":"`System.object GetProperties()`","obsolete":true,"pointer":false,"zero":"是（空括号）"}
+]}

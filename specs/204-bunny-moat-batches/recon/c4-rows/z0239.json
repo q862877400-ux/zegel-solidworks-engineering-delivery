@@ -1,0 +1,122 @@
+{
+  "idx": 239,
+  "results": [
+    {
+      "member": "GetProcessedBody2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Selected_Faces_on_Process_Body_Example_CSharp.md",
+        "Get_Selected_Faces_on_Process_Body_Example_VB.md",
+        "Get_Selected_Faces_on_Process_Body_Example_VBNET.md",
+        "Get_UV_Parameters_For_XYZ_Location_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页只说 Maximum U/V angle、Remarks 又称 pitch，均未给单位；示例显式把角度换算成弧度后传入。",
+          "example_quote": "// 1 radian = 180º/p = 57.295779513º or approximately 57.3º\nconst double RadPerDeg = 1.0 / 57.3;\nconst double MaxUAngle = 1.0 * RadPerDeg;\nconst double MaxVAngle = 1.0 * RadPerDeg;",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_CSharp.md"
+        },
+        {
+          "what": "Returns 只说返回一个副本；示例显示该副本尚未属于任何文档，须先 CreateFeatureFromBody3 落入新零件，其面才存在。",
+          "example_quote": "swFeat = (Feature)swNewPart.CreateFeatureFromBody3(swProcBody, false, (int)swCreateFeatureBodyOpts_e.swCreateFeatureBodyCheck);",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 三段与两示例无互斥说法；单位与副本归属仅示例更具体。"
+    },
+    {
+      "member": "GetProcessedBodyWithSelFace",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Selected_Faces_on_Process_Body_Example_CSharp.md",
+        "Get_Selected_Faces_on_Process_Body_Example_VB.md",
+        "Get_Selected_Faces_on_Process_Body_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说需预选面；示例显示接收者 body 必须取自「预选面所在的同一文档」（新零件），而非原零件的 body。",
+          "example_quote": "swProcBody = (Body2)swBody.GetProcessedBodyWithSelFace();",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_CSharp.md"
+        },
+        {
+          "what": "Returns 只说「a copy of the body」；示例显示该副本携带了选面，可用 GetSelectedFaces / GetSelectedFaceCount 读回。",
+          "example_quote": "swSelFaceVar = (object[])swProcBody.GetSelectedFaces();",
+          "example_file": "Get_Selected_Faces_on_Process_Body_Example_CSharp.md"
+        }
+      ],
+      "note": "预选前置三语言示例一致，无矛盾；补充的是接收文档与选面回读路径。"
+    },
+    {
+      "member": "GetProfileCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Lofted_Bend_Feature_Example_CSharp.md",
+        "Insert_Lofted_Bend_Feature_Example_VB.md",
+        "Insert_Lofted_Bend_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只讲为 IGetProfiles 定数组长度；示例在 GetDefinition() 返回值上直接调用，未调 AccessSelections、也从未调 IGetProfiles，计数对象是预选的两个草图。",
+          "example_quote": "Debug.Print(\"Number of sketch profiles in this feature: \" + lbfd.GetProfileCount());",
+          "example_file": "Insert_Lofted_Bend_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Examples 段；三份示例口径一致，未构成冲突。"
+    },
+    {
+      "member": "GetProfileGroupFolders",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_VBNET.md",
+        "Create_Path_Segment_SSMember_Example_CSharp.md",
+        "Create_Path_Segment_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按规定跳过。两份 Corner_Treatments 示例只调 Count，不调本成员。"
+    },
+    {
+      "member": "GetProfileGroupFoldersCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md",
+        "Create_Path_Segment_SSMember_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按规定跳过；两份 VBNET 版 SSMember 示例未调本成员。"
+    },
+    {
+      "member": "GetProfileType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Properties_of_Sweep_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只交叉引用「Selections that Define Features」而未写前置；示例把 AccessSelections 当作读本成员的前置，并在末尾 ReleaseSelectionAccess。",
+          "example_quote": "bRet = swSweep.AccessSelections(swModel, Nothing)",
+          "example_file": "Get_Properties_of_Sweep_Feature_Example_VB.md"
+        }
+      ],
+      "note": "枚举口径（swSelectType_e）成员页与示例逐字一致；示例另给出调用序。"
+    },
+    {
+      "member": "GetProjectedPointOn",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Projected_Point_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（Returns 后直接 Examples），按规定跳过。"
+    }
+  ]
+}

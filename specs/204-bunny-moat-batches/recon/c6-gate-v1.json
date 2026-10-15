@@ -1,0 +1,116 @@
+{
+ "role": "V1",
+ "sampled": 12,
+ "findings": [
+  {
+   "group": 1,
+   "topic": "编进目录但从未直接调<N>族<N>成员",
+   "class_claimed": "真分歧",
+   "your_class": "时序更新",
+   "who_is_right": "我们",
+   "why": "重算 docs/family-coverage.json：今值 291族/2324，与生成物一致；256/2114 是旧快照 ⇒ 应改称时序更新。"
+  },
+  {
+   "group": 2,
+   "topic": "成员数N<N>",
+   "class_claimed": "假阳性",
+   "your_class": "假阳性",
+   "who_is_right": "我们",
+   "why": "三值都对：swapi IView 462 文件=461 成员(+_overview)、IDrawingDoc 275=274、ISheet 54=53 ⇒ 确是三个接口。"
+  },
+  {
+   "group": 3,
+   "topic": "按页头kind统计method<N>",
+   "class_claimed": "假阳性",
+   "your_class": "假阳性",
+   "who_is_right": "我们",
+   "why": "IView 页头 34 property + 427 method = 461，ISheet 45 / IDrawingDoc 268 各属其接口 ⇒ 假阳性成立。"
+  },
+  {
+   "group": 4,
+   "topic": "drawing_workflowpy<N><N>函数",
+   "class_claimed": "真分歧",
+   "your_class": "时序更新",
+   "who_is_right": "判不了",
+   "why": "git 逐提交实计同文件 2033(9-28)→2172→2742(9-29)→今 2961；2112 不在任何提交里 ⇒ 两值皆旧时点，非同时刻分歧。"
+  },
+  {
+   "group": 5,
+   "topic": "全量回归<N>passed<N>skipped<N>failed",
+   "class_claimed": "时序更新",
+   "your_class": "时序更新",
+   "who_is_right": "我们",
+   "why": "ROADMAP 自身后续十余处都记 1274，1260 是更早轮的值 ⇒ known-facts 的 1274 为现值，类别对。"
+  },
+  {
+   "group": 6,
+   "topic": "可复用套路增至<N>",
+   "class_claimed": "时序更新",
+   "your_class": "时序更新",
+   "who_is_right": "我们",
+   "why": "16→17：ROADMAP 轮 242 记 17（新），known-facts 事实 173 是轮 239 ⇒ 类别对，但机器 home 取了旧的。"
+  },
+  {
+   "group": 9,
+   "topic": "negative_input_selfproof扫<N>py",
+   "class_claimed": "时序更新",
+   "your_class": "时序更新",
+   "who_is_right": "我们",
+   "why": "同一门禁同一 glob：脚本 TOOLS=仓库 tools/（102→223→今 508）⇒ 口径相同，时序更新成立。"
+  },
+  {
+   "group": 10,
+   "topic": "门禁数由<N>增至<N>",
+   "class_claimed": "时序更新",
+   "your_class": "时序更新",
+   "who_is_right": "判不了",
+   "why": "「门禁数」今有三口径：check_*.py 28 · _run_* 31 · gate-classification.json 33 ⇒ 两文未必同一个量。"
+  },
+  {
+   "group": 16,
+   "topic": "无Returns段成员<N>",
+   "class_claimed": "假阳性",
+   "your_class": "假阳性",
+   "who_is_right": "我们",
+   "why": "drawingdoc 162 / isheet 14 分属两接口，且 drawingdoc 文档 5.3 节标题自证同为 162 ⇒ 假阳性成立。"
+  },
+  {
+   "group": 19,
+   "topic": "签审计<N>调用点<N>通过<N>存疑<N>查不到",
+   "class_claimed": "真分歧",
+   "your_class": "时序更新",
+   "who_is_right": "我们",
+   "why": "final-audit 明写轮 130 把那 2 条单列为 comtypes ⇒ 是后改的口径；且两文的 711-696=15 都没交代口径。"
+  },
+  {
+   "group": 21,
+   "topic": "能力清单<N>verified<N>stitched<N>not_implemented<N>",
+   "class_claimed": "真分歧",
+   "your_class": "时序更新",
+   "who_is_right": "我们",
+   "why": "自数 capabilities.yaml = 112（100/10/2，id 全唯一）⇒ 31 与 110 皆旧快照，生成物也写 112。"
+  },
+  {
+   "group": 23,
+   "topic": "IView零参可读候选还<N>",
+   "class_claimed": "假阳性（措辞近似）",
+   "your_class": "非分歧",
+   "who_is_right": "我们",
+   "why": "「约 200」与 201 是同一个量（IView 零参可读候选）的两种写法，聚类没错 ⇒ 不该计进 11 组假阳性。"
+  }
+ ],
+ "home_advice_holes": [
+  "tier0「生成物」只认 union-coverage/generated 子串：受新鲜度门禁的 harvest-digest.md 落 tier2，而无门禁的 union-coverage-matrix.md 反而 tier0。",
+  "机器 home 对「可复用套路增至<N>」取了 known-facts(16 条)，而较新的是 ROADMAP(17 条) ⇒ 把 ROADMAP 一律垫底，会把它独有的现值判成副本。",
+  "10 组假阳性仍被机械选出一个 home（「成员数N<N>」→ iview-read-members.md），与「各自文档自持」相反；照它执行会删掉另两个接口的数。",
+  "docs/recon 整目录升到 tier1，而 -read-members 这批新文件 git 未跟踪、无任何门禁 ⇒ 未受检的新文档压过了受检文档。",
+  "#19 的 home 指 final-audit.md，但 A5 的制品、且被新鲜度门禁实跑比对的是 signature-audit.md（含合计行列和校验）⇒ 该修的是它。"
+ ],
+ "capabilities_count_check": "自数 capabilities.yaml=112 条（100 verified/10 stitched/2 not_implemented）· id 全唯一；★是 JSON 非 YAML；生成物也写 112。",
+ "counts_i_dispute": [
+  "类别：#1/#4/#19/#21 我改判为「时序更新」（各有两个时点证据）⇒ 真分歧 4→0、时序更新 7→11。",
+  "#23 应为「非分歧」（同一量两种写法）⇒ 假阳性 11→10、非分歧 1→2；11 组的根因说因此也不成立。",
+  "#21 现值 112 不是 110；#10 现值不是 23（今 28/31/33 三口径）；#1 现值 291/2324 不是 256/2114。",
+  "若按「把现值搬进 known-facts」执行，上面三处会把已过时的数当现值固化 —— 现值应以生成物/真源为准。"
+ ]
+}

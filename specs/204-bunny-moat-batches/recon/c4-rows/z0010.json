@@ -1,0 +1,86 @@
+{"idx":10,"results":[
+{"member":"AddFilletedCorners","remarks_empty":false,
+"examples_actually_used":["Create_SM_Corner_Relief_Feature_Example_CSharp.md","Create_SM_Corner_Relief_Feature_Example_VBNET.md"],
+"conflicts":[
+{"kind":"precondition_diff",
+"remarks_quote":"This property is valid only if [[ISMCornerReliefData::ReliefType]] is set to [[swCornerReliefType_e]].swCornerRectangularRelief.",
+"example_quote":"           cornerItr.AddFilletedCorners = True\n           cornerItr.CornerFilletDiameter = 0.00025\n           cornerItr.CenterOnBendLines = True\n           cornerItr.TangentToBend = True\n           cornerItr.ReliefType = swCornerReliefType_e.swCornerRectangularRelief",
+"example_file":"Create_SM_Corner_Relief_Feature_Example_VBNET.md",
+"why":"示例第151行以 swCornerTearRelief 收集角，第156行即写 AddFilletedCorners=True，而 ReliefType 到第160行才改成 Rectangular ⇒ 写入时前提不成立。"}],
+"example_more_specific":[
+{"what":"示例写明刚拿到的角对象 ReliefType 默认是 tear（成员页未给默认值）。",
+"example_quote":"           // Default is tear relief for all Sketched Bends",
+"example_file":"Create_SM_Corner_Relief_Feature_Example_CSharp.md"}],
+"note":"唯一冲突是写入顺序；示例后面还在 circular / constant-width 分支里回读同一属性。"},
+
+{"member":"AddFrame","remarks_empty":false,
+"examples_actually_used":["Get_Gtol_Frame_Information_Example_CSharp.md","Get_Gtol_Frame_Information_Example_VBNET.md"],
+"conflicts":[
+{"kind":"precondition_diff",
+"remarks_quote":"This method is valid only if this Gtol was created in SOLIDWORKS 2022 or later.",
+"example_quote":"// Preconditions:\n// 1. Open a drawing that contains a GTol created with\neither SolidWorks 2021 or SolidWorks 2022/2022+.",
+"example_file":"Get_Gtol_Frame_Information_Example_CSharp.md",
+"why":"示例前置明确允许 2021 年创建的 Gtol；ConvertFormat 仅在 CanConvertFormat 为真且格式为 GTOL_SW2021 时才尝试且可失败，AddFrame 前无 2022 守卫。"}],
+"example_more_specific":[
+{"what":"示例给出成功判据：GetFrameCount 加一；成员页只说返回 bool。",
+"example_quote":"FrameCount = swGtol.GetFrameCount(); // frame count\nshould increase by one",
+"example_file":"Get_Gtol_Frame_Information_Example_CSharp.md"}],
+"note":"两份示例的 AddFrame() 均为无参，与签名一致；分歧只在「Gtol 谁创建」这一前置。"},
+
+{"member":"AddGroupBox","remarks_empty":false,
+"examples_actually_used":["Add_.NET_Controls_to_SOLIDWORKS_Using_an_Add-in_Example_CSharp.md","Add_.NET_Controls_to_SolidWorks_Using_an_Add-in_Example_VBNET.md","Set_Focus_on_PropertyManager_Page_Control_Example_VB.md","Show_Bubble_ToolTip_for_PropertyManager_Page_Control_Example_CSharp.md"],
+"conflicts":[],
+"example_more_specific":[
+{"what":"示例把两个 swAddGroupBoxOptions_e 值按位或成 Options；成员页只说「as defined in swAddGroupBoxOptions_e」。",
+"example_quote":"            caption = \"Sample Group Box\";\n            options = (int)swAddGroupBoxOptions_e.swGroupBoxOptions_Visible + (int)swAddGroupBoxOptions_e.swGroupBoxOptions_Expanded;\n            pm_Group = (PropertyManagerPageGroup)pm_Page.AddGroupBox(GroupID, caption, options);",
+"example_file":"Show_Bubble_ToolTip_for_PropertyManager_Page_Control_Example_CSharp.md"},
+{"what":"示例要求页内每个控件 ID 唯一，群组 ID 单独 const 出来。",
+"example_quote":"    //Each object in the page needs a unique ID\n    const int GroupID = 1;",
+"example_file":"Show_Bubble_ToolTip_for_PropertyManager_Page_Control_Example_CSharp.md"}],
+"note":"四份示例都在显示前（构造函数 / Class_Initialize）调用，与 Remarks 前置一致，未见冲突。"},
+
+{"member":"AddHorizontalDimension2","remarks_empty":true,
+"examples_actually_used":["Dimension_Edge_in_Drawing_Example_VB.md"],
+"conflicts":[],
+"example_more_specific":[
+{"what":"示例写明视图里无法转换的边会让调用返回 NULL（成员页无 Remarks，也未写失败形状）。",
+"example_quote":"NULL if cannot convert edge in this view\nSet\nswDispDim = swDrawModel.AddHorizontalDimension2(nXpos,\nnYpos, 0#)",
+"example_file":"Dimension_Edge_in_Drawing_Example_VB.md"}],
+"note":"成员页无 ## Remarks ⇒ 按纪律跳过冲突判定；参数段已声明 X/Y/Z 单位为 meters。"},
+
+{"member":"AddIndicator","remarks_empty":false,
+"examples_actually_used":["Get_Gtol_Frame_Information_Example_CSharp.md","Get_Gtol_Frame_Information_Example_VBNET.md"],
+"conflicts":[],
+"example_more_specific":[
+{"what":"示例逐一列出受支持的 BorderType 四个值；成员页只指向枚举、不列举。",
+"example_quote":"// supported border types: swGtolIndicatorBorderType_CollectionPlane,\nswGtolIndicatorBorderType_OrientationPlane\nswGtolIndicatorBorderType_IntersectionPlane\nswGtolIndicatorBorderType_DirectionFeature",
+"example_file":"Get_Gtol_Frame_Information_Example_CSharp.md"},
+{"what":"示例把 swGtolGeomCharSymbol_e 的值塞进 BorderType 槽，标注 unsupported 并靠返回值判失败。",
+"example_quote":"boolstatus = swGtolFrame.AddIndicator((int)swGtolGeomCharSymbol_e.swGcsFLAT,\n(int)swGtolGeomCharSymbol_e.swGcsSYMMETRY, sDatum); // unsupported BorderType",
+"example_file":"Get_Gtol_Frame_Information_Example_CSharp.md"}],
+"note":"示例只用 swGcsFLAT 做反向用例，Remarks 列的五个合法 TolType 未被违反，不构成冲突。"},
+
+{"member":"AddInstanceAt","remarks_empty":false,
+"examples_actually_used":["Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_CSharp.md","Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_VBNET.md","Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_VB.md"],
+"conflicts":[],
+"example_more_specific":[
+{"what":"示例要求先回滚并 AccessSelections 才能改实例表，成员页没提这一步。",
+"example_quote":"    'Roll back and access the variable pattern feature\n    status = swDimensionDrivenTablePatternFeat.AccessSelections(swModel, Nothing)",
+"example_file":"Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_VB.md"},
+{"what":"示例在 AddInstanceAt 之后用 GetInstanceCount 复核，并只用返回 bool 判成败。",
+"example_quote":"    status = swDimensionDrivenTablePatternFeat.AddInstanceAt(False, -1)\n    Debug.Print \"Instance added to table? \" & status\n    nbr = swDimensionDrivenTablePatternFeat.GetInstanceCount",
+"example_file":"Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_VB.md"},
+{"what":"示例把 SetInstanceDimensionValue 的实例号取成添加前读到的 GetInstanceCount 值。",
+"example_quote":"    status = swDimensionDrivenTablePatternFeat.AccessSelections(swModel, Nothing)\n    'Set new values for the new instance\n    errorString = swDimensionDrivenTablePatternFeat.SetInstanceDimensionValue(nbr, \"D3@Sketch2@bottle.moPart_c\", 0.15)",
+"example_file":"Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_VB.md"}],
+"note":"三份示例都是 AddInstanceAt(False, -1)，与 Index 的 -1 语义一致；Remarks 两条均未被违反。"},
+
+{"member":"AddItem","remarks_empty":true,
+"examples_actually_used":["Use_Advanced_Component_Selection_Example_CSharp.md","Use_Advanced_Component_Selection_Example_VB.md","Use_Advanced_Component_Selection_Example_VBNET.md"],
+"conflicts":[],
+"example_more_specific":[
+{"what":"示例给出 Property 的真实写法「Document name -- SW Special」，Condition 以十六进制 0x4 传入。",
+"example_quote":"            // Add selection criteria to query list\n            AddRetVal = AdvancedSelectionCriteria.AddItem(\"Document name -- SW Special\", 0x4, \"Gear\", false);\n            Debug.Print(\"AddItem returned \" + AddRetVal);",
+"example_file":"Use_Advanced_Component_Selection_Example_CSharp.md"}],
+"note":"成员页无 ## Remarks（只有 Obsolete 行）⇒ 跳过冲突判定；页面已写明被 AddItem2 取代。"}
+]}

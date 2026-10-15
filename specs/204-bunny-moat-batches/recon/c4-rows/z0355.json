@@ -1,0 +1,102 @@
+{
+  "idx": 355,
+  "results": [
+    {
+      "member": "LoadReferences",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Linear_Motor_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 ## Remarks，按纪律跳过；示例用它设 vContact（面数组）。"
+    },
+    {
+      "member": "LoadSplineData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Linear_Motor_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体文件名 Test_bouncingBall.csv（不带目录）；页面只说\"从哪个文件加载\"。",
+          "example_quote": "boolstatus = swMotorFeat.LoadSplineData(\"Test_bouncingBall.csv\")",
+          "example_file": "Create_Linear_Motor_Feature_Example_VB.md"
+        }
+      ],
+      "note": "示例宿主是 SimulationMotorFeatureData，页面归属 ISimulationForceFeatureData；两者各有该成员。"
+    },
+    {
+      "member": "Location",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Connection_Point_Feature_Data_Example_VB.md",
+        "Get_and_Set_Connection_Point_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Connection_Point_Feature_Data_Example_VBNET.md",
+        "Create_Linear_Motor_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 ## Remarks，跳过。Linear Motor 示例用的是马达接口同名成员，非本页所写接口。"
+    },
+    {
+      "member": "Lock",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Configuration_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "Remarks 讲配置名保留字符，与 Lock 锁定语义无关；两者不矛盾，示例只读取。"
+    },
+    {
+      "member": "LockAllExternalReferences",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Lock_All_External_References_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 ## Remarks，按纪律跳过。"
+    },
+    {
+      "member": "LockAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Edge_Flange_Example_CSharp.md",
+        "Create_Edge_Flange_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only when:\n\n- merging two bodies in a multibody part,\n\n    - and -\n\n- [[IEdgeFlangeFeatureData::OffsetType]] is set to [[swFlangeOffsetTypes_e]].swFlangeOffsetUptoEdgeAndMerge.",
+          "example_quote": "FeatData.LockAngle = true;\n                FeatData.OffsetType = (int)swFlangeOffsetTypes_e.swFlangeOffsetBlind;",
+          "example_file": "Create_Edge_Flange_Example_CSharp.md",
+          "why": "示例写 LockAngle=true 时 OffsetType 最终为 Blind，非 UptoEdgeAndMerge；且零件为单件 cover.sldprt，两条前提均不成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出赋值次序：先写 LockAngle，后写 OffsetType，写入瞬间 OffsetType 尚未设为 UptoEdgeAndMerge。",
+          "example_quote": "FeatData.BendAngle = dAngle;\n                FeatData.LockAngle = true;\n                FeatData.OffsetType = (int)swFlangeOffsetTypes_e.swFlangeOffsetBlind;",
+          "example_file": "Create_Edge_Flange_Example_CSharp.md"
+        }
+      ],
+      "note": "VB.NET 版第 98-99 行与 C# 第 107-108 行同型，同样违反页面所列有效性条件。"
+    },
+    {
+      "member": "LockLightToModel",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_Spotlight_and_Get_Light_Feature_Example_CSharp.md",
+        "Add_Spotlight_and_Get_Light_Feature_Example_VB.md",
+        "Add_Spotlight_and_Get_Light_Feature_Example_VBNET.md",
+        "Redirect_Spotlight_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页面无 ## Remarks，按纪律跳过；四份示例均传字面灯 id 4。"
+    }
+  ]
+}

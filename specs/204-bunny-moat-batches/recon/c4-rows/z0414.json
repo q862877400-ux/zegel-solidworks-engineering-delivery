@@ -1,0 +1,93 @@
+{
+  "idx": 414,
+  "results": [
+    {
+      "member": "ReverseAlignment",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_Parting_Surface_Feature_Data_Example_CSharp.md",
+        "Get_and_Set_Parting_Surface_Feature_Data_Example_VB.md",
+        "Get_and_Set_Parting_Surface_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IPartingSurfaceFeatureData/ReverseAlignment.md 无 ## Remarks 段，按纪律跳过。示例变量确为 SldWorks.PartingSurfaceFeatureData。"
+    },
+    {
+      "member": "ReverseDecalsOrder",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Reverse_Order_of_Decals_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IModelDocExtension/ReverseDecalsOrder.md 无 ## Remarks 段，按纪律跳过。示例用 swModelDocExt.ReverseDecalsOrder(lNbrDecals)，接口吻合。"
+    },
+    {
+      "member": "ReverseDir",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Height_of_Dome_Feature_Example_VB.md",
+        "Create_and_Modify_Dome_Feature_Example_CSharp.md",
+        "Create_and_Modify_Dome_Feature_Example_VB.md",
+        "Create_and_Modify_Dome_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份 Create and Modify Dome 示例都先调 AccessSelections(swModel, Nothing)，再写 ReverseDir，最后 ModifyDefinition 才落地——成员页只说「须 ModifyDefinition」，没提 AccessSelections 这一步。",
+          "example_quote": "status = swDomeFeatureData.AccessSelections(swModel, Nothing)",
+          "example_file": "Create_and_Modify_Dome_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 与 4 份示例一致（ReverseDir=True 后接 ModifyDefinition），无冲突。"
+    },
+    {
+      "member": "ReverseDirection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Autoballoon_to_Face_Example_CSharp.md",
+        "Add_Autoballoon_to_Face_Example_VB.md",
+        "Add_Autoballoon_to_Face_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "True to reverse the item ordering, false to not; only valid when [[IAutoBalloonOptions::ItemOrder]] is set to [[swBalloonItemNumbersOrder_e]].swBalloonItemNumbers_OrderSequentially",
+          "example_quote": "autoballoonParams.ItemOrder = swBalloonItemNumbers_DoNotChangeItemNumbers",
+          "example_file": "Add_Autoballoon_to_Face_Example_VB.md",
+          "why": "★该句逐字出自本成员页的 ## Returns 段（其 ## Remarks 只有一句「See the SOLIDWORKS Help...」）。页面称仅当 ItemOrder=OrderSequentially(枚举值 4) 才有效；三份示例却设 ItemOrder=DoNotChangeItemNumbers(枚举值 1)，仍照样设 ReverseDirection 并成功调用 AutoBalloon5。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "Change_Bend_Radius_of_Sketched_Bend_Example_VB.md 用的是 ISketchedBendFeatureData.ReverseDirection，非本成员，已排除。"
+    },
+    {
+      "member": "ReverseEvaluate",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "ICurve/ReverseEvaluate.md 无 ## Remarks 段，跳过。3 份 Get_Distance 示例调的是 SldWorks.Surface.ReverseEvaluate；C# 示例里注释写 ICurve::ReverseEvaluate，但被调对象 swSurf 声明为 Surface（见 ISurface/ReverseEvaluate.md，返回 UV 数组）。"
+    },
+    {
+      "member": "ReverseFaceNormal",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Data_for_Simple_Fillet_Example_VB.md",
+        "Get_Data_for_Simple_Fillet_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "ISimpleFilletFeatureData2/ReverseFaceNormal.md 全文仅 10 行（到标题为止，无签名无 Remarks），跳过。示例按 swFillet.ReverseFaceNormal(0) 带下标调用。"
+    },
+    {
+      "member": "ReverseOffset",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "IEdgeFlangeFeatureData/ReverseOffset.md 无 ## Remarks 且无 ## Examples 段，跳过。3 份 Create a Thread 示例调的是 SldWorks.ThreadFeatureData.ReverseOffset（另页 IThreadFeatureData/ReverseOffset.md，语义为翻转螺旋线偏移）。"
+    }
+  ]
+}

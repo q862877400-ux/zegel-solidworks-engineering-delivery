@@ -1,0 +1,101 @@
+{
+  "idx": 31,
+  "results": [
+    {
+      "name": "weldment_profile_and_curve",
+      "level": "verified",
+      "members_found": [
+        "SelectByID2",
+        "IModelDocExtension.SaveAs",
+        "IModelDoc2.ConfigurationManager",
+        "IConfigurationManager.ActiveConfiguration",
+        "IFeatureManager.CreateDefinition",
+        "IFeatureManager.CreateFeature",
+        "IProfileCenterMateFeatureData.EntitiesToMate",
+        "IProfileCenterMateFeatureData.MateAlignment",
+        "IProfileCenterMateFeatureData.OffsetDistance",
+        "IProfileCenterMateFeatureData.FlipDimension",
+        "IProfileCenterMateFeatureData.LockRotation",
+        "IFeature.GetErrorCode2"
+      ],
+      "examples_used": [
+        "Create_Profile_Center_Mate_Example_CSharp.md",
+        "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "活动文档须为装配体（含型材构件）：示例先打开 AdvancedMateDemo2.sldasm",
+          "from": "Create_Profile_Center_Mate_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "须先选中两个实体（Face2）并取回后赋给 EntitiesToMate（示例用 SelectByRay 取 2 个面）",
+          "from": "Create_Profile_Center_Mate_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "本仓走 CreateDefinition(101)+CreateFeature，官方该入口无示例（示例走 CreateMateData(24)+CreateMate）",
+          "from": "Create_Profile_Center_Mate_Example_CSharp.md",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        },
+        {
+          "text": "建自定义型材前：库特征与零件模板须存在、Parts 默认模板路径有效、目标目录先建好",
+          "from": "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "调用序：打开 .sldlfp 库特征→SelectByID2 选构件→AddConfiguration→再 Extension.SaveAs 出新 .sldlfp",
+          "from": "Insert_Structural_Weldments_Using_Custom_Weldment_Profile_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "evidence 只证 create_weldment_profile 建出 .sldlfp；配合的装配体/双实体前置与官方 CreateDefinition 入口均未提。"
+    },
+    {
+      "name": "costing_templates_and_defaults",
+      "level": "verified",
+      "members_found": [
+        "ICostManager.GetTemplatePathnames",
+        "ICostManager.CostingDefaults",
+        "ICostingDefaults.GetTemplateName"
+      ],
+      "examples_used": [
+        "Create_Machining_Costing_Analyses_Example_CSharp.md"
+      ],
+      "preconditions": [
+        {
+          "text": "打开零件文档 machined_part.sldprt（CostManager 由活动文档 Extension.GetCostingManager 取）",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "确认 Costing 模板存在：系统选项 > 文件位置里显示 Costing templates 文件夹",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "covered",
+          "evidence_quote": "回了真实模板路径 `…\\lang\\chinese-simplified\\costing templates\\…`"
+        },
+        {
+          "text": "取到 CostManager 后先 WaitForUIUpdate，再读模板数与模板路径",
+          "from": "Create_Machining_Costing_Analyses_Example_CSharp.md",
+          "state": "not_covered",
+          "evidence_quote": ""
+        },
+        {
+          "text": "取默认模板走 CostingDefaults.GetTemplateName，官方示例无该成员用例",
+          "from": "docs/recon/member-to-example-index.md（GetTemplateName 条目全属 ISheet 图纸格式，无关）",
+          "state": "cannot_tell",
+          "evidence_quote": ""
+        }
+      ],
+      "verdict": "has_uncovered",
+      "note": "只覆盖「模板存在」一条；打开零件文档与 WaitForUIUpdate 调用序未提，GetTemplateName 无相关示例。"
+    }
+  ]
+}

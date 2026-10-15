@@ -1,0 +1,111 @@
+{
+  "idx": 345,
+  "results": [
+    {
+      "member": "JogLine",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Explode_Line_Sketch_and_Jog_Line_Example_CSharp.md",
+        "Insert_Explode_Line_Sketch_and_Jog_Line_Example_VB.md",
+        "Insert_Explode_Line_Sketch_and_Jog_Line_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过比较；三份示例均用 swSketchSegment.JogLine。"
+    },
+    {
+      "member": "Jogged",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Set_Properties_of_Angular_Running_Dimension_Example_CSharp.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VB.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过比较；三份示例均以 dispdim.Jogged 读回。"
+    },
+    {
+      "member": "KFactor",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Base-Flange_Feature_Using_Gauge_Table_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks；另 3 份列出的示例里 KFactor 属 CustomBendAllowance，不是本成员。"
+    },
+    {
+      "member": "KeepBackground",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_and_Set_Scene_Properties_Example_VB.md",
+        "Get_and_Set_Scene_Properties_Example_CSharp.md",
+        "Get_and_Set_Scene_Properties_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[ISwScene::BackgroundType]] is set to one of the following:\n\n- [[swSceneBackgroundType_e]].swBackgroundType_Image\n\n- swSceneBackgroundType_e.swBackgroundType_Graduated\n\n- swSceneBackgroundType_e.swBackgroundType_Plain",
+          "example_quote": "Scene.BackgroundType = swSceneBackgroundType_e.swBackgroundType_UseEnvironment … Debug.Print \"Keep the scene background when changing the scene? \" & Scene.KeepBackground",
+          "example_file": "Get_and_Set_Scene_Properties_Example_VB.md",
+          "why": "Remarks 把有效范围限定为 Image/Graduated/Plain；三份示例都先把 BackgroundType 设成 UseEnvironment（不在表内）再读该属性，两侧对有效前置的界定不能同时成立。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "CSharp/VBNET 两份同型：BackgroundType=UseEnvironment 后读 KeepBackground。"
+    },
+    {
+      "member": "KeepBodies",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Delete_Body_Feature_Example_VB.md",
+        "Insert_Delete_Body_Feature_Example_CSharp.md",
+        "Insert_Delete_Body_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call [[IDeleteBodyFeatureData::Bodies]] to specify the bodies to keep or delete.",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"Fillet5\", \"SOLIDBODY\", 5.92851881957586E-02, 4.09115950836281E-02, -1.97275812591329E-02, True, 0, Nothing, 0) … Set myFeature = Part.FeatureManager.InsertDeleteBody2(False)",
+          "example_file": "Insert_Delete_Body_Feature_Example_VB.md",
+          "why": "Remarks 说须调 Bodies 指定要保留/删除的体；三份示例只靠 SOLIDBODY 预选建特征，全程未调 Bodies，两种指定方式不能同时是必需。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "三份示例均只读回 KeepBodies，未写入；CSharp/VBNET 同型。"
+    },
+    {
+      "member": "KeepBody",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_ConvertSolid_Feature_Example_CSharp.md",
+        "Create_ConvertSolid_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按纪律跳过比较；两份示例均以 FeatData.KeepBody 读回。"
+    },
+    {
+      "member": "KeepCapColor",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Section_View_in_Model_Example_VB.md",
+        "Create_Section_View_in_Model_Example_CSharp.md",
+        "Create_Section_View_in_Model_Example_VBNET.md",
+        "Get_Sectioned_Bodies_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[ISectionViewData::ShowSectionCap]] is true and [[ISectionViewData::GraphicsOnlySection]] is false.",
+          "example_quote": "data.ShowSectionCap = True\n    data.KeepCapColor = True\n    data.GraphicsOnlySection = True",
+          "example_file": "Create_Section_View_in_Model_Example_VB.md",
+          "why": "Remarks 要求 GraphicsOnlySection 为 false；CSharp/VBNET 两份同型示例却设成 True 仍写 KeepCapColor=True，且后置条件称剖面已着色，两条不能同时成立。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "Get_Sectioned_Bodies_Example_VB 用 KeepCapColor=False 且 GraphicsOnlySection=False，符合 Remarks。"
+    }
+  ]
+}

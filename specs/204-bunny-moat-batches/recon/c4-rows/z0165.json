@@ -1,0 +1,158 @@
+{
+  "idx": 165,
+  "results": [
+    {
+      "member": "GetControlPoints",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md",
+        "Get_B-Spline_Surface_Parameterization_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "备注没写 IBSurfParamData 从哪来；示例给出前置链：选面→GetSurface→GetBSurfParams3 才得到该对象。",
+          "example_quote": "Set swBSurfParam = swSurf.GetBSurfParams3(False, False, swSurfParam, 0.01, sense)",
+          "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_VB.md"
+        },
+        {
+          "what": "备注的示意表列的是整张 6 点矩阵（Total=18），示例却表明返回只是被指定那一行/列的一个向量。",
+          "example_quote": "Debug.Print(\"Control point at row=2 and column=3: \");",
+          "example_file": "Get_B-Spline_Surface_Parameterization_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Edit_Spline_Example_VB 的 GetControlPoints 属 ISplineParamData（out 参数版），名字撞车已排除；备注自带表是 3 行×2 列而正文写 2X3。"
+    },
+    {
+      "member": "GetControlVertexWeights",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Edit_Spline_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "备注只说「valid only if IsRationalCurve」，示例把它落成调用方必须写的显式 If 守卫。",
+          "example_quote": "If swSkSpl.IsRationalCurve Then",
+          "example_file": "Edit_Spline_Example_VB.md"
+        },
+        {
+          "what": "备注未说索引基数，示例按 0..UBound 的 0 基 Variant 数组遍历权重。",
+          "example_quote": "For k = 0 To UBound(weights)",
+          "example_file": "Edit_Spline_Example_VB.md"
+        }
+      ],
+      "note": "备注自身「valid only if」与「非有理返回空数组」两句有张力，但属备注内部，未与示例冲突。"
+    },
+    {
+      "member": "GetControllingDimensionCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_CSharp.md",
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_VB.md",
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_VBNET.md",
+        "Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面无任何前置；示例先 SelectByID2 选中 VarPattern1 再 GetDefinition 取 DimPatternFeatureData。",
+          "example_quote": "swDimensionDrivenTablePatternFeat = (DimPatternFeatureData)swFeature.GetDefinition();",
+          "example_file": "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例在计数前必须先 AccessSelections(swModel, null) 回滚访问，这一步页面完全没提。",
+          "example_quote": "status = swDimensionDrivenTablePatternFeat.AccessSelections(swModel, null);",
+          "example_file": "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按纪律跳过冲突判定；四份示例均实际调用该成员。"
+    },
+    {
+      "member": "GetControllingDimensionName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_CSharp.md",
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_VB.md",
+        "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_VBNET.md",
+        "Delete_and_Insert_Instances_in_Variable_Pattern_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说「先用 Count 取数量」、参数写「see Remarks」却没给基数；示例把 Index 定为 0 基。",
+          "example_quote": "controllingDimNames[i] = (string)swDimensionDrivenTablePatternFeat.GetControllingDimensionName(i);",
+          "example_file": "Delete_Instances_and_Dimensions_in_Variable_Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "C#/VB/VB.NET/C# 四份示例一致用 0..dimNbr-1；数组却按 dimNbr+1 预分配，官方示例自身有富余。"
+    },
+    {
+      "member": "GetConversionFactor",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_and_Set_User_Units_Example_CSharp.md",
+        "Get_and_Set_User_Units_Example_VB.md",
+        "Get_and_Set_User_Units_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只说「Gets the conversion factor」；示例给出 UserUnit 的来源 Part.GetUserUnit(swAngleUnit)。",
+          "example_quote": "Set docUserUnit = Part.GetUserUnit(swAngleUnit)",
+          "example_file": "Get_and_Set_User_Units_Example_VB.md"
+        },
+        {
+          "what": "示例把它与 ConvertDoubleToSystemValue 同屏打印，说明是文档单位制到系统值的换算因子。",
+          "example_quote": "Debug.Print \"  Conversion factor: \" & docUserUnit.GetConversionFactor",
+          "example_file": "Get_and_Set_User_Units_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，跳过冲突判定；页面与示例都没写因子的单位。"
+    },
+    {
+      "member": "GetCoordinateSystemTransformByName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Coordinate_System_Transform_Example_VB.md",
+        "Get_Table-driven_Pattern_Properties_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只说 NameIn 是坐标系名；示例传的就是坐标系特征的 .Name。",
+          "example_quote": "Set swXform = swDocExt.GetCoordinateSystemTransformByName(swCoordSys.Name)",
+          "example_file": "Get_Table-driven_Pattern_Properties_Example_VB.md"
+        },
+        {
+          "what": "页面 Returns 只写「Math transform」；示例按 ArrayData 9/10/11 取平移且 ×1000 才打 mm。",
+          "example_quote": "Debug.Print \" Origin = (\" & -1# * swXform.ArrayData(9) * 1000# & \", \" & -1# * swXform.ArrayData(10) * 1000# & \", \" & -1# * swXform.ArrayData(11) * 1000# & \") mm\"",
+          "example_file": "Get_Table-driven_Pattern_Properties_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，跳过冲突判定；两例都把 NameIn 取自所选特征的 Name。"
+    },
+    {
+      "member": "GetCoordinateSystemXformByName",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Transform_of_Coordinate_System_Example_VB.NET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只给 System.object 返回、未说形状；示例整体强转成 Double() 裸数组。",
+          "example_quote": "CType(swModel.GetCoordinateSystemXformByName(sAxisName),",
+          "example_file": "Get_Transform_of_Coordinate_System_Example_VB.NET.md"
+        },
+        {
+          "what": "示例按下标取原点三项并 ×1000 才按 mm 打印，用法与其后继成员返回 MathTransform 不同。",
+          "example_quote": "* vXformArr(9) * 1000.0#) + \",\" + _",
+          "example_file": "Get_Transform_of_Coordinate_System_Example_VB.NET.md"
+        }
+      ],
+      "note": "成员页无 Remarks（只有 Obsolete 行），跳过冲突判定；示例按裸 double 数组用，与后继不同。"
+    }
+  ]
+}

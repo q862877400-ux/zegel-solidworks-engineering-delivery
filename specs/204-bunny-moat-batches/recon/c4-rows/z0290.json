@@ -1,0 +1,181 @@
+{
+  "idx": 290,
+  "results": [
+    {
+      "member": "IActivateDoc3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Assembly_Example_CPlusPlus_COM.md",
+        "Add_Component_and_Mate_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "This file becomes the active document, and this method returns a pointer to that document object.",
+          "example_quote": "hres = swApp->IActivateDoc3(sActiveAssembly,\nfalse, &lErrorActivatingDoc, &swModel);",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md",
+          "why": "成员页写 3 形参、以返回值给出文档指针；示例传 4 实参、文档指针作末位 out，结果收在 hres。"
+        },
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "This file becomes the active document, and this method returns a pointer to that document object.",
+          "example_quote": "swApp->IActivateDoc3(sAssemblyName,\ntrue, &lErrors, &swModel);",
+          "example_file": "Add_Component_and_Mate_Example_CPlusPlus_COM.md",
+          "why": "第二份官方示例同为 4 实参 + hres，且 errors 复用了 OpenDoc6 已用过的 lErrors。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例用不带扩展名的文档名激活刚建的工程图，正是 Remarks 警告的「说不准激活哪个」的场景。",
+          "example_quote": "CComBSTR sDrawingDocName (L\"ujoint\n- Sheet1\");",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "两次都把 Silent 传 false，即 Remarks 说的「会弹重建确认框」那一支，示例未处理该框。",
+          "example_quote": "hres = swApp->IActivateDoc3(sDrawingDocName,",
+          "example_file": "Access_Assembly_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "两页都是 C++ COM 原始接口写法；成员页 Signature 与 Returns 均未提末位 out 形参。"
+    },
+    {
+      "member": "IActiveDoc2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Block_Definition_and_Insert_Block_Instance_Example_CSharp.md",
+        "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md",
+        "Get_DimXpert_Block_Tolerance_Example_VB.md",
+        "Get_DimXpert_Block_Tolerance_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 IActiveDoc2 当只读属性用，同一条语句里连读两次取同一文档，不做缓存。",
+          "example_quote": "Set dimXpertMgr = swapp.IActiveDoc2.Extension.DimXpertManager(swapp.IActiveDoc2.IGetActiveConfiguration().Name, True)",
+          "example_file": "Get_DimXpert_Block_Tolerance_Example_VB.md"
+        },
+        {
+          "what": "空文档的判空用的是 swapp.ActiveDoc，随后 swapp.IActiveDoc2 被直接解引用、未判空。",
+          "example_quote": "Set swModelDoc = swapp.ActiveDoc",
+          "example_file": "Get_DimXpert_Block_Tolerance_Example_VB.md"
+        }
+      ],
+      "note": "四份示例全用属性形态 swApp.IActiveDoc2，与 kind=property、{get;} 及「read-only」一致。"
+    },
+    {
+      "member": "IAddComponents2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Components_and_Transforms_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "**Signature**: `Component2 IAddComponents2( ref System.int Count, ref System.string Names, ref System.double Transforms )`",
+          "example_quote": "= pAssy->IAddComponents2(&nNumComp,\nsPartPath, dTransform, swCompArr);",
+          "example_file": "Add_Components_and_Transforms_Example_CPlusPlus_COM.md",
+          "why": "成员页 3 形参、Returns 直接给出 IComponent2 数组指针；示例传 4 实参，数组作末位 out，函数回 HRESULT。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "返回数组由调用方预分配并置 NULL（合 Remarks「应用负责分配」），随后逐个 Release()，未单独释放数组本身。",
+          "example_quote": "LPCOMPONENT\nswCompArr[2]\n= { NULL, NULL};",
+          "example_file": "Add_Components_and_Transforms_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "transforms 实为定长 double dTransform[32]，与 nNumComp=2 对应 2×16，与 Remarks 的 count×16 相符。",
+          "example_quote": "double\ndTransform[32]",
+          "example_file": "Add_Components_and_Transforms_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "Remarks 三条（文件名数组 / count×16 / 应用负责分配与释放）都被示例印证；唯一不符是返回形态。"
+    },
+    {
+      "member": "IAddControl",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Up_PropertyManager_Page_Slider_Control_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "**Signature**: `PropertyManagerPageControl IAddControl( System.int ID, System.short ControlType, System.string Caption, System.short LeftAlign, System.int Options, System.string Tip )`",
+          "example_quote": "hres = m_pSwGroup_1->IAddControl(id,\ncontrolType, caption, alignment, options, tip, &m_pSwControl_1_2);",
+          "example_file": "Set_Up_PropertyManager_Page_Slider_Control_Example_CPlusPlus_COM.md",
+          "why": "成员页 6 形参、以返回值给出控件；示例传 7 实参，控件指针作末位 out，函数回 HRESULT。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把 IAddControl 调在组框对象 m_pSwGroup_1 上，而非 IPropertyManagerPage2 本身。",
+          "example_quote": "hres = m_pSwGroup_1->IAddControl(id,",
+          "example_file": "Set_Up_PropertyManager_Page_Slider_Control_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例把返回控件 QI 到 IPropertyManagerPageSlider 再配 Style/Range；成员页只说返回「新建的控件」。",
+          "example_quote": "m_pSwControl_1_2->QueryInterface(IID_IPropertyManagerPageSlider,",
+          "example_file": "Set_Up_PropertyManager_Page_Slider_Control_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "Options 用 '+' 组合两个 swControlOptions_ 标志，示例未出现 Remarks 提到的 SmallGapAbove。",
+          "example_quote": "options = swControlOptions_Visible + swControlOptions_Enabled;",
+          "example_file": "Set_Up_PropertyManager_Page_Slider_Control_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "成员页标 Obsolete→AddControl2；示例片段有省略号，看不到页面显示状态的时序。"
+    },
+    {
+      "member": "IAddProfileArc",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把三数组取自 ISketchArc 的 ISketchPoint.X/Y/Z 与 GetNormalVector()，即草图局部坐标。",
+          "example_quote": "center[0] = swCenterPt.X;\ncenter[1] = swCenterPt.Y;\ncenter[2] = swCenterPt.Z;",
+          "example_file": "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+        },
+        {
+          "what": "成员页只写「Array of 3 doubles (x,y,z)」未给坐标系；示例传真实弧段的起止点却仍按整圆成柱面。",
+          "example_quote": "swCurve = swBody.IAddProfileArc(center,\nnormal, radius, startpt, endpt);",
+          "example_file": "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+        }
+      ],
+      "note": "前置为「已选中一个圆草图」；未见与「always creates a full circle」相抵触的说法，conflicts 留空。"
+    },
+    {
+      "member": "IAddProfileLine",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Direction 实参直接传「终点 − 起点」的向量、未归一化；root 取草图线起点 X/Y/Z。",
+          "example_quote": "dir[0] = swEndPt.X - root[0];\ndir[1] = swEndPt.Y - root[1];\ndir[2] = swEndPt.Z - root[2];",
+          "example_file": "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+        },
+        {
+          "what": "示例走 Remarks 的第二条路（配 ICreateExtrusionSurface），未演示 ICreateRevolutionSurface。",
+          "example_quote": "swSurface = swBody.ICreateExtrusionSurface((SldWorks.Curve)swCurve,\nextruAxis);",
+          "example_file": "Create_Imported_Surface_Body_from_Sketch_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页未给坐标系与单位；示例的两条搭配路径与 Remarks 一致，未见矛盾。"
+    },
+    {
+      "member": "IBodyObject2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Macro_Feature_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Signature 与 See Also，无 ## Remarks 段，按纪律跳过比较。"
+    }
+  ]
+}

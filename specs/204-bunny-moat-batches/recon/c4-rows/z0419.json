@@ -1,0 +1,116 @@
+{
+  "idx": 419,
+  "results": [
+    {
+      "member": "RowCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Export_BOMs_to_XML_Example_CSharp.md",
+        "Export_BOMs_to_XML_Example_VB.md",
+        "Export_BOMs_to_XML_Example_VBNET.md",
+        "Get_Components_in_Each_BOM_Table_Row_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按规则跳过，不判冲突。"
+    },
+    {
+      "member": "RowHidden",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无 Remarks；所列示例里 swTable 是 SldWorks.TableAnnotation，调的是 ITableAnnotation::RowHidden，非 IDesignTable::RowHidden。"
+    },
+    {
+      "member": "RunBidirectionally",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Set_Properties_of_Angular_Running_Dimension_Example_CSharp.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VB.md",
+        "Set_Properties_of_Angular_Running_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取到该属性的完整调用序：AddAngularRunningDim→ReJog/Align→SetPickMode→按 DIMENSION 选中→SelectionManager 取对象，成员页只讲 True/False 语义。",
+          "example_quote": "boolstatus = Part.Extension.SelectByID2(\"D2@Sketch31@foodprocessor.SLDDRW\", \"DIMENSION\", 0.0408612062995185, 0.166216670731707, 0, false, 0, null, 0);",
+          "example_file": "Set_Properties_of_Angular_Running_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的真值表与示例不冲突；示例只读取该属性，从未写值。"
+    },
+    {
+      "member": "RunCommand",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Fire_Events_When_PropertyManager_Page_Opened_and_Canceled_Example_CSharp.md",
+        "Fire_Events_When_PropertyManager_Page_Opened_and_Canceled_Example_VB.md",
+        "Fire_Events_When_PropertyManager_Page_Opened_and_Canceled_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "页无 Remarks，跳过。Record_Macros_Example_CSharp.md 里是 swApp.RunCommand（ISldWorks），非本成员。"
+    },
+    {
+      "member": "RunDesignCheck5",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Run_SOLIDWORKS_Design_Checker_Example_CSharp.md",
+        "Run_SOLIDWORKS_Design_Checker_Example_VB.md",
+        "Run_SOLIDWORKS_Design_Checker_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先把 FeatureManager 里的 Design Binder 显示出来，Remarks 只说置 true 后 .drp 出现在 Design Binder。",
+          "example_quote": "swApp.SetUserPreferenceIntegerValue((int)swUserPreferenceIntegerValue_e.swFeatureManagerDesignBinderVisibility, (int)swAutoHideShowResponse_e.swAutoHideShowResponse_Show);",
+          "example_file": "Run_SOLIDWORKS_Design_Checker_Example_CSharp.md"
+        },
+        {
+          "what": "示例把签名里的 out System.int lReportFormat 在 C# 中按 ref 传（ResultSummary 才用 out）， Remarks 未讲调用约定。",
+          "example_quote": "retValue = swDCAddIn.RunDesignCheck5(StandardFileName, ReportFolderName, AddtoDesignBinder, OverWriteReport, AutoCorrect, ref lReportFormat, out resultSummary);",
+          "example_file": "Run_SOLIDWORKS_Design_Checker_Example_CSharp.md"
+        },
+        {
+          "what": "示例把返回码 0..4 逐条译成文案；Remarks 只说「Error code as defined in dsgnchkError_e」。",
+          "example_quote": "Debug.Print(\"Standards file does not exist.\");",
+          "example_file": "Run_SOLIDWORKS_Design_Checker_Example_CSharp.md"
+        }
+      ],
+      "note": "lReportFormat 三行真值表与示例后置条件逐条吻合，未发现矛盾。"
+    },
+    {
+      "member": "Save",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "两份 GTol 示例里是 swModel.Save()（IModelDoc2.Save），未调用 IBody2.Save，故无可比对的示例。"
+    },
+    {
+      "member": "Save3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Third-party_Application_Keywords_to_SOLIDWORKS_Search_and_Model_Example_VB.md",
+        "Isolate_Changed_Dimension_Example_CSharp.md",
+        "Isolate_Changed_Dimension_Example_VB.md",
+        "Isolate_Changed_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例一律用 swSaveAsOptions_Silent，且 C# 里 Errors/Warnings 两个 out 形参按 ref 传。",
+          "example_quote": "status = swModel.Save3((int)swSaveAsOptions_e.swSaveAsOptions_Silent, ref errors, ref warnings);",
+          "example_file": "Isolate_Changed_Dimension_Example_CSharp.md"
+        },
+        {
+          "what": "示例演示了 Remarks 指向的分工：另存新名走 SaveAs，原名保存才用 Save3。",
+          "example_quote": "status = swModelDocExt.SaveAs(saveFileName, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref errors, ref warnings);",
+          "example_file": "Isolate_Changed_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "返回值/Errors/Warnings 的成败规则与三份示例一致，未发现矛盾。"
+    }
+  ]
+}

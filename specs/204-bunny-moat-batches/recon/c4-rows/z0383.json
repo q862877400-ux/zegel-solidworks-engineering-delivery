@@ -1,0 +1,101 @@
+{
+  "idx": 383,
+  "results": [
+    {
+      "member": "PLMID",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未核示例。"
+    },
+    {
+      "member": "PLMObjectSpecification",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未核示例。"
+    },
+    {
+      "member": "PackVariant",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Parameters/Examples/See Also，无 Remarks，跳过。"
+    },
+    {
+      "member": "PadZero",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未核示例。"
+    },
+    {
+      "member": "PageSetup",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按纪律跳过，未核示例。"
+    },
+    {
+      "member": "Parameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Change_Dimension_Example_VB.md",
+        "Change_Dimension_Example_VBNET.md",
+        "Change_Dimension_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说「多数参数是尺寸」，示例把返回值直接当 Dimension 用并调 SystemValue。",
+          "example_quote": "Set swDim = swFeature.Parameter(\"D3\")",
+          "example_file": "Change_Dimension_Example_VB.md"
+        },
+        {
+          "what": "给出成员页没写的前置：须先按 COMPPATTERN 选中特征，再取选中对象当 Feature。",
+          "example_quote": "boolstatus = swModel.Extension.SelectByID2(\"LocalCirPattern1\", \"COMPPATTERN\", 0, 0, 0, False, 0, Nothing, 0)",
+          "example_file": "Change_Dimension_Example_VB.md"
+        },
+        {
+          "what": "印证 Remarks 的短名规则：传 \"D3\"，而打印标签用全名 D3@LocalCirPattern1。",
+          "example_quote": "Debug.Print \"D3@LocalCirPattern1 is \" & swFeature.Parameter(\"D3\").SystemValue & \" before changing it.\"",
+          "example_file": "Change_Dimension_Example_VB.md"
+        }
+      ],
+      "note": "Get_Depth_of_Extrusion 调的是 swModel.Parameter（IModelDoc2），非本成员，未计入。"
+    },
+    {
+      "member": "Parameterization",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Infinite_Plane_Example_VB.md",
+        "Find_Minimum_Radius_Curvature_of_Surface_Example_VB.md",
+        "Get_UV_Parameters_For_XYZ_Location_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只说「两个整数打包进一个 double」，示例给出 DoubleRec/Long2Rec+LSet 的解码做法。",
+          "example_quote": "Function ExtractFields(ByVal dValue As Double, iLower As Integer, iUpper As Integer)",
+          "example_file": "Create_Infinite_Plane_Example_VB.md"
+        },
+        {
+          "what": "Remarks 只列名数组顺序，示例把 0 基下标写实：4=uBoundType、10=numProps、0/1=uRange。",
+          "example_quote": "ExtractFields vSurfParam(10), Num_uProp, Num_vProp",
+          "example_file": "Create_Infinite_Plane_Example_VB.md"
+        },
+        {
+          "what": "示例用 IFace2::GetUVBounds 取面上参数范围，Remarks 的清单里未列这个方法。",
+          "example_quote": "vFaceUV = swface.GetUVBounds",
+          "example_file": "Find_Minimum_Radius_Curvature_of_Surface_Example_VB.md"
+        }
+      ],
+      "note": "三份示例的下标用法与 Remarks 的 11 元素布局逐项吻合，未发现冲突。"
+    }
+  ]
+}

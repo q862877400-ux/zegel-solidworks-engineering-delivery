@@ -1,0 +1,185 @@
+{
+  "idx": 72,
+  "results": [
+    {
+      "member": "CreateSpline3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_On-surface_Spline_Example_CSharp.md",
+        "Create_On-surface_Spline_Example_VB.md",
+        "Create_On-surface_Spline_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只说 Direction 可为 Nothing or null；C#/VB.NET 示例须包成 DispatchWrapper，且只传单个 null（VBA 直接传 Nothing）。",
+          "example_quote": "dirArray = new DispatchWrapper(null);",
+          "example_file": "Create_On-surface_Spline_Example_CSharp.md"
+        },
+        {
+          "what": "页面称 SimulateNaturalEnds \"valid only for 2D splines\"，on-surface 示例仍显式传 true。",
+          "example_quote": "skSegment = (SketchSegment)Part.SketchManager.CreateSpline3((pointArray), dispArray, dirArray, true, out statuses);",
+          "example_file": "Create_On-surface_Spline_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出 on-surface 路径的收尾动作：建完立即 InsertSketch(true)。",
+          "example_quote": "Part.SketchManager.InsertSketch(true);",
+          "example_file": "Create_On-surface_Spline_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 版把 Status 以 Variant 按引用传入并以 Set 接返回，页面未给调用序。",
+          "example_quote": "Set skSegment = Part.SketchManager.CreateSpline3((pointArray), surfs, Nothing, True, statuses)",
+          "example_file": "Create_On-surface_Spline_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 两条路径与三份示例逐行吻合（选面→建样条→InsertSketch），未找到不可同时成立的说法。"
+    },
+    {
+      "member": "CreateSplineParamData",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Spline's_Parameters_Example_CSharp.md",
+        "Get_Spline's_Parameters_Example_VB.md",
+        "Get_Spline's_Parameters_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面仅说创建空的 spline 参数数据对象；示例给出填满它的字段与顺序。",
+          "example_quote": "swSplineParaData = swSketchMgr.CreateSplineParamData();",
+          "example_file": "Get_Spline's_Parameters_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示必须先设 Dimension/Order/ControlPointsCount 再 SetControlPoints/SetKnotPoints。",
+          "example_quote": "swSplineParaData.ControlPointsCount = 6;",
+          "example_file": "Get_Spline's_Parameters_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按规则跳过冲突判定；只登记示例更具体的部分。"
+    },
+    {
+      "member": "CreateSplinesByEqnParams2",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Spline's_Parameters_Example_CSharp.md",
+        "Get_Spline's_Parameters_Example_VB.md",
+        "Get_Spline's_Parameters_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面 Returns 写 Array of sketch segments，示例把返回值当单一 object 存进 varSeg，从未按数组索引。",
+          "example_quote": "varSeg = swSketchMgr.CreateSplinesByEqnParams2(swSplineParaData);",
+          "example_file": "Get_Spline's_Parameters_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示调用时无需活动草图：先建再 InsertSketch(true)。",
+          "example_quote": "swSketchMgr.InsertSketch(true);",
+          "example_file": "Get_Spline's_Parameters_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按规则跳过冲突判定；只登记示例更具体的部分。"
+    },
+    {
+      "member": "CreateStackedBalloonOptions",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md",
+        "Add_Balloon_to_Stacked_Balloon_Example_VB.md",
+        "Add_Balloon_to_Stacked_Balloon_Example_VBNET.md",
+        "Insert_BOM_Table_and_Stacked_Balloon_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 第 1 步只说 Select an item，示例给出按坐标点选 FACE 的具体做法。",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", -0.311973500811291, 0.0329693343254007, 0.00999999999999091, false, 0, null, 0);",
+          "example_file": "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md"
+        },
+        {
+          "what": "Remarks 第 5 步的 add balloons 在示例里是先判 IsStackedBalloon、再 GetBalloonStack().AddTo。",
+          "example_quote": "swNote2 = (Note)swBalloonStack.AddTo((int)swBalloonTextContent_e.swBalloonTextQuantity, \"12\", (int)swBalloonTextContent_e.swBalloonTextQuantity, \"\");",
+          "example_file": "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md"
+        },
+        {
+          "what": "BOM 示例把 SelectByID2/SelectByRay 与本方法的调用序也一并给出，且可放在插入 BOM 之后。",
+          "example_quote": "StackedBalloonParams = swModel.Extension.CreateStackedBalloonOptions();",
+          "example_file": "Insert_BOM_Table_and_Stacked_Balloon_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 5 步顺序与两份示例逐行吻合，未发现矛盾。"
+    },
+    {
+      "member": "CreateStructuralMemberGroup",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Structural_Member_Group_Example_CSharp.md",
+        "Create_Structural_Member_Group_Example_VB.md",
+        "Create_Structural_Member_Group_Example_VBNET.md",
+        "Insert_Structural_Weldment_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只有一句 Creates a weldment structural-member group；示例给出必须设 Segments 再随数组传给 InsertStructuralWeldment3。",
+          "example_quote": "Group1.Segments = segments1;",
+          "example_file": "Create_Structural_Member_Group_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks，按规则跳过冲突判定；只登记示例更具体的部分。"
+    },
+    {
+      "member": "CreateStructureSystem",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只说收 IStructureSystemMemberFeatureData 数组；C#/VB.NET 示例先用 DispatchWrapper[] 再包一层才传。",
+          "example_quote": "fArray = ObjectArrayToDispatchWrapperArray(memData);",
+          "example_file": "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md"
+        },
+        {
+          "what": "示例坐实 Remarks 的路线：返回值按 Feature 接，再 GetSpecificFeature2 转成 StructureSystemFolder。",
+          "example_quote": "structSysModDef = (StructureSystemFolder)structSys.GetSpecificFeature2();",
+          "example_file": "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 指向 IStructureSystemFolder，其第 8 步说 primaryFDArray/secondaryFDArray，与形参说明一致；四份示例无矛盾。"
+    },
+    {
+      "member": "CreateStructureSystemMemberData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md",
+        "Create_Face_Plane_Intersection_SSMember_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "页面只有一句指路；示例给出返回值必须逐级向下转型才能用到具体成员接口。",
+          "example_quote": "memPathSegDef = (PrimaryMemberPathSegmentFeatureData)PrimDef;",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+        },
+        {
+          "what": "示例给出 MemberType 实参与成员种类的对应 3=FacePlaneIntersection，与官方枚举表一致。",
+          "example_quote": "structMemDef = (StructureSystemMemberFeatureData)modDocExt.CreateStructureSystemMemberData(3);",
+          "example_file": "Create_Face_Plane_Intersection_SSMember_Example_CSharp.md"
+        },
+        {
+          "what": "示例把返回对象的 StructureSystemMemberType 标为 swStructureSystemMemberType_e，与页面 MemberType 所引枚举不同名。",
+          "example_quote": "Debug.Print(\"Type of structure system member as defined by",
+          "example_file": "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 仅指向 IStructureSystemFolder；实参 0/3 与 swStructureSystemMemberCreationType_e 枚举值吻合，两枚枚举各指不同属性，无矛盾。"
+    }
+  ]
+}

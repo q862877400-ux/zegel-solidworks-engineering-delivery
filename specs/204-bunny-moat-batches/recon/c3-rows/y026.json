@@ -1,0 +1,134 @@
+{
+ "idx": 26,
+ "results": [
+  {
+   "name": "weldment_cut_list",
+   "level": "verified",
+   "members_found": [
+    "InsertWeldmentCutList2",
+    "GetBodies2",
+    "GetBodyBox",
+    "FeatureManager",
+    "EditRebuild3",
+    "FirstFeature",
+    "GetNextFeature",
+    "GetFirstSubFeature",
+    "GetNextSubFeature",
+    "GetTypeName2",
+    "Name",
+    "GetSpecificFeature2",
+    "UpdateCutList",
+    "GetBodyCount",
+    "CustomPropertyManager",
+    "Add3",
+    "Get6",
+    "GetNames",
+    "GetCutListItems",
+    "ConfigurationManager",
+    "ActiveConfiguration"
+   ],
+   "examples_used": [
+    "Insert_Weldment_Cut_List2_Example_CSharp.md",
+    "Insert_Weldment_Cut_List2_Example_VB.md",
+    "Get_Custom_Property_Values_On_Cut_List_Folders_Example_VB.md",
+    "Get_Solid_Bodies_from_Cut-list_Folders_and_Get_Custom_Properties_Example_VB.md",
+    "Get_Custom_Properties_for_Cut-list_Item_Example_VB.md",
+    "Save_Solid_Body_to_File_Example_VB.md"
+   ],
+   "preconditions": [
+    {
+     "text": "必须先打开一个已含焊缝/结构构件的焊件零件（bracket.sldprt / weldment_box3.sldprt）",
+     "from": "Insert_Weldment_Cut_List2_Example_CSharp.md",
+     "state": "covered",
+     "evidence_quote": "**焊件切割清单那条链**（先建结构构件、再走切割清单）"
+    },
+    {
+     "text": "系统选项 FeatureManager > Solid Bodies > Show 必须打开，树里才有 Solid Bodies 文件夹",
+     "from": "Insert_Weldment_Cut_List2_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "文档属性 > 焊件 > “用 Description 属性值重命名切割清单文件夹”须设为 OK",
+     "from": "Get_Custom_Property_Values_On_Cut_List_Folders_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "读文件夹属性前必须先在树上对 Cut list 右键 Update（更新切割清单）",
+     "from": "Get_Custom_Property_Values_On_Cut_List_Folders_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "`update_cut_list` 报 \"切割清单项目1\"（type=CutListFolder, body_count=1）"
+    },
+    {
+     "text": "官方示例调用序：GetSpecificFeature2→BodyFolder 先 SetAutomaticCutList(True) 再 UpdateCutList()",
+     "from": "Save_Solid_Body_to_File_Example_VB.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "CutListFolder 的 GetBodyCount 为 0 时该文件夹不在树中显示，示例跳过它",
+     "from": "Get_Solid_Bodies_from_Cut-list_Folders_and_Get_Custom_Properties_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "（type=CutListFolder, body_count=1）"
+    },
+    {
+     "text": "遍历须按 GetFirstSubFeature/GetNextSubFeature 递归并匹配类型名 CutListFolder，且 GetSpecificFeature2 非空",
+     "from": "Get_Custom_Property_Values_On_Cut_List_Folders_Example_VB.md",
+     "state": "covered",
+     "evidence_quote": "`CutListFolder` = **['切割清单项目1', '切割清单项目1']**"
+    },
+    {
+     "text": "GetCutListItems（Configuration 上的清单项枚举）在官方示例语料中零命中，前置无从比对",
+     "from": "(无官方示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "官方示例的 Solid Bodies>Show、Description 重命名、SetAutomaticCutList 三项前置，evidence 均未提及。"
+  },
+  {
+   "name": "simulation_solver_options",
+   "level": "verified",
+   "members_found": [
+    "StaticStudyOptions",
+    "FrequencyStudyOptions",
+    "BucklingStudyOptions",
+    "ComputeFreeBodyForce2",
+    "ContactPenaltyStiffnessScaleFactor",
+    "DefinedReferencePressure",
+    "CheckDecouple",
+    "BucklingModes",
+    "ExtractPositiveBucklingFactorsOnly",
+    "GetAddInObject",
+    "LoadAddIn",
+    "CosmosWorks",
+    "ActiveDoc",
+    "StudyManager",
+    "StudyCount",
+    "GetStudy",
+    "Name"
+   ],
+   "examples_used": [
+    "Load_and_Unload_Add-in_Example_CSharp.md"
+   ],
+   "preconditions": [
+    {
+     "text": "LoadAddIn 前置：加载项 DLL 必须先编译存在且按完整路径传入",
+     "from": "Load_and_Unload_Add-in_Example_CSharp.md",
+     "state": "not_covered",
+     "evidence_quote": ""
+    },
+    {
+     "text": "ICWStudy.StaticStudyOptions/Frequency/Buckling 及各 setter 在官方示例语料零命中，无前置可比对",
+     "from": "(无官方示例)",
+     "state": "cannot_tell",
+     "evidence_quote": ""
+    }
+   ],
+   "verdict": "has_uncovered",
+   "note": "CosmosWorks 族无任何官方示例；唯一相关示例是通用加载项的 Load_and_Unload_Add-in，其 DLL 存在性前置 evidence 未提。"
+  }
+ ]
+}

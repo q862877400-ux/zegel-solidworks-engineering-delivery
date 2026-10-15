@@ -1,0 +1,156 @@
+{
+  "idx": 142,
+  "results": [
+    {
+      "member": "Get4",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Custom_Properties_of_Referenced_Part_Example_CSharp.md",
+        "Get_Custom_Properties_of_Referenced_Part_Example_VB.md",
+        "Get_Custom_Properties_of_Referenced_Part_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例用 get_CustomPropertyManager(\"\") 取管理器并传空串配置名，成员页未说明入口对象与该参数含义",
+          "example_quote": "swCustProp = swModelDocExt.get_CustomPropertyManager(\"\");",
+          "example_file": "Get_Custom_Properties_of_Referenced_Part_Example_CSharp.md"
+        },
+        {
+          "what": "示例固定 UseCached=False，并把返回值直接当作「Up-to-date data」打印",
+          "example_quote": "bool = swCustProp.Get4(\"Property_Name\", False, val, valout)",
+          "example_file": "Get_Custom_Properties_of_Referenced_Part_Example_VB.md"
+        }
+      ],
+      "note": "示例落在 Remarks 表格 UseCached=False 分支，与成员页一致；两侧可同时成立。"
+    },
+    {
+      "member": "Get6",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Custom_Properties_for_Configuration_Example_CSharp.md",
+        "Get_Custom_Properties_for_Configuration_Example_VB.md",
+        "Get_Custom_Properties_for_Configuration_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例从 config.CustomPropertyManager 取管理器，成员页未说明入口对象",
+          "example_quote": "cusPropMgr = config.CustomPropertyManager;",
+          "example_file": "Get_Custom_Properties_for_Configuration_Example_CSharp.md"
+        },
+        {
+          "what": "示例在 Set2 前后各调一次 Get6，且从不读 WasResolved 与 LinkToProperty",
+          "example_quote": "lRetVal = cusPropMgr.Get6(\"ADATE\", false, out ValOut, out ResolvedValOut, out wasResolved, out linkToProp);",
+          "example_file": "Get_Custom_Properties_for_Configuration_Example_CSharp.md"
+        }
+      ],
+      "note": "示例取的是活动配置的管理器，不触发 Remarks 所说的配置回切；无矛盾。"
+    },
+    {
+      "member": "GetActiveConfiguration",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md",
+        "Get_Appearance_Filename_Example_CSharp.md",
+        "Get_Appearance_Filename_Example_VB.md",
+        "Get_Appearance_Filename_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 System.object 返回值显式向下转型成 Configuration",
+          "example_quote": "swConfiguration = (Configuration)swModel.GetActiveConfiguration();",
+          "example_file": "Get_Appearance_Filename_Example_CSharp.md"
+        },
+        {
+          "what": "同一示例连续两次取活动配置，每次建完显示状态后重取",
+          "example_quote": "Set swConfig = swModel.GetActiveConfiguration",
+          "example_file": "Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md"
+        }
+      ],
+      "note": "成员页只有签名、没有 Remarks 段，按规则跳过冲突判定。"
+    },
+    {
+      "member": "GetActiveConfigurationName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Name_of_Active_Configuration_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例前置只要求文档存在、不要求打开，正对上 Remarks 的「关闭分支」",
+          "example_quote": "1. Verify that the specified part document exists.",
+          "example_file": "Get_Name_of_Active_Configuration_Example_VB.md"
+        },
+        {
+          "what": "示例只用文件路径调用、不经 ActiveDoc，取回值直接拼接打印",
+          "example_quote": "Debug.Print \" Name of active configuration = \" & swApp.GetActiveConfigurationName(sFileName)",
+          "example_file": "Get_Name_of_Active_Configuration_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的「文档不必打开」与示例前置一致，两侧可同时成立。"
+    },
+    {
+      "member": "GetActiveDisplayPane",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_TaskPaneView_Add-in_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值当 int，与 swDisplayPaneIndex_e 逐值比较而非当布尔用",
+          "example_quote": "int index = iSwApp.GetActiveDisplayPane();",
+          "example_file": "Create_TaskPaneView_Add-in_Example_CSharp.md"
+        },
+        {
+          "what": "示例在显示窗格事件回调里调用，成员页未给任何前置",
+          "example_quote": "if (index == (int)swDisplayPaneIndex_e.swDisplayPaneNone)",
+          "example_file": "Create_TaskPaneView_Add-in_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页没有 Remarks 段，按规则跳过冲突判定；示例补足了前置与枚举用法。"
+    },
+    {
+      "member": "GetActiveGroundPlane",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Ground_Plane_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例取 swAllConfiguration 时把 Config_names 显式传 Null，成员页只说该参数仅对 swSpecifyConfiguration 有效",
+          "example_quote": "groundPlanes = Part.GetActiveGroundPlane(swAllConfiguration, Null)",
+          "example_file": "Insert_Ground_Plane_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 说逐配置返回元素或 null；示例只按当前配置激活后读且不检查结果。"
+    },
+    {
+      "member": "GetActivePropertyManagerPage",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Active_PropertyManager_Page_Name_Example_CSharp.md",
+        "Get_Active_PropertyManager_Page_Name_Example_VB.md",
+        "Get_Active_PropertyManager_Page_Name_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补出前置：须先在界面点开 Fillet/Round，使 PropertyManager 页处于活动",
+          "example_quote": "// 2. In SOLIDWORKS Design, click Insert > Features > Fillet/Round.",
+          "example_file": "Get_Active_PropertyManager_Page_Name_Example_CSharp.md"
+        },
+        {
+          "what": "示例把返回值存入 string 变量后直接打印",
+          "example_quote": "pageName = swModelDocExt.GetActivePropertyManagerPage();",
+          "example_file": "Get_Active_PropertyManager_Page_Name_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页没有 Remarks 段，按规则跳过冲突判定。"
+    }
+  ]
+}

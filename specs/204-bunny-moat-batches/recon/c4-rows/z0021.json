@@ -1,0 +1,120 @@
+{
+  "idx": 21,
+  "results": [
+    {
+      "member": "Angle",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "四份示例全是名字撞车：texture.Angle 与 swBlockInstance.Angle，与本成员无关"
+    },
+    {
+      "member": "AngleOverride",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取值路径：先把 AdvancedHoleElementData 转成 CountersinkElementData，才能写本属性",
+          "example_quote": "            swCounterSinkNear = (CountersinkElementData)swAdvHole_Near_1;",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks，判据跳过；示例只把它设为 false，并排在 EndConditionOverride 之后"
+    },
+    {
+      "member": "AngleSelection",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Hinge_Mate_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只列 Angle/MaxVal/MinVal，示例还要把两个角度实体写进 EntitiesToMate[2]",
+          "example_quote": "            MateData.EntitiesToMate[2] = AngleEntitiesToMateVar;",
+          "example_file": "Create_Hinge_Mate_Example_CSharp.md"
+        },
+        {
+          "what": "示例给出取本对象的方式：先 CreateMateData(22) 再转成 HingeMateFeatureData",
+          "example_quote": "            HingeMateFeatureData MateData = (HingeMateFeatureData)swAssembly.CreateMateData(22);",
+          "example_file": "Create_Hinge_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 要求的 Angle/MinVal/MaxVal 示例全都设了，不构成冲突；角度值取 0.5236 弧度"
+    },
+    {
+      "member": "AngularTolerance",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Heal_Edges_Feature_Data_Example_CSharp.md",
+        "Get_Heal_Edges_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页无任何前置说明，示例要求先 AccessSelections，读完再 ReleaseSelectionAccess",
+          "example_quote": "            swHealEdgesFeature.AccessSelections(swModel, null);",
+          "example_file": "Get_Heal_Edges_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks，判据跳过；示例仅把本属性当只读打印，页面与示例都没给单位"
+    },
+    {
+      "member": "AnimateDuringSimulation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "swmotionstudyapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取属性对象的路径：GetProperties(4) 后再转 CosmosMotionStudyProperties",
+          "example_quote": "swMotionStudyProps = swMotionStudy1.GetProperties(4)",
+          "example_file": "swmotionstudyapi__Get_COSMOSMotion_Motion_Study_Properties_and_Results_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，判据跳过；示例只把本属性当只读布尔打印，未给默认值"
+    },
+    {
+      "member": "Annotation",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "两份示例是通用实体的 SelObj.Annotation（本成员返回 IDimXpertAnnotation），不是一回事"
+    },
+    {
+      "member": "AnnotationCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Where_Annotations_Can_Be_Shown_Example_CSharp.md",
+        "Get_Where_Annotations_Can_Be_Shown_Example_VB.md",
+        "Get_Where_Annotations_Can_Be_Shown_Example_VBNET.md",
+        "Move_Annotations_to_First_Annotation_View_Example_CSharp.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Call this method before calling [[IAnnotationView::IGetAnnotations]] to get the size of the array for that method.",
+          "example_quote": "                annotations = (object[])swAnnView.GetAnnotations2(false, false);\n                swFeat = (Feature)swAnnView;\n                nbrAnnotations = swAnnView.AnnotationCount;",
+          "example_file": "Get_Where_Annotations_Can_Be_Shown_Example_CSharp.md",
+          "why": "Remarks 要求先读本属性再取数组，示例顺序相反：因 IGetAnnotations 已 Obsolete 且 C#/VBA 不支持，示例改用无计数字段的 GetAnnotations2"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例读取计数前先调 Activate() 激活该注释视图，成员页未提这一步",
+          "example_quote": "                swAnnView.Activate();\n                annotations = (object[])swAnnView.GetAnnotations2(false, false);",
+          "example_file": "Get_Where_Annotations_Can_Be_Shown_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例顺序一致（先取数组后读计数）；Move 示例同样在 GetAnnotations2 之后才读本属性"
+    }
+  ]
+}

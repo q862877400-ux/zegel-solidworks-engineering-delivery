@@ -1,0 +1,155 @@
+{
+  "idx": 204,
+  "results": [
+    {
+      "member": "GetGuideCurvesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+        "Get_Guide_Curves_in_Loft_Feature_Example_VB.md",
+        "Get_Guide_Curves_in_Loft_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值当 GuideCurves 属性数组的循环上界，且在 AccessSelections 之前先读；Remarks 只提 IGetGuideCurves",
+          "example_quote": "guideCurves = (object[])swLoftFeatureData.GuideCurves;",
+          "example_file": "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "VBA 用 Long 接收（签名是 System.short），并紧接 AccessSelections 再取数组",
+          "example_quote": "nbrGuideCurves = swLoftFeatureData.GetGuideCurvesCount",
+          "example_file": "Get_Guide_Curves_in_Loft_Feature_Example_VB.md"
+        }
+      ],
+      "note": "Sweep C# 示例用的是 SweepFeatureData，非 ILoftFeatureData，已排除"
+    },
+    {
+      "member": "GetGuideCurvesType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+        "Get_Guide_Curves_in_Loft_Feature_Example_VB.md",
+        "Get_Guide_Curves_in_Loft_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "See [Accessing Selections that Define Features](<../../docs/Programming with the SOLIDWORKS API/Selections that Define Features.md>) for additional details on using this method.",
+          "example_quote": "Debug.Print (\" Type of feature: \" & swLoftFeatureData.GetGuideCurvesType(i))",
+          "example_file": "Get_Guide_Curves_in_Loft_Feature_Example_VB.md",
+          "why": "成员签名零参、返回类型数组；VBA/VB.NET 却传索引取单值，C# 则零参强转 int[]，两侧不能同时成立"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "读之前须先 AccessSelections(swModel, null)，读完 ReleaseSelectionAccess",
+          "example_quote": "status = swLoftFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "VB.NET 同形：swLoftFeatureData.GetGuideCurvesType(i)，与 VBA 一致"
+    },
+    {
+      "member": "GetGuideTangencyType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Boundary_Feature_Example_CSharp.md",
+        "Insert_Boundary_Feature_Example_VB.md",
+        "Insert_Boundary_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先 AccessSelections 才取数；Remarks 只说先调 GetCurvesCount",
+          "example_quote": "status = swBoundaryBossFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "GetCurvesCount 也要传 Direction，形参与本成员第一形参同型",
+          "example_quote": "nbrCurves = swBoundaryBossFeatureData.GetCurvesCount((int)swBoundaryBossDirection_e.swBoundaryBossDirection_First);",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例都先 GetCurvesCount 再取，与 Remarks 一致"
+    },
+    {
+      "member": "GetHeaderCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Export_BOMs_to_XML_Example_CSharp.md",
+        "Export_BOMs_to_XML_Example_VB.md",
+        "Export_BOMs_to_XML_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把它当行偏移量加到 nStart，并断言至少 1 —— 页里的 rows or columns 二选一由此定为 rows",
+          "example_quote": "nStart = nStart + nNumHeader;",
+          "example_file": "Export_BOMs_to_XML_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例均先用 GetSplitInformation 判分裂方向再套用该偏移"
+    },
+    {
+      "member": "GetHeaderFooterString",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Print_Drawing_as_High_Quality_Example_CSharp.md",
+        "Print_Drawing_as_High_Quality_Example_VB.md",
+        "Print_Drawing_as_High_Quality_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "取串前先把 UsePageSetup 设为 Document；返回串被拼成 CenterFooter 的 N of M",
+          "example_quote": "footerText = (footerTextNumber + \" of \" + footerTextCount);",
+          "example_file": "Print_Drawing_as_High_Quality_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks，只按示例补充"
+    },
+    {
+      "member": "GetHeightAtIndex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Compound_Note_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例刻意开 2012 版图纸（2016+ 文档该成员已 Obsolete），且只在 IsCompoundNote 为真时用索引",
+          "example_quote": "ht2 = swNote.GetHeightAtIndex(2)",
+          "example_file": "Create_Compound_Note_Example_VB.md"
+        },
+        {
+          "what": "示例先用 GetTextCount() 取文本条数，再据此索引，与 Remarks 的 1 起编号一致",
+          "example_quote": "count = swNote.GetTextCount()",
+          "example_file": "Create_Compound_Note_Example_VB.md"
+        }
+      ],
+      "note": "索引语义与 Remarks 完全吻合，未见冲突"
+    },
+    {
+      "member": "GetHiddenComponents",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Components_Hidden_In_Drawing_View_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "必须先选中视图、靠 GetSelectedObject6(1,-1) 取到 View 才能调",
+          "example_quote": "Set swDrView = swSelMgr.GetSelectedObject6(1, -1)",
+          "example_file": "Get_Components_Hidden_In_Drawing_View_Example_VB.md"
+        },
+        {
+          "what": "返回数组可能 IsEmpty，示例显式判空后直接退出",
+          "example_quote": "If IsEmpty(vCompArr) Then Exit Sub",
+          "example_file": "Get_Components_Hidden_In_Drawing_View_Example_VB.md"
+        }
+      ],
+      "note": "前置还要求先在视图里隐藏过组件"
+    }
+  ]
+}

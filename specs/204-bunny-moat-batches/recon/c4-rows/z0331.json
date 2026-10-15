@@ -1,0 +1,125 @@
+{
+  "idx": 331,
+  "results": [
+    {
+      "member": "IsBcurve",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Ruled_Surface_Example_VB.md",
+        "Get_Length_of_Spline_or_Elliptical_Edge_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "This method returns True if the curve is an intersection curve, ellipse, trimming curve, or a surface parametric curve. Because intersection and trimming curves can be lines or circles, it is advisable to first determine whether the curve is a circle or line before recognizing it as a b-curve.",
+          "example_quote": "Set swCurve = swEdge.GetCurve: Debug.Assert swCurve.IsBcurve",
+          "example_file": "Get_Length_of_Spline_or_Elliptical_Edge_Example_VB.md",
+          "why": "Remarks 说 ellipse 也返回 True、True 不等于 b-curve 且须先排除圆与直线；示例却对椭圆边断言 IsBcurve 并直接当 b-curve 取参数。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例把「零件含样条或椭圆边并已选中」写成前置，再断言 IsBcurve。",
+          "example_quote": "1. Open a part that contains a spline or elliptical edge.",
+          "example_file": "Get_Length_of_Spline_or_Elliptical_Edge_Example_VB.md"
+        },
+        {
+          "what": "示例前置要两条用 b-curve 建的边且都已选中，经 GetSelectedObject5(1)(2).GetCurve 取曲线。",
+          "example_quote": "Open a part that has two edges created using b-curves.",
+          "example_file": "Create_Ruled_Surface_Example_VB.md"
+        }
+      ],
+      "note": "两份示例都确实调 ICurve::IsBcurve；冲突集中在 True 是否足以判定 b-curve。"
+    },
+    {
+      "member": "IsBendLine",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Tangent_Edges_of_Bendlines_Example_CSharp.md",
+        "Get_Tangent_Edges_of_Bendlines_Example_VB.md",
+        "Get_Tangent_Edges_of_Bendlines_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 与 See Also，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "IsBendLineNote",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Merge_and_Unmerge_Bend_Tags_Example_CSharp.md",
+        "Merge_and_Unmerge_Bend_Tags_Example_VB.md",
+        "Merge_and_Unmerge_Bend_Tags_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 与 See Also，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "IsBomBalloon",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_BOM_Table_and_BOM_Balloon_Example_VBNET.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_CSharp.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VB.md",
+        "Insert_and_Show_BOM_Table_and_BOM_Balloon_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 与 See Also，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "IsBossFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Thicken_Feature_Example_VB.md",
+        "Get_Guide_Curves_in_Loft_Feature_Example_CSharp.md",
+        "Get_Guide_Curves_in_Loft_Feature_Example_VB.md",
+        "Get_Guide_Curves_in_Loft_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 与 See Also，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "IsBoundaryBoxSketch",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Is_Selected_Feature_a_Boundary_Box_Sketch_Example_CSharp.md",
+        "Is_Selected_Feature_a_Boundary_Box_Sketch_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns 与 Examples，无 Remarks 段，按纪律跳过。"
+    },
+    {
+      "member": "IsCircle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Circular_Holes_In_Face_Example_CPlusPlus_COM.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "Use [[IEdge::GetCurveParams2]] or [[IEdge::IGetCurveParams2]] to determine if a circular edge is a complete circle or an arc.",
+          "example_quote": "if(S_OK!=pCurve->IsCircle(&pCBool)||pCBool==FALSE)",
+          "example_file": "Get_Circular_Holes_In_Face_Example_CPlusPlus_COM.md",
+          "why": "Remarks 说 IsCircle 分不出整圆与圆弧、要用 GetCurveParams2 判；示例仅凭 IsCircle 就把该边计为圆孔，曲线参数调用被丢成成功检查。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出 C++ COM 绑定形态：先查 HRESULT 再取 VARIANT_BOOL 出参，成员页签名无出参。",
+          "example_quote": "if(S_OK!=pCurve->IsCircle(&pCBool)||pCBool==FALSE)",
+          "example_file": "Get_Circular_Holes_In_Face_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例把它用于每个非外环的首条边来统计面上的圆孔个数。",
+          "example_quote": "pEdge=pEdgeList[0];",
+          "example_file": "Get_Circular_Holes_In_Face_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "另三份示例调的是 ISketchArc::IsCircle（SketchArc 变量），不是 ICurve::IsCircle，故未采信。"
+    }
+  ]
+}

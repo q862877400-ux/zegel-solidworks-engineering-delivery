@@ -1,0 +1,116 @@
+{
+  "idx": 343,
+  "results": [
+    {
+      "member": "IsTwoSided",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Rib_Feature_Data_Example_CSharp.md",
+        "Get_Rib_Feature_Data_Example_VB.md",
+        "Get_Rib_Feature_Data_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例只在 IsTwoSided 为 false 时才去读 ReverseThicknessDir，说明反向厚度仅对单侧筋有意义；成员页只写「see ReverseThicknessDir」，未给适用条件。",
+          "example_quote": "Debug.Print(\"Rib is extruded on two sides of the midplane? \" + swRibFeat.IsTwoSided);\n            if (!swRibFeat.IsTwoSided)\n            {\n                Debug.Print(\"Single-sided rib is extruded on the reverse side? \" + swRibFeat.ReverseThicknessDir);\n            }",
+          "example_file": "Get_Rib_Feature_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只约束写侧须先 ModifyDefinition；三份示例全是只读，不与之冲突。"
+    },
+    {
+      "member": "IsUniform",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Data_for_Scale_Feature_Example_CSharp.md",
+        "Get_Data_for_Scale_Feature_Example_VB.md",
+        "Get_Data_for_Scale_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规则跳过比对。"
+    },
+    {
+      "member": "IsVirtual",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_New_Virtual_Assembly_Example_CSharp.md",
+        "Insert_New_Virtual_Assembly_Example_VB.md",
+        "Insert_New_Virtual_Assembly_Example_VBNET.md",
+        "Insert_New_Virtual_Component_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出前置：必须先由插入调用成功返回 Component2（status==1 或 swComp 非空）才能读 IsVirtual；成员页未写这条前置。",
+          "example_quote": "status = swAssy.InsertNewVirtualPart(swFeature, out swComponent);\n            if (status == 1)\n            {\n                Debug.Print(\"Virtual component inserted!\");\n                Debug.Print(\"Name of virtual component: \" + swComponent.Name2);\n                // Check to see if the part is a virtual component\n                Debug.Print(\"Is component virtual? \" + swComponent.IsVirtual);",
+          "example_file": "Insert_New_Virtual_Component_Example_CSharp.md"
+        },
+        {
+          "what": "示例还给出虚拟件 Name2 含 '^'，须拆名并补 .sldprt/.sldasm 才能 SaveVirtualComponent 存成外部文件；成员页只泛述可存外部。",
+          "example_quote": "splits = swComponent.Name2.Split('^');\n                compName = objFSO.GetParentFolderName(swModel.GetPathName()) + \"\\\\\" + splits[0];",
+          "example_file": "Insert_New_Virtual_Component_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 讲存进装配文件与不建 In-Place 配合；四份示例都只读该属性，无冲突。"
+    },
+    {
+      "member": "IsVirtualComponent3",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Paths_and_Titles_of_Parents_of_Virtual_Component_Example_CSharp.md",
+        "Get_Paths_and_Titles_of_Parents_of_Virtual_Component_Example_VB.md",
+        "Get_Paths_and_Titles_of_Parents_of_Virtual_Component_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规则跳过比对。"
+    },
+    {
+      "member": "IsWeldment",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Does_Part_Contain_a_Weldment_Feature_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规则跳过比对。"
+    },
+    {
+      "member": "Isolate",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Isolate_Component_Example_CSharp.md",
+        "Isolate_Component_Example_VB.md",
+        "Isolate_Component_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks 段，按规则跳过比对。"
+    },
+    {
+      "member": "IsolateChangedDimensions",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Isolate_Changed_Dimension_Example_CSharp.md",
+        "Isolate_Changed_Dimension_Example_VB.md",
+        "Isolate_Changed_Dimension_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 IsolateChangedDimensions 放在 SaveAs 之前，且隔离结果要重新打开该图纸才可见；Remarks 的两步里没有保存/重开这一环。",
+          "example_quote": "swApp.SetUserPreferenceToggle((int)swUserPreferenceToggle_e.swUseChangedDimensions, true);\n\t            swDrawing = (DrawingDoc)swModel;\n\t            swDrawing.IsolateChangedDimensions();\n\t            // Save drawing document to another name",
+          "example_file": "Isolate_Changed_Dimension_Example_CSharp.md"
+        },
+        {
+          "what": "示例全程只把该全局开关置 true、从未复位，属进程级持久副作用；Remarks 只说明怎么置位，未提示需要还原。",
+          "example_quote": "swApp.SetUserPreferenceToggle((int)swUserPreferenceToggle_e.swUseChangedDimensions, true);",
+          "example_file": "Isolate_Changed_Dimension_Example_CSharp.md"
+        }
+      ],
+      "note": "三份示例严格照 Remarks 的两步顺序（先置开关、再调用），无冲突。"
+    }
+  ]
+}

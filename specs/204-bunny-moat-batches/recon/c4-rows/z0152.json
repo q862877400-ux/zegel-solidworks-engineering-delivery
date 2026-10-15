@@ -1,0 +1,139 @@
+{
+  "idx": 152,
+  "results": [
+    {
+      "member": "GetBodiesCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Delete_Body_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出数据对象的取得路径：先 InsertDeleteBody2 建特征，再 GetDefinition 转 DeleteBodyFeatureData 才能调此计数。",
+          "example_quote": "insDelBody = (DeleteBodyFeatureData)myFeature.GetDefinition();",
+          "example_file": "Insert_Delete_Body_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "示例只打印计数、从未调 IGetBodies；成员页也未说必须调它，不构成冲突。另3例调的是 ScaleFeatureData.GetBodiesCount，撞名不用。"
+    },
+    {
+      "member": "GetBody",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 Remarks。四份示例均非本成员：Combine_Assembly 调 Component2.GetBody；Temporary_Bodies 三例调 Edge.GetBody。"
+    },
+    {
+      "member": "GetBodyCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Check_Interference_Among_Bodies_Example_VB.md",
+        "Create_Save_Bodies_Feature_and_Create_Assembly_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出取文件夹对象的路径：对 GetTypeName2 = \"SolidBodyFolder\" 的特征调 GetSpecificFeature2。",
+          "example_quote": "Set swBodyFolder = swFeature.GetSpecificFeature2",
+          "example_file": "Create_Save_Bodies_Feature_and_Create_Assembly_Example_VB.md"
+        },
+        {
+          "what": "示例把计数当空文件夹的守卫：count<1 就不去取 GetBodies。",
+          "example_quote": "If (count < 1) Then",
+          "example_file": "Create_Save_Bodies_Feature_and_Create_Assembly_Example_VB.md"
+        }
+      ],
+      "note": "成员页点名 IGetBodies，示例用 COM 侧 GetBodies，先后顺序一致。另2例调 CostPart.GetBodyCount，撞名不用。"
+    },
+    {
+      "member": "GetBodyOutline2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Body_Outline_Example_CSharp.md",
+        "Get_Body_Outline_Example_VB.md",
+        "Get_Body_Outline_Example_VBNET.md",
+        "Get_Curves_that_Form_Outline_of_Bodies_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出具体插值规则：本曲线起点与前一条曲线终点取中点、终点与后一条曲线起点取中点，首尾循环。",
+          "example_quote": "sPoints(i * 3) = sEva(0) + 0.5 * (eEvaPrev(0) - sEva(0))",
+          "example_file": "Get_Body_Outline_Example_VB.md"
+        },
+        {
+          "what": "另一例传 ProjectOnPlane=False，按 Outline 索引把曲线分组后直接画进 3D 草图，不做补缝插值。",
+          "example_quote": "lNumCurves = swModeler.GetBodyOutline2((vBodies), swVector, dTolerance, False, vCurves, vTopologicalEntities, vIndices)",
+          "example_file": "Get_Curves_that_Form_Outline_of_Bodies_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 的 ProjectOnPlane=true 只写在「To close gaps」条件句下；传 False 不违反任何硬前置，故不判冲突。"
+    },
+    {
+      "member": "GetBodyTrimMembers",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Access_Structure_System_Corner_Treatments_Example_VB.md",
+        "Access_Structure_System_Corner_Treatments__Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "仅当角处理特征 CornerType = 2（复杂角处理）分支里才调此成员。",
+          "example_quote": "ElseIf crnrFeat2.CornerType = 2 Then 'Complex",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md"
+        },
+        {
+          "what": "VBA 侧返回数组可能为空，须先用 IsEmpty 守卫再遍历。",
+          "example_quote": "If Not IsEmpty(varBodyMem) Then",
+          "example_file": "Access_Structure_System_Corner_Treatments_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks，按规定跳过冲突判定；此处只记示例给出的具体前置与守卫。"
+    },
+    {
+      "member": "GetBomAreaCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_CSharp.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VB.md",
+        "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先赋 ThemeName 再读计数，说明计数随主题而定。",
+          "example_quote": "swMBDPdfData.ThemeName = \"c:\\program files\\solidworks corp\\solidworks\\data\\themes\\simple assembly (a4, landscape)\\theme.xml\"",
+          "example_file": "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VB.md"
+        },
+        {
+          "what": "计数被当作 SetBomTable 的守卫：大于 0 才去映射第 0 个 BOM 表区。",
+          "example_quote": "If nbrBOMTableAreas > 0 Then",
+          "example_file": "Export_BOM's_Second_Column_to_BOM_Table_Area_Example_VB.md"
+        }
+      ],
+      "note": "成员页只有 Returns 与 Examples，无 Remarks 段，按规定跳过冲突判定。"
+    },
+    {
+      "member": "GetBomBalloonText",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_BOM_Balloon_Properties_Example_CSharp.md",
+        "Get_BOM_Balloon_Properties_Example_VB.md",
+        "Get_BOM_Balloon_Properties_Example_VBNET.md",
+        "Set_BOM_Balloon_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例在 InsertBOMBalloon2 后选中新注释再 GetSelectedObject6 取 INote，WhichOne 传 True/False 分读上下文本。",
+          "example_quote": "Debug.Print \" Upper text = \" & swNote.GetBomBalloonText(True) & \" [\" & swNote.GetBomBalloonTextStyle(True) & \"]\"",
+          "example_file": "Get_BOM_Balloon_Properties_Example_VB.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段，按规定跳过冲突判定；示例与 Parameters 对 WhichOne 的说法一致。"
+    }
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "idx": 55,
+  "results": [
+    {
+      "member": "CounterDrillAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for swCounterDrilled and swCounterDrilledDrilled holes.",
+          "example_quote": "swFeat = swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore,",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "Remarks 把适用孔型限定为 swCounterDrilled/swCounterDrilledDrilled，示例建的却是 swWzdCounterBore（两者都不是），却照样读取。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "成员页 Returns 只写「Counterdrill angle」、全文无单位；示例按弧度读出并乘 57.3 换算成 deg 打印",
+          "example_quote": "Debug.Print(\"  CounterDrillAngle            = \" + swWizHole.CounterDrillAngle * 57.3 + \" deg\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "三个语言版本示例都在同一 swWzdCounterBore 孔上读该成员，口径一致；差异只在 Remarks 的孔型限定。"
+    },
+    {
+      "member": "CounterDrillDepth",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for swCounterDrilled and swCounterDrilledDrilled holes.",
+          "example_quote": "swFeat = swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore,",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "Remarks 把适用孔型限定为 swCounterDrilled/swCounterDrilledDrilled，示例建的却是 swWzdCounterBore（两者都不是），却照样读取。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "成员页 Returns 只写「Counterdrill depth」、全文无单位；示例按米读出并乘 1000.0 换算成 mm 打印",
+          "example_quote": "Debug.Print(\"  CounterDrillDepth            = \" + swWizHole.CounterDrillDepth * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "三个语言版本示例都在同一 swWzdCounterBore 孔上读该成员，口径一致；差异只在 Remarks 的孔型限定。"
+    },
+    {
+      "member": "CounterDrillDiameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for swCounterDrilled and swCounterDrilledDrilled holes.",
+          "example_quote": "swFeat = swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore,",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "Remarks 把适用孔型限定为 swCounterDrilled/swCounterDrilledDrilled，示例建的却是 swWzdCounterBore（两者都不是），却照样读取。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "成员页 Returns 只写「Counterdrill diameter」、全文无单位；示例按米读出并乘 1000.0 换算成 mm 打印",
+          "example_quote": "Debug.Print(\"  CounterDrillDiameter         = \" + swWizHole.CounterDrillDiameter * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "三个语言版本示例都在同一 swWzdCounterBore 孔上读该成员，口径一致；差异只在 Remarks 的孔型限定。"
+    },
+    {
+      "member": "CounterSinkAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for swCounterSunk and swCounterSunkDrilled holes.",
+          "example_quote": "swFeat = swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore,",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "Remarks 把适用孔型限定为 swCounterSunk/swCounterSunkDrilled，示例建的却是 swWzdCounterBore（两者都不是），却照样读取。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "成员页 Returns 只写「Countersink angle」、全文无单位；示例按弧度读出并乘 57.3 换算成 deg 打印",
+          "example_quote": "Debug.Print(\"  CounterSinkAngle             = \" + swWizHole.CounterSinkAngle * 57.3 + \" deg\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "三个语言版本示例都在同一 swWzdCounterBore 孔上读该成员，口径一致；差异只在 Remarks 的孔型限定。"
+    },
+    {
+      "member": "CounterSinkDiameter",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+        "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_VBNET.md",
+        "Create_Holes_using_Hole_Wizard_and_Sketch_Points_Example_VB.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is relevant only for swCounterSunk and swCounterSunkDrilled holes.",
+          "example_quote": "swFeat = swFeatMgr.HoleWizard((int)swWzdGeneralHoleTypes_e.swWzdCounterBore,",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md",
+          "why": "Remarks 把适用孔型限定为 swCounterSunk/swCounterSunkDrilled，示例建的却是 swWzdCounterBore（两者都不是），却照样读取。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "成员页 Returns 只写「Countersink diameter」、全文无单位；示例按米读出并乘 1000.0 换算成 mm 打印",
+          "example_quote": "Debug.Print(\"  CounterSinkDiameter          = \" + swWizHole.CounterSinkDiameter * 1000.0 + \" mm\");",
+          "example_file": "Create_Holes_Using_Hole_Wizard_and_Sketch_Points_Example_CSharp.md"
+        }
+      ],
+      "note": "三个语言版本示例都在同一 swWzdCounterBore 孔上读该成员，口径一致；差异只在 Remarks 的孔型限定。"
+    },
+    {
+      "member": "CouplerRatioDenominator",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Linear_Coupler_Mate_Example_CSharp.md",
+        "Create_Linear_Coupler_Mate_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出可直接照抄的数值与时机：先设 Numerator/Denominator，再赋 MateEntity1/2 并 CreateMate；页未说设置顺序",
+          "example_quote": "swLinearMateData.CouplerRatioDenominator = 0.00199;",
+          "example_file": "Create_Linear_Coupler_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 已给出 分子/分母 = 位移比；示例与之一致，未见矛盾，只补了取值与赋值时机。"
+    },
+    {
+      "member": "CouplerRatioNumerator",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Linear_Coupler_Mate_Example_CSharp.md",
+        "Create_Linear_Coupler_Mate_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "本页无 Remarks，比值语义只见于 Denominator 页；示例给出可照抄的数值与 CreateMate 后经 GetDefinition 读回的做法",
+          "example_quote": "swLinearMateData.CouplerRatioNumerator = 0.00099;",
+          "example_file": "Create_Linear_Coupler_Mate_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 ## Remarks 段，按纪律跳过冲突判定；两例都真实赋值并读回该成员。"
+    }
+  ]
+}

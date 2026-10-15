@@ -1,0 +1,119 @@
+{
+  "idx": 203,
+  "results": [
+    {
+      "member": "GetGroupsCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Structural_Member_Group_Example_CSharp.md",
+        "Create_Structural_Member_Group_Example_VB.md",
+        "Create_Structural_Member_Group_Example_VBNET.md",
+        "Insert_Structural_Weldment_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例要求先调 AccessSelections(Part, null) 才能取组数；成员页只给文档链接，未写调用序",
+          "example_quote": "swWeldFeatData.AccessSelections(Part, null);",
+          "example_file": "Insert_Structural_Weldment_Example_CSharp.md"
+        },
+        {
+          "what": "示例在读完组数与 Groups 后调 ReleaseSelectionAccess() 成对释放",
+          "example_quote": "swWeldFeatData.ReleaseSelectionAccess();",
+          "example_file": "Insert_Structural_Weldment_Example_CSharp.md"
+        }
+      ],
+      "note": "四份示例一致：先 AccessSelections 后取数、最后 ReleaseSelectionAccess，与 Remarks 无矛盾"
+    },
+    {
+      "member": "GetGtolBoxAtIndex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的用 GetGtolBoxCount 定 Index 落成 0 基循环，上界为 Count-1",
+          "example_quote": "for (k = 0; k <= swPMIFrameData.GetGtolBoxCount() - 1; k++)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "页面索引区间 0..2 与示例 0 基循环一致，未发现冲突"
+    },
+    {
+      "member": "GetGtolBoxCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页无 Remarks 也无用法；示例显示它作为 GetGtolBoxAtIndex 的循环上界（减 1 作闭区间）",
+          "example_quote": "for (k = 0; k <= swPMIFrameData.GetGtolBoxCount() - 1; k++)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "remarks_empty，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetGtolDatumAtIndex",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把 Remarks 的用 GetGtolDatumCount 定 Index 落成 0 基循环，上界为 Count-1",
+          "example_quote": "for (l = 0; l <= swPMIFrameData.GetGtolDatumCount() - 1; l++)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "页面索引区间 0..2 与示例 0 基循环一致，未发现冲突"
+    },
+    {
+      "member": "GetGtolDatumCount",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_PMI_Data_Example_CSharp.md",
+        "Get_PMI_Data_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "成员页无 Remarks 也无用法；示例显示它作为 GetGtolDatumAtIndex 的循环上界（减 1 作闭区间）",
+          "example_quote": "for (l = 0; l <= swPMIFrameData.GetGtolDatumCount() - 1; l++)",
+          "example_file": "Get_PMI_Data_Example_CSharp.md"
+        }
+      ],
+      "note": "remarks_empty，按纪律跳过冲突判定"
+    },
+    {
+      "member": "GetGtolFormatData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "C#/VB.NET 两例签名与页面一致；示例前置属整段宏，未构成冲突"
+    },
+    {
+      "member": "GetGtolFrameXMLSchema",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "示例仅复现签名与调用位置，未给出比成员页更具体的语义"
+    }
+  ]
+}

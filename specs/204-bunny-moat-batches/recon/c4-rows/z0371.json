@@ -1,0 +1,117 @@
+{
+ "idx": 371,
+ "results": [
+  {
+   "member": "MoveAnnotations",
+   "remarks_empty": true,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 ## Remarks，按纪律跳过，未逐字引用示例。"
+  },
+  {
+   "member": "MoveOrCopy",
+   "remarks_empty": true,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "成员页无 ## Remarks，按纪律跳过；签名 void 且无 Returns 段。"
+  },
+  {
+   "member": "MoveXYZ",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Run_SOLIDWORKS_Commands_and_Synthesize_Mouse_Events_Example_VB.md",
+    "Run_SolidWorks_Commands_and_Synthesize_Mouse_Events_Example_CSharp.md",
+    "Run_SolidWorks_Commands_and_Synthesize_Mouse_Events_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "三份示例给出 MoveXYZ 实参：米量级坐标约 0.037/0.032/0.049，同例 Move 用 50/150/5/10；Flags 只传单个 swMouse_LeftDown",
+     "example_quote": "status = TheMouse.MoveXYZ(0.03720615681732, 0.0316583060694, 0.04991700841805, (int)swMouse_e.swMouse_LeftDown);",
+     "example_file": "Run_SolidWorks_Commands_and_Synthesize_Mouse_Events_Example_CSharp.md"
+    },
+    {
+     "what": "示例 Preconditions 第 3 条把 Remarks 的「加 Commands 类型库引用」落成具体操作与路径",
+     "example_quote": "// 3. In the IDE, right-click the project name in the Project Explorer,\n//    click Add Reference, browse install_dir\\api\\redist, click\n//    SolidWorks.Interop.swcommands.dll, and click OK.",
+     "example_file": "Run_SolidWorks_Commands_and_Synthesize_Mouse_Events_Example_CSharp.md"
+    }
+   ],
+   "note": "Remarks 只说坐标系为模型坐标系、未给单位，故不构成 unit_diff。"
+  },
+  {
+   "member": "MultiSelect2",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Block_Definition_and_Insert_Block_Instance_Example_CSharp.md",
+    "Create_Block_Definition_and_Insert_Block_Instance_Example_VB.md",
+    "Create_Block_Definition_and_Insert_Block_Instance_Example_VBNET.md",
+    "Multiselect_Same%20and_Different_Objects_Example_CSharp.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例证实 Data 传 null/Nothing 可行；AppendFlag=true 可跨三次调用追加三种不同类型数组",
+     "example_quote": "nbrSelObjects = swModelDocExt.MultiSelect2(vSkSeg, true, null);",
+     "example_file": "Create_Block_Definition_and_Insert_Block_Instance_Example_CSharp.md"
+    },
+    {
+     "what": "示例用 Face2[]/Edge[]/Entity[] 三种实数组、AppendFlag=false，逐次 ClearSelection2 后取返回计数",
+     "example_quote": "nbrSelections = swModelDocExt.MultiSelect2(entitiesArray, false, null);",
+     "example_file": "Multiselect_Same%20and_Different_Objects_Example_CSharp.md"
+    }
+   ],
+   "note": "Remarks 通篇讲 PropertyManager 选择框的 mark，示例两例都不走 mark 路径；两侧无相互否证。"
+  },
+  {
+   "member": "MultipleLeaders",
+   "remarks_empty": true,
+   "examples_actually_used": [],
+   "conflicts": [],
+   "example_more_specific": [],
+   "note": "ICallout.MultipleLeaders 页无 ## Remarks，按纪律跳过。"
+  },
+  {
+   "member": "MultipleStart",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_a_Thread_Feature_Example_CSharp.md",
+    "Create_a_Thread_Feature_Example_VB.md",
+    "Create_a_Thread_Feature_Example_VBNET.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例只在读取时打印 MultipleStart、从不置 true；为 true 才读 NumberOfStarts，比 Remarks 更具体",
+     "example_quote": "Debug.Print(\"Multiple thread starts? \" + swThreadFeatData.MultipleStart);",
+     "example_file": "Create_a_Thread_Feature_Example_CSharp.md"
+    },
+    {
+     "what": "示例改螺距时先置 PitchOverride=true、再给米量级 Pitch=0.01；Remarks 未给螺距单位",
+     "example_quote": "swThreadFeatData.PitchOverride = true;\n            swThreadFeatData.Pitch = 0.01",
+     "example_file": "Create_a_Thread_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "三份示例互不矛盾；Remarks 的两条约束未被任一示例否证。"
+  },
+  {
+   "member": "MultipleThicknessFaces",
+   "remarks_empty": false,
+   "examples_actually_used": [
+    "Create_Shell_Feature_Example_CSharp.md",
+    "Create_Shell_Feature_Example_VBNET.md",
+    "Get_Shell_Feature_Data_Example_VB.md"
+   ],
+   "conflicts": [],
+   "example_more_specific": [
+    {
+     "what": "示例给出该属性必须落在 AccessSelections 与 ReleaseSelectionAccess 之间读取的具体调用序",
+     "example_quote": "bRet = swShell.AccessSelections(swModel, null);\n\t\tswModel.ClearSelection2(true);",
+     "example_file": "Create_Shell_Feature_Example_CSharp.md"
+    }
+   ],
+   "note": "Remarks 本身只指向 Selections that Define Features 一文，未给可与示例否证的说法。"
+  }
+ ]
+}

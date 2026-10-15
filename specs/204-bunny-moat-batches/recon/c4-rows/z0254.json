@@ -1,0 +1,134 @@
+{
+  "idx": 254,
+  "results": [
+    {
+      "member": "GetSelectionSetByName",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Objects_in_Selection_Set_Example_CSharp.md",
+        "Get_Objects_in_Selection_Set_Example_VB.md",
+        "Get_Objects_in_Selection_Set_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例给出确切入参：遍历特征树时先匹配 featureNode.Name == \"Selection-Set1(3)\"，再把该特征名传进来",
+          "example_quote": "swSelectionSet = (SelectionSet)swSelectionSetFolderFeature.GetSelectionSetByName(swSelectionSetFeature.Name);",
+          "example_file": "Get_Objects_in_Selection_Set_Example_CSharp.md"
+        },
+        {
+          "what": "示例限定场景是装配体：先 SelectByID2 选中组件再用 SaveSelection 造出选择集，之后才按名取回",
+          "example_quote": "// 1. Verify that the assembly to open exists.",
+          "example_file": "Get_Objects_in_Selection_Set_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只说去特征树取名，未给字面量，示例更具体；两侧机制一致，无冲突。"
+    },
+    {
+      "member": "GetSelectionSetFolder",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Objects_in_Selection_Set_Example_CSharp.md",
+        "Get_Objects_in_Selection_Set_Example_VB.md",
+        "Get_Objects_in_Selection_Set_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值直接转成 SelectionSetFolder，并紧接着用它调 GetSelectionSetByName",
+          "example_quote": "swSelectionSetFolderFeature = (SelectionSetFolder)swFeatureMgr.GetSelectionSetFolder();",
+          "example_file": "Get_Objects_in_Selection_Set_Example_CSharp.md"
+        }
+      ],
+      "note": "本页无 Remarks 段（仅 Signature/Returns），按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetSelectionSetItemTypes",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_and_Delete_Selection_Sets_Example_CSharp.md",
+        "Create_and_Delete_Selection_Sets_Example_VB.md",
+        "Create_and_Delete_Selection_Sets_Example_VBNET.md",
+        "Get_Dispatch_Objects_for_Selection_Set_Items_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回数组按 int[] 接收并显式强转，落实 Returns 里 longs or integers 的前半",
+          "example_quote": "selectionSetItemArrayTypes = (int[])swSelectionSet.GetSelectionSetItemTypes();",
+          "example_file": "Create_and_Delete_Selection_Sets_Example_CSharp.md"
+        },
+        {
+          "what": "示例用同一个下标 j 并行取项与类型，印证 Remarks 说的两类数组顺序一致",
+          "example_quote": "selectionSetItemArray = (object[])swSelectionSet.GetSelectionSetItems();",
+          "example_file": "Create_and_Delete_Selection_Sets_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只约束两类数组的顺序，与示例下标并行完全吻合，找不到冲突。"
+    },
+    {
+      "member": "GetSelectionSetItems",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_and_Delete_Selection_Sets_Example_CSharp.md",
+        "Create_and_Delete_Selection_Sets_Example_VB.md",
+        "Create_and_Delete_Selection_Sets_Example_VBNET.md",
+        "Get_Dispatch_Objects_for_Selection_Set_Items_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回数组按 object[] 接收再逐项转成 SelectionSetItem，比 Returns 的说法更具体",
+          "example_quote": "selectionSetItemArray = (object[])swSelectionSet.GetSelectionSetItems();",
+          "example_file": "Create_and_Delete_Selection_Sets_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只是一句指向 GetSelectionSetItemTypes 的交叉引用，无可与示例冲突的断言。"
+    },
+    {
+      "member": "GetSelectionSets",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Delete_Selection_Sets_Example_CSharp.md",
+        "Create_and_Delete_Selection_Sets_Example_VB.md",
+        "Create_and_Delete_Selection_Sets_Example_VBNET.md",
+        "Get_Dispatch_Objects_for_Selection_Set_Items_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例按 object[] 接收后从 i=0 遍历，逐个转 SelectionSet 并调 GetName",
+          "example_quote": "selectionSetArray = (object[])swSelectionSetFolder.GetSelectionSets();",
+          "example_file": "Create_and_Delete_Selection_Sets_Example_CSharp.md"
+        }
+      ],
+      "note": "本页无 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetSelectionSpecification",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Selection_Specification_Example_CSharp.md",
+        "Get_Selection_Specification_Example_VB.md",
+        "Get_Selection_Specification_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例补了前置：先在特征树里选中两个特征，再分别取第 1、2 项的规格",
+          "example_quote": "2. Select two features in the FeatureManager design tree.",
+          "example_file": "Get_Selection_Specification_Example_CSharp.md"
+        }
+      ],
+      "note": "本页只有 Signature/Parameters/Returns，无 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetSelections",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "三份示例调的是 RefAxisFeatureData.GetSelections（另一接口的同名成员），本成员未被用到。"
+    }
+  ]
+}

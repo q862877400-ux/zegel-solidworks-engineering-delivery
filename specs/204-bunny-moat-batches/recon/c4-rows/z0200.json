@@ -1,0 +1,151 @@
+{
+  "idx": 200,
+  "results": [
+    {
+      "member": "GetFrameCount",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md",
+        "Get_Text_Items_in_GTol_Frame_Example_CSharp.md",
+        "Get_Text_Items_in_GTol_Frame_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "This method returns the number of frames that this symbol has stored, which may be different than the number of frames that actually appear when this frame is displayed.",
+          "example_quote": "for (int idx = 1; idx <= (swGtol.GetFrameCount() - 1); idx++)",
+          "example_file": "Get_Text_Items_in_GTol_Frame_Example_CSharp.md",
+          "why": "示例恒按 -1 折算真实帧数；Remarks 自举的例子是显示 3 帧而存的是 1、2、5，差为 2，不是 1。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "Get_PMI_Data 两例调的是 PMIGtolData 上的同名成员，非 IGtol，已排除。"
+    },
+    {
+      "member": "GetFrameRate",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Get_Motion_Study_Example_VB.md",
+        "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md",
+        "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_VBNET.md",
+        "swmotionstudyapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值当「每秒帧数」取倒数得时间步长，页面的 Returns 只说是什么。",
+          "example_quote": "deltaT = 1 / frameRate",
+          "example_file": "sldworksapi__Fire_Events_for_External_Output_Time_Step_Changes_Example_VBNET.md"
+        }
+      ],
+      "note": "成员页只有 Returns、没有 Remarks 段，按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetFrameSymbols3",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Text_Items_in_GTol_Frame_Example_CSharp.md",
+        "Get_Text_Items_in_GTol_Frame_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Frame number to examine (1 or 2)",
+          "example_quote": "for (int idx = 1; idx <= (swGtol.GetFrameCount() - 1); idx++)",
+          "example_file": "Get_Text_Items_in_GTol_Frame_Example_CSharp.md",
+          "why": "示例把帧号一路传到 GetFrameCount()-1，未夹到 2；本页只承认 1 或 2，越界值是示例自己喂进去的。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例不判版本号，改用 GetFrameValues 返回非空当作「2022 之前」的闸门，再取符号数组。",
+          "example_quote": "if (myParams != null)",
+          "example_file": "Get_Text_Items_in_GTol_Frame_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 2022 版本门槛示例前置未写，且对 mySymbols 未判空。"
+    },
+    {
+      "member": "GetFrameToleranceType",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "TolType may be one of only swGtolGeomCharSymbol_e.:\n\n- swGcsANG\n\n- swGcsPARALLEL\n\n- swGcsPERP\n\n- swGcsCIRCRUNOUT\n\n- swGcsSYMMETRY",
+          "example_quote": "boolstatus = swGtolFrame.SetFrameToleranceType((int)swGtolGeomCharSymbol_e.swGcsROUND);",
+          "example_file": "Get_Gtol_Frame_Information_Example_CSharp.md",
+          "why": "swGcsROUND 不在页面列的 5 个值内；示例却先把它设进同一帧，紧接着用本成员读回并按 swGtolGeomCharSymbol_e 打印。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "示例注释 supported tolerance types 与 Remarks 一致，冲突出在调用本身。"
+    },
+    {
+      "member": "GetFrameValues",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Text_Items_in_GTol_Frame_Example_CSharp.md",
+        "Get_Text_Items_in_GTol_Frame_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Frame number to examine (1 or 2)",
+          "example_quote": "for (int idx = 1; idx <= (swGtol.GetFrameCount() - 1); idx++)",
+          "example_file": "Get_Text_Items_in_GTol_Frame_Example_CSharp.md",
+          "why": "循环上限取自 GetFrameCount()-1，可能大于 2；本页只承认 1 或 2 两个合法帧号。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例示范返回值可能为 null、判空后才索引，成员页没提可空。",
+          "example_quote": "if (myParams != null)",
+          "example_file": "Get_Text_Items_in_GTol_Frame_Example_CSharp.md"
+        }
+      ],
+      "note": "页面列的五个元素与示例索引 0..4 相符，short 形参与 C# 的 (short) 转换一致。"
+    },
+    {
+      "member": "GetFreezeLocation",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Move_Freeze_Bar_Example_CSharp.md",
+        "Move_Freeze_Bar_Example_VB.md",
+        "Move_Freeze_Bar_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例把返回值解释成冻结条所依附的那条特征，比页面的「位置」更具体。",
+          "example_quote": "Debug.Print(\"Freeze bar location is after \" + feat.Name);",
+          "example_file": "Move_Freeze_Bar_Example_CSharp.md"
+        }
+      ],
+      "note": "成员页无 Remarks 段（只有 Returns 的 Null 说明），按纪律跳过冲突判定。"
+    },
+    {
+      "member": "GetFromTo",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Gtol_Frame_Information_Example_CSharp.md",
+        "Get_Gtol_Frame_Information_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "If this method returns true, then call [[IGtol::GetFromToText]] and [[IGtol::SetFromToText]] to retrieve and set the From-To labels for this Gtol.",
+          "example_quote": "boolstatus = swGtol.GetFromTo\nboolstatus = swGtol.GetFromToText(swFromText, swToText)",
+          "example_file": "Get_Gtol_Frame_Information_Example_VBNET.md",
+          "why": "页面把「返回 true」设为调 GetFromToText 的条件；示例把上一行结果直接丢弃，下一行无条件就调。"
+        }
+      ],
+      "example_more_specific": [],
+      "note": "示例前置只说选中 GTol，未保证该 GTol 带 From-To 符号。"
+    }
+  ]
+}

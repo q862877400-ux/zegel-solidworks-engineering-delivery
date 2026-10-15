@@ -1,0 +1,135 @@
+{
+  "idx": 512,
+  "results": [
+    {
+      "member": "UpdateValuesFromExternalEquationFile",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Pack_and_Go_Part_and_Linked_Equation_Example_CSharp.md",
+        "Pack_and_Go_Part_and_Linked_Equation_Example_vb.md",
+        "Pack_and_Go_Part_and_Linked_Equation_Example_vbnet.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页只有 Returns、无 ## Remarks，按纪律跳过比对；三份示例均真实调用该成员。"
+    },
+    {
+      "member": "UpdateWhereUsedReferences",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Rename_Component_and_Update_References_Example_CSharp.md",
+        "Rename_Component_and_Update_References_Example_VB.md",
+        "Rename_Component_and_Update_References_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，跳过比对；三份示例均以 swRenamedDocumentReferences 读写该属性。"
+    },
+    {
+      "member": "UpperText",
+      "remarks_empty": false,
+      "examples_actually_used": [],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "You can only get or set the upper text in a BOM autoballoon using [[INote::GetBomBalloonText]] or [[INote::SetBomBalloonText]] after [[inserting a BOM balloon]].",
+          "example_quote": "swStackedBalloons.UpperText = \"\"\"\"",
+          "example_file": "Add_Balloon_to_Stacked_Balloon_Example_VB.md",
+          "why": "Remarks 只许在 BOM 气泡上经 INote 读写；示例直接给堆叠气泡选项赋 UpperText，未建 BOM 气泡也未调 INote。两条不能同时成立。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "You can only get or set the upper text in a BOM autoballoon using [[INote::GetBomBalloonText]] or [[INote::SetBomBalloonText]] after [[inserting a BOM balloon]].",
+          "example_quote": "Dim swStackedBalloons As SldWorks.StackedBalloonOptions",
+          "example_file": "Add_Balloon_to_Stacked_Balloon_Example_VB.md",
+          "why": "示例对象是 StackedBalloonOptions，即 IStackedBalloonOptions.UpperText（该页另写 stacked balloons），不是本页这一成员；同名两接口互斥。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "给出 UpperText 的字面量写法与 VBA 连续引号转义，成员页只说「气泡上方文字」。",
+          "example_quote": "swStackedBalloons.UpperText = \"\"\"\"",
+          "example_file": "Add_Balloon_to_Stacked_Balloon_Example_VB.md"
+        }
+      ],
+      "note": "三份候选示例全部绑定 StackedBalloonOptions，故 examples_actually_used 记空；C#/VB.NET 两份写法相同。"
+    },
+    {
+      "member": "UpperTextContent",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_Autoballoon_to_Face_Example_CSharp.md",
+        "Add_Autoballoon_to_Face_Example_VB.md",
+        "Add_Autoballoon_to_Face_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "To get or set document default values for UpperTextContent...",
+          "example_quote": "StackedBalloonOptions swStackedBalloons = default(StackedBalloonOptions);",
+          "example_file": "Add_Balloon_to_Stacked_Balloon_Example_CSharp.md",
+          "why": "该示例被挂在本成员下，却声明 StackedBalloonOptions 并赋 UpperTextContent，落在同名兄弟接口 IStackedBalloonOptions 上。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "给出具体枚举赋值 swBalloonTextItemNumber，并示范三种语言写法；成员页只说「文字样式」。",
+          "example_quote": "autoballoonParams.UpperTextContent = (int)swBalloonTextContent_e.swBalloonTextItemNumber;",
+          "example_file": "Add_Autoballoon_to_Face_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只限定「文档默认值」的存取路径，与示例改设实例值不冲突，故未列为矛盾。"
+    },
+    {
+      "member": "UpsideDown",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_a_Callout_Independent_of_a_Selection_Example_CSharp.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VB.md",
+        "Create_a_Callout_Independent_of_a_Selection_Example_VBNET.md",
+        "Get_All_Elements_of_Sketch_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，跳过；四份均读取 swTextFormat.UpsideDown。成员页另列 Get Arrow 三份。"
+    },
+    {
+      "member": "UseAlternateNameInBOM",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Change_Configuration_Properties_Example_VB.md",
+        "Get_List_Of_Configurations_Example_CSharp.md",
+        "Get_List_Of_Configurations_Example_VB.md",
+        "Get_List_Of_Configurations_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，跳过比对；四份均真实读写该属性。"
+    },
+    {
+      "member": "UseAngleDimForProfile",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+        "Create_Sheet_Metal_Gusset_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is valid only if [[ISMGussetFeatureData::ProfileDimensionScheme]] is set to 1.",
+          "example_quote": "swFeatData.ProfileDimensionScheme = (int)swSheetMetalGussetProfileDimType_e.swSheetMetalGussetProfileDimType_IndentDepth;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md",
+          "why": "官方枚举页 swSheetMetalGussetProfileDimType_IndentDepth=0；示例在 scheme=0 时赋本属性，与「仅当为 1 有效」互斥。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出同一 CreateDefinition 对象上的完整赋值序：本属性与 ProfileLengthDim/HeightDim/AngleDim 连写。",
+          "example_quote": "swFeatData.UseAngleDimForProfile = false;",
+          "example_file": "Create_Sheet_Metal_Gusset_Example_CSharp.md"
+        }
+      ],
+      "note": "VB.NET 那份第45/48行写法相同（无 (int) 强转）；接口 _overview 也只把本属性列在 ProfileDimensions 分支下。"
+    }
+  ]
+}

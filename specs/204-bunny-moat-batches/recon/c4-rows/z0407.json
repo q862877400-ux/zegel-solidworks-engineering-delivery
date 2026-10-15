@@ -1,0 +1,160 @@
+{
+  "idx": 407,
+  "results": [
+    {
+      "member": "RemoveCommandTab",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Flyouts_in_the_CommandManager_Example_CSharp.md",
+        "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "调用序比成员页具体：先按 (docType, Title) GetCommandTab，判空/ID不匹配才 RemoveCommandTab，再 AddCommandTab 重建",
+          "example_quote": "foreach (int type in docTypes)\n{\n    CommandTab cmdTab;\n    cmdTab = iCmdMgr.GetCommandTab(type, Title);\n    if (cmdTab != null && !getDataResult || ignorePrevious)// If tab exists, but we have ignored the registry info (or changed CommandGroup ID), re-create the tab; otherwise the ids won't match and the tab will be blank\n    {\n        bool res = iCmdMgr.RemoveCommandTab(cmdTab);",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        },
+        {
+          "what": "示例对 ASSEMBLY/DRAWING/PART 三种文档类型各调一次，成员页只说指定 tab、未说粒度",
+          "example_quote": "int[] docTypes = new int[]{(int)swDocumentTypes_e.swDocASSEMBLY,\n                                   (int)swDocumentTypes_e.swDocDRAWING,\n                                   (int)swDocumentTypes_e.swDocPART};",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        }
+      ],
+      "note": "无 Remarks 跳过；VB.NET 按 ICommandTab 传参，成员页签名写 CommandTab（参数类型差，非冲突）。"
+    },
+    {
+      "member": "RemoveEdges",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Remove_Edge_from_Edge_Flange_Feature_Example_CSharp.md",
+        "Remove_Edge_from_Edge_Flange_Feature_Example_VB.md",
+        "Remove_Edge_from_Edge_Flange_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "RemoveEdges 只改定义对象，示例随后必须 ModifyDefinition 才落到特征上；成员页未提提交这一步",
+          "example_quote": "nStatus = (swEdgeFlangeError_e)swEdgeFlangeData.RemoveEdges(vEdgesToRemove);\nDebug.Print(\"Edge removal error code = \" + swEdgeFlangeError2String(nStatus));\nbStatus = swFeature.ModifyDefinition(swEdgeFlangeData, swDocument, null);",
+          "example_file": "Remove_Edge_from_Edge_Flange_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例把返回码逐个翻成文字，并单列 case 0 为 no error；成员页 Returns 只给枚举名未给 0 的含义",
+          "example_quote": "case 0:\n    functionReturnValue = \"no error\";\n    break;",
+          "example_file": "Remove_Edge_from_Edge_Flange_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "无 Remarks 跳过；三示例调用序：GetDefinition→AccessSelections→Edges→RemoveEdges→Modify。"
+    },
+    {
+      "member": "RemoveExternalDocuments",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md",
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_VB.md",
+        "Add_and_Remove_Files_from_Pack_and_Go_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "包装的落地形状：object[] 经 ObjectArrayToBStrWrapperArray 转成 BStrWrapper[] 才传入；Remarks 只点名类名",
+          "example_quote": "public BStrWrapper[] ObjectArrayToBStrWrapperArray(object[] SwObjects)\n{\n    int arraySize;\n    arraySize = SwObjects.GetUpperBound(0);\n    BStrWrapper[] dispwrap = new BStrWrapper[arraySize + 1];",
+          "example_file": "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md"
+        },
+        {
+          "what": "被删文件必须先由 AddExternalDocuments 加进 Pack and Go：示例先加 2 个再删第 1 个；成员页未写此前置",
+          "example_quote": "status = swPackAndGo.AddExternalDocuments(ObjectArrayToBStrWrapperArray(otherFiles));\n// Remove one of the non-SOLIDWORKS Design files from Pack and Go\nobject[] delOtherFiles = new object[1];\ndelOtherFiles[0] = (object)otherFiles[0];\nDebug.Print(\"\");\nDebug.Print(\"  Remove non-SOLIDWORKS Design file:\");\nDebug.Print(\"    The path and filename is: \" + delOtherFiles[0]);\nstatus = swPackAndGo.RemoveExternalDocuments(ObjectArrayToBStrWrapperArray(delOtherFiles));",
+          "example_file": "Add_and_Remove_Files_from_Pack_and_Go_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 把包装要求限定在 C#；VBA/VB.NET 传纯 String 数组不包装，与之相符，非冲突。"
+    },
+    {
+      "member": "RemoveFlyoutGroup",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Flyouts_in_the_CommandManager_Example_CSharp.md",
+        "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "调用点在卸载路径 DisconnectFromSW→RemoveCommandMgr，与 RemoveCommandGroup 相邻；传创建时的 flyoutGroupID=91",
+          "example_quote": "public void RemoveCommandMgr()\n{\n    iBmp.Dispose();\n    iCmdMgr.RemoveCommandGroup(mainCmdGroupID);\n    iCmdMgr.RemoveFlyoutGroup(flyoutGroupID);\n}",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_CSharp.md"
+        },
+        {
+          "what": "VB.NET 版把这两个删除包在 Try/Catch 里吞掉全部异常、C# 版没有；成员页 Returns 只说 True/False 未谈失败处理",
+          "example_quote": "Public Sub RemoveCommandMgr()\n    Try\n        iBmp.Dispose()\n        iCmdMgr.RemoveCommandGroup(mainCmdGroupID)\n        iCmdMgr.RemoveFlyoutGroup(flyoutGroupID)\n    Catch e As Exception\n    End Try\nEnd Sub",
+          "example_file": "Create_Flyouts_in_the_CommandManager_Example_VBNET.md"
+        }
+      ],
+      "note": "无 Remarks，按纪律跳过冲突比对；两示例的 RemoveFlyoutGroup 返回值都未接收，成员页 Returns 说的 bool 在示例里被丢弃。"
+    },
+    {
+      "member": "RemoveFromMenu",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Remove_Menu_Commands_Menus_and_Toolbar_Buttons_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "同一命令要从主框架+上下文菜单都移除，示例连调两方法；验证方式也不同：工具栏立即看、弹出菜单需点击",
+          "example_quote": "' 3. Examine the Selection Filter toolbar to verify step 1.\n' 4. Click or right-click a feature to verify step 2.",
+          "example_file": "Remove_Menu_Commands_Menus_and_Toolbar_Buttons_Example_VB.md"
+        },
+        {
+          "what": "只删工具栏按钮时也把 RemoveParentMenu 传 True；成员页注明该参对工具栏无效，示例照传不误",
+          "example_quote": "swApp.RemoveFromMenu swCommands_FilterEdges, 1, 3, True",
+          "example_file": "Remove_Menu_Commands_Menus_and_Toolbar_Buttons_Example_VB.md"
+        }
+      ],
+      "note": "示例第 39 行注释只说 main frame menus 却传 Option=3，成员页参数表定义 3=菜单+工具栏；属注释与参数表之差。"
+    },
+    {
+      "member": "RemoveFromPopupMenu",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Remove_Menu_Commands_Menus_and_Toolbar_Buttons_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "SelectionType 用枚举 swSelEVERYTHING 而非裸数字；示例把两方法背靠背连调，落实 Remarks 的交叉引用",
+          "example_quote": "swApp.RemoveFromMenu swCommands_Suppress, 1, 3, False\n' Remove the Suppress command from all context-sensitive menus; do not\n' remove the parent menus\nswApp.RemoveFromPopupMenu swCommands_Suppress, 1, swSelEVERYTHING, False",
+          "example_file": "Remove_Menu_Commands_Menus_and_Toolbar_Buttons_Example_VB.md"
+        },
+        {
+          "what": "示例先用 GetMenuStrings 取出父菜单名却不删父菜单，第 4 参传 False；成员页只说 True/False 未示取值场景",
+          "example_quote": "name = swApp.GetMenuStrings(swCommands_Suppress, 1, parentName)",
+          "example_file": "Remove_Menu_Commands_Menus_and_Toolbar_Buttons_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 说弹出菜单改动下次显示才生效，示例验证步正是点击/右击后确认，与之相符，非冲突。"
+    },
+    {
+      "member": "RemoveFromSelectionSet",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Delete_Selection_Sets_Example_CSharp.md",
+        "Create_and_Delete_Selection_Sets_Example_VB.md",
+        "Create_and_Delete_Selection_Sets_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "须先遍历特征树找到 Selection Sets 文件夹，逐层 GetSelectionSets→GetSelectionSetItems 拿到 item 才能调",
+          "example_quote": "selectionSetItemArray = (object[])swSelectionSet.GetSelectionSetItems();\nselectionSetItemArrayTypes = (int[])swSelectionSet.GetSelectionSetItemTypes();",
+          "example_file": "Create_and_Delete_Selection_Sets_Example_CSharp.md"
+        },
+        {
+          "what": "逐项删空会连带删掉整个选择集，成员页只说删 item；三份示例 Postconditions 都这样写",
+          "example_quote": "//    c. Gets and then deletes each selection set item in the\n//       selection set, which deletes the selection set.",
+          "example_file": "Create_and_Delete_Selection_Sets_Example_CSharp.md"
+        }
+      ],
+      "note": "无 Remarks，按纪律跳过冲突比对；页签名 void，示例也不接收返回值，与之一致。"
+    }
+  ]
+}

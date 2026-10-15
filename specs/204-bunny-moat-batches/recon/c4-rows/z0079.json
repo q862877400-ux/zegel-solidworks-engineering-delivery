@@ -1,0 +1,137 @@
+{
+  "idx": 79,
+  "results": [
+    {
+      "member": "D1AlignmentMethod",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Access_Curve-driven_Pattern_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 段故跳过判定。3 份 Create_Local_* 用的是 LocalCurvePatternFeatureData，属 ILocalCurvePatternFeatureData，不采信。"
+    },
+    {
+      "member": "D1CapEnd",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Extruded_Reference_Surface_Example_CSharp.md",
+        "Insert_Extruded_Reference_Surface_Example_VB.md",
+        "Insert_Extruded_Reference_Surface_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例建特征时 CapEnd1 传 false，故随后读到的 D1CapEnd 为未封端（成员页未给初值）",
+          "example_quote": "swFeatureManager.FeatureExtruRefSurface3(false, false, (int)swStartConditions_e.swStartSketchPlane, 0, (int)swEndConditions_e.swEndCondBlind, (int)swEndConditions_e.swEndCondBlind, 0.01, 0.01, true, false,",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 仅一句 See 链接，无实质前置；示例只读不写，与 Returns 一致。"
+    },
+    {
+      "member": "D1CurveMethod",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_and_Access_Curve-driven_Pattern_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "无 Remarks 段故跳过判定。3 份 Create_Local_* 用 LocalCurvePatternFeatureData，属另一接口，不采信。"
+    },
+    {
+      "member": "D1Curves",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Boundary_Feature_Example_CSharp.md",
+        "Insert_Boundary_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例读 D1Curves 前先 ClearSelection2，循环上界取 GetCurvesCount，元素逐个 AddSelectionListObject",
+          "example_quote": "for (i = 0; i < nbrCurves; i++)",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例按 mark=8193/16385 预选两张面，成员页只说可用面/边/草曲线，未给 mark",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"FACE\", -0.0831962633037051, -0.000743092842242277, 0.0342529447572133, false, 8193, null, 0);",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 说可用面/边/草曲线，示例正是选两张面，一致无冲突；返回形态 object→object[] 也一致。"
+    },
+    {
+      "member": "D1Direction",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_and_Access_Curve-driven_Pattern_Feature_Example_CSharp.md",
+        "Create_and_Access_Curve-driven_Pattern_Feature_Example_VB.md",
+        "Create_and_Access_Curve-driven_Pattern_Feature_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "Use this property only when editing the pattern feature.",
+          "example_quote": "patternDirection = swCurveDrivenPatternFeatureData.D1Direction;",
+          "example_file": "Create_and_Access_Curve-driven_Pattern_Feature_Example_CSharp.md",
+          "why": "Remarks 把该属性限定为仅编辑时使用；示例全程不写它，只在 AccessSelections 之后读取。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例建特征前先以 mark=4 选种子特征，再以 mark=1 选方向边；成员页只给方向实体 mark=1",
+          "example_quote": "status = swModelDocExt.SelectByID2(\"\", \"EDGE\", 0.0115207253109588, -8.89643058599177E-06, 0.0754182969300832, true, 1, null, 0);",
+          "example_file": "Create_and_Access_Curve-driven_Pattern_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "mark=1 与示例吻合；3D 曲线需 mark=1024 的分支三份示例均未覆盖。"
+    },
+    {
+      "member": "D1DraftAngle",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Extruded_Reference_Surface_Example_CSharp.md",
+        "Insert_Extruded_Reference_Surface_Example_VB.md",
+        "Insert_Extruded_Reference_Surface_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例先判 D1DraftOn 再读 D1DraftAngle，并在同一分支给出 D1DraftOutward 的 outward 语义",
+          "example_quote": "if (swSurfExtrudeFeature.D1DraftOn)",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_CSharp.md"
+        },
+        {
+          "what": "建特征时 Dang1 传 0.4、Dchk1 传 true；本页 Returns 写 see Remarks，Remarks 亦未给单位",
+          "example_quote": "swFeatureManager.FeatureExtruRefSurface3(false, false, (int)swStartConditions_e.swStartSketchPlane, 0, (int)swEndConditions_e.swEndCondBlind, (int)swEndConditions_e.swEndCondBlind, 0.01, 0.01, true, false,",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 的 D1DraftOn 前置与示例 if 守卫一致，无冲突；示例未给角度单位，不作断言。"
+    },
+    {
+      "member": "D1DraftOn",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Extruded_Reference_Surface_Example_CSharp.md",
+        "Insert_Extruded_Reference_Surface_Example_VB.md",
+        "Insert_Extruded_Reference_Surface_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "建特征时第9参 Dchk1 传 true 即开启方向1拔模，示例随后才读 D1DraftOn",
+          "example_quote": "swFeatureManager.FeatureExtruRefSurface3(false, false, (int)swStartConditions_e.swStartSketchPlane, 0, (int)swEndConditions_e.swEndCondBlind, (int)swEndConditions_e.swEndCondBlind, 0.01, 0.01, true, false,",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_CSharp.md"
+        },
+        {
+          "what": "示例显示 D1DraftOn 是 D1DraftAngle 与 D1DraftOutward 的读取开关",
+          "example_quote": "Debug.Print(\"    Drafted? \" + swSurfExtrudeFeature.D1DraftOn);",
+          "example_file": "Insert_Extruded_Reference_Surface_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只有 See 链接；示例只读不写，与 Returns 的 bool 语义一致。"
+    }
+  ]
+}

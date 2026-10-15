@@ -1,0 +1,125 @@
+{
+  "idx": 297,
+  "results": [
+    {
+      "member": "IGetSelectedObject2",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（只有 Obsolete 句 + Signature + Parameters + See Also），按规则跳过，示例未读"
+    },
+    {
+      "member": "IGetSelectedObject3",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（只有 Obsolete 句 + Signature + Parameters + See Also），按规则跳过，示例未读"
+    },
+    {
+      "member": "IGetSpecificFeature",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（只有 Obsolete 句 + Signature + See Also），按规则跳过，示例未读"
+    },
+    {
+      "member": "IGetSplinePts",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_Curve_Spline_Points_Example_CPlusPlus_COM.md"],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "The array returned contains the x, y, z location of the spline points",
+          "example_quote": "pCurve->IGetSplinePts( dSplinePts);",
+          "example_file": "Get_Curve_Spline_Points_Example_CPlusPlus_COM.md",
+          "why": "页说方法“返回”一个数组；示例是调用方 new 出缓冲区再作为实参传入，方法不返回数组。"
+        },
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "[[ICurve::IGetSplinePtsSize]] defines the spline and determines the size of the array returned.",
+          "example_quote": "pCurve->IGetBCurveParams( dSplineParams);",
+          "example_file": "Get_Curve_Spline_Points_Example_CPlusPlus_COM.md",
+          "why": "页称 IGetSplinePtsSize 定义样条；示例的样条数据由 IGetBCurveParams 填入缓冲区，Size 只被用来取长度。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例给出成员页没有的调用序：BCurveParamsSize2 → BCurveParams → SplinePtsSize → SplinePts",
+          "example_quote": "pCurve->IGetBCurveParamsSize2( FALSE, TRUE,",
+          "example_file": "Get_Curve_Spline_Points_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "非进程内场景改用 GetSplinePts/GetBCurveParams（回 VARIANT），成员页未给该替代成员",
+          "example_quote": "return arrays, so this code must be used in an in-process DLL. Otherwise,",
+          "example_file": "Get_Curve_Spline_Points_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "两处冲突分别落在数组形状与“谁定义样条”；示例其余部分（i+=3 读三元组）与页一致"
+    },
+    {
+      "member": "IGetSplinePtsSize",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_Curve_Spline_Points_Example_CPlusPlus_COM.md"],
+      "conflicts": [
+        {
+          "kind": "other_conflict",
+          "remarks_quote": "PropArray contains 4 integers:",
+          "example_quote": "*dKnotArray = &dSplineParams[2];",
+          "example_file": "Get_Curve_Spline_Points_Example_CPlusPlus_COM.md",
+          "why": "页说 PropArray 含 4 个 int；示例在同一缓冲区里跨 2 个 int 就取 knot 数组起点。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "三个数组由 IGetBCurveParamsSize2/IGetBCurveParams 的缓冲区切片得到，页未交代数据来源",
+          "example_quote": "*propArray = (int*)&dSplineParams[0];",
+          "example_file": "Get_Curve_Spline_Points_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "示例把返回值当 double 元素个数 new 数组，并按 i+=3 读 x,y,z 三元组",
+          "example_quote": "*dSplinePts = new double[nSplinePts];",
+          "example_file": "Get_Curve_Spline_Points_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "knots 长度（控制点数+阶数）与示例的 2+propArray[1]+propArray[2] 偏移自洽，不算冲突"
+    },
+    {
+      "member": "IGetStartPoint2",
+      "remarks_empty": true,
+      "examples_actually_used": [],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks（只有描述句 + Signature + Returns + See Also），按规则跳过，示例未读"
+    },
+    {
+      "member": "IGetUnits",
+      "remarks_empty": false,
+      "examples_actually_used": ["Get_and_Set_Units_Example_CPlusPlus_COM.md"],
+      "conflicts": [
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "The format of the returned data is an array of shorts:",
+          "example_quote": "hres\n= pModelDoc->IGetUnits(unitArray);",
+          "example_file": "Get_and_Set_Units_Example_CPlusPlus_COM.md",
+          "why": "页说“返回”5 个 short 的数组；示例由调用方声明 short unitArray[5] 传入后从缓冲区读，不接返回值。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "非进程内改用 GetUnits（回 VARIANT），成员页 See Also 只列名未说这一区别",
+          "example_quote": "array, so this code must be used in an in-process DLL. Otherwise, use",
+          "example_file": "Get_and_Set_Units_Example_CPlusPlus_COM.md"
+        },
+        {
+          "what": "前置：先取活动文档指针并判空才调用，成员页未写任何前置",
+          "example_quote": "S_OK != m_pSldWorks->get_IActiveDoc2(\n&pModelDoc ) || pModelDoc == NULL )",
+          "example_file": "Get_and_Set_Units_Example_CPlusPlus_COM.md"
+        }
+      ],
+      "note": "5 元素顺序（LengthUnit…RoundToFraction）与示例 unitArray[0..4] 及 SetUnits 实参一一对上，无实质冲突"
+    }
+  ]
+}

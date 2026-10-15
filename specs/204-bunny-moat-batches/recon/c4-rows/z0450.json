@@ -1,0 +1,177 @@
+{
+  "idx": 450,
+  "results": [
+    {
+      "member": "SetNearSideElements",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Advanced_Hole_Example_CSharp.md",
+        "Create_Advanced_Hole_Example_VB.md",
+        "Create_Advanced_Hole_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "Remarks 只是指向跨文档；示例给出先 AccessSelections、再设近侧元素的具体调用序",
+          "example_quote": "featdata.AccessSelections(swModel, null);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        },
+        {
+          "what": "设完必须再调 ModifyDefinition 才生效，三份示例皆如此，Remarks 未提",
+          "example_quote": "feat.ModifyDefinition(featdata, swModel, null);",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        },
+        {
+          "what": "实参是 AdvancedHoleElementData[] 强类型数组，而签名写作 System.object ElmArray",
+          "example_quote": "AdvancedHoleElementData[] newNearArr = new AdvancedHoleElementData[2];",
+          "example_file": "Create_Advanced_Hole_Example_CSharp.md"
+        },
+        {
+          "what": "VB 示例注释给出数组堆叠顺序来自近侧面和远侧面，成员页无此说明",
+          "example_quote": "'Set the near and far side arrays; stack ordering is from the near and far side faces",
+          "example_file": "Create_Advanced_Hole_Example_VB.md"
+        }
+      ],
+      "note": "Remarks 仅一句跨文档指引，不含任何可与示例冲突的断言。"
+    },
+    {
+      "member": "SetNetBlendCurveData",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Insert_Boundary_Feature_Example_CSharp.md",
+        "Insert_Boundary_Feature_Example_VB.md",
+        "Insert_Boundary_Feature_Example_VBNET.md",
+        "Insert_Solid_Body_Boundary_Surface_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "SignedDraftAngle 实传 0.26179938779915（≈15°弧度），成员页只写 Draft angle 未给单位",
+          "example_quote": "swFeatureMgr.SetNetBlendCurveData(0, 1, 0, 0.26179938779915, 1, true);",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "示例按 CurveIndex 0 与 1 各调一次，且全部在 InsertNetBlend 之前，Remarks 未给调用序",
+          "example_quote": "swFeatureMgr.SetNetBlendCurveData(0, 0, 0, 0, 1, true);",
+          "example_file": "Insert_Boundary_Feature_Example_CSharp.md"
+        },
+        {
+          "what": "曲面示例把 TangentType 写成具名枚举 swTangencyNone 并接住返回值，成员页只给枚举链接",
+          "example_quote": "swFeature = (Feature)swFeatureMgr.SetNetBlendCurveData(0, 0, (int)swTangencyType_e.swTangencyNone, 0, 1, true);",
+          "example_file": "Insert_Solid_Body_Boundary_Surface_Feature_Example_CSharp.md"
+        }
+      ],
+      "note": "Remarks 只要求逐曲线调用，四份示例都满足，无冲突。"
+    },
+    {
+      "member": "SetNetBlendDirectionData",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Insert_Boundary_Feature_Example_CSharp.md",
+        "Insert_Boundary_Feature_Example_VB.md",
+        "Insert_Boundary_Feature_Example_VBNET.md",
+        "Insert_Solid_Body_Boundary_Surface_Feature_Example_CSharp.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按规则 3 跳过比对。"
+    },
+    {
+      "member": "SetOrdinateDimensionArrowSize",
+      "remarks_empty": true,
+      "examples_actually_used": [
+        "Create_Ordinate_Dimensions_Example_CSharp.md",
+        "Create_Ordinate_Dimensions_Example_VB.md",
+        "Create_Ordinate_Dimensions_Example_VBNET.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [],
+      "note": "成员页无 ## Remarks，按规则 3 跳过比对。"
+    },
+    {
+      "member": "SetOverrideDefaultParameter2",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Create_Base_Flange_Feature_Example_VBNET.md",
+        "Set_Override_Option_for_Auto_Relief_Default_Parameters_Example_CSharp.md",
+        "Set_Override_Option_for_Auto_Relief_Default_Parameters_Example_VB.md",
+        "Set_Override_Option_for_Auto_Relief_Default_Parameters_Example_VBNET.md"
+      ],
+      "conflicts": [
+        {
+          "kind": "precondition_diff",
+          "remarks_quote": "This property is only valid for multibody sheet metal parts created in SOLIDWORKS 2013 and later.",
+          "example_quote": "Part = swApp.NewDocument(\"C:\\ProgramData\\SolidWorks\\SOLIDWORKS 2022\\templates\\Part.prtdot\", 0, swSheetWidth, swSheetHeight)",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md",
+          "why": "Remarks 限多体零件；示例从 Part.prtdot 新建单零件文档，只建一个基体法兰，非多体。"
+        },
+        {
+          "kind": "return_shape_diff",
+          "remarks_quote": "This property is only valid for multibody sheet metal parts created in SOLIDWORKS 2013 and later.",
+          "example_quote": "Debug.Print(\"Result code for override of AutoRelief as defined by swSheetMetalModifierError_e: \" & smFeatData.SetOverrideDefaultParameter2(swSheetMetalOverrideDefaultParameters_e.swSheetMetalOverrideDefaultParameters_AutoRelief, True))",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md",
+          "why": "Remarks 称其为 property；示例把返回值当错误码拼接。属性无返回值，二者不能同时成立。"
+        }
+      ],
+      "example_more_specific": [
+        {
+          "what": "示例先 AccessSelections 再设值、之后 ModifyDefinition；BaseFlange 示例反而没调 AccessSelections",
+          "example_quote": "swSheetMetalFeatureData.AccessSelections(swModel, null);",
+          "example_file": "Set_Override_Option_for_Auto_Relief_Default_Parameters_Example_CSharp.md"
+        },
+        {
+          "what": "BaseFlange 示例把接收者取为 Base-Flange 的父钣金特征，Remarks 未说该由哪个特征对象接收",
+          "example_quote": "var = SHFeat.GetParents()",
+          "example_file": "Create_Base_Flange_Feature_Example_VBNET.md"
+        }
+      ],
+      "note": "本批唯一出冲突的成员：2 条，均由 Create_Base_Flange 示例触发。"
+    },
+    {
+      "member": "SetOverrideMassValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+        "Get_Mass_Properties_Using_IMassProperty_Example_VBNET.md",
+        "Get_Mass_Properties_using_MassProperty_Object_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "三份示例都在上一行先把 OverrideMass 置 true，Remarks 的前置因此被满足，无冲突",
+          "example_quote": "OvProp.OverrideMass = true;",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        },
+        {
+          "what": "改完还须 SetOverrideOptions 回写并 Recalculate 才生效，Remarks 未提这一步",
+          "example_quote": "MyMassProp.SetOverrideOptions(OvProp, (int)swInConfigurationOpts_e.swThisConfiguration, null);",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        }
+      ],
+      "note": "示例满足 Remarks 前置，冲突为空。"
+    },
+    {
+      "member": "SetOverrideMomentsOfInertiaValue",
+      "remarks_empty": false,
+      "examples_actually_used": [
+        "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md",
+        "Get_Mass_Properties_Using_IMassProperty_Example_VBNET.md",
+        "Get_Mass_Properties_using_MassProperty_Object_Example_VB.md"
+      ],
+      "conflicts": [],
+      "example_more_specific": [
+        {
+          "what": "示例传裸 0 作 ReferenceFrame、传空串作坐标系名，未用成员页引用的具名枚举",
+          "example_quote": "OvProp.SetOverrideMomentsOfInertiaValue(0, comArr, \"\");",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        },
+        {
+          "what": "变量名 comArr 意为质心数组，实装的却是成员页所述九项惯量 Lxx..Lzz",
+          "example_quote": "double[] comArr = new double[9];",
+          "example_file": "Get_Mass_Properties_Using_IMassProperty_Example_CSharp.md"
+        }
+      ],
+      "note": "示例同样满足 Remarks 前置（先置 OverrideMomentsOfInertia=true）。"
+    }
+  ]
+}
