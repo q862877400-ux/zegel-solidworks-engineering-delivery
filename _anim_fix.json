@@ -1,6 +1,0 @@
-{
-  "animation_export_update": {
-    "note_remove_marker": "缺 Motion 加载项",
-    "note_add": "★★★ 2026-10-01（轮 285）**理由修正**（★ 依据是一次**可执行的探测**，`output/motion-avi-probe.json`）：原写「缺 Motion 加载项」—— ★ **而实测**那条**不成立**：`ensure_motion_type_library` 回 **真实路径**（`…\\swmotionstudy.tlb`），且 AVI 三环**全通** —— `create_avi_parameter(mgr)` ✓ · `configure_avi_parameter(ap)` ✓ · `export_motion_study_avi(study, path, ap)` ✓。★★ **真正的障碍是**「**没有可动的装配体**」**：我建的是**空装配体 + 空运动算例**（无组件、无马达、未计算）⇒ 导出**跑得通**而**文件 0 字节**。★ 证据：`{ok: False, returned: True, exists: True, size_bytes: 0}` —— ★ 而能力层**自己就报 `ok: False`**（★ 因为 `export_motion_study_avi` 的判据**本来**就是「文件出现且大小 > 0」，★ 见它的 docstring：「判据不看返回值 …… 本项目累计多处『返回码撒谎』」）⇒ ★★ **那是"让失败可见"的又一次正确落地**。★ **下一步**：★ 要真验它，需要一个**有组件、有马达、能计算**的装配体（★ `add_constant_speed_rotary_motor_by_cylinders` 要 `shaft_component` + `rotor_component` 两个组件）"
-  }
-}

@@ -1,8 +1,0 @@
-[  10.2s]    (缓存刷新: 558 个控件)
-page_kind=CATEGORY
-候选 Pane 26 个
-_is_card_pane 耗时 0.8s，命中 1
-   'CPDH-A9' (1994, 601, 2389, 726)
-
-★ 直接看「型号：」/「代码：」Text 的父 Pane 是否被判为卡:
-  标签 '型号：CPDH-A9' 父Pnane 判定 -> 'CPDH-A9' (L1994, T601, R2389, B726)

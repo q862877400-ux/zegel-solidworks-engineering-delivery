@@ -1,3 +1,0 @@
-★★ 2026-10-02（轮 359–362）**「参考轴」这条路径也试了，同样不建成**（★ 独立新证据）：`InsertAxis2(True)` 能建参考轴（轴名 `基准轴1`）· `SelectByID2("…","AXIS")` 与 `SelectByID2("…","SKETCH")` 都能返回 true（★ 前提：第 8 参 `Callout` 必须传**空 Dispatch**，传 `None` 会得 `类型不匹配`@8 —— 事实 33）· ★★ **而 `FeatureRevolve2` 仍不建成实体**：受控对照**三组全 false**（无轴 / 参考轴 / 参考轴+轮廓跨轴），`solid_bodies = 0`、`volume = 0.0`。★ 证据 `output/revolve-reference-axis-evidence.json`。
-
-★★★★ **`feature_created`（返回值非 None）是**假阳性**判据**（轮 361 实测）：那一次回了 `true` 而 **`solid_bodies = 0`**，同批下一次复跑又变回 `false` ⇒ **不可复现**。⇒ ★ **判「建成没有」要看实体数 / 体积，不要看返回值是不是 None**。
