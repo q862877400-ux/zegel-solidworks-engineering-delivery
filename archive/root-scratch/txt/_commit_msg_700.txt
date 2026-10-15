@@ -1,0 +1,41 @@
+fix(阶段1): ★★★★ 处置 **B-3 / B-4**（★ 草稿里的两处抄错）—— ★ 两处都**先实测再改**，★ 且发现 B-3 被抄到了**第二个产物**
+
+■ 一 · ★ **B-4**：一个数字挂到了**错误的树**上
+  ★ 裁判逐字：「★ `api-pre/api-03-weldment.md` 第 19 行 —— ★ 逐条把 **289 改成 285**
+    （★ 289 是 **VBA 树** `sldworksapivb6\` 的数）」
+  ★★ **我没有直接改** —— ★ 先**去数了一遍**（★ 铁律：改前先核）：
+  | ★ 树 | ★ 计数方式 | ★ 实测 |
+  |---|---|---|
+  | ★ `sldworksapi\` | 按**含** `IFeatureManager~` | ★★ **285** ✓（★ 本条要用的） |
+  | ★ `sldworksapi\` | 按**前缀** `IFeatureManager~` | ★ **0**（★ 真名以 `SolidWorks.Interop…` 开头） |
+  | ★ `sldworksapivb6\` | 按 `SldWorks~FeatureManager~` | ★★ **289**（★ **原写的那个数出自这里**） |
+  | ★ `sldworksapivb6\` | 按 `IFeatureManager` 过滤 | ★ **0**（★ 下一行那半句**仍成立**） |
+  ⇒ ★★★ **裁判判定成立**：★ 289 确实是 VBA 树的数 ⇒ **已改成 285**，
+    ★★ **并把四个数都逐条列出来**（★ 免得后人再混）✓
+  ★ 裁判还提醒：「★ 顺带记下同句的另一半**仍然成立**（★ VBA 树按 `IFeatureManager` 过滤 = 0），
+    ★ **别把两处混为一谈**」⇒ ★★ **我照做了** ✓
+
+■ 二 · ★ **B-3**：官方 `false if not` 被抄成 `false to not`
+  ★ 裁判逐字：「★ `recon/audit-vs-official/audit-03-weldment-C.md` #1 —— ★ 引文把官方的 `false if not`
+    抄成 `false to not` ⇒ ★ **抄进 `api-05-drawing.md` 之前先改** ★（注意：官方**别的**页确实通篇是
+    `false to not`，所以这不是「官方通例」，是**抄错这一行**）」
+  ★★ 先去核官方页（★ 不盲改）：★ `C:\swapi\types\IFeature\GetErrorCode2.md` 逐字
+    「`- **IsWarning**: True if the error is a warning, **false if not**`」⇒ ★ **裁判对** ✓
+  ★★★ 改 `audit-03-weldment-C.md` **时把"为什么不是官方通例"也写进去了** ✓
+
+■ 三 · ★★★★ 而扫全部时**发现同一条断言被抄到了第二个产物**
+  ★ 我 grep 全 `recon/` 找 `false to not` ⇒ ★★ 命中 **96 处**（★ 绝大多数是**别的页**的正当原文）⇒
+    ★★★ 其中**同源的**还有一处：★ `verify50/vd50-B-weldment.md` **L147** ✓
+  ★ 而 `verify-done/B-audit-highconfidence.md` 的 L129 **也引了错的版本** —— ★★ **但那一份我不改** ✓
+
+  ★★★★ **这里有一条可复用的判据**：
+    ★ **「引用错误」与「复述错误」要分开** ——
+    ★ 一份**核错报告**里引错的原文**是证据**（★ 它正是在记录"条目引错了"）⇒ **不该改**；
+    ★ 而一份**摘要**里复述错的原文**是错误**（★ 它会被下游当事实抄走）⇒ **该改** ✓
+  ⇒ ★ 所以：★ 改了 `vd50-B-weldment.md`（★ 摘要）· ★ **不动** `B-audit-highconfidence.md`（★ 核错记录）✓
+
+■ 四 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 3 passed** ✓
+  ★★ **本轮没改生产代码**（★ 只改 `specs/` 下的草稿）⇒ 所以是 `fix(...)` 而非 `feat(...)` ✓
+  ★★★ **阶段 1 的 A 级（3）+ B-1/B-2/B-3/B-4 已全部处置**；
+    ★ **B-5 / B-6 仍待办**（★ B-5 要建"官方源自身的错"共享清单 · ★ B-6 要改 `GATE-FINAL.md` 四处附注）✓

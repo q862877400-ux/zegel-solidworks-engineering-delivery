@@ -1,0 +1,45 @@
+test(boundary): 对称线性直径尺寸 —— ★ 前置链条已跑通，★ **缺一个"能区分"的判据**（事实 462）
+
+★ 收**事实 461 留的两个下一步**。
+
+## 一、★ 两个下一步都做了
+
+```
+① ★ `sw_part._select_by_id` 的真签名是
+   `(extension, entity_name, entity_type, append=False, mark=0)`
+   —— ★ **它根本没有 x/y/z**！★ 而例子要的坐标是 `SelectByID2` 的**第 3/4/5 参** ⚠
+   ⇒ ★ **故得直接调 `SelectByID2`**（官方 9 参）
+② ★ 尺寸计数换成 `ISketch.GetDimensionCount2/3`
+```
+
+## 二、★ 真机（零弹窗）
+
+```
+★ **照例子**：`SelectByID2(Line1)=True` · `SelectByID2(Line3)=True` · `ClearSelection2=ok`
+             ⇒ `AddSymmetricDimension` ⇒ 回 **`CDispatch`** ✓（★ 选中了）
+★ **对照（什么都不选）**                ⇒ 也回 **`CDispatch`** ⚠
+★ 而 **`dims` 两格都是 `-1`** —— ★ `GetDimensionCount2/3` 也没通 ⚠
+```
+
+## 三、★★ 故诚实结论
+
+★ **选择那一步已通、而我没找到能区分的判据** ——
+  ★ **两格都回 `CDispatch`** ⇒ ★ **那个判据不能区分** ⚠ ⇒ ★ **按原则不能算建成**。
+
+★ **按事实 53 停手**（★ 已三轮）；★ **下一步就是换判据**：
+  试**文档级**的尺寸计数（`IModelDoc2` 上那个）或**从特征树看 `DisplayDimension`**。
+
+## 四、★★ 而这一条的教训值得单独记
+
+★ **当两格都回同一个对象时，"回了对象"就不是判据** ——
+  ★ 必须找**可分的量**（★ 与事实 436 同族）⚠
+
+## 五、交付
+
+```
+docs/known-facts.md   **事实 462**（+20）
+tools/prove_symmetric_angular_dimension.py  ★ 两处修正（★ 签名对齐 + 尺寸计数换法）
+output/symmetric-angular-dimension-evidence.json
+★ 本轮**不登记能力**（★ 未建成 —— 不假装做到）
+★ 语法门禁 0 处（779 个文件）
+```

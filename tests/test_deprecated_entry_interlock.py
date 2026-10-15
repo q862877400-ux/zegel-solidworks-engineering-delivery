@@ -31,6 +31,21 @@
      ① 后继名 == 自己（解析错）· ② **不同 arity 的不同方法** · ③ **跳代常伴随签名变化**。
    ⇒ ★★ **每条进 `DEPRECATED_ENTRIES` 前要**读两边的签名。
 ```
+
+## 四、★★★ 2026-10-09（spec 241）**收口两处"看不见"**
+```
+★ ① **点式形态曾是盲区**：★ 原扫描只认 `get_com_member(obj, "Name", …)` 的**字面量形态**
+   ⇒ ★ `asm_model.AddMate5(…)`（`func` 是 `Attribute`）**一次都收不到** ⇒
+   ★★ 那是**空判据**：★ 只要换个写法（点式），互锁**读成 0 处**、照样绿 ✓
+   （★ 本仓同族教训：spec 239「只看点式调用 = 空判据」—— ★ 两次方向相反、**同一个病**）
+★ ② **`call_assembly_doc` 曾是盲区**：★ 它第 2 实参也是**成员名字面量**，
+   ★ 而原扫描只认 `get_com_member` / `call_com_member`
+   ⇒ ★ `sw_weldment.py` 走官方入口的 `call_assembly_doc(model, "CreateMate", data)`
+   ★ **读不出来** ⇒ 判据② 会**假红**（"后继 `CreateMate` 一次都没被调用"）。
+★ ③ **登记表按"名字 + 处数"**（★ **不按行号**）—— ★ 行号会漂移（★ 本仓纪律：
+   「判据按**名字**定位，不按行号」）；★ 且**登记表不许有死条目**
+   （★ 登记了却已不存在的 ⇒ 红 —— ★ 与"mock 落后于换代"**同病**）。
+```
 """
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -56,9 +71,67 @@ if str(SCRIPTS) not in sys.path:
 
 import sw_com_traps as TRAPS  # noqa: E402
 
-#: ★ **已登记的既有偏差**：`模块 → {(行号, 成员名)}`。
+#: ★★ **已登记的既有偏差**：`模块 → {成员名: 处数}` —— ★ **计数棘轮：只许变少，不许变多**。
 #: ★ 与试点文件同一纪律：★ **不许新增**；★ 已有的显式登记；★ **修好后从本表删掉**。
-_REGISTERED: dict[str, set[tuple[int, str]]] = {}
+#: ★★ **为什么不按行号**：★ 行号**会漂移**（上面插一行就全错位）⇒ ★ 本仓纪律
+#:   「判据按**名字**定位，不按行号」（★ 试点文件里那条 `(916, "SaveAs")` 就是这么烂掉的）。
+#: ★ 每条都要写"为什么**留**在这里"（★ 不是"顺手登记"）。
+_REGISTERED: dict[str, dict[str, int]] = {
+    #: ★ `sw_assembly.py` 的 `add_mate5_checked` —— ★ **唯一**用点式形态调 `AddMate5` 的地方。
+    #: ★ 留在这里的理由：★ `AddMate5` 官方 `Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]`，
+    #:   ★ 而**换掉它要按 `mate_type` 分流**（★ 官方 Remarks 三条：标准/高级/机械 ⇒ `CreateMate` ·
+    #:   **偏心同心** ⇒ `AddConcentricMateWithTolerance` · **柱面距离** ⇒ `AddDistanceMate`）——
+    #:   ★★ 而**分流语义靠 `mate_type` 一个参数定不下来**（★ `swMateDISTANCE` 既可能是平面距离、
+    #:   也可能是柱面距离）⇒ ★★ **必须真机验证**；★ 装配域 `level` 仍是 `stitched`（铁律 2）
+    #:   ⇒ ★ **本轮不换**，★ 以登记形式**显式存在**。
+    #:   ★★ spec 246：`sw_assembly.py` 的 `ActivateDoc2` 是 `ActivateDoc3` 的**兜底分支**
+    #:     （`try: sw.ActivateDoc3(...) except: sw.ActivateDoc2(...)`）—— ★ **兜底本身就是意图**，
+    #:     ★ 而 `ActivateDoc3` 已在该分支之前**被调用过** ⇒ ★ 保留登记，**不删**。
+    "sw_assembly.py": {"AddMate5": 1, "ActivateDoc2": 1},
+    #: ★ `sw_assembly_doc.py::add_mate` —— ★ 通用包装（`*args` 15 个直传），★ **拿不到 `mate_type` 语义**。
+    #: ★ 它的 docstring **已逐字记档保留**（★ 见 `sw_assembly_doc.py` 该函数头）⇒ ★ 同上，登记不换。
+    #: ★★ spec 246：`GetExplodedViewCount`（零参）⇒ 后继 `GetExplodedViewCount2(ConfigurationName)`
+    #:   ★ **多一个参数** ⇒ ★ 换它要**先确定"按哪个配置数"**（★ 那是**语义决定**，不是机械替换）
+    #:   ⇒ ★ 登记不换（★ 该函数头的记档已写明"我一度把传错参个数读成'取不到'"）。
+    "sw_assembly_doc.py": {"AddMate5": 1, "GetExplodedViewCount": 1},
+    #: ★ `sw_connect.py::save_document` 的 `model.Extension.SaveAs(...)` —— ★ **点式形态**，
+    #:   ★★ 它**此前从未被任何判据看见**（★ 原扫描不认点式）⇒ ★ 本轮**新看见**，登记不换。
+    #: ★ 不换的理由：★ 保存/导出路由改错会**直接坏掉写盘**（★ 试点文件逐字：「改路由必须真机验」）
+    #:   ⇒ ★ 按硬约束⑥，★ 它**以登记形式显式存在**，★ 而不是被跳过。
+    "sw_connect.py": {"SaveAs": 1},
+    #: ★★ spec 246 新增的四处登记 —— ★ 都是「**新收进靶子表**的废弃入口**在真树里已有调用**」
+    #:   （★ 242 的教训 40：★ 加一条进表 ⇒ 必须同步补 `_REGISTERED`，★ 否则判据①当场红）。
+    #:   ★ `sw_export.py` 的两处 `ActivateDoc2` 与 `sw_review.py` 的一处**同型**：★ 都是 `ActivateDoc3` 的兜底
+    #:     （★ 且 `dynamic_sw` 那处是 `DumbDispatch` 迟到绑定兜底 —— ★ 官方入口在该后端上失败时才走）
+    #:     ⇒ ★ **保留登记**（★ 删掉就等于把兜底删了，★ 那是**行为变更**、必须真机验）。
+    "sw_export.py": {"ActivateDoc2": 2},
+    "sw_review.py": {"ActivateDoc2": 1},
+    #: ★ `sw_part.py:934` 的 `AutoDimension2` —— ★ 该函数头**逐字记档**：
+    #:   ★★ 「后继**已验证可调**…★ 而**替换要等一个能证明"尺寸真的建出来了"的判据** ⇒ ★ **再换**」
+    #:   ⇒ ★ 登记不换（★ 与事实 40 同族：★ 「后继能调」与「后继能替」是**两件事**）。
+    #: ★ `sw_part.py:1677` 的 `FeatureCircularPattern4` —— ★ 后继链终点 `CreateFeature` 收
+    #:   `System.object FeatureData` ⇒ ★ **要先造 `ICircularPatternFeatureData`** ⇒ 换它是**重写**，须真机验。
+    #: ★★ spec 247：`sw_part.py:1536` / `2544` 的 `FeatureLinearPattern5`（**2 处**）——
+    #:   ★ 官方那句是「`See [[CreateFeature]] and the Remarks in [[ILinearPatternFeatureData]] and
+    #:   [[ILocalLinearPatternFeatureData]]`」⇒ ★ **真后继 = `CreateFeature`**（后两个是**数据接口**）
+    #:   ⇒ ★ 收表并登记；★ 不换的理由同上（★ 要**先造 `ILinearPatternFeatureData`**）。
+    "sw_part.py": {"AutoDimension2": 1, "FeatureCircularPattern4": 1, "FeatureLinearPattern5": 2},
+    #: ★★ spec 247 新增：`sw_pattern.py:548` 的 `FeatureLocalCurveDrivenPattern` ——
+    #:   ★ 官方那句是「`See [[CreateFeature]] and the Remarks in [[ILocalCurvePatternFeatureData]]`」
+    #:   ⇒ ★ 真后继 = `CreateFeature`（★ 后一个链接是**数据接口**、不是后继）⇒ ★ 收表并登记。
+    #:   ★ 不换的理由：★ 后继收 `System.object FeatureData` ⇒ ★ 要**先造 `ILocalCurvePatternFeatureData`**
+    #:   ⇒ 换它是**重写**、须真机验（★ 与 `FeatureCircularPattern4` 同型）。
+    "sw_pattern.py": {"FeatureLocalCurveDrivenPattern": 1},
+    #: ★ `sw_selection.py:337` 的 `ResumeSelectionList` —— ★ **零参版**，而后继 `ResumeSelectionList2(Append)`
+    #:   ★ 多一个"是否追加"的语义参数 ⇒ ★ 换它要**先决定追加语义**（★ 同文件 335 行已在 `report_errors` 分支用 `2` 版）
+    #:   ⇒ ★ 登记不换。
+    "sw_selection.py": {"ResumeSelectionList": 1},
+}
+
+#: ★★ 被识别为「成员名载体」的包装器（★ **第 2 实参**是成员名的**字面量**）。
+#: ★ `call_assembly_doc(doc, member, *args)` 是 spec 228 的受登记访问器 ——
+#:   ★★ **它的第 2 实参同样是成员名** ⇒ ★ 不收它，`CreateMate` 就**读不出来**（判据②假红）。
+_WRAPPERS = ("get_com_member", "call_com_member", "call_assembly_doc")
 
 
 def _obsolete_names() -> set[str]:
@@ -69,22 +142,33 @@ def _successors() -> set[str]:
     return set(TRAPS.DEPRECATED_ENTRIES.values())
 
 
-def _iter_member_calls(source: str):
-    """★ 逐个 yield 真被调用的成员名（★ 只认 `get_com_member` / `call_com_member` 的**第 2 实参字面量**）。
+def _scan_calls(tree: ast.AST):
+    """★ 逐个 yield `(行号, 成员名)` —— ★★ **两种形态都收**（★ spec 241 的收口）。
 
-    ★★ **为什么不扫"字符串出现过"**：★ 事实 271 实测 —— 按字符串扫得 **1020** 处，
-      而绝大多数来自 `sw_api_sldworks.py`（★ **反射转储表**，列出**所有**成员名，★ **不是调用**）
-      ⇒ ★ **改用 AST 后是 42 处**（★ 差 24 倍，且方向完全不同）。
+    ★ 形态①（**字面量**）：`get_com_member(obj, "AddMate5", …)` ⇒ 取第 2 实参字符串。
+    ★ 形态②（**点式**）：`asm_model.AddMate5(…)` ⇒ `func` 是 `Attribute` ⇒ 取 `.attr`。
+    ★★ **为什么必须两种都收**：★ 只收形态① ⇒ ★ 换个写法就**绕过互锁**（★ 实测：`AddMate5`
+      在真树上是**点式**调的 ⇒ 原扫描读成 **0 处** ⇒ 那是**空判据**）。
     """
-    tree = ast.parse(source)
     for node in ast.walk(tree):
-        if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Name):
+        if not isinstance(node, ast.Call):
             continue
-        if node.func.id not in ("get_com_member", "call_com_member"):
-            continue
-        if len(node.args) >= 2 and isinstance(node.args[1], ast.Constant) \
-                and isinstance(node.args[1].value, str):
-            yield node.lineno, node.args[1].value
+        func = node.func
+        if isinstance(func, ast.Attribute):
+            yield getattr(node, "lineno", 0), func.attr
+        elif isinstance(func, ast.Name) and func.id in _WRAPPERS:
+            if len(node.args) >= 2 and isinstance(node.args[1], ast.Constant) \
+                    and isinstance(node.args[1].value, str):
+                yield getattr(node, "lineno", 0), node.args[1].value
+
+
+def _iter_member_calls(source: str):
+    """★ 兼容旧接口：逐行 yield `(行号, 成员名)`（★ 只认**成员名载体**，不筛靶子表）。"""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return
+    yield from _scan_calls(tree)
 
 
 def _scan_all_modules():
@@ -100,26 +184,59 @@ def _scan_all_modules():
         yield path.name, tree
 
 
+def _count_deprecated_calls() -> dict[str, dict[str, int]]:
+    """★ 真树读数：`文件 → {靶子表成员名: 处数}`（★ 两种形态都算）。"""
+    obsolete = _obsolete_names()
+    counts: dict[str, dict[str, int]] = {}
+    for name, tree in _scan_all_modules():
+        for _ln, member in _scan_calls(tree):
+            if member in obsolete:
+                counts.setdefault(name, {})
+                counts[name][member] = counts[name].get(member, 0) + 1
+    return counts
+
+
 # ── ① 不许新增 ────────────────────────────────────────────────────────
 def test_no_new_calls_to_deprecated_entries():
-    """★★ **互锁**：全仓不许**新增**对靶子表里废弃入口的调用（★ 已有的以 `_REGISTERED` 登记）。"""
-    obsolete = _obsolete_names()
-    offenders = []
-    for name, tree in _scan_all_modules():
-        registered = _REGISTERED.get(name, set())
-        for node in ast.walk(tree):
-            if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Name):
-                continue
-            if node.func.id not in ("get_com_member", "call_com_member"):
-                continue
-            if len(node.args) >= 2 and isinstance(node.args[1], ast.Constant) \
-                    and isinstance(node.args[1].value, str) and node.args[1].value in obsolete:
-                if (node.lineno, node.args[1].value) not in registered:
-                    offenders.append((name, node.lineno, node.args[1].value))
+    """★★ **互锁**：全仓不许**新增**对靶子表里废弃入口的调用（★ 已有的以 `_REGISTERED` 登记）。
+
+    ★ 判据是**处数棘轮**（★ 不按行号 —— ★ 行号会漂移）：★ 某个 (文件, 成员) 的**处数超过登记值** ⇒ 红。
+    """
+    counts = _count_deprecated_calls()
+    offenders = {}
+    for fname, per in counts.items():
+        reg = _REGISTERED.get(fname, {})
+        for member, n in per.items():
+            allowed = reg.get(member, 0)
+            if n > allowed:
+                offenders.setdefault(fname, {})[member] = {"now": n, "registered": allowed}
     assert not offenders, (
         "★ 出现**新增**的对废弃入口的调用（★ 本仓库判据：用靶子表给的后继）：%s\n"
         "★ 已登记 = %s（★ 每条的修法都要真机验；★ 验不过不许留在柜台上）"
-        % (offenders[:12], {k: sorted(v) for k, v in _REGISTERED.items()}))
+        % (offenders, {k: dict(v) for k, v in _REGISTERED.items()}))
+
+
+# ── ①b ★ 登记表不许有死条目 ────────────────────────────────────────────
+def test_registration_table_has_no_dead_entries():
+    """★★★ **登记表不许有死条目**：★ 登记了、而真树上**已经不存在**（或变少）⇒ **红**。
+
+    ★ 为什么单列一条：★ **登记表是"现状"，不是"历史"** —— ★ 有人把废弃路由修好之后
+      忘了删登记 ⇒ ★ 那条登记就变成**假数据**，★ 而**它不会自己报错**
+      （★ 与"mock 落后于换代"**同病**：★ 试点文件里那条 `sw_connect.py: (916, "SaveAs")`
+      ★ 就是这么烂掉的 —— ★ 行号早漂了、且**从没被任何判据读过**）。
+    ★ 修法：★ 真修好了 ⇒ ★ **把登记删掉**（★ 这是好事，不是失败）。
+    """
+    counts = _count_deprecated_calls()
+    dead = {}
+    for fname, per in _REGISTERED.items():
+        actual = counts.get(fname, {})
+        for member, allowed in per.items():
+            now = actual.get(member, 0)
+            if now < allowed:
+                dead.setdefault(fname, {})[member] = {"now": now, "registered": allowed}
+    assert not dead, (
+        "★ 登记表里有**死条目**（★ 登记值 > 真树处数）⇒ ★ 要么是**修好了**（请删掉登记）、"
+        "要么是**改名/搬家了**（请把登记改对）：%s" % (dead,))
 
 
 # ── ② 正面：后继要真的存在 ────────────────────────────────────────────
@@ -129,10 +246,13 @@ def test_every_successor_is_actually_used_somewhere():
     ★ 为什么需要它：★ 否则"互锁"会退化成「**全都不许用**」—— ★ 那是另一个错误
       （★ **没有任何可用路由**）。★ 试点文件里的
       `test_saveas3_is_present_where_image_or_pdf_is_written` 就是这个作用。
+    ★★ **注意**：★ 后继**不一定**走 `get_com_member` ——
+      ★ `CreateMate` 在 `sw_weldment.py` 走的是 `call_assembly_doc` ⇒ ★ 扫描器必须认它
+      （★ 否则本判据**假红**）。
     """
     used = set()
     for _name, tree in _scan_all_modules():
-        for _ln, member in _iter_member_calls(ast.unparse(tree)):
+        for _ln, member in _scan_calls(tree):
             used.add(member)
     missing = sorted(s for s in _successors() if s not in used)
     assert not missing, (
@@ -191,3 +311,34 @@ def test_target_table_entries_all_have_successors():
         assert iface and member, (iface, member)
         assert succ and succ != member, (member, succ)
         assert succ.startswith(member.split("SaveAs")[0]) or True  #: ★ 只作记录，不强制前缀
+
+
+# ── ④ ★ 点式形态**不是**盲区（★ spec 241 的收口自证）──────────────────
+def test_dotted_call_form_is_not_a_blind_spot():
+    """★★★ **点式形态必须被抓出** —— ★ 否则"换个写法就绕过互锁"（★ 那就是**空判据**）。
+
+    ★ 本仓同族教训（★ 两次方向相反、**同一个病**）：
+      · spec 239：「**只看点式调用 = 空判据**」（★ 调用藏在共用骨架里 ⇒ 读成 0）；
+      · spec 241：**只认字面量形态 = 空判据**（★ 点式调用 ⇒ 读成 0）。
+    ★★ **合成负例**（★ 判据必须能在**合成输入**上红，而不是只在真树上绿）。
+    """
+    obsolete = _obsolete_names()
+    assert "AddMate5" in obsolete, (
+        "★ 靶子表里没有 `AddMate5` ⇒ 本判据的前提不成立"
+        "（★ 官方 `C:\\swapi\\types\\IAssemblyDoc\\AddMate5.md:12` 逐字 "
+        "`Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]`）")
+    #: ★ 形态②：点式 ⇒ 必须抓出
+    dotted = "def f(asm):\n    return asm.AddMate5(0, 0, False)\n"
+    got = [m for _ln, m in _scan_calls(ast.parse(dotted)) if m in obsolete]
+    assert got == ["AddMate5"], "★ 点式形态**没被抓出** ⇒ 互锁有盲区：%s" % got
+    #: ★ 形态①：字面量 ⇒ 必须抓出
+    literal = 'def g(asm):\n    return get_com_member(asm, "AddMate5", 0)\n'
+    got2 = [m for _ln, m in _scan_calls(ast.parse(literal)) if m in obsolete]
+    assert got2 == ["AddMate5"], "★ 字面量形态没被抓出：%s" % got2
+    #: ★ `call_assembly_doc` 也是成员名载体 ⇒ 必须抓出（★ 否则判据②假红）
+    via_wrapper = 'def h(asm, d):\n    return call_assembly_doc(asm, "AddMate5", d)\n'
+    got3 = [m for _ln, m in _scan_calls(ast.parse(via_wrapper)) if m in obsolete]
+    assert got3 == ["AddMate5"], "★ `call_assembly_doc` 形态没被抓出：%s" % got3
+    #: ★★ **边界冻结**：正确后继**不得**被误报（★ 放宽扫描面必须配"不加什么"的断言）
+    good = "def i(asm, data):\n    return asm.CreateMate(data)\n"
+    assert [m for _ln, m in _scan_calls(ast.parse(good)) if m in obsolete] == []

@@ -109,6 +109,8 @@ __all__ = [
 ]
 
 #: 方法型成员的实参个数（**属性型成员不进表** —— 它们由下面的显式读写封装负责）
+#: enum-gate: not-enum arity
+#: arity-reflect: byref=excluded
 VIEW_ARITY: dict[str, int] = {
     "Activate": 0,
     "DrawHighlightedItems": 0,
@@ -125,7 +127,10 @@ VIEW_ARITY: dict[str, int] = {
     "AddPerspective": 0,
     "RemovePerspective": 0,
     "HasPerspective": 0,
-    "ShowMagnifyingGlass": 5,
+    # ★ 2026-10-09（spec 227）：原登记 **5**，按**两源一致**订正为 **6** ——
+    #   官方 `C:\swapi\types\IModelView\ShowMagnifyingGlass.md` 签名 6 个形参、**无 by-ref**，
+    #   出厂反射 `_raw/reflect_sldworks/iface_sldworks.txt:11458` 同为 6（另 `sw_api_sldworks.py` 也登记 6）。
+    "ShowMagnifyingGlass": 6,
     "HideMagnifyingGlass": 0,
     "MoveMagnifyingGlass": 3,
     "StartDynamics": 0,

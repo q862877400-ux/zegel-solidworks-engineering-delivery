@@ -66,6 +66,11 @@ SW_IMPORT_GRAPHICS_BODY = 0
 SW_IMPORT_SURFACE_BODY = 1
 SW_IMPORT_SOLID_BODY = 2
 
+#: 本表的取值集与官方枚举同源（spec 226 把它从「散文」升级为「可核」）：
+#: `C:\swapi\enums\swLengthUnit_e.md` 与 `_raw/enum_values_sldworks.txt` 第 959–970 行**逐条一致**
+#: （swMM=0 · swCM=1 · swMETER=2 · swINCHES=3 · swFEET=4 …）；本表值集 {0,1,2,3,4} ⊆ 官方取值集。
+#: ★ 键是**本地语义键**（`"mm"`/`"meter"`/`"in"`，且有意允许同义键）⇒ 不逐行补 `# swXxx`。
+#: enum-gate: enum swLengthUnit_e
 SW_LENGTH_UNITS = {
     "mm": 0,
     "cm": 1,

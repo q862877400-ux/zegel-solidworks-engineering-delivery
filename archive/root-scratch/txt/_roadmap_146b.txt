@@ -1,0 +1,26 @@
+     ★ 2026-10-01（轮 250 / **24h 计划 段 3 续 / Spec Kit `146` 的 converge**）· ★★★★★ **修好 `shell`，`stitched` **9 → 8**（方向对上了）；并判决了一个**单位冲突****
+         ▶ **修了什么**：`shell` 的**宿主**。原写法 `model.**FeatureManager**.InsertFeatureShell(...)`
+           真机报 `AttributeError: <unknown>.InsertFeatureShell`；★ 而官方类型表里它是
+           **`C:\swapi\types\IModelDoc2\InsertFeatureShell.md`** ⇒ ★★ **宿主是 `IModelDoc2`**。
+           ★ 改成 `model.InsertFeatureShell(...)` ⇒ ★★★ **真机立刻通过**（`readback` 三条全真：
+           特征「抽壳1」在树里 · `EditRebuild3` True · `GetWhatsWrongCount` 0）。
+           ⇒ ★★ **这正是 known-facts 36 的形态**（「同名接口分属不同族 ⇒ 用错接口 = 对象对任何成员都没反应」）
+             ⇒ ★★★ **见 `<unknown>.X` 就该去查类型表里"那个成员挂在谁身上"**。
+         ★★★★★ **单位冲突的判决（本轮第二个成果）**：
+           · **官方文档**写「`Thickness`: Shell thickness in **meters**」
+           · **本模块头**（轮 132 实测校正）写「长度单位：**毫米** … 传进去的就是毫米」
+           ⇒ ★ 用**两个厚度**实测（`tools/probe_shell_thickness_units.py`，100×60×20 的板，体积 120000）：
+               `t=2.0` ⇒ 实体 23232 ⇒ 空腔 **96768 = 96×56×18** ⇒ **四壁各减 2 mm** ✓
+               `t=4.0` ⇒ 实体 43456 ⇒ 空腔 **76544 = 92×52×16** ⇒ **四壁各减 4 mm** ✓
+           ⇒ ★★★ **几何自证口径是毫米** ⇒ ★ **官方那句「meters」对本机不成立**
+             （★ 若按 meters 解，2.0 的壁就是 **2 米** ⇒ 会把 20 mm 厚的板吃光或失败 —— ★ 实测都没有）。
+           ⚠ 而我**事先规定**的比值判据（下降之比 ≈ 厚度之比）**没判出来**（实测 0.791 ≠ 2.0）
+             ⇒ ★★ **真正判出来的是几何**（把空腔算成边长）**⇒ 定则：能算成可核对的几何量时，别用比值。**
+         ▶ **验收**：① 门禁链 **18 道** exit 0 ✓ · 全量 pytest **1278 passed / 0 failed** ✓
+           ② ★ 真机 `output/modeling-readback-evidence.json` = **verdict: pass** ✓
+           ⇒ ★★ **能力升级**：`modeling_feature_readback_tools` = **`verified`**
+             （★ 其余三个**在同一条目里如实标注未通过**：`rib`/`dome` 静默失败 · `composite_curve` 选择不合法）
+         ▶ **状态**：★ **`stitched` 9 → 8** · `verified` **46 → 47** · 能力 56 条 ·
+           `all_specs()` **105** · known-facts **183** 条。
+         ▶ **队列续作**：★ 修 `rib` / `insert_dome` 的静默失败（回读已能定位）·
+           ★ `insert_composite_curve` 的选择（官方要求 `mark=1` 且实体类型合法）· ★ 段 4（25 个）。

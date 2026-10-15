@@ -1,0 +1,896 @@
+# L1 · 主干局部任务（60 条）
+# 来源：specs/315-eval-corpus/spec.md
+# ★ 工具名锚定 register_capabilities.all_specs()（476 个真实工具）
+# ★ linkage：跨零件尺寸关联方式（业主 2026-10-11 定：只用 in_context / global_variable）
+#   · in_context = ① 在位设计（装配里建零件 + 跨零件几何关联）
+#   · global_variable = ③ 全局变量/方程（两个零件共用顶层参数）
+#   · none = 不涉及跨零件关联
+# ★ linkage_tool_surface：green = 工具面已验证 / red = 工具面待补
+
+- id: L1-001
+  product_class: 板件
+  task: 建一块 100×60×20 的矩形板
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_rectangle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_part_mass_properties
+  readback:
+  - 体积 = 120000 mm³
+  - 体数 = 1
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-002
+  product_class: 板件
+  task: 板上四角各打一个 M6 通孔，孔心距边 10mm
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_rectangle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_hole_wizard
+    - solidworks_part_mass_properties
+  readback:
+  - 孔数 = 4
+  - 孔径 = 6mm
+  - 体积 = 120000 − 4×π×9×20
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-003
+  product_class: 板件
+  task: 板的一个面做 2mm 抽壳
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_rectangle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_select_face_selector
+    - solidworks_shell_params
+  readback:
+  - 抽壳特征存在
+  - 壁厚回读 = 2mm
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-004
+  product_class: 板件
+  task: 板四周做 R3 圆角
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_rectangle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_fillet
+    - solidworks_fillet_params
+  readback:
+  - 圆角特征存在
+  - 半径回读 = 3mm
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-005
+  product_class: 板件
+  task: 板的一条边做 2×45° 倒角
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_rectangle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_chamfer
+  readback:
+  - 倒角特征存在
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-006
+  product_class: 板件
+  task: 板中心做 20mm 圆形凸台（拉伸凸台）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_circle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_part_bounding_box
+  readback:
+  - 包围盒高度增加 20mm
+  - 体数 = 1
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-007
+  product_class: 板件
+  task: 把板沿中心镜像出一个对称特征
+  tools:
+  - - solidworks_mirror_feature
+    - solidworks_feature_list_names
+  readback:
+  - 镜像特征存在
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-008
+  product_class: 板件
+  task: 板上做一条半圆端槽（腰形孔）
+  tools:
+  - - solidworks_slot_semicircular_by_selection
+    - solidworks_selection_count
+  readback:
+  - 槽特征存在
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-009
+  product_class: 板件
+  task: 给板加 3 个自定义属性（材料/重量/编号）
+  tools:
+  - - solidworks_config_set_custom_properties
+    - solidworks_custom_property_list
+  readback:
+  - 3 个属性可读回
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-010
+  product_class: 板件
+  task: 把板导出成 STEP
+  tools:
+  - - solidworks_export_step
+    - solidworks_part_mass_properties
+  readback:
+  - STEP 文件存在且非空
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-011
+  product_class: 轴件
+  task: 建一根 φ20×100 的圆柱轴
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_circle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_part_mass_properties
+  readback:
+  - 体积 ≈ π×100×100
+  - 体数 = 1
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-012
+  product_class: 轴件
+  task: 用轮廓+中心线旋转出一根阶梯轴
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_line
+    - solidworks_sketch_add_centerline
+    - solidworks_sketch_end
+    - solidworks_revolve_boss
+    - solidworks_revolve_params
+  readback:
+  - 回转体数 = 1
+  - 各档直径回读一致
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-013
+  product_class: 轴件
+  task: 轴两端各做 1×45° 倒角
+  tools:
+  - - solidworks_chamfer
+    - solidworks_entities_on_body
+  readback:
+  - 倒角特征存在
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-014
+  product_class: 轴件
+  task: 轴的一端切一个键槽（矩形切除）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_rectangle
+    - solidworks_sketch_end
+    - solidworks_extrude_cut
+    - solidworks_part_mass_properties
+  readback:
+  - 体积减少
+  - 切除特征存在
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-015
+  product_class: 轴件
+  task: 轴中间做一段退刀槽（环形切除）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_circle
+    - solidworks_sketch_end
+    - solidworks_revolve_cut
+    - solidworks_revolve_params
+  readback:
+  - 切除特征存在
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-016
+  product_class: 轴件
+  task: 读回轴的质量属性（体积/密度/质量）
+  tools:
+  - - solidworks_part_mass_properties
+    - solidworks_mass_property_object
+  readback:
+  - 体积 > 0
+  - 密度可读
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-017
+  product_class: 轴件
+  task: 读回轴的包围盒
+  tools:
+  - - solidworks_part_bounding_box
+  readback:
+  - 包围盒 = 20×20×100（±0.01）
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-018
+  product_class: 轴件
+  task: 轴上插入一条螺旋线（螺距 2，高 20）
+  tools:
+  - - solidworks_helix_insert
+    - solidworks_feature_list_names
+  readback:
+  - 螺旋线特征存在
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-019
+  product_class: 轴件
+  task: 把轴放大 2 倍（缩放特征）
+  tools:
+  - - solidworks_scale_feature
+    - solidworks_part_mass_properties
+  readback:
+  - 体积比 = 8.0
+  difficulty: easy
+  linkage: global_variable
+  linkage_tool_surface: green
+  linkage_note: 尺寸由全局变量驱动 ⇒ 改一个值，多个尺寸跟着变（工具面已验证）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-020
+  product_class: 轴件
+  task: 轴上做 6 等分圆周阵列的孔
+  tools:
+  - - solidworks_circular_pattern
+    - solidworks_pattern_params
+  readback:
+  - 阵列特征存在
+  - 实例数 = 6
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-021
+  product_class: 夹具
+  task: 建一个 L 形定位块（两块板 + 合并）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_rectangle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_part_mass_properties
+  readback:
+  - 体数 = 1
+  difficulty: medium
+  linkage: in_context
+  linkage_tool_surface: red
+  linkage_note: ★ 本条零件的几何要引用另一个零件的面/边 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-022
+  product_class: 夹具
+  task: 定位块上做两个 M8 安装沉头孔
+  tools:
+  - - solidworks_hole_wizard
+    - solidworks_hole_standards
+  readback:
+  - 孔数 = 2
+  - 沉头直径可读
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-023
+  product_class: 夹具
+  task: 建一个压板（板 + 中心孔 + 圆角）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_rectangle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_hole_wizard
+    - solidworks_fillet
+  readback:
+  - 孔数 = 1
+  - 圆角特征存在
+  difficulty: medium
+  linkage: in_context
+  linkage_tool_surface: red
+  linkage_note: ★ 本条零件的几何要引用另一个零件的面/边 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-024
+  product_class: 夹具
+  task: 建一个定位销（φ6×30 圆柱 + 两端倒角）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_circle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_chamfer
+  readback:
+  - 体积 ≈ π×9×30
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  linkage_note: ★ 零件形状由装配位置决定 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-025
+  product_class: 夹具
+  task: 把压板和定位块装配起来（加同轴配合）
+  tools:
+  - - solidworks_assembly_add_mate_checked
+    - solidworks_assembly_add_mate_checked
+    - solidworks_assembly_list_mates
+  readback:
+  - 配合数 ≥ 1
+  difficulty: medium
+  linkage: in_context
+  linkage_tool_surface: red
+  linkage_note: ★ 本条零件的几何要引用另一个零件的面/边 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-026
+  product_class: 夹具
+  task: 装配体里检查干涉
+  tools:
+  - - solidworks_assembly_check_interference
+  readback:
+  - 干涉数可读
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  linkage_note: ★ 零件形状由装配位置决定 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-027
+  product_class: 夹具
+  task: 列出装配体的全部组件
+  tools:
+  - - solidworks_assembly_list_components
+    - solidworks_collect_assembly_bom
+  readback:
+  - 组件数 ≥ 2
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  linkage_note: ★ 零件形状由装配位置决定 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-028
+  product_class: 夹具
+  task: 给装配体出一份 BOM（导出 CSV）
+  tools:
+  - - solidworks_collect_assembly_bom
+    - solidworks_delivery_export_bom_csv
+  readback:
+  - CSV 文件存在且非空
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  linkage_note: ★ 零件形状由装配位置决定 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-029
+  product_class: 夹具
+  task: 把装配体导出成 STEP
+  tools:
+  - - solidworks_export_step
+  readback:
+  - STEP 文件存在且非空
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  linkage_note: ★ 零件形状由装配位置决定 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-030
+  product_class: 夹具
+  task: 给夹具零件出一张工程图并标注关键尺寸
+  tools:
+  - - solidworks_drawing_create_projected_view
+    - solidworks_drawing_add_note
+    - solidworks_auto_dimension_sketch
+  readback:
+  - 视图数 ≥ 1
+  - 尺寸数 ≥ 1
+  difficulty: hard
+  linkage: global_variable
+  linkage_tool_surface: green
+  linkage_note: 尺寸由全局变量驱动 ⇒ 改一个值，多个尺寸跟着变（工具面已验证）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-031
+  product_class: 平口钳
+  task: 建固定钳体（底板 + 导轨槽切除）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_rectangle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_extrude_cut
+  readback:
+  - 体数 = 1
+  - 切除特征存在
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  linkage_note: ★ 零件形状由装配位置决定 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-032
+  product_class: 平口钳
+  task: 建滑动钳体（板 + 配合面 + 钳口安装孔）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_rectangle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_hole_wizard
+  readback:
+  - 孔数可读
+  difficulty: medium
+  linkage: in_context
+  linkage_tool_surface: red
+  linkage_note: ★ 本条零件的几何要引用另一个零件的面/边 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-033
+  product_class: 平口钳
+  task: 建梯形螺杆（回转体 + 截断）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_line
+    - solidworks_sketch_add_centerline
+    - solidworks_sketch_end
+    - solidworks_revolve_boss
+  readback:
+  - 回转体数 = 1
+  difficulty: hard
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-034
+  product_class: 平口钳
+  task: 建手柄（细长轴 + 球头）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_circle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_revolve_boss
+  readback:
+  - 体数 = 1
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-035
+  product_class: 平口钳
+  task: 建钳口压板（耐磨件）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_rectangle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+  readback:
+  - 体数 = 1
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  linkage_note: ★ 零件形状由装配位置决定 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-036
+  product_class: 平口钳
+  task: 把固定钳体与滑动钳体装配（导轨配合）
+  tools:
+  - - solidworks_assembly_add_mate_checked
+    - solidworks_assembly_add_mate_checked
+    - solidworks_assembly_list_mates
+  readback:
+  - 配合数 ≥ 1
+  difficulty: hard
+  linkage: in_context
+  linkage_tool_surface: red
+  linkage_note: ★ 本条零件的几何要引用另一个零件的面/边 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-037
+  product_class: 平口钳
+  task: 装配体里做一次干涉检查
+  tools:
+  - - solidworks_assembly_check_interference
+  readback:
+  - 干涉数可读
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  linkage_note: ★ 零件形状由装配位置决定 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-038
+  product_class: 平口钳
+  task: 读回装配体的质量属性
+  tools:
+  - - solidworks_part_mass_properties
+    - solidworks_mass_property_object
+  readback:
+  - 质量 > 0
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  linkage_note: ★ 零件形状由装配位置决定 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-039
+  product_class: 平口钳
+  task: 出平口钳装配图（投影视图 + 气泡）
+  tools:
+  - - solidworks_drawing_create_projected_view
+    - solidworks_drawing_insert_balloons
+  readback:
+  - 视图数 ≥ 1
+  difficulty: hard
+  linkage: none
+  linkage_tool_surface: green
+  linkage_note: ★ 零件形状由装配位置决定 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-040
+  product_class: 平口钳
+  task: 做一次参数变更（钳口宽度 125→150）并验证传播
+  tools:
+  - - solidworks_config_update_dimension
+    - solidworks_part_bounding_box
+    - solidworks_session_rebuild
+  readback:
+  - 包围盒宽度增加 25mm
+  difficulty: hard
+  linkage: none
+  linkage_tool_surface: green
+  linkage_note: 尺寸由全局变量驱动 ⇒ 改一个值，多个尺寸跟着变
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-041
+  product_class: 连杆
+  task: 建一根连杆（两端圆孔 + 中间杆）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_circle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_hole_wizard
+  readback:
+  - 孔数 = 2
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-042
+  product_class: 连杆
+  task: 建一根可调连杆（螺纹套 + 两端接头）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_rectangle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+    - solidworks_revolve_boss
+  readback:
+  - 体数 = 1
+  difficulty: hard
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-043
+  product_class: 连杆
+  task: 把连杆与两个销轴装配
+  tools:
+  - - solidworks_assembly_add_mate_checked
+    - solidworks_assembly_add_mate_checked
+  readback:
+  - 配合数 ≥ 2
+  difficulty: hard
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-044
+  product_class: 连杆
+  task: 给连杆装配体加一个旋转马达
+  tools:
+  - - solidworks_motion_create_study
+    - solidworks_motion_collect_summary
+  readback:
+  - 马达数 ≥ 1
+  difficulty: hard
+  linkage: global_variable
+  linkage_tool_surface: green
+  linkage_note: 尺寸由全局变量驱动 ⇒ 改一个值，多个尺寸跟着变（工具面已验证）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-045
+  product_class: 连杆
+  task: 运行运动算例并读回摘要
+  tools:
+  - - solidworks_motion_calculate_and_play
+    - solidworks_motion_collect_summary
+  readback:
+  - 算例有结果
+  difficulty: hard
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-046
+  product_class: 连杆
+  task: 读回连杆的包围盒与体积
+  tools:
+  - - solidworks_part_bounding_box
+    - solidworks_part_mass_properties
+  readback:
+  - 体积 > 0
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-047
+  product_class: 连杆
+  task: 给连杆加两个配置（长/短）
+  tools:
+  - - solidworks_config_create
+    - solidworks_config_inspect
+  readback:
+  - 配置数 = 2
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  linkage_note: 尺寸由全局变量驱动 ⇒ 改一个值，多个尺寸跟着变
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-048
+  product_class: 连杆
+  task: 给连杆出工程图（投影视图）
+  tools:
+  - - solidworks_drawing_create_projected_view
+  readback:
+  - 视图数 ≥ 1
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-049
+  product_class: 连杆
+  task: 把连杆导出 STL
+  tools:
+  - - solidworks_export_stl
+  readback:
+  - STL 文件存在且非空
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-050
+  product_class: 连杆
+  task: 对连杆做一次静力仿真（赋材料 + 约束 + 求解）
+  tools:
+  - - solidworks_simulation_set_material
+    - solidworks_simulation_apply_fixed_restraint
+    - solidworks_simulation_create_mesh_safely
+    - solidworks_simulation_run_analysis
+  readback:
+  - 仿真有结果
+  difficulty: hard
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-051
+  product_class: 箱体
+  task: 建一个箱体毛坯（矩形块）
+  tools:
+  - - solidworks_sketch_start
+    - solidworks_sketch_add_rectangle
+    - solidworks_sketch_end
+    - solidworks_extrude_boss
+  readback:
+  - 体数 = 1
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-052
+  product_class: 箱体
+  task: 箱体抽壳（壁厚 8mm）
+  tools:
+  - - solidworks_shell_params
+    - solidworks_part_mass_properties
+  readback:
+  - 抽壳特征存在
+  - 壁厚回读 = 8mm
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-053
+  product_class: 箱体
+  task: 箱体上做两个轴承孔（同轴）
+  tools:
+  - - solidworks_hole_wizard
+    - solidworks_part_bounding_box
+  readback:
+  - 孔数 = 2
+  difficulty: hard
+  linkage: in_context
+  linkage_tool_surface: red
+  linkage_note: ★ 本条零件的几何要引用另一个零件的面/边 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-054
+  product_class: 箱体
+  task: 箱体上做剖分面（基准面 + 分割）
+  tools:
+  - - solidworks_insert_ref_plane
+    - solidworks_part_intersect
+  readback:
+  - 剖分关系存在
+  difficulty: hard
+  linkage: in_context
+  linkage_tool_surface: red
+  linkage_note: ★ 本条零件的几何要引用另一个零件的面/边 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-055
+  product_class: 箱体
+  task: 箱体上做一排 M8 螺栓孔（线性阵列）
+  tools:
+  - - solidworks_hole_wizard
+    - solidworks_linear_pattern_report
+  readback:
+  - 孔数 ≥ 3
+  difficulty: medium
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-056
+  product_class: 箱体
+  task: 读回箱体的孔系位置与中心距
+  tools:
+  - - solidworks_hole_params
+    - solidworks_measure_selection
+  readback:
+  - 孔位可读
+  difficulty: medium
+  linkage: in_context
+  linkage_tool_surface: red
+  linkage_note: ★ 本条零件的几何要引用另一个零件的面/边 ⇒ 该用①在位设计；★ 而本条的工具面是红的（见 owner-review §5c）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-057
+  product_class: 箱体
+  task: 箱体做拔模分析
+  tools:
+  - - solidworks_mold_draft_analysis
+    - solidworks_mold_evidence
+  readback:
+  - 分析返回可读
+  difficulty: hard
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-058
+  product_class: 箱体
+  task: 箱体上插入一个坐标系
+  tools:
+  - - solidworks_insert_coordinate_system
+    - solidworks_csys_params
+  readback:
+  - 坐标系特征存在
+  difficulty: easy
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-059
+  product_class: 箱体
+  task: 箱体出工程图并标关键尺寸
+  tools:
+  - - solidworks_drawing_create_projected_view
+    - solidworks_auto_dimension_sketch
+  readback:
+  - 视图数 ≥ 1
+  difficulty: hard
+  linkage: none
+  linkage_tool_surface: green
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价
+- id: L1-060
+  product_class: 箱体
+  task: 改一个轴系接口参数，验证零件/图纸传播
+  tools:
+  - - solidworks_config_update_dimension
+    - solidworks_session_rebuild
+    - solidworks_part_bounding_box
+  readback:
+  - 包围盒变化符合预期
+  difficulty: hard
+  linkage: global_variable
+  linkage_tool_surface: green
+  linkage_note: 尺寸由全局变量驱动 ⇒ 改一个值，多个尺寸跟着变（工具面已验证）
+  needs_owner_judgment: true
+  notes: 工具链是候选，需业主确认是否等价

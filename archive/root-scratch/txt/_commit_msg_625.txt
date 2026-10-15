@@ -1,0 +1,20 @@
+docs(ROADMAP): 游标写入本阶段长程计划指针 + 对「工程图 13 项」的关键纠正
+
+■ 游标（本仓「唯一必须维护的字段」）加两处：
+ ① 「当前阶段」段加：**本阶段长程计划** = `specs/202-user-coverage-gaps/plan-24h.md`
+    （轮次队列 R1–R6+ 与三条作业方式 M1–M3）
+ ② 「下一步 ⓪」段加一个「**先读这一段再动手**」的纠正块（本轮查到的四条事实）：
+    · ★ **工程图 13 项里本仓已实现 8 项、但只有 4 项挂成了工具**
+      （依据 `recon/drawing-existing-coverage.md`）⇒ ★★ **该做的是「把已有的挂出来」，不是重写实现**
+      （重写 = 造第二个家 —— 业主当场指出过这类重复）
+    · ★ **挂它的前置已修**：`RESOLVERS` 加了 `"drawing_model": resolve_model`
+      （那批函数首参叫 `drawing_model`；而 `register()` 不传 `inject_as` ⇒ 注入键字面上等于
+      `inject` 的值 —— 见 known-facts **169**）⇒ ★ 不修就会 `TypeError`
+    · ★ **真缺口只有 5 项**：断裂视图 · 辅助视图 · 表面粗糙度 · 基准符号 · 气泡序号
+    · ★ **废弃链（已逐字核实）**：`InsertBreak`→`InsertBreak2`→**`InsertBreak3`**；
+      `InsertSheetMetalMiterFlange` 的 `IModelDoc2` 那份**废弃** ⇒ 用 `IFeatureManager` 那份（14 参）
+
+■ 为什么改游标而不是别处：本仓纪律「进度只写 `capabilities.yaml` 的 `level` 与 `docs/ROADMAP.md` §一 游标」。
+
+■ 一并记一条操作教训：本文件是 **CRLF**，`edit` 用**多行** `old_string` 会失配 ⇒ **一律用单行锚点**；
+  且 `git commit -m` 传多行中文（含引号）会被 PowerShell 拆坏（事实 48 同族）⇒ **一律写消息文件 + `-F`**。

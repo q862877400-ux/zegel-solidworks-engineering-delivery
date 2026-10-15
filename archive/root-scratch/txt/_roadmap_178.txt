@@ -1,0 +1,44 @@
+     ★ 2026-10-01（轮 289 / **24h 计划 段 5/6「AVI 线收口」**）· ★★★★★ **"同一个错误码"要查它属于**哪个枚举** —— 而"通用错误"是深挖的终点**
+         ▶ **本轮查的**：★ `save_document` 内部是 `model.Extension.SaveAs(path, 0, 1, …, errors, warnings)`
+           ⇒ ★ 两个**输入**参数都对（`swSaveAsVersion_e` 的 **`swSaveAsCurrentVersion = 0`** ·
+             `swSaveAsOptions_e` 的 **`swSaveAsOptions_Silent = 1`**，★ 反射核实）
+           ★ 而**回来的错误码 `1`** 属于**另一个枚举**（输出的那个）：`swFileSaveError_e` ⇒
+             ★ **`swGenericSaveError = 1`** · `swReadOnlySaveError = 2` · `swFileNameEmpty = 4` ·
+             `swFileLockError = 16` · `swFileSaveFormatNotAvailable = 32` · `swFileSaveWithRebuildError = 64` …
+           ⇒ ★★★ **所以"错误码 1" = `swGenericSaveError`**（通用保存错误）
+           ★ 官方 Remarks：★「**Not all of these return codes are fatal errors. The return code is a
+             bitmask of different conditions**」⇒ ★★ 即：`1` 是"有一个未具体化的错误"，**不指向具体原因**
+         ★★★★★ **而更重要的是：这条线到此为止（★ 事实 53 的实践）**：
+           ★ AVI 那条线我**连续收窄了 6 次**（每次更具体）：
+           ```
+           1. 缺 Motion 加载项      => ★ 被推翻（类型库能加载、三环全通）
+           2. 没有可动的装配体      => ⚠ 部分对
+           3. motor ok: false       => ★ 更具体
+           4. 算例类型 / 找不到圆柱面 => ★ 两个假设都被自己的探针推翻
+           5. 组件未解析            => ★★ 拿到源头（未找到圆柱面 原文 + save 回 False）
+           6. swGenericSaveError    => ★★★ 到了"通用错误"这一层 —— 再往下只能靠排除法
+           ```
+           ⇒ ★★★★ **而事实 53 说**：「同一个启发式**连续修补 ≥3 次**还没稳定，就该停下回退」——
+             ★ 本轮**不是回退**（★ 每版都**留下了证据**，收窄是**有进展的**），
+             ★★ **而是"停止深挖、记录到当前粒度"** ⇒ ★ **那与"回退"不同**：★ 回退=承认路子错了；
+               ★ 停止=承认**边际收益低了**
+         ★★★ **定则**：
+           ★ **"同一个错误码"要查它属于哪个枚举** —— ★ 本处有两组容易混的：输入用
+             `swSaveAsVersion_e`/`swSaveAsOptions_e`（值 0 与 1）；输出用 `swFileSaveError_e`（值 1）
+             ⇒ ★★ **而"错误码 1"在两套里含义**完全不同**（一套是"当前版本"、另一套是"通用错误"）
+               ⇒ ★★★ **看到"错误码 N"要先问"哪个枚举的输出"**
+           ★★ **"通用错误"是深挖的自然终点** —— ★ 它**不是一个可以继续追的线索**（没有指向）
+             ⇒ ★★ **可操作判据**：★ 查到 `*Generic*` / `*Unknown*` / `*Other*` 这类错误码时，
+               ★ **不要再往下追** ⇒ ★ 该转向"换一条路验证"或"记录并停止"
+             ⇒ ★★★ **而本轮选"记录并停止"**：★ 因为**整条链已被逐环走过**（5 个证据文件），
+               ★ 而**卡点写得很清楚**
+         ▶ **验收**：① 能力 **75** 条 · `all_specs()` **175** · 归属 **175/175** ✓
+           · 门禁链 **8 段全 PASS** ✓ · `release_check` exit 0 ✓ · 全量 pytest **1284 passed / 0 failed** ✓
+           ② ★ 真机证据：★ **5 份逐环证据**（motor-chain-probe · motor-studytype-probe ·
+             motor-e2e-replica · motion-avi-probe · motion-avi-evidence）—— ★ **AVI 仍到不了**（如实）
+         ▶ **状态**：`all_specs()` **175** · 能力 **75** 条（verified **53** · stitched **21**）·
+           known-facts **221** 条。
+         ▶ **队列续作**：★ **转出 AVI 线**（★ 边际收益低）⇒ 去做：
+           ★ 剩下 6 条「verified 却 0 工具」逐条定性（★ 其中 `requirements_planning` 是纯 Python ⇒
+             ★ 该写明"为什么不挂工具"）· ★ `semicircular_slot` 的 `<unknown>.SketchManager`
+             （★ **有副作用 ⇒ 先查清再动**）· ★ 收敛报告再刷（★ 事实 216）。

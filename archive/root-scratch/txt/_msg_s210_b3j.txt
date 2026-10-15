@@ -1,0 +1,52 @@
+规格 210 · B3 拆 undecided：★ 拆出一条工具层的真 bug（相对导入无兜底）+ 门禁棘轮
+
+★★★★ 把 22 条 `undecided` 逐条看原因 ⇒ ★★ 拆出**五类完全不同的原因**，
+★ 其中**一类是工具层真 bug** ✓
+
+一、★★ 五类（性质完全不同）
+1. ★★ **声明不准（7 条）**：★ 七条 `drawing_*` 报 **`当前文档不是工程图（GetType()=1）`**
+   ⇒ ★★ 它们的 `inject` 声明是 **`model`**，而**实际要工程图** ✗ ——
+   ★ **`inject` 没表达出"文档类型"这一维** ✓
+2. ★★ **`requires` 维度不够（4 条）**：★ `sketch_*` 报 **`没有活动草图` / `不在草图编辑态`**；
+   ★ `part_bounding_box` 报 **`零件里可能没有实体`** ⇒
+   ★★ **它们要的是"编辑态 / 实体"，而 `requires` 只表达"宿主对象"** ✗ ✓
+3. ★★ **参数合成不够（4 条）**：★ `automation_get_flag` ⇒ `invalid literal for int(): 'MCP_CALIB'`
+   （★ **我把字符串塞进了 int 形参** ✗）· `config_set_custom_properties` ⇒ 需要 **dict**（给了字符串 ✗）·
+   `weldment_create_weldment_profile` ⇒ 要 **`.sldlfp`** ✗ · `fastener_*` ⇒ 需要**非空**标准名 ✗
+   ⇒ ★★ 合成器要**按类型提示**，★ 不能只看名字后缀 ✓
+4. ★★★ **工具层真 bug（1 条）**：★ `simulation_apply_link_connector` 报
+   **`ImportError: attempted relative import with no known parent package`** ✗
+5. ★ **待查（6 条）**：★ `costing_*` / `topology_list_constraints`（★ 返回体为空）·
+   `weldment_read_property_manager`（★ `SldWorks.Application.GetNames` ✗）✓
+
+二、★★★ 真 bug 的根因与系统性
+· ★ 根因：★ `scripts/sw_simulation_loads.py` **函数体内 17 处** `from .sw_… import …`
+  **没有兜底** ⇒ ★★ 作为 `scripts.X` 导入时成立，★ **按顶层模块导入就炸** ✗
+· ★★ **而仓库自己早就写好了正确写法**（同文件那处 `sw_connect`）：
+  ★ `try: from .X import Y` / ★ `except ImportError: from X import Y` ✓
+  ⇒ ★ 照仓库自己的写法修那 17 处（**+68/−17**，★ 按**事实 61** 核对：17 处删除 = 被替换的原行，
+    ★ 每行变 4 行 ⇒ ★ 行数吻合 ✓）⇒ ★ 真机验证：★ **该模块作为顶层模块现在能导入** ✓
+· ★★ 全仓扫描：★ 同款**共 54 处 / 22 个文件**，★ **顶层一个都没有**
+  ⇒ ★ 没有模块因此整体坏掉，★ 只有"**在非包导入路径下调用那些函数**"才炸 ✓
+· ★★ 处置（★ 事实 61：批量改动风险高 ⇒ 不一次改 22 个文件）：
+  ★ 修**实际炸掉的那一个** + ★ 加**门禁棘轮**（★ 存量只许变少、不许变多）✓
+
+三、★ 交付
+· ★ 新 `scripts/check_relative_imports.py` ⇒ 全仓实测 **35 处**
+  （★★ **基线必须实测、不许估** —— ★ 我先估了 37，★ 实扫是 35，★ 已改）✓
+· ★ 新 `tests/test_relative_imports_gate.py`（**4 条**，★ **两侧都证** —— 事实 62 的手法）：
+  ★★ **负例**：★ **修复前**的原文（`git show HEAD:…`）⇒ ★ **必须命中 17 处** ✓
+  ★★ **正例**：★ **修复后**的文件 ⇒ ★ **必须 0 命中** ✓
+  ★ **契约**：★ 判据必须 `startswith("try:")` —— ★ 因为修法带 `# noqa` 注释 ⇒
+    ★ 用 `== "try:"` 会把**已修好的**算成没兜底 ✗
+    （★ **我第一版就栽在这，真机现象：修完仍是 54 处**）✓
+
+四、测试与门禁
+★ `tests/test_relative_imports_gate.py` **4 passed** · 收尾链 **12.2 s** ✓（★ 本轮**没有既有红点**）✓
+
+五、下一批
+1. ★★ 把该门禁**接进 `release_check.py`** ⇒ ★ 成为常驻不变量 ✓
+2. ★★ 按五类逐类处置：★ 声明补"文档类型"维 · ★ `requires` 补"编辑态/实体"维 ·
+   ★ 合成器按类型提示 · ★ 剩下的真 bug（`SldWorks.Application.GetNames`）✓
+3. ★ 跑 **`nonempty`（135）** 与 **`null`（266）** ⇒ ★ 全量分布 ✓
+4. ★★ 把覆盖层接成**棘轮**（★ 每次普查的 `missed` **必须**进覆盖层 + 门禁）✓

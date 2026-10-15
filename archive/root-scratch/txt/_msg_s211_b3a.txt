@@ -1,0 +1,53 @@
+规格 211 · B3-1：★★ 「裁剪/延伸焊件」落地 —— ★ 并做了一次**数组形参的形态判定**
+
+一、★ 官方页三样（★ 逐字）
+· ★ 签名：★ **参数式 5 参** —— `InsertWeldmentTrimFeature2(int EndCond, int Options,
+  double GapValue, object BodiesToTrim, object BodiesOrFaces)` ✓
+· ★ `## Parameters`：★ `EndCond` 取 `swSolidworksWeldmentEndCondOptions_e` ·
+  ★★ `Options` 是 `swWeldmentTrimExtendOptionType_e` 的 **Logical sum**（★ 按位或叠 ✓）·
+  ★ `GapValue` 只写 "Length to trim"（★ ⚠ **没给单位**）· ★ 另两个是**数组**
+· ★★★ `## Remarks` **给了完整 mark 表**：★ **`1 = Body or bodies to trim`** ·
+  ★ **`2 = Trimming boundaries (body or face)`** ✓
+· ★ 老版 `InsertWeldmentTrimFeature` 也在 ⇒ ★ 本包装用**带 `2` 的后继版** ✓
+
+二、★★★ **数组形参的形态判定**（★ 本批特有的一步，★ 事实 12/33 的现场）
+★ 两个形参是 **`System.object`**（★ 不是 `System.object[]`）⇒ ★ 按**事实 12/33**：
+★ **空数组不能传 Python `None`** ✗ ⇒ ★★ **两种形态都试了**：
+| 形态 | 读数 |
+|---|---|
+| ★ 传 Python `None` | ★ 调不通（★ 而第一次还被我的 `NameError` 挡住 ✗ ⇒ 修后复测 ✓）|
+| ★★ **传空 `VARIANT(VT_DISPATCH, None)`** | ★★★ **调用完成、回对象** ✓ |
+⇒ ★★★ **正确形态 = 空 `VARIANT(VT_DISPATCH, None)`** ✓ ⇒ ★ **已改进包装** ✓
+  ★（★ 用 `sw_connect.create_empty_dispatch_variant()` ✓）
+
+三、★★ **真机第一步读数**（★ 与"扫描曲面"同型）
+· ★ **两种形态都调通**（★ **不抛** ✓）
+· ★★ **而特征树没变**（★ `feature_count` 前后相同 ✗）
+· ⇒ ★★★ **因为前置没上** —— ★ 官方 `## Remarks` 明写 **mark 1/2 都要选** ✓
+⇒ ★★★ **定性的边界（★ 从"扫描曲面"学来的定则，★ 本轮严格照用）**：
+  ★★ **「读到静默 / 没建」≠「判定试死」** —— ★ 中间的桥是「**前置是否完全对上**」✓
+  ★ 教科书式的反例就在本规格里：★ **扫描曲面**当时若写成"试死"，
+  ★ **后来"建成 `曲面-扫描1`"的发现就会被自己的记录挡住** ✗ ✓
+
+四、★★ **本批真栽了两次（★ 都是同类，★ 已用测试钉住）**
+· ★ 我第一版的块里用了 `mm` 与 `feature_names`，★ **而 `sw_weldment.py` 都没导入** ✗ ⇒
+  ★ **运行时 `NameError`**（★ 第一次报 `name 'mm' is not defined` ⇒ 暴露 ✓）
+· ★★ 修的时候又发现：★ 块里写 `sw_connect.create_empty_dispatch_variant()`，★ 而模块是
+  **`from sw_connect import …`**（★ 没有模块名 ✗）⇒ ★ **会再 `NameError`** ✓
+· ⇒ ★★★ **两个都修了**（★ 加 `mm` · `feature_names` · `create_empty_dispatch_variant` 到 from-import ✓）
+· ★★★ **并写了一条"回归钉"测试**：★ `test_module_imports_the_new_dependencies`
+  —— ★ **断言这三个名字在模块里可用** ✓ ⇒ ★ **同类错不再复发** ✓
+
+五、★ 交付物
+· `scripts/sw_weldment.py`：★ +`insert_weldment_trim_report` + `WELDMENT_TRIM_MARKS` +
+  ★ 三个新导入（★ `mm` · `feature_names` · `create_empty_dispatch_variant`）✓
+· `tools/probe_spec211_weldtrim.py` · `output/spec211-b3-weldtrim.json` ✓
+· `tests/test_spec211_weldment_trim.py`（★ **7 passed**，★ 含那条回归钉 ✓）
+· `capabilities.yaml`：★ **131 条** · ★ **`stitched` 16 → 17** ✓
+  ★★ 取 **`stitched`**（★ 不是 `verified`）—— ★ **因为只到"第一步：查行为"** ✓
+· `docs/metrics.md` 已重生成 ✓
+
+六、★ 下一轮
+· ★ **B3-1 的第二步**：★ 建焊件体（★ `create_structural_member` —— ★ 模块里已有 ✓）+
+  ★ **按 mark 1/2 选好** ⇒ ★ **把"试死"与"大发现"分开** ✓
+· ★ 然后 **B3 余下三项**（★ 焊接符号 · 圆角焊缝 · 角撑板 —— ★ 角撑板台账已判"不做" ✓）

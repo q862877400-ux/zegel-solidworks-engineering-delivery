@@ -1,0 +1,34 @@
+     ★ 2026-10-01（轮 270 / **24h 计划 段 4「焊件 6 个」/ Spec Kit `152`**）· ★★★ **焊件 6 个上柜台（all_specs 122 → 128）；而 2 个真机失败各属**不同类****
+         ▶ **选法**：★ `sw_weldment` 未挂 10 个 ⇒ 筛子两条：① ★ **规则 3**（无裸坐标）——
+            ★★ **10 个全过**（★ 初查报的"裸坐标嫌疑"是**假阳性**：★ 我的粗查匹配到了
+              `Any` / `Path` / `properties` 里的字母 `y`）；② ★★ **入参能不能表达**（★ 真筛子）。
+           ⇒ ★ **挂 6 个** ⇒ `all_specs()` **122 → 128** · 归属 **128/128** ✓
+         ★ **没挂的 4 个（★ 每条都有具体原因）**：
+           · `configure_member_profile` / `configure_split_member` ⇒ ★ 要**宿主对象** ⇒ 需新注入键
+             ⇒ ★ **不顺手加**（加了要同步 RESOLVERS）；
+           · `create_structural_member` ⇒ ★ `segment_groups` 是**嵌套结构**；
+           · `iter_features_recursive` ⇒ ★ **内部辅助**，非工具候选。
+         ★★★★★ **真机 3 个的结果 —— 而它们分属**不同类**（★ 事实 202 的三分法）**：
+           ```
+           | 工具 | 结果 | 类别 |
+           | export_cut_list_csv | ★ pass（文件 26 B） | 纯数据 + 文件 |
+           | create_cut_list | ⚠ fail | ★★ **接口不可达**（第②类） |
+           | set_cut_list_properties | ⚠ fail | ★ **正确的失败**（第①类） |
+           ```
+           · ★★ `create_cut_list` 报「`IFeatureManager.InsertWeldmentCutList2` 在当前后端
+             （**pywin32 迟到绑定**）上**取不到**」⇒ ★ **与事实 47 同一族**（★ 迟到绑定下某些成员取不到）
+             ⇒ ★ **标为后端限制**（★ 不硬试形态）；
+           · ★ `set_cut_list_properties` 报「**没有可写入切割清单的结构构件实体**」
+             ⇒ ★ **前置不满足** ⇒ ★ **如实说"没有对象可写"** ⇒ **第①类正确的失败** ✓
+         ★★★ **定则**：★ **"按子串判参数名"会假阳性**（★ 本轮 `y` 命中 `Any`/`Path`/`properties`）
+           ⇒ ★ 正解是**按词边界**（★ `tool_registry._looks_like_coord_component` 已经是正则）
+             ★★ **而临时探针也要按对的判据写** —— ★ 否则它会**误导下一步的范围决定**。
+         ▶ **验收**：① `all_specs()` = **128** ✓ · 归属 **128/128** ✓ · 绑定门禁 **PASS** ✓
+           · 门禁链 18 道 exit 0 ✓ · `release_check` exit 0 ✓ · 全量 pytest **1284 passed / 0 failed** ✓
+           ② ★ 真机 `output/weldment-evidence.json`（★ 1/3 · 两个失败**逐条分类**）✓
+           ⚠ **本批 6 个里只真机验了 3 个**（★ 另 3 个：`read_property_manager` 需 PropertyManager 打开 ·
+             `create_profile_center_mate` / `create_weldment_profile` 需结构构件）
+             ⇒ ★★ **如实记**（★ 硬约束③），★ 下轮补。
+         ▶ **状态**：`all_specs()` **128** · 能力 **59** 条（verified **50** · stitched **8**）·
+           known-facts **202** 条。
+         ▶ **队列续作**：★ 补验焊件另 3 个 · ★ `all_specs()` 离 145 差 **17**。

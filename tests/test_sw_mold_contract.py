@@ -166,9 +166,13 @@ def test_insert_parting_surface_passes_eight_args_in_official_order():
     # 位置严格照官方：Int32, Boolean, Boolean, Double, Double, Int32, Double, Boolean
     assert args[0] == 2 and isinstance(args[0], int)
     assert args[1] is True and args[2] is True
-    assert args[3] == 1.5 and args[4] == 30.0
+    #: ★★ 2026-10-11 **单位修复**：`distance` / `tolerance` 是长度 ⇒ 毫米→米换算一次。
+    #:   依据：本仓探针 `tools/prove_mold_family_rest.py:107` 逐字 `distance=10.0 * MM`
+    #:   （`MM = 0.001`）+ 定案 `output/probe-unit-decisive/decisive.json`。
+    #:   ⇒ 传 1.5 ⇒ **0.0015**；传 0.01 ⇒ **1e-05**。`angle` 是角度，**不换算**。
+    assert args[3] == 0.0015 and args[4] == 30.0
     assert args[5] == 1 and isinstance(args[5], int)
-    assert args[6] == 0.01
+    assert args[6] == 1e-05
     assert args[7] is True
 
 

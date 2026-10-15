@@ -788,7 +788,13 @@ SWS_MATERIAL_DATABASE = "SOLIDWORKS Materials"
 # ────────────────────────────────────────────────────────────────────
 def set_material(model, material_name: str,
                  database: str = SWS_MATERIAL_DATABASE) -> str:
-    """给零件赋材料，**返回回读到的 ``MaterialIdName``**（空串 = 没赋上）。
+    """给零件赋材料，**返回回读到的材料名**（空串 = 没赋上）。
+
+    ★★★ **spec 261 换路由后的语义变化（★ 真机实测）**：本函数原先回读**废弃的** ``MaterialIdName``，
+      ★ 它给的是**复合串** ``库名|材料名|编号``（★ 真机实测：``'solidworks materials|AISI 1020|2'``）；
+      ★ 换到官方后继 ``IPartDoc::GetMaterialPropertyName2`` 后，回的是**纯材料名**（★ 实测：``'AISI 1020'``）。
+      ⇒ ★★ **两代不等价**（★ 语义不同，不是同值）—— ★ 换路由**改善了**语义（现在可直接与 ``material_name`` 比）。
+      ★★ **已核调用方（★ 这是关键）**：全仓有 **16 处**调用（★ 都在 `tools/` 的证据采集脚本里），\n        ★ 逐个核过 —— ★ 它们只用 ``bool(返回值)`` 与**直接存值**，★ **没有一处**做字符串切分/比较\n        ⇒ ★ **不依赖** ``库名|材料名|编号`` 那个格式 ⇒ ★ **语义变化是安全的**。\n      ★★ **定则：行为变化的**安全性**取决于「调用方怎么用它」，不是「有没有人用」**。
 
     ⚠ 库名用 ``SWS_MATERIAL_DATABASE``（``"SOLIDWORKS Materials"``），
     材料名用库里的名（如 ``"AISI 1020"``、``"Alloy Steel"``）。
@@ -800,7 +806,27 @@ def set_material(model, material_name: str,
     :returns: 回读到的 ``MaterialIdName``；``''`` 表示**没赋上**（库名或材料名不对）。
     """
     get_com_member(model, "SetMaterialPropertyName2", "", database, material_name)
-    return get_com_member(model, "MaterialIdName")
+    return _read_material_id_name(model)
+
+
+def _read_material_id_name(model) -> str:
+    """读材料名（★ spec 261 换路由：官方后继 `IPartDoc::GetMaterialPropertyName2`）。
+
+    ★★ **为什么换**：`IModelDoc2::MaterialIdName` 官方标
+      「Obsolete. Superseded by [[IPartDoc::GetMaterialPropertyName2]] and
+       [[IPartDoc::SetMaterialPropertyName2]]」。
+    ★★★ **两处不是 drop-in**：① **接口换了**（`IModelDoc2` ⇒ **`IPartDoc`**，★ 零件文档上两者是同一 COM 对象）；
+      ② **签名换了**（原是无参**属性**；后继是 `(ConfigName, out Database)` ⇒ ★ 要传配置名 + 一个 **by-ref 出参**）。
+    ★ `ConfigName` 传 `""`（★ 官方 Remarks：只有默认配置时用 `""`）。
+    ★ 取不到就回 `""`（★ 与旧写法同语义）。
+    """
+    try:
+        import pythoncom
+        from win32com.client import VARIANT
+        db = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BSTR, "")
+        return str(get_com_member(model, "GetMaterialPropertyName2", "", db) or "")
+    except Exception:                                              # noqa: BLE001
+        return ""
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -1562,6 +1588,7 @@ def create_mesh_safely(study, *, model=None, units: int = 0, element_size: float
 #: ★★ `swsSolverType_e` —— ★ 出处：本仓 `_raw` 的 cosworks 枚举页 + `STUDY_OPTION_SETTERS`
 #:   （★ 逐条核过：Automatic=0 · DirectSparse=1 · **FFEPlus=2** · CASI=5 · Abaqus=6 ·
 #:    INTEL=7 · INTELCluster=8）✓
+#: enum-gate: enum swsSolverType_e
 SWS_SOLVER_TYPES = {
     "automatic": 0, "direct_sparse": 1, "ffeplus": 2, "casi": 5,
     "abaqus": 6, "intel": 7, "intel_cluster": 8,

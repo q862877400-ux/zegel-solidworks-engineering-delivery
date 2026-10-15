@@ -1,0 +1,54 @@
+| 211 | **Motion 类型库**能加载**（`swmotionstudy.tlb`）—— 而"动画导出缺 Motion 加载项"那条理由要复核**（2026-10-01，轮 278）。
+
+## 一、★ 本批做了什么
+```
+★ 填 `motion_study`（★ 它原本是 `verified` 却 **0 工具** —— 事实 210 的"自相矛盾的账"）：
+   `sw_motion` 有 **13 个公开函数 · 0 个工具** ⇒ ★ 其中 **6 个入参可表达**：
+   · `create_motion_study` · `collect_motion_study_summary` · `get_motion_study_manager`
+   · `validate_motion_studies` · `ensure_motion_type_library` · `validate_motion_study_summary`
+⇒ ★★ **关键是 `asm_model` 这个 resolver **早就存在****（★ 拓扑那批加的）⇒ ★ **直接用，不新增键** ✓
+⇒ ★ `all_specs()` **158 → 164** · 归属 **164/164** ✓
+★ 又踩了 `**kwargs` 那次教训（★ `validate_motion_studies(asm_model, **requirements)`）
+  ⇒ ★ **同样的修法**：★ **写显式形参的包装** `validate_motion_studies_report(…, study_name=, …)`
+    ⇒ ★★ **而那更好：★ 形参即文档**（★ 调用方一眼看到能传什么）。
+```
+
+## 二、★★★★★ 真机 **PASS（5/5）** —— 而其中一条**推翻了一个旧理由**
+```
+| 步骤 | 结果 |
+|---|---|
+| `ensure_motion_type_library`（零参） | ★ pass ⇒ **`D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\swmotionstudy.tlb`** |
+| `collect_motion_study_summary`（装配体） | ★ pass ⇒ 回 dict（含 `motion_type_library` 路径） |
+| `get_motion_study_manager` | ★ pass |
+| `create_motion_study(name="DSH_MOTION", duration=4.0)` | ★ pass（回 study 对象） |
+| `validate_motion_studies_report(minimum_motor_count=0)` | ★ pass ⇒ `{'ok': True, 'asked': [...], 'returned': {...}}` |
+⇒ ★ **5/5** · 证据 `output/motion-evidence.json`
+```
+
+★★★ **而这条最值得记**：
+```
+★★ `ensure_motion_type_library` **回了一个真实路径** ⇒ ★ **Motion 类型库在本机**能加载****。
+⇒ ★★★ 而 `capabilities.yaml` 里 `animation_export` 的 `stitched` 理由写的是
+   「**缺 Motion 加载项**」⇒ ★★ **那条理由与本次实测**不一致**。
+⇒ ★ **处置**：★ **不立刻改它**（★ 因为"类型库能加载" ≠ "AVI 导出能跑" —— ★ 那两件事不同）
+   ★★ 而**把它记为待复核**（★ 下一步：★ 真机试 `export_motion_study_avi`
+     ⇒ ★ **才知道那条 `stitched` 该不该升级**）。
+   ⇒ ★★★ **这正是硬约束③的形态**：★ **一个旧结论的理由与新的实测对不上时，要标记并复核，
+     而不是二选一地采信**。
+```
+
+## 三、★ 定则
+```
+★★★ **"类型库能加载" ≠ "依赖它的功能能跑"** —— ★ 本机 `swmotionstudy.tlb` 加载成功，
+   ★ **而 AVI 导出还需要**：★ `create_avi_parameter(manager)`（★ 要 manager）→
+     `configure_avi_parameter(avi_parameter, …)` → `export_motion_study_avi(study, path, …)`
+     ⇒ ★★ **三环各有宿主对象** ⇒ ★ **能加载只是第一环**。
+   ⇒ ★ **所以"缺加载项"这种理由要**具体到哪一环缺****（★ 否则它会把"没试过"说成"做不到"）。
+★★ **同一教训用了两次**（★ 轮 272 的 `configure_*_solver` · 轮 278 的 `validate_motion_studies`）
+   ⇒ ★ **`**kwargs` 在"工具层要声明参数名"的场景下是错的** ——
+   ★★ **正解一律是显式形参**（★ 而它还顺带给出文档）。
+```
+
+**依据**：`mcp-server/tool_specs_batch40.py`（★ 6 个 ToolSpec）· `output/motion-evidence.json`（★ **PASS 5/5**）·
+`scripts/sw_motion.py` 的 `validate_motion_studies_report` · `capabilities.yaml` 的 `animation_export`（★ 待复核）·
+`scripts/check_param_binding.py`（★ 抓 `**kwargs`）· 事实 47 / 202 / 210

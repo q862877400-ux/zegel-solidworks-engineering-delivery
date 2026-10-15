@@ -1,0 +1,38 @@
+规格 209 · B2 批：unfold / fold 真机建成，hem 如实记负结论（+ 4 条新事实与 4 处我自己的错）
+
+来源：docs/HANDOFF.md 的 209 待办 + docs/recon-207/adjudication.md 的 B2/B4 硬约束。
+本批做掉 B2-1（idx 336 unfold）· B4-2（idx 173 hem）· B4-4（idx 155 fold）。
+
+一、unfold / fold：真机建成
+· scripts/sw_sheet_metal.py 新增 create_unfold / create_fold（+ _flat_pattern_count 读侧）
+· 工具 solidworks_sheet_metal_create_unfold / _create_fold（batch93 ⇒ 442 个工具）
+· 判据（全回读）：特征树 +1（展开1 / 折叠1）· 平展型式个数 · **逐条回读 mark = [1, 4]**
+· mark 表逐字取自官方示例 Insert_and_Access_Fold_Feature_Example_VB.md（不是猜的）
+
+二、hem：如实记负结论（stitched）
+· 成员名 / 16 参顺序 / 五个枚举值**逐条核对官方无误**；四步前置照做（并已按 Remarks 订正顺序）
+· **五种形态全部回 None**：边选择（index:0 / 最长边）× 长度口径（0.01 / 10.0）×
+  卸料槽（自定义/默认）× 板厚（0.002 箔片 / 2.0 真厚度）
+· 按事实 53 当场停止（不再凑形态）；工具挂出但 require_verified 调用前抛带原因的错误
+· ★ 裁决书要的 L2/L3 静态断言已做：swHemTypes_e 五成员一个不漏（钉死别家的 Open/Closed 互换
+  与漏 Double=4）+ 幻觉名 InsertHemFeature2 不许进代码
+
+三、顺手拿到 4 条新事实（spec.md §五 第 7–11 条）
+· IEdge **没有**长度成员（凭印象写成员名 ⇒ 12 条边读数全 None；改用两个顶点自己算）
+· SetSelectedObjectMark 第 3 参必须是 swSelectionMarkSet(0) —— 传 -1 **静默不生效**（返回 false 不报错）
+· 钣金 FeatureData 的长度是**文档单位（mm）不是米**：传 0.002 造出 0.002 mm 的箔片
+  ⇒ BaseFlangeSpec 的「单位为米」是错的（本轮**只更正文档、未改行为**）
+· ICustomBendAllowance.Type 必须**最后设**（Remarks 逐字）；官方示例顺序相反、靠 KFactor 巧合成立
+· unfold 的 mark 4 **不是必需的**（只给固定面 mark 1 也建成）⇒ 我把示例当"必需"读过
+
+四、我自己的 4 处错（spec.md §六 第 6–9 条，全部当场修）
+· mark action 传 -1（静默）⇒ 我据此写下了"unfold 建不出来"的**错误结论**
+· create_hem 前置顺序反了（Remarks 的步序也是签名的一部分）
+· create_fold 的前置特征选早了 ⇒ 被 ClearSelection2 清掉
+· 探针读 IEdge.GetLength（该成员不存在）
+
+门禁
+· check_specs(all_specs()) = 442 个工具 · 0 问题；契约测试 tests/test_tool_specs_batch93.py 12 passed
+· capabilities.yaml 120 条（101 行纯插入 / 0 删除）
+· 收尾链 13.0 s 跑完（★ 链尾自动关了本会话拉起的 SolidWorks）
+· ⚠ 仍有一处**既有**红（非本次改动）：tools/verify_union_349.py:112 的变换未自证

@@ -1,0 +1,60 @@
+| 360 | ★★★ **结构系统那条链走到哪一步、卡在哪一个接口**（★ 真机 `output/structure-system-evidence.json`）—— ★ **前 4 步都成**（★ 含型材尺寸名 `ROUND BAR 23` 设进去了）；★ 卡点是 **`SetPathSegments` 不在我们手里的接口上** ⇒ ★ 要 **QueryInterface**（2026-10-03，轮 445）。
+
+## 一、★★★★★ 真机：★ **前 4 步都成**（★ 而那已是一条**从未有过的进展**）
+```
+   \| 步骤 \| 真机结果 \|
+   |---|---|
+   | ① 按名字选 2 条线段（`EXTSKETCHSEGMENT`） | ★ `select_stats = [True, True]` · 清选区后 `selected_count = **2**` ✓ |
+   | ② `ext.CreateStructureSystemMemberData(0)` | ★ 回的对象 **非 None** ✓ |
+   | ③ `mem.MemberProfile` | ★ 回的对象 **非 None** ✓ |
+   | ④ 设 `ProfileStandard="GB"` · `ProfileType="round-rods"` · `ProfileSize=…` | ★★ **`size_used = "ROUND BAR 23"` · `size_errors = []`** ✓✓✓ |
+   | ⑤ `GetSelectedObject6(i, 0)` 装 `segments` | ★ `segments_got = 2` ✓（★ 靠**事实 359**） |
+   | ⑥ `SetPathSegments(segments)` | ✗ ★ **`TypeError: 'bool' object is not callable`** ⚠ |
+   | ⑦ `CreateStructureSystem([mem], …)` | ✗ ★ **`TypeError: 'NoneType' object is not callable`** ⚠ |
+   ★★ 而**判据**（★ 规则 6）：★ 特征树 `19 → 19` · `new_features = []` ⇒ ★ **没建成**（★ 如实）✓
+```
+
+## 二、★★★★★ 卡点**精确到一个接口**（★ 而那与**事实 36** 同族）
+```
+★ 两个 `TypeError` **形态相同**（★ "取它时它已经是个值"）⇒ ★★ 即：★ **那个成员在错误的接口上不存在**，
+   ★ 迟到绑定拿到了别的东西 ⇒ ★ 报"not callable"（★ 与**事实 227**那条"误用 helper 的表现是类型错误"同一个形态）✓
+★ 而**查清了它在哪**（★ CHM 正文树，★ 扫了 **29,697** 个文件、文件名含 `SetPathSegments` 的 **3** 个）：
+   ```
+   SldWorks~**IPrimaryMemberPathSegmentFeatureData**~SetPathSegments.html   ← ★★ **在这里**
+   SldWorks~PrimaryMemberPathSegmentFeatureData~SetPathSegments.html
+   SldWorks~StructuralMemberFeatureData~ISetPathSegments.html
+   ```
+   ★★ 而★ **`IStructureSystemMemberFeatureData` 的成员名单**（★ 10 个）里**没有它**：
+     ```
+     AccessSelections · GetBody · GetFeature · GetSplitMember · IsSplit · **MemberProfile**
+     ReleaseSelectionAccess · StartEndExtendD1 · StartEndExtendD2 · StructureSystemMemberType
+     ```
+     ⇒ ★★★ **即：★ 它**一个**都**不返回 `IPrimaryMemberPathSegmentFeatureData`**** ⚠
+★★★ **而官方示例那句 `Set PrimDef = structMemDef` 靠的是 VBA 的**多接口自动转换**** ——
+   ★★ 而在 **pywin32** 里 ⇒ ★ **必须自己 `QueryInterface`** ✓
+```
+
+## 三、★★★★★ 而`QueryInterface` 这条路**可做**（★ 已核准）
+```
+★ `pythoncom` **可用** · 出厂类型库 `SolidWorks.Interop.sldworks.dll` **在**（2,831,960 字节）✓
+★ 而★ 本仓**已有** `_oleobj_` 的用法（★ `sw_connect.py:898/911` · `sw_delivery.py:681/714`）——
+   ★★ 而它们用的是 **`DumbDispatch`**（★ 那是给 `TypeError` 的兜底），★ **不是 QI** ⚠
+★★ **故正解是一条新地基**：★ **从出厂类型库取接口的 IID、再 `QueryInterface`** ——
+   ★ 路线：★ `pythoncom.LoadTypeLib(dll)` ⇒ 逐个 `ITypeInfo` ⇒ `GetTypeAttr().iid` ⇒ 缓存 `名字 → IID` ✓
+   ★★ 而★ 那**正是铁律 4 的用法**（★ **签名/IID 以出厂类型库为准**）✓
+```
+
+## 四、★ 本轮顺带踩的两个坑（★ 都是**已记过**的，★ 而我重踩了一遍）
+```
+★ ① ★ **给 COM 属性赋值不能用 `get_com_member`** —— ★ 它"取或调"，★ 于是去**调用**那个值 ⇒
+   ★★ 真机报 `'str' object is not callable`（★ 看起来像"值传错了"，★ 真因是**函数选错了**）
+   ⇒ ★ **正解 `set_com_member`** —— ★★ **而这正是事实 227 的定则**（★ 轮 294 就记下了）⚠
+   ⇒ ★★★ **教训**：★ 我**没有先查事实 227** —— ★ 而它就在库里、★ 名字还很显眼 ✓
+★ ② ★ **`IFeatureManager.GetFeatureCount` **要一个参数**（`TopLevelOnly`）** ——
+   ★ 不传报 `com_error(非选择性的参数)`（★ 而那正是**事实 33**那个形态）✓
+```
+
+**依据**：`output/structure-system-evidence.json`（★ 真机 · `size_used=ROUND BAR 23` · 树 `19→19`）·
+`tools/prove_structure_system.py` · CHM `SldWorks~IPrimaryMemberPathSegmentFeatureData~SetPathSegments.html` 与
+`IStructureSystemMemberFeatureData_members.html`（★ 10 个成员）· 事实 36 / 47 / 227 / 33 / 358 / 359 ·
+`scripts/sw_connect.py`（★ `get_com_member` 的"取或调"语义）· 铁律 4

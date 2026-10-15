@@ -86,51 +86,16 @@ SPECS_BATCH91 = [
             "★ 因为 `hung=True` 的窗口**消息永远不被取出**，只有真输入事件有效 ✓ "
             "★ 官方依据：**本仓自研**（`scripts/sw_gui_modal.py`）⇒ 真源是源码 ✓",
     ),
-    # ── ② 倒角几何（3）—— ★★ **纯计算**：只吃标量、返回 float/dict ⇒ 最好挂的一类 ────────
-    ToolSpec(
-        name="solidworks_chamfer_straight_edge_volume",
-        title="Volume Removed by a 45° Equal-Distance Chamfer on a Straight Edge",
-        module="sw_chamfer_geometry", function="straight_chamfer_volume_mm3",
-        inject="",
-        params=[
-            Param("length_mm", float, description="直边长度（毫米）。"),
-            Param("width_mm", float, description="倒角宽度（毫米）。"),
-        ],
-        doc="算**直边** 45° 等距倒角**切掉的体积**（mm³）—— ★ **纯数学**、不碰 COM ✓ "
-            "★ 用途：★ 把「倒角到底切掉多少」变成**可判的判据**（★ 与质量属性对得上才算建成）✓ "
-            "★ 官方依据：**本仓自研的几何公式**（`scripts/sw_chamfer_geometry.py`）"
-            "⇒ 真源是源码；★ **不编官方签名**（铁律 5）✓",
-    ),
-    ToolSpec(
-        name="solidworks_chamfer_circular_rim_volume",
-        title="Volume Removed by a 45° Equal-Distance Chamfer on a Circular Rim",
-        module="sw_chamfer_geometry", function="circular_rim_chamfer_volume_mm3",
-        inject="",
-        params=[
-            Param("radius_mm", float, description="圆孔半径（毫米）。"),
-            Param("width_mm", float, description="倒角宽度（毫米）。"),
-        ],
-        doc="算**圆孔缘** 45° 等距倒角**切掉的体积**（mm³）—— ★ 纯数学 ✓ "
-            "★ 官方依据：**本仓自研的几何公式**（`scripts/sw_chamfer_geometry.py`）⇒ 真源是源码 ✓",
-    ),
-    ToolSpec(
-        name="solidworks_chamfer_volume_report",
-        title="Judge a Chamfer by Comparing Measured Volume Against the Expected Cut",
-        module="sw_chamfer_geometry", function="chamfer_volume_report",
-        inject="",
-        params=[
-            Param("kind", str, description="倒角种类（★ 与几何公式对应，如直边 / 圆缘）。"),
-            Param("volume_before_mm3", float, description="倒角**前**的体积（mm³）。"),
-            Param("volume_after_mm3", float, description="倒角**后**的体积（mm³）。"),
-            Param("expected_removed_mm3", float,
-                  description="**公式算出的应切体积**（mm³）—— ★ 用 "
-                              "`solidworks_chamfer_straight_edge_volume` 或 "
-                              "`solidworks_chamfer_circular_rim_volume` 先算出来 ✓"),
-        ],
-        doc="★ 把「**倒角断言**」做成一条**可判的判据**：把实测的前后体积差与"
-            "**公式算出的应切体积**对比 ⇒ ★ 不靠肉眼说「看着像倒角了」 ✓ "
-            "★ 官方依据：**本仓自研**（`scripts/sw_chamfer_geometry.py`）⇒ 真源是源码 ✓",
-    ),
+    #: ★★★ 2026-10-10 **倒角几何三个工具已移除**（★ 业主架构指令）：
+    #:   ★ 业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+    #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**」✓
+    #:   ★★ **判据**：★ 「**那个数字错了，回读能不能查出来**」——
+    #:     ★ 它们是**倒角切除体积公式**（★ `V = …` 几何闭式解）⇒
+    #:     ★★ **公式错了，回读几何查不出来**（★ 倒角看起来照样"倒上了"）⇒ ★ **是方法** ✗
+    #:   ★ 已移出：★ `scripts/sw_chamfer_geometry.py` → `archive/inherited-methods/scripts/` ✓
+    #:   ★★ 移出的三个工具：★ `solidworks_chamfer_straight_edge_volume` ·
+    #:     `solidworks_chamfer_circular_rim_volume` · `solidworks_chamfer_volume_report`
+    #:   ⚠ **本批其余都是工具**（★ GUI 护栏 / 焦点 / 曲面运行期查询）⇒ ★ **全部保留** ✓
     # ── ③ 焦点（3）—— ★ 与既有 `solidworks_gui_get_foreground_window` 同族的不同面 ─────────
     ToolSpec(
         name="solidworks_gui_focus_state",

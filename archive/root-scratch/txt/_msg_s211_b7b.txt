@@ -1,0 +1,53 @@
+规格 211 · B7「PDM」：★★★★★ **待实测 → 不做** —— ★★ **21 项至此**全部有结论****
+
+一、★★★★ **本项的三层证据（★ 逐层都有硬读数 ✓）**
+| 层 | 读数 | 来源 |
+|---|---|---|
+| ★ ① **接口面** | ★★ **`ISldWorks` 下**没有** PDM 入口** ✗ —— 入口在 **`IApplication::PDMDocManager`**（★ 而★ **`IApplication` 不是 `ISldWorks`** ✗）| ★ 全扫 `C:\swapi\types` ✓ |
+| ★★ ② **成员面** | ★★ **`IPDMDocManager` 只有 3 个成员**（`SetCancelOperation` · `SetDocumentStatus` · `SetManagedDocument`）⇒ ★ **全是"设置状态"**、★ **没有检入/检出/取版本这类用户理解的 PDM 功能** ✗ | ★ 官方接口页 ✓ |
+| ★★★ ③ **产品性质** | ★★ **独立许可产品**（★ 与 Simulation / Routers 同类 ✓）| ★ 本仓既有两条知识 ✓ |
+
+★ **第 ③ 层的两条既有知识**（★ 本批直接引用、★ 不另造）：
+· ★ `scripts/sw_automation_knowledge.py`：「★ 这是**官方文档不会给**的：★ 它只在「**你调 PDM 而没买许可**」时出现」✓
+· ★★ `scripts/sw_com_traps.py`：★「`0x80040112`: **COM 类未授权 —— 通常是该产品没许可**（**PDM** / Simulation / Routers）」✓
+
+二、★★★★ **真机读数**
+```
+★ sw.PDMDocManager             ⇒ AttributeError: SldWorks.Application.PDMDocManager      ✗
+★ sw.GetPDMDocManager()        ⇒ AttributeError: SldWorks.Application.GetPDMDocManager   ✗
+★ sw.Application.PDMDocManager ⇒ AttributeError: SldWorks.Application.Application       ✗
+```
+⇒ ★★★ **三种取法全部 `AttributeError`** ✓
+
+三、★★★★★ **而★ 这两件事**必须分开记****（★ 本批最要紧的一处分寸 ✓）
+★★ **`AttributeError`（成员不存在）** ✗ ≠ ★★ **`0x80040112`（COM 类未授权 / 没许可）** ✗
+· ★ 本次拿到的是**前者** ✓ ⇒ ★★ **即"从 `ISldWorks` 出发，那些成员根本不在这个接口上"** ✓
+· ★★ **而不是**"本机装了 PDM 但没授权" ✗ —— ★ **那个结论本批**没有**证据** ✓
+⇒ ★★★ **所以 `limitations` 里明写**：★「★ **本机没装 PDM 这件事没有直接证据**（★ 没查注册表、没查安装目录）
+  —— ★ 因为**硬约束明禁动系统层** ✓；★ 判据来自『从 `ISldWorks` 出发拿不到』+『本仓既有的许可错误知识』」✓
+  ★★ **那正是"分寸"**：★ **不把"拿不到"说成"没许可"**，★ **也不把"没许可"当已知** ✓
+
+四、★★★★ **另有一处如实记**（★ 覆盖表的第四格）
+★ 覆盖表那行「其他 / PDM | ❌ | · | · | **✅** | ·」⇒ ★ **四家里只有 `vespo92/SolidworksMCP-TS` 声明做了** ✓
+★ 而★ **本批没有去读它的实现来判断其真伪** ✗ ⇒ ★ 已写进 `limitations` ✓（★ 不猜 ✓）
+
+五、★ 登记
+· ★ `capabilities.yaml`：★ 新增 **`pdm`** ⇒ ★★ **共 139 条** · ★ `level = **`not_implemented`** ✓
+  ★（★ `not_implemented` 计数 **2 → 3** ✓）
+· ★ `tools/spec211_manual_verdicts.py`：★ PDM **待实测 → 不做** ✓
+
+六、★★★★★★ **21 项至此**全部有结论**** ✓✓
+| 终判 | 数 | 说明 |
+|---|---|---|
+| ★★ **可做** | ★ **10** | ★★ **已做 10**（★ `verified` **6** · ★ `stitched` **4**）—— ★ **可做项全部做完** ✓ |
+| ★ **不做** | ★ **10** | ★ 剪裁曲面 · 边界凸台 · Instant3D · 序列/说明书 · 装配体性能分析 · 边界曲面 · 平板型式/导出 DXF · 曲线驱动阵列 · 零部件阵列 · **PDM** ✓ |
+| ★ **已覆盖** | ★ **1** | ★ 展开/折叠 ✓ |
+| ★★ **待实测** | ★ **0** | ★★ **没有了** ✓✓ |
+⇒ ★★★★ **规格 211 的完成判据**（★「21 项每一项都有结论」）**已达成** ✓✓
+  ★ **每一档都带依据**：★ `verified` 带真机证据 · ★ `stitched` 带真机读数与未建成的原因 ·
+  ★ **`不做` 带理由 + 证据**（★ 事实 419 · 事实 47 · 官方无入口 · 硬约束/许可 ✓）
+
+七、★ 下一轮（★ 规格收口的最后一程）
+★ **B8 文档部分**：★ ① 重生成覆盖表与终表 ✓ · ★ ② 更新 `specs/211-user-feature-gaps/tasks.md` 与
+  `goal-bar.md` ✓ · ★ ③ 更新 `docs/HANDOFF.md` ✓ · ★ ④ 跑一次收尾链 ✓
+⇒ ★ **然后规格 211 可以标记完成** ✓

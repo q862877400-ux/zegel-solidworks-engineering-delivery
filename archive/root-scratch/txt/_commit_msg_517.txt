@@ -1,0 +1,32 @@
+feat(B6/T605+T609): **平面区域**与**替换面**真机建成 —— 两条「旧式方法」能力的选法由真机定下
+
+★ 承上一轮（事实 398 里留的两条下一步）：
+  · T605 平面区域 ⇒ ★ 改用**草图边界**（★ 上轮用的是曲面体的边）
+  · T609 替换面 ⇒ ★ 把两个 mark 的**分工调过来**试
+  ★★ **本轮两条都成了** ✓
+
+★ 真机（`tools/probe_planar_replace_variants.py`，走 `sw_guard`、`sw_alive: true`、零弹窗）：
+  | 能力 | 变体 | 结果 |
+  |---|---|---|
+  | **T605 平面区域** | ★ **选草图**（mark=1 · 回读 `sel_count = 1`） | ★ **返回值 `True` · 建成 `曲面-基准面1`** ✓ |
+  | T609 替换面 | 实体面=1 · 曲面面=2（★ 上轮那组） | **0 增量** ⚠ |
+  | **T609 替换面** | ★ **实体面=2 · 曲面面=1** | ★ **建成 `替换面1`** ✓ |
+
+★★★ **两条「官方 Remarks 的歧义」都由真机定下**（★ 三源互证做不到的，只有真机能定）：
+  ① `InsertPlanarRefSurface` 说「select the surface's **boundary entities** with Marks of 1」
+     —— ★★ **两种读法都通**（曲面体的边 / 草图）⇒ ★ 真机：**是草图**（★ 边上 0 增量、返回值 `False`）
+  ② `InsertFeatureReplaceFace` 说「select the faces to **replace** … with Marks of 1 and select
+     the re[placement face]」—— ★★ **那句在 md 里被截断了** ⇒ ★ 真机：
+     **曲面面 = mark 1（要替换掉的）· 实体面 = mark 2（替换成它）**
+     ★ 而这**与官方那句一致** —— ★ 我轮 516 的**推断把方向搞反了** ⚠
+
+★ 落地：
+  · `insert_planar_ref_surface_report` **重写**：改成**按名字选草图**（★ 特征可按名字选，
+    事实 32 的「没有名字」只对**实体**成立）· 收 `sketch_name`（留空用最后一个）·
+    ★ 并在**没选中草图**时给出**带原因的显式拒绝**（★ 不是静默失败）
+  · `_select_two_faces_for_replace` **修正分工**（曲面体(1)⇒mark 1 · 实体(0)⇒mark 2）
+  · `capabilities.yaml` 新增 **`surface_planar_region`** 与 **`replace_face`**，★ 两者 level = **`verified`**
+  · docstring 里把**两条真机结论**与**未查项**都写清
+
+★ `git diff --numstat` = **added=66 · deleted=14**（★ 那 14 处删除是**重写 docstring 与选法**，
+  ★ 不是误删）；语法门禁 0 处。

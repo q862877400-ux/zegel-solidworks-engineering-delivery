@@ -1,0 +1,55 @@
+规格 211 · B2-2：★★ 查了「扫描曲面」那条**从没查过的路 B** —— ★ 并**精确限定**它到哪一步
+
+一、★★★ 本批的**立足点**（★ 为什么不直接说"扫描曲面做不了"）
+· ★ 官方有**两条**建曲面扫描的入口：
+  · ★ **路 A** = `CreateDefinition(swFmSweepSurface)` + `CreateFeature` ⇒
+    ★★ **事实 392**：★「**`CreateFeature` 在这条后端上静默回 `None`**」✗ ⇒ **已试死** ✓
+  · ★ **路 B** = `InsertSweepSurface2`（★ **参数式 + 官方 mark 表**）⇒ ★★ **从来没试过** ✓
+    （★ 依据**事实 237**逐字：「'不做曲面族'那条结论只覆盖了**半条路** —— 官方有**两条**建曲面的
+     入口，**而第二条从来没试过**」✓）
+· ★★ 故本批**只查路 B**，★ **不重复路 A、也不宣称路 A 可行** ✓ —— ★ 这条**写进了能力返回值**
+  （`route` 字段）★ 且**测试断言它必须在** ✓
+
+二、★ 官方页三样（★ 逐字）
+· ★ 签名：★ **11 参、纯参数式、★ 不要求 `AccessSelections`** ✓
+· ★★★ `## Remarks` **给了完整「调用序」**：
+  「Use `IModelDocExtension::SelectByID2` to select the profile and sweep curves.
+   The mark for: **1 = Profile selection** · **2 = Guide curve selection, if provided** ·
+   **4 = Sweep path**」✓
+· ★ `PathAlign` 只在 `TwistCtrlFollowPath` 时可用（0/2/3）· `TwistAngle` 只在
+  `ConstantTwistAlongPath` 时有意义 · ★★ `UseAutoSelect=false` 时「the user **must select the bodies**」✓
+
+三、★★★★ **真机读数（★ 关键，★ 而它必须被精确限定）**
+```
+空零件、无选择（selection_count_before = 0）⇒ 直接调
+⇒ returned_is_none = True · 特征树 5→5 · 新增 []
+```
+· ★★★ **行为 = 静默回 `None`**（★ 与事实 392 **形态相同** ✓）
+· ★★★★ **但成因未必相同** ✗ —— ★ 官方 `## Remarks` 明写**必须先按 mark 选**
+  （1=Profile · 4=Sweep path）⇒ ★★ **"静默"很可能只是因为"前置没上"** ✗
+· ★★★ **故本条的定性是：★「查了行为」，★ 还**没到「试死」那一步**」** ✓
+  ★★ **必须与事实 392 分开**：★ 392 的静默是「**前置全对上仍静默**」⇒ **那才是试死** ✓
+  ★ 而本次是「**前置没上**」⇒ ★ **按事实 53 的精神，不许推广** ✗ ✓
+
+四、★★ **下一步的判据已经想好**（★ 留给下一批）
+★ 建「**轮廓草图 + 路径草图**」、★ **按 mark 选好**（1 / 4）再调 ⇒
+· ★ 若**仍静默回 `None`** ⇒ ★★ **那才是真正的试死** ✓（★ 那时才可与事实 392 并列 ✓）
+· ★ 若**建成** ⇒ ★★ **大发现** ✓（★ 那条路走得通 ✓）
+
+五、★ 交付物
+· `scripts/sw_surface_features.py`：★ +`sweep_surface_report` + `SWEEP_MARKS` ✓
+· `tools/probe_spec211_sweep.py` · `output/spec211-b2-sweep.json` ✓
+· `tests/test_spec211_sweep.py`（★ **7 passed**）✓
+· `capabilities.yaml`：★ +`sweep_surface` ⇒ **130 条** · ★ **`stitched` 16 → 17** ✓
+  ★★ 取 **`stitched`**（★ **不是 `verified`**）—— ★ **因为只到"查了行为"** ✓
+· `docs/metrics.md` 已重生成 ✓
+
+六、★ 一处**设计上的克制**（★ 值得记）
+· ★ 我本想做一个「**按选择器 + mark 选草图**」的 helper ⇒ ★★ **而本文件没有它** ✗
+  ⇒ ★★ **本批不发明它**（★ 铁律 1 + 只读优先 ✓）⇒ ★ 改为：★ **本包装是薄包装**
+  （★ 不替调用方做选择）+ ★ **把官方 mark 表放进返回值** + ★ **记调用前的选择计数** ✓
+· ★★ 于是"**选不上**"与"**选了没用**"在返回值里**可分辨** ✓
+
+七、★ 下一轮
+· ★ **B2-2 的下一步**：★ 建轮廓/路径草图 + 按 mark 选 ⇒ ★ **把"试死"与"大发现"分开** ✓
+· ★ 然后 **B5/B3**（★ 曲线驱动阵列 / 焊件 4 项）✓

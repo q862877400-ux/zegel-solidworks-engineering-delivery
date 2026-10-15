@@ -1,0 +1,46 @@
+feat(knowledge): 新增 sw_automation_knowledge.py —— 自动化通用可复用知识
+
+用户要求：把「我们自己做的东西」里**通用可复用的**那部分拿出来融进来，
+比如错误码是什么意思、弹窗怎么去点。
+
+## 扫了 6 类可复用条目
+  错误码/HResult 21 文件 · 弹窗对话框 155 文件 · 选区 222 文件
+  by-ref/变体 555 文件 · 许可/连接 106 文件 · 诊断/状态回读 101 文件
+
+## 落成模块的 4 块
+1. **错误码释义** HRESULTS 10 条
+   重点 `0x80040112` = COM 类未授权 —— codestack 明确记为
+   `Class is not licensed for use`，出现在调 PDM 而没买许可时。
+   **官方文档不会给**，报错是英文。
+2. **不让弹窗打断** `enter_command_lock` / `exit_command_lock`
+   核心是 `ISldWorks.CommandInProgress`（反射确认 get_=0 参 / set_=1 参）：
+   置 True 后会触发对话框的操作**被拦下、命令直接失败返回**，
+   而不是弹窗等人点。⚠ 必须 try/finally 成对开关，
+   忘了关回来 SolidWorks 会一直拒收一切操作。
+3. **通知三件套** `DefineUserNotification` / `ShowUserNotification` /
+   `CloseUserNotification`（第 3 个才是「关掉」）
+4. **首选项开关** `set_flag` / `get_flag` + 少问一句的开关表
+
+⚑ 顺带说明：仓库里 155 处「弹窗」命中**大部分是 `SendMsgToUser2`，
+那是自己弹提示框**（codestack 用来在宏出错时显示 `Err.Description`），
+**不是关掉 SolidWorks 的弹窗**。关弹窗走 `CommandInProgress`。
+
+## ⚑⚑ 又栽一次凭印象写 API（第 10 次）
+初稿写了 `GetErrorNotification` / `SetErrorNotification` 来「关错误通知」——
+**这两个成员在全部 18 个程序集里零命中**，是我照印象编的。
+真实的是 `DefineUserNotification` / `ShowUserNotification` / `CloseUserNotification`。
+已改正并在注释里写明这次更正。
+
+（另：我的校验脚本一度误报 `CommandInProgress` 不存在——因为它只匹配无前缀形式，
+ 反射里属性形态是 `get_`/`set_` 前缀。**误报和漏报都要查**，不能只查自己怀疑的那个。）
+
+## 纪律
+本模块**不含任何 API 成员别名** —— 成员一律按官方名查 `sw_api_*` 索引，
+本模块只提供「知识」：错误码含义、开关怎么用、状态怎么回读。
+9 个成员 + 1 个枚举**逐个回反射核实存在**。
+
+## 验证
+- 成员名门禁 PASS · 来源门禁 240 块 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 721 passed / 2 failed（2 个为上游既有）
+- A6 0 命中

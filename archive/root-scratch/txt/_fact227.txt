@@ -1,0 +1,40 @@
+| 227 | **"取或调"的 helper 不能用来**设值** —— 它会去**调用**那个值**（2026-10-01，轮 294）。
+
+## 一、★ 本轮查清的三条（都是真机事实）
+```
+① ★★ **`ScaleRatio` 回的是**比例的两个数****：★ 真机 **`(1.0, 500.0)`** ⇒ **即 1:500**；
+   ★ 而 `ScaleDecimal` 回 **`0.002`**（★ = 1/500）⇒ ★★★ **官方那句 "contain the same information,
+   but use the value in a different way" 正是此意** ⇒ ★ **所以 `get_view_scale` 回 0.002 是对的** ✓
+② ★★★ **"写"曾失败的原因**：`get_com_member(v, "ScaleRatio", (2.0, 1.0))` ⇒
+   `TypeError: 'tuple' object is not callable` —— ★★ **因为 `get_com_member(obj, name, *args)`
+   的语义是「取或调」：有实参就**一定调用****（★ 于是它在"调用"一个 tuple）。
+   ⇒ ★ **正解：`set_com_member(obj, name, value)`** —— ★ 它的 docstring 写着「设置 COM 成员的
+     **唯一被真机验证通过的形态**：**属性赋值**」。
+③ ★★★★ **而改用赋值之后，真机结果仍是"写不进"**：
+   `set_view_scale_verified(v, 2.0)` ⇒ `{"ok": false, "before": [1.0, 500.0], "after": [1.0, 500.0],
+   "use_sheet_scale_before": true, "use_sheet_scale_cleared": true}`
+   ★ **即：先关掉「跟随图纸」（`UseSheetScale` 真机回 `True`，★ 而关它**成功了**）· 再赋
+   `ScaleRatio = (2.0, 1.0)` **不报错** · ★ **而回读**没变****
+   ⇒ ★★ **所以 `ScaleRatio` 在本机是**读得到、写不进****（★ 一个具体的、可复现的事实）
+   ⇒ ★★★ **而能力层**如实报 `ok: false`** —— ★ 因为它的判据是「**回读真的变了**」（★ **规则 6 的精神**）✓
+```
+
+## 二、★ 定则
+```
+★★★ **"取或调"的 helper 不能用来设值** —— ★ 本项目有两个**名字很像**的 helper：
+   ★ `get_com_member(obj, name, *args)` ⟹ **取或调**（★ 有实参就**一定调用**）；
+   ★ `set_com_member(obj, name, value)` ⟹ **属性赋值**（★ docstring 写着"唯一被真机验证通过的形态"）。
+   ⇒ ★★ **而误用的表现是一个**类型错误**（`'tuple' object is not callable`）——
+     ★ **它看起来像"值传错了"，★ 而真因是"函数选错了"**（★ 与事实 205 的"报错误导"同族）。
+   ⇒ ★★★ **可操作判据**：★ 要**设**一个 COM 成员时，**函数名里必须有 `set`** ——
+     ★ 而 `get_*` 带实参**永远**是"调用"。
+★★ **"读得到、写不进"是一种要单独记的结论** —— ★ 它不等于"成员不存在"（★ 读得回来）、
+   也不等于"权限不足"（★ 赋值不报错）⇒ ★ **它就是"赋值被忽略"**。
+   ⇒ ★★ **而它的暴露完全靠"回读判据"**（★ 若只看"没报错"就会误判成功）——
+     ★ 那正是规则 6（建/改之后回读）**存在的理由**，★ 本处是它的又一个实证。
+```
+
+**依据**：`output/scale-ratio-probe.json`（★ `(1.0, 500.0)` · `ScaleDecimal 0.002` · `UseSheetScale True` ·
+`'tuple' object is not callable`）· `output/set-view-scale-probe.json`（★ 赋值后回读不变）·
+`scripts/sw_connect.py` 的 `get_com_member` / `set_com_member` docstring（★ "取或调" vs "唯一被验证通过的形态"）·
+`scripts/sw_drawing_view.py` 的 `set_view_scale_verified` / `set_view_scale_report` · 事实 36 / 205 / 226

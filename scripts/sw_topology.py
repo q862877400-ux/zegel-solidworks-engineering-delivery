@@ -82,6 +82,14 @@ from __future__ import annotations
 
 from typing import Any
 
+#: ★ 长度换算助手：`_mm(v)` = **毫米→米**（恰好一次）。
+#:   依据：本仓定案 `output/probe-unit-decisive/decisive.json`。
+try:
+    from sw_connect import mm as _mm          # noqa: F401
+except Exception:                             # noqa: BLE001
+    _mm = lambda v: float(v) / 1000.0         # noqa: E731
+
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（新能力实现，非第三方移植）+ SolidWorks 官方 API 签名
 # 文件:   scripts/sw_topology.py —— 本文件自身
@@ -131,6 +139,7 @@ except ImportError:
 #   其余三条在各自枚举块内（见下方每条的定位注）。
 # ⚠ 本模块为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
+#: enum-gate: enum swsAnalysisStudyType_e
 SWS_ANALYSIS_STUDY_TYPES: dict[str, int] = {
     "static": 0,
     # ⚑ 拓扑优化研究类型。反射：swsAnalysisStudyTypeTopology_Static = 13
@@ -141,6 +150,7 @@ SWS_ANALYSIS_STUDY_TYPES: dict[str, int] = {
 #: ``ICWTopologyStudyManager.CreateGoal(Int32)`` 的目标类型
 #: 反射：swsTopologyGoalType_e —— MaximizeStiffness=0 / MinimizeMaximumDisplacement=1 / MinimizeMass=2
 #: 官方教程「Best Stiffness to Weight ratio (default)」对应 MaximizeStiffness。
+#: enum-gate: enum swsTopologyStudyGoalType_e
 SWS_TOPOLOGY_GOAL_TYPES: dict[str, int] = {
     "maximize_stiffness": 0,
     "minimize_maximum_displacement": 1,
@@ -150,6 +160,7 @@ SWS_TOPOLOGY_GOAL_TYPES: dict[str, int] = {
 #: ``ICWTopologyMassConstraint.SetMassPreference(Int32)`` 的取值
 #: 反射：swsTopologyMassConstraintOption_e —— AbsoluteValue=0 / Percentage=1
 #: 官方教程的「Reduce mass by (percentage) = 75」对应 Percentage + SetValue(75.0)。
+#: enum-gate: enum swsTopologyStudyMassConstraintOption_e
 SWS_TOPOLOGY_MASS_PREFERENCES: dict[str, int] = {
     "absolute_value": 0,
     "percentage": 1,
@@ -161,6 +172,7 @@ SWS_TOPOLOGY_MASS_PREFERENCES: dict[str, int] = {
 #: ⚑ 官方 CHM 原话："During optimization, the software always preserves the faces
 #:   to which you apply fixtures and loads." ⇒ 夹具与载荷所在面**自动保留**，
 #:   ``LoadsAndFixtures`` 是与之对齐的默认语义；``Preserved Region`` 是**额外**的保留区。
+#: enum-gate: enum swsTopologyPreservedRegionOption_e
 SWS_TOPOLOGY_PRESERVED_REGION_OPTIONS: dict[str, int] = {
     "loads_only": 0,
     "fixtures_only": 1,
@@ -170,6 +182,7 @@ SWS_TOPOLOGY_PRESERVED_REGION_OPTIONS: dict[str, int] = {
 
 #: ``ICWTopologyStudyOptions.SetIterationOption(Int32)``
 #: 反射：swsTopologyIterationOption_e —— Auto=0 / UserDef=1
+#: enum-gate: enum swsTopologyIterationOption_e
 SWS_TOPOLOGY_ITERATION_OPTIONS: dict[str, int] = {
     "auto": 0,
     "user_defined": 1,
@@ -177,6 +190,7 @@ SWS_TOPOLOGY_ITERATION_OPTIONS: dict[str, int] = {
 
 #: ``ICWTopologyDemoldControl.SelectDemoldDirection(Int32)``
 #: 反射：swsTopologyDemoldDirectionOption_e
+#: enum-gate: enum swsTopologyDemoldDirectionOption_e
 SWS_TOPOLOGY_DEMOLD_DIRECTIONS: dict[str, int] = {
     "two_direction_mid_plane": 0,
     "pull_direction_only": 1,
@@ -185,6 +199,7 @@ SWS_TOPOLOGY_DEMOLD_DIRECTIONS: dict[str, int] = {
 
 #: ``ICWTopology*Control`` 的启用开关（多个 Control 的 ``SetInclude*`` 用同一对值）
 #: 反射：swsTopologyActivationOption_e —— Deactivate=0 / Activate=1
+#: enum-gate: enum swsTopologyActivationOption_e
 SWS_TOPOLOGY_ACTIVATION: dict[str, int] = {
     "deactivate": 0,
     "activate": 1,
@@ -677,10 +692,10 @@ def create_thickness_control(
     def _configure():
         if min_thickness is not None:
             get_com_member(control, "SetIncludeMinMemberThickness2", True)
-            get_com_member(control, "SetMinimumMemberThickness", float(min_thickness))
+            get_com_member(control, "SetMinimumMemberThickness", _mm(min_thickness))
         if max_thickness is not None:
             get_com_member(control, "SetIncludeMaxMemberThickness2", True)
-            get_com_member(control, "SetMaxMemberThickness", float(max_thickness))
+            get_com_member(control, "SetMaxMemberThickness", _mm(max_thickness))
         return control
 
     return _edit(control, _configure)
@@ -805,7 +820,7 @@ def run_topology_study(study, *, units: int = 0, element_size: float = 0.0,
     if code not in (None, 0):
         # 回退：先 CreateMesh(NUnits, DElementSize, DTolerance) 再 RunAnalysis()
         get_com_member(study, "CreateMesh", int(units),
-                       float(element_size), float(tolerance))
+                       _mm(element_size), _mm(tolerance))
         code = call_com_member(study, "RunAnalysis")
     #: ★★★★ **承诺的那一步**：★ 用**结果**判成功（★ 而不是返回码）✓
     results = None

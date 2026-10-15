@@ -106,6 +106,7 @@ def explain_hresult(code: int) -> str:
 
 #: 弹窗与通知相关的官方成员清单（名字 + 实参个数，反射逐条确认）
 #: ⚠ 只列**反射里确实存在**的；用前请对回 sw_api_sldworks.ARITY。
+#: enum-gate: not-enum arity
 DIALOG_AND_NOTIFY: dict[str, int] = {
     "CommandInProgress": 1,          # 反射整行两种形态：get_=0 参 / set_=1 参
     "FrameState": 1,                 # 同上：get_=0 / set_=1
@@ -119,6 +120,7 @@ DIALOG_AND_NOTIFY: dict[str, int] = {
 }
 
 #: 反射确认能「少问一句」的首选项开关（值来自 swconst 的 swUserPreferenceToggle_e）
+#: enum-gate: enum swUserPreferenceToggle_e
 DIALOG_SUPPRESSORS: dict[str, int] = {
     # ⚑ 这几个值取自对 swconst 的反射（swUserPreferenceToggle_e）
     "swInputDimValOnCreate": 10,

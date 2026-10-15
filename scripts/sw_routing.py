@@ -81,6 +81,8 @@ __all__ = [
 ]
 
 #: 反射确认的实参个数（**不含** by-ref 出参）
+#: enum-gate: not-enum arity
+#: arity-reflect: byref=excluded
 ROUTING_ARITY: dict[str, int] = {
     # IRouteManager
     "StartRoute": 2,
@@ -121,6 +123,7 @@ ROUTING_ARITY: dict[str, int] = {
 }
 
 
+#: dispatch-guard: exempt internal-helper
 def _checked(target, member: str, *args):
     """按签名表校核实参个数，通过后才发起调用（开发期护栏）。"""
     expected = ROUTING_ARITY.get(member)

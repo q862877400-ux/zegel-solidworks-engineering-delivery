@@ -49,30 +49,16 @@ _SPEC = ("A SpurGearSpec as a dict: module_mm / teeth / face_width_mm / bore_dia
 
 
 SPECS_BATCH41 = [
-    #: ── 齿轮（★ 空条目 `external_spur_gear_geometry` 的填实）─────────────
-    ToolSpec(
-        name="solidworks_gear_calculate_spur",
-        title="Calculate an External Spur Gear (pure geometry)",
-        module="sw_gear", function="calculate_external_spur_gear_report",
-        inject=None,
-        params=[Param("spec", dict, description=_SPEC)],
-        doc="Compute the external involute spur gear geometry from a spec dict. "
-            "★ Pure calculation — no SolidWorks call. ★ Verify against the analytic formulas "
-            "(pitch diameter = module × teeth, etc.), not by eye.",
-    ),
-    ToolSpec(
-        name="solidworks_gear_create_spur",
-        title="Create an External Spur Gear Body",
-        module="sw_gear", function="create_external_spur_gear_report",
-        inject="model",
-        params=[
-            Param("spec", dict, description=_SPEC),
-            Param("plane_name", str, default="Front Plane",
-                  description="Sketch plane name (★ the layer tries the UI-language candidates)."),
-        ],
-        doc="Create an external spur gear body. ★ The criterion is that the FEATURE TREE changes "
-            "(rule 6 — never a silent success). ⚠ Does NOT save the document.",
-    ),
+    #: ★★★ 2026-10-10 **齿轮两个工具已移除**（★ 业主架构指令）：
+    #:   ★ 业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+    #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+    #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+    #:   ★★ **判据**：★ 「**那个数字错了，回读能不能查出来**」——
+    #:     ★ 齿轮是**渐开线齿形公式**（★ 模数/齿数/压力角 → 齿廓点）⇒
+    #:     ★★ **齿形错了，回读几何查不出来**（★ 它看起来"就是个齿轮"）⇒ ★ **它是方法** ✗
+    #:   ★ 已移出：★ `scripts/sw_gear.py` → `archive/inherited-methods/scripts/` ✓
+    #:   ★★ 移出的两个工具：★ `solidworks_gear_calculate_spur` · `solidworks_gear_create_spur`
+    #:   ⚠ **留在这里的 Toolbox 四个是工具**（★ 索引查询 ⇒ ★ 判据是数据，回读可查）✓
     #: ── Toolbox 索引（★ 空条目 `standard_parts_toolbox` 的填实）──────────
     ToolSpec(
         name="solidworks_toolbox_list_standards",

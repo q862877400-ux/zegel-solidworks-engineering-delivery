@@ -1,0 +1,45 @@
+fix(阶段1): ★★★★★ **A4 存量账从 13 收到 4** —— ★ 而**判据改了四次、每次都是"太窄"**（★ 这本身是最大的产出）
+
+■ 一 · ★ 上轮留下的账：★ **13 个 `verified` 条目**只挂 `pytest tests/xxx.py` 当证据
+  ★★ 本轮**逐个去找**它们的真机证据（★ 查 `output/*evidence.json` · 查 `tools/verify_*.py` ·
+    ★★ **查条目全文**）✓
+
+■ 二 · ★★★★★ 而**判据被改了四次** —— ★ 每次都太窄（★ 这是本轮最值得记的一件事）
+  | ★ 版本 | ★ 判据 | ★ 报出 | ★ 漏在哪 |
+  |---|---|---|---|
+  | ★ 一 | ★ 只认「真机/实跑/实测」措辞 | ★ **21** | ★ 漏了 `tools/verify_*.py` 与 `output/*evidence.json` |
+  | ★★ 二 | ★ 补那两类 | ★ **13** | ★ 漏了**写在 `limitations` 里的**真机记录 |
+  | ★★★ 三 | ★ **查条目全文** | ★ **5** | ★ 漏了「**回归**」这种说法 |
+  | ★★★★ 四 | ★ 补「回归 / 连续三次通过」 | ★ **4** | ★ —— |
+  ⇒ ★★★★ **21 → 13 → 5 → 4**，★ 而**每一次收缩都是判据的错、★ 不是条目的错** ✓
+  ★★★ **∴ 可复用判据**：★★★ **判「有没有运行证据」要看**整条记录**、★ 且**收词要宽** ——
+    因为"我们跑过"这件事，★ 本仓至少有**五种**写法：
+    ★ 真机 · ★★ 实跑 / 实测 · ★★★ **`tools/verify_*.py` 验收命令** · ★★★★ **`output/*evidence.json` 证据文件** ·
+    ★★★★★ **「已连续 N 次通过回归」** ✓
+
+■ 三 · ★ 而被证明**有**真机记录的（★ 不再算缺口）
+  | ★ 条目 | ★ 真机记录（★ 逐字） |
+  |---|---|
+  | ★ `solidworks_addin_host` | ★「★ SW2026 SP1.1 Revision 34.1.1 **已真机验证** ConnectToSW、SetAddinCallbackInfo2、SldWorks 应用事件、三命令 CommandGroup、64 位 TaskPane、IPropertyManagerPage2Handler」✓ |
+  | ★★ `external_spur_gear_geometry` | ★「★ SW2026 SP1.1 **已真机验证** m2/z24/20°/齿宽10/孔10 的 SLDPRT、STEP、四视图、重开和 **B-Rep 尺寸回读**」✓ |
+  | ★★ `pack_and_go` | ★「★ SW2026 SP01.1 的基础两零件装配**已连续三次通过**原生 Pack and Go 回归」✓ |
+  | ★★ `motion_study` | ★「★ ⚑ 2026-10-01（轮 63）**真机跑通入口链**」✓ |
+  | ★★ `configurations_and_design_tables` · ★ `requirements_planning` | ★ 各有真机痕迹 ✓ |
+  ⇒ ★★★ **它们的真机证据一直**在** `limitations` 里、★ 只是没写进 `evidence` 字段** ✓
+
+■ 四 · ★★ 而剩下的 **4 个分两类**（★ 这才是真正要处理的）
+  ★ **真缺口 3 个** —— ★ 它们确实只有 `pytest tests/test_cad_reliability.py` 当证据，
+    ★★ 而那个文件自己逐字写着「⚠ **未在本机实测 SolidWorks** … ★ **不改变任何 COM 调用**」：
+    · ★ `parameter_updates`（★ 参数更新回读）
+    · ★★ `custom_properties_and_bom`（★ 自定义属性与 BOM）
+    · ★★ `drawings_and_bom`（★ 工程图与 BOM）✓
+  ★★ **口径 1 个** —— ★ `autocad_script_backend`：★ 它的 `limitations` 明写
+    「★ **本条不挂 SolidWorks 工具**…是 **AutoCAD SCR / AutoLISP 白名单命令桥**
+    （★ **另一条产品线**）」⇒ ★★★ **A4 的「我们自己的运行证据」对它应是 AutoCAD 运行**,
+    ★★ 而不是 SolidWorks 运行 ⇒ **这一条是口径问题、不是缺失** ✓
+
+■ 五 · ★ 收尾
+  ★ `BASELINE` **13 → 4**（★ 账更准了）✓
+  ★★ 收尾链：**`release_check 第 1 轮 OK` · 3 passed** ✓
+  ★★★ **下一步明确**：★ **对那 3 个真缺口各跑一次真机**（★ 它们全是**基本零件/装配操作**）✓
+  ★★ **`C_D_E` 的 🔴 16 条**：★ **#1 · #2 · #3 · #4 · #7 · #9 · #10 完成** ⇒ **剩 9 条** ✓

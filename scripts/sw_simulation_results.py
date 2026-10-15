@@ -81,6 +81,7 @@ __all__ = [
 # 覆盖:   后续同级定义
 # ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
+#: enum-gate: enum swsStaticResultNodalStressComponentTypes_e
 SWS_NODAL_STRESS_COMPONENTS = {
     "sx": 0, "sy": 1, "sz": 2,        # swsStaticNodalStress_SX / SY / SZ
     "txy": 3, "txz": 4, "tyz": 5,     # swsStaticNodalStress_TXY / TXZ / TYZ
@@ -108,6 +109,8 @@ SWS_MESHER_TYPES = {
 # 覆盖:   后续同级定义
 # ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
+#: enum-gate: not-enum arity
+#: arity-reflect: byref=excluded
 RESULTS_ARITY: dict[str, int] = {
     "CreatePlot": 4,
     "CreateDeformedBody": 2,
@@ -120,6 +123,7 @@ RESULTS_ARITY: dict[str, int] = {
     "AddIsoClippingToPlot": 5,
 }
 
+#: arity-reflect: byref=excluded
 MESH_ARITY: dict[str, int] = {
     "GetNodeLocation": 1,
     "GetElementLocation": 1,
@@ -134,6 +138,7 @@ MESH_ARITY: dict[str, int] = {
 }
 
 
+#: dispatch-guard: exempt internal-helper
 def _checked(table: dict[str, int], target, member: str, *args):
     """按签名表校核实参个数，通过后才发起调用（开发期护栏）。"""
     expected = table.get(member)

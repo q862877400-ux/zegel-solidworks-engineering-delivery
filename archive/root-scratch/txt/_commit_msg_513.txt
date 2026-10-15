@@ -1,0 +1,31 @@
+fix(facts): 用类型库核实 arity —— 它**含末尾那个 `Retval` 出参**，而反射转储**不含**（事实 397）
+
+★ 承上一轮留下的方向「该换的是**后端**或**旧式方法**」。★ 而目标那句「凡属 **pywin32 后端**结构性到不了的」
+  提示了本仓**早有**一条口径 —— **事实 128**：
+  > **可达性结论必须带「绑定层次」限定** —— `pywin32 迟到绑定` / `comtypes 早绑定` /
+  > `C# PIA` / `进程内 C++` 四层，**各层结论不能互相顶替**。
+  > ⚠ 不带层次的「到不了」会被后来人读成「**官方没这个能力**」。
+
+★ 而事实 128 还给了**方法**（它的副产）：★ **类型库的方法表是第 4 套官方签名源** ——
+  `comtypes.client.GetModule('<sldworks.tlb>').<IIface>._methods_`，
+  每条 = `(HRESULT, 名字, argtypes, flags(名 + 方向), id, 描述)` ⇒ ★★ **直接给出 `[in] / [out] / [in,out]`**。
+
+★ 本轮用它核实（★ 本机 `sldworks.tlb` 2020872 B · `comtypes 1.4.17`）：
+  ```
+  InsertRuledSurfaceFromEdge2   arity=12
+    argtypes = c_long, c_double, VB, VB, VB, c_double, VB, c_double, c_double, c_double, VB, **LP_POINTER(IFeature)**
+    flags    = (Type·Length·FlipPullDir·FlipDir·TrimAndSew·Angle·CoordInput·X·Y·Z·BConnectSurface) 均 flag=1(in)
+               **末尾 (10, 'Retval')**
+  FeatureBossThicken (IFeatureManager)  arity=8   （7 个 in + 末尾 Retval）
+  FeatureBossThicken (IModelDoc2)       arity=3   （全 in，无 Retval）
+  InsertExtendSurface                   arity=3   （全 in，无 Retval）
+  CreateDefinition                      flags = ((1,'Type'), **(10,'PDispOut')**)
+  ```
+
+★★ **两个结论**：
+  ① ★ **直纹的 11 与加厚的 7 都传对了** —— ★ 故它们的失败**不是 arity 问题** ✓
+  ② ★★ **新定则：拿类型库数 arity 时要减 1** —— ★ 末尾那个 `Retval` / `PDispOut` 是**返回值**、
+    pywin32 侧**不传**；★ 而**对照反射转储的 arity 就不用减**（它本来就不含）。
+    ⚠ 我当初以为"两源冲突"，★ 真因是**我没数末尾那个出参** —— ★ 而**两源其实一致**。
+
+★ 记成 **事实 397**。语法门禁 0 处。

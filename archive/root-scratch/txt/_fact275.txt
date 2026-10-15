@@ -1,0 +1,54 @@
+| 275 | **把「同一处踩了五次」机械化：`.py` 语法门禁（第 19 道）接进 `release_check`**（2026-10-01，轮 355–356）。
+
+## 一、★★★★★ 五次实录（★ 全在**新建文件**时）
+```
+★ 形态**完全一样**：★ 新建 `.py` 时把**来源块写进了头部三引号里面**（忘了闭合）⇒
+   Python 把后面几十行**当字符串吞掉** ⇒ 报的是
+   `SyntaxError: invalid character '★' (U+2605)`
+   ★★ **错误信息指向那个星号，不是真因** ⇒ 每次都要现场再推理一遍。
+★ 五次：`tools/modal_dialog_forensics.py` · `tests/test_deprecated_entry_interlock.py` ·
+   `tools/extract_operation_descriptions.py` · `tools/judge_gap_candidates.py` ·
+   ★★ **`scripts/check_python_syntax.py`（第五次正是在写这道门禁的脚本本身）**。
+★★ 而**每一次**修法都一样：★ 在 `# ── 来源 ──` **之前**补一行三引号。
+   ★ 第六次我**手改又失败** ⇒ 最后**用脚本**（找 `# ── 来源 ──` 那行、在它之前插入）才稳。
+   ⇒ ★ **定则：同一处修 ≥3 次仍要手改，就说明该让脚本做**（与事实 53 同族）。
+```
+
+## 二、★ 门禁的判据与效果
+```
+★ `scripts/check_python_syntax.py`：扫 `scripts` `tools` `tests` `mcp-server` `subskills`
+   下**全部** `.py`，逐个 `ast.parse`（★ **不 import、不执行** ⇒ 不需要 SolidWorks、不需要依赖装好）。
+★★ **它报的是真因的名字** —— 负例实测：
+   `✗ tools\_syntax_negcase.py:1: **unterminated triple-quoted string literal**`
+   （★ 而不是那个令人困惑的 `invalid character '★'`）✓
+★ 实测：**532** 个文件 · 失败 **0** 处 · exit 0；造一个负例 ⇒ 失败 1 处 · exit 1；删掉 ⇒ 恢复 exit 0。
+★ 已接进 `release_check.py`（第 **19** 道）：`py_syntax = _run_python_syntax_gate()` + 后续 `raise`。
+```
+
+## 三、★★★★★ 元门禁**当场抓了我两次**（★ 这就是它存在的意义）
+```
+★ 接完第一版跑 `release_check`，元门禁（`check_gate_wiring.py`）报两条：
+   ① 「`py_syntax` 的结果**没有进返回体** ⇒ 『它跳过了/它没跑』在外面**看不见**
+      （★ 静默跳过与没跑等价）⇒ 加进 `_gate_results`」
+   ② 「`_run_python_syntax_gate` 在 `release_check.py` 里被调用，却**没登记分类**
+      （登记表必须覆盖每一个调用点）」
+⇒ ★★ **两条都是可执行的修法**：① 加进 `_gate_results` 的 dict；
+   ② 加进 `docs/gate-classification.json`（`kind: hard`）✓
+★★ **这才是好门禁的形态** —— ★ 它不只说"不合格"，★ 它说"**改成什么**"。
+```
+
+## 四、★★ 顺带抓到我自己上一轮的两处遗漏（★ 也由门禁报出）
+```
+★ `check_union_conventions.py` 报：「能力 `simulation_load_family_breadth` 是 CAD 能力且标 `verified`，
+   但 **`verified_versions` 为空** —— 『跑过』必须有版本证据」
+   ⇒ ★★ **我上一轮把它升 `verified` 时漏了 `verified_versions`** ⇒ 补 `["2026"]`（★ 与别的条目同口径）
+     + 在 `limitations` 里写明真机版本（SW 2026 SP4.1 / Python 3.14.7 / 证据文件）✓
+   ★★★ **定则：升 `verified` 必须同时给 `verified_versions`** —— ★ 门禁会拦，★ 而**它拦得住**就是好事。
+★ 另一条「`docs/union-level-audit.md` 与最新数据不一致」⇒ ★ **生成物过期**，★ 跑生成器即绿（★ 链里有）。
+```
+
+**依据**：`scripts/check_python_syntax.py`（★ 扫 **532** 个文件 · 负例 exit 1）·
+`scripts/release_check.py` 的 `_run_python_syntax_gate` + `_gate_results["py_syntax"]` ·
+`docs/gate-classification.json`（★ 新增 `check_python_syntax.py` 条目）·
+`tests/test_deprecated_entry_interlock.py`（4 passed）· `docs/union-gap-batch-judgement.md`
+（★ 174 可判 / **104** 真缺候选 / **70** 有候选）· 事实 48 / 53 / 62 / 271 / 273 / 274

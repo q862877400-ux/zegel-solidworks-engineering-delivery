@@ -1,0 +1,58 @@
+| 264 | **一次扫描证明：判据的**形态盲区**会把真 bug 藏起来 —— `get_com_member(…, 变量, value)` 设属性（事实 227）在真机上确实报 `TypeError`**（2026-10-01，轮 344）。
+
+## 一、★★★ 起因：上一轮那条教训可以**批量用**
+```
+★ 事实 263 的定则：「`limitations` 里引用的失败数字会随时间失效」⇒ ★ 本轮**扫了一遍**：
+   ★ 16 条 `stitched` 里**引用失败数字的 5 条**：
+     · `simulation_load_family_breadth`（"真机四类**全部失败**"）
+     · `simulation_solver_options`（"5 个配置工具**未通过**"）
+     · `topology_readback`（"读回部分通过；run 未通过"）
+     · `render_material_library`（"仍未通过：回 `True` 而计数不变" ← ★ 上一轮已查过）
+     · `mold_parting_geometry`（"3/5 fail" ← ★ 上一轮已标注过时）
+   ⇒ ★ 真待查 **3 条**，★ 而其中 `simulation_solver_options` 的失败原因**写得最具体**，先做它。
+```
+
+## 二、★★★★★ 真因（★ 而它**早就写着**了）
+```
+★ 它的 `limitations` 原话：「① `TypeError: 'bool' object is not callable` ⇒ 真机上该成员**已是 bool 值**
+   （不是 setter）⇒ **能读不能写**」
+⇒ ★ 那正是**事实 227**：★ `get_com_member(obj, "X", value)` 的语义是**「取或调」**——
+   ★ **传了实参**时它**先无参调一次**拿到返回值、★ **再拿那个返回值去"调用"**。
+   ⇒ ★ 对**属性**（值已是 `bool`）⇒ `TypeError: 'bool' object is not callable`；
+   ⇒ ★★ **而对**方法**才是对的** ⇒ ★★ **两种语义必须分开用**：
+     · **属性** ⇒ `set_com_member`（★ 直接设）
+     · **方法** ⇒ `get_com_member(obj, name, *args)`（★ 调用）
+★ 现场：`sw_simulation_study_options.set_option` 的
+   `return bool(get_com_member(options, name, _coerce(entry, value)))` —— ★ **设属性写成了取或调**。
+★★ **修法**：★ 先试 `set_com_member`，★ 失败再退回调用式（★ 登记表 `STUDY_OPTION_SETTERS` 里**两种都有**）
+   ⇒ ★ 两条路都走通，★ 而**两条都不通时报带原因的 `RuntimeError`**（★ 不静默）。
+```
+
+## 三、★★★★★ 扫描本身暴露了一个**判据盲区**（★ 本轮最值钱的发现）
+```
+★ 我先扫「`get_com_member` 多传参数」⇒ **261 处** —— ★★ **而绝大多数是假阳性**：
+   `AddMate5` / `SetUserPreferenceToggle` / `SendMsgToUser2` / `GetUserPreferenceToggle`
+   ★ **都是方法**，多传参数**是对的**。
+★ 于是改用官方类型表的 `kind: property` 筛（2416 个属性名）⇒ **95 处**候选 —— ★ 好多了，★ **但仍漏了本处**：
+   ⇒ ★★★ **因为 `set_option` 里那行传的是**变量 `name`**，不是字符串字面量** ⇒
+     ★ 我的 `ast.Constant` 判据**只认字面量** ⇒ **真 bug 正好在盲区里**。
+   ⇒ ★ 与**事实 51**（分析范围要贴合组织单元）· **事实 62**（门禁要能抓到真 bug 的**形态**）**同型**。
+★★★ **可操作**：★ **判据要覆盖"值从哪来"（数据流），不能只认字面量** ——
+   ★ 本处该做的是：★ 从 `STUDY_OPTION_SETTERS` 这类**登记表**出发，★ 看表里的名字是属性还是方法，
+   ★ **再**看调用点用的是哪个 API。⚠ 本处**尚未补这个数据流**（★ 记为下一步）。
+```
+
+## 四、★ 本轮**没有**升 `simulation_solver_options`（★ 硬约束③）
+```
+★ 修完 `set_option` 后真机跑，★ **卡在建研究之前**：
+   `AttributeError: <unknown>.GetAddInObject`（★ 在 `sw_simulation.py` 的 `L226` 一带）。
+★★ 而**官方类型表证实**：★ `GetAddInObject` **在 `ISldWorks` 上**（`ISldWorks/GetAddInObject.md` 存在）
+   ⇒ ★ 即：★ **那个函数拿到的对象不是 `ISldWorks`**（★ 报 `<unknown>.X` = 事实 36 的形态）。
+   ⇒ ★ 那是**本轮挖出的第 2 个真问题**，★ **留给下一轮**（★ 要看清 `sw_simulation` 怎么取 `sw`）。
+⇒ ★★ **所以本轮不升等级**：★ 没有 `verdict: pass` 的证据就不升（★ 只如实记「`TypeError` 那条路已修，
+   而"设进去之后读数变了"仍待验」）。
+```
+
+**依据**：`scripts/sw_simulation_study_options.py`（★ `set_option` 改 `set_com_member` + 退回调用式）·
+`C:\swapi\types\ISldWorks\GetAddInObject.md`（★ 证实宿主）· `output/solver-options-evidence.json`（★ 卡在建研究）·
+`sw_simulation.py` 的 `L126` / `L226` / `L240` · 事实 36 / 51 / 62 / 227 / 263

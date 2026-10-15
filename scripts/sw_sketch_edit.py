@@ -69,6 +69,7 @@ SKETCH_CHAMFER_TYPE = {
 }
 
 #: 官方 `SketchMirror` 的**选中标记**（不是参数，是选实体时的 mark）。
+#: enum-gate: member SketchMirror
 SKETCH_MIRROR_MARK = {
     "segment": 1,       # 要镜像的是草图线段
     "centerline": 2,    # 要镜像的是中心线

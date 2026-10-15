@@ -1,0 +1,62 @@
+| 285 | **挖 `render_material_library`：官方明写 `AddRenderMaterial` **2011 起不支持** —— 整族四条入口都换了代**（2026-10-02，轮 368）。
+
+## 一、★★★★★ 真因（★ 只能去官方查 —— 铁律 4 的价值）
+```
+★ `C:\swapi` 那套**没有 Remarks** ⇒ ★ 换 **CHM 解包**查 ⇒ `AddRenderMaterial` 的正文写着：
+   「**Not supported in SOLIDWORKS 2011 and later.** Superseded by
+     **IModelDocExtension::AddDisplayStateSpecificRenderMaterial** and **IModelDocEx…**」
+⇒ ★★★ **本机是 SW 2026** ⇒ ★ **那个入口回 `true` 而**什么都不做**** ✓✓✓
+   ⇒ ★ 完美解释了上一轮那条：`add_ret = true` 而 `GetRenderMaterials` 回 `None`、计数 0。
+   ⇒ ★★ **教训**：★ **`C:\swapi` 里"没有 Remarks"不等于"没有语义"** ——
+     ★ **两套官方源分工不同**（`C:\swapi` 查精确签名与枚举值 · CHM 查语义与示例），
+     ★★ **一处查不到就换另一处**（★ 我这一轮才做到）。
+```
+
+## 二、★★★★ 官方示例给出的**整族换代**（★ 四条全换）
+```
+★ 官方示例 `Add_and_Delete_Materials_from_Specific_Display_States_Example_VBNET`：
+   ① `CreateRenderMaterial(…)`                       ← ★ 这个**没换**（我们在用）✓
+   ② `**AddDisplayStateSpecificRenderMaterial**(material, swDisplayStateOpts_e.swAllDisplayState,
+                                                  displayStateNames, materialID1, materialID2)`
+   ③ 回读也是新入口：`**GetRenderMaterialsCount2**(opt, names)` · `**GetRenderMaterials2**(opt, names)` ·
+      `**GetMaterialIds**(…)` · `**MaterialIdName**`
+   ④ `**DeleteDisplayStateSpecificRenderMaterial**(id1, id2)`
+★ 签名（`C:\swapi`）：`Add(…, Int32 DisplayStateOption, Object DisplayStateNames, Object PWMaterialId1,
+   Object PWMaterialId2)` · `Delete(id1, id2)` · `GetRenderMaterialsCount2(Int32, Object)` · `GetRenderMaterials2(Int32, Object)`
+★ 枚举（反射）：`swThisDisplayState=1` · **`swAllDisplayState=2`** · `swSpecifyDisplayState=3`
+   ⇒ ★★★ **而我们那 4 处用的全是**已废弃**的旧入口** ⇒ ★ **整族都得换** ✓
+```
+
+## 三、★★★★★ 真机实验结果（★ 分两半：写**成功**、读**不成**）
+```
+★ **写**：`AddDisplayStateSpecificRenderMaterial(mat, 2, [], out_i4(), out_i4())`
+   ⇒ ★★ **返回 true，且 `id1 = 6`** ⇒ ★ **分配到了外观 ID**（★ 旧入口不会给 ID）✓✓✓
+   ⇒ ★ **即：写入**真的生效了**。
+★ **读**：`GetRenderMaterialsCount2(opt, names)` 对 **opt = 0/1/2 全回 0**，
+   **opt = 3 回 `-1`**（★ 那是**错误码**）；`GetRenderMaterials2` **全程回 `None`**；
+   ★ 旧入口 `GetRenderMaterialsCount` 也回 **0**。
+   ⇒ ★★★ **写与读不一致**。
+```
+
+## 四、★ 下一轮的起点（★ 已写明，★ 不猜）
+```
+★ 官方签名页面里链到 **`IConfiguration::CreateDisplayState`** ⇒ ★ 而 `Add…Specific…` 要的是
+   **显示状态名数组**（`DisplayStateNames`）⇒ ★ **本机那个文档大概**没有显示状态**，
+   ★ 所以读回是空的（★ 而写能成功但无处可挂）**。
+⇒ ★ **下一轮**：★ **先在配置上建一个显示状态** ⇒ 用它做 `DisplayStateNames` ⇒ 再 `Add` ⇒ 再读；
+   ★ 判据：`GetRenderMaterialsCount2(2, ["<那个名>"])` **> 0**。
+```
+
+## 五、★ 等级
+```
+★ `render_material_library` **仍 `stitched`**（★ 硬约束③：没有 pass 不升）——
+   ★ 但本轮拿到了**决定性的事实**（★ 旧入口自 2011 起就是空操作）与**下一步的方向**。
+★ 而上一轮修的那处 `spec.extra`（第 12 处"取或调"）**是独立的真 bug**，★ 已修、已提交（轮 367）。
+```
+
+**依据**：`D:\AI\SW\AI Solidworks\官方文档\SWhelp\sldworksapi\…IModelDocExtension~AddRenderMaterial.html`
+（★ 正文 "Not supported in SOLIDWORKS 2011 and later. Superseded by …"）·
+`…Add_and_Delete_Materials_from_Specific_Display_States_Example_VBNET`（★ 四条新入口的调用序列）·
+`C:\swapi\types\IModelDocExtension\AddDisplayStateSpecificRenderMaterial.md` 等 4 个签名 ·
+`D:\AI\SW\_raw\**\enum_values_sldworks.txt`（★ `swDisplayStateOpts_e` 1/2/3）·
+本机实测（★ `id1 = 6` · 四个 option 读回 0/0/0/−1 · `GetRenderMaterials2` 回 None）· 事实 8 / 284

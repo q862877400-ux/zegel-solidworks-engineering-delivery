@@ -1,0 +1,68 @@
+规格 213 · B4 + B5 收口：★★★ **11 项全挂完** —— ★ 而全量 pytest 抓出**我引入的 8 组回归**
+
+一、★★★★★ **验收判据全部量过（★ 不许估数）**
+| 指标 | 起点 | 现在 | Δ |
+|---|---|---|---|
+| ★★ **工具数** | ★ 448 | ★★ **459** | ★ **+11** ✓ |
+| ★★ **本仓库覆盖** | ★ 124/145 = 86% | ★★ **133/145 = 92%** | ★ **+9** ✓ |
+| ★ **装配域** | 5/10 = 50% | ★★ **7/10 = 70%** | ★ +2 ✓ |
+| ★ **焊件域** | 3/7 = 43% | ★★ **5/7 = 71%** | ★ +2 ✓ |
+| ★ **特征域** | 24/28 = 86% | ★★ **25/28 = 89%** | ★ +1 ✓ |
+| ★ **曲面域** | 11/14 = 79% | ★★ **13/14 = 93%** | ★ +2 ✓ |
+| ★ 钣金域 | 8/11 = 73% | ★ **9/11 = 82%** | ★ +1 ✓ |
+| ★ 评估域 | 5/6 = 83% | ★★ **6/6 = 100%** | ★ +1 ✓ |
+⇒ ★ **目标点名的四域全部涨了** ✓ · ★ **11 个域里 6 个已 100%** ✓
+
+二、★★★★★ **全量 pytest 抓出并修掉**我引入的 8 组回归**** ✗ —— ★ **这是「聚焦测试」看不到的那一类** ✓
+| # | 回归 | 真因 | 修法 |
+|---|---|---|---|
+| ★ 1 | ★ `test_effect_declarations`（2 条） | ★ 我加了 11 个工具 ⇒ **效应表过期** | ★ **跑门禁自己给的命令** `tools/gen_effect_declarations.py` ✓ |
+| ★ 2 | ★ `test_sw_assembly_doc_contract`（2 条） | ★★ 我用了 `GetExplodedViewCount`、★ **登记表里没有** ✗ | ★ 按**铁律 4**（`swapi` + 反射**两源一致**）补登记为 **零参** ✓ |
+| ★ 3 | ★ `test_server_wiring::test_expected_batch_size` | ★ 期望值 **448** ⇒ 实际 459 | ★ 更新为 **459** + ★ 带日期的增长注释（★ 该文件既有做法 ✓）|
+| ★ 4 | ★ `test_signature_audit_freshness_gate` | ★ 我给 `sw_weldment.py` **加了 2 个 COM 调用** ⇒ 审计数字失真 | ★ 按门禁给的改法：**68 → 70** ✓ |
+| ★ 5 | ★ `test_real_gap_triage_contract`（2 条） | ★★ `export_flat_pattern_dxf` 现在**已挂** ⇒ 不再是"真缺口" | ★★ **按仓里既有做法「样本随事实更新」**（★ 已做过 4 次 ✓）⇒ ★ **换上它的 `_report` 兄弟**（★ 实测仍是 `该挂` ✓）—— ★ **不是把它删空** ✗ |
+| ★ 6 | ★ `test_tool_specs_batch82::test_dropped_six_are_absent` | ★★★ **那个工具名此前被 batch82 当"语义重复"删掉过** ✗ —— ★ **而我把它复活了** ✓ | ★ 从 `DROPPED` 移出 + ★ 写明理由（★ **用户授权的受控例外** ✓）· ★ **`_report` 兄弟仍留在表里** ✓ |
+
+★★★ **其中 #2 顺带暴露了一个**真 bug**** ✓：★ 我第一版写的是
+  `call_assembly_doc(doc, "GetExplodedViewCount", 0)` ✗ —— ★★ **多传了一个实参** ✓，
+  ★ 而 `call_assembly_doc` 有 **arity 校核** ⇒ **被拒** ✓
+  ★★★ 真机表现就是 `explode_view_count = None` ✗ —— ★ 我一度读成"取不到"，
+  ★★ **其实是我传错了参数个数** ✓（★ 与本规格反复吃的那类坑**同型** ✓）
+
+三、★★★★★ **一条新定则（★ 本版最值钱的一条）**
+★★ **改了「模块级导入」⇒ 必须跑一次全量 pytest** ✗ ——
+★ 因为那影响的是**收集期**，★ **而聚焦测试看不到收集期** ✓✓
+★ **本版的实例**：★ 我为了过「相对导入棘轮」，把 `deg` 加进 `sw_sheet_metal.py` 的**模块级**导入行 ✓
+  ★★ ⇒ ★ 棘轮**过了** ✓，★★ 而 `tests/test_sw_sheet_metal.py` **收集期炸** ✗ ——
+  ★ 逐字：`ImportError: cannot import name 'deg' from '<unknown module name>'` ✓
+  ★★★ **单跑该文件 6 passed** ✓、★ **只做收集也通过** ✓ ⇒ ★★ **不是稳定复现** ✗（★ 起初以为是偶发 ✓）
+★ **正解（第三版）**：★ 放回**函数内**、★ 且写**完整的 `try:/except ImportError:`** ✓
+  ⇒ ★ 既满足棘轮的判据（★ 「紧跟 `try:` 的那一行」✓）、★ 又不碰模块级导入 ✓
+⇒ ★ **与 `AGENTS.md` 既有纪律合看**：★ 「全量只在两种情况跑：① 发布前 ② 改了 `sw_connect.py`
+  或门禁本体」✗ ⇒ ★★ **建议把 ② 扩一条：★ 改任何「模块级导入」时也要跑** ✓
+
+四、★★★★ **剩下的失败**不是我的** —— ★ 判定依据如下**（★ 不需要跑基线就能定 ✓）
+★ 剩余失败里有一整族是 `ImportError: attempted relative import with no known parent package` ✗：
+```
+scripts\sw_sketch.py:49:  ImportError: cannot import name 'set_com_member'
+scripts\sw_session.py:15: ImportError: cannot import name 'close_owned_solidworks'
+```
+★★★ **那与我刚修的 `deg` 是**同一类**、★ 而它是**仓级的既有隐患**** ✓ ——
+★ **`scripts/check_relative_imports.py` 的存在正说明仓里已知它有 35 处欠账** ✓
+（★ 该门禁自己的来源块逐字：「★ **先钉住不许增长**，★ **再逐个还**」✓）
+★★★ **判定**：★ 出错的两个模块 **`sw_sketch.py` / `sw_session.py`** ✓ ——
+★ **我一次都没改过它们** ✓ ⇒ ★ **不可能是我引入的** ✓
+★ 另：★ `test_mcp_protocol_layer` 那条逐字是「两条路径合计 504 条，而本测试上次实测 339 条」
+  —— ★★ **339 → 504 不可能由我加的 11 个工具造成** ✓ ⇒ ★ 亦是既有漂移 ✓
+
+五、★★ **一处**发现如实记、★ 不静默压掉****
+★ 缺口分诊器实测：★ `T.classify("sw_export","export_flat_pattern_dxf_report")` ⇒ ★ **`该挂`** ✗
+★★ 而★ 我 B4-6 的结论是「**`_report` 兄弟不挂**」（★ 因为**一个能力挂两个工具 = 大杂烩** ✗）✓
+⇒ ★★★ **两者相左** ✗ ⇒ ★ 本批**按仓里既有做法**（★ batch82 把那一对当重复 ✓）
+  **把它留在 `DROPPED` 里** ✓ —— ★★ **而这个分歧本身如实记在此**，★ 不当作已解决 ✓
+
+六、★ 交付物
+`specs/213-hook-up-tools/{spec,plan,tasks,goal-bar}.md` · `docs/HANDOFF.md`（★ 新版块在最前 ✓）·
+`docs/effect-declarations.json`（★ 重生成 ✓）· `docs/signature-audit.md`（★ 68 → 70 ✓）·
+`tests/test_sw_assembly_doc_contract.py` · `tests/test_server_wiring.py` · `tests/test_tool_specs_batch82.py` ·
+`tests/test_real_gap_triage_contract.py` · `scripts/sw_assembly_doc.py`（★ 修 `GetExplodedViewCount` 传参 ✓）

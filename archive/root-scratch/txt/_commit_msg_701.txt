@@ -1,0 +1,43 @@
+feat(阶段1): ★★★★★ 建「**官方源自身的错**」共享清单（B-5）—— ★ 而**自校当场抓出我自己的错**
+
+■ 一 · ★ B-5 是什么（★ 裁判逐字）
+  > ★ 建一条共享的「**官方源自身的错**」清单，★ 供两份摘要抄录时**对照**：
+  > ① `ISheet.GetProperties` 说 **seven** 却列 **8** 个名字且 `sameCustomPrp` 无定义（`…2` 说 eight 并补上定义，
+  > 且名字是 `sameCustomProp`）· ② `IDrawingDoc` **5 处死链** · ③ `swLoftedBendFacetOptions_e`…
+
+  ★★ 产出：★ **`docs/official-source-errors.md`**（★ 83 行 · ★ 4 节）✓
+
+■ 二 · ★★★ 三条素材我**逐条自己核**（★ 不盲抄），★ 并各**补了实测**
+  | ★ | ★ 实测结果 |
+  |---|---|
+  | ★ ① `ISheet.GetProperties` | ★ 逐字「array of **seven** doubles:」· ★★ 紧跟列 **8 个**名字（末项 `sameCustomPrp`）· ★★★ 且**全页没有它的定义** ⇒ **官方自相矛盾** ✓<br>★★★ 对照 `GetProperties2`：★ 说 **eight** · ★ 列 8 个 · ★ **补了定义** · ★ **名字是 `sameCustomProp`**（★ 三处都改了）✓ |
+  | ★ ② `IDrawingDoc` 死链 | ★★ **我数出"唯一死链目标 8 个"**（★ 裁判汇总记的是「5 处」—— ★ 那是它抽查点到的条数，★★ **两者口径不同、不矛盾**）✓ |
+  | ★ ③ `swLoftedBendFacetOptions_e` | ★ 实测**正好 4 个**成员行 ✓ |
+
+■ 三 · ★★★★★ 而**自校**（`tools/selfcheck_official_source_errors.py`）**当场抓出我自己的错**
+  ★ 我给 #6/#7/#8 三条都写了「★ 接口名错了 ⇒ 真名是 X」
+  ★★ 自校**逐个去官方核那些"真名"** ⇒ ★★★ **3 条"真名"官方也没有**：
+    · `ISketchManager::MakeSketchBlockSelected` · ★ `IView::ActivateView` · ★ `IDrawingDoc::SetSelectedSheets`
+  ⇒ ★★★★ **我把一种错换成了另一种**（★ 而这在**纯文本上完全看不出来**）✓
+
+  ★★ 于是又去**实测那三个成员到底在哪**：
+  | ★ 成员 | ★ 扫描全部 **566 个接口**的结果 |
+  |---|---|
+  | ★ `MakeSketchBlockSelected` | ★★★ **全仓查不到**（★ 这个名字官方**根本不存在**） |
+  | ★ `SetSelectedSheets` | ★★★ **全仓查不到** |
+  | ★ `ActivateView` | ★★ 在 **`IDrawingDoc`** 或 **`IFeatMgrView`**（★ 不在 `IDrawingView`） |
+  ⇒ ★★★ 所以**死链有**四种**成因，不是一种** —— ★ 已按实测**重写那张表**（★ 加了「成因」一栏）✓
+
+■ 四 · ★★★★ 可复用判据（★ 本轮最重要的产出）
+  > ★★★ **"改正"这个动作必须可核 —— 否则"改正"与"改错"在文本上长得一模一样** ✓
+  ★ 本条里：★ 我"改"了 8 条链接，★ 其中 **3 条改错了**；★ **纯读文本发现不了**，
+    ★★ **只有"把改后的名字拿去核"才抓得到** ✓
+  ★★★ 与**事实 62**（★ 负例是门禁有效的唯一证明）**同族**：
+    ★ **62 说的是"门禁要能被证伪"，★ 本条说的是"改正也要能被证伪"** ✓
+  ★★ 与**事实 61 定则②**（★ 能用 `edit` 就别写批量脚本）也相关：★
+    ★ **批量"改正"最危险** —— ★ 它会一次把 N 条改成看着像对的 ✓
+
+■ 五 · ★ 收尾
+  ★ 新增：★ `docs/official-source-errors.md` · ★ `tools/selfcheck_official_source_errors.py` ✓
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 3 passed** ✓
+  ★★ **阶段 1 剩 B-6**（★ 改 `GATE-FINAL.md` 的 C6/C9/C4/C11 四处附注）✓

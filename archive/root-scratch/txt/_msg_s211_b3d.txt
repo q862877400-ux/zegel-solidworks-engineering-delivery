@@ -1,0 +1,57 @@
+规格 211 · B3-2/B3-3：★★ 角撑板与圆角焊缝的**参数式入口**都试了 —— ★ 而结论是「还不算试死」
+
+一、★★★ 本批的判别力在哪（★ 一句话）
+★★ **事实 47** 记着 `create_gusset` **到不了建成** ✗ —— ★★ 而那条用的是**属性式
+`ISMGussetFeatureData`**（★ 而 SM 那个是**钣金**族 —— ★ **事实 36**：★ 两个不同接口、**不可互认** ✓）
+⇒ ★★★ **参数式 `InsertGussetFeature3` 从没试过** ✓ ⇒ ★ **不论成不成都有价值** ✓
+
+二、★ 官方页三样（★ 逐字）
+· ★★ `InsertGussetFeature3` —— ★ **纯参数式 20 参**、★ **不带 `AccessSelections`**、
+  ★ **无 `object` 数组** ✓
+  ★ 关键两参：★ `BIsProfile`（"True to use a polygon profile, **false to use a triangle profile**"）·
+  ★ `CrvIndex`（"Index of the edge to use **if multiple intersecting edges exist**"）⇒ ★ **要两条相交的边** ✓
+· ★ `InsertFilletBeadFeature3` —— ★ **参数式 18 参**，★ 其中 `FaceSet1`/`FaceSet2` 与
+  `DeSelEdge1`/`DeSelEdge2` 是 **`System.object`** ⇒ ★ **数组**（★ 事实 12/33 ✓）
+  ★ `Type1`：★ 0 = Full length · 1 = Intermittent · 2 = Staggered ✓
+
+三、★★★★ **★ 顺带纠了一处台账"依据不够精确"**
+· ★★ 全扫 `C:\swapi\types` 后发现：★ **焊接符号的真宿主是 `IModelDoc2`**（★ `InsertWeldSymbol3`/`2`/
+  `IInsertWeldSymbol3`）★ **与 `IDrawingDoc::InsertWeldSymbol`** ✗ ——
+  ★ 而台账把它写作 `IFeatureManager` ✗（★ **那是"依据不精确"、★ 不是判错** ✓）
+· ★★ 角撑板那侧**核对无误**：★ 焊件角撑板确实是 `IFeatureManager::InsertGussetFeature`/`2`/`3` ✓
+
+四、★ 真机读数（★ `tools/probe_spec211_weld_misc.py`）
+| 项 | 读数 |
+|---|---|
+| ★ **A 角撑板（参数式 20 参）** | ★★ **调用没抛、回 `None`** ⇒ 静默回 `None` ✓ |
+| ★ **B 圆角焊缝（参数式 18 参）** | ★★ **调用没抛、回 `None`** ⇒ 静默回 `None` ✓ |
+| ★ B 的两组 `object` 形参 | ★ 按**事实 12/33** 传空 `VARIANT` ⇒ ★ **调用完成、不报类型不匹配** ✓ |
+
+★★ **有判别力的一点**：★ 两条参数式路**都调通了**（★ 不抛 ✓）——
+★ 这与**属性式**那条路的"报类型不匹配"**表现不同** ✓
+
+五、★★★ **定性（★ 严格照定则，★ 不夸大）**
+· ★ 读数在**无选择**下取的 ⇒ ★★ **前置没上** ⇒ ★ **还不算试死** ✓
+· ★ 依据：★ A 官方明写 `CrvIndex` 要**两条相交的边**；★ B 的 `FaceSet1/2` 是**面集合** ✓
+⇒ ★★★ **两条都记 `stitched`**（★ 不加不减）✓ —— ★★ 并把**下一步判据写进 `limitations`** ✓
+
+六、★ 登记
+· ★ `capabilities.yaml`：★ **133 条** · ★★ **`stitched` 17 → 19** ✓
+  ★ 两条各带：★ `source_evidence`（★ 三样 ✓）· `evidence`（★ 真机读数 ✓）·
+  ★ `limitations`（★ **第一条写明"只到第一步"** · ★ **第二条写"必须与事实 47 分开"** ·
+  ★ **第三条写下一步判据** ✓）
+· ★ `docs/metrics.md` 已重生成 ✓
+
+七、★★ **规格 211 的进度（★ 如实）**
+| 状态 | 项 |
+|---|---|
+| ★★ **`verified`** | ★ 缩放/变形 · **扫描曲面** |
+| ★ **`stitched`** | ★ 截面属性 · 取消剪裁 · 裁剪/延伸焊件（★ **试死**）· 角撑板 · 圆角焊缝 |
+| ★ **不做（有依据）** | ★ 剪裁曲面（事实 419）· 曲线驱动阵列（事实 47 链）· 成形工具 · 边界凸台 · Instant3D · 装配序列 · 装配体性能分析 |
+| ★ **已有/已覆盖** | ★ 展开折叠 · 边界曲面（直纹）· 平板型式（待核） |
+| ★★ **未处理** | ★ **装配 5**（爆炸直线 · 零部件阵列 · SpeedPak · 序列 · 性能分析）· ★ **PDM** |
+
+八、★ 下一轮
+★★ **做 B8 收口**（★ 那是**规格 211 的完成判据**）：★ ① 21 项**逐项结论表**（★ 含"未处理"如实标注 ✓）·
+★ ② 更新 `tasks.md` / `goal-bar.md` / `docs/HANDOFF.md` · ★ ③ **全量 pytest + 记基线** ✓
+★（★ 装配 5 与 PDM ⇒ ★ 在收口表里**如实标"未真机验"** ✓ —— ★ 不假装已收口 ✓）

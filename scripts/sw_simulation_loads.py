@@ -187,6 +187,7 @@ SWS_SPRING_SUBTYPES = {
 # 覆盖:   后续同级定义
 # ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
+#: enum-gate: not-enum arity
 OFFICIAL_LOAD_SIGNATURES: dict[str, int] = {
     # 夹具
     "AddRestraint": 3,
@@ -229,6 +230,7 @@ def _require(manager):
     return manager
 
 
+#: dispatch-guard: exempt internal-helper
 def _check(manager, member: str, arity: int, *args):
     """按 OFFICIAL_LOAD_SIGNATURES 校核本次调用的实参个数，再发起调用。
 
@@ -300,6 +302,7 @@ def _check(manager, member: str, arity: int, *args):
 #:   ⇒ ★ **按位置换才对**，★ 而"一刀切位置 2"会把 `AddForce2`/`AddPrescribedDisplacement`
 #:     的 **`DispArray` 当成 `RefGeom` 去换** ⇒ ★★ 那比不换更坏。
 #:   ★ 本表只列**已从反射核过位置**的；★ 表外的不换（铁律 5）。
+#: enum-gate: not-enum index
 _REFGEOM_POSITIONS = {
     "AddForce": 2,
     "AddForce2": 3,

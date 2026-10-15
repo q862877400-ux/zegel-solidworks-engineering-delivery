@@ -1,0 +1,23 @@
+docs(facts): 查完 `CreateDefinition` 的 35 条常量 —— 直纹/加厚**没有新架构入口**；投影曲线落进「指针族」（事实 392）
+
+★ 承上一轮登记在事实 391 里的第二个方向：「试 `CreateDefinition` 新架构」。
+  本轮把它**查到底**（★ 逐条读完官方那份清单）。
+
+★ 结果一 —— ★★ **`CreateDefinition` 的 35 个合法常量里没有**直纹曲面 / 加厚 / 等距 / 剪裁 / 平面区域：
+  · 逐条读完 `C:\swapi\types\IFeatureManager\CreateDefinition.md` 的清单（**35 条全数**）
+  · 与本仓 B6/B7 相关的**只有两条**：
+    `swFmRefSurface`（surface sweep）→ **扫描曲面**（我们已用，常数 **62**）
+    `swFmRefCurve`（projection curve）→ **投影曲线**（常数 **14**）
+  ⇒ ★★ **故「试新架构」这个方向对直纹曲面与加厚**不可行** **—— ★ 那是一份**有据的否定** ✓
+
+★ 结果二 —— ★★ **投影曲线的新架构落进了「指针族」**：
+  · `IProjectionCurveFeatureData` **存在**（4 属性 / 7 方法）
+  · ★★ 而它的成员里**有 `AccessSelections` / `IAccessSelections` / `IAccessSelections2`**
+    ⇒ ★ **装配必须走 `AccessSelections`** ⇒ **指针族** ⇒ **到不了**
+  · ⇒ ★★ **故 B7/T706 的定性可以直接下** —— ★ 与**线性阵列**（事实 385）、**扫描曲面**同族 ✓
+
+★ 落地：
+  · **事实 392**（把上面两条一次写清，★ 含 35 条清单这个事实本身）
+  · `specs/201-toolbar-gaps/tasks.md` 的 **T706 勾上**（★ 定性已下），★ T705 与它**分开列**
+    （★ 分割线是"前置还不够"、★ 投影曲线是"指针族" —— ★ 两回事，不该混写一行）
+★ 语法门禁 0 处。

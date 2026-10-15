@@ -179,6 +179,7 @@ def _as_list(value) -> list:
         return [value]
 
 
+#: dispatch-guard: exempt internal-helper
 def _read(obj, member):
     """★ 安全读一个零参 COM 成员；★ 读不到返回 `None`（★ 不猜、不静默当 0）。"""
     if obj is None:
@@ -282,6 +283,7 @@ def _sum_over_views(model, member: str) -> int | None:
         return None
     total = 0
     for v in views:
+        #: dispatch-fwd: upstream _sum_over_views sites 二级转发：上游 10 个调用点**全是字面量**（5 distinct，两源可查）
         raw = _read(v, member)
         try:
             total += int(raw)
@@ -894,6 +896,7 @@ def auto_insert_balloons(model, *,
 #   `_delta()` 当判据 ✓ —— ★ **不拿返回的数组长度当唯一判据**（★ 同 `PostIntersect` 那类教训）
 
 #: ★ 官方 `swImportModelItemsSource_e`（★ 逐值抄自 `C:\swapi\enums\`）
+#: enum-gate: enum swImportModelItemsSource_e
 MODEL_ITEM_SOURCES = {
     "entire_model": 0,
     "selected_feature": 1,
@@ -903,6 +906,7 @@ MODEL_ITEM_SOURCES = {
 
 #: ★★ 官方 `swInsertAnnotation_e` —— **26 个成员一个不漏**（★ 位掩码；逐值抄自该页的 Value 列）✓
 #:   ⚠ **不许跨条复制别的映射表**；★ 本表只属于这个成员 ✓
+#: enum-gate: enum swInsertAnnotation_e
 ANNOTATION_TYPE_BITS = {
     "swInsertCThreads": 1,
     "swInsertDatums": 2,
@@ -1122,6 +1126,7 @@ def insert_model_annotations(model, view_name: str = "", *, source: str = "entir
 #   ★ 这选的是**同一类东西**（视图里的实体），★ 只是**不猜坐标** ✓
 
 #: ★ 官方 `swViewEntityType_e`（★ 逐值抄自 `C:\swapi\enums\swViewEntityType_e.md`）
+#: enum-gate: enum swViewEntityType_e
 VIEW_ENTITY_TYPES = {
     "edge": 1,
     "vertex": 2,

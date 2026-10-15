@@ -1,0 +1,51 @@
+| 153 | **规则 3 的文档描述了一个**未实现**的形态** —— dict-form 与四个索引来源**都不存在**，而门禁只验了其中一小段** —— 2026-10-01（轮 211 核实）。
+
+★★★ **来源**：队列 A8 的前置调研（只读子代理 `simscan`，共享任务 `task-2`）⇒ ★ 我**抽查了它三条最关键论断，全部属实**。
+
+★★★ **核实结果（每条都跑过命令）**：
+```
+① **文档与实现不吻合**：
+     文档（`docs/union-conventions.md` 规则 3）要的是 **dict 形态**：
+        { "selection": { "edges": [4, 6, 9] } } · { "face_edges": [2] } · { "planes": ["front"] }
+     而 resolver（`scripts/sw_selection_spec.py` 的 `resolve_entity`）**实际接受**的是：
+        "__current_selection__"（当前选区第一个，不重选）· "index:<n>"（体上第 n 个，重选）· 一个 COM 对象
+     ⇒ ★★ **文档是 dict-form，实现是 str/COM-form** —— 两者不是同一个东西。
+② **那四个"索引来源"不存在**：
+     grep 'def list_faces|def list_edges|def list_vertices|def list_sketch_segments' scripts/  ⇒ **0 命中**
+     ⇒ ★ 文档说「索引来自 list_faces / …」，而这四个函数**查不到**（按铁律 5 该写"查不到"）。
+③ **门禁只验了规则 3 的一小段**：
+     `tool_registry.py`：`_BARE_COORD_NAMES = {"x","y","z","x_mm","y_mm","z_mm","point","coordinate"}`
+     判据只有 `if p.name in _BARE_COORD_NAMES: raise GateError("规则 3 违反…")`
+     ⇒ ★ 只拦「**参数名**是裸坐标」，**不拦**「selection 是不是声明式」、**不拦**「按 mark 分配」
+     ⇒ 规则 3 在文档里有**三段**（形态 / 索引来源 / 按 mark 分配），机器**只验了一段**。
+```
+
+★★ **这解释了一个此前的困惑**：`tool_specs_batch1.py` 的 docstring 为什么要专门写一段
+「**内部实现与对外表面的合法差异**」—— ★ 因为规则 3 描述的是**理想形态**，实现只做到了一部分，
+而当时**用一段散文把那个落差说清楚了**（那是对的处置；缺的是把它**升级成一条记录**）。
+
+★★★ **可复用的定则**：
+> **"文档写了" ≠ "它能当判据"** —— 一条规则若含**多个子句**，要**逐子句问"机器验了哪几个"**；
+> 没验的子句**不是不存在**，而是**在无人看守地漂移**（本处：形态与 mark 两段）。
+★ 这与**事实 150**（门禁报错先判断要措辞还是结构）· **事实 152**（门禁正则假设注释不含某字符）
+  **是同一族的第三种形态**：前两条是"门禁读错/判错"，这一条是"**门禁只判了规则的一部分**"。
+
+★ **对 A8 的可执行结论**（调研已给，我核实）：
+```
+· `sw_simulation_loads` 那族**可以做**：照 `tool_specs_batch4.py` 的形状
+  （`pre_call` 选中 + `derived_args` 用既有 `_selected_dispatch_array` 造 DispArray + `param_alias` 隐藏内部参）
+  ⚠ 但受两处缺口所限：**mark 无法自动分配**（resolver 的 `select_object`/`Select4` 不取 mark）·
+    **曲面/非轴对齐实体的"面上一点"构造查不到**（`resolve_face_selector` 只有 6 个轴对齐包面）。
+· `sw_part` 那 6 个**不能一套方案全装**：
+     `sketch_centerline` ✔ 3D 点（`resolve_point`）· `linear_pattern` ✔ 方向（`resolve_direction`）·
+     `hole_wizard` ✔ 3D 点**但函数体是 `pass` 桩（没实现可包）** ·
+     ★ `sketch_arc` / `sketch_polygon` / `add_dimension` ✘ **需先补"草图平面内 2D 点"解析器**（现无）
+· ⚠ ★ **只有 `add_dimension(x,y)` 与 `hole_wizard(…,x,y,z)` 会被门禁拒**；其余（`cx`/`x1`/`d1_x`…）
+  **不在黑名单、门禁不拦** ⇒ 它们是靠 `batch16` 的**人工分类**才进 A8 的 —— ★ 那本身就是覆盖不全的证据。
+```
+
+★ **派生的三件待办**（已写进长期知识）：① 对齐规则 3 的文档与实现（补实现，或把文档改成描述实际形态）·
+② 补规则 3 的机器门禁（形态 + mark 两段）· ③ 补 2D 草图平面点解析器。
+
+**依据**：共享任务 `task-2` 的只读调研 · 我复核的三条命令 · `docs/union-conventions.md` 规则 3 ·
+`mcp-server/tool_registry.py` 的 `_BARE_COORD_NAMES` · `tool_specs_batch1.py` / `batch4.py` · 事实 150 / 152

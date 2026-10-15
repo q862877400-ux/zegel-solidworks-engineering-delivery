@@ -1,0 +1,863 @@
+# L2 · 长尾覆盖任务（60 条）
+# 来源：specs/315-eval-corpus/spec.md
+# ★ 工具名锚定 register_capabilities.all_specs()（476 个真实工具）
+# ★ needs_owner_judgment=true 的条目需业主判（见 owner-review.md）
+
+- target_group: add
+  task: 给草图加一条几何关系（水平）
+  tools:
+  - - solidworks_sketch_apply_relations
+    - solidworks_count_sketch_relations
+  expected_groups:
+  - add
+  forbidden_groups: []
+  readback:
+  - 关系数 +1
+  needs_owner_judgment: true
+  notes: v3.1 补：本条覆盖此前遗漏的组
+  id: L2-001
+- id: L2-002
+  target_group: appearance
+  task: 删除一个渲染材质
+  tools:
+  - - solidworks_appearance_delete_render_material
+    - solidworks_collect_appearance_evidence
+  expected_groups:
+  - appearance
+  forbidden_groups: []
+  readback:
+  - 材质数减少
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-003
+  target_group: assembly
+  task: 列出装配体的全部组件与配合
+  tools:
+  - - solidworks_assembly_list_components
+    - solidworks_assembly_list_mates
+  expected_groups:
+  - assembly
+  forbidden_groups: []
+  readback:
+  - 组件数 ≥ 1
+  needs_owner_judgment: true
+  notes: 本组 25 个工具，本条覆盖其中 2 个
+- id: L2-004
+  target_group: auto
+  task: 给草图自动标注尺寸
+  tools:
+  - - solidworks_auto_dimension_sketch
+    - solidworks_sketch_fully_defined_status
+  expected_groups:
+  - auto
+  forbidden_groups: []
+  readback:
+  - 尺寸数增加
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-005
+  target_group: base
+  task: 读回钣金基体法兰的参数（厚度/折弯半径/K 因子）
+  tools:
+  - - solidworks_base_flange_params
+    - solidworks_sheet_metal_evidence
+  expected_groups:
+  - base
+  forbidden_groups: []
+  readback:
+  - 厚度可读
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-006
+  target_group: boundary
+  task: 用两个面建一个边界凸台
+  tools:
+  - - solidworks_boundary_boss_report
+    - solidworks_boundary_surface_report
+  expected_groups:
+  - boundary
+  forbidden_groups: []
+  readback:
+  - 特征存在
+  needs_owner_judgment: true
+  notes: 本组 2 个工具，本条覆盖其中 2 个
+- id: L2-007
+  target_group: chamfer
+  task: 给一条边做 2×45° 倒角
+  tools:
+  - - solidworks_chamfer
+    - solidworks_entities_on_body
+  expected_groups:
+  - chamfer
+  forbidden_groups: []
+  readback:
+  - 倒角特征存在
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-008
+  target_group: circular
+  task: 把一个特征做圆周阵列（6 等分）
+  tools:
+  - - solidworks_circular_pattern
+    - solidworks_pattern_params
+  expected_groups:
+  - circular
+  forbidden_groups: []
+  readback:
+  - 实例数 = 6
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-009
+  target_group: collect
+  task: 收集装配体的 BOM 证据
+  tools:
+  - - solidworks_collect_assembly_bom
+    - solidworks_collect_model_summary
+  expected_groups:
+  - collect
+  forbidden_groups: []
+  readback:
+  - BOM 行数 ≥ 1
+  needs_owner_judgment: true
+  notes: 本组 4 个工具，本条覆盖其中 2 个
+- id: L2-010
+  target_group: config
+  task: 新建一个配置并切换
+  tools:
+  - - solidworks_config_create
+    - solidworks_config_activate
+  expected_groups:
+  - config
+  forbidden_groups: []
+  readback:
+  - 配置数 +1
+  needs_owner_judgment: true
+  notes: 本组 8 个工具，本条覆盖其中 2 个
+- id: L2-011
+  target_group: costing
+  task: 读回零件的成本分析（实体数、成本项）
+  tools:
+  - - solidworks_costing_evidence
+    - solidworks_costing_read_analysis
+  expected_groups:
+  - costing
+  forbidden_groups: []
+  readback:
+  - 实体数可读
+  needs_owner_judgment: true
+  notes: 本组 19 个工具，本条覆盖其中 2 个
+- id: L2-012
+  target_group: count
+  task: 数草图里的几何关系条数
+  tools:
+  - - solidworks_count_sketch_relations
+    - solidworks_sketch_fully_defined_status
+  expected_groups:
+  - count
+  forbidden_groups: []
+  readback:
+  - 关系数可读
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-013
+  target_group: create
+  task: 从草图建一个旋转曲面
+  tools:
+  - - solidworks_create_revolved_surface
+    - solidworks_surface_evidence
+  expected_groups:
+  - create
+  forbidden_groups: []
+  readback:
+  - 曲面体数 +1
+  needs_owner_judgment: true
+  notes: 本组 2 个工具，本条覆盖其中 2 个
+- id: L2-014
+  target_group: csys
+  task: 插入一个坐标系并读回参数
+  tools:
+  - - solidworks_insert_coordinate_system
+    - solidworks_csys_params
+  expected_groups:
+  - csys
+  forbidden_groups: []
+  readback:
+  - 坐标系特征存在
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-015
+  target_group: custom
+  task: 给零件写一个自定义属性并读回
+  tools:
+  - - solidworks_config_set_custom_properties
+    - solidworks_custom_property_get
+  expected_groups:
+  - custom
+  forbidden_groups: []
+  readback:
+  - 属性可读回
+  needs_owner_judgment: true
+  notes: 本组 4 个工具，本条覆盖其中 2 个
+- id: L2-016
+  target_group: delete
+  task: 删掉草图里的全部几何关系
+  tools:
+  - - solidworks_delete_all_sketch_relations
+    - solidworks_count_sketch_relations
+  expected_groups:
+  - delete
+  forbidden_groups: []
+  readback:
+  - 关系数 = 0
+  needs_owner_judgment: true
+  notes: 本组 2 个工具，本条覆盖其中 2 个
+- id: L2-017
+  target_group: delivery
+  task: 导出 BOM 的 CSV
+  tools:
+  - - solidworks_delivery_export_bom_csv
+    - solidworks_delivery_bom_traceability
+  expected_groups:
+  - delivery
+  forbidden_groups: []
+  readback:
+  - CSV 存在
+  needs_owner_judgment: true
+  notes: 本组 3 个工具，本条覆盖其中 2 个
+- id: L2-018
+  target_group: document
+  task: 列出一个文档的外部引用
+  tools:
+  - - solidworks_document_dependencies
+    - solidworks_pdm_evidence_report
+  expected_groups:
+  - document
+  forbidden_groups: []
+  readback:
+  - 依赖列表可读
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-019
+  target_group: dome
+  task: 在一个面上加圆顶
+  tools:
+  - - solidworks_part_insert_dome
+    - solidworks_dome_params
+  expected_groups:
+  - dome
+  forbidden_groups: []
+  readback:
+  - 圆顶特征存在
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-020
+  target_group: drawing
+  task: 列出一张工程图有哪些图纸、当前在哪张
+  tools:
+  - - solidworks_drawing_list_sheets
+    - solidworks_drawing_current_sheet_name
+  expected_groups:
+  - drawing
+  forbidden_groups: []
+  readback:
+  - 图纸数 ≥ 1
+  needs_owner_judgment: true
+  notes: 本组 31 个工具，本条覆盖其中 2 个
+- target_group: entities
+  task: 列出体上的全部实体（边/面/顶点）
+  tools:
+  - - solidworks_entities_on_body
+  expected_groups:
+  - entities
+  forbidden_groups: []
+  readback:
+  - 实体数 > 0
+  needs_owner_judgment: true
+  notes: v3.1 补：本条覆盖此前遗漏的组
+  id: L2-021
+- id: L2-022
+  target_group: equation
+  task: 给零件加一个全局方程
+  tools:
+  - - solidworks_equation_add
+    - solidworks_equation_list
+  expected_groups:
+  - equation
+  forbidden_groups: []
+  readback:
+  - 方程数 +1
+  needs_owner_judgment: true
+  notes: 本组 4 个工具，本条覆盖其中 2 个
+- id: L2-023
+  target_group: export
+  task: 把零件导出 STEP 与 STL
+  tools:
+  - - solidworks_export_step
+    - solidworks_export_stl
+  expected_groups:
+  - export
+  forbidden_groups: []
+  readback:
+  - 两个文件都存在
+  needs_owner_judgment: true
+  notes: 本组 8 个工具，本条覆盖其中 2 个
+- id: L2-024
+  target_group: extrude
+  task: 把一个草图拉伸成凸台
+  tools:
+  - - solidworks_extrude_boss
+    - solidworks_extrude_depth
+  expected_groups:
+  - extrude
+  forbidden_groups: []
+  readback:
+  - 体数 +1
+  needs_owner_judgment: true
+  notes: 本组 5 个工具，本条覆盖其中 2 个
+- target_group: fastener
+  task: 查紧固件类型表（螺栓/螺母）
+  tools:
+  - - solidworks_fastener_types
+    - solidworks_fastener_table_types
+  expected_groups:
+  - fastener
+  forbidden_groups: []
+  readback:
+  - 类型列表非空
+  needs_owner_judgment: true
+  notes: v3.1 补：本条覆盖此前遗漏的组
+  id: L2-025
+- id: L2-026
+  target_group: feature
+  task: 压缩一个特征再解压缩
+  tools:
+  - - solidworks_feature_suppress
+    - solidworks_feature_unsuppress
+    - solidworks_feature_list_names
+  expected_groups:
+  - feature
+  forbidden_groups: []
+  readback:
+  - 特征状态来回切换
+  needs_owner_judgment: true
+  notes: 本组 8 个工具，本条覆盖其中 3 个
+- id: L2-027
+  target_group: fillet
+  task: 读回一个圆角特征的半径
+  tools:
+  - - solidworks_fillet
+    - solidworks_fillet_params
+  expected_groups:
+  - fillet
+  forbidden_groups: []
+  readback:
+  - 半径可读
+  needs_owner_judgment: true
+  notes: 本组 2 个工具，本条覆盖其中 2 个
+- id: L2-028
+  target_group: flatten
+  task: 把一张曲面展平
+  tools:
+  - - solidworks_flatten_surface
+    - solidworks_surface_evidence
+  expected_groups:
+  - flatten
+  forbidden_groups: []
+  readback:
+  - 展平特征存在
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-029
+  target_group: gtol
+  task: 插入一个形位公差符号
+  tools:
+  - - solidworks_gtol_insert
+    - solidworks_drawing_add_note
+  expected_groups:
+  - gtol
+  forbidden_groups: []
+  readback:
+  - 标注数 +1
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-030
+  target_group: helix
+  task: 插入一条螺旋线
+  tools:
+  - - solidworks_helix_insert
+    - solidworks_feature_list_names
+  expected_groups:
+  - helix
+  forbidden_groups: []
+  readback:
+  - 螺旋线特征存在
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-031
+  target_group: hole
+  task: 查一个标准孔规格表（M6 通孔）
+  tools:
+  - - solidworks_hole_standards
+    - solidworks_fastener_types
+  expected_groups:
+  - hole
+  forbidden_groups: []
+  readback:
+  - 标准列表非空
+  needs_owner_judgment: true
+  notes: 本组 8 个工具，本条覆盖其中 2 个
+- id: L2-032
+  target_group: insert
+  task: 在已有实体上插入一张平面区域曲面
+  tools:
+  - - solidworks_insert_planar_surface
+    - solidworks_surface_evidence
+  expected_groups:
+  - insert
+  forbidden_groups: []
+  readback:
+  - 曲面体数 +1
+  needs_owner_judgment: true
+  notes: 本组 17 个工具，本条覆盖其中 2 个
+- id: L2-033
+  target_group: linear
+  task: 读回线性阵列的报告
+  tools:
+  - - solidworks_linear_pattern_report
+    - solidworks_pattern_params
+  expected_groups:
+  - linear
+  forbidden_groups: []
+  readback:
+  - 实例数可读
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-034
+  target_group: loft
+  task: 读回放样特征的轮廓数
+  tools:
+  - - solidworks_loft_params
+    - solidworks_part_loft
+  expected_groups:
+  - loft
+  forbidden_groups: []
+  readback:
+  - 轮廓数 ≥ 2
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-035
+  target_group: mass
+  task: 取质量属性对象
+  tools:
+  - - solidworks_mass_property_object
+    - solidworks_part_mass_properties
+  expected_groups:
+  - mass
+  forbidden_groups: []
+  readback:
+  - 对象非空
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-036
+  target_group: measure
+  task: 量两个面之间的距离
+  tools:
+  - - solidworks_measure_selection
+    - solidworks_selection_count
+  expected_groups:
+  - measure
+  forbidden_groups: []
+  readback:
+  - 距离可读
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-037
+  target_group: mirror
+  task: 把一个特征关于基准面镜像
+  tools:
+  - - solidworks_mirror_feature
+    - solidworks_feature_list_names
+  expected_groups:
+  - mirror
+  forbidden_groups: []
+  readback:
+  - 镜像特征存在
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-038
+  target_group: misumi
+  task: 查一个米思米标准件型号
+  tools:
+  - - solidworks_misumi_suggest_part
+  expected_groups:
+  - misumi
+  forbidden_groups: []
+  readback:
+  - 返回条数 ≥ 0
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 1 个
+- id: L2-039
+  target_group: mold
+  task: 对分型件做拔模分析
+  tools:
+  - - solidworks_mold_draft_analysis
+    - solidworks_mold_evidence
+  expected_groups:
+  - mold
+  forbidden_groups: []
+  readback:
+  - 分析返回可读
+  needs_owner_judgment: true
+  notes: 本组 7 个工具，本条覆盖其中 2 个
+- id: L2-040
+  target_group: motion
+  task: 建一个运动算例并读回摘要
+  tools:
+  - - solidworks_motion_create_study
+    - solidworks_motion_collect_summary
+  expected_groups:
+  - motion
+  forbidden_groups: []
+  readback:
+  - 算例存在
+  needs_owner_judgment: true
+  notes: 本组 8 个工具，本条覆盖其中 2 个
+- id: L2-041
+  target_group: part
+  task: 读回零件的包围盒与质量属性
+  tools:
+  - - solidworks_part_bounding_box
+    - solidworks_part_mass_properties
+  expected_groups:
+  - part
+  forbidden_groups: []
+  readback:
+  - 体积 > 0
+  needs_owner_judgment: true
+  notes: 本组 12 个工具，本条覆盖其中 2 个
+- id: L2-042
+  target_group: pattern
+  task: 读回一个阵列特征的参数
+  tools:
+  - - solidworks_pattern_params
+    - solidworks_linear_pattern_report
+  expected_groups:
+  - pattern
+  forbidden_groups: []
+  readback:
+  - 实例数可读
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-043
+  target_group: pdm
+  task: 读回文档的 PDM 相邻证据（属性/配置/引用）
+  tools:
+  - - solidworks_pdm_evidence_report
+    - solidworks_document_dependencies
+  expected_groups:
+  - pdm
+  forbidden_groups: []
+  readback:
+  - 报告可读
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-044
+  target_group: ref
+  task: 建一个 3D 边界框
+  tools:
+  - - solidworks_insert_global_bounding_box
+    - solidworks_ref_geometry_create_3d_bounding_box
+  expected_groups:
+  - ref
+  forbidden_groups: []
+  readback:
+  - 边界框特征存在
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-045
+  target_group: resolve
+  task: 解析一个声明式选择器
+  tools:
+  - - solidworks_resolve_selection
+    - solidworks_resolve_entity
+  expected_groups:
+  - resolve
+  forbidden_groups: []
+  readback:
+  - 解析成功
+  needs_owner_judgment: true
+  notes: 本组 2 个工具，本条覆盖其中 2 个
+- id: L2-046
+  target_group: review
+  task: 导出一份审查报告（含预览图）
+  tools:
+  - - solidworks_build_review_report
+    - solidworks_review_run
+  expected_groups:
+  - review
+  forbidden_groups: []
+  readback:
+  - 报告文件存在
+  needs_owner_judgment: true
+  notes: 本组 9 个工具，本条覆盖其中 2 个
+- id: L2-047
+  target_group: revolve
+  task: 读回一个旋转特征的参数
+  tools:
+  - - solidworks_revolve_params
+    - solidworks_revolve_boss
+  expected_groups:
+  - revolve
+  forbidden_groups: []
+  readback:
+  - 角度可读
+  needs_owner_judgment: true
+  notes: 本组 3 个工具，本条覆盖其中 2 个
+- id: L2-048
+  target_group: rib
+  task: 读回筋特征的参数
+  tools:
+  - - solidworks_rib_params
+    - solidworks_part_rib
+  expected_groups:
+  - rib
+  forbidden_groups: []
+  readback:
+  - 参数可读
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-049
+  target_group: scale
+  task: 把零件放大 2 倍
+  tools:
+  - - solidworks_scale_feature
+    - solidworks_part_mass_properties
+  expected_groups:
+  - scale
+  forbidden_groups: []
+  readback:
+  - 体积比 = 8.0
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-050
+  target_group: section
+  task: 读回零件截面的面积
+  tools:
+  - - solidworks_section_properties
+    - solidworks_section_area_crosscheck
+  expected_groups:
+  - section
+  forbidden_groups: []
+  readback:
+  - 面积 > 0
+  needs_owner_judgment: true
+  notes: 本组 2 个工具，本条覆盖其中 2 个
+- id: L2-051
+  target_group: select
+  task: 按序号选中体上的一条边
+  tools:
+  - - solidworks_select_entity_by_index
+    - solidworks_selection_count
+  expected_groups:
+  - select
+  forbidden_groups: []
+  readback:
+  - 选区计数 = 1
+  needs_owner_judgment: true
+  notes: 本组 3 个工具，本条覆盖其中 2 个
+- id: L2-052
+  target_group: selection
+  task: 读回当前选区的计数与坐标
+  tools:
+  - - solidworks_selection_count
+    - solidworks_selection_point
+  expected_groups:
+  - selection
+  forbidden_groups: []
+  readback:
+  - 计数可读
+  needs_owner_judgment: true
+  notes: 本组 11 个工具，本条覆盖其中 2 个
+- id: L2-053
+  target_group: sheet
+  task: 从草图建一个钣金基体法兰
+  tools:
+  - - solidworks_sheet_metal_create_base_flange
+    - solidworks_sheet_metal_evidence
+  expected_groups:
+  - sheet
+  forbidden_groups: []
+  readback:
+  - 钣金特征存在
+  needs_owner_judgment: true
+  notes: 本组 13 个工具，本条覆盖其中 2 个
+- id: L2-054
+  target_group: shell
+  task: 读回抽壳特征的壁厚
+  tools:
+  - - solidworks_shell_params
+    - solidworks_part_mass_properties
+  expected_groups:
+  - shell
+  forbidden_groups: []
+  readback:
+  - 壁厚可读
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-055
+  target_group: simulation
+  task: 对零件做静力分析：赋材料、加约束、划网格、求解
+  tools:
+  - - solidworks_simulation_set_material
+    - solidworks_simulation_apply_fixed_restraint
+    - solidworks_simulation_create_mesh_safely
+    - solidworks_simulation_run_analysis
+  expected_groups:
+  - simulation
+  forbidden_groups: []
+  readback:
+  - 仿真有结果
+  needs_owner_judgment: true
+  notes: 本组 53 个工具，本条覆盖其中 4 个
+- id: L2-056
+  target_group: sketch
+  task: 数一个草图里有几条线、几段弧
+  tools:
+  - - solidworks_sketch_count_lines
+    - solidworks_sketch_count_arcs
+  expected_groups:
+  - sketch
+  forbidden_groups: []
+  readback:
+  - 线数/弧数可读
+  needs_owner_judgment: true
+  notes: 本组 45 个工具，本条覆盖其中 2 个
+- id: L2-057
+  target_group: slot
+  task: 建一条半圆端槽
+  tools:
+  - - solidworks_slot_semicircular_by_selection
+    - solidworks_selection_count
+  expected_groups:
+  - slot
+  forbidden_groups: []
+  readback:
+  - 槽特征存在
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-058
+  target_group: surface
+  task: 用已有草图建一个拉伸曲面
+  tools:
+  - - solidworks_surface_create_extruded
+    - solidworks_surface_evidence
+  expected_groups:
+  - surface
+  forbidden_groups: []
+  readback:
+  - 曲面体数 +1
+  needs_owner_judgment: true
+  notes: 本组 8 个工具，本条覆盖其中 2 个
+- id: L2-059
+  target_group: sweep
+  task: 读回一个扫描特征的参数
+  tools:
+  - - solidworks_sweep_params
+    - solidworks_sweep_surface
+  expected_groups:
+  - sweep
+  forbidden_groups: []
+  readback:
+  - 参数可读
+  needs_owner_judgment: true
+  notes: 本组 2 个工具，本条覆盖其中 2 个
+- id: L2-060
+  target_group: thicken
+  task: 把一张曲面加厚成实体
+  tools:
+  - - solidworks_thicken
+    - solidworks_part_mass_properties
+  expected_groups:
+  - thicken
+  forbidden_groups: []
+  readback:
+  - 体数 +1
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-061
+  target_group: toolbox
+  task: 查 Toolbox 标准件库有哪些标准
+  tools:
+  - - solidworks_toolbox_list_standards
+  expected_groups:
+  - toolbox
+  forbidden_groups: []
+  readback:
+  - 标准列表非空
+  needs_owner_judgment: true
+  notes: 本组 4 个工具，本条覆盖其中 1 个
+- id: L2-062
+  target_group: topology
+  task: 建一个拓扑优化算例并读回约束
+  tools:
+  - - solidworks_topology_create_study
+    - solidworks_topology_list_constraints
+  expected_groups:
+  - topology
+  forbidden_groups: []
+  readback:
+  - 算例存在
+  needs_owner_judgment: true
+  notes: 本组 17 个工具，本条覆盖其中 2 个
+- id: L2-063
+  target_group: untrim
+  task: 取消剪裁一张曲面
+  tools:
+  - - solidworks_untrim_surface
+    - solidworks_surface_evidence
+  expected_groups:
+  - untrim
+  forbidden_groups: []
+  readback:
+  - 曲面特征存在
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-064
+  target_group: view
+  task: 把视图切到等轴测并缩放到合适大小
+  tools:
+  - - solidworks_set_standard_view
+    - solidworks_view_zoom_to_fit
+  expected_groups:
+  - view
+  forbidden_groups: []
+  readback:
+  - 视图已切换
+  needs_owner_judgment: true
+  notes: 本组 22 个工具，本条覆盖其中 2 个
+- id: L2-065
+  target_group: weld
+  task: 读回圆角焊缝的报告
+  tools:
+  - - solidworks_weld_fillet_bead_report
+    - solidworks_feature_list_names
+  expected_groups:
+  - weld
+  forbidden_groups: []
+  readback:
+  - 报告可读
+  needs_owner_judgment: true
+  notes: 本组 1 个工具，本条覆盖其中 2 个
+- id: L2-066
+  target_group: weldment
+  task: 建焊件并生成切割清单
+  tools:
+  - - solidworks_weldment_ensure_cut_list
+    - solidworks_weldment_evidence
+  expected_groups:
+  - weldment
+  forbidden_groups: []
+  readback:
+  - 切割清单存在
+  needs_owner_judgment: true
+  notes: 本组 15 个工具，本条覆盖其中 2 个

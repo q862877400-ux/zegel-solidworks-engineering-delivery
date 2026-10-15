@@ -1,0 +1,74 @@
+| 257 | **弹窗要**治根**：`OpenDoc6` 加 `swOpenDocOptions_LoadExternalReferencesInMemory(512)` ⇒「打开外部参考的零件」**不再弹**** —— 而"点掉"只是兜底（2026-10-01，轮 335，**用户指出**）。
+
+## 一、★ 用户的批评（★ 一针见血）
+```
+> 「现在的弹窗是你点了又出来，你是不是没解决弹窗的**原因**，只是单纯点弹窗，
+>   然后因为**根因没解决**就直接卡死。
+>   我建议加一个**返回 LLM 的脚本**：发现弹窗之后不要用函数机械处理，
+>   而是自动**截图**或把弹窗内容发给 agent，让 agent 分析再**根因解决**。」
+⇒ ★★★ **两半都对**：
+   ★ **前半**（★ 我只治标）—— ★ 真机证实：★ 机械点掉**只是把这一次糊过去**，
+     ★ **下一次打开同一个文件还会弹**（★ 而某一次没人点 ⇒ 会话卡死）。
+   ★ **后半**（★ 弹窗 ⇒ 截图 ⇒ 交 agent 分析）—— ★ 那是**未知弹窗**的正确路子（★ 见"下一步"）。
+```
+
+## 二、★★★★★ 根因与官方开关
+```
+★ 现象：★ 打开**带外部参考**的工程图/装配体时，SolidWorks 弹
+   「**打开外部参考的零件**」（★ 单选"打开所有参考的零件/不打开/…" + 确定）。
+★ 根因：★ `OpenDoc6` 用的是**默认选项** ⇒ ★ SolidWorks **只能问用户**要不要加载参考件。
+★★ 官方开关（★ `swOpenDocOptions_e`）：
+   **`swOpenDocOptions_LoadExternalReferencesInMemory = 512 (0x200)`**
+   —— 官方原话「**Open external references in memory only**」。
+★★★ 而官方**明说 API 场景必须用它**：
+   「`swExtRefLoadRefDocsInMemory`（System Options → External References → Load documents in memory only）
+     **is ignored when opening documents through the API** because
+     `IDocumentSpecification::LoadExternalReferencesInMemory` and
+     `ISldWorks::OpenDoc6`(`swOpenDocOptions_LoadExternalReferencesInMemory`)
+     **have sole control of reference loading**」
+⇒ ★★ **即：★ 在 API 里改系统选项**没用**，★ **只能**在 `OpenDoc6` 的选项位上加 512** ✓
+⚠ 官方前提：★「valid only if `swLoadExternalReferences` is not set to `None`」
+   ⇒ ★ 若用户偏好设成"从不加载"，本选项不生效（★ 而那时也不会弹框 ⇒ 两种情形都不卡）。
+```
+
+## 三、★ 修法与真机（`output/open-doc-rootfix-evidence.json`，★ **PASS**）
+```
+★ 改：`scripts/sw_connect.py` 的 `open_document` ⇒ `options |= 512`（★ 一行）。
+★★ **判据从"点掉几个"换成"外部参考框有没有出现"**：
+   ```
+   打开前：['SOLIDWORKS Design']        打开后：['SOLIDWORKS Design']      ← 同一个（常驻）
+   external_ref_left = []               ⇒ ★★ "外部参考"框**完全没有出现** ✓
+   ```
+⇒ ★★★ **这才是"根因解决"的证据** —— ★ 而不是"点掉了 N 个"（★ 点掉是**事后**的，
+   ★ 而**不弹**是**事前**的）✓
+```
+
+## 四、★★ 两条定则
+```
+★★★ **"点掉弹窗"是兜底，"让它不弹"才是修复** —— ★ 判据要能用**前者与后者区分开**：
+   · 兜底成功的证据：★ 「点掉了 N 个」
+   · **修复成功的证据**：★ 「**根本就没弹**」（★ 本处的 `external_ref_left == []`）
+   ⇒ ★★ **一个只会报"点掉 N 个"的系统，永远分不清"修好了"与"每次都在糊"。**
+★★ **"常驻窗口"不该被当成待处置的弹窗** —— ★ 真机：那个 `SOLIDWORKS Design`（★ 标题 = 主窗口名）
+   ★ **点了 7 次也不消失**（★ 它一直在 `#32770` 名单里）。
+   ⇒ ★★ **所以"发现 N 个"这个计数本身要**排除常驻项****，★ 否则**每次都报"发现 1 个"**，
+     ★ 让人以为总有弹窗（★ 那会让"修复成功"与"没修"看起来一样）。⚠ **本处尚未按此收紧**。
+```
+
+## 五、★ 下一步（★ 用户建议的后半 —— **尚未实现**）
+```
+★ **弹窗 ⇒ 截图 ⇒ 交 agent 分析**（★ 而不是按类名机械点）：
+   ★ 现在的能力是"按 Win32 类名 `#32770` 找 + 发 `WM_COMMAND/IDOK`" —— ★ **零硬编码**，
+   ★ 代价是**不理解弹窗在问什么**（★ 本处就因此"点了又弹"）。
+   ⇒ ★★ **可落地设计**：★ `settle_residual_dialogs` 发现弹窗时
+     · ① ★ 用 `PrintWindow` / `BitBlt` 截该 `#32770` 的**位图**；
+     · ② ★ 连**标题 + 所有子控件文本 + 按钮 ID** 一起落盘成 JSON；
+     · ③ ★ **返回给调用方（Lead / agent）** ⇒ ★ 由 agent 判断"这是什么、该点哪个、
+       以及**能不能从根上让它不弹**"（★ 例如本处的 512 选项就是**查官方文档**得来的）。
+   ⚠ **不许做成"自动点确定"** —— ★ 那正是本轮被用户批评的形态。
+```
+
+**依据**：`output/open-doc-rootfix-evidence.json`（★ **PASS**：`external_ref_left=[]`）·
+`output/open-doc-dialog-evidence.json`（★ 修根因前的对照：发现 1 / 点掉 7）·
+`scripts/sw_connect.py` 的 `open_document`（★ `options |= 512` + 收尾段）·
+`C:\swapi\enums\swOpenDocOptions_e.md`（★ 512 / Silent / ReadOnly 等）· 事实 8 / 242 / 256

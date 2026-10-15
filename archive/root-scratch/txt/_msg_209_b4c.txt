@@ -1,0 +1,31 @@
+规格 209 · B4-3：相交特征（idx 181）—— 真机建成 相交1，布尔 SafeArray 包装双向证实
+
+来源：docs/recon-207/adjudication.md §九（idx 181 intersect）。
+裁决书逐字：真名是两步 PreIntersect2 → PostIntersect；RegionType 三值表 + 示例 mark=0 +
+排除数组形状齐备；读侧 IIntersectFeatureData 零指针族 ⇒ ★ 唯一要实测的只有 System.object
+布尔 SafeArray 的包装。
+
+改了什么
+· scripts/sw_boolean_ops.py（新建 —— 铁律 3：scripts/ 白名单内；本仓既有零件特征模块里
+  没有多体/布尔这一族，裁决书指定的落点就是它）
+· mcp-server/tool_specs_batch95.py（新）+ register_capabilities ⇒ 444 个工具
+· tests/test_tool_specs_batch95.py（8 条：RegionType 三值表 + 数组必须包 VARIANT + 判据声明）
+· tools/probe_spec209_b4_intersect.py（真机探针）· tools/add_s209_b4c_capabilities.py
+· capabilities.yaml +1 条（part_intersect，verified ⇒ 122 条）
+
+★★ 裁决书点名的"唯一要实测"已验，而且是双向证实的
+PostIntersect 第 1 参是 System.object（布尔 SafeArray）⇒ 本仓包 VARIANT(VT_ARRAY | VT_BOOL)：
+· 不排除 ⇒ PreIntersect2 回 1 个体 · PostIntersect 建出 相交1 · GetIntersectionsCount() 回 1
+· 排除唯一的体 ⇒ PostIntersect 回 None、特征没建出来
+⇒ ★★ 说明那个 True 真被 SW 读走了（不是"参数被忽略但没报错"）。
+两种 region_type（intersecting / intersecting_and_internal）都各验了一遍。
+
+真机证据（走 tools/sw_guard.py，0 弹窗；output/spec209-intersect.json）
+· 选择走官方示例的"名字 + 类型"（SOLIDBODY:凸台-拉伸1,PLANE:前视基准面，都 mark 0）
+· 判据 = PreIntersect2 回的体数 + 特征树增量 + GetIntersectionsCount()（不看返回值）
+
+门禁
+· check_specs(all_specs()) = 444 个工具 · 0 问题；契约测试 8 passed
+· capabilities.yaml 122 条（36 行纯插入 / 0 删除）
+· 收尾链 15.8 s（★ 链尾自动关了本会话拉起的 SolidWorks）
+· ⚠ 仍有一处**既有**红（非本次改动）：tools/verify_union_349.py:112

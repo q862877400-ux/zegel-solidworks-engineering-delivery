@@ -1,0 +1,47 @@
+| 254 | **`InsertWrapFeature2` 在"选择正确"时仍**静默不建**（不抛异常、特征树不变）** —— 2026-10-01（轮 329）。
+
+## 一、★ 这一批的由来（objective② 的真缺核对）
+```
+★ 把 12 条 naked 逐条查完之后，**真缺 4 条**：`wrap` · `sensor` · `units` · `undo`
+   （★ 另 8 条查明是**语义等价**：`balloon`⇒BOM 族 · `gdt`/`datum`⇒`add_gtol_frame` 等 9 个 ·
+    `hem`/`jog`⇒钣金族 · `unfold`⇒`export_flat_pattern_dxf` · `referenced_documents`⇒17 个 `*depend*`）
+★ 本轮做 `wrap` —— ★ 官方入口明确：`IFeatureManager.InsertWrapFeature2`（**5 参** · 反射 arity = 5）。
+```
+
+## 二、★★★ 调用序与 mark（★ 来自官方**示例**，不是猜）
+```
+★ `C:\swapi\examples\Create_Wrap_Feature_on_Multiple_Faces_Example_VB.md`（★ 65 行的 VB 示例）：
+   ① 选基准面 ⇒ `SelectByID2("Plane8", "PLANE", …)`
+   ② `SketchManager.InsertSketch True` ⇒ `CreateCircle(...)` ⇒ `InsertSketch True`
+   ③ 选草图 ⇒ `SelectByID2("Sketch30", **"SKETCH"**, 0,0,0, False, **4**, …)`
+   ④ 选面   ⇒ ★ **逐个 `SelectByRay(...)`** ← ★★ **因为"面没有名字"**（事实 32）
+   ⑤ `FeatureManager.InsertWrapFeature2(Type, Thickness, ReverseDir, Method, MeshFactor)`
+★ `swWrapSketchType_e`（★ 官方枚举 × 反射**两源一致**）：**0 = Emboss · 1 = Engrave（UI 叫 Deboss）· 2 = Scribe**
+★ 官方硬约束：★ **草图必须是 2D**（原话 "3D sketches are invalid"）· ★ 拔模方向 mark = 2（仅 Emboss/Engrave）
+```
+
+## 三、★★★★ 真机结果（★ **如实：没通过**）
+```
+★ 选择**是对的**：★ 草图 `mark4 = 1` · 圆柱面 `mark1 = 1`（★ 回读计数，事实 8）✓
+★ 两个负例**都通过**：★ 未选中 ⇒ 显式拒绝（★ 并报出 mark1/mark4 计数）· ★ 非法 `wrap_type` ⇒ 拒绝 ✓
+★★ **而 `InsertWrapFeature2` 回了 `ok=false` 而 `error=null`** —— ★ 即：
+   ★ **它没抛异常，而特征树**没有多出新特征****。
+   ⇒ ★★★ **定则：★ 又一个「不抛但什么也没做」的 COM 方法**（★ 与 `InsertSewRefSurface` 的首次失败、
+     `InsertMirrorFeature2` 的 mark 错、`InsertProtrusionBlend2` 的形态错**同型**）
+     ⇒ ★★ **所以"调用没抛"永远不能当成功**（★ 事实 8 / 248 / 250 的同一族）。
+```
+
+## 四、★ 下一层要查什么（★ 三个候选，★ 按可能性排序）
+```
+① ★ **`Method` / `MeshFactor`（第 4/5 参）取值表没查到**（★ 本模块按铁律 5 用 0、并标明未核）——
+   ★ 而**它们可能不是随便给 0**（★ 例如 `Method` 可能要求 0=Analytical / 1=Numerical 之一）。
+② ★ **草图与圆柱的位置关系**：★ 我把 2D 草图放在 **Front Plane**，★ 而圆柱的轴**也在 x 轴**上
+   ⇒ ★ **草图平面可能与圆柱轴平行但不"迎面"** ⇒ ★ 包覆要求草图**能投到目标面上**。
+   ★ 示例里选的是 `Plane8`（★ 模型自己的面）⇒ ★ **该试"与目标面正对的平面"**。
+③ ★ **"Multiple Faces"**：★ 示例名如此 ⇒ ★ 也许它**要求一次选**多个面**（★ 而我们只选了一个）。
+```
+
+**依据**：`output/wrap-evidence.json`（★ **PARTIAL 3/4**：选择 ✓ · 两个负例 ✓ · **建特征 ✗**）·
+`scripts/sw_wrap.py`（★ 新增，★ 已带来源块）· `C:\swapi\types\IFeatureManager\InsertWrapFeature2.md` ·
+`C:\swapi\examples\Create_Wrap_Feature_on_Multiple_Faces_Example_VB.md` · `C:\swapi\enums\swWrapSketchType_e.md` ·
+事实 8 / 32 / 242 / 248 / 250 / 253

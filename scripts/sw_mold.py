@@ -57,6 +57,14 @@
 
 from __future__ import annotations
 
+#: ★ 长度换算助手：`_mm(v)` = **毫米→米**（恰好一次）。
+#:   依据：本仓定案 `output/probe-unit-decisive/decisive.json`。
+try:
+    from sw_connect import mm as _mm          # noqa: F401
+except Exception:                             # noqa: BLE001
+    _mm = lambda v: float(v) / 1000.0         # noqa: E731
+
+
 try:
     from .sw_connect import get_com_member, call_com_member, set_com_member
 except ImportError:
@@ -131,10 +139,10 @@ def insert_parting_surface(model, *, surface_type: int = 0, flip: bool = False,
         int(surface_type),      # 1 Int32 未查证
         bool(flip),             # 2 Boolean 未查证
         bool(use_trim),         # 3 Boolean 未查证
-        float(distance),        # 4 Double
+        _mm(distance),          # 4 Double（★ 单位修复：探针逐字 `distance=10.0 * MM`）
         float(angle),           # 5 Double
         int(option),            # 6 Int32 未查证
-        float(tolerance),       # 7 Double
+        _mm(tolerance),         # 7 Double（★ 同上）
         bool(alternate),        # 8 Boolean 未查证
     )
     if feat is None:
@@ -326,11 +334,13 @@ def mold_evidence(model) -> dict:
     """
     fm = get_com_member(model, "FeatureManager")
 
+#: dispatch-guard: exempt internal-helper
     def _count(name: str):
         try:
             return get_com_member(fm, name)
         except Exception:
             return None
+#: dispatch-guard: exempt internal-helper
 
     def _prop(name: str):
         try:

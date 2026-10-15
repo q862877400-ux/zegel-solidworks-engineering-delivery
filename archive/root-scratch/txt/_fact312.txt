@@ -1,0 +1,53 @@
+| 312 | **`selection_point` 的真 bug 与真语义**：两个入口的 **arity 不同**（`GetSelectionPoint2(Index,Mark)` 2 参 · `GetSelectionPoint(AtIndex)` 1 参）；★ 而 `GetSelectionPoint2` **对"面"有效、对"顶点"恒回 None**（2026-10-03，轮 397）。
+
+## 一、★★★★★ bug（★ 真机抓到 —— `tools/prove_selection_base.py` 第一次跑就报）
+```
+★ `scripts/sw_selection_spec.selection_point` 里有一个**穷举入口**的循环：
+   `for _nm in ("GetSelectionPoint2", "GetSelectionPoint"): … cand(1, -1)`
+   ⇒ ★★ **给两个入口传了同一组实参 `(1, -1)`**。
+★ 而官方签名（`C:\swapi\types\ISelectionMgr\`）**两个不同**：
+   · `GetSelectionPoint2( **Index**, **Mark** )` —— **2 参**（★ 现行）
+   · `GetSelectionPoint( **AtIndex** )`         —— **1 参**（★ **Obsolete**）
+   ⇒ ★★★ 走到 1 参那个**必然报** **`(-2147352562, '无效的参数数目。')`**
+     ★ 而那个错**指不出是"参数个数"的问题**（★ 同族：事实 33 —— 报错看不出真因）。
+★ 更坏的是**报错被覆盖**：★ 循环里 `except` 写 `out["error"] = …` ⇒
+   ★ **后一个入口的报错盖掉前一个** ⇒ ★ 看不到 2 参那个入口到底为什么失败。
+```
+
+## 二、★★★★★ 修法（★ 两条）
+```
+① ★ **按名字给各自的 arity**：`(("GetSelectionPoint2", (1, -1)), ("GetSelectionPoint", (1,)))`
+   —— ★ 那正是"签名三源"该给出的东西（铁律 4）。
+② ★ **两个入口的报错都留住**（收集进 `errors` 列表再合并）——
+   ★ 先前是覆盖 ⇒ 信息丢失。
+★ 修后真机实测：★ **`selection_point` ⇒ `ok: true · point_mm: [-20.0, 0.0, -5.0]`** ✓
+★ 静态锁：★ `tests/test_sw_selection_base_contract.py::test_get_selection_point_arity_is_per_name`
+  ★ 读源码断言"两个入口各自带自己的实参元组"，并**禁止** `GetSelectionPoint(1, -1)` 再出现。
+```
+
+## 三、★★★★★ 真语义：**"selection point" 是"面上的拾取点"**
+```
+★ 真机穷举（选中 **VERTEX**、`GetSelectedObjectCount2(-1)` = 1）：
+   `(1,-1)` · `(0,-1)` · `(1,0)` · `(0,0)` · `(1,1)` · `(2,-1)` ⇒ ★★ **全部回 `None`** ⚠
+★ 同一探针换成选中 **FACE**：★ `(1,-1)` ⇒ **`[-20.0, 0.0, -5.0]`** ✓（`(1,0)` 同值）
+⇒ ★★★★ **即：★ 它返回的是**选择时鼠标落在那个面上的位置**** ——
+   ★ 顶点选中时**没有面可投影** ⇒ None（★ 不是 bug，是语义）✓
+⇒ ★★ **用法**：★ 要读"点"就**先选面**；★ 选顶点读点**得不到东西**（★ 而它**不报错、回 None**
+   ⇒ ★ 所以 `selection_point` 必须把 `ok=False` 与原因带出来 —— 它现在**做到了**）。
+```
+
+## 四、★ 一条方法收获（★ 本会话第 N 次同一族）
+```
+★★ 我在"读点前该选什么"上**连改两次**（边 → 顶点）都没对 ⇒ ★ 第三次**改用穷举**
+   （一次跑 6 种 Index/Mark × 两种实体）⇒ **一次就拿到了答案** ✓
+⇒ ★ 而那正是**事实 53** 的正面用法：★ **同一个启发式修补 ≥3 次就该停下换做法** ——
+   ★ 而"换做法"最优的形态常常是**把猜测变成一张穷举表**（★ 它会**同时**回答"对不对"与"为什么"）。
+★ 本轮尤其典型：★ 前两次我都以为"是选错了实体种类"，★ 穷举后才发现
+   **对顶点根本没有这个读数**（★ 那是**语义**，不是选择方式）。
+```
+
+**依据**：`output/selection-base-evidence.json`（★ `verdict: pass` 9/9 · `point_mm: [-20.0, 0.0, -5.0]`）·
+本机穷举实验（★ VERTEX 6 组合全 None · FACE `(1,-1)` 有值）·
+`C:\swapi\types\ISelectionMgr\{GetSelectionPoint,GetSelectionPoint2}.md` ·
+`scripts/sw_selection_spec.py` 的 `selection_point` · `tests/test_sw_selection_base_contract.py`（8 passed）·
+事实 8 / 33 / 53

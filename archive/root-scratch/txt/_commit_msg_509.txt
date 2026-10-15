@@ -1,0 +1,29 @@
+fix(facts): 「`AccessSelections` 到不了」这个归因要**收窄** —— 它只是「认领选择」的常规步骤（事实 393）
+
+★ 本轮先查出一个**改变图景的事实**：
+  **117 个** `I*FeatureData` 接口**都带** `AccessSelections`
+  （`IExtrudeFeatureData2` · `IRevolveFeatureData2` · `ISweepFeatureData` · `ILoftFeatureData` ·
+   `IFillSurfaceFeatureData` · `IThickenFeatureData` · `IRuledSurfaceFeatureData` ·
+   `IProjectionCurveFeatureData` · `ILinearPatternFeatureData` …）
+  ★★ **而本仓大量能力是成功过的**（拉伸 / 旋转 / 扫描实体 / 放样 / 填充曲面）
+  ⇒ ★ **故「有 `AccessSelections`」≠「到不了」** ⚠
+
+★ 而本仓 `scripts/sw_sweep.py` 的注释（轮 315 真机定的）**早就写着**：
+  > ★★ **即使这一步报错，特征仍然建成了**（`扫描1` · type=`Sweep`）⇒ ★ **所以它不是必需的**
+
+★ 于是设计了一个**有据的假设**：★ **跳过 `AccessSelections`、直接 `CreateFeature`**
+  真机（`tools/probe_sweep_surface_skip_access.py`）：
+  · ★ 跳过那组：`sel = {1:1, 4:1}`（选区对）· `data = CDispatch`（拿到）· **`CreateFeature` 回 `None`** · `new = []`
+  · ★ 对照组（调它）：`access = 0x80010105` · **`CreateFeature` 也回 `None`** · `new = []`
+  ⇒ ★★ **假设被否证**（2/2 都不成）。
+
+★★★ **而它反而给出了统一图景**：
+  > ★ **「`AccessSelections` 报不报错不是关键；★ `CreateFeature` 回 `None` 才是」**
+
+★ 那与**事实 391**（加厚 / 直纹曲面「调用通而特征不建」）**同一类**。
+★ **故修正后的说法**：★ 那三族（线性阵列 · 扫描曲面 · 投影曲线）
+  **不是**「指针族到不了」，★★ **而是「`CreateFeature` 在这条后端上静默回 `None`」**
+  —— ★ 与**事实 40 / 391** 同族 ✓
+
+★ 记成 **事实 393**（含 117 个接口名单的**重现命令**）。
+★ 语法门禁 0 处。

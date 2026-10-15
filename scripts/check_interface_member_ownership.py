@@ -65,6 +65,14 @@ TYPES = SWAPI / "types"
 CD_DOC = TYPES / "IFeatureManager" / "CreateDefinition.md"
 RAW = Path(r"D:\AI\SW\_raw")
 
+#: ★★ **官方 `CreateDefinition` 宿主页清单**（spec 238）—— 官方**不止一个** `CreateDefinition`
+#: 方法：`IFeatureManager::CreateDefinition` 与 `IMotionStudy::CreateDefinition`，
+#: 两者各有**自己的** `Type` 常量域。旧实现只认第一个 ⇒ 把宿主没表达出来
+#: （`sw_motion.py` 的站点宿主是 `IMotionStudy`，却被拿去查 `IFeatureManager` 的表）。
+CD_HOSTS = ("IFeatureManager", "IMotionStudy")
+#: `{宿主: CreateDefinition.md}`（`TYPES` 变动后由 `_cimo()` 之类的调用方重算）。
+CD_DOCS: dict = {_h: TYPES / _h / "CreateDefinition.md" for _h in CD_HOSTS}
+
 IGNORE = {"AccessSelections", "ReleaseSelectionAccess", "GetType", "GetTypeName2"}
 CD_PAREN = re.compile(r"\bCreateDefinition\s*\(")
 CD_STR = re.compile(r"[\"']CreateDefinition[\"']")
@@ -179,6 +187,47 @@ def officially_named() -> dict:
     return {c: sorted(v)[0] for c, v in out.items() if len(v) == 1}
 
 
+def host_pages() -> dict:
+    """⇒ ``{常量: {宿主: 官方点名的返回接口}}`` —— 只收**逐条点名**的条目（spec 238）。
+
+    # ── 来源 ─────────────────────────────────────────────────────────
+    # 仓库:   SolidWorks 官方 API 文档（`C:\\swapi\\types\\<宿主>\\CreateDefinition.md`）
+    # 定位:   ★★ 官方**两个** `CreateDefinition` 宿主页的 `## Parameters` 段格式**不同**：
+    #           · `IFeatureManager`：`- swFmBaseFlange (sheet metal base flange)` —— **散文标签**
+    #           · `IMotionStudy`  ：`- swFmAEMGravity ([[ISimulationGravityFeatureData]])` —— **点名接口**
+    #         ⇒ 本函数只认**后者**（`swFmX ([[IIface]])`），因为那是**官方断言**（最强证据）。
+    #         ★ 散文标签那一侧继续走 `build_map()` 的文本匹配（那是**推断**）。
+    #   ⚠ **多宿主点名不一致**时不在这里裁决（留给 `check_cd_host_scope.py` 判红）。
+    # ────────────────────────────────────────────────────────────────
+    """
+    out: dict = {}
+    for host, doc in CD_DOCS.items():
+        if not doc.is_file():
+            continue
+        text = doc.read_text(encoding="utf-8", errors="replace")
+        for m in re.finditer(r"^\s*-\s*(swFm\w+)\s*\(\[\[(\w+)\]\]\)\s*$", text, re.M):
+            out.setdefault(m.group(1), {})[host] = m.group(2)
+    return out
+
+
+def host_consts() -> dict:
+    """⇒ ``{常量: [收录它的官方宿主页]}``（**所有** `CreateDefinition` 页的 `Type` 清单）。
+
+    ★★ 用途：回答「这个常量**属于哪个**宿主」—— 与「它映射到哪个接口」是**两件事**。
+    旧实现把两件事合成一件 ⇒ `sw_motion.py` 的站点被拿去查**别的宿主**的表。
+    """
+    out: dict = {}
+    for host, doc in CD_DOCS.items():
+        if not doc.is_file():
+            continue
+        text = doc.read_text(encoding="utf-8", errors="replace")
+        for c in re.findall(r"^\s*-\s*(swFm\w+)\s*\(", text, re.M):
+            out.setdefault(c, [])
+            if host not in out[c]:
+                out[c].append(host)
+    return out
+
+
 def build_map() -> tuple:
     """从**官方文本**造 `CONST → 接口` ⇒ ``(mapped, ambiguous, unmapped)``。
 
@@ -214,6 +263,15 @@ def build_map() -> tuple:
     for _c, _i in officially_named().items():
         if _i in ifaces:
             mapped[_c] = _i
+            OFFICIAL_NAMED.add(_c)
+    # ★★ **①′ 官方宿主页逐条点名**（spec 238）—— 与 ① 同为**官方断言**，优先级相同。
+    #    `IMotionStudy/CreateDefinition.md` 的 `Type` 清单**每条都带 `[[返回接口]]`** ⇒
+    #    直接采用，**不做文本匹配**（那是推断）。★ 多宿主点名不一致 ⇒ 不取，留给
+    #    `check_cd_host_scope.py` 报 `ambiguous-host`（门禁**不自动挑选约定**）。
+    for _c, _hosts in host_pages().items():
+        _vals = sorted(set(_hosts.values()))
+        if len(_vals) == 1 and _vals[0] in ifaces:
+            mapped[_c] = _vals[0]
             OFFICIAL_NAMED.add(_c)
     for cname, cdesc in consts.items():
         # ⚠ **官方点名的条目不得被文本匹配覆盖**（官方断言 > 推断）
@@ -287,10 +345,19 @@ def enum_values() -> dict:
 
 
 def module_consts(path: Path) -> dict:
-    """同文件里的 `SW_FM_X = <int>` ⇒ ``{常量名: 数值}``。"""
+    """同文件里的 `SW_FM_X = <int>` ⇒ ``{常量名: 数值}``。
+
+    ★★★ **2026-10-09（spec 237）：正则宽化到容忍行尾注释** —— 旧正则要求常量行
+    **以数字结尾**（`\\s*$`）⇒ `SW_FM_MATE_PROFILE_CENTER = 101  # swFmMateProfileCenter`
+    **一律读不到** ⇒ 整文件常量表成了 `{}` ⇒ `scripts/sw_weldment.py` 唯一的
+    `CreateDefinition` 站点被**静默判成「常量解析不出」**（读数 `no-const 1`）。
+    ★ 这是「**窄读取器读出 0 也会骗人**」的第七次（spec 233/234/230 同族）。
+    ⇒ 现在允许 `[ \t]*(#.*)?$`。★ 能红的判据：
+    `tests/test_cd_site_disposition.py::test_module_consts_reads_trailing_comment`。
+    """
     try:
         return {m.group(1): m.group(2)
-                for m in re.finditer(r"^\s*([A-Z][A-Z0-9_]*)\s*=\s*(\d+)\s*$",
+                for m in re.finditer(r"^[ \t]*([A-Z][A-Z0-9_]*)[ \t]*=[ \t]*(\d+)[ \t]*(?:#.*)?$",
                                      path.read_text(encoding="utf-8"), re.M)}
     except OSError:
         return {}
@@ -427,6 +494,99 @@ def members_of(iface: str) -> set:
     return {f.stem for f in d.glob("*.md") if f.stem != "_overview"}
 
 
+#: ★★ **站点处置码（封闭词表）** —— spec 237 抽出。
+#: 旧实现把四种语义**完全不同**的处置**合成一个 `跳过 N`**（静默降级）：
+#: `no-const`（可能只是读取器太窄）/ `unmapped`（该审却漏审）/ `empty-members`（数据源缺）/
+#: `no-members-used`（确实无事可查）。合成之后，**一次把 `checked` 退化成 `unmapped` 的回归
+#: 完全不可见**（读数仍是「跳过 5→6」）。⇒ 分开报，并由
+#: `scripts/check_create_definition_site_disposition.py` 逐站点要求表态。
+SITE_CODES = ("checked", "unmapped", "empty-members", "no-members-used", "dynamic")
+
+
+def scan_sites(paths) -> list:
+    """⇒ **逐站点处置记录**（spec 237 从 `main()` 抽出；口径**不重写**，只搬家）。
+
+    每条 = `{"path", "line", "var", "arg", "const", "code", "used", "bad", "why", "arg_texts"}`：
+    · `line`  = `CreateDefinition(...)` **调用行**（同一行可产生多条计划）；
+    · `code`  ∈ `SITE_CODES`；`const` 为 `None` 表示 `dynamic`；
+    · `arg_texts` = 解析常量时**实际看过的实参文本**（`dynamic` 的自证要用它 ——
+      ★ 它必须包含**调用点**的实参文本，否则「读取器太窄」这条守卫会失效）。
+    """
+    byval = enum_values()
+    mapped, _ambiguous, _unmapped = build_map()
+    #: ★ spec 238：站点**属于哪个官方宿主页**（与「映射到哪个接口」是两件事）。
+    hconsts = host_consts()
+    out: list = []
+    for t in paths:
+        t = Path(t)
+        if not t.is_file():
+            continue
+        consts = module_consts(t)
+        calls = cd_calls(t)
+        if not calls:
+            continue
+        try:
+            lines = t.read_text(encoding="utf-8").splitlines()
+        except OSError:
+            continue
+        for var, line_no, arg in calls:
+            # ⚠⚠ **形参驱动的站点必须展开成 N 个检查**（每个调用点一次）。
+            const0 = to_const(arg, consts, byval)
+            plans = []          # [(常量, [要收集的范围], 说明)]
+            arg_texts = [arg or ""]
+            if const0:
+                plans.append((const0, [enclosing_range(lines, line_no - 1)], "块内"))
+            else:
+                fn = enclosing_func_name(lines, line_no - 1)
+                ids = re.findall(r"\b([A-Za-z_]\w*)\b", (arg or ""))
+                pname = next((x for x in ids if x not in ("int", "float", "str")), "")
+                pi = param_index(lines, fn, pname) if (fn and pname) else -1
+                if fn and pi >= 0:
+                    base = enclosing_range(lines, line_no - 1)
+                    for cl, args in calls_of(lines, fn):
+                        if pi >= 0 and pi < len(args):
+                            arg_texts.append(args[pi])
+                            c2 = to_const(args[pi], consts, byval)
+                            if c2:
+                                plans.append((c2, [base, enclosing_range(lines, cl - 1)],
+                                              "调用点 L%d" % cl))
+            if not plans:
+                out.append({"path": t, "line": line_no, "var": var, "arg": arg,
+                            "const": None, "code": "dynamic", "used": 0, "bad": 0,
+                            "why": "块内", "arg_texts": arg_texts, "hosts": []})
+                continue
+            pat = re.compile(r"\b%s\s*\.\s*(\w+)\s*(?:=[^=]|\()" % re.escape(var))
+            for const, ranges, why in plans:
+                rec = {"path": t, "line": line_no, "var": var, "arg": arg, "const": const,
+                       "code": "checked", "used": 0, "bad": 0, "why": why,
+                       "arg_texts": arg_texts, "hosts": hconsts.get(const, [])}
+                iface = mapped.get(const)
+                if not iface:
+                    rec["code"] = "unmapped"
+                    out.append(rec)
+                    continue
+                members = members_of(iface)
+                if not members:
+                    rec["code"] = "empty-members"
+                    out.append(rec)
+                    continue
+                used = {}
+                for rlo, rhi in ranges:
+                    for j in range(rlo, min(rhi, len(lines))):
+                        for m in pat.finditer(lines[j]):
+                            if m.group(1) not in IGNORE:
+                                used.setdefault(m.group(1), j + 1)
+                rec["used"] = len(used)
+                rec["bad_members"] = sorted(mm for mm in used if mm not in members)
+                rec["bad"] = len(rec["bad_members"])
+                rec["members"] = sorted(used)
+                rec["iface"] = iface
+                if not used:
+                    rec["code"] = "no-members-used"
+                out.append(rec)
+    return out
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="接口归属检查（期望接口判据）")
     ap.add_argument("--glob", default="scripts/*.py")
@@ -450,78 +610,30 @@ def main(argv=None) -> int:
         print("     ★ 官方点名 %d 条：%s" % (_named, " ".join(sorted(OFFICIAL_NAMED))))
     if MANUAL_USED:
         print("     · 人工确证 %d 条：%s" % (_manual, " ".join(sorted(MANUAL_USED))))
-    byval = enum_values()
-
     targets = sorted(REPO.glob(a.glob))
     if a.all:
         targets += sorted(REPO.glob("tools/*.py"))
 
-    checked = skipped = 0
-    problems = []
-    for t in targets:
-        if not t.is_file():
-            continue
-        consts = module_consts(t)
-        calls = cd_calls(t)
-        if not calls:
-            continue
-        try:
-            lines = t.read_text(encoding="utf-8").splitlines()
-        except OSError:
-            continue
-        for var, line_no, arg in calls:
-            # ⚠⚠ **形参驱动的站点必须展开成 N 个检查**（每个调用点一次）。
-            #   第 38 轮第二版只解析**第一个**调用点的常量 ⇒ 5 个调用点只检查了 1 个
-            #   （实测 `检查过 1 个站点，跳过 3`）。**⇒ 展开。**
-            const0 = to_const(arg, consts, byval)
-            plans = []          # [(常量, [要收集的范围], 说明)]
-            if const0:
-                plans.append((const0, [enclosing_range(lines, line_no - 1)], "块内"))
-            else:
-                fn = enclosing_func_name(lines, line_no - 1)
-                # ⚠ 实参文本可能被**包装**过（本项目是 `int(fm_type)`）⇒ **抽出里面的标识符**。
-                #   第一版直接把 `int(fm_type` 当形参名去查 ⇒ 查不到 ⇒ 站点被跳过
-                #   （实测「检查过 1，跳过 3」）。
-                ids = re.findall(r"\b([A-Za-z_]\w*)\b", (arg or ""))
-                pname = next((x for x in ids if x not in ("int", "float", "str")), "")
-                pi = param_index(lines, fn, pname) if (fn and pname) else -1
-                if fn and pi >= 0:
-                    base = enclosing_range(lines, line_no - 1)   # helper 自身（可能有 data.X）
-                    for cl, args in calls_of(lines, fn):
-                        if pi >= 0 and pi < len(args):
-                            c2 = to_const(args[pi], consts, byval)
-                            if c2:
-                                plans.append((c2, [base, enclosing_range(lines, cl - 1)],
-                                              "调用点 L%d" % cl))
-            if not plans:
-                skipped += 1
-                continue
-            pat = re.compile(r"\b%s\s*\.\s*(\w+)\s*(?:=[^=]|\()" % re.escape(var))
-            for const, ranges, why in plans:
-                iface = mapped.get(const)
-                if not iface:
-                    skipped += 1
-                    continue
-                members = members_of(iface)
-                if not members:
-                    skipped += 1
-                    continue
-                used = {}
-                for rlo, rhi in ranges:
-                    for j in range(rlo, min(rhi, len(lines))):
-                        for m in pat.finditer(lines[j]):
-                            if m.group(1) not in IGNORE:
-                                used.setdefault(m.group(1), j + 1)
-                if not used:
-                    skipped += 1
-                    continue
-                checked += 1
-                bad = [(mm, ln) for mm, ln in used.items() if mm not in members]
-                if bad:
-                    problems.append((t.name, why, const, iface, bad))
+    #: ★ spec 237：取点循环搬进 `scan_sites()`（口径不变），此处只做**分码汇总**。
+    sites = scan_sites(targets)
+    codes: dict = {}
+    for s in sites:
+        codes[s["code"]] = codes.get(s["code"], 0) + 1
+    checked = codes.get("checked", 0)
+    skipped = len(sites) - checked
+    problems = [(s["path"].name, s["why"], s["const"], s["iface"],
+                 [(m, 0) for m in s["bad_members"]])
+                for s in sites if s["code"] == "checked" and s["bad"]]
 
     print("扫描 %d 个文件；**检查过 %d 个 `CreateDefinition` 站点**；跳过 %d"
           "（映射表没有 / 成员集空 / 没收集到成员）" % (len(targets), checked, skipped))
+    #: ★★ **分码明细** —— 旧实现把四种处置合成一个数（静默降级，spec 237）。
+    print("  ★ 分码：%s" % " · ".join("%s %d" % (c, codes.get(c, 0)) for c in SITE_CODES))
+    for s in sites:
+        if s["code"] != "checked":
+            print("     [%s] %s:%d  const=%s  官方宿主页=%s" % (
+                s["code"], s["path"].name, s["line"], s["const"] or "（解析不出）",
+                " / ".join(s.get("hosts") or []) or "**无**（没有任何官方 `CreateDefinition` 页收录）"))
     print()
 
     # ⚠ **假绿守卫**（第 29 轮的教训，保留）
@@ -542,8 +654,12 @@ def main(argv=None) -> int:
         print("[OK] 没有「成员不在期望接口上」的站点")
     print()
     print("  ⚠ **本工具按「诊断」定位**：映射表来自**文本匹配**，有歧义/未映射的洞")
-    print("     （第 41 轮现状：**31 唯一（自动 24 + 人工确证 7）/ 0 歧义 / 4 未映射**）")
+    print("     （实测：**%d 唯一**（官方点名 %d + 文本匹配 %d + 人工确证 %d）/ 歧义 %d / 未映射 %d）"
+          % (len(mapped), _named, _auto, _manual, len(ambiguous), len(unmapped)))
     print("     ⇒ 报 `[HIT]` 时值得看；**没有命中不等于归属一定正确**。")
+    print("  ⚠ ★ 官方 `CreateDefinition` **宿主页不止一个**（%s）⇒ 「常量属于哪个宿主」由"
+          % " / ".join(sorted(CD_DOCS)))
+    print("     `scripts/check_cd_host_scope.py` 判（本工具只按宿主域查成员）。")
     print("  ⚠ 与 `check_member_names.py`（**门禁**）互补不替代：")
     print("     那个判「名字在**某个**接口里存在」（快、全仓）；本工具判「在**这个**接口里存在」。")
     return 0

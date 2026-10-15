@@ -1,0 +1,50 @@
+feat(特征): **高级孔真机建成** —— ★ 而关键是一个参数**形态**：`SSize` 要"规格串"（事实 469）
+
+★ 承**事实 467**（"嫌疑只剩 `SSize`"）⇒ ★ **本轮一跑就收口**。
+
+## 一、★★★★★ 五格对照把它钉死了
+
+```
+SSize=''         ⇒ 回 `None` · 特征 7 → 7   ✗
+SSize='8'        ⇒ 回 `None` · 特征 7 → 7   ✗
+★ **SSize='M8'**  ⇒ **特征 7 → 8** · 新增 **`M8 间隙孔1`** · 回 `CDispatch` ✓
+SSize='0.008'    ⇒ 回 `None` · 特征 7 → 7   ✗
+SSize='M8x1.25'  ⇒ 回 `None` · 特征 7 → 7   ✗
+```
+  ⇒ ★★ **故 `SSize` 要的是"规格串"**（★ 如 `M8`），
+    ★ **而不是空串、也不是纯数字** —— ★ 正是官方那句「**必须是该紧固件类型的合法尺寸**」✓
+
+## 二、★★★ 而**产出的特征是真的异型孔向导**
+
+★ 名字是 **`M8 间隙孔1`**，★ **而不是「切除-拉伸」** ——
+  ★★ **⇒ 那正是事实 464 说的那个差距被补上了** ✓
+
+## 三、★ 三个前置缺一不可
+
+```
+① 孔位用 **`SelectByRay`（`Mark=0`）** 选出来（★ 事实 466）
+② **`SSize` 要规格串**
+③ `FastenerTypeIndex` 要与 standard 匹配（ANSI Metric + `swWzdHole` 下：40/41/704/38）
+```
+
+## 四、★ 可照抄的一组参数
+
+```
+`swWzdHole=2` · `ANSI_METRIC=1` · `40`（螺钉间隙）· `"M8"` · `swEndCondThroughAll=1` ·
+`Diameter=0.008` · `Depth=0.02` · 其余 0 · `RevDir=False` · `FeatureScope=True` · 后四个 `False`
+```
+
+## 五、交付
+
+```
+capabilities.yaml   + **`feature_hole_wizard5`**（verified）⇒ **108 条**
+docs/toolbar-ledger.json  「高级孔」补 capability_id ⇒ **已能 81**（★ 原始"能"只有 47）
+docs/known-facts.md  **事实 469**（+26）
+tools/prove_hole_wizard5_build.py  ★ 五格 `SSize` 对照
+HEAD ? · 语法门禁 0 处（782 个文件）
+```
+
+## 六、★★ 方法论
+
+★ **当一个 27 参的方法回 `None` 时，把**字符串参数的形态**拿出来做对照** ——
+  ★ 而**空串与纯数字都不是答案、"规格串"才是** ⚠

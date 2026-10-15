@@ -1,0 +1,26 @@
+★★★★★ 2026-10-01（轮 296）**半圆槽那条线查清了 —— 而结论是「`<unknown>.X` 有**两个**根因」**：
+  ★ **查法（★ 全程静态 + 最小探针，★ 没有反复瞎试）**：
+    ① 静态读 `create_semicircular_slot` ⇒ ★ 它用 `with sketch(model, plane_name)`（★ 一个 `@contextmanager`）
+       与 `H.sketch_slot`（★ 里面是 `model.SketchManager.CreateSketchSlot(...)`）；
+    ② ★ **最小探针**：`doc.SketchManager` ✓（CDispatch）· 开草图后 ✓ · **`CreateSketchSlot` ✓** ·
+       **`H.sketch_slot` ✓** · 收尾后**树 7 → 8** ⇒ ★★ **这一路**全通****；
+    ③ ★ **`_point_from_selection` 三个 index 都成功**（`index:0` `[-0.02, 0.0]` · `index:1` `[0.0, 0.01]` ·
+       `index:2` `[0.02, 0.0]`）⇒ ★★ **"选不到 index:1"的假设被推翻**；
+    ④ ★★★ **决定性一步**：直接调 `H.create_semicircular_slot(doc, …, …)` ⇒ ★ **崩在**收尾**：
+       `sw_connect.safe_get_com_member(doc, "GetTitle")` ⇒ **`AttributeError: <unknown>.GetTitle`**
+  ⇒ ★★★★ **所以根因是：那一步把 `doc` 这个 COM 对象弄**失效**了** ——
+    ★ **而"失效的对象对**任何**成员都回 `<unknown>.<名字>`"** ⇒ ★ **于是 `SketchManager` 也回 `<unknown>`**。
+    ★★ **即：`<unknown>.SketchManager` 不是"SketchManager 有问题"，★ 而是"整个对象没了"** ✓
+  ★★★ **一条重要的区分（★ 补进事实 36 那一族）**：★ **`<unknown>.X` 有**两个**根因，症状一样** ——
+    · **① 接口用错**（★ 事实 36：★ 同名接口分属不同族 ⇒ 读不到任何成员）；
+    · **② 对象失效**（★ 本轮：★ 对**任意**成员都 `<unknown>`，★ 包括 `GetTitle` 这种最普通的）。
+    ⇒ ★★ **判据**：★ **试一个"与报错点**无关**的普通成员"**（★ 如 `GetTitle`）——
+      ★ **它也 `<unknown>` ⇒ 是 ②（对象失效）**；★ **它正常 ⇒ 是 ①（接口/成员不对）**
+      ⇒ ★★★ **那个"无关成员"就是判据的**对照项****（★ 与事实 185 的"判据要先自证"同族）✓
+  ★ **处置**：★ `declarative_hole_creation` 里**半圆槽那一条**如实记为：
+    ★「★ **本机失败** · ★ **而根因查清**：★ 该调用**让文档对象失效**（★ `doc.GetTitle` 也报 `<unknown>`）
+      ⇒ ★ **那不是"半圆槽 API 不可用"，而是"那一步把文档弄坏了"** ——
+      ★★ **而"树 14→0 / 7→0"正是同一现象**（★ 我原来把它当成"副作用"，★ 现在知道**是对象失效**）」
+  ★ **下一步线索**：★ 查 `with sketch(...)` 的 `finally` 里 `end_sketch` 与"把草图引用交回给 `extrude_cut`"
+    那段（★ `sketch_ref.feature = finished_ref.feature`）—— ★ **对象失效最可能在那里**
+    （★ 即：★ **在已结束的文档状态上继续操作**）。

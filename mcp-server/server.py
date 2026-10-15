@@ -1260,10 +1260,28 @@ def cadstudio_build_dxf_preview_scene(params: CadStudioDxfPreviewInput) -> str:
     },
 )
 def cadstudio_check_dfm(params: CadStudioDfmReviewInput) -> str:
-    """Run whitelisted DFM checks for machining, sheet metal, laser cutting, or 3D printing."""
+    """Run whitelisted DFM checks for machining, sheet metal, laser cutting, or 3D printing.
+
+    ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+      业主原话：「**我想让你继承上游的是工具，只是单纯的工具。**
+      而像齿轮这种东西，在我认知里属于方法——**方法错了，工具再多也没有用**。
+      你要从你继承的东西里面把方法筛选出来，把工具留下来，**方法全部都删掉**。」
+    ★★ `dfm_review`（DFM 规则库）是**方法** ——
+      判据：「那个数字错了，回读能不能查出来」⇒ **不能** ⇒ 方法。
+    ★ 原件在 `archive/inherited-methods/scripts/dfm_review.py`（只搬不删）。
+    ⇒ 本工具改为**如实报 removed**（不抛异常 —— 那会让 MCP 客户端看到崩溃）。
+    """
 
     def op():
-        from scripts.dfm_review import write_dfm_report
+        try:
+            from scripts.dfm_review import write_dfm_report
+        except ImportError:
+            return {
+                "status": "removed",
+                "reason": "★ DFM 复核方法已按业主架构指令移出继承面（★ 只继承工具）",
+                "where": "archive/inherited-methods/scripts/dfm_review.py",
+                "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
+            }
 
         input_path = Path(os.path.expandvars(params.input_path)).expanduser().resolve()
         output_path = Path(os.path.expandvars(params.output_path)).expanduser().resolve()
@@ -1355,7 +1373,15 @@ def cadstudio_fea_preflight(params: CadStudioFeaPreflightInput = CadStudioFeaPre
     """Discover approved CalculiX or Elmer solver executables without running arbitrary commands."""
 
     def op():
-        from scripts.fea_analysis import discover_solver
+        try:
+            from scripts.fea_analysis import discover_solver
+        except ImportError:
+            return {
+                "status": "removed",
+                "reason": "★ FEA 方法已按业主架构指令移出继承面（★ 只继承工具）",
+                "where": "archive/inherited-methods/scripts/fea_analysis.py",
+                "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
+            }
 
         return discover_solver(params.solver)
 
@@ -1376,7 +1402,15 @@ def cadstudio_prepare_fea(params: CadStudioFeaPrepareInput) -> str:
     """Generate a versioned CalculiX .inp file from a structured FEA 1.0 request."""
 
     def op():
-        from scripts.fea_analysis import build_calculix_input, validate_analysis
+        try:
+            from scripts.fea_analysis import build_calculix_input, validate_analysis
+        except ImportError:
+            return {
+                "status": "removed",
+                "reason": "★ FEA 方法已按业主架构指令移出继承面（★ 只继承工具）",
+                "where": "archive/inherited-methods/scripts/fea_analysis.py",
+                "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
+            }
 
         input_path = Path(os.path.expandvars(params.input_path)).expanduser().resolve()
         output_dir = Path(os.path.expandvars(params.output_dir)).expanduser().resolve()
@@ -1415,7 +1449,15 @@ def cadstudio_run_fea(params: CadStudioFeaRunInput) -> str:
     """Run a structured FEA 1.0 request through an approved local solver without arbitrary command execution."""
 
     def op():
-        from scripts.fea_analysis import run_analysis
+        try:
+            from scripts.fea_analysis import run_analysis
+        except ImportError:
+            return {
+                "status": "removed",
+                "reason": "★ FEA 方法已按业主架构指令移出继承面（★ 只继承工具）",
+                "where": "archive/inherited-methods/scripts/fea_analysis.py",
+                "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
+            }
 
         input_path = Path(os.path.expandvars(params.input_path)).expanduser().resolve()
         output_dir = Path(os.path.expandvars(params.output_dir)).expanduser().resolve()
@@ -1438,7 +1480,15 @@ def cadstudio_run_fea_convergence(params: CadStudioFeaConvergenceInput) -> str:
     """Run 3-8 approved CalculiX meshes and compare displacement/stress convergence."""
 
     def op():
-        from scripts.fea_convergence import run_convergence_study
+        try:
+            from scripts.fea_convergence import run_convergence_study
+        except ImportError:
+            return {
+                "status": "removed",
+                "reason": "★ 该方法已按业主架构指令移出继承面（★ 只继承工具）",
+                "where": "archive/inherited-methods/scripts/fea_convergence.py",
+                "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
+            }
 
         input_path = Path(os.path.expandvars(params.input_path)).expanduser().resolve()
         output_dir = Path(os.path.expandvars(params.output_dir)).expanduser().resolve()
@@ -1465,7 +1515,15 @@ def cadstudio_review_advanced_geometry(params: CadStudioAdvancedGeometryInput) -
     """Validate advanced surface/mold plans and return pilot/blocked preflight evidence."""
 
     def op():
-        from scripts.advanced_geometry import write_preflight_report
+        try:
+            from scripts.advanced_geometry import write_preflight_report
+        except ImportError:
+            return {
+                "status": "removed",
+                "reason": "★ 该方法已按业主架构指令移出继承面（★ 只继承工具）",
+                "where": "archive/inherited-methods/scripts/advanced_geometry.py",
+                "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
+            }
 
         input_path = Path(os.path.expandvars(params.input_path)).expanduser().resolve()
         output_path = Path(os.path.expandvars(params.output_path)).expanduser().resolve()
@@ -1488,7 +1546,15 @@ def cadstudio_create_ocp_loft(params: CadStudioOcpLoftInput) -> str:
     """Create and reopen a real parameterized OCP loft without arbitrary geometry code execution."""
 
     def op():
-        from scripts.advanced_geometry_ocp import execute_ocp_loft
+        try:
+            from scripts.advanced_geometry_ocp import execute_ocp_loft
+        except ImportError:
+            return {
+                "status": "removed",
+                "reason": "★ 该方法已按业主架构指令移出继承面（★ 只继承工具）",
+                "where": "archive/inherited-methods/scripts/advanced_geometry_ocp.py",
+                "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
+            }
 
         input_path = Path(os.path.expandvars(params.input_path)).expanduser().resolve()
         output_dir = Path(os.path.expandvars(params.output_dir)).expanduser().resolve()
@@ -1511,7 +1577,15 @@ def cadstudio_create_ocp_surface(params: CadStudioOcpSurfaceInput) -> str:
     """Create smooth loft, sweep, knit, or thicken geometry through a strict structured whitelist."""
 
     def op():
-        from scripts.advanced_surface_ocp import execute_advanced_surface
+        try:
+            from scripts.advanced_surface_ocp import execute_advanced_surface
+        except ImportError:
+            return {
+                "status": "removed",
+                "reason": "★ 该方法已按业主架构指令移出继承面（★ 只继承工具）",
+                "where": "archive/inherited-methods/scripts/advanced_surface_ocp.py",
+                "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
+            }
 
         input_path = Path(os.path.expandvars(params.input_path)).expanduser().resolve()
         output_dir = Path(os.path.expandvars(params.output_dir)).expanduser().resolve()

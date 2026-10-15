@@ -72,6 +72,8 @@ __all__ = [
 ]
 
 #: 反射确认的实参个数（7 个成员里 2 个是回调、0 参，不列入调用侧）
+#: enum-gate: not-enum arity
+#: arity-reflect: byref=excluded
 FEATUREWORKS_ARITY: dict[str, int] = {
     "CreateFeatures": 1,
     "RecognizeFeatureAutomatic": 1,
@@ -84,6 +86,7 @@ FEATUREWORKS_ARITY: dict[str, int] = {
 CALLBACK_MEMBERS = ("BubbleTipCallback", "HelpErrCallback")
 
 
+#: dispatch-guard: exempt internal-helper
 def _checked(target, member: str, *args):
     """按签名表校核实参个数，通过后才发起调用（开发期护栏）。"""
     expected = FEATUREWORKS_ARITY.get(member)

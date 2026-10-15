@@ -1,0 +1,573 @@
+=== OUR MCP TOOLS: 459 ===
+cadstudio_build_dxf_preview_scene
+cadstudio_check_dfm
+cadstudio_check_routing
+cadstudio_create_ocp_loft
+cadstudio_create_ocp_surface
+cadstudio_fea_preflight
+cadstudio_prepare_fea
+cadstudio_resolve_backend
+cadstudio_review_advanced_geometry
+cadstudio_routing_preflight
+cadstudio_run_fea
+cadstudio_run_fea_convergence
+cadstudio_write_open_format
+solidworks_activate_configuration
+solidworks_activate_model_for_preview
+solidworks_add_coincident_mate
+solidworks_add_component
+solidworks_add_concentric_mate
+solidworks_add_dimension
+solidworks_add_distance_mate
+solidworks_add_rotary_motor
+solidworks_add_sketch_relation
+solidworks_addin_host_status
+solidworks_api_deprecated_successor
+solidworks_appearance_delete_render_material
+solidworks_assembly_add_mate_checked
+solidworks_assembly_add_parallel_mate
+solidworks_assembly_apply_component_transform_x
+solidworks_assembly_auto_explode
+solidworks_assembly_check_interference
+solidworks_assembly_create_exploded_view
+solidworks_assembly_dissolve
+solidworks_assembly_edit_explode_parameters
+solidworks_assembly_exit_edit_part_in_context
+solidworks_assembly_exploded_view_configuration
+solidworks_assembly_external_reference_count
+solidworks_assembly_get_exploded_view_count
+solidworks_assembly_get_exploded_view_names
+solidworks_assembly_list_components
+solidworks_assembly_list_mates
+solidworks_assembly_replace_component
+solidworks_assembly_show_exploded
+solidworks_assembly_suppress_component
+solidworks_assembly_unsuppress_component
+solidworks_assembly_view_collapse
+solidworks_assembly_view_explode
+solidworks_auto_dimension_sketch
+solidworks_automation_enter_command_lock
+solidworks_automation_exit_command_lock
+solidworks_automation_explain_hresult
+solidworks_automation_get_flag
+solidworks_automation_is_command_locked
+solidworks_automation_set_flag
+solidworks_available_direction_selectors
+solidworks_available_point_selectors
+solidworks_base_flange_params
+solidworks_batch_export_files
+solidworks_build_review_report
+solidworks_chamfer
+solidworks_chamfer_circular_rim_volume
+solidworks_chamfer_straight_edge_volume
+solidworks_chamfer_volume_report
+solidworks_circular_pattern
+solidworks_clear_selection
+solidworks_clear_selection_for_preview
+solidworks_close_documents
+solidworks_collect_appearance_evidence
+solidworks_collect_assembly_bom
+solidworks_collect_model_summary
+solidworks_collect_view_evidence
+solidworks_config_activate
+solidworks_config_create
+solidworks_config_inspect
+solidworks_config_read_custom_property
+solidworks_config_set_custom_properties
+solidworks_config_update_dimension
+solidworks_connect
+solidworks_costing_assign_custom_cost
+solidworks_costing_body_count
+solidworks_costing_default_template
+solidworks_costing_defaults
+solidworks_costing_evidence
+solidworks_costing_include_body
+solidworks_costing_list_bodies
+solidworks_costing_list_templates
+solidworks_costing_method_value
+solidworks_costing_read_analysis
+solidworks_costing_read_body
+solidworks_costing_set_default_lot_size
+solidworks_costing_set_default_manufacturing_method
+solidworks_costing_set_default_material
+solidworks_costing_set_default_template
+solidworks_costing_set_lot_size
+solidworks_costing_set_markup
+solidworks_costing_set_method
+solidworks_costing_update_cost_for_all_bodies
+solidworks_create_basic_part
+solidworks_create_configuration
+solidworks_create_hole_feature
+solidworks_create_revolved_surface
+solidworks_csys_params
+solidworks_current_selection
+solidworks_current_sketch_name
+solidworks_custom_property_count
+solidworks_custom_property_get
+solidworks_custom_property_list
+solidworks_custom_property_names
+solidworks_delivery_bom_traceability
+solidworks_delivery_export_bom_csv
+solidworks_delivery_pack_and_go_audit_matrix
+solidworks_dome_params
+solidworks_drawing_add_note
+solidworks_drawing_collect_view_evidence
+solidworks_drawing_create_auxiliary_view
+solidworks_drawing_create_broken_view
+solidworks_drawing_create_detail_view
+solidworks_drawing_create_hole_table
+solidworks_drawing_create_projected_view
+solidworks_drawing_create_revision_table
+solidworks_drawing_create_section_view
+solidworks_drawing_create_three_standard_views
+solidworks_drawing_current_sheet_info
+solidworks_drawing_current_sheet_name
+solidworks_drawing_get_current_sheet
+solidworks_drawing_insert_center_marks
+solidworks_drawing_insert_datum_tag
+solidworks_drawing_insert_surface_finish_symbol
+solidworks_drawing_list_sheets
+solidworks_drawing_list_views
+solidworks_drawing_set_sheet_format
+solidworks_drawing_set_sheet_scale
+solidworks_drawing_sheet_count
+solidworks_drawing_sheet_names
+solidworks_drawing_sheet_scale
+solidworks_drawing_sheets_summary
+solidworks_drawing_view_annotations
+solidworks_drawing_view_scale
+solidworks_drawing_view_set_scale
+solidworks_entities_on_body
+solidworks_equation_add
+solidworks_equation_delete
+solidworks_equation_evaluate
+solidworks_equation_list
+solidworks_export_active
+solidworks_export_assembly_bom
+solidworks_export_bmp
+solidworks_export_dxf
+solidworks_export_iges
+solidworks_export_image
+solidworks_export_parasolid
+solidworks_export_step
+solidworks_export_stl
+solidworks_extrude_boss
+solidworks_extrude_cut
+solidworks_extrude_depth
+solidworks_extrude_midplane
+solidworks_extrude_params
+solidworks_fastener_table_types
+solidworks_fastener_types
+solidworks_feature_cosmetic_thread
+solidworks_feature_delete
+solidworks_feature_info
+solidworks_feature_list_names
+solidworks_feature_present
+solidworks_feature_suppress
+solidworks_feature_unsuppress
+solidworks_feature_whats_wrong
+solidworks_fillet
+solidworks_fillet_params
+solidworks_flatten_surface
+solidworks_gear_calculate_spur
+solidworks_gear_create_spur
+solidworks_generate_drawing
+solidworks_get_active_view
+solidworks_get_costing_manager
+solidworks_get_view_model_doc
+solidworks_gtol_insert
+solidworks_gui_assert_focus
+solidworks_gui_assert_no_modal
+solidworks_gui_close_modals
+solidworks_gui_ensure_focus
+solidworks_gui_find_modals
+solidworks_gui_focus_state
+solidworks_gui_get_foreground_window
+solidworks_gui_modal_report
+solidworks_gui_screen_png
+solidworks_health_check
+solidworks_helix_insert
+solidworks_hole_blind_by_selection
+solidworks_hole_counterbore_by_selection
+solidworks_hole_countersink_by_selection
+solidworks_hole_params
+solidworks_hole_pattern
+solidworks_hole_standards
+solidworks_hole_through_by_selection
+solidworks_hole_wizard
+solidworks_insert_center_of_mass
+solidworks_insert_coordinate_system
+solidworks_insert_curve_through_points
+solidworks_insert_delete_face
+solidworks_insert_global_bounding_box
+solidworks_insert_lofted_ref_surface
+solidworks_insert_offset_surface
+solidworks_insert_planar_surface
+solidworks_insert_ref_plane
+solidworks_insert_reference_point
+solidworks_insert_replace_face
+solidworks_insert_ruled_surface
+solidworks_inspect_configurations
+solidworks_inspect_drawing
+solidworks_inspect_hole_features
+solidworks_inspect_motion_studies
+solidworks_list_render_materials
+solidworks_list_simulation_study_options
+solidworks_loft_params
+solidworks_macro_build_prompt
+solidworks_macro_extract_vba_code
+solidworks_macro_fallback_template
+solidworks_macro_normalize_model_family
+solidworks_macro_run
+solidworks_macro_select_template
+solidworks_macro_validate_vba_code
+solidworks_macro_write_file
+solidworks_measure_selection
+solidworks_mesh_configure_import_preferences
+solidworks_mesh_restore_import_preferences
+solidworks_mirror_feature
+solidworks_misumi_suggest_part
+solidworks_mold_core_cavity_split
+solidworks_mold_draft_analysis
+solidworks_mold_evidence
+solidworks_mold_parting_line
+solidworks_mold_parting_surface
+solidworks_mold_shut_off_surface
+solidworks_mold_undercut_detect
+solidworks_motion_calculate_and_play
+solidworks_motion_collect_summary
+solidworks_motion_create_study
+solidworks_motion_ensure_type_library
+solidworks_motion_export_avi
+solidworks_motion_study_manager
+solidworks_motion_validate_studies
+solidworks_motion_validate_summary
+solidworks_new_document
+solidworks_open_document
+solidworks_pack_and_go
+solidworks_part_axis
+solidworks_part_bounding_box
+solidworks_part_insert_composite_curve
+solidworks_part_insert_dome
+solidworks_part_loft
+solidworks_part_mass_properties
+solidworks_part_rib
+solidworks_part_shell
+solidworks_part_sweep
+solidworks_part_wrap
+solidworks_pattern_params
+solidworks_preflight_check_com_dependencies
+solidworks_read_document_units
+solidworks_read_sensors
+solidworks_ref_geometry_create_3d_bounding_box
+solidworks_refresh_scene_graph
+solidworks_repo_find_real_implementations
+solidworks_resolve_entity
+solidworks_resolve_selection
+solidworks_review_active
+solidworks_review_collect_geometry_measurements
+solidworks_review_drawing
+solidworks_review_drawing_layout
+solidworks_review_evaluate_report
+solidworks_review_export_previews
+solidworks_review_inspect_bmp
+solidworks_review_pdf_text_layout
+solidworks_review_run
+solidworks_review_write_report
+solidworks_review_write_summary
+solidworks_revolve_boss
+solidworks_revolve_cut
+solidworks_revolve_params
+solidworks_save_document
+solidworks_select_by_selector
+solidworks_select_entity_by_index
+solidworks_select_face_selector
+solidworks_selection_clear_colors
+solidworks_selection_collect_evidence
+solidworks_selection_count
+solidworks_selection_deselect
+solidworks_selection_enable
+solidworks_selection_enable_contour
+solidworks_selection_is_coord_sys_element_selected
+solidworks_selection_is_in_edit_target
+solidworks_selection_point
+solidworks_selection_set_object_mark
+solidworks_selection_suspend_list
+solidworks_selector_resolve_direction
+solidworks_selector_resolve_point
+solidworks_session_busy_status
+solidworks_session_solver_processes
+solidworks_session_stuck_status
+solidworks_session_wait_until_idle
+solidworks_set_appearance
+solidworks_set_component_fixed
+solidworks_set_custom_properties
+solidworks_set_standard_view
+solidworks_sheet_metal_create_base_flange
+solidworks_sheet_metal_create_draft
+solidworks_sheet_metal_create_edge_flange
+solidworks_sheet_metal_create_gusset
+solidworks_sheet_metal_create_one_bend
+solidworks_sheet_metal_create_swept_flange
+solidworks_sheet_metal_evidence
+solidworks_sheet_metal_insert_closed_corner
+solidworks_sheet_metal_insert_miter_flange
+solidworks_shell_params
+solidworks_simulation_activate_plot
+solidworks_simulation_apply_fixed_restraint
+solidworks_simulation_apply_link_connector
+solidworks_simulation_apply_normal_force
+solidworks_simulation_apply_rigid_connector
+solidworks_simulation_check_mesh_size
+solidworks_simulation_collect_evidence
+solidworks_simulation_collect_mesh_evidence
+solidworks_simulation_configure_buckling_solver
+solidworks_simulation_configure_frequency_solver
+solidworks_simulation_configure_static_solver
+solidworks_simulation_create_mesh
+solidworks_simulation_create_mesh_for_control
+solidworks_simulation_create_mesh_safely
+solidworks_simulation_create_study
+solidworks_simulation_create_study_by_type
+solidworks_simulation_default_element_size_and_tolerance
+solidworks_simulation_default_solve_memory_budget_gb
+solidworks_simulation_delete_plot
+solidworks_simulation_ensure_addin
+solidworks_simulation_find_study
+solidworks_simulation_generate_report
+solidworks_simulation_get_buckling_load_factors
+solidworks_simulation_get_edge_weld_connector
+solidworks_simulation_get_loads_manager
+solidworks_simulation_get_results
+solidworks_simulation_get_study_manager
+solidworks_simulation_get_worst_jacobian_ratio
+solidworks_simulation_is_component_failed
+solidworks_simulation_list_setter_summary
+solidworks_simulation_list_studies
+solidworks_simulation_mesh_settings_report
+solidworks_simulation_mesh_size
+solidworks_simulation_run_analysis
+solidworks_simulation_set_material
+solidworks_simulation_set_registered_study_option
+solidworks_simulation_set_study_option
+solidworks_simulation_set_study_options
+solidworks_simulation_solve_memory_preflight
+solidworks_simulation_solver_type
+solidworks_sketch_add_3point_arc
+solidworks_sketch_add_3point_center_rectangle
+solidworks_sketch_add_3point_rectangle
+solidworks_sketch_add_arc
+solidworks_sketch_add_centerline
+solidworks_sketch_add_circle
+solidworks_sketch_add_conic
+solidworks_sketch_add_ellipse
+solidworks_sketch_add_line
+solidworks_sketch_add_parabola
+solidworks_sketch_add_parallelogram
+solidworks_sketch_add_partial_ellipse
+solidworks_sketch_add_perimeter_circle
+solidworks_sketch_add_polygon
+solidworks_sketch_add_rectangle
+solidworks_sketch_add_slot
+solidworks_sketch_add_tangent_arc
+solidworks_sketch_circular_pattern
+solidworks_sketch_convert_entities
+solidworks_sketch_count_arcs
+solidworks_sketch_count_lines
+solidworks_sketch_count_segments
+solidworks_sketch_create_chamfer
+solidworks_sketch_end
+solidworks_sketch_extend
+solidworks_sketch_fillet
+solidworks_sketch_flip_entities
+solidworks_sketch_fully_defined_status
+solidworks_sketch_insert_chain_dimensions
+solidworks_sketch_is_3d
+solidworks_sketch_linear_pattern
+solidworks_sketch_mirror
+solidworks_sketch_move_entities
+solidworks_sketch_offset
+solidworks_sketch_rotate_entities
+solidworks_sketch_scale_entities
+solidworks_sketch_select_segment
+solidworks_sketch_spline
+solidworks_sketch_start
+solidworks_sketch_stretch_entities
+solidworks_sketch_trim
+solidworks_slot_semicircular_by_selection
+solidworks_surface_create_extruded
+solidworks_surface_cut
+solidworks_surface_evidence
+solidworks_surface_extend
+solidworks_surface_fill
+solidworks_surface_knit
+solidworks_surface_midsurface_create
+solidworks_surface_runtime_available
+solidworks_sweep_params
+solidworks_thicken
+solidworks_toolbox_list_standards
+solidworks_toolbox_load_index
+solidworks_toolbox_part_path
+solidworks_toolbox_search
+solidworks_topology_create_demold_control
+solidworks_topology_create_factor_of_safety_constraint
+solidworks_topology_create_mass_constraint
+solidworks_topology_create_preserved_region
+solidworks_topology_create_stress_constraint
+solidworks_topology_create_study
+solidworks_topology_create_symmetry_control
+solidworks_topology_create_thickness_control
+solidworks_topology_evidence
+solidworks_topology_run
+solidworks_undo
+solidworks_update_dimension
+solidworks_validate_motion_study
+solidworks_view_activate
+solidworks_view_add_perspective
+solidworks_view_get_camera
+solidworks_view_get_display_mode
+solidworks_view_get_frame
+solidworks_view_get_next
+solidworks_view_get_scale
+solidworks_view_has_perspective
+solidworks_view_initialize_shading
+solidworks_view_redraw
+solidworks_view_remove_perspective
+solidworks_view_roll_view
+solidworks_view_rotate_about_center
+solidworks_view_set_camera_by_name
+solidworks_view_set_display_mode
+solidworks_view_set_frame
+solidworks_view_set_scale
+solidworks_view_start_dynamics
+solidworks_view_stop_dynamics
+solidworks_view_translate_view
+solidworks_view_zoom_by_factor
+solidworks_view_zoom_to_fit
+solidworks_weldment_create_cut_list
+solidworks_weldment_create_profile_center_mate
+solidworks_weldment_create_structural_member
+solidworks_weldment_create_sub_weld_folder
+solidworks_weldment_create_weldment_profile
+solidworks_weldment_ensure_cut_list
+solidworks_weldment_evidence
+solidworks_weldment_export_cut_list_csv
+solidworks_weldment_gusset_create
+solidworks_weldment_insert_end_cap
+solidworks_weldment_iter_features
+solidworks_weldment_read_property_manager
+solidworks_weldment_set_cut_list_properties
+solidworks_weldment_update_cut_list
+
+=== SCRIPTS sw_*.py: 111 files ===
+sw_addin_host.py                       5  _registry_key_exists, _read_diagnostics, _process_is_running, probe_addin_host, main
+sw_api_SWRoutingLib.py                 2  _require, call_index
+sw_api_cosworks.py                     2  _require, call_index
+sw_api_dsgnchk.py                      2  _require, call_index
+sw_api_fworks.py                       2  _require, call_index
+sw_api_gtswutilities.py                2  _require, call_index
+sw_api_sldcostingapi.py                2  _require, call_index
+sw_api_sldtoolboxconfigureaddin.py     2  _require, call_index
+sw_api_sldworks.py                     2  _require, call_index
+sw_api_swdimxpert.py                   2  _require, call_index
+sw_api_swdocumentmgr.py                2  _require, call_index
+sw_api_swmotionstudy.py                2  _require, call_index
+sw_api_swpublished.py                  2  _require, call_index
+sw_appearance.py                       12  rgb01, material_values, material_variant, _configuration_args, _try_set, get_material_property_values, verify_appearance, set_document_appearance, set_feature_appearance, set_component_appearance, apply_component_palette, apply_named_appearance
+sw_assembly.py                         36  _empty_callout, _select_by_id, _as_alias_list, _active_solidworks_app, _activate_model_document, _add_component5, _add_component4, add_component, resolve_component, get_component_model, get_component_feature, get_assembly_entity, get_component_feature_entity, find_largest_cylinder_face, select_entities_for_mate, add_mate5_checked, add_concentric_mate_by_cylinders, add_gear_mate_by_cylinders, add_revolute_joint_by_cylinders, build_transform_data_x, apply_component_transform_x, iter_feature_tree, collect_mate_feature_summary, add_mate_coincident, add_mate_concentric, add_mate_distance, add_mate_parallel, get_components, find_component_by_name, suppress_component, unsuppress_component, replace_component, get_interference_detection, collect_mate_entity_evidence, configure_mate_feature_data, collect_mate_in_place_evidence
+sw_assembly_doc.py                     21  _require, call_assembly_doc, add_mate, suppress_mate, move_component, fix_component, hide_component, dissolve_assembly, collect_assembly_doc_evidence, edit_part_in_context, exit_edit_part_in_context, list_external_file_references_count, create_exploded_view, auto_explode, view_explode_assembly, view_collapse_assembly, show_exploded, get_exploded_view_names, get_exploded_view_count, get_exploded_view_configuration_name, edit_explode_parameters
+sw_automation_knowledge.py             7  explain_hresult, enter_command_lock, exit_command_lock, is_command_locked, set_flag, get_flag, send_message
+sw_busy.py                             8  _enum_windows, _is_family, _is_app, solver_processes, solidworks_stuck, solidworks_busy, wait_until_idle, _main
+sw_capability_probe.py                 4  _find_typelib, _type_names, probe_capabilities, main
+sw_capture.py                          1  capture
+sw_chamfer_geometry.py                 3  straight_chamfer_volume_mm3, circular_rim_chamfer_volume_mm3, chamfer_volume_report
+sw_com_traps.py                        10  is_type_mismatch, explain, _variant, byref_long, byref_pair, adaptive_arity, is_swp_macro, deprecated_successor, iter_real_sources, find_real_implementations
+sw_connect.py                          35  get_com_member, call_com_member, solidworks_process_id, _resolve_pid, _dialog_handles, count_residual_dialogs, dismiss_residual_dialogs, settle_residual_dialogs, residual_dialogs, get_com_member_raw, safe_get_com_member, create_empty_dispatch_variant, out_i4, out_dispatch, set_com_member, normalize_doc_type, _expand_path, _ensure_parent_dir, _prog_id_for_version, _read_active_document, _wait_until_ready, _record_owned_instance, read_owned_instance, clear_owned_instance, close_owned_solidworks, connect_solidworks, get_sw_version, find_template, ensure_default_templates, restore_default_templates, new_document, open_document, save_document, mm, deg
+sw_costing.py                          36  _checked, get_costing_manager, get_costing_defaults, get_costing_model, list_templates, close_costing, wait_for_ui_update, get_body_count, get_bodies, include_body, set_costing_method, get_costing_method, create_cost_analysis, get_cost_analysis, update_cost_for_all_bodies, set_lot_size, set_markup, _num, read_cost_analysis, set_default_lot_size, set_default_template, get_default_template, set_default_material, set_default_manufacturing_method, read_cost_body, assign_custom_cost, collect_costing_evidence, _costing_chain, collect_costing_evidence_report, read_cost_analysis_report, get_body_count_report, list_cost_bodies_report, read_cost_body_report, list_costing_templates_report, get_default_template_report, get_costing_method_report
+sw_curve_and_split.py                  8  _tree_names, _delta, _selection_mark_counts, _face_loop_stats, insert_split_line_project, insert_split_line_silhouette, insert_curve_through_points, insert_mate_reference
+sw_custom_property.py                  6  custom_property_manager, custom_property_count, custom_property_names, _read_value_via_get6, custom_property, custom_properties
+sw_delivery.py                         33  _file_signature, _sha256, _property_value, collect_assembly_bom, export_assembly_bom_csv, build_bom_traceability, _status_codes, _collect_new_outputs, _document_dependency_paths, _optional_com_member, _is_external_reference, _toolbox_state, _suppression_state, _collect_component_audit_records, _associated_drawing_paths, _required_pack_dependency_paths, build_pack_and_go_audit_matrix, _missing_dependency_paths, _safe_staged_destination, _stage_pack_and_go_dependencies, _comtypes_document_names, _active_solidworks_major, _load_sldworks_typelib_module, _model_doc_extension, _coerce_dispatch, _get_pack_and_go, _pywin32_pack_and_go, _comtypes_module, _extract_comtypes_model, _comtypes_active_model, _connect_comtypes_solidworks, _comtypes_pack_and_go, pack_and_go
+sw_document_data.py                    12  _configuration_names, _resolve_configuration_name, _active_configuration_name, inspect_configurations, activate_configuration, create_configuration, _document_length_unit_scale, _dimension_value_mm, update_dimension_mm, _property_manager, read_custom_property, set_custom_properties
+sw_drawing.py                          0  
+sw_drawing_create_missing.py           16  _as_list, _read, _view_name, _view_type, _iter_views, _view_names, _find_view, _sum_over_views, _selection_count, _delta, _break_state, insert_break_lines, create_auxiliary_view, insert_surface_finish_symbol, insert_datum_tag, auto_insert_balloons
+sw_drawing_expose.py                   14  _mm, _selection_count, _result, create_projected_view, create_three_standard_views, create_section_view, create_detail_view, set_sheet_format, add_drawing_note, _selection_marks, _view_by_name, create_hole_table, create_revision_table, insert_center_marks
+sw_drawing_query.py                    11  require_drawing, sheet_count, sheet_names, current_sheet_name, sheets_summary, current_sheet_info, list_views, view_annotations_report, _sheet_by_name, get_sheet_scale_report, set_sheet_scale_report
+sw_drawing_review.py                   0  
+sw_drawing_view.py                     21  call_view, call_view_no_args, get_view_name, get_first_view, get_next_view, get_annotation_count, get_annotations, get_visible_component_count, get_scale_decimal, collect_view_evidence, _iter_views, list_drawing_views_report, _find_view, get_view_scale_report, set_view_scale_report, collect_view_evidence_report, get_view_scale_ratio, get_view_scale, set_view_scale, set_view_scale_verified, get_com_view_scale_ratio_raw
+sw_drawing_view_types.py               0  
+sw_entity_reference.py                 3  geometry_signature, reference_from_metadata, resolve_semantic_reference
+sw_equation.py                         5  _manager, add_equation, list_equations, delete_equation, evaluate_equations
+sw_export.py                           31  _report_preference_guard, _ensure_parent_dir, export_to_step, export_to_stl, export_to_iges, export_to_parasolid, export_to_pdf, _sheet_metal_alignment_variant, export_to_dxf, export_flat_pattern_dxf, batch_export, _normalize_format, _file_signature, _activate_source_document, _export_for_format, batch_export_formats, _export_generic, _print_result, get_mass_property_override_options, set_mass_property_override, export_to_bmp, export_to_image, _export_report, export_step_report, export_stl_report, export_iges_report, export_parasolid_report, export_dxf_report, export_bmp_report, export_image_report, export_flat_pattern_dxf_report
+sw_feature_entry_ops.py                5  _feature_names, find_cylindrical_face, insert_cosmetic_thread, thicken_surface, create_flatten_surface
+sw_feature_readback.py                 20  _is_real_feature, feature_names, feature_present, whats_wrong, feature_readback, extrude_depth, extrude_params, pattern_params, hole_params, feature_info, fillet_params, csys_params, base_flange_params, _read_feature_params, rib_params, dome_params, sweep_params, loft_params, revolve_params, shell_params
+sw_featureworks.py                     6  _checked, recognize_and_create, recognize_interactive, set_advanced_options, set_performance_options, read_featureworks_state
+sw_gear.py                             10  _finite_positive, _involute_angle, _polar, _append_unique, _sample_angles, calculate_external_spur_gear, create_external_spur_gear, _gear_spec_from_dict, calculate_external_spur_gear_report, create_external_spur_gear_report
+sw_geometry_selectors.py               4  available_point_selectors, available_direction_selectors, resolve_point, resolve_direction
+sw_gtol.py                             5  insert_gtol, _feature_names_snapshot, add_gtol_frame, ensure_gtol_frame, add_gtol_indicator
+sw_gui_focus.py                        4  foreground, focus_state, ensure_focus, assert_focus
+sw_gui_input.py                        11  _press, _tap, _hold, _tap_ctrl, label, reset_labels, set_text, get_text, clear, commit, type_text
+sw_gui_modal.py                        5  find_modals, modal_report, assert_no_modal, close_modals, screen_png
+sw_helix.py                            2  insert_helix, _newest_feature_name
+sw_hole_features.py                    38  _positive, _center, _feature_name, _circle_cut, _entry_point_3d, _chamfer_hole_entry, create_blind_hole, create_through_hole, create_counterbore_hole, create_countersink_hole, create_semicircular_slot, create_hole_pattern, list_fastener_types, list_fastener_table_types, get_fastener_table, _out_container, _out_value, _as_list, _hole_standards_data, _pair, list_hole_standards, configure_straight_tap, configure_tapered_tap, get_hole_standards, get_fastener_types, get_fastener_table_types, get_fastener_table, _point_from_selection, _feature_names_here, _with_tree_judgement, create_through_hole_at_selection_report, create_blind_hole_at_selection_report, create_counterbore_hole_at_selection_report, create_countersink_hole_at_selection_report, create_semicircular_slot_at_selection_report, _find_hole_entry_edge, hole_pattern_report, create_hole_wizard_at_selection_report
+sw_import_mesh_reference.py            6  configure_mesh_import_preferences, _read_preference_quietly, restore_mesh_import_preferences, import_mesh_reference, _build_parser, main
+sw_isolate.py                          3  _main, _kill_tree, run_isolated
+sw_jlcfa_audit.py                      6  _conn, goto, _find_target, goto_element, run_one, main
+sw_jlcfa_batch.py                      5  _conn, _shot, _wait_generated, run_one, main
+sw_jlcfa_cards.py                      8  code_labels, visible_codes, locate_code, scroll_card_into_view, _scrollbar, _drag, category_cards, locate_category
+sw_jlcfa_click.py                      6  dpi_of, click_control, click_point, click_rect, client_to_screen, verify_click_landed
+sw_jlcfa_fill.py                       21  _container_texts, _has_cjk, model_row, model_line, code_present, unfilled, set_front, _clip, _keys, _tap, type_into, first_missing_label, find_edit_by_label, _fmt_value, _probe_candidates, fill_all, _parse_step, _hint_re, param_rows, row_for_label, _all_edits
+sw_jlcfa_grid.py                       5  _luma, card_rows, named_cards_in_order, locate_card, _capture
+sw_jlcfa_gui.py                        10  log, sw_window, ensure_window, click, drag, wheel, find_node, tab_column, refresh_pane, snap
+sw_jlcfa_index.py                      4  load_index, summarize, list_categories, search
+sw_jlcfa_locate.py                     17  _ctl, _modal, connect, container_element, _dedupe_key, _controls, container_rect, _overlaps, locate, locate_all, rect_of, _is_blue, find_blue_groups, locate_shape, focus_solidworks, capture_front, capture_window
+sw_jlcfa_search.py                     7  search_row, search_box, search_button, search, _is_card_pane, result_cards, first_result_point
+sw_jlcfa_select.py                     14  md5_png, crop_region, fill_blank, scroll, pick_first, wait_until_changed, _sw_pid, combo_list_rect, select_index, pending_edits, _parse_hint, fill_edit, pending_params, fill_to_100
+sw_jlcfa_steps.py                      12  log, _container_from, read_state, page_kind, evidence, run_step, click, controls_cached, cache_drop, ensure_front, act_with_focus, resume
+sw_loft.py                             4  _blend_args, create_loft_report, _cut_blend_args, create_loft_cut_report
+sw_macro.py                            1  run_macro
+sw_macro_guard.py                      12  _configure_stdio_utf8, normalize_model_family, build_prompt, extract_vba_code, _contains_any_pattern, validate_vba_macro, select_template_key, fallback_macro_for_request, generate_macro_with_guard, write_macro_file, _parse_args, main
+sw_mass_property.py                    3  require_mass_property_document, mass_property_object, mass_properties
+sw_measure.py                          1  measure_selection_report
+sw_misumi.py                           7  session, _get, list_categories, list_brands, suggest_keywords, suggest_part, full_text_search
+sw_mold.py                             7  insert_parting_line, insert_parting_surface, insert_shut_off_surface, insert_core_cavity_solids, mold_draft_analysis, mold_undercut_detect, mold_evidence
+sw_motion.py                           18  _motion_typelib_candidates, ensure_motion_type_library, motion_member, get_motion_study_manager, create_motion_study, _set_first_supported, _set_load_references, add_constant_speed_rotary_motor, add_constant_speed_rotary_motor_by_cylinders, calculate_and_play, _collect_motion_features, collect_motion_study_summary, validate_motion_study_summary, validate_motion_studies, create_avi_parameter, configure_avi_parameter, export_motion_study_avi, validate_motion_studies_report
+sw_part.py                             65  _empty_callout, _select_by_id, _get_plane_name_candidates, _get_sketch_name_candidates, _as_tuple, _safe_com_member, _model_cache_key, _cache_name_variants, _cache_sketch_ref, _find_cached_sketch_ref, _capture_sketch_ref, _refresh_sketch_ref, _select_first_candidate, _get_selection_count, _select_com_object, _select_any_object, _select_sketch_ref, _select_sketch_feature_by_name, _ensure_sketch_selected, start_sketch, end_sketch, sketch, current_sketch_name, sketch_line, sketch_rectangle, sketch_corner_rectangle, sketch_circle, sketch_arc, sketch_polygon, sketch_slot, sketch_spline, auto_dimension_sketch, add_dimension, add_sketch_relation, extrude_boss, extrude_cut, extrude_midplane, _select_revolve_axis, revolve_boss, revolve_cut, fillet, chamfer, linear_pattern, feature_suppress, feature_unsuppress, feature_delete, circular_pattern, shell, mirror_feature, hole_wizard, rib, get_bounding_box, sketch_ellipse, sketch_centerline, insert_dome, insert_composite_curve, _feature_report, shell_report, rib_report, insert_dome_report, insert_composite_curve_report, _require_active_sketch, create_axis_report, add_dimension_report, linear_pattern_report
+sw_pattern.py                          6  _checked, edit_selection, configure_linear_pattern, configure_curve_driven_pattern, read_pattern_element, collect_pattern_evidence
+sw_pdm.py                              14  _checked, get_configuration_manager, add_custom_property, add_invisible_custom_property, delete_custom_property, get_all_external_references, close_document, get_custom_property_names_and_values, read_table_name, add_table_revision_row, delete_table_row, delete_table_column, get_bom_start_number, collect_pdm_evidence
+sw_preference_guard.py                 5  _member, read_preference, write_preference, _same, preference_guard
+sw_preflight.py                        17  _configure_stdio_utf8, _module_available, missing_com_dependencies, pip_install_command, shell_command_text, install_com_dependencies, ask_install_permission, ensure_com_dependencies, import_com_dependencies, _is_windows, _solidworks_com_registered, _solidworks_exe_candidates, solidworks_installed, ensure_solidworks_installed, run_preflight, _parse_args, main
+sw_ref_geometry.py                     9  _tree_names, _delta, _judge, insert_ref_plane, insert_coordinate_system, insert_reference_point, insert_center_of_mass, create_3d_bounding_box, insert_global_bounding_box
+sw_render_material.py                  8  get_extension, create_render_material, add_render_material, refresh_scene_graph, list_render_materials, delete_render_material, apply_visual_properties, collect_appearance_evidence
+sw_review.py                           29  _pdf_text_overlap_candidate, _import_pdf_parser, _drawing_boxes_overlap, review_drawing_layout, _expand_path, _file_info, _read_bmp_size, inspect_pdf_text_layout, inspect_bmp_preview, _graphics_redraw, zoom_to_fit, clear_selection_for_preview, activate_model_for_preview, set_standard_view, save_preview, save_review_previews, collect_model_summary, _unit_vector, _axis_distance_mm, group_coaxial_hole_segments, validate_hole_positions, collect_geometry_measurements, build_review_report, evaluate_review_report, write_review_report, write_markdown_summary, run_review, _parse_args, main
+sw_routing.py                          23  _checked, start_route, exit_route, add_to_route, edit_route, create_route_line, create_flatten_route, create_pipe_drawing, export_pipe_data, export_tube_data, get_all_route_segment_count, get_electrical_route, get_auto_route, get_route_property, get_routing_component_manager, create_covering, apply_covering, remove_covering, set_bend_radius, read_cable_card, set_wire_route_path, read_wire_endpoints, collect_routing_evidence
+sw_selection.py                        25  _checked, get_selection_manager, get_selection_count, get_selected_object, get_selected_objects, get_selected_object_type, get_selected_face, get_selected_component, get_selected_view, get_selection_point, get_selection_point_in_sketch_space, set_selection_point, deselect, add_to_selection_list, suspend_selection_list, resume_selection_list, set_selection_color, clear_selection_colors, get_selected_object_mark, set_selected_object_mark, set_enable_selection, set_enable_contour_selection, is_coord_sys_element_selected, is_in_edit_target, collect_selection_evidence
+sw_selection_spec.py                   12  get_selection_count, clear_selection, current_selection, entities_on_body, select_object, select_entity_by_index, resolve_entity, resolve_selection, selection_point, select_by_selector_report, resolve_entity_report, entities_as_array
+sw_sensor.py                           5  out_double, out_bstr, _iter_features, _sensor_of, read_sensors_report
+sw_session.py                          2  session, undo_report
+sw_sheet_metal.py                      11  require_verified, _feature_type, iter_features, create_base_flange, sheet_metal_evidence, _create_from_definition, create_one_bend, create_edge_flange, create_draft, create_gusset, create_swept_flange
+sw_sheet_metal_weld_entry.py           15  _tree, _new_features, _body_face_count, _surface_body_count, _volume_mm3, _delta, _selection_marks, _feature_name, _read_definition, insert_sheet_metal_miter_flange, insert_sheet_metal_closed_corner, insert_weldment_end_cap, insert_weldment_gusset, insert_mid_surface, create_midsurface
+sw_simulation.py                       36  ensure_simulation_addin, get_cosmosworks, get_cw_document, get_study_manager, create_static_study, iter_studies, get_study_by_name, _loads_and_restraints_manager, _selected_dispatch_array, _require_nonempty_selection, apply_fixed_restraint, apply_normal_force, create_mesh, default_element_size_and_tolerance, set_material, select_face_at, resolve_face_selector, select_face_by_selector_report, select_face_by_selector, run_analysis, collect_study_evidence, create_study_report, list_studies, find_study, mesh_size_report, create_mesh_report, run_analysis_report, default_solve_memory_budget_gb, mesh_settings_report, configure_mesh_settings, mesh_safety_apply, mesh_safety_restore, create_mesh_safely, static_solver_type_report, solve_memory_preflight, check_mesh_size_sane
+sw_simulation_loadprops.py             8  _require, edit_transaction, configure_force, configure_pressure, configure_heat_flux, configure_contact_set, read_material_card, collect_load_property_evidence
+sw_simulation_loads.py                 52  _require, _check, _wants_error_code, add_fixed_restraint, add_reference_geometry_restraint, add_force, add_torque, add_pressure, add_radiation, add_convection, add_heat_flux, add_heat_power, add_temperature, add_gravity, add_centrifugal_force, add_distributed_mass, add_remote_load, add_cyclic_symmetry_restraint, add_prescribed_displacement, add_bearing_load, add_spring_connector, add_pin_connector, add_rigid_connector, add_link_connector_report, add_link_connector, add_elastic_connector, add_bolt_connector, add_spot_weld_connector, add_edge_weld_connector, get_loads_and_restraints, get_edge_weld_connector, collect_loads_evidence, _loads_count, _report, apply_pressure_report, apply_torque_report, apply_gravity_report, apply_centrifugal_force_report, apply_convection_report, apply_elastic_connector_report, apply_heat_flux_report, apply_heat_power_report, apply_temperature_report, apply_radiation_report, apply_distributed_mass_report, apply_force_report, apply_remote_load_report, _split_selection, apply_link_connector_report, apply_rigid_connector_report, apply_rigid_connector_by_objects_report, apply_pin_connector_report
+sw_simulation_results.py               12  _checked, create_plot, create_deformed_body, activate_plot, delete_plot, get_displacement_at_points, get_buckling_load_factors, get_mesh_node_location, get_mesh_element_location, get_worst_jacobian_ratio, is_component_failed, collect_mesh_evidence
+sw_simulation_study.py                 20  _checked, create_study, create_study_v2, create_study_v3, get_study, delete_study, duplicate_study, rename_study, convert_study, set_active_study, run_analysis, mesh_and_run, create_mesh, create_mesh_for_control, get_study_manager_of, get_loads_manager_of, get_results_of, export_study, generate_report, collect_study_evidence
+sw_simulation_study_options.py         14  _coerce, set_option, set_options, study_options_of, configure_static_solver, configure_frequency_solver, configure_buckling_solver, list_setter_summary, _options_from_study, configure_static_solver_report, configure_frequency_solver_report, configure_buckling_solver_report, set_study_option_report, set_study_options_report
+sw_simulation_worker.py                9  _busy_guard, _study, mesh_size_by_name, create_mesh_by_name, run_analysis_by_name, run_analysis_by_name, mesh_settings_by_name, configure_mesh_settings_by_name, create_mesh_safely_by_name
+sw_sketch.py                           33  _require, as_sequence, get_sketch_segments, get_lines, get_arcs, get_ellipses, get_parabolas, get_polylines, get_splines, get_sketch_points, get_user_points, get_contour_edges, get_sketch_contours, get_sketch_regions, get_sketch_hatches, get_sketch_slots, get_sketch_pictures, get_sketch_paths, get_sketch_block_instances, get_relation_manager, is_3d_sketch, get_model_to_sketch_transform, set_model_to_sketch_transform, set_automatic_solve, merge_points, collect_sketch_evidence, sketch_by_name, _count_by_divisor, count_lines, count_arcs, count_segments, active_sketch, resolve_sketch
+sw_sketch_dimensions.py                10  _sketch, _relations, add_horizontal_dimension, add_vertical_dimension, add_path_length_dimension, insert_chain_dimensions, fully_define_sketch, count_sketch_relations, delete_all_sketch_relations, delete_sketch_relation
+sw_sketch_edit.py                      4  create_sketch_chamfer, _active_sketch_segment_count, sketch_mirror, convert_entities
+sw_sketch_edit_ops.py                  10  _sketch, select_sketch_segment, _select_spec, sketch_trim, sketch_extend, sketch_offset, sketch_fillet, sketch_linear_pattern, sketch_circular_pattern, sketch_intersect_curves
+sw_sketch_modify_ops.py                11  _require_model, _sketch_bbox_mm, _sketch_transform_translation, _moved, _geom_evidence, sketch_move, sketch_rotate, sketch_scale, sketch_stretch, sketch_flip, _active_sketch_name
+sw_sketch_primitives.py                11  _sm, _need, sketch_3point_corner_rectangle, sketch_3point_center_rectangle, sketch_parallelogram, sketch_tangent_arc, sketch_3point_arc, sketch_elliptical_arc, sketch_parabola, sketch_conic, sketch_perimeter_circle
+sw_sketch_status.py                    2  _active_sketch, get_constrained_status
+sw_surface.py                          18  get_modeler, _invoke, runtime_available, require_runtime_available, create_planar_surface, create_cylindrical_surface, create_spherical_surface, create_conical_surface, create_toroidal_surface, create_offset_surface, create_extrusion_surface, create_revolution_surface, create_ruled_surface, create_swept_surface, create_bspline_surface, create_coons_b_surface, create_sheet_from_surface, collect_surface_evidence
+sw_surface_edit_ops.py                 7  _tree_names, _delta, insert_planar_surface, insert_offset_surface, insert_ruled_surface, insert_delete_face, insert_replace_face
+sw_surface_features.py                 19  _harden_defaults, create_extruded_surface_report, _select_all_surface_faces, _body_count, _solid_body_count, _surface_body_count, knit_surfaces_report, thicken_surface_report, insert_extend_surface_report, insert_fill_surface_report, _empty_callout, insert_ruled_surface_report, insert_offset_surface_report, insert_planar_ref_surface_report, insert_replace_face_report, _select_all_surface_edges, _select_two_faces_for_replace, trim_surface_report, cut_surface_report
+sw_surface_ref_ops.py                  4  _tree_names, _delta, insert_revolved_ref_surface, insert_lofted_ref_surface
+sw_sweep.py                            3  _feature_type_name, create_sweep_report, create_sweep_surface_report
+sw_toolbox_index.py                    4  load_index, list_standards, search, part_path
+sw_topology.py                         25  create_topology_study, get_topology_study_manager, get_topology_study_options, _edit, set_topology_goal, create_mass_constraint, create_factor_of_safety_constraint, create_stress_constraint, create_preserved_region, create_symmetry_control, create_demold_control, create_thickness_control, set_topology_iteration_options, list_topology_constraints_and_controls, _default_constraint_name, run_topology_study, collect_topology_evidence, collect_topology_numbers, _kinds_taken, _kinds_summary, topology_manager_report, topology_options_report, set_topology_goal_report, set_topology_iteration_options_report, topology_constraints_report
+sw_units.py                            2  _flatten_units, read_units_report
+sw_view.py                             28  _require, get_active_view, activate_view, redraw_view, initialize_shading, get_view_frame, set_view_frame, get_display_mode, set_display_mode, get_view_scale, set_view_scale, zoom_view, translate_view, rotate_about_center, roll_view, get_view_camera, set_view_camera_by_name, get_view_orientation, set_view_orientation, get_view_translation, has_perspective, add_perspective, remove_perspective, start_dynamics, stop_dynamics, get_next_view, get_view_model_doc, collect_view_evidence
+sw_weldment.py                         24  _as_tuple, _active_configuration_name, create_weldment_profile, create_structural_member, _body_length_key, _body_cut_list_key, ensure_cut_list, _iter_feature_chain, iter_features_recursive, _read_property, read_property_manager, set_cut_list_properties, _cut_list_folders, _read_cut_list_folders, update_cut_list, weldment_evidence, export_cut_list_csv, _create_from_definition, configure_member_profile, create_profile_center_mate, configure_split_member, create_cut_list, create_sub_weld_folder, create_structural_member_from_sketch
+sw_wrap.py                             2  _feature_type_name, create_wrap_report

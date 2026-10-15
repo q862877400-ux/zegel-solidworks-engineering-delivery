@@ -1,0 +1,45 @@
+fix(tests): 契约随实现形态更新 —— 全量 1403 passed · 我造成的失败 **0**
+
+★ 承用户问「你的意思是我们应该等上游？」—— ★ **不是**。★ 本仓 `origin` 故意留空、上游只是来源之一，
+  ★ **契约的主人就是这个仓库**。★ 我上轮那句"由契约的主人决定"把话说拧了：
+  ★ 我当时缺的**不是授权，是证据** —— **没读那个测试的 docstring** 就下了结论。
+
+## 这一轮把"没读就下结论"的那几个读完了、改了、验了
+
+| 测试 | 它的 docstring 说什么 | 我做了什么 |
+|---|---|---|
+| `test_scale_and_name_are_properties_not_methods` | ★ 轮 293 自己写着「**契约随证据更新**」：旧断言 `("Scale",…)` 被真机否掉 ⇒ 真名 `ScaleRatio`、回两个 double | ★ 轮 467 我给 `set_view_scale` **加了回读**（规则 6）⇒ 它现在 5 次调用（2 读+1 写+2 读）⇒ 断言按新契约更新：**拆成"写"与"读"两栏各自实名核**（★ 不是放松，★ 还加严了）|
+| `test_tap_configure_sets_expected_properties` | ★ 本仓模板在 `test_create_render_material` 的 docstring 里：「实现已改 `set_com_member`（属性赋值）⇒ **本 mock 随之改为记录 `__setattr__`**」 | ★ 它的 mock 还是**旧形态**（`__getattr__` 返回可调用 ⇒ 假设成员是方法）⇒ 改成 `__setattr__` |
+| `test_create_profile_center_mate_uses_fm_101_and_five_properties` | 同上 | 同上 |
+
+★ **两处都不是"把测试改绿"**：★ 是**mock 的形态落后于实现**（★ 而本仓**自己**在同类测试里留了模板）。
+
+## 数字
+
+```
+收集期错误     6 → 0
+全量 pytest   「6 errors · 根本跑不起来」→ **1403 passed / 7 failed / 17 skipped**
+release_check  exit 0
+```
+
+## ★ 那 7 个 —— 全部用基线证明「本来就红」（★ 我造成的 = 0）
+
+| 测试 | 基线跑同一批 |
+|---|---|
+| `test_no_bare_byref_args` | **1 failed** |
+| `test_no_uncalled_helpers` | **1 failed** |
+| `test_tool_registry::test_rule3_bare_coordinates_rejected[x_mm]` | **1 failed** |
+| `test_report_freshness_gate` ×2 | **2 failed** |
+| `test_real_gap_triage_contract` ×2 | **2 failed** |
+| **合计** | **7** ＝ 当前失败数 ✓ |
+
+★ 方法：`git stash -u` → `git checkout HEAD~1` → 跑同一批测试 → 恢复。
+
+## 一条我该早点用的判据
+
+★ 本仓**早有一条**写在 `tests/test_create_render_material_sets_exactly_seven_properties` 的 docstring 里：
+  「`IRenderMaterial.Ambient` 是**属性** —— 取回来的是 `float`，再去"调用"它 ⇒
+   `TypeError: 'float' object is not callable`（事实 227「取或调」）⇒ **实现已改为 `set_com_member`，
+   本 mock 随之改为记录 `__setattr__`**」
+★ 即：**"实现从取/调改成属性赋值"时，mock 也必须从 `__getattr__` 改成 `__setattr__`** ——
+  ★ 我这一整轮在**重新发现**这条本仓早已记下的规律。★ 这就是"先读本仓注释"的价值。

@@ -28,6 +28,15 @@ SolidWorks 零件建模工具
 from sw_feature_readback import feature_names
 from dataclasses import dataclass
 from contextlib import contextmanager
+#: ★★★ 2026-10-08（spec 222）**补一个缺失的导入** —— 本文件此前用了
+#:   `dict[str, Any]`（`_feature_report` 的返回注解）却**从未导入 `Any`**，
+#:   而文件也没有 `from __future__ import annotations` ⇒ ★ **模块 import 即崩**
+#:   （`NameError: name 'Any' is not defined`）。
+#:   ⚠ 之所以长期没暴露：`tests/test_extended_modules_contract.py` 把整个
+#:     `sw_part` 用 `_StubModule` 桩掉了，**从没真正 import 过它** ⇒
+#:     ★ 而公开工具 `solidworks_add_sketch_relation` 指向的正是本模块 ⇒ **该工具此前是死的**。
+#:   ⇒ ★ 修法：补 `from typing import Any`（最小改动，不改任何行为）✓
+from typing import Any
 
 try:
     from .sw_connect import get_com_member
@@ -166,6 +175,7 @@ def _as_tuple(value):
     return (value,)
 
 
+#: dispatch-guard: exempt internal-helper
 def _safe_com_member(obj, attr_name, *args, default=None):
     """读取 COM 成员，失败时返回默认值，避免排障路径再次抛 COM 异常。"""
     if obj is None:
@@ -535,30 +545,65 @@ def current_sketch_name(model, fallback="Sketch1"):
 # 覆盖:   后续同级定义 —— 本块涵盖这一段全部助手函数，**止于下一个来源块**（「边界框」那块）。
 # ─────────────────────────────────────────────────────────────────────
 
+#: ★★★ 2026-10-08 根因修复（★ 目标 `goal-d2098c24` · 用户令：「**尺寸单位不对的问题…从根因修复**」✓）
+#:   ★★ 现场铁证：★ `solidworks_sketch_add_circle(radius_mm=10.5)` ⇒ ★ 真机用 `ISketchArc::GetRadius()`
+#:     从模型读回 **10500.0 mm** ✗（★ 即 10.5 **米**，★ **1000×** ✓）—— ★ 同一 bug 也解释了
+#:     第 10 轮尺寸框里的 `21000.00mm` ✓
+#:   ★★ 根因：★ 下面这一族草图图元**文档写"毫米"**（★ 对外契约 ✓）★ 却把值**原样**送进
+#:     `ISketchManager.Create*` ✗，★ 而 **COM 侧单位是米** ✓（本仓事实 2）
+#:   ★ 对照：★ 同文件的 `sketch_spline` **有** `/1000.0` ✓ ⇒ ★ **同批工具不一致**，这就是根因 ✓
+#:   ★★ 修法：★ **在这六个函数里各做一次 ÷1000** ✓（★ 对外"毫米"契约与形参名保持不变 ✓）
+#:   ★ 判据（★ 目标里写死）：★★ **回读值必须等于传入值** ✓（★ ±0.001 mm ✓）
+#:
+#: ★★★★★ 2026-10-10 **补修（★ 那次修复**漏了 4 个函数**）** —— ★ 真机裁决：
+#:   ★★ 上面那次只给 **6 个**加了换算，★ 而 `sketch_polygon` / `sketch_slot` /
+#:     `sketch_ellipse` / `sketch_centerline` **仍然原样送毫米** ✗
+#:   ★ 真机读数（★ 证据 `output/_probe_unit_verdict.json`，★ 走 `sw_guard`）：
+#:     · ★ 修前：★ `sketch_polygon(radius=25)` ⇒ 包围盒跨度 **50000 mm** ✗（★ 应 ~43 mm）
+#:       · ★ `sketch_centerline((0,0)→(25,25))` ⇒ **25000 mm** ✗（★ 应 25 mm）
+#:       · ★ `sketch_ellipse(长半轴 25)` ⇒ **50000 mm** ✗（★ 应 50 mm）
+#:     · ★ 修后：★ 三者分别 **50 / 25 / 50 mm** ✓ —— ★ 与「有换算」那组**同口径** ✓
+#:   ★★★ **可复用教训**：★ **「修了一个族」≠「修完了那个族」** ——
+#:     ★ 当时没有**结构性判据**（★ 只靠人记得），★ 所以漏了 4 个 ✓
+#:     ⇒ ★ 现已补 `tests/test_ec00_sketch_unit_conversion.py`（★ **10 个函数逐个核**）✓
+#:   ★★★ **本模块的单位契约（★ 一句话，接手方先看这句）**：
+#:     ★★ **对外收「毫米」（形参名与 docstring 都是毫米）· ★ COM 侧单位是「米」**
+#:       ⇒ ★ **每个**收长度坐标的 `sketch_*` 都**必须在函数内换算一次** ✓
+#:     ⚠ **事实 73 的那句「模块单位是毫米、不做换算」已过时** —— ★ 它只对 2026-10-08
+#:       那次修复**之前**的函数成立；★ 2026-10-08 之后，★ **有换算才是对的** ✓
+_MM_TO_M = 1.0 / 1000.0                        #: ★ 毫米 → 米（★ 事实 2 的换算口径 ✓）
+
+
 def sketch_line(model, x1, y1, x2, y2):
     """画直线（单位: **毫米**）"""
     return get_com_member(get_com_member(model, "SketchManager"),
-                          "CreateLine", x1, y1, 0, x2, y2, 0)
+                          "CreateLine",
+                          x1 * _MM_TO_M, y1 * _MM_TO_M, 0,
+                          x2 * _MM_TO_M, y2 * _MM_TO_M, 0)
 
 
 def sketch_rectangle(model, cx, cy, w, h):
     """以中心点画矩形（单位: **毫米**）"""
     return get_com_member(get_com_member(model, "SketchManager"),
                           "CreateCenterRectangle",
-        cx, cy, 0, cx + w / 2, cy + h / 2, 0
+        cx * _MM_TO_M, cy * _MM_TO_M, 0,
+        (cx + w / 2) * _MM_TO_M, (cy + h / 2) * _MM_TO_M, 0
     )
 
 
 def sketch_corner_rectangle(model, x1, y1, x2, y2):
     """以对角线画矩形（单位: **毫米**）"""
     return get_com_member(get_com_member(model, "SketchManager"),
-                          "CreateCornerRectangle", x1, y1, 0, x2, y2, 0)
+                          "CreateCornerRectangle",
+                          x1 * _MM_TO_M, y1 * _MM_TO_M, 0,
+                          x2 * _MM_TO_M, y2 * _MM_TO_M, 0)
 
 
 def sketch_circle(model, cx, cy, radius):
     """画圆（单位: **毫米**）"""
     return get_com_member(get_com_member(model, "SketchManager"),
-                          "CreateCircleByRadius", cx, cy, 0, radius)
+                          "CreateCircleByRadius",
+                          cx * _MM_TO_M, cy * _MM_TO_M, 0, radius * _MM_TO_M)
 
 
 def sketch_arc(model, cx, cy, x1, y1, x2, y2, direction=1):
@@ -572,13 +617,26 @@ def sketch_arc(model, cx, cy, x1, y1, x2, y2, direction=1):
         direction: 1=逆时针, -1=顺时针
     """
     return get_com_member(get_com_member(model, "SketchManager"),
-                          "CreateArc", cx, cy, 0, x1, y1, 0, x2, y2, 0, direction)
+                          "CreateArc",
+                          cx * _MM_TO_M, cy * _MM_TO_M, 0,
+                          x1 * _MM_TO_M, y1 * _MM_TO_M, 0,
+                          x2 * _MM_TO_M, y2 * _MM_TO_M, 0, direction)
 
 
 def sketch_polygon(model, cx, cy, radius, sides=6):
-    """画正多边形（内切圆方式）"""
+    """画正多边形（内切圆方式）—— ★ **单位: 毫米**（★ 对外契约，★ 函数内换算成米）。
+
+    ★★★ 2026-10-10 修一处 **1000× 单位 bug**（★ 真机裁决，★ 证据 `output/_probe_unit_verdict.json`）：
+      ★ 本函数原**原样**把 `cx/cy/radius` 送进 `ISketchManager.CreatePolygon` ✗ ——
+      ★★ 而 **COM 侧单位是米**（★ 事实 2；★ 同模块 `sketch_line`/`sketch_circle` 等**都有** `_MM_TO_M`）✓
+      ★ 实测：★ 传 `radius=25`（毫米口径）⇒ 包围盒跨度 **50000 mm** ✗（★ 应为 ~43 mm）
+      ⇒ ★ **修法**：★ 与同批函数一致，★ **只在这里换算一次**（★ 对外形参名与"毫米"契约不变）✓
+    """
     return get_com_member(get_com_member(model, "SketchManager"),
-                          "CreatePolygon", cx, cy, 0, cx + radius, cy, 0, sides, True)
+                          "CreatePolygon",
+                          cx * _MM_TO_M, cy * _MM_TO_M, 0,
+                          (cx + radius) * _MM_TO_M, cy * _MM_TO_M, 0,
+                          sides, True)
 
 
 def sketch_slot(model, x1, y1, x2, y2, radius):
@@ -615,9 +673,13 @@ def sketch_slot(model, x1, y1, x2, y2, radius):
         0,  # swSketchSlotCreationType_e: 0 = line（★ 第 1 参 ✓ 原就对）
         0,  # ★★ swSketchSlotLengthType_e: 0 = **CenterCenter**（★ 2026-10-04 修：
             #    原为 `radius` —— ★ 而官方该枚举**只有 0/1 两个成员**）✓
-        2.0 * float(radius),  # ★★ 官方 `Width`（★ 2026-10-04 修：原为 `radius` ⇒ 差系数 2）
-        x1, y1, 0,
-        x2, y2, 0,
+        #: ★★★ 2026-10-10 修 **1000× 单位 bug**（★ 真机裁决，★ 证据 `output/_probe_unit_verdict.json`）：
+        #:   ★ `x1/y1/x2/y2/radius` 原**原样**送进 COM ✗ —— ★ 而 COM 侧单位是**米**（事实 2）；
+        #:   ★★ 同模块 `sketch_line`/`sketch_circle` 等**都有** `_MM_TO_M` ⇒ ★ 本函数漏了 ✓
+        #:   ★ **对外契约仍是毫米** ⇒ ★ **只在这里换算一次** ✓
+        2.0 * float(radius) * _MM_TO_M,  # ★★ 官方 `Width`（★ 2026-10-04 修系数 2）
+        x1 * _MM_TO_M, y1 * _MM_TO_M, 0,
+        x2 * _MM_TO_M, y2 * _MM_TO_M, 0,
         0, 0, 0,
         1, False
     )
@@ -932,20 +994,127 @@ def auto_dimension_sketch(model, sketch=None, sketch_segments=None):
 
 
 def add_dimension(model, x, y):
-    """在指定位置添加尺寸标注"""
-    return model.AddDimension2(x, y, 0)
+    """在指定位置添加尺寸标注（单位: **毫米**）"""
+    #: ★★★ 2026-10-08 根因修复（问题① 单位）：★ 本函数对外是**毫米**（★ 工具层形参 `x_mm`/`y_mm` ✓）
+    #:   而官方 `IModelDoc2::AddDimension2(X, Y, Z)` 要的是**米** ✓ ⇒ ★ 补 ÷1000 ✓
+    #:   （★ 与 `sketch_circle`/`sketch_line`/`sketch_arc` 是同一族病 ✓）
+    return model.AddDimension2(x * _MM_TO_M, y * _MM_TO_M, 0)
+
+
+#: ★ 官方合法的草图关系常量（★ 2026-10-08 spec 222 按官方 Remarks **逐项校正** ✓）
+#: ★★ 来源：`C:/swapi/types/IModelDoc2/SketchAddConstraints.md` 的 `## Remarks` 清单。
+#: ★ 本次移除两项**官方清单里不存在**的名字（旧表把它们当合法值发给用户）：
+#:   · `sgEQUAL`    ⇒ 官方无此串，等长关系的官方名是 **`sgSAMELENGTH`** ✓
+#:   · `sgMIDPOINT` ⇒ 官方无此串，中点关系的官方名是 **`sgATMIDDLE`** ✓
+#: ⚠ 本表为静态照录，未在本机真机复验（AGENTS.md 铁律 2）。
+_SG_RELATIONS = frozenset((
+    "sgFIXED", "sgHORIZONTAL", "sgVERTICAL", "sgCOLINEAR", "sgPARALLEL",
+    "sgPERPENDICULAR", "sgTANGENT", "sgCONCENTRIC", "sgSAMELENGTH", "sgSYMMETRIC",
+    "sgATMIDDLE", "sgCOINCIDENT",
+))
+
+#: ★ 旧名 → 官方名（★ 2026-10-08 spec 222）。★ 用户与旧提示词里已写下的错名
+#:   **不再**被当作合法值原样派发，而是**明确拒绝并指出官方名** ✓
+#: ★★ 键**一律小写** —— 查表处用 `_cand.lower()` 对齐。
+#:   ⚠ 曾经的坑（2026-10-08 由独立复核抓出）：键写成混合大小写 `"sgEQUAL"`，
+#:     而查表用 `.lower()` ⇒ **恒不命中** ⇒ 提示恒为空 = **死代码** ✗
+#:     ★ 而当时的判据**抓不到**它（只断言「官方名出现在消息里」，而合法值清单本来就含官方名）。
+#:     ⇒ ★ 判据已补强：必须断言提示的**专有措辞**「官方对应名为」出现 ✓
+_SG_LEGACY_ALIASES = {
+    "sgequal": "sgSAMELENGTH",
+    "sgmidpoint": "sgATMIDDLE",
+}
+
+
+def _sg_relation_name(relation_type):
+    """★ 归一关系名：★ 允许**不带 `sg` 前缀** / 任意大小写 ✓；★ 非法回 `None` ✓"""
+    raw = str(relation_type or "").strip()
+    if not raw:
+        return None
+    cand = raw if raw.lower().startswith("sg") else "sg" + raw
+    for name in _SG_RELATIONS:
+        if name.lower() == cand.lower():
+            return name
+    return None
 
 
 def add_sketch_relation(model, relation_type):
     """
     添加草图几何关系
 
-    常用 relation_type:
+    常用 relation_type（★ 大小写无关；★ `sg` 前缀**可省略** ✓）:
         "sgFIXED", "sgHORIZONTAL", "sgVERTICAL", "sgCOLINEAR",
         "sgPARALLEL", "sgPERPENDICULAR", "sgTANGENT", "sgCONCENTRIC",
-        "sgEQUAL", "sgSYMMETRIC", "sgMIDPOINT", "sgCOINCIDENT"
+        "sgSAMELENGTH", "sgSYMMETRIC", "sgATMIDDLE", "sgCOINCIDENT"
+
+    ⚠ 旧名 `sgEQUAL` / `sgMIDPOINT` **官方清单里不存在**，本函数会**拒绝**并提示官方名。
     """
-    return model.SketchAddConstraints(relation_type)
+    #: ★★★ 2026-10-08 根因修复（问题② 约束）：★ 现场铁证 ↓
+    #:   ★ 传 `PARALLEL`/`COINCIDENT`/`on_edge`/`PIERCE` ⇒ `SketchAddConstraints` **一律回 `True`** ✗
+    #:     而真判据（`ISketchSegment::GetRelationsCount` ✓）显示 **关系数 1 → 1 不变** ✗ ⇒ **空操作** ✓
+    #:   ★ 带前缀的 `sgFIXED` ⇒ 关系数 **1 → 2** ✓ ⇒ ★ 根因 = **缺 `sg` 前缀 + 零校验** ✓
+    #:   ★ 修法：★ ① **白名单校验**（非法即抛 ✗，★ 不再静默 `True` ✓）② **自动补 `sg` 前缀** ✓
+    name = _sg_relation_name(relation_type)
+    if name is None:
+        _raw = str(relation_type or "").strip()
+        _cand = _raw if _raw.lower().startswith("sg") else "sg" + _raw
+        _hint = _SG_LEGACY_ALIASES.get(_cand.lower())
+        _hint = (" ★ 官方对应名为 **%s**（官方 Remarks 清单里**没有** %s）✓" % (_hint, _cand)) if _hint else ""
+        raise ValueError(
+            "非法 relation_type=%r ⇒ `IModelDoc2::SketchAddConstraints` 会**静默回 True** "
+            "而**不加任何关系** ✗。★ 合法值：%s（★ `sg` 前缀可省 ✓）%s"
+            % (relation_type, sorted(_SG_RELATIONS), _hint)
+        )
+
+    #: ★★★ 2026-10-08（spec 222）**前置状态门** —— ★ 与 `specs/221` 的判据**同源同义** ✓
+    #:   ★ 为什么必须加：本函数走的是**字符串入口** `SketchAddConstraints`，
+    #:     而它**不看草图状态**、失败也回 `True` ✗
+    #:     ⇒ 在**已过定义**的草图上继续加 ⇒ **越加越坏**（现场铁证：status=4 时仍继续加）✗
+    #:   ★ 判据：`ISketch::GetConstrainedStatus`，★ 本仓取 **2（欠定义）为唯一可加状态**。
+    #:     ⚠ 这是**本仓的项目规则**（沿用 `specs/221`），**不是**官方 `swConstrainedStatus_e`
+    #:       的强制规定 —— 官方只定义取值，没规定「哪些状态允许加关系」。如实标注。
+    #:   ★ 本门**不受任何开关影响** —— 没有 `verify=False` 之类的旁路 ✓
+    _ADDABLE_STATUS = 2
+    _STATUS_NAME = {1: "swUnknownConstraint", 2: "swUnderConstrained",
+                    3: "swFullyConstrained", 4: "swOverConstrained",
+                    5: "swNoSolution", 6: "swInvalidSolution", 7: "swAutosolveOff"}
+    try:
+        from sw_sketch import active_sketch as _active_sketch
+        _sk = _active_sketch(model)
+    except Exception:                                                          # noqa: BLE001
+        _sk = None
+    if _sk is None:
+        raise ValueError(
+            "没有活动草图 ⇒ `IModelDoc2::SketchAddConstraints` 在无活动草图时"
+            "**静默回 True 而不加任何关系** ✗。★ 先 `sketch_start` 再调本函数。"
+        )
+    #: ⚠⚠⚠ **不要写 `get_com_member(sk, "GetConstrainedStatus", "GetConstrainedStatus2")`** ✗
+    #:   `get_com_member(obj, attr_name, *args)` 的第 3 个参数是**调用实参**（`return member(*args)`），
+    #:   **不是**「备用成员名」⇒ 那样写会去调 `GetConstrainedStatus("GetConstrainedStatus2")`，
+    #:   实参个数不符 ⇒ 抛错 ⇒ 被吞 ⇒ `_st = None` ⇒ **本门恒拒、工具在真机上根本用不了**。
+    #:   （2026-10-08 由独立复核抓出；当时判据没抓到，因为测试桩比真函数宽容、把实参错误吞了。）
+    #:   ⇒ ★ 正确写法与 `scripts/sw_sketch_relations.py::_val` 一致：**只传成员名**，再按需调用。
+    _st = None
+    for _member in ("GetConstrainedStatus", "GetConstrainedStatus2"):
+        try:
+            #: dispatch-arg: probe 试名探测：先试 `GetConstrainedStatus`，查不到再试 `GetConstrainedStatus2`
+            _v = get_com_member(_sk, _member)
+        except Exception:                                                      # noqa: BLE001
+            continue
+        try:
+            _v = _v() if callable(_v) else _v
+        except Exception:                                                      # noqa: BLE001
+            continue
+        if isinstance(_v, (int, float)):
+            _st = int(_v)
+            break
+    if _st != _ADDABLE_STATUS:
+        raise ValueError(
+            "草图状态为 **%s（%r）** ⇒ ★ 本仓规则：**只有 `status == 2`（欠定义）才允许加关系** ✓；"
+            "当前状态下继续加会**过定义 / 无解** ✗。★ 请先修草图或撤销多余关系。"
+            % (_STATUS_NAME.get(_st, "未知"), _st)
+        )
+    return model.SketchAddConstraints(name)
 
 
 # ============================================================
@@ -953,13 +1122,29 @@ def add_sketch_relation(model, relation_type):
 # ============================================================
 
 def extrude_boss(model, sketch_name, depth, direction=True, merge=True):
-    """
-    凸台拉伸
+    """★ 凸台拉伸（★ **前置：必须先选中草图** —— ★ 见下）。
+
+    ★★★ **2026-10-10 单位订正（★ 官方依据逐字）**：★ `depth` 的单位是 **米**，★ **不是毫米** ✗
+      · ★ 官方 `C:\\swapi\\types\\IFeatureManager\\FeatureExtrusion3.md` **逐字**：
+        「**D1**: Depth of extrusion for first end **in meters**」
+      · ★★ 本函数**没有**乘 `_MM_TO_M`（★ 同模块的 `sketch_line` **乘了** ⇒ 两个口径）
+      · ★★★ **⇒ 本仓真机脚本的用法是 `extrude_boss(model, sk, mm(8))`**
+        （★ `tests/solidworks_configuration_family_regression.py:69` 逐字）——
+        ★★ **用 `mm(...)` 先转米**，★ 那**证实**了收的是米。
+      ⚠ 原 docstring 写「拉伸深度（**毫米**）」⇒ ★★ **那是错的**（★ 会让调用者传 10.0 得 **10 米**）。
+
+    ★★★ **前置（★ 官方 Example 的调用序，★ 真机两臂实测）**：
+      ★ 官方 `C:\\swapi\\examples\\Insert_Feature_Extrusion_Example_VB.md` **逐字**：
+        `boolstatus = Part.Extension.SelectByID2("Sketch1", "SKETCH", 0, 0, 0, False, 0, Nothing, 0)`
+      ★★ 真机两臂（★ `output/_probe_ec00_extrude_official.json`）：
+        · **选中草图** ⇒ 返回非 `None` · 特征树有拉伸 · **体数 1** ✓
+        · **不选草图** ⇒ 返回 `None` · **没建成** ✗
+      ⇒ ★★ **所以本函数第一行就是 `_ensure_sketch_selected`**（★ 那**不是**多余的前置）。
 
     参数:
         model: IModelDoc2
-        sketch_name: 草图名称（如 "Sketch1"）
-        depth: 拉伸深度（**毫米**）
+        sketch_name: 草图名称（★ 中英文都试 —— ★ `_get_sketch_name_candidates`）
+        depth: 拉伸深度（★ **米** —— ★ 毫米请用 `sw_connect.mm(x)` 转换）
         direction: True=正方向
         merge: True=合并结果
     """
@@ -1241,7 +1426,10 @@ def fillet(model, radius, edges=None):
     """
     return model.FeatureManager.FeatureFillet3(
         #: ★ 旧的三参逐字不变（★ `Options=195` · `R1` · `Ftyp=0` · `OverflowType=0`）
-        195, radius,
+        #: ★★ 2026-10-11 **单位修复**：官方 `FeatureFillet3.md:18` 的 `R1` 吃**米**
+        #:   （真机定案：`fillet(5.0)` ⇒ 包围盒 40→4.926 ⇒ 5 米半径吃光盒子）
+        #:   依据 `output/probe-unit-decisive/decisive.json`。
+        195, radius * _MM_TO_M,
         #: ★★ 新增：`R2`（非对称的第二半径）· `Rho`（圆锥 rho）⇒ ★ 对称圆角用中性值 0.0
         0.0, 0.0,
         #: ★★★ 新增：`Ftyp` · `OverflowType` · `ConicRhoType` ⇒ ★ 0 = 默认
@@ -1263,7 +1451,7 @@ def chamfer(model, distance, angle_deg=45):
     import math
     angle_rad = angle_deg * math.pi / 180.0
     return model.FeatureManager.InsertFeatureChamfer(
-        4, 1, distance, angle_rad, 0, 0, 0, 0
+        4, 1, distance * _MM_TO_M, angle_rad, 0, 0, 0, 0
     )
 
 
@@ -1315,11 +1503,17 @@ def linear_pattern(model, feature_name, d1_x, d1_y, d1_z, d1_spacing, d1_count,
     #: ★★★★★ 2026-10-04（接手轮）**记档保留 3.0 —— ★ 而这次的"没换"是**没验出来**、★ 如实记** ✓
     #:   处置阶段 2 · T1 · ★ 逐条流程 ①② ✓
     #:   ★ **官方链**（★ 按接口限定地追 —— ★ 上一轮定的判据）：
-    #:     · `FeatureLinearPattern3` 废弃 ⇒ `4` · `4` 废弃 ⇒ `5` ·★ **`5` 废弃、★ 后继空** ✓
+    #:     · `FeatureLinearPattern3` 废弃 ⇒ `4` · `4` 废弃 ⇒ `5` ·★ **`5` 废弃** ✓
+    #:     ★★★★ **⚠ 订正（★ spec 293 · 2026-10-10）**：★ 此处原写「★ 5 也废弃、★ **后继为空**」——
+    #:       ★★★ **那句话是错的** ✗。★ **官方逐字**（`C:\swapi\types\IFeatureManager\FeatureLinearPattern5.md:12`）：
+    #:         「Obsolete. See `IFeatureManager::CreateFeature` and the Remarks in
+    #:           `ILinearPatternFeatureData` and `ILocalLinearPatternFeatureData`.」
+    #:       ⇒ ★★ **后继不是 `FeatureLinearPattern6`，★ 是 `CreateFeature` + `I*FeatureData`** ✓
     #:   ★★ **⇒ 按铁律 4 查反射裁决**（★ 最高代是哪个）：
     #:     ★ `FeatureLinearPattern` ⇒ 8/9/10/**20**/**22** ⇒ ★★ **`5` 是最高代、★ 反射里没有 `6`** ✓
     #:     ★★ 而 `FeatureCircularPattern` ⇒ 4/5/6/7/**14** ⇒ ★ **`5` 也是最高代** ✓
-    #:     ⇒ ★★★ **∴ "`5` 也废弃"是官方**没清状态标记**、★ 而它**就是现行可用那代**** ✓
+    #:     ⇒ ★★★ **∴ `5` 是**本族最高代**、★ 而**不是"没有后继"**** —— ★★ 「最高代」说的是**本族**（★ `1`–`5`），
+    #:       ★ **官方给的替换是**跨族**的 `CreateFeature`**（★ 见上面的订正 · ★ spec 293）✓
     #:   ★★★ **参数对位**（★ 官方签名逐字）：★ `FeatureLinearPattern5` **22 参** ⇒
     #:     ★★ **前 10 参与本处的 `3` 代**逐字相同**（`Num1, Spacing1, Num2, Spacing2, FlipDir1,
     #:       FlipDir2, DName1, DName2, GeometryPattern, VaryInstance`）、★ 新增 12 个是开关 ✓
@@ -1389,9 +1583,22 @@ def linear_pattern(model, feature_name, d1_x, d1_y, d1_z, d1_spacing, d1_count,
     #:       ★★ 选中读数：★ `dir_by_point: true` · `body_Select(True,256): true` · `sel_count: 2` ✓
     #:     ⇒ ★★★★★ **⇒ ①本仓的"阵列"基线与 ②`5` 代的可用性**同时**得到真机证据** ✓
     #:   ── 四 · ★ 换代（★ 逐条流程 ③）──────────────────────────
-    #:     ★ 官方链：★ `3` 废弃 ⇒ `4` ⇒ `5`（★ 5 也废弃、★ 后继空）·
+    #:     ★ 官方链：★ `3` 废弃 ⇒ `4` ⇒ `5`（★ **`5` 也废弃**）·
     #:     ★★ **而反射裁决**：★ `FeatureLinearPattern` 最高代 **`5`（22 参）**、★ **没有 `6`** ⇒
-    #:       ★★★ **`5` 就是现行可用那代** ⇒ ★ **换到 `5`、★ 参数按官方 22 参对位** ✓
+    #:       ★★★ **`5` 就是本族的现行可用那代** ⇒ ★ **换到 `5`、★ 参数按官方 22 参对位** ✓
+    #:     ★★★★ **⚠ 订正（★ spec 293 · 2026-10-10）**：★ 此处原写「★ 5 也废弃、★ **后继为空**」——
+    #:       ★★★ **那句话是错的** ✗。★ **官方逐字**（`C:\swapi\types\IFeatureManager\FeatureLinearPattern5.md:12`）：
+    #:         「**Obsolete. See `IFeatureManager::CreateFeature` and the Remarks in
+    #:           `ILinearPatternFeatureData` and `ILocalLinearPatternFeatureData`.**」
+    #:       ⇒ ★★ **后继不是 `FeatureLinearPattern6`，★ 是 `CreateFeature` + `I*FeatureData`** ✓
+    #:       ★★★ **而它换不了（★ 不是"一处替换"）**：★ 官方指南逐字
+    #:         （`C:\swapi\docs\...\Pattern Features and their Feature Data Objects.md:20`）：
+    #:         「**Before calling `IFeatureManager::CreateDefinition`, you must pre-select the
+    #:           entities needed to create the linear pattern feature.**」✓
+    #:       ⇒ ★★ **后继要求预选**：方向（mark **1** / **2**）+ 要阵列的面/特征/实体（mark **4** / **256**）；
+    #:         ★★ **而本函数**不做选择**（★ 靠 `DName1`/`DName2` **尺寸名**驱动、★ 无选择集）**
+    #:       ⇒ ★★★ **换它 = 改本函数的**契约****（★ 调用方要开始负责预选）⇒ ★ **不是"换路由"** ⇒
+    #:         ★★ **记档保留**（★ 逐站点拍板见 `specs/293-route-change-viability/`）✓
     #:   ★★★★★ **可复用判据（★ 本轮）**：
     #:     ★★★ **"换代验不出来"时，★ 先去修基线** —— ★ 基线立住的那一刻，
     #:       ★★ **换代问题**常常自己就答了**（★ 本轮：基线一建立、★ `5` 代同时也成了）✓
@@ -1572,7 +1779,7 @@ def shell(model, thickness, faces_to_remove=None):
     #:     `t=4.0` ⇒ 实体 **43456**、空腔 **76544** = **92×52×16** ⇒ **四壁各减 4 mm**。
     #:   ⇒ ★★ **几何自证口径是毫米** ⇒ **不要按官方那句 meters 换算**（★ 与本模块头一致）。
     #:   ★ 若按 meters 解，2.0 的壁就是 **2 米** ⇒ 会把 20 mm 厚的板吃光或直接失败（★ 实测都没有）。
-    return model.InsertFeatureShell(thickness, False)
+    return model.InsertFeatureShell(thickness * _MM_TO_M, False)
 
 
 def mirror_feature(model, feature_name, mirror_plane_name):
@@ -1722,7 +1929,7 @@ def rib(model, sketch_name, thickness, direction=True):
     #:   ★★★★ **⇒ 真因在**调用形态****：★ 原写法 `model.FeatureManager.InsertRib(...)` 是
     #:     **属性链直取 + 直调** ⇒ ★★ **而本仓的纪律是走 `get_com_member` / `call_com_member`**
     #:     （★ 同模块 `insert_dome` 那次修的**正是**同一个问题 —— 它现在的形态逐字是
-    #:       `call_com_member(model, "InsertDome", float(height), bool(reverse), bool(elliptic))`）✓
+    #:       `call_com_member(model, "InsertDome", float(height) * _MM_TO_M, bool(reverse), bool(elliptic))`）✓
     #:   ★★★★★ **⚠ `ReferenceEdgeIndex` 传 `0`** ⇒ ★ 官方逐字：「Edge in the sketch to use to
     #:     determine the material direction and for draft reference」⇒ ★★ **第 0 条边** ✓
     #:     ★★★ **而官方示例也传 `0`** ⇒ ★ **一致** ✓
@@ -1738,9 +1945,12 @@ def rib(model, sketch_name, thickness, direction=True):
     #:     「★ `IFeatureManager.InsertRib` **10** 参 · ★ `IModelDoc.InsertRib` **8** 参」）⇒
     #:     ★★ **而原实现传了 **9** 个实参**（★ 与两个版本**都不匹配**）⇒ **必然失败** ✓
     #:   ★★★★★ **⇒ 定案：★ 走 8 参**（★ 官方前 8 个名字逐一对位）✓
+    #: ★★ 2026-10-11 **单位修复**（★ 官方示例 `Get_Rib_Feature_Data_Example_VB.md:54`
+    #:   传 `0.00254` = 2.54mm 的**米**值 ⇒ COM 吃米）⇒ `thickness` 必须换算一次。
+    #:   依据：`output/probe-unit-decisive/decisive.json`（同文档单变量定案）。
     return call_com_member(
         model, "InsertRib",
-        bool(direction), False, float(thickness), 0, False, False, False, 0.0
+        bool(direction), False, float(thickness) * _MM_TO_M, 0, False, False, False, 0.0
     )
 
 
@@ -1832,9 +2042,15 @@ def sketch_ellipse(model, cx, cy, major_x, major_y, minor_x, minor_y, z=0.0):
     ★ **走的正是现行入口**：`IModelDoc2.CreateEllipse` 与 `CreateEllipse2`
     **两级都已废弃**，现行是 `ISketchManager.CreateEllipse`（见来源块）。
 
-    ⚠ **单位：毫米** —— 与同模块的 `sketch_circle` / `sketch_corner_rectangle` 一致，
-    而**不是**它们 docstring 里写的"米"（那几处 docstring 与实际不符，
-    见已知事实 73 的实测）。本函数按**实测**来，并在 docstring 里写明。
+    ⚠ **单位：毫米**（★ 对外契约 ✓）—— ★ 但**函数内换算成米**再送 COM。
+
+    ★★★ 2026-10-10 修 **1000× 单位 bug**（★ 真机裁决，★ 证据 `output/_probe_unit_verdict.json`）：
+      ★ 本函数原把 `cx/cy/major_x/...` **原样**送进 `ISketchManager.CreateEllipse` ✗ ——
+      ★★ 而 **COM 侧单位是米**（★ 事实 2；★ 同模块 `sketch_circle` 等**都有** `_MM_TO_M`）✓
+      ★ 实测：★ 传长半轴 `25`（毫米口径）⇒ 包围盒跨度 **50000 mm** ✗（★ 应为 50 mm）
+      ★★ **订正说明**：★ 本函数 docstring 原引「已知事实 73」说「模块单位是毫米、**不做换算**」——
+      ★ 那条结论**只对当时未修的函数成立**；★ 2026-10-08 的根因修复给 5 个函数加了 `_MM_TO_M`
+      （★ 事实 73 未同步更新）⇒ ★★ **本次以真机读数为准**：★ **COM 吃米，对外收毫米** ✓
 
     :param cx, cy: 椭圆**中心**的坐标（毫米）。
     :param major_x, major_y: **长轴**上一点的坐标（毫米）—— 它到中心的距离就是长半轴。
@@ -1845,9 +2061,9 @@ def sketch_ellipse(model, cx, cy, major_x, major_y, minor_x, minor_y, z=0.0):
     """
     seg = get_com_member(
         get_com_member(model, "SketchManager"), "CreateEllipse",
-        float(cx), float(cy), float(z),
-        float(major_x), float(major_y), float(z),
-        float(minor_x), float(minor_y), float(z))
+        float(cx) * _MM_TO_M, float(cy) * _MM_TO_M, float(z),
+        float(major_x) * _MM_TO_M, float(major_y) * _MM_TO_M, float(z),
+        float(minor_x) * _MM_TO_M, float(minor_y) * _MM_TO_M, float(z))
     if seg is None:
         raise RuntimeError(
             "ISketchManager.CreateEllipse 返回 None ⇒ 椭圆没建出来"
@@ -1885,8 +2101,16 @@ def sketch_centerline(model, x1, y1, x2, y2, z=0.0):
     `CreateCenterLineVB` 是它的 **VB 变体**（`Void` 返回）—— 现行是
     `ISketchManager.CreateCenterLine`（见来源块）。
 
-    ⚠ **单位：毫米**（**实测**，不是照官方文档的「meters」）——
-    依据 `tools/verify_centerline_smoke.py`。同模块其余助手同此（已知事实 73）。
+    ⚠ **单位：毫米**（★ 对外契约 ✓）—— ★ 但**函数内换算成米**再送 COM。
+
+    ★★★ 2026-10-10 修 **1000× 单位 bug**（★ 真机裁决，★ 证据 `output/_probe_unit_verdict.json`）：
+      ★ 本函数原把 `x1/y1/x2/y2` **原样**送进 `ISketchManager.CreateCenterLine` ✗ ——
+      ★★ 而 **COM 侧单位是米**（★ 事实 2；★ 同模块 `sketch_line` 等**都有** `_MM_TO_M`）✓
+      ★ 实测：★ 传 `(0,0)→(25,25)`（毫米口径）⇒ 包围盒跨度 **25000 mm** ✗（★ 应为 25 mm）
+      ★★ **订正说明**：★ 本函数原引「已知事实 73」说「模块单位是毫米、不做换算」——
+      ★ 那条只对当时未修的函数成立；★ 2026-10-08 根因修复给 5 个函数加了 `_MM_TO_M`
+      （★ 事实 73 未同步）⇒ ★★ **本次以真机读数为准**：★ **COM 吃米，对外收毫米** ✓
+      ★ 注：★ `z` **不换算**（★ 它是**草图平面内的深度偏移**，★ 2D 草图恒 0）✓
 
     :param x1, y1: 端点 1 的坐标（毫米）。
     :param x2, y2: 端点 2 的坐标（毫米）。
@@ -1896,7 +2120,8 @@ def sketch_centerline(model, x1, y1, x2, y2, z=0.0):
     """
     seg = get_com_member(
         get_com_member(model, "SketchManager"), "CreateCenterLine",
-        float(x1), float(y1), float(z), float(x2), float(y2), float(z))
+        float(x1) * _MM_TO_M, float(y1) * _MM_TO_M, float(z),
+        float(x2) * _MM_TO_M, float(y2) * _MM_TO_M, float(z))
     if seg is None:
         raise RuntimeError(
             "ISketchManager.CreateCenterLine 返回 None ⇒ 中心线没建出来"
@@ -1951,7 +2176,8 @@ def insert_dome(model, height, reverse=False, elliptic=False):
     #:   ★ 正确形态 = **`call_com_member(obj, name, *args)`**（实参直接跟着名字）。
     #: ⚠ 官方 Remarks 还要求：★ **"select the face for the dome using a selection mark of 1"**
     #:   ⇒ 调用方**必须用 `mark=1`** 选面（★ `select_face_at` 的默认 `mark=0` **不满足**）。
-    call_com_member(model, "InsertDome", float(height), bool(reverse), bool(elliptic))
+    call_com_member(model, "InsertDome", float(height) * _MM_TO_M,
+                    bool(reverse), bool(elliptic))
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -2393,7 +2619,8 @@ def linear_pattern_report(model, feature_name: str, spacing_mm: float, count: in
         #:   `com_error: (-2147352562, '无效的参数数目。')`。
         #:   ★ 记一条：**“读了文档” ≠ “按文档写”** —— 我读了参数表，却凭印象补了尾部。
         #: ★★★★ 2026-10-04（接手轮）**换到现行的 `5` 代（22 参）** —— 处置阶段 2 · T1 ✓
-        #:   ★ 官方链：★ `3` 废弃 ⇒ `4` ⇒ `5`（★ 5 也废弃、★ 后继空）·
+        #:   ★ 官方链：★ `3` 废弃 ⇒ `4` ⇒ `5`（★ **`5` 也废弃**）—— ★★ 后继**不是** `6`，
+        #:     ★ **是跨族的 `IFeatureManager::CreateFeature`**（★ 官方逐字 · ★ 见 `linear_pattern` 的订正 · spec 293）·
         #:   ★★ **反射裁决**：★ 最高代 `5`（**22 参**）、★ **没有 `6`** ⇒ ★ **`5` 是现行可用那代** ✓
         #:   ★★★ **真机证据**（★ `tools/probe_linear_pattern_baseline.py` ·
         #:     `output/linear-pattern-baseline-evidence.json`）：★ 三种形态**全部建成**

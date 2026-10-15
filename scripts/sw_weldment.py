@@ -22,6 +22,14 @@ except ImportError:
     from sw_part import _ensure_sketch_selected
     from sw_preflight import import_com_dependencies
 
+#: ★ spec 240：`IAssemblyDoc` 成员的通用访问器。★ **单独一个 `try:`** ——
+#:   `scripts/check_relative_imports.py` 的判据是「相对导入必须**紧跟** `try:`」
+#:   ⇒ 把它塞进上面那个 `try:` 块会让 `.sw_connect` 那行**掉出**覆盖 ⇒ 棘轮 +1（红）。
+try:
+    from .sw_assembly_doc import call_assembly_doc
+except ImportError:
+    from sw_assembly_doc import call_assembly_doc
+
 
 pythoncom, _win32com, VARIANT = import_com_dependencies()
 
@@ -33,21 +41,35 @@ SW_SOLID_BODY = 0
 # 仓库:   SolidWorks 官方 API 枚举定义（SolidWorks.Interop.swconst.dll）
 # 文件:   D:\AI\SW\_raw\reflect\  —— 由 D:\AI\SW\tools\reflect-enum.ps1
 #         对官方程序集做纯元数据反射取得（swFeatureNameID_e）。
-# 定位:   本模块新��� 4 个 CreateDefinition 入口的 Type 实参。
+# 定位:   本模块新增的 `CreateDefinition` 入口的 Type 实参（★ spec 240 后：**无代码使用**）。
 # 取值:   逐个反射核出，未臆造；`C:\swapi\enums\swFeatureNameID_e.md` 只有名称列、
 #         **无数值列**，故不以该文件为取值依据（见 AGENTS.md 铁律 4）。
 # ⚠ 扫描 131 个条目确认：焊件相关的**只有这 3 个**，没有「下料表」或「构件分割」
 #   的独立 fm 条目 —— 那两个走 IFeatureManager 的 Insert* 方法（见文件末尾）。
-# ⚑ 现状: SW_FM_MATE_PROFILE_CENTER 被 create_profile_center_mate 使用；
-#   SW_FM_PROFILE_FEATURE 与 SW_FM_WELD_MEMBER_FEAT **当前无人使用** ——
-#   保留是因为它们记录了「型材特征 / 构件成员在官方枚举里确有独立 fm 条目」
-#   这一事实（我曾据 swFmWeldMemberFeat 误写过一个不成立的创建入口）。
+# ⚑ 现状（★ spec 240 后）：`SW_FM_MATE_PROFILE_CENTER` 与 `SW_FM_PROFILE_FEATURE` /
+#   `SW_FM_WELD_MEMBER_FEAT` **均无代码使用** —— 保留是因为它们记录了三条**证据锚点**：
+#   ① `swFmProfileFeature(65)` / `swFmWeldMemberFeat(72)`：「型材特征 / 构件成员在官方枚举里
+#      确有独立 fm 条目」这一事实（我曾据 `swFmWeldMemberFeat` 误写过一个不成立的创建入口）；
+#   ② `swFmMateProfileCenter(101)`：★ **官方枚举里确有这个 fm 条目，但它不在任何官方
+#      `CreateDefinition` 宿主页的 `Type` 清单里** ⇒ 正是「枚举有 ≠ `CreateDefinition` 支持」的
+#      活样本；`create_profile_center_mate` 已改走官方入口（见下方 `SW_MATE_PROFILE_CENTER`）。
 #   若后续无对应封装，可连同说明一并删除。
 # ⚠ 本组为静态反射结果，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 SW_FM_PROFILE_FEATURE = 65      # swFmProfileFeature
 SW_FM_WELD_MEMBER_FEAT = 72    # swFmWeldMemberFeat
 SW_FM_MATE_PROFILE_CENTER = 101  # swFmMateProfileCenter
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   SolidWorks 官方 API 枚举定义（SolidWorks.Interop.swconst.dll）
+# 文件:   C:\swapi\enums\swMateType_e.md:34 —— `| swMatePROFILECENTER | 24 |`
+# 定位:   `create_profile_center_mate` 走**官方入口** `IAssemblyDoc::CreateMateData(Type)`
+#         时要传的 `Type` 实参。★ 它**不是** `swFm*` 族（`CreateDefinition` 的那套）——
+#         配合族走 `IAssemblyDoc`，不走 `IFeatureManager::CreateDefinition`。
+# 覆盖:   `create_profile_center_mate`
+# ⚠ 本常量为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
+# ────────────────────────────────────────────────────────────────────
+SW_MATE_PROFILE_CENTER = 24     # swMatePROFILECENTER
 CORE_CUT_LIST_PROPERTY_NAMES = {
     "length",
     "长度",
@@ -140,6 +162,7 @@ def _active_configuration_name(model) -> str:
 # ⚠ ★★ **`GapValue` 官方没给单位**（★ Parameters 只写 "Length to trim"）⇒
 #   ★ 按仓里既有约定**加 `unit_assumption`**（★ 缝合，不发明 ✓）
 # ⚠ ★ 官方**没有**标 `Obsolete`（★ 与 `InsertWeldmentTrimFeature` 老版并存 ⇒ 本包装用 `…2` ✓）
+#: enum-gate: member InsertWeldmentTrimFeature2
 WELDMENT_TRIM_MARKS = {"body_to_trim": 1, "trim_boundary": 2}
 
 
@@ -390,6 +413,7 @@ def ensure_cut_list(model) -> list[Any]:
     return created
 
 
+#: dispatch-guard: exempt internal-helper
 def _iter_feature_chain(first_feature, next_member: str):
     """@brief 遍历顶层或同级子特征链。"""
     feature = first_feature
@@ -664,63 +688,15 @@ def export_cut_list_csv(evidence: dict[str, Any], output_path: str | Path) -> Pa
 # ══════════════════════════════════════════════════════════════════════
 
 
-# ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身既有模式（AGENTS.md 铁律 1 认可的第三类来源）
-# 文件:   scripts/sw_sheet_metal.py::_create_from_definition（同任务产出的姊妹模块）
-#         与 scripts/sw_weldment.py::create_base_flange 所在文件的上游写法
-# 定位:   本文件新增 4 个 CreateDefinition 入口共用的骨架，沿用既有形状：
-#           取 FeatureData → 交给调用方设属性 → CreateFeature
-#           → 用 GetErrorCode 拒绝硬错误。
-#         沿用而非另写，是为保持「错误码判定」在同一套模块里一致。
-# ⚠ 本函数为照既有模式新写，未在本机实测（见 AGENTS.md 铁律 2）
-# ────────────────────────────────────────────────────────────────────
-def _create_from_definition(model, fm_type: int, apply_definition):
-    """与 scripts/sw_sheet_metal.py::_create_from_definition 同构的共用骨架。
-
-    先取 FeatureData、交给调用方设属性、再 ``CreateFeature``，
-    最后用 ``GetErrorCode`` 拒绝硬错误（与上游 ``create_base_flange`` 一致）。
-    """
-    manager = get_com_member(model, "FeatureManager")
-    data = get_com_member(manager, "CreateDefinition", int(fm_type))
-    if data is None:
-        raise RuntimeError(f"CreateDefinition({fm_type}) 未返回特征数据")
-    apply_definition(data)
-    feature = get_com_member(manager, "CreateFeature", data)
-    if feature is None:
-        raise RuntimeError(f"CreateFeature({fm_type}) 创建失败")
-    # ── 来源 ─────────────────────────────────────────────────────────
-    # 仓库:   SolidWorks 官方 API（`C:\swapi`，三源之一）+ 本项目既有模式
-    # 文件:   C:\swapi\types\IFeature\GetErrorCode.md
-    #           → 逐字「**Obsolete. Superseded by [[IFeature::GetErrorCode2]].**」
-    #         C:\swapi\types\IFeature\GetErrorCode2.md
-    #           → `System.int GetErrorCode2( **out** System.bool IsWarning )`
-    # 定位:   ★★ 2026-10-04（接手轮）**处置阶段 2 生产第 15 条** ——
-    #         `workflow-15` 的 **B-3** 逐字点出：「★ 我们**实际调用**的 `IFeature.GetErrorCode()`
-    #         带着官方的 `Obsolete. Superseded by [[IFeature::GetErrorCode2]].` 行；
-    #         ★ 官方逐字点名的后继是 `IFeature::GetErrorCode2`（多一个 `out bool IsWarning`），
-    #         ★★ **我们代码里没有它、也没有任何换用后继的说明**」✓
-    #        ★★★ **真机实测（不许凭签名就下结论 —— 铁律 2）**：
-    #         `tools/probe_geterrorcode2.py` · `output/geterrorcode2-evidence.json`
-    #         | ★ 形态 | ★ 结果 |
-    #         |---|---|
-    #         | ★ 旧 `GetErrorCode()` | ★ 回 **`0`** —— ★ **真的工作** ✓ |
-    #         | ★★ 新 `GetErrorCode2()`（0 参）| ★★ 回 **`<bound method GetErrorCode2 of <COMObject>>`** ——
-    #           ★★★ **那不是"调通了"**，★ 那是 `get_com_member` 的「取或调」**失败后原样返回成员本身** ✓
-    #           （★ 实测字段：`是成员本身=True`）|
-    #         | ★★ 新 `GetErrorCode2(out_i4)` | ★★ **`类型不匹配`（位置 1）** ✓ |
-    #        ★★★★ **⇒ 结论：后继在 pywin32 这条后端上**到不了**** ——
-    #         与**事实 47**（★ 含 by-ref 的成员在 pywin32 迟到绑定下到不了）**一致** ✓
-    #         ⇒ ★ **保留旧的**，★ 并按本仓纪律**把理由写在这里**（★ 而不是让它沉默）✓
-    #        ⚠⚠ **本探针自己的结论行写错了**：★ 它把"拿到 bound method"当成了"能调"
-    #          （★ 因为 `get_com_member` 不抛异常）⇒ ★★ **按纪律 `tools/` 只报不动**，
-    #          ★ 故**不改探针**，★ 而在此**如实纠正** ✓
-    #          ★★★ **可复用判据**：★ **判"一个成员调没调通"，要看 `hasattr(返回值, "_oleobj_")`，
-    #          不是"没抛异常"** ✓
-    # ─────────────────────────────────────────────────────────────────
-    error_code = int(get_com_member(feature, "GetErrorCode") or 0)
-    if error_code:
-        raise RuntimeError(f"焊件特征 {fm_type} 返回特征错误码: {error_code}")
-    return feature
+# ⚑ 2026-10-09（spec 240）**墓碑**：此处原有 `_create_from_definition(model, fm_type, apply)`
+#   —— 取 `IFeatureManager.CreateDefinition(fm_type)` 的共用骨架。★ 已**整体删除**：
+#   它唯一的调用方是 `create_profile_center_mate`，而 `swFmMateProfileCenter(101)` **不在任何**
+#   官方 `CreateDefinition` 宿主页的 `Type` 清单里（只有枚举页收录）⇒ 官方**不支持**这条路。
+#   ⇒ 该 `CreateDefinition` 站点**正当消失**（与 spec 239 的 `swFmDraft` 同族）。
+#   ★ **不保留**为死代码：无调用方时 `fm_type` 无法绑定 ⇒ 站点会退化成 `dynamic`
+#     （`check_create_definition_site_disposition` 的 `[reader-too-narrow]` 会红）。
+#   ★ 「有人写回 `CreateDefinition(swFmMateProfileCenter)`」由 `check_cd_host_scope` 的
+#     `unsupported-path` 码接住（它会红），**不靠计数棘轮**。
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -788,20 +764,49 @@ def configure_member_profile(
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
-# 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt
-#           → IProfileCenterMateFeatureData 段
-# 定位:   型材中心配合。官方签名（**全部是属性，无方法**）：
-#           Object  EntitiesToMate
-#           Int32   MateAlignment
-#           Double  OffsetDistance
-#           Boolean FlipDimension / LockRotation
-#           配合 IFeatureManager.CreateDefinition(swFmMateProfileCenter = 101)。
-#           该 FeatureData **无 Initialize 成员**，
-#           故只设属性，不臆造 Initialize 调用。
+# 仓库:   SolidWorks 官方 API（三源之一 `C:\swapi`）+ 官方枚举
+# 文件:   C:\swapi\types\IAssemblyDoc\CreateMateData.md
+#           → `System.object CreateMateData( System.int Type )`
+#             `## Remarks` 的 `Type` 清单**逐条列出** `swMatePROFILECENTER`；★ **无** `Obsolete`。
+#         C:\swapi\types\IAssemblyDoc\CreateMate.md
+#           → `System.object CreateMate( System.object MateData )`
+#             `## Remarks` 给出 5 步调用序（① `CreateMateData` → ② 设通用属性 → ③ 转型 →
+#             ④ 按配合专属接口的 Remarks 设属性 / 预选实体 → ⑤ `CreateMate`），
+#             且逐条列出 `IProfileCenterMateFeatureData`；★ **无** `Obsolete`。
+#         C:\swapi\types\IProfileCenterMateFeatureData\_overview.md
+#           → 5 个属性 / **0 个方法**；`## Remarks` 第 2 步：`EntitiesToMate` 或预选（Mark = 1）。
+#         C:\swapi\enums\swMateType_e.md:34 → `| swMatePROFILECENTER | 24 |`
+#         D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IProfileCenterMateFeatureData 段
+# 定位:   型材中心配合。★ **spec 240 改走官方入口**：
+#           `call_assembly_doc(model, "CreateMateData", SW_MATE_PROFILE_CENTER)`
+#             → 设 5 个属性 → `call_assembly_doc(model, "CreateMate", data)`。
+#         ★★ **为什么不再走 `CreateDefinition`**：`swFmMateProfileCenter(101)` **不在任何**
+#           官方 `CreateDefinition` 宿主页（`IFeatureManager` / `IMotionStudy`）的 `Type` 清单里
+#           —— 只有枚举页收录 ⇒ 官方**不支持**那条路径（spec 238 的 `unsupported-path` 靶子）。
+#         ★★ **为什么不能换回前代入口**：`IAssemblyDoc::AddMate{,2,3,4,5}` **五页全带**
+#           `Obsolete`（`grep -c -i obsolete` = 1/1/1/2/2）⇒ 那是**已废弃**的一族。
+#         ★ 该 FeatureData **无 Initialize 成员**，故只设属性，不臆造 Initialize 调用。
 # ⚠ MateAlignment 的枚举在两套官方源里查不到（`sw_know find MateAlignment`
 #   未命中可用的枚举定义），故本函数只做 int 透传，不给默认值语义。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
+# ────────────────────────────────────────────────────────────────────
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（本机实测结论的固化）
+# 文件:   scripts/sw_weldment.py —— 本函数
+# 定位:   ★★★ 2026-10-10（规格 285）**首次真机验证** ⇒ ★★ **本机建不出**（★ 且**静默**）：
+#         ★ ① `IAssemblyDoc::CreateMateData(24)` ⇒ ★ **回对象** ✓（★ 与 280/281 的 `AccessSelections` **不同因**）；
+#         ★ ② `EntitiesToMate` 试了**三条实体路**（★ 随便两个面 / 两个圆柱面 / 另一对圆柱面）⇒ ★ **全回 None**；
+#         ★ ③ `CreateMate` 回 `None` 时★ **消息栈 n=0**（★ **空**）⇒ ★★★ **读不到任何原因**（★ 与 263 同族）。
+#         ★ ④ 「预选 + Mark 1」那条臂 ⇒ ★ **选中 0 个**（★ 装配里选面**没选上**）⇒ ★★ **该臂不成立**（★ 不拿它当证据）。
+#         ★★ **官方依据**：`IProfileCenterMateFeatureData/_overview.md` 的创建三步 + ★ 它给的两条路
+#         （★ `EntitiesToMate` **或** `SelectByID2` + **Mark = 1**）；★ 而 `IAssemblyDoc::CreateMate.md` 说
+#         「★ **星号**才支持**预选**」⇒ ★ `IProfileCenterMateFeatureData` **无星号** ⇒ ★★ 两句话**不完全一致**。
+#         ★★★ **处置**：★ **代码路线是对的**（★ 官方三步逐条照做）⇒ ★ 结论记「**本机建不出**」而不是「写错了」；
+#         ★ 与 `CreateMateData` **通**这一点也要记 —— ★ 它排除了「整条 API 不可用」。
+#         ★ 读数：`output/_probe285_mate.txt` · `_probe285_mate_cyl.txt` · `_probe285_mate_presel.txt`。
+# 官方依据: `C:/swapi/types/{IAssemblyDoc/CreateMate,IAssemblyDoc/CreateMateData,IProfileCenterMateFeatureData/_overview}.md`
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   本函数
 # ────────────────────────────────────────────────────────────────────
 def create_profile_center_mate(
     model,
@@ -812,18 +817,30 @@ def create_profile_center_mate(
     flip_dimension: bool = False,
     lock_rotation: bool = False,
 ):
-    """在所选实体间创建型材中心配合。"""
+    """在所选实体间创建型材中心配合（官方入口 `IAssemblyDoc::CreateMateData` + `CreateMate`）。
+
+    ⚠★ **本机（SW 34.4.1）实测建不出**：★ `CreateMateData(24)` 通、★ `CreateMate` **静默回 `None`**（★ 见上方来源块）。
+    """
     if entities is None:
         raise ValueError("entities 为 None：须先选中要配合的实体")
 
-    def _apply(data):
-        set_com_member(data, "EntitiesToMate", entities)
-        set_com_member(data, "MateAlignment", int(mate_alignment))
-        set_com_member(data, "OffsetDistance", float(offset_distance))
-        set_com_member(data, "FlipDimension", bool(flip_dimension))
-        set_com_member(data, "LockRotation", bool(lock_rotation))
+    #: ★ `CreateMateData` 是 `IAssemblyDoc` 的成员 ⇒ 走受登记表约束的通用访问器
+    #:   （arity 由 `ASSEMBLY_DOC_ARITY` 在**发起调用之前**核对）。
+    mate_data = call_assembly_doc(model, "CreateMateData", SW_MATE_PROFILE_CENTER)
+    if mate_data is None:
+        raise RuntimeError(
+            f"IAssemblyDoc.CreateMateData({SW_MATE_PROFILE_CENTER}) 未返回配合数据对象")
 
-    return _create_from_definition(model, SW_FM_MATE_PROFILE_CENTER, _apply)
+    set_com_member(mate_data, "EntitiesToMate", entities)
+    set_com_member(mate_data, "MateAlignment", int(mate_alignment))
+    set_com_member(mate_data, "OffsetDistance", float(offset_distance))
+    set_com_member(mate_data, "FlipDimension", bool(flip_dimension))
+    set_com_member(mate_data, "LockRotation", bool(lock_rotation))
+
+    feature = call_assembly_doc(model, "CreateMate", mate_data)
+    if feature is None:
+        raise RuntimeError("IAssemblyDoc.CreateMate 创建型材中心配合失败")
+    return feature
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────

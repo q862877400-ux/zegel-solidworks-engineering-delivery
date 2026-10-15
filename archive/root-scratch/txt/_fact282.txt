@@ -1,0 +1,61 @@
+| 282 | **挖 `costing_templates_and_defaults`：三条其实**能通**（旧结论已过时）+ 一条定位到**事实 36 的同名不同族****（2026-10-02，轮 365）。
+
+## 一、★ 按新纪律先读 limitations，再动手
+```
+★ `costing_templates_and_defaults` 的 limitations 写着：
+   「⚠ 真机：`list_templates` **fail** —— 报 `<unknown>.GetTemplatePathnames`
+     （**事实 36 的形态**：那个成员挂在别的接口上，**待查**）· `get_default_template` 未单独验」
+⇒ ★★ **而它自己就指明了方向**（事实 36 = 同名接口分属不同族）⇒ ★ 去官方/反射源查宿主。
+```
+
+## 二、★★★★★ 查明的宿主表（★ 反射转储 `iface_sldcostingapi.txt`）
+```
+## ICostManager（**7 个成员**）
+   Void Close() · Object get_CostingDefaults() · Object get_CostingModel() ·
+   **Int32 GetTemplateCount(Int32)** · **Object GetTemplatePathnames(Int32)** ·
+   **String IGetTemplatePathnames(Int32, Int32)** ← ★ **带 `I` 前缀 = 指针变体**（事实 47 那一族）·
+   Void WaitForUIUpdate()
+
+## ICostingDefaults ⇒ `String GetTemplateName(Int32)`
+## ISheet          ⇒ `String GetTemplateName()`        ← ★★ **同名！不同族！**（事实 36 的教科书形态）
+```
+
+## 三、★★★★ 真机重测（★ 走**我们真实的入口**，★ 不是手调）
+```
+list_templates(cm, 0)      ⇒ **ok** · 回真实路径
+                             `c:\programdata\solidworks\solidworks 2026\lang\chinese-simplified\costing templates\…` ✓
+get_costing_defaults(cm)   ⇒ **ok**（`<COMObject>`）✓
+get_costing_model(cm)      ⇒ **ok**（`<COMObject>`）✓
+get_default_template(cm,0) ⇒ ✗ `AttributeError: <unknown>.GetTemplateName`   ← ★ **仍失败，已定位**
+⇒ ★★ **即：limitations 里 `list_templates` 那句"fail"**已经过时**（★ 现在能通）——
+   ★ 与本项目一直强调的同一条纪律一致：**旧的失败结论会把好能力钉在 stitched 上**（事实 266）。
+```
+
+## 四、⚠ 剩下那一条的**定位**（★ 下一轮的起点）
+```
+★ `get_default_template` 传的是 `defaults`（★ `get_costing_defaults(cm)` 的返回）⇒
+   ★ **报的是"名字不存在"（`<unknown>.GetTemplateName`）**，★ 而**不是**参数错。
+⇒ ★ 候选（★ 不猜，★ 留给下一轮）：
+   ① **那个对象不是 `ICostingDefaults`** —— ★ 同 `CostingModel` 就是 `CostPart` 那种 duck-typing
+      （★ 本文件 L150 的实测注释就记着这一条）⇒ ★ **该把那个对象上的成员列出来看**；
+   ② 或 `GetTemplateName` 在**另一种初始化状态**下才可见。
+★ **判法**（下一轮）：★ 拿到 `defaults` 后，**列出它身上真实可调的成员**（★ 逐个试），
+   ★ 而不是继续假设它是 `ICostingDefaults`。
+```
+
+## 五、★★ 一条**我自己的**教训（★ 差点误判成"代码 bug"）
+```
+★ 我的第一版探针**手试了反射名** `get_CostingDefaults` / `get_CostingModel` ⇒ 两个都报
+   `<unknown>.get_CostingDefaults` ⇒ ★★ **我差点写"我们这两个入口也坏了"** ✗
+★ **而我们的代码用的是正确的 COM 名**（`sw_costing.py` L184 `"CostingDefaults"` · L191 `"CostingModel"`）
+   ⇒ ★ 走真实入口重测 ⇒ **两个都 ok** ✓
+⇒ ★★★ **定则**：★ **反射转储里的 `get_Xxx` 是**属性 getter 的名字**，不是 pywin32 里该用的名字**；
+   ★★ **探针要按我们自己的入口调**（★ AGENTS 那条纪律的又一次应用）——
+   ★ **手试反射名会把"好代码"报成"坏代码"**。
+```
+
+**依据**：本机实测（`list_templates` 回真实模板路径 · `costing_defaults` / `costing_model` 均 ok ·
+`get_default_template` 报 `<unknown>.GetTemplateName`）·
+`D:\AI\SW\_raw\reflect\iface_sldcostingapi.txt`（★ `ICostManager` 7 成员 · `ICostingDefaults` 的 `GetTemplateName(Int32)`）·
+`D:\AI\SW\_raw\reflect\iface_sldworks.txt`（★ `ISheet` 的同名 `GetTemplateName()`）·
+`scripts/sw_costing.py` L150 / L184 / L191 / L194–198 · 事实 36 / 47 / 266 / 281

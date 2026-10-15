@@ -1,0 +1,33 @@
+feat(特征): **「边界凸台/基体」与「放样」在 API 上是同一个** —— 真机确认（事实 430）
+
+★ 照新纪律（**官方文档是第 0 步**）读 `InsertProtrusionBlend2.md` 的 `## Remarks`，得到 mark 分工
+  （**1 = profile · 2 = guide curve · 4 = centerline**）与两条硬约束
+  （★ **剖面要按顺序选** · ★ **强烈建议带引导线**）。
+
+★★ **而读它时发现一件事**：★ **本仓 `scripts/sw_loft.py::create_loft_report` 走的**就是那个入口**
+  （★ 而它的 docstring 早就写着那条 mark=1 与"按顺序"）⇒ ★ **故推论**：
+  ★ 工具栏上的「**边界凸台/基体**」与「**放样凸台/基体**」**在 API 上是同一个** ⚠
+
+★ 真机（`tools/prove_boundary_boss_same_api_as_loft.py`，走 `sw_guard`、零弹窗）：
+  ```
+  两个剖面（`草图1`、`草图2`，按顺序选中）⇒ `create_loft_report`
+  ⇒ **建成 `放样1`**（★ 而**类型名 = `Blend`**）· mark1 = **2** · report_ok = **True** ✓
+  ```
+  ⇒ ★★ **故假说成立：这条**不需要新代码**（★ 它的能力已存在）** ✓
+
+## ★ 而我**当场犯了一个过度映射，并撤回了它**
+
+★ 我一开始把「**边界切除**」也映射到 `loft_and_sweep` —— ★ 而**它走的是另一个入口**
+  （`InsertCutBlend`）、★ **我只验了凸台** ⚠
+  ⇒ ★★ **故撤回那条映射**（★ **不假装做到**）⇒ 台账 **已能 65**（★ 而非 66）✓
+  ★ 并把它记进事实 430 当**警示**：★ **一个 UI 名字相似并不等于同一个 API** ——
+    ★ **"UI 上两个按钮"可能是同一个方法、也可能是两个方法，只有真机能定**。
+
+## 交付
+
+```
+tools/prove_boundary_boss_same_api_as_loft.py（新）· output/boundary-boss-same-api-evidence.json
+docs/known-facts.md            **事实 430**
+docs/toolbar-ledger.json       「边界凸台/基体」→ loft_and_sweep（★ 「边界切除」**未补**）
+HEAD ? · 语法门禁 0 处 · 台账：已能 **65** · 可攻关 27 · 待查 20 · 待验证 7
+```

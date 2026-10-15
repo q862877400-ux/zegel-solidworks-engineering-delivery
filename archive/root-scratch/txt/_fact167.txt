@@ -1,0 +1,48 @@
+| 167 | **W5 探针：质量属性读数全通，但 `Mass` 的**物理单位没有确证** —— 三个读数各自正确却乘起来量纲不对** —— 2026-10-01（轮 233）。
+
+★★★ **真机读数**（`tools/probe_mass_property_reads.py`，盒 40×20×10 mm ⇒ 体积应 8000 mm³）：
+```
+取法：★ **`model.Extension.CreateMassProperty` 是属性**（当属性取就拿到对象）——
+      ★★ **与 W3 的 `Extension.CustomPropertyManager` 相反**（那个**必须当方法调用**，见事实 161）
+后备：`model.GetMassProperties` 回 **12 个 double** =
+      [0, 0, -5.0, **7999.999999999999**, **2800.0**, 7999999.999999999, 333…, 1133…, 1333…, 0, 0, 0]
+      ⇒ 官方 12 元组次序 = [CX, CY, CZ, **Volume**, **Area**, **Mass**, Ixx, Iyy, Izz, …] ✓
+
+成员读数：
+  Volume       = 7999.999999999999  ⇒ ★ **8000 mm³** ✓
+  SurfaceArea  = 2800.0             ⇒ ★ **2800 mm²** ✓（2×(40·20 + 40·10 + 20·10)）
+  CenterOfMass = [0, 0, **-5.0**]   ⇒ ★ 盒 z 从 −10 到 0 ⇒ 重心 −5 ✓ **完全正确**
+  Density      = 1000.0
+  **Mass       = 7999999.999999999**  ⚠⚠ **见下**
+  AccuracyLevel ⇒ ⚠ **`AttributeError: <unknown>.AccuracyLevel`** —— 该成员**读不到**（如实记）
+```
+
+★★★★ **★ 单位实测：是「毫米系」，不是 SI 米**（本探针最要紧的一问）
+```
+volume_matches_mm3 = **true**（m³ = false）· area_matches_mm2 = **true**（m² = false）
+⇒ ★ 与既有事实 73 的 `IBody2.GetBodyBox`（**毫米**）**一致**，而**与官方其余几何接口惯用的"米"不同**。
+```
+
+★★★★★ **而三个读数**各自都对、乘起来量纲却不成立** ⇒ ★ 必须如实记录，不许猜**：
+```
+Volume = 8000 mm³ · Density = 1000.0 · Mass = 7999999.999999999
+★ 而 **8000 × 1000 = 8,000,000** ⇒ ★★ `Mass` **恰好等于** `Volume(mm³) × Density`
+⇒ ⚠ 若 Volume 是 mm³、Density 是 kg/m³，质量应是 **8 g = 0.008 kg** ⇒ **不是 8e6**。
+⇒ ★★★ **所以 `Mass` 的物理单位我**没有确证**** ——
+   三个读数各自"像对的"，但**乘起来量纲不成立**。
+   ★ 正确做法：**照实记录**；工具说明里**写明「Mass 的物理单位未确证」**；
+   ★★ **不猜、不给它安一个单位**（不给一个我核不出来的数一个名字）。
+★ 可复跑：`python tools/probe_mass_property_reads.py` ⇒ `output/mass-property-reads.json`
+```
+
+★★ **本轮新得出的一条定则（与事实 161 配对）**：
+```
+★ 事实 161 的教训是「`CustomPropertyManager` **必须当方法调用**」；
+  而本轮的 `CreateMassProperty` **当属性取就行** ⇒
+  ★★ **"上一个接口的教训不能照搬"** —— 每个接口的**封送形状要单独实测**。
+  ⇒ 定则：**同一个父对象（`Extension`）的不同成员，取法也可能不同**；
+    照搬上一个成员的结论会得到一个**假阳性或假阴性**。
+```
+
+**依据**：`tools/probe_mass_property_reads.py` + `output/mass-property-reads.json`（真机，SW 2026 SP4.1）·
+`C:\swapi\types\IMassProperty2\`（11 个成员**全是 `kind: property`**）· 事实 8 / 33 / 73 / 161 / 166

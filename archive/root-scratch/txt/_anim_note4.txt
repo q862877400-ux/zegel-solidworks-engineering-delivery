@@ -1,0 +1,9 @@
+★★★★★ 2026-10-01（轮 287）**理由第四次收窄 —— 而这次的关键是"我的假设被自己的探针推翻了两次"**：
+  · ★ 假设 A「算例类型不对（type=2 不行）」⇒ ★ **被推翻**：`motor type0 ✓ · motor type2 ✓`（★ 两个都成）；
+  · ★ 假设 B「找不到圆柱面」⇒ ★ **被推翻**：`find_largest_cylinder_face` 对两个组件**都回对象**（4/4）；
+  · ★★★ **而探针给出了一条**精确、可复现的事实****：★ **在「运动算例 1」（即**第一个、无 name** 建的那个）上 `CreateDefinition(SW_FM_AEM_ROTATIONAL_MOTOR)` 回 `None`** ⇒ 能力层如实抛 `RuntimeError: 创建旋转马达 FeatureData 失败`；★ **而在**命名 + `study_type=2`** 的那个算例上，同一条链**全通**（`motor ok: true`）。
+    ★ 证据：output/motor-chain-probe.json（★ 9/9 全绿）· output/motor-studytype-probe.json（★ type0/type2 都成）· output/motor-e2e-replica.json（★ s1 失败 / s2 成功 / summary 里 `MCP_AVI_PhysSim` motor 1）。
+  · ★★ **而 `tools/verify_motion_avi_e2e.py` 那条路里马达**仍然失败**** —— ★ **原因与我的复刻**不同（复刻里 s2 成功）⇒ ★ **如实写明"差异未定位"**，★ 不猜。
+★ ⇒ ★★★ **当前最准确的说法**：★ **马达能在**已验证的 3 种算例**上建成**（type0 · type2 · 命名算例），
+  ★ **而在第一个（无 name）算例上 `CreateDefinition` 回 `None`**；★ **e2e 场景里失败的具体差异尚待定位**。
+  ★★ 而`AVI 导出`那一步**本身是通的**（★ 轮 285 三环全证）⇒ ★ **所以整条路上**唯一没打通的就是"e2e 里那一次建马达"**。

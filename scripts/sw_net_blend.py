@@ -36,9 +36,11 @@ from __future__ import annotations
 import math
 
 #: ★ 官方 `InsertNetBlend` 的 `Type` 枚举（官方逐字）
+#: enum-gate: member InsertNetBlend
 BLEND_TYPE = {"base": 0, "boss": 1, "surface": 2, "cut": 3}
 
 #: ★ 官方 `SetNetBlendDirectionData` 的 `InfluenceType` 枚举（官方逐字）
+#: enum-gate: member SetNetBlendDirectionData
 INFLUENCE_TYPE = {"global": 0, "to_next_curve": 1, "to_next_sharp": 2, "to_next_edge": 3}
 
 #: ★ 毫米 → 米（本仓事实 2：COM 侧是米，工具面对用户是毫米）

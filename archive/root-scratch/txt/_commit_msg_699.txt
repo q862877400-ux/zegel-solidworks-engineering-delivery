@@ -1,0 +1,47 @@
+fix(阶段1): ★★★★ 处置 **B-2**（两处文件名笔误）· ★ 并**扫全部证据引用**（★ 扫出 3 个死链，★ 其中 2 个正是 **B-1**）
+
+■ 一 · ★ B-2：两处**文件名笔误**（★ 裁判逐字：「★ 它们按判据「逐个 `path.exists`」是**死链**，会污染后续的证据可达性检查」）
+  | ★ 笔误 | ★ 真名 |
+  |---|---|
+  | ★ `out-cut-list-property-names-evidence.json` | ★★ `cut-list-property-names-evidence.json`（★ 多了 `out-` 前缀）|
+  | ★ `loom-type-evidence.json` | ★★ `loft-type-evidence.json`（★ `loom` → `loft`）|
+  ★ 两处**都已改**，★ 且**改前先断言目标文件存在**（★ 不盲改）✓
+  ★ YAML 解析 OK ✓
+
+■ 二 · ★★★ 修完两处后，我**扫了一遍全部**（★ `tools/scan_evidence_links.py`）—— ★ 不只看裁判点名的那两处
+  ```
+  ★ capabilities.yaml 里引到的 `output/*.json` 共 **146** 个
+  ★★ 存在的 **143** 个
+  ★★★ 死链   **3** 个：simulation-evidence.json · slot-direct-probe.json · topology-evidence.json
+  ```
+  ★★★★ **其中两个正是裁判点名的 B-1**（★ `simulation-evidence.json` · `topology-evidence.json`）⇒
+    ★ **我的扫描独立复现了 B-1** ⇒ **判据一致、交叉验证成功** ✓
+  ★ 第三个 `slot-direct-probe.json` **只出现在事实 230 的长散文里**（★ 不是证据引用）⇒
+    ★★ **判为低优先**，★ 且**如实记在这里**（★ 不假装它不存在）✓
+  ★★ **死链率 = 3/146 = 2.1%** ✓
+
+■ 三 · ★ B-1 的处置（★ 按裁判给的第一条建议：★ 铁律 5）
+  ★ 裁判逐字给了两条路：★ 「按铁律 5 在条目里写「**该产物未落盘，数字查不到**」，
+    ★ 或把产出脚本重跑一遍把文件补」。
+  ★★ **我选了第一条**（★ 如实记），★ 因为**第二条要真机 + 时间**，★ 且**产物在 `.gitignore` 里**
+    ⇒ ★★★ **就算重跑，它也不会入库**（★ 下次还是"回不到原文"）✓
+  ★ 所以我在**三处**补了如实说明：
+    · ★ `simulation_and_fea` 的 `evidence`：★ 补一句「`output/simulation-evidence.json` 当前不在仓里」
+      + ★ 说明那几个数字（`element_count: 7310` · `suggested_size_mm: 4.933908705960544` · `plot_count: 4`）
+      **回不到原文**、★ 要复现就重跑 ✓
+    · ★ `mesh_size_sanity_gate` 的 `evidence`：★ 同样补一句（★ 它引了同一份文件当"权威参照"）✓
+    · ★ `topology_optimization` 的 `evidence`：★ 补一句（★ 那份 `topology-evidence.json` 也不在）✓
+  ★★ **产物没入库的根因也写进去了**：★ `output/` 在 `.gitignore` 里 ⇒
+    ★★★ **所以"重跑一次"治不了本，★ 治本的只有"如实标注"** ✓
+
+■ 四 · ★★★ 本轮又踩**两个坑**（★ 都由可核的判据当场抓到）
+  ① ★★ **YAML 不像 Python 会拼接相邻字符串** —— ★ 我把一条长 `evidence` 拆成三行 `"..."`，
+     ★ 以为会像 Python 那样隐式拼接 ⇒ ★ `yaml.safe_load` 报 `expected ',' or ']'` ✓
+     ★ 修法：★ **合并成一条**（★ YAML 里要换行得用 `\n` 或 `>-`）✓
+  ② ★ **ASCII 双引号**（★ 本会话**第 4 次**）⇒ ★ **往 YAML/Python 里写中文，引号一律用 `「」`** ✓
+
+■ 五 · ★ 收尾
+  ★ `capabilities.yaml` 解析 OK（★ **110 个条目**）✓
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 3 passed** ✓
+  ★★ **阶段 1 的 A 级（3 条）+ B-2 + B-1 至此处置完毕**；
+    ★ **B-3 / B-4 / B-5 / B-6 仍是待办**（★ 都在 `specs/` 与 `api-pre/` 的草稿里）✓

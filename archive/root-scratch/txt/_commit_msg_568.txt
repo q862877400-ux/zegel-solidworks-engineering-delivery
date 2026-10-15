@@ -1,0 +1,44 @@
+feat(特征): **螺纹线真机建成**（`InsertCosmeticThread3`）· ★ 前置 = 选**圆柱面的边**（事实 447）
+
+★ 照新纪律（**官方文档是第 0 步**）攻台账「螺纹线」。
+
+## 一、★ 静态已定
+
+```
+签名 **7 参**：InsertCosmeticThread3(Standard, StandardType, Size, Diameter, EndType, Depth, Note)
+★ md **未标 `Obsolete`**（★ 台账给的 api 名是对的）
+★ 两个枚举的值来自**反射**（铁律 4）：
+  swCosmeticStandardType_e  : **1 = ANSI Metric**（0=ANSI Inch · 2=BSI · 4=DIN · 8=ISO · 9=JIS）
+  swCosmeticEndConditions_e : **2 = Through**（0=Blind · 1=BlindUptoNext · 3=Blind2Dia）
+```
+
+## 二、★ 真机：**三格对照**（`tools/prove_cosmetic_thread.py`，走 `sw_guard`、零弹窗）
+
+```
+选**圆柱面的边**  ⇒ **成** —— **`装饰螺纹线1`** · 型 **`CosmeticThread`** ✓
+选**圆柱面本身**  ⇒ 不成 ✗
+**什么都不选**    ⇒ 不成 ✗
+```
+  ⇒ ★★ **故：必须选**圆柱面的边**** ✓
+
+## 三、★★★ 而本轮最值钱的一条是「**我怎么找那个面**」
+
+```
+★ 我第一版用 `str(Surface.Identity)` 里含 `"Cylinder"` 来**猜**哪个面是圆柱面
+  ⇒ ★ **三组全 `cyl=False`**（★ **根本没找到面**）⚠
+★ 而官方有**现成的一整族判形方法**：
+  **`ISurface.IsCylinder()` · `IsCone()` · `IsPlane()` · `IsSphere()` · `IsTorus()` ·
+   `IsRevolved()` · `IsSwept()` · `IsBlending()`**
+  ⇒ ★ 换成 `face.GetSurface().IsCylinder()` 之后**一次就成** ✓
+```
+  ⇒ ★★ **方法论**：★ 「找一个某种面」之前，先问官方有没有**判形方法** ——
+    ★ 而**不是拿字符串去猜** ⚠（★ 那属于**编造**，违反**铁律 1**）。
+  ⇒ ★ 而这是本会话**第五次**「失败在我这边」（事实 420 · 431 · 440 · 441 · 本条）。
+
+## 四、交付
+
+- `capabilities.yaml` 新增 **`feature_cosmetic_thread`**（`level = verified`）⇒ 共 **101** 条
+- 台账「螺纹线」补 `capability_id` ⇒ **已能 75**（★ 原始"能"只有 47）
+- 记成 **事实 447**
+
+★ 语法门禁 0 处（766 个文件）。

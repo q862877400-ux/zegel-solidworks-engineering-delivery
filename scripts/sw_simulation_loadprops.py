@@ -111,10 +111,12 @@ def edit_transaction(target, begin_end: tuple[str, str], what: str):
     class _Tx:
         def __enter__(self_inner):
             _require(target, what)
+            #: dispatch-arg: dynamic `begin` 由 `begin_end` 形参解包而来（BeginEdit 成员名由调用方给）
             get_com_member(target, begin)
             return target
 
         def __exit__(self_inner, exc_type, exc, tb):
+            #: dispatch-arg: dynamic `end` 由 `begin_end` 形参解包而来（EndEdit 成员名由调用方给）
             get_com_member(target, end)
             return False   # 不吞异常
 
@@ -164,29 +166,41 @@ def configure_force(
             set_com_member(force, "Unit", int(unit))
             applied["Unit"] = int(unit)
         if magnitude is not None:
-            get_com_member(force, "NormalForceOrTorqueValue", float(magnitude))
+            #: ★★★★★ 2026-10-10 **修一处真 bug（★ 本仓自己的纪律被违反）**：
+            #:   ★ 原来这里写的是 `get_com_member(force, "NormalForceOrTorqueValue", 值)` ✗
+            #:   ★★ 而 `get_com_member` 的语义是「**取或调**」（★ 有实参 ⇒ **一定调用**）——
+            #:     `NormalForceOrTorqueValue` 是**可写属性**（★ 不是方法）⇒
+            #:     ★★ 它**不是「找不到成员」**，而是**取回来是个 `float`、不可调用** ⇒
+            #:     ★ 于是 `get_com_member` **抛 `TypeError`** ⇒ ★ **力的大小从来没设上** ✗
+            #:   ★★★ **后果（★ 真机实测）**：★ 求解弹窗报「★ **未定义载荷或规定的位移**」
+            #:     +「固定-刚性零件上的载荷将不处于活动状态」⇒ ★ **求解被前置检查拦住** ✓
+            #:   ★★ **正解在本仓早已写明** —— `sw_connect.set_com_member` 的 docstring 逐字：
+            #:     「★★ 与已知事实 4（读用 `get_com_member`）成对：★ **读走 `get_com_member`，
+            #:       ★ 写走本函数**」✓
+            #:   ★ 故此处改用 `set_com_member`（★ 下面 `PhaseAngle` 等三处同病同修）。
+            set_com_member(force, "NormalForceOrTorqueValue", float(magnitude))
             applied["NormalForceOrTorqueValue"] = float(magnitude)
         if phase_angle is not None:
-            get_com_member(force, "PhaseAngle", float(phase_angle))
+            set_com_member(force, "PhaseAngle", float(phase_angle))
             applied["PhaseAngle"] = float(phase_angle)
         if phase_angle_unit is not None:
-            get_com_member(force, "PhaseAngleUnit", int(phase_angle_unit))
+            set_com_member(force, "PhaseAngleUnit", int(phase_angle_unit))
             applied["PhaseAngleUnit"] = int(phase_angle_unit)
         if equation is not None:
             set_com_member(force, "Equation", str(equation))
             applied["Equation"] = str(equation)
         if equation_linear_unit is not None:
-            get_com_member(force, "EquationLinearUnit", int(equation_linear_unit))
+            set_com_member(force, "EquationLinearUnit", int(equation_linear_unit))
             applied["EquationLinearUnit"] = int(equation_linear_unit)
         if equation_angular_unit is not None:
-            get_com_member(force, "EquationAngularUnit", int(equation_angular_unit))
+            set_com_member(force, "EquationAngularUnit", int(equation_angular_unit))
             applied["EquationAngularUnit"] = int(equation_angular_unit)
         if equation_coordinate_system is not None:
-            get_com_member(force, "EquationCoordinateSystemType",
+            set_com_member(force, "EquationCoordinateSystemType",
                            int(equation_coordinate_system))
             applied["EquationCoordinateSystemType"] = int(equation_coordinate_system)
         if include_non_uniform is not None:
-            get_com_member(force, "IncludeNonUniformDistribution2",
+            set_com_member(force, "IncludeNonUniformDistribution2",
                            bool(include_non_uniform))
             applied["IncludeNonUniformDistribution2"] = bool(include_non_uniform)
     return applied

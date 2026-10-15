@@ -86,6 +86,8 @@ __all__ = [
 # 覆盖:   后续同级定义
 # ⚠ 本组为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
+#: enum-gate: not-enum arity
+#: arity-reflect: byref=included
 ASSEMBLY_DOC_ARITY: dict[str, int] = {
     'ActivateGroundPlane': 2,
     'AddComponent5': 8,
@@ -258,12 +260,34 @@ def _require(doc):
 # 覆盖:   后续同级定义
 # ⚠ 本组为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
+#: dispatch-guard: covered check_assembly_doc_call_shape.py
 def call_assembly_doc(doc, member: str, *args):
     """按登记表校核实参个数，通过后调用该成员。
 
     ⚠ **编号变体的取舍在此生效**：官方 ``AddMate2`` / ``AddMate3`` 这类变体
       官方未说明差别，登记表把它们折叠到基础名并保留**实参最多的那一条**。
       ⇒ 传基础名即可；要指定具体变体请绕过本函数直接 ``get_com_member``。
+
+    ★★ **by-ref 实参契约**（2026-10-09 · spec 228，**订正一处流行的误解**）：
+      登记表声明的是 ``byref=included``（见本表起始行正上方的
+      ``#: arity-reflect: byref=included``）⇒ **表值 = 反射原始形参个数，含 by-ref**，
+      而它**正是调用方要给的实参个数** —— ★ **不是**「by-ref 出参由 COM 自己回填、
+      调用方不用给」。理由（**真机实测**，不是类推）：
+
+      * ``sw_connect.out_i4()`` 的来源块记着 2026-10-01 在 SW 2026 SP4.1 上逐形态试过：
+        ``VARIANT(VT_BYREF | VT_I4, 0)`` ✓ 通过，而 **`省略该参数` ✗
+        `DISP_E_PARAMNOTOPTIONAL`（「非选择性的参数」）** —— 迟到绑定
+        （``getattr`` → ``IDispatch::Invoke``）下**每个形参都必须给一个 VARIANT**。
+      * ``out_dispatch()`` 的来源块记着 2026-10-03（轮 499）对 ``Object&`` 出参的
+        同款真机结论（``VARIANT(VT_BYREF | VT_DISPATCH, None)`` ✓）。
+      * 本模块 :func:`edit_part_in_context` 已经在这么写：``EditPart2``（原始 3 参、
+        第 3 参 ``Int32&``）⇒ ``call_com_member(asm, "EditPart2", …, out_i4())``，**3 个实参**。
+
+      ⇒ ★ **形参类型以 `&` 结尾的位置，必须传 by-ref 包装器**
+        （``out_i4()`` / ``out_dispatch()`` / ``VARIANT(VT_BYREF | …)``），
+        **不能裸传 `0` / `None`**（裸传会**静默无效**或报一个看不出真因的错误）。
+      ★ 这条契约由门禁 ``scripts/check_assembly_doc_call_shape.py`` 守着
+        （arity + by-ref 占位；接进 ``release_check.py``）。
 
     :raises KeyError: 名字不在登记表里（**不静默忽略**）
     :raises ValueError: 实参个数与登记表对不上（在**发起调用之前**就报）
@@ -322,11 +346,18 @@ def add_mate(doc, *args):
         ★★ **要换就得**先按 `mate_type` 分流**（★ 而本函数**拿不到**那个语义）✓
       ★★★★ **⇒ 所以本处**记档保留**、★ 不在没把握时硬换** —— ★ 因为 `AddMate5` **当前仍可调**
         （★ 「废弃 ≠ 不可达」—— ★ 事实 12 那族），★★ 而**硬换成错的分流会**直接坏掉装配功能**** ✓
-      ★ **该怎么换（★ 留给下一轮的具体动作）**：★ 在**调用方**（`scripts/sw_assembly.py` 的
-        `add_mate`）那里 ★ 已有 `mate_type` ⇒ ★★ **按它分流**：
-        · ★ 同心 ⇒ `AddConcentricMateWithTolerance` ✓
-        · ★★ 距离 ⇒ `AddDistanceMate` ✓
-        · ★★★ 其余 ⇒ 造 `I*MateFeatureData` + `CreateMate` ✓
+      ★ **该怎么换（★ 复核订正 · spec 291）**：★ 在**调用方**那里 —— ★★ **调用方**是
+        `scripts/sw_assembly.py` 的 **`add_mate5_checked(asm_model, mate_type, …)`**
+        （★ **不是** `add_mate` —— ★ `sw_assembly.py` 里**没有** `add_mate`，★ 那个名在**本模块**）✓
+      ★★ **分流按**配合种类**、★ 不是按 `mate_type` 数值**：★ `swMateDISTANCE` 既可能**平面距离**
+        （⇒ `CreateMate`）也可能**圆柱面距离**（⇒ `AddDistanceMate`）⇒ ★★ **一个 `mate_type` 定不下来** ✓
+        · ★ **偏心的同心配合** ⇒ `AddConcentricMateWithTolerance`
+          （★★ **不是 drop-in**：官方页要求**父标准同心配合必须已存在**；★ 而它自己说**建标准同心配合
+           通常就用 `AddMate5`** ⇒ ★★★ **循环引用**）✓
+        · ★★ **圆柱面距离配合** ⇒ `AddDistanceMate`
+          （★★ **不是 drop-in**：**只对柱面距离**；★ 选择**必须是两圆柱面 / 一圆柱面 + 一轴**）✓
+        · ★★★ **标准 / 高级 / 机械** ⇒ 造 `I*MateFeatureData` + `CreateMate` ✓
+      ★★ **⇒ 本轮只订正记档、★ 不动路由** ✓
       ★★ **前置条件**：★ **上面每一步都要先**真机验证**（★ 逐条流程第 ② 步）——
         ★ 而装配域当前 `level` 是 `stitched`（★ 本会话早先降过级）⇒ ★★★ **不满足"有真机证据"** ⇒
         **本轮不换** ✓

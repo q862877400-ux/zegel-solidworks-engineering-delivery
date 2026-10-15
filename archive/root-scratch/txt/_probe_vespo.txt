@@ -1,0 +1,138 @@
+total tool-name literals found: 111
+
+=== tools whose normalized op is in domain 'other' (10) ===
+solidworks_operations                    -> operations                  domain=other  file=chromadb.ts
+update_sheet_format                      -> update_sheet_format         domain=other  file=drawing.ts
+set_view_grayscale_enhanced              -> view_grayscale_enhanced     domain=other  file=enhanced-drawing.ts
+macro_set_security                       -> security                    domain=other  file=macro-security.ts
+macro_get_security_info                  -> security_info               domain=other  file=macro-security.ts
+vba_api_automation                       -> api_automation              domain=other  file=vba-advanced.ts
+vba_error_handling                       -> error_handling              domain=other  file=vba-advanced.ts
+vba_custom_properties                    -> custom_prop                 domain=other  file=vba-file-management.ts
+vba_pdm_operations                       -> pdm_operations              domain=other  file=vba-file-management.ts
+vba_advanced_features                    -> advanced_features           domain=other  file=vba-part.ts
+
+=== vespo92 'other' domain as recorded in union-sources.json ===
+  advanced_features
+  api_automation
+  custom_prop
+  error_handling
+  operations
+  pdm_operations
+  security
+  security_info
+  update_sheet_format
+  view_grayscale_enhanced
+
+=== all 103 vespo92 tools (name -> op -> domain) ===
+Custom                                       -> custom                       other
+Height                                       -> height                       other
+Large                                        -> large                        other
+Length                                       -> length                       other
+MyPart                                       -> mypart                       other
+Part1                                        -> part1                        other
+Standard                                     -> standard                     other
+Width                                        -> width                        other
+add_diameter_dimension                       -> diameter_dimension           param
+add_dimensions                               -> dimension                    param
+add_drawing_view                             -> drawing_view                 drawing
+add_section_view                             -> section_view                 drawing
+add_sketch_constraint                        -> sketch_constraint            sketch
+add_sketch_dimension                         -> sketch_dimension             sketch
+analyze_draft                                -> analyze_draft                inspect
+apply_drawing_template                       -> apply_drawing_template       drawing
+batch_apply_template                         -> batch_apply_template         macro
+batch_export                                 -> batch_export                 macro
+batch_run_macros                             -> batch_run_macros             macro
+capture_screenshot                           -> capture_screenshot           inspect
+check_geometry                               -> check_geometry               inspect
+check_interference                           -> interference                 assembly
+close_model                                  -> close_model                  session
+compare_drawing_templates                    -> compare_drawing_templates    drawing
+convert_text_to_native_macro                 -> convert_text_to_native_macro macro
+create_batch_vba                             -> batch_vba                    macro
+create_configurations_batch                  -> configurations_batch         macro
+create_drawing_from_model                    -> drawing_from_model           drawing
+create_drawing_vba                           -> drawing_vba                  macro
+create_extrusion                             -> extrude                      feature
+create_feature_vba                           -> feature_vba                  macro
+create_initialized_macro                     -> initialized_macro            macro
+create_part                                  -> part                         session
+create_sketch                                -> sketch                       sketch
+design_table_create                          -> design_table_create          param
+design_table_refresh                         -> design_table_refresh         param
+diagnose_macro_execution                     -> diagnose_macro_execution     macro
+edit_macro                                   -> edit_macro                   macro
+edit_sketch                                  -> edit_sketch                  sketch
+exit_sketch                                  -> exit_sketch                  sketch
+export_file                                  -> export_file                  session
+export_with_options                          -> export_with_options          session
+extract_drawing_template                     -> extract_drawing_template     drawing
+generate_vba_script                          -> generate_vba_script          macro
+get_bounding_box                             -> bbox                         inspect
+get_dimension                                -> dimension                    param
+get_drawing_dimensions                       -> drawing_dimensions           drawing
+get_drawing_sheet_info                       -> drawing_sheet_info           drawing
+get_drawing_views                            -> drawing_views                drawing
+get_mass_properties                          -> mass_props                   inspect
+get_template_custom_properties               -> template_custom_properties   session
+list_template_library                        -> template_library             session
+macro_export_vba                             -> export_vba                   macro
+macro_get_security_info                      -> security_info                other
+macro_set_security                           -> security                     other
+macro_start_recording                        -> recording                    macro
+macro_stop_recording                         -> stop_recording               macro
+measure_distance                             -> measure_distance             inspect
+open_model                                   -> open_model                   session
+pause_resume_macro_recording                 -> pause_resume_macro_recording macro
+pdm_configure                                -> pdm_configure                appearance
+rebuild_model                                -> rebuild_model                session
+run_macro                                    -> run_macro                    macro
+run_vba_macro                                -> run_vba_macro                macro
+save_template_to_library                     -> save_template_to_library     session
+set_dimension                                -> dimension                    param
+set_drawing_scale                            -> drawing_scale                drawing
+set_drawing_sheet_size                       -> drawing_sheet_size           drawing
+set_template_custom_properties               -> template_custom_properties   session
+set_view_grayscale_enhanced                  -> view_grayscale_enhanced      other
+setup_template_positions                     -> setup_template_positions     session
+simple_extrude                               -> simple_extrude               feature
+sketch_arc                                   -> sketch_arc                   sketch
+sketch_centerline                            -> sketch_centerline            drawing
+sketch_circle                                -> sketch_circle                sketch
+sketch_circular_pattern                      -> sketch_circular_pattern      sketch
+sketch_ellipse                               -> sketch_ellipse               sketch
+sketch_line                                  -> sketch_line                  sketch
+sketch_linear_pattern                        -> sketch_linear_pattern        sketch
+sketch_mirror                                -> sketch_mirror                sketch
+sketch_offset                                -> sketch_offset                sketch
+sketch_polygon                               -> sketch_polygon               sketch
+sketch_rectangle                             -> sketch_rectangle             sketch
+sketch_spline                                -> sketch_spline                sketch
+solidworks_operations                        -> operations                   other
+start_native_macro_recording                 -> native_macro_recording       macro
+stop_native_macro_recording                  -> stop_native_macro_recording  macro
+update_sheet_format                          -> update_sheet_format          other
+vba_advanced_features                        -> advanced_features            other
+vba_api_automation                           -> api_automation               other
+vba_assembly_analysis                        -> assembly_analysis            assembly
+vba_assembly_components                      -> assembly_components          assembly
+vba_assembly_configurations                  -> assembly_configurations      appearance
+vba_assembly_mates                           -> assembly_mates               assembly
+vba_batch_operations                         -> batch_operations             macro
+vba_configurations                           -> configurations               appearance
+vba_create_drawing_views                     -> drawing_views                drawing
+vba_create_reference_geometry                -> reference_geometry           inspect
+vba_custom_properties                        -> custom_prop                  other
+vba_design_table                             -> design_table                 param
+vba_drawing_annotations                      -> drawing_annotations          drawing
+vba_drawing_dimensions                       -> drawing_dimensions           drawing
+vba_drawing_sheet_format                     -> drawing_sheet_format         drawing
+vba_drawing_tables                           -> drawing_tables               drawing
+vba_equations                                -> equation                     param
+vba_error_handling                           -> error_handling               other
+vba_pattern_features                         -> pattern_features             feature
+vba_pdm_operations                           -> pdm_operations               other
+vba_sheet_metal                              -> sheet_metal                  sheetmetal
+vba_simulation_setup                         -> simulation_setup             simulation
+vba_surface_modeling                         -> surface_modeling             surface

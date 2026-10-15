@@ -91,6 +91,8 @@ PDM_CONFIGURATION_GENERATION = 18
 PDM_TABLE_GENERATION = 6
 
 #: 反射确认的实参个数（**不含**末尾 by-ref 出参）
+#: enum-gate: not-enum arity
+#: arity-reflect: byref=excluded
 DOCUMENT_ARITY: dict[str, int] = {
     "CloseDoc": 0,
     "AddCustomProperty": 3,
@@ -104,6 +106,9 @@ DOCUMENT_ARITY: dict[str, int] = {
     "Get3DExperienceType": 0,
 }
 
+#: 反射确认的实参个数（**不含**末尾 by-ref 出参）
+#: enum-gate: not-enum arity
+#: arity-reflect: byref=excluded
 TABLE_ARITY: dict[str, int] = {
     "AddRevisionRow": 1,
     "DeleteRow": 1,
@@ -115,6 +120,7 @@ TABLE_ARITY: dict[str, int] = {
 }
 
 
+#: dispatch-guard: exempt internal-helper
 def _checked(table: dict[str, int], target, member: str, *args):
     """按签名表校核实参个数，通过后才发起调用（开发期护栏）。"""
     expected = table.get(member)

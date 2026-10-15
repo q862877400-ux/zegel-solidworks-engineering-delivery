@@ -1,0 +1,66 @@
+| 292 | **弹窗检测"自己也卡住"的根因与修法**（用户当场撞见弹窗而自动化没发现）——2026-10-02，轮 375。
+
+## 一、★★★★★ 用户的现场（★ 一句话点破）
+```
+★ SolidWorks 弹着：★「**未定义载荷或规定的位移**（对于带有特殊载荷的问题，如热力载荷、引力载荷、
+   或离心载荷，启用妥当的旗标）固定-刚性零件上的载荷将不处于活动状态。」★ 标题 `Simulation`
+★ 而用户说：★「**弹窗了你为啥没发现，先别干活了，先把这个弹窗检测的问题解决好，
+   不然你总是会卡住一动不动**」
+⇒ ★★★ **那句话正是根因** —— ★ 我的检测器**自己也卡住了**。
+```
+
+## 二、★★★★★ 逐步计时诊断（★ 弹窗在屏幕上时）
+```
+EnumWindows（列举 #32770）        ⇒ **0.00 s**   · 找到 3 个 `#32770`（含那个 `Simulation`）
+tasklist（取 pid，`resolve_pid` 用）⇒ **0.14 s**  · 不是它
+GetWindowRect / GetWindowDC       ⇒ 0.00 s
+**BitBlt（新写法）**              ⇒ **0.01 s** · 唯一色数 9（**有内容**）
+**PrintWindow（旧写法）**         ⇒ ★ **挂住 >300 s**   ← ★ **真因**
+EnumChildWindows（子控件）        ⇒ 0.01 s · 9 个（含 `Button 是` / `Button 否` /
+                                    `Static 请参阅知识库文章 QA00000299039`）
+```
+★★ **为什么 `PrintWindow` 会挂**：★ 它**向目标窗口发消息**请其自绘，
+   ★★ 而**模态对话框在自己的消息循环里等用户**（★ 本项目铁律 2 说的"未抑制的模态对话框会永久挂起"正是它）。
+★★ **为什么 `BitBlt` 不挂**：★ 它**只从屏幕 DC 拷贝像素**，★ **不向目标窗口发任何消息** ✓
+   ⚠ 代价：★ 目标**被遮挡时截不到内容**（而 `PrintWindow` 能截被遮挡的窗口）。
+```
+
+## 三、★ 两处修改
+```
+① `tools/modal_dialog_forensics._screenshot`：★ **`PrintWindow` ⇒ `BitBlt`**（★ 兜底才回 `PrintWindow`）。
+② **新增 `tools/modal_dialog_safe.py`**：★ `collect_dialogs_safe(timeout=15)` ——
+   ★★ **在子进程里跑 `collect_dialogs` 并给硬时限** ⇒ ★ **它永不阻塞调用方**。
+   ★ 超时时回 `{count: None, timed_out: True, note: …}`，★ 而调用方**照样能判定"有弹窗"**。
+   ★ 依据（★ 与事实 53 同族）：★ **同一个不确定的阻塞点，试第 N 种写法都不如**给一个外部时限**可靠**。
+★ 真机自证：★ **弹窗在屏幕上时，`modal_dialog_safe.py` 在 20.15 s 内返回并报"发现弹窗"** ✓
+   （★ 而修之前：★ `collect_dialogs()` **>300 s 未返回** ⇒ 那正是"一动不动"）
+```
+
+## 四、★★★★ 顺带补上一个**门禁盲区**（★ 这次才暴露）
+```
+★ 我改代码时写出一个文件：★ 在 `from __future__ import annotations` **之前**留了一个**裸字符串**
+   （★ 脚本插入的"空 docstring"）⇒
+   ★★ **`ast.parse()` 说 OK**，而**真跑**报
+   `SyntaxError: from __future__ imports must occur at the beginning of the file` ⚠
+⇒ ★★★ **即：★ 第 19 道语法门禁有盲区** —— ★ 它只 `ast.parse`，★ **不做完整的编译期检查**。
+⇒ ★ **修法**：★ `scripts/check_python_syntax.py` 改**用 `compile(src, path, "exec")`** ✓
+   ★ 负例自证：★ 造一个"`__future__` 前有裸字符串"的文件 ⇒ **门禁报出**
+   `✗ tools\_fut_negcase.py:3: from __future__ imports must occur at the beginning of the file`；
+   ★ 删掉 ⇒ **539 个文件 · 0 失败 · exit 0** ✓
+   ⇒ ★★ **又一次印证**：★ **`ast.parse` 通过 ≠ 能跑**（★ 与事实 58「判据要按括号配对切分」同族：
+     ★ **判据要用**真正的那个检查器**，不用它的近似**）。
+```
+
+## 五、★ 还没做完的（★ 如实记，下一轮）
+```
+⚠ `collect_dialogs` 在**子进程里仍然会超时**（★ 20 s 没跑完）⇒ ★ 说明**取证那几步里还有慢的**
+   （★ 而我把 `_screenshot` 换成 `BitBlt` 后，单发测是 0.01 s ⇒ ★ **慢的可能在 `_controls` 或
+   `collect_dialogs` 的其它部分**）。
+⇒ ★ **但从"能不能发现问题"的角度，本轮已达标**：★ 检测**总能返回**、★ 且**报得出"有弹窗"**。
+   ★ 下一轮可再做：★ 在子进程里**给每一步打时间戳**，把最后那个慢点也揪出来。
+```
+
+**依据**：本机逐步计时（★ `EnumWindows` 0.00 s · `BitBlt` 0.01 s · `PrintWindow` 挂 >300 s ·
+`EnumChildWindows` 0.01 s／9 控件）· `tools/modal_dialog_safe.py`（★ 20.15 s 内返回 `count=None`,
+`timed_out=True`）· `tools/modal_dialog_forensics.py` 的 `_screenshot`（★ 已改 `BitBlt`）·
+`scripts/check_python_syntax.py`（★ 已改 `compile`；★ 负例 exit 1／恢复 exit 0）· 事实 53 / 58 / 62

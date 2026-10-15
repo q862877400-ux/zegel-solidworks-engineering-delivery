@@ -1,0 +1,55 @@
+规格 211 · B1-1 形态判定：★★ 结论翻转 —— `GetSectionProperties2` **可用**（不是后端限制）
+
+★★★ ×5 **本轮最重要的发现，而且方向与我预期相反** ✓
+
+一、★ 起因：真机第一轮报
+`TypeError: … 取回来的成员**不可调用**（`getattr` 回了 `tuple`）`
+★ 那是**本仓守卫**报的，★ 而它明写「★ 这**多半是 pywin32 迟到绑定造不出该方法的调用包装**，
+★ **不是参数没传对**」⇒ ★★ 而仓里**已有同型先例（事实 386）**：`IModelDocExtension.InsertChainDimensions`
+—— 官方 `kind: method`、`System.object …(System.object)`，而 `type(getattr(...))` = `tuple`、
+`callable` = `False`、`repr` = `(None, None, None)`、`dir()` 里没有该名字 ✓
+⇒ ★★ **但我没有凭"它长得像 386"就定性**（★ 那是把"一个实例"推广成"一族" ✗）
+⇒ ★ 写 `tools/probe_spec211_section_props_forms.py` **逐形态实测** ✓
+
+二、★★★ 五个形态的读数（★ 全落盘 `output/spec211-b1-section-props-forms.json`）
+
+| 成员 | `type(getattr(...))` | `callable` | `in_dir` | `repr` 前几项 |
+|---|---|---|---|---|
+| **`GetSectionProperties2`** | **`tuple`** | `False` | False | ★★ `(0.0, 1.2, 0.0, 29.999999999999996, -0.0, …` |
+| **`GetSectionProperties`** | **`tuple`** | `False` | False | ★★ 同样的数值数组 |
+| `IGetSectionProperties2` | `method` | **`True`** | False | `<bound method …>` |
+| `IGetSectionProperties` | `method` | **`True`** | False | `<bound method …>` |
+| ★ 对照 `InsertChainDimensions`（事实 386 的样本） | `NoneType` | `False` | False | **`None`** |
+| ★ 对照 `GetMassProperties2`（已知可用） | `method` | `True` | False | `<bound method …>` |
+
+★★★ **结论**：★ **`GetSectionProperties2` 与事实 386 那个样本「不同命」** ✗ ——
+★ 386 那个回的是 **`None`**、★ 而这个回的是**一个有内容的元组** ✓
+⇒ ★★ **真相是：pywin32 把它当「无参属性」直接求值了**，★ 而它**用了当前的选择集**当隐含输入 ✓
+   ★（★ 与仓里记的 `Extension` 上"**有的成员当属性取**"（`MassProperty` / `CustomPropertyManager` 那两处）
+   **同型** ✓）
+
+三、★★ 逐项对**官方 24 元格式**核（★ 判据用官方定义 + 回读，★ 不看"有没有抛"）
+| 官方下标 | 含义 | 读数 | 核 |
+|---|---|---|---|
+| `retval[0]` | status（`0=success`·`1=invalid`·`2=面不平行`·`3=算不出`） | **`0.0`** | ★ **success** ✓ |
+| `retval[1]` | **area** | **`1.2`** | ★★ **与 6000 mm² 对不上**（6000/1.2 = 5000）✗ |
+| `retval[2..4]` | 形心 x / y / z | `0.0` · **`29.9999…`** · `-0.0` | ★★ **正是 100×60 矩形的中心**（y∈[0,60]）✓ |
+
+四、★★ **所以 B1-1 的终判要改**
+· ★ 台账原判：★★ **不成立** —— 它**不是"后端限制"** ✗
+· ★ 新判：★★ **可用（当属性取 + 用当前选择集）**；★ **但面积单位必须查明** ✓
+  ★（★ 记忆里也记着「`GetSectionProperties` 的单位**未确证**」—— ★★ 这条现在**必须解决**，★ 因为
+    ★ 面积差 5000 倍时，★ 一个"看起来对"的读数就是**最危险的那类错**）✓
+
+五、★ 下一轮（B1-1 收口的两个具体动作）
+1. ★★ **查明面积的单位**：★ 用**已知面积**的几何（★ 如 100×60 与 200×60 两次）⇒ ★ 看比例是否线性、
+   再与"mm² / cm² / in² / m²"哪个吻合 ✓
+2. ★ **落地**：★ 按仓里既有模式写进 `scripts/sw_mass_property.py`
+   （★ **类型判据先行** + **行为判据认入口** + 记 `entry_used`），★ 并**如实登记它的副作用**：
+   ★★ **它会清空并重写选择集** ⇒ ★ 按**规格 210** 的效应声明体系，★ 它**不许被标 `read_only`** ✓
+
+六、★ 交付物
+· `tools/probe_spec211_section_properties.py`（★ 建状态 + 正例 + 官方负例设计）✓
+· `tools/probe_spec211_section_props_forms.py`（★ 五形态判定）✓
+· `output/spec211-b1-section-props-forms.json`（★ 证据）✓
+· `docs/spec211-negative-conditions.md`（★ B1+B2 五项的"必然失败"负例 + 官方依据）✓

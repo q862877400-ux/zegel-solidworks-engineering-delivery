@@ -1,0 +1,65 @@
+| 300 | **`topology_readback` 真机 7/8 —— 唯一失败是 `set_iteration_options` 报 `0x80010105`（事实 47 同族的后端限制）；★ 而 `set_goal` 的**设置生效**被证到**（2026-10-02，轮 383）。
+
+## 一、★★★★★ 为什么挖它（★ 死路清单 + limitations 的先扫）
+```
+★ 按纪律先扫：★ `topology_readback` **不在** `docs/dead-ends.md` 上 ⇒ ★ 可以挖。
+★ 而它的 limitations 指着一条：★「`solidworks_topology_run` ⇒ **未真机通过**（★ 跑求解依赖仿真链；
+   ★ 见 `analysis_run_readback` 的同族限制）」。
+⇒ ★★ 而"跑求解"**正是我昨天用观察器查明的那条**（★ `timed_out` ≠ 卡死，★ 而是在算 33 分钟）——
+   ★ 于是用**新知识**重判它：★ **本族有 7 个工具，★ 而"读数"那 7 个**不跑求解**** ⇒
+   ★ **它们本来就可以真机验**，★ 不必等仿真链 ✓
+★ 另：★ `weldment_cut_list` **不该再挖** —— ★ 它的 limitations 已查明是**本机没装焊件轮廓库**（环境）。
+```
+
+## 二、★★★★★ 做法与结果：**跑现成的读回证据脚本**（★ 走护栏）
+```
+★ `python tools/sw_guard.py --timeout 300 -- python tools/capture_topology_readback_evidence.py`
+   ⇒ `ok: false · timed_out: false · seconds: 5.3 · dialogs: []`（★ **无弹窗** —— 它只读、不跑求解）
+★ 证据 `output/topology-readback-evidence.json`：★ **`verdict=FAIL`（7/8）**
+   ```
+   bindings          ok=True   （★ 6 个工具的绑定都解析到）
+   material          "solidworks materials|AISI 1020|2"
+   create_study      ok=True
+   collect_numbers   ok=True   status="no_results"（★ 合理：没跑求解）
+   constraints       ok=True   total=9 kinds
+   manager_report    ok=True   object_type="CDispatch"
+   options_report    ok=True   object_type="CDispatch"
+   **set_goal**      ok=True   **before_taken: 0 → after_taken: 1**   ← ★★ **设置**真的生效了**
+   **set_iteration_options**  **ok=False**  error: **com_error: (-2147417851, '服务器出现意外情况。')**
+   ```
+```
+
+## 三、★★★★★ 真因：`-2147417851` 就是 **`0x80010105`** —— 事实 47 同族的**后端限制**
+```
+★ `0x80010105` 正是事实 47 记下的那个码：
+   ★「`AccessSelections(model, VARIANT(VT_DISPATCH, None))` 报 **`服务器出现意外情况`（`0x80010105`）
+     —— 与已知事实 28 的 `CreateBsplineSurface` 同一个错误码」。
+★ 而事实 47 的结论是：★ **那是**架构性限制**（★"不能调用官方标记为仅进程内非托管 C++ 的指针接口"），
+   ★ **不是参数没找对**。
+⇒ ★★★ **即：★ `set_topology_iteration_options` 的失败**不是我们代码写错**，★ 而是**同一条后端限制** ✓
+   ⇒ ★★ **于是本族的定性可以写准**：★ **7 项真机通过 · 1 项受后端限制**（★ 而★ 不是"未验"）✓
+   ★★ 而 `set_goal` 那条**"设置生效"**的判据（★ `before_taken 0 → after_taken 1`）是**本次新证到的** ✓
+```
+
+## 四、★ 处置
+```
+① `capabilities.yaml` 的 `topology_readback`：★ **补 evidence**（★ 7/8 的真机结果 + 那个错误码的定性），
+   ★ 并把 limitations 里"未真机通过"那句**写准**：★ **7 项通过 · `set_iteration_options` 受后端限制**。
+② ★ **不升 verified**（★ 硬约束③：8 项里 1 项不过 ⇒ 不是 pass）——
+   ★ 而**理由变了**：★ 从"没验过"变成"**验过 7 项，1 项是已知后端限制**" ✓
+③ ★ **不重试 `set_iteration_options`**（★ 事实 47 的定则：★ **20+ 种形态已穷尽，不要再"换个参数试试"**）。
+```
+
+## 五、★ 一条方法收获
+```
+★★ **挖 stitched 之前先读它的 limitations，能省一整轮** —— ★ 本轮两条对照鲜明：
+   · `weldment_cut_list`：★ limitations 已写"真因是**本机没装焊件轮廓库**" ⇒ ★ **一眼就不该挖**（省一轮）✓
+   · `topology_readback`：★ limitations 说"未真机通过，跑求解依赖仿真链" ⇒ ★ 而**逐工具看**才发现
+     ★ **7 个工具里只有 1 个真的碰求解** ⇒ ★ 于是**7 项可以立刻验** ✓
+   ⇒ ★★ 定则：★ **limitations 说的是"哪一条路走死了"，★ 而"哪几项**没走那条路**"要自己拆开看**。
+```
+
+**依据**：`output/topology-readback-evidence.json`（★ `verdict=FAIL` · 7/8 · `set_goal` 的
+`before_taken: 0 → after_taken: 1` · `set_iteration_options` 的
+`com_error: (-2147417851, '服务器出现意外情况。')`）· `tools/sw_guard.py`（★ `seconds: 5.3` · 无弹窗）·
+`docs/dead-ends.md`（★ 本族不在其上）· 事实 47 / 297 / 299

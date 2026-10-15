@@ -1,0 +1,41 @@
+规格 210 · B3 接线：★ 相对导入门禁接进 release_check（★ 被元门禁拦了一次）
+
+★★★★ 把门禁接成**常驻不变量** —— ★ 而接线过程**被仓里自己的元门禁拦了一次** ✓
+
+一、★ 交付：门禁接进 `release_check.py`
+1. ★ 加 `_run_relative_imports_gate()`（★ 形状照既有门禁：`subprocess` + `encoding="utf-8"` +
+   `errors="replace"` + `timeout` + `stdin=DEVNULL`）✓
+2. ★ 调用点：★ 紧跟**环境坑门禁**之后，★ `fail` 就 `raise AssertionError` ✓
+3. ★ `"relative_imports": rel_imports` 进结果字典 ✓
+
+二、★★★ **被仓里的"接线元门禁"拦了一次**（★ 本轮最值钱的观察）
+· ★ 现象：★ `[FAIL] 接线方式有问题：_run_relative_imports_gate 在 release_check.py 里被调用，
+  却**没登记分类**` ✗
+· ★★ 认识：★ **"函数被调用了"与"门禁被登记了"是两件事** ——
+  ★ 仓里的元门禁按 **AST 现算**实况、★ 再跟 `docs/gate-classification.json` 的登记表比对 ⇒
+  ★★ **它不读登记表的自述** ⇒ ★ 所以它抓得到**新加的、还没登记的** ✓
+· ⇒ ★ 补登记（`kind: "hard"` + 理由）⇒ 元门禁显示 `✓` ✓
+· ★★ 值得记住：★ **本仓加了自校验之后，"新门禁漏登记"这类错误会被当场抓住** ✓
+
+三、★★ 又踩到一个"**负例钉 HEAD**"的坑（★ 与上一轮同类）
+· ★ 测试用 `git show HEAD:scripts/sw_simulation_loads.py` 当**负例输入** ⇒
+  ★★ 而**修复一提交，`HEAD` 就含修复** ⇒ ★ 负例前提**自动失效** ⇒ 测试变红 ✗
+  ★（★ 而它**看起来像门禁坏了** —— ★ 与上一轮"引号修复器"那个坑**同型**：
+    ★★ **症状指向别处，真因在我这一侧**）✓
+· ★ 修法：★ 钉**确定的旧提交** ✓
+· ★★ **但钉旧提交也要实测确认**：★ 我先写 `d6bb5c27`（★ 凭"它看起来在前面"）⇒
+  ★★ **那已经是修复后**了 ⇒ 仍是 0 处 ✗ ⇒ ★ 实测扫了 7 个提交才找到真值
+  **`62796a28`**（★ 17 处）✓
+  ⇒ ★★ 定则：★ **负例钉旧提交时，必须实地量一遍那个提交** ✓
+
+四、测试与门禁
+★ `tests/test_relative_imports_gate.py` **4 passed** ✓
+★ `scripts/check_gate_wiring.py` 对 `check_relative_imports.py` 显示 **`✓`** ✓
+★ `scripts/release_check.py` 跑到**既有那处红点**（"负例输入自证门禁"）才停 ——
+  ★★ 而我的门禁排在它**前面** ⇒ ★ **我的门禁是过的** ✓
+★ 收尾链 **11.9 s** ✓
+
+五、下一批（★ 剩下的只有收口）
+1. ★ 跑 **`nonempty`（135）** 与 **`null`（266）** ⇒ ★ 全量分布 ✓
+2. ★★ **收口**：★ **全量 pytest** + `tasks.md` 勾 + `goal-bar` + **`docs/HANDOFF.md`** ✓
+3. ★ 若有余力：★ 深扫再跟一层（★ `sketch_spline` 那条）✓

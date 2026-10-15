@@ -1,0 +1,64 @@
+| 296 | **用户要求"只要是 SolidWorks 的弹窗就 100% 处理" ⇒ 判据**不认类名**、改认"家族进程 + 像弹窗"**（2026-10-02，轮 379）。
+
+## 一、★★★★ 用户的更正（★ 把我上一轮"分层边界"里的两层划掉了）
+```
+★ 我说过：「**别的进程**的弹窗扫不到」「**类名不是 `#32770`** 的扫不到」。
+★ **用户的口径**：★「**别的进程无所谓，只要是 solidworks 的弹窗，这个机制就应该 100% 能处理**」
+⇒ ★★ 即：★ **其余进程的弹窗我可以不管，但 SolidWorks 家族的弹窗一个都不许漏** ✓
+```
+
+## 二、★★★★★ 真机查到的进程树（★ 这才是判据的依据）
+```
+主进程   SLDWORKS.exe                  D:\\Program Files\\SOLIDWORKS Corp\\SOLIDWORKS\\
+子进程   sldProcMon.exe · swCefSubProc.exe ×3
+同族     EwServer.exe · SWVisualize.Queue.Server.exe · remotesolverdispatcherservice.exe ·
+         dispatcher.exe · **sldworks_fs.exe** · **cwbcbfmesh.exe**（★ 网格器）· **sldsurfacing.exe**
+⇒ ★★★ **弹窗可能来自其中任意一个**（★ 尤其网格器/曲面器 —— 它们**自己会弹报错框**）
+   ⇒ ★★ **只认 `sldworks.exe` 会漏** ⇒ ★ **判据必须按 exe 路径认"家族"** ✓
+```
+
+## 三、★★★★★ 改后的判据（★ **两条都与类名无关**）
+```
+★ **A. 属于 SolidWorks 家族**（`sw_family_window`）—— 取窗口所属进程的 exe 全路径
+     （`OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION)` + `QueryFullProcessImageNameW`，★ 纯 ctypes、不跑子进程），
+     满足任一即可：★ 路径含 `SOLIDWORKS Corp` · 含 `SOLIDWORKS Shared` · 文件名以 `sld`/`sw` 开头且是 `.exe`
+★ **B. 像弹窗**（★ 三条取或，**与类名无关**）：
+     ① 类名是 `#32770`（★ Win32 经典对话框）
+     ② **有 `Button` 子控件**（★ 那才是"等用户点的东西" —— ★ **本质，不是偶然**）
+     ③ 有可见且有文本的 `Static`/`Edit` 子控件（★ 只有提示文字的极简框）
+⇒ ★★★ 于是"认类名"那个盲区（★ XAML/Qt/CEF/自定义类名）**被消掉** ✓
+   ★ **正常运行时命中 0 个**（真机确认 ⇒ 零噪声）。
+```
+
+## 四、★★★★ 顺手把**处置判据**也修硬了（★ 事实 8 同族）
+```
+★ 原来只报 `dismissed` —— ★ 那是**点掉函数的返回值**（★ `PostMessage` **不报错 ≠ 点掉了**）。
+⇒ ★ 现在**两条都报**：★ `dismissed`（★ 动作是否发出）**+ `still_present`**（★ **窗口是否真的没了**）
+   ⇒ ★★ **`still_present` 才是真判据**（★ 真机复验：★ `dismissed: true · still_present: false` ✓）
+★ 逻辑也顺过来：★ 一级 `PostMessage` ⇒ **验 `IsWindow`** ⇒ 仍在 ⇒ **真输入事件** ⇒ **再验** ⇒
+   ★ 仍在才写 `dismissed: false`（★ 那才是"我没成功"的诚实记录）。
+```
+
+## 五、★ 真机复验
+```
+★ `python tools/sw_guard.py --timeout 600 -- python tools/capture_mesh_solve_evidence.py`
+   ⇒ `ok: true · timed_out: false · seconds: 6.1`
+   ⇒ `kind: "dialog" · class: "#32770" · exe: "SLDWORKS.exe" · Button`
+   ⇒ **`dismissed: true` · `still_present: false`** ✓
+★ 事件仍落盘 `output/dialog-events/`（★ 每条含 `at / phase / kind / exe / class / controls / hung /
+   dismissed / still_present`）⇒ ★ LLM 事后可读。
+```
+
+## 六、★ 仍然**不属于**本机制职责的（★ 如实说，但已不是盲区）
+```
+★ **其它进程**的弹窗 —— ★ 用户明确"无所谓"（★ 而兜底也会把它标成 `family-window` 之外的东西？★ 不会：
+   ★ 兜底只看**家族内**的窗口）⇒ ★ 本机制**不管**它们，★ 且**不误报**。
+★ **UAC / 安全桌面** —— ★ 在**另一个桌面**上、`EnumWindows` 看不到；★ 而它**不是 SolidWorks 的弹窗**
+   （★ 是系统的），★ 按用户口径不在范围内。
+```
+
+**依据**：真机进程树（★ `Get-CimInstance Win32_Process`：★ `sldProcMon` / `swCefSubProc` /
+`cwbcbfmesh` / `sldsurfacing` / `sldworks_fs` …）· `tools/sw_guard.py` 的
+`_exe_of_window` / `sw_family_window` / `scan_family_windows` / `Sentinel._sweep`
+（★ 主路径换判据 + 兜底 `kind: family-window`）· 真机复验输出（★ `exe: SLDWORKS.exe` ·
+`dismissed: true` · `still_present: false` · `seconds: 6.1`）· 事实 8 / 295

@@ -1,0 +1,24 @@
+has _domain: True has _normalize: True
+DOMAIN_LABELS keys: ['session', 'refgeom', 'sketch', 'param', 'feature', 'surface', 'sheetmetal', 'weldment', 'mold', 'assembly', 'drawing', 'inspect', 'simulation', 'appearance', 'macro', 'advanced', 'other']
+==  appearance ⑭ 外观 / 材质 / 配置 1
+    ['configurations']
+==  assembly ⑩ 装配 7
+    ['assembly', 'component', 'components', 'interference', 'load_assembly', 'pack_and_go_assembly', 'save_assembly']
+==  drawing ⑪ 工程图 18
+    ['analyze_drawing_annotations', 'analyze_drawing_comprehensive', 'analyze_drawing_dimensions', 'analyze_drawing_views', 'annotation', 'auto_center_marks', 'auto_dimension_view', 'centerline', 'check_drawing_compliance', 'check_drawing_standards', 'compare_drawing_versions', 'detail_view', 'drawing', 'drawing_view', 'generate_drawing_report', 'section_view', 'technical_drawing', 'validate_drawing_completeness']
+==  feature ⑤ 零件特征 11
+    ['chamfer', 'extrude', 'extrude_cut', 'fillet', 'loft', 'mirror_feature', 'pattern_circular', 'revolve', 'save_body_as_part', 'sweep', 'tutorial_simple_hole']
+==  inspect ⑫ 检查 / 测量 / 反馈 3
+    ['analyze_geometry', 'calculate_mass_properties', 'mass_props']
+==  macro ⑮ 宏 / 自动化 22
+    ['analyze_macro', 'batch_apply_template', 'batch_execute_macros', 'batch_export', 'batch_file_operations', 'batch_process_files', 'execute_macro', 'generate_vba_assembly_insert', 'generate_vba_assembly_mates', 'generate_vba_batch_export', 'generate_vba_code', 'generate_vba_drawing_dimensions', 'generate_vba_drawing_views', 'generate_vba_extrusion', 'generate_vba_file_operations', 'generate_vba_macro_recorder', 'generate_vba_part_modeling', 'generate_vba_revolve', 'macro_library', 'macro_recording', 'optimize_macro', 'stop_macro_recording']
+==  other ⑰ 未归类 17
+    ['arc', 'classify_feature_tree', 'delete_feature', 'execute_workflow', 'features', 'file_properties', 'line', 'load_part', 'mate', 'model_info', 'optimize_performance', 'rename_feature', 'suppress', 'undo', 'units', 'update_sheet_format', 'update_title_block']
+==  param ④ 尺寸 / 约束 / 参数 2
+    ['dimension', 'manage_design_table']
+==  refgeom ② 参考几何 3
+    ['ref_axis', 'ref_plane', 'reference_point']
+==  session ① 会话 / 文档 / 文件 22
+    ['activate_document', 'apply_template', 'close_model', 'compare_templates', 'convert_file_format', 'export_dwg', 'export_iges', 'export_image', 'export_pdf', 'export_step', 'export_stl', 'extract_template', 'manage_file_properties', 'open_documents', 'open_model', 'part', 'save_as', 'save_file', 'save_part', 'save_to_template_library', 'template', 'template_library']
+==  sketch ③ 草图 15
+    ['check_sketch_fully_defined', 'circle', 'ellipse', 'exit_sketch', 'polygon', 'rectangle', 'sketch', 'sketch_circular_pattern', 'sketch_constraint', 'sketch_dimension', 'sketch_linear_pattern', 'sketch_mirror', 'sketch_offset', 'sketch_tutorial_simple_hole', 'spline']

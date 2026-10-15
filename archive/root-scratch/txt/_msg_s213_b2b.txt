@@ -1,0 +1,65 @@
+规格 213 · B2b + B3（后半）：★★★ **B 类 5 项全部挂完** —— ★ 而真机验证抓出我**两处判据太弱**
+
+一、★★★★★ **B 类 5 项至此全部走完两步**（★ 「先缝模块、再挂工具」✓）
+★ 本批落的三项（★ 实现进 `scripts/`、声明进 `tool_specs_batch102.py` ✓）：
+| 项 | 模块函数 | 声明 |
+|---|---|---|
+| ★ `explode_line_sketch` | ★ `sw_assembly_doc.insert_explode_line_sketch_report` | ★ `solidworks_insert_explode_line_sketch` |
+| ★ `speedpak` | ★ `sw_assembly_doc.create_speedpak_report` | ★ `solidworks_create_speedpak` |
+| ★★ `curve_driven_pattern` | ★ `sw_pattern.insert_local_curve_driven_pattern_report` | ★ `solidworks_insert_local_curve_driven_pattern` |
+⇒ ★★ 工具数 **456 → 459** ✓（★ 登记进 `BATCH_MODULES` ✓）
+
+二、★★★★★ **本批最值钱的一件事：★ 真机验证抓出我**两处判据太弱**** ✗
+★ 我按纪律另写 `tools/probe_spec213_b2b_modules.py`（★ **走模块函数、★ 不走探针实现** ✓），
+  ★★ 然后**逐项跟原探针的读数对了一遍** —— ★ 结果两处都要改 ✗：
+
+★★ **① 爆炸直线：★ 我的判据比原探针**弱**** ✗
+· ★ 我第一版只记 `active_sketch_present`（★ "**现在有没有**" ✗）
+· ★★ 而原探针的判据是 **`active_sketch_before=False → active_sketch_after=True`** ✓
+  —— ★ 那才对应官方 `## Returns` 里的 **inserted** ✓
+⇒ ★★★ **「现在有」分辨不了「这次插入了」与「本来就开着」** ✗（★ 与 SpeedPak 那项**同一个坑** ✓）
+⇒ ★ 已修：★ 判据改成 **`active_sketch_side_changed`** ✓（★ 前后两个字段都记 ✓）
+
+★★ **② 曲线驱动阵列：★ 我那次读数**根本无效**** ✗ —— ★ 而**我当场发现了** ✓
+· ★ 第一版我传 `seed_feature=<草图名>` ✗ ⇒ 真机 `mark1=False · mark2=False` ⇒ ★ **两处前置都没上** ✗
+· ★★ 而原探针用的是 `extrudes[0]` = **`凸台-拉伸1`**（★ **特征名** ✓）⇒ `mark1=True · mark2=True` ✓
+⇒ ★★★ **官方 mark 表逐字：★ 1 = 「Components to pattern」⇒ 要传**拉伸特征**的名字、★ 不是草图名** ✓
+⇒ ★ 已修（★ 探针从特征树里**动态取**拉伸名 ✓）；★ 重跑后：
+  ★★ **`mark1=True · mark2=True · 选区=2` 而新增 `[]` · 回 `None`** ⇒ ★ **读数有效、且确实不建** ✓
+⇒ ★★★★ **这一处是非同小可的**：★ 若不修，我会拿一个**"前置没上"的读数**去当"真的不建"的证据 ✗ ——
+  ★ 而那**正是本规格反复吃的那个坑**（★ 「读数无效」与「真的不建」长得一模一样 ✓）
+
+三、★★★★★ **三项的真机读数（★ 有效读数、★ 分档如实）**
+| 项 | 真机读数（★ 一律回读） | 登记等级 |
+|---|---|---|
+| ★ `explode_line_sketch` | ★★ **`ActiveSketch` 侧变化 `False → True`**（★ `added=[]` ⇒ 判据由**侧变化**触发 ✓） | ★ **`verified`** ✓ |
+| ★ `speedpak` | ★★ **`IsSpeedPak` `False → True`** · ★ 组件 3 · ★ 组件名 `sub-1` · ★ 选中 ✓ | ★ **`verified`** ✓ |
+| ★★ `curve_driven_pattern` | ★★ **前置有效而仍不建**（★ `mark1=True · mark2=True` · ★ 新增 `[]` · ★ 回 `None` ✓） | ★★ **`stitched`** ✓ |
+⇒ ★★★ **A7 逐字**：「全文没有一处把 `source_verified` 或 `stitched` 写成 `verified`」✓ ——
+  ★★ 曲线驱动阵列的 `stitched` **有两条独立理由**：★ ① 官方页第一行就是 **`Obsolete`** ✓
+  （★ 逐字指向 `CreateFeature` + `ILocalCurvePatternFeatureData` ✓）· ★ ② 真机两档有效读数皆不建 ✓
+
+四、★★★★ **本批第三次被相对导入棘轮教育，★ 而这次我读懂了判据**
+★ 棘轮源码逐字：`prev = lines[i-1].strip()` / `if prev.startswith("try:")` ✓
+⇒ ★★★ **只有紧跟 `try:` 的那一行算"有兜底"** ✓，★ **且它扫函数内** ✓
+⇒ ★★ **正解**：★ 在函数里写**完整的**
+  `try: from .X import Y` / `except ImportError: from X import Y` ⇒ ★ **加 0** ✓
+★ 本批这么做了 **3 次**（`sw_assembly_doc` 的 `feature_names` · `sw_pattern` 的 `_select_by_id`
+  与 `feature_names` 与 `mm` ✓）⇒ ★ **棘轮 35 = 基线** ✓
+
+五、★ 契约与负例（★ `tests/test_spec213_batch102_tools.py`，★ 三个文件合跑 **37 passed**）
+· ★ **正例**：★ 3/3 过 `check_spec` ✓ · ★ 3/3 进 `all_specs()` ✓ · ★ 无重名 ✓ ·
+  ★ 模块函数存在 ✓ · ★ **签名对得上官方参个数** ✓（★ 爆炸直线**只 1 个形参**（官方零参）·
+  ★ 曲线阵列 **15 个**（13 官方 + 2 选择 ✓）✓）
+· ★★ **负例①（最要紧）**：★ **文档串里必须能 grep 到 `stitched` 与 `Obsolete`** ✓ ——
+  ★ 缺一个就算"写成 verified" ✗；★ 而**另两项不许出现 `Obsolete`** ✓
+· ★★ **负例②**：★ 爆炸直线的判据**必须**是 `active_sketch_side_changed`、★ 源码里必须能 grep 到 ✓
+· ★★ **负例③**：★ SpeedPak 必须**同时**有 `is_speedpak_before/after`、★ 且判据**排除"本来就开着"** ✓
+· ★★ **负例④**：★ 长度 `_mm` 结尾 · ★ 布尔/枚举不许带单位后缀（规则 2 / 2b）✓
+· ★★ **负例⑤**：★ 三项都不许声明 `read_only=True` ✓
+
+六、★ 交付物
+`scripts/sw_assembly_doc.py`（★ 两个新函数（含**修过的判据**）✓）· `scripts/sw_pattern.py`（★ 一个 ✓）·
+`mcp-server/tool_specs_batch102.py` · `mcp-server/register_capabilities.py` ·
+`tests/test_spec213_batch102_tools.py` · `tools/probe_spec213_b2b_modules.py` ·
+`specs/213-hook-up-tools/goal-bar.md` ✓

@@ -96,6 +96,8 @@ __all__ = [
 ]
 
 #: 反射确认的实参个数（调用侧成员；**不含**末尾 by-ref 出参）
+#: enum-gate: not-enum arity
+#: arity-reflect: byref=excluded
 SELECTION_ARITY: dict[str, int] = {
     "GetSelectedObjectCount": 0,
     "GetSelectedObjectCount2": 1,
@@ -143,6 +145,7 @@ SELECTION_ARITY: dict[str, int] = {
 SELECTION_ALL_KINDS = -1
 
 
+#: dispatch-guard: exempt internal-helper
 def _checked(target, member: str, *args):
     """按签名表校核实参个数，通过后才发起调用（开发期护栏）。"""
     expected = SELECTION_ARITY.get(member)

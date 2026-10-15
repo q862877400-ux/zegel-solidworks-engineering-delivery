@@ -72,6 +72,8 @@ __all__ = [
 ]
 
 #: 反射确认的实参个数（**不含**末尾 by-ref 出参）
+#: enum-gate: not-enum arity
+#: arity-reflect: byref=excluded
 COSTING_ARITY: dict[str, int] = {
     # ICostManager
     "Close": 0,
@@ -106,6 +108,7 @@ COSTING_ARITY: dict[str, int] = {
 }
 
 
+#: dispatch-guard: exempt internal-helper
 def _checked(target, member: str, *args):
     """按签名表校核实参个数，通过后才发起调用（开发期护栏）。"""
     expected = COSTING_ARITY.get(member)
@@ -311,6 +314,7 @@ def set_markup(cost_analysis, markup_type: int | None = None,
         get_com_member(cost_analysis, "MarkUpPercent", float(markup_percent))
     return True
 
+#: dispatch-guard: exempt internal-helper
 
 def _num(target, member: str, default=0, *args):
     """读一个成员 ⇒ 数值；**只有 `None` 才回落到 `default`**。

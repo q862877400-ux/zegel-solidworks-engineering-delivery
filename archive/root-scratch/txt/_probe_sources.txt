@@ -1,0 +1,90 @@
+======================================================================
+repo=Eduardof0nt/Solidworks-MCP-Server
+license=MIT
+tool_count=187
+operation_count=178
+declared_verified=
+note=README 称 '✅ Verified on SolidWorks 2024'，但仓库内测试文件数为 0
+domains type=<class 'dict'>
+  domain 'appearance' -> list[10] ['activate_configuration', 'activate_display_state', 'appearance_color', 'background', 'configuration', 'configurations', 'display_states', 'material', 'materials', 'take_photoview_screenshot']
+  domain 'assembly' -> list[13] ['assembly', 'assembly_tree', 'component', 'explode_assembly', 'fix_component', 'hide_component', 'interference', 'mirror_component', 'move_component', 'pattern_component_circular', 'pattern_component_linear', 'replace_component', 'suppress_component']
+  domain 'drawing' -> list[18] ['annotation', 'auxiliary_view', 'balloon', 'bom', 'broken_view', 'center_mark', 'centerline', 'detail_view', 'drawing', 'drawing_dimension', 'drawing_view', 'export_drawing_dwg', 'export_drawing_pdf', 'hole_table', 'projected_view', 'revision_table', 'section_view', 'sketch_centerline']
+  domain 'feature' -> list[23] ['chamfer', 'circular_pattern', 'combine_bodies', 'curve_driven_pattern', 'delete_body', 'dome', 'draft', 'extrude', 'fill_pattern', 'fillet', 'helix', 'hole', 'intersect', 'linear_pattern', 'loft', 'mirror', 'move_body', 'revolve', 'scale_body', 'shell', 'split_body', 'sweep', 'wrap']
+  domain 'inspect' -> list[11] ['analyze_draft', 'bbox', 'capture_screenshot', 'check_geometry', 'display_mode', 'mass_props', 'measure_distance', 'sensors', 'status', 'view_orientation', 'zoom_to_fit']
+  domain 'macro' -> list[4] ['macro_recording', 'run_macro', 'run_vba_code', 'stop_macro_recording']
+  domain 'mold' -> list[3] ['parting_line', 'shut_off_surface', 'tooling_split']
+  domain 'other' -> list[18] ['bodies', 'clear_selection', 'composite_curve', 'custom_prop', 'delete_feature', 'features', 'fold', 'gdt', 'hide_all_planes', 'mate', 'model_info', 'projected_curve', 'rib', 'select_entity', 'show_all_planes', 'suppress', 'unsuppress_feature', 'view_rotate']
+  domain 'param' -> list[6] ['delete_equation', 'design_table', 'dimension', 'equation', 'global_var', 'link_dimension_to_equation']
+  domain 'refgeom' -> list[3] ['ref_axis', 'ref_plane', 'reference_point']
+  domain 'session' -> list[14] ['close_all', 'close_document', 'connect', 'export_file', 'export_step', 'export_stl', 'open_document', 'open_documents', 'part', 'rebuild_model', 'referenced_documents', 'save_all', 'save_as_copy', 'save_document']
+  domain 'sheetmetal' -> list[10] ['base_flange', 'edge_flange', 'export_flat_pattern', 'flat_pattern_info', 'flatten_sheet_metal', 'hem', 'jog', 'miter_flange', 'sketched_bend', 'unfold']
+  domain 'simulation' -> list[3] ['motion_study', 'run_simulation', 'simulation_study']
+  domain 'sketch' -> list[26] ['3d_sketch', 'edit_sketch', 'exit_sketch', 'hide_all_sketches', 'show_all_sketches', 'sketch', 'sketch_arc', 'sketch_chamfer', 'sketch_circle', 'sketch_circular_pattern', 'sketch_constraint', 'sketch_construction', 'sketch_convert_entities', 'sketch_dimension', 'sketch_ellipse', 'sketch_extend', 'sketch_fillet', 'sketch_line', 'sketch_linear_pattern', 'sketch_offset', 'sketch_polygon', 'sketch_rectangle', 'sketch_spline', 'sketch_text', 'sketch_trim', 'split_line']
+  domain 'surface' -> list[11] ['boundary_boss', 'delete_face', 'extend_surface', 'extruded_surface', 'filled_surface', 'knit_surfaces', 'offset_surface', 'planar_surface', 'revolved_surface', 'thicken_surface', 'trim_surface']
+  domain 'weldment' -> list[5] ['end_cap', 'gusset', 'structural_member', 'trim_weldment', 'weld_symbol']
+operations len=178
+tools len=187
+======================================================================
+repo=andrewbartels1/SolidworksMCP-python
+license=MIT
+tool_count=128
+operation_count=121
+declared_verified=
+note=README 自述 'under active construction'；mock 适配器输出为模拟值
+domains type=<class 'dict'>
+  domain 'appearance' -> list[1] ['configurations']
+  domain 'assembly' -> list[7] ['assembly', 'component', 'components', 'interference', 'load_assembly', 'pack_and_go_assembly', 'save_assembly']
+  domain 'drawing' -> list[18] ['analyze_drawing_annotations', 'analyze_drawing_comprehensive', 'analyze_drawing_dimensions', 'analyze_drawing_views', 'annotation', 'auto_center_marks', 'auto_dimension_view', 'centerline', 'check_drawing_compliance', 'check_drawing_standards', 'compare_drawing_versions', 'detail_view', 'drawing', 'drawing_view', 'generate_drawing_report', 'section_view', 'technical_drawing', 'validate_drawing_completeness']
+  domain 'feature' -> list[11] ['chamfer', 'extrude', 'extrude_cut', 'fillet', 'loft', 'mirror_feature', 'pattern_circular', 'revolve', 'save_body_as_part', 'sweep', 'tutorial_simple_hole']
+  domain 'inspect' -> list[3] ['analyze_geometry', 'calculate_mass_properties', 'mass_props']
+  domain 'macro' -> list[22] ['analyze_macro', 'batch_apply_template', 'batch_execute_macros', 'batch_export', 'batch_file_operations', 'batch_process_files', 'execute_macro', 'generate_vba_assembly_insert', 'generate_vba_assembly_mates', 'generate_vba_batch_export', 'generate_vba_code', 'generate_vba_drawing_dimensions', 'generate_vba_drawing_views', 'generate_vba_extrusion', 'generate_vba_file_operations', 'generate_vba_macro_recorder', 'generate_vba_part_modeling', 'generate_vba_revolve', 'macro_library', 'macro_recording', 'optimize_macro', 'stop_macro_recording']
+  domain 'other' -> list[17] ['arc', 'classify_feature_tree', 'delete_feature', 'execute_workflow', 'features', 'file_properties', 'line', 'load_part', 'mate', 'model_info', 'optimize_performance', 'rename_feature', 'suppress', 'undo', 'units', 'update_sheet_format', 'update_title_block']
+  domain 'param' -> list[2] ['dimension', 'manage_design_table']
+  domain 'refgeom' -> list[3] ['ref_axis', 'ref_plane', 'reference_point']
+  domain 'session' -> list[22] ['activate_document', 'apply_template', 'close_model', 'compare_templates', 'convert_file_format', 'export_dwg', 'export_iges', 'export_image', 'export_pdf', 'export_step', 'export_stl', 'extract_template', 'manage_file_properties', 'open_documents', 'open_model', 'part', 'save_as', 'save_file', 'save_part', 'save_to_template_library', 'template', 'template_library']
+  domain 'sketch' -> list[15] ['check_sketch_fully_defined', 'circle', 'ellipse', 'exit_sketch', 'polygon', 'rectangle', 'sketch', 'sketch_circular_pattern', 'sketch_constraint', 'sketch_dimension', 'sketch_linear_pattern', 'sketch_mirror', 'sketch_offset', 'sketch_tutorial_simple_hole', 'spline']
+operations len=121
+tools len=128
+======================================================================
+repo=vespo92/SolidworksMCP-TS
+license=MIT
+tool_count=103
+operation_count=98
+declared_verified=
+note=TypeScript；103 个工具里 27 个是 vba_* 宏生成器，不是直接操作
+domains type=<class 'dict'>
+  domain 'appearance' -> list[3] ['assembly_configurations', 'configurations', 'pdm_configure']
+  domain 'assembly' -> list[4] ['assembly_analysis', 'assembly_components', 'assembly_mates', 'interference']
+  domain 'drawing' -> list[15] ['apply_drawing_template', 'compare_drawing_templates', 'drawing_annotations', 'drawing_dimensions', 'drawing_from_model', 'drawing_scale', 'drawing_sheet_format', 'drawing_sheet_info', 'drawing_sheet_size', 'drawing_tables', 'drawing_view', 'drawing_views', 'extract_drawing_template', 'section_view', 'sketch_centerline']
+  domain 'feature' -> list[3] ['extrude', 'pattern_features', 'simple_extrude']
+  domain 'inspect' -> list[7] ['analyze_draft', 'bbox', 'capture_screenshot', 'check_geometry', 'mass_props', 'measure_distance', 'reference_geometry']
+  domain 'macro' -> list[21] ['batch_apply_template', 'batch_export', 'batch_operations', 'batch_run_macros', 'batch_vba', 'configurations_batch', 'convert_text_to_native_macro', 'diagnose_macro_execution', 'drawing_vba', 'edit_macro', 'export_vba', 'feature_vba', 'generate_vba_script', 'initialized_macro', 'native_macro_recording', 'pause_resume_macro_recording', 'recording', 'run_macro', 'run_vba_macro', 'stop_native_macro_recording', 'stop_recording']
+  domain 'other' -> list[10] ['advanced_features', 'api_automation', 'custom_prop', 'error_handling', 'operations', 'pdm_operations', 'security', 'security_info', 'update_sheet_format', 'view_grayscale_enhanced']
+  domain 'param' -> list[6] ['design_table', 'design_table_create', 'design_table_refresh', 'diameter_dimension', 'dimension', 'equation']
+  domain 'session' -> list[10] ['close_model', 'export_file', 'export_with_options', 'open_model', 'part', 'rebuild_model', 'save_template_to_library', 'setup_template_positions', 'template_custom_properties', 'template_library']
+  domain 'sheetmetal' -> list[1] ['sheet_metal']
+  domain 'simulation' -> list[1] ['simulation_setup']
+  domain 'sketch' -> list[16] ['edit_sketch', 'exit_sketch', 'sketch', 'sketch_arc', 'sketch_circle', 'sketch_circular_pattern', 'sketch_constraint', 'sketch_dimension', 'sketch_ellipse', 'sketch_line', 'sketch_linear_pattern', 'sketch_mirror', 'sketch_offset', 'sketch_polygon', 'sketch_rectangle', 'sketch_spline']
+  domain 'surface' -> list[1] ['surface_modeling']
+operations len=98
+tools len=103
+======================================================================
+repo=Slacker-LLC/solidworks-mcp
+license=Apache-2.0
+tool_count=92
+operation_count=89
+declared_verified=SW 2026 SP3.2 简体中文
+note=README 称每个工具都在 SolidWorks 2026 SP3.2 上跑过；含 tools/tlb_probe.py 直读类型库
+domains type=<class 'dict'>
+  domain 'appearance' -> list[2] ['appearance', 'material']
+  domain 'assembly' -> list[3] ['component', 'component_fixed', 'components']
+  domain 'drawing' -> list[17] ['activate_drawing_view', 'activate_sheet', 'annotation', 'auto_dimension_view', 'center_mark', 'centerline', 'detail_view', 'drawing', 'drawing_sketch', 'drawing_view', 'drawing_views', 'model_annotations', 'model_view', 'projected_view', 'section_view', 'sheets', 'standard_views']
+  domain 'feature' -> list[13] ['chamfer', 'circular_pattern', 'draft', 'extrude', 'extrude_cut', 'fillet', 'hole', 'linear_pattern', 'loft', 'mirror_feature', 'revolve', 'shell', 'sweep']
+  domain 'inspect' -> list[6] ['bbox', 'capture_screenshot', 'check_errors', 'mass_props', 'measure', 'status']
+  domain 'other' -> list[16] ['arc', 'bodies', 'delete_feature', 'edges', 'faces', 'features', 'line', 'mate', 'mates', 'point', 'rename_feature', 'rib', 'sheet', 'suppress', 'vertices', 'view']
+  domain 'param' -> list[2] ['dimension', 'relation']
+  domain 'refgeom' -> list[3] ['ref_axis', 'ref_plane', 'reference_planes']
+  domain 'session' -> list[7] ['active_document_info', 'export_document', 'new_document', 'open_document', 'rebuild_document', 'save_active_document', 'save_document']
+  domain 'sketch' -> list[20] ['3point_arc', 'circle', 'close_sketch', 'construction_geometry', 'convert_entities', 'edit_sketch', 'ellipse', 'polygon', 'rectangle', 'sketch', 'sketch_chamfer', 'sketch_fillet', 'sketch_mirror', 'sketch_offset', 'sketch_segments', 'sketch_status', 'sketch_trim', 'sketches', 'slot', 'spline']
+operations len=89
+tools len=92

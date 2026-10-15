@@ -146,6 +146,8 @@ SWS_RUN_ANALYSIS_ERRORS = {
 # 覆盖:   后续同级定义
 # ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
+#: enum-gate: not-enum arity
+#: arity-reflect: byref=excluded
 STUDY_MANAGER_ARITY: dict[str, int] = {
     "CreateNewStudy": 3,
     "CreateNewStudy2": 2,
@@ -164,6 +166,7 @@ STUDY_MANAGER_ARITY: dict[str, int] = {
     "ManageDistributedSimulation": 2,
 }
 
+#: arity-reflect: byref=excluded
 STUDY_ARITY: dict[str, int] = {
     "RunAnalysis": 0,
     "MeshAndRun": 0,
@@ -184,6 +187,7 @@ STUDY_ARITY: dict[str, int] = {
 }
 
 
+#: dispatch-guard: exempt internal-helper
 def _checked(table: dict[str, int], target, member: str, *args):
     """按签名表校核实参个数，通过后才发起调用（开发期护栏）。"""
     expected = table.get(member)

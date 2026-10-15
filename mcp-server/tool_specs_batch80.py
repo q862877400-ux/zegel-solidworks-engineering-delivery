@@ -111,10 +111,17 @@ SPECS_BATCH80 = [
         module="sw_com_traps", function="deprecated_successor",
         inject="",
         params=[Param("member", str, description="An official member name, e.g. `CreateDefinition` "
-                                                 "or a numbered variant like `AddMate2`.")],
+                                                 "or a numbered variant like `AddMate2`."),
+                Param("interface", str, default="", description="Optional interface name (e.g. "
+                      "`IEntity`). ★ Leave EMPTY to look up by member name alone — which returns "
+                      "`None` when that name maps to different successors on different interfaces "
+                      "(the tool refuses to guess). Pass the interface to get the exact answer.")],
         doc="Given a member name, return the successor this repo maps it to — and `None` when it "
             "does not know it (★ the wrapped function's docstring is explicit: it does NOT guess, "
-            "repo rule 5). ★ Pure function: no SolidWorks call, no COM.",
+            "repo rule 5). ★★ `None` also means \"ambiguous by name\": some members share a name "
+            "across interfaces with DIFFERENT successors (e.g. `Select2` — 6 different endpoints), "
+            "so an unqualified lookup has no single right answer. Pass `interface` to disambiguate. "
+            "★ Pure function: no SolidWorks call, no COM.",
     ),
     ToolSpec(
         name="solidworks_repo_find_real_implementations",

@@ -1,0 +1,28 @@
+[
+  {
+    "id": "mesh_size_sanity_gate",
+    "label": "建网格前的地基闸门（★ 把「跑求解必挂」掐断在网格之前）",
+    "level": "verified",
+    "backends": ["solidworks-com-pywin32"],
+    "verified_versions": ["2026"],
+    "dependencies": ["solidworks", "simulation-addin"],
+    "limitations": [
+      "★ 真机 **4/4 通过**（`output/mesh-sane-evidence.json`）：不合理尺寸被拒 ✓ · 合理尺寸被接受 ✓ · 闸不放行时**不建网格** ✓ · **全程不跑求解** ✓",
+      "★★★ **它解决的是一个**有据的对照**所暴露的问题**：同一句 `default_element_size_and_tolerance(study, -1)`，既有 `tools/capture_simulation_evidence.py`（**跑通**）拿到 **4.933908705960544**（⇒ 网格 **7310** 单元 · RunAnalysis **1 秒 · 4 张图**），而本项目其它链拿到 **4930.501659457233**（⇒ 网格 **7250** · **300 秒超时**）—— ★ 两者**差恰好 1000 倍**",
+      "★★ **那个 1000 倍的原因**未查清**（如实标注）**：`tools/probe_mesh_units.py` 证明父/子进程回值**完全一致**（⇒ 不是进程差异）；`tools/probe_document_units.py` 里「文档单位」那一处**读不到**（`非选择性的参数`／`-1`）⇒ ★ 正路仍是**读到文档单位那一处**",
+      "★★★★ **而本闸门**不依赖**解开那个根因**：★ 它只判「这个 element_size 对这个零件合理吗」，不合理就**不让往下走** ⇒ **不建网格 ⇒ 不跑求解 ⇒ 不弹模态框 ⇒ 不挂起**",
+      "★★ 它与 `sw_isolate`（进程隔离）**互补**：★ **一个防发生，一个防外溢** —— 隔离保证「万一挂了不外溢」，本闸门保证「根本不去挂」",
+      "★ 判据取「单元尺寸不得大于零件的最大边」—— ★ **宽到不可能误伤**：合法网格参数**永远不该**触到它（单元 = 零件最大边 ⇒ 网格只剩 1 个单元）；官方建议值实测约为零件最大边的 **1/20**",
+      "★ **量不到包围盒时只记不判**（★ 不因为缺参照就误报）",
+      "⚠ 只在 **100×60×20 mm 单实体板**上验过"
+    ],
+    "allowed_modes": ["interactive", "reviewed", "unattended"],
+    "evidence": [
+      "python tools/capture_mesh_sane_evidence.py（真机，2026-10-01 轮 248：**4/4 通过**，★ **全程无弹框、不挂起**；证据落 output/mesh-sane-evidence.json）",
+      "★ **对照证据**：tools/capture_simulation_evidence.py 的 `output/simulation-evidence.json`（`suggested_size_mm: 4.933908705960544` · `element_count: 7310` · `plot_count: 4`）—— ★ 那是「参数生效」的权威参照",
+      "★ 静态：`scripts/check_param_binding.py` PASS（★ 它当场抓到了本批初版漏写 `param_alias`）· 门禁链 18 道 exit 0"
+    ],
+    "source": "original",
+    "source_evidence": "scripts/sw_simulation.py 的 check_mesh_size_sane（判据用 IBody2.GetBodyBox 量零件尺寸）+ mcp-server/tool_specs_batch31.py"
+  }
+]

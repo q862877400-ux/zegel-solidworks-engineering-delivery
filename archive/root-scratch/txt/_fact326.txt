@@ -1,0 +1,61 @@
+| 326 | **objective② 画图域首轮 scoping**：`Hem`/`Jog` **反射里不存在** ⇒ 按铁律 5 不做；`balloon`/`datum` 有**零参入口 + 现成回读**；★ 而**外部夹具会引出不可控的加载弹窗** ⇒ 验证路径必须**自足**（2026-10-03，轮 411）。
+
+## 一、★★★★★ `Hem` / `Jog`：**反射 dump 里一个都没有** ⇒ 不做
+```
+★ 全库搜 `'[A-Za-z_]*(Hem|Jog)[A-Za-z_]*'` ⇒ **0 个命中**（★ 而 `balloon`/`datum` 一堆）。
+★ `CreateDefinition.md` 的 35 个常量名单里也没有。
+⇒ ★★ 按**铁律 5**：★ **名字缺席 = 官方 API 里没有这个成员**（★ 而不是"没写文档"）
+   ⇒ ★ **不做**（★ 并在此记清依据，★ 免得下一个人重走）。
+⚠ 注：★ `jog`/`hem` 本来是**钣金特征**（不是标注）—— 而本仓的钣金能力另有条目。
+```
+
+## 二、★★★★★ `balloon` / `datum`：入口与回读**都在**（★ 而这一条是**可以做**的）
+```
+★ 官方入口（`C:\swapi\types\`）：
+   · `IModelDoc2.**InsertDatumTag2()**` ⇒ **`System.object`** ⇒ ★★ **零参**
+     （★ 与**已能用的** `solidworks_gtol_insert` 同形）
+   · `IModelDoc2.InsertBOMBalloon2(Style, Size, UpperTextStyle, UpperText, …)` ⇒ 多参
+   · `IDrawingDoc.AutoBalloon5` / `CreateAutoBalloonOptions` · `IModelDocExtension.CreateBalloonOptions`
+★ 而**现成的回读**：★ `IView.**GetDatumTagCount()**` ⇒ `System.int` ✓✓✓
+   ⇒ ★★ **判据可以定量**（★ 计数 +1）—— ★ 那正是"规则 6"要的东西，★ 不必自造判据。
+```
+
+## 三、★★★★★ 而**外部夹具这条路被弹窗挡住了**（★ 两条教训）
+```
+★ capabilities 里记着一条成法：「用 SolidWorks 自带示例图当**有内容的测试夹具**」
+   ⇒ ★ 本探针照做（`samples\introsw\box.slddrw`）。
+★★ 真机结果：★ 打开它时弹出一个**模态进度窗** ——
+   `#32770` · 静态文本「打开 零部件」「更新 工程图」「更新 图形」「**正在加载零部件：**」·
+   按钮 `['关闭', '不再显示此信息', '隐藏细节', '**跳过**']`
+   ⇒ ★★ 护栏按纪律归为 **`needs_llm`** 并**中止调用**（★ 不自行点）。
+★ 而**另一条**：★ 我那一版里有一句 `view.Select()` —— ★ 那是**"试名字"性质**的调用（★ 非官方入口）
+   ⇒ ★ **它也引出了同一个窗**。
+   ⇒ ★★★ **教训 A**：**"试名字"式的调用会引出弹窗** ⇒ ★ 官方入口要**先查**（铁律 5），★ 不拿非官方入口去试。
+   ⇒ ★★★ **教训 B（更重要）**：★ **外部夹具会把"不可控的加载弹窗"带进验证路径** ⇒
+     ★★ **验证路径必须自足** —— ★ 用**仓内新建**的文档，★ 不依赖外部引用。
+```
+
+## 四、★ 而**自足路径是有的**（★ 本轮找到的落点）
+```
+★ 工具面里 `solidworks_generate_drawing` **不在 `all_specs()` 里** ——
+   ★ 因为它在 **`mcp-server/server.py`**（★ 上游文件、非 ToolSpec）：
+   `server.py:100  "drawing_generate_from_spec": drawing.generate_drawing_from_spec`
+   ⇒ ★★ 即：★ **仓里本来就能自建工程图**（`scripts/sw_drawing.generate_drawing_from_spec`）。
+⇒ ★ 下一步（**具体到动作**）：★ 用**仓内的 DrawingSpec**自建一张工程图 + 一个视图，
+   ★ 再在那个视图上验 `InsertDatumTag2()` ⇒ 回读 `IView.GetDatumTagCount()` 是否 +1。
+   ★★ **这样就不碰任何外部引用、也不该有加载弹窗**（★ 若还有，★ 那就是新证据）。
+```
+
+## 五、★ 处置
+```
+① ★ `Hem`/`Jog` ⇒ **不做**（★ 依据写进本事实）
+② ★ `balloon`/`datum` ⇒ **可做**，★ 但**本轮没验成** ⇒ ★ **不注册**（★ 硬约束⑥）
+   ★ 两个探针（`probe_drawing_datum_tag.py` / `probe_drawing_datum_tag2.py`）**保留** ——
+   ★ 它们记着"零参入口回了 None"与"外部夹具引弹窗"两个卡点。
+③ ★ 弹窗已按纪律清掉（`sw_guard --clear` ⇒ 0 个）
+```
+
+**依据**：`output/drawing-datum-tag-evidence.json`（★ 零参 `InsertDatumTag2` 回 None · 计数 0→0）·
+`tools/probe_drawing_datum_tag2.py`（★ 外部夹具引出的 `needs_llm` 弹窗证据）·
+`C:\swapi\types\IModelDoc2\InsertDatumTag2.md` + `IView\GetDatumTagCount.md` ·
+`mcp-server/server.py:100`（★ `generate_drawing_from_spec`）· 铁律 5 · 事实 320 / 321

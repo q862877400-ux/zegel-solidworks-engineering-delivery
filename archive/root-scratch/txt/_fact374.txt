@@ -1,0 +1,64 @@
+| 374 | ★★★★★ **`solidworks_simulation_apply_link_connector` 挂上了**（★ `all_specs` **220 → 221** · 真机 **pass**）⇒ ★★ **`plan-200r-v3` §七 W2 收口**；★ 而顺带查出并修掉一个**真 bug**：★ `BATCH_MODULES` 的元组被**提前闭合**（2026-10-03，轮 459）。
+
+## 一、★★★★★ 新工具（★ 而它的**参数形态**是规则 3 的判断）
+```
+★ `solidworks_simulation_apply_link_connector`
+   ★ 参数：★ **两个**声明式选择器****（`first` / `second` · ★ kind 固定 `VERTEX`）+ 两个 `body_index` ✓
+   ★★ **为什么这样设计**：★ `add_link_connector(manager, objA, objB)` **吃两个 COM 对象**
+     ⇒ ★ **没法入参数表达**（★ 与事实 367 那条 `select_object` **同族**）⚠
+     ★★★ **故让调用方给选择器，而对象在能力层内部解析** ✓
+     （★ `sw_selection_spec.resolve_entity` · ★ 而★ 那支 `"index:<n>"` / `"__current_selection__"` / COM 对象）✓
+★ 而★ 本仓的 `ENTITY_KINDS = ('EDGE', 'FACE', 'VERTEX')` **本来就含 `VERTEX`** ⇒ ★ 不用改它 ✓
+★ 真机（★ `output/link-tool-contract-evidence.json` · **verdict: pass**）：
+   ```
+   ★ 按**契约**调（★ 而不是手调 COM —— 那是 `AGENTS.md` 那条）：
+     `add_link_connector_report(lm, doc, "index:0", "index:0", first_body_index=0, second_body_index=1)`
+     ⇒ ★★ **`Count` 0 → 1** ✓✓✓
+   ```
+```
+
+## 二、★★★★★ 而**本仓那个包装本来就是对的**（★ 我一度以为要改它）
+```
+★ 事实 373 里我**推断**：★ "`add_link_connector` 走 `_check(..., **2**, …)` ⇒ 只传 2 个实参 ⇒ 要修" ⚠
+★★ 而★ **本轮读了 `_check` 的实现**才发现：
+   ```
+   ★ `_check` 的 docstring 写着「★★★★★ 2026-10-01（轮 348）**这里原本少传了末尾那个 `ByRef ErrorCode`**
+      —— ★★ 修法：**由本函数统一补 `out_i4()`**（★ 一处修改 ⇒ 整批 `Add*` 全受益）」
+   ⇒ ★★★ **即：★ 那个 `2` 是「官方声明的**非-byref** 个数」**，★ 而★ out 参数**由它自动补** ✓
+   ```
+★ 真机印证：★ **拿已验场景直接调那个包装** ⇒ ★★ **`Count` 0 → 1**（★ `raw_type = CDispatch`）✓
+   ⇒ ★★★ **故它**不需要改**** —— ★ 而★ 它当年"没成"的真因是**我给的顶点不对** ✓
+★★★ **故教训**（★ 与事实 371 同族）：★ **"看形参个数" ≠ "看它实际传了几个"** ——
+   ★★ **要读实现**（★ 我那一轮**没读**，★ 而★ 这一轮一读就清楚了）✓
+```
+
+## 三、★★★★★ ⚠ 而本轮**查出一个真 bug**（★ 而它藏在"我自己的编辑"里）
+```
+★ 现象：★ 我把 `tool_specs_batch64` 加进 `BATCH_MODULES` 之后，★ **`all_specs` 仍是 220** ⚠
+★ 真因（★ 一看那几行就明白）：
+   ```
+   L306       "tool_specs_batch62",   # …
+   L307   "tool_specs_batch63",)      ← ★★ **那个 `)` 提前闭合了 `BATCH_MODULES` 的元组** ⚠
+   L308   "tool_specs_batch64",       ← ★ **成了元组外面的一个表达式** ⇒ **它没进列表** ✓
+   ```
+   ★★ 而★ **那是我第 33 轮**插 `batch63` 时留下的**（★ 我把缩进也弄没了）⚠
+   ⇒ ★★★ **而 `batch63` **仍然被加载**（★ 因为它在 `)` 之前）⇒ ★ **故它没有造成工具丢失** ✓
+     ★ 真机核过：★ `solidworks_select_face_selector` **在名单里** = `True` ✓
+★ **修**：★ 把那两行并回元组内（★ 用 `edit` 工具**逐处**改 —— ★ 事实 61 那条）✓
+   ⇒ ★ **`all_specs` 220 → 221** · ★ 而**两个**新工具都在 ✓
+```
+
+## 四、★★★★★ 故**又一条可复用的判据**
+```
+★★★ **往一个列表里插项，要核"它**真的在**那个列表里"** ——
+   ★ 而★ 判据是**运行期的条数与名字**（★ `all_specs()` / `len(...)`），
+   ★★ **而不是**源码里"看起来跟前面那行挨着" ⚠
+   ⇒ ★ 因为★ **括号/缩进错了**会让它**在外面**，★ 而★ **源码 diff 看着像是加了一行** ✓✓✓
+★ 而★ 那**与本阶段的主线同族**：★ **判据要看**真实的那一面**（运行期），★ 而不是**文本的观感**** ✓
+```
+
+**依据**：`output/link-tool-contract-evidence.json`（★ **pass** · `Count 0 → 1` · ★ 声明式选择器）·
+`output/link-wrapper-twobody-evidence.json`（★ 包装本来就对 · `0 → 1`）·
+`mcp-server/tool_specs_batch64.py`（★ 新）· `scripts/sw_simulation_loads.add_link_connector_report`（★ 新包装）·
+`scripts/sw_simulation_loads._check` 的 docstring（★ 轮 348 统一补 `out_i4()`）·
+`register_capabilities.BATCH_MODULES`（★ 已修 · **221**）· 事实 61 / 348 / 367 / 371 / 373 · `plan-200r-v3.md` §七 W2

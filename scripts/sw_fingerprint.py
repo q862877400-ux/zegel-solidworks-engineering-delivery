@@ -82,6 +82,7 @@ def jsonable(value):
         return "<unprintable>"
 
 
+#: dispatch-guard: exempt internal-helper
 def _read(member, obj, *args, default=None):
     """★ 读一个成员并**吞掉异常** ⇒ 回 `(值, 错误说明)` —— ★ 拿不到**不等于**没变 ✓
 

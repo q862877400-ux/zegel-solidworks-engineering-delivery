@@ -23,14 +23,18 @@
 ## 本批取的 2 个（签名照实取）
 | 工具 | 函数 | 参数 | 备注 |
 |---|---|---|---|
-| ✅ | `sw_part.add_sketch_relation` | `(model, relation_type)` | ★ `relation_type` 的**12 个合法值**取自该函数 docstring |
+| ✅ | `sw_part.add_sketch_relation` | `(model, relation_type)` | ★ `relation_type` 的合法值已按官方 Remarks 清单校正（2026-10-08 spec 222） |
 | ✅ | `sw_part.mirror_feature` | `(model, feature_name, mirror_plane_name)` | 三个参数都是字符串 |
 
-**`relation_type` 的合法值**（★ 引自 `add_sketch_relation` 的 docstring，**不是猜的**）：
+**`relation_type` 的合法值**（★ 引自 `IModelDoc2::SketchAddConstraints` 的官方 Remarks 清单，
+`C:/swapi/types/IModelDoc2/SketchAddConstraints.md`，**不是猜的**）：
 ```
 sgFIXED · sgHORIZONTAL · sgVERTICAL · sgCOLINEAR · sgPARALLEL · sgPERPENDICULAR
-sgTANGENT · sgCONCENTRIC · sgEQUAL · sgSYMMETRIC · sgMIDPOINT · sgCOINCIDENT
+sgTANGENT · sgCONCENTRIC · sgSAMELENGTH · sgSYMMETRIC · sgATMIDDLE · sgCOINCIDENT
 ```
+⚠ ★★ **2026-10-08 校正**：本文件此前把 `sgEQUAL` / `sgMIDPOINT` 当作合法值 —— 而官方
+Remarks 清单里**没有**这两个串。⇒ 已改为官方名 **`sgSAMELENGTH`** / **`sgATMIDDLE`**；
+旧名现在会被 `sw_part.add_sketch_relation` **拒绝并指出官方名**（不再静默失败）。
 
 ## 留批的 12 个（**逐条记明归属**，不留"以后再说"）
 ```
@@ -66,10 +70,15 @@ SPECS_BATCH16 = [
         doc="Add a sketch geometric relation to the current selection.",
         params=[
             Param("relation_type", str,
-                  description="Relation name. Valid values (from the function's own docstring): "
+                  description="Relation name. Valid values (each verified against the official "
+                              "IModelDoc2::SketchAddConstraints Remarks list, C:/swapi/types/"
+                              "IModelDoc2/SketchAddConstraints.md): "
                               "sgFIXED, sgHORIZONTAL, sgVERTICAL, sgCOLINEAR, sgPARALLEL, "
-                              "sgPERPENDICULAR, sgTANGENT, sgCONCENTRIC, sgEQUAL, sgSYMMETRIC, "
-                              "sgMIDPOINT, sgCOINCIDENT."),
+                              "sgPERPENDICULAR, sgTANGENT, sgCONCENTRIC, sgSAMELENGTH, sgSYMMETRIC, "
+                              "sgATMIDDLE, sgCOINCIDENT. "
+                              "The 'sg' prefix is optional and matching is case-insensitive. "
+                              "Legacy names sgEQUAL / sgMIDPOINT do NOT exist in the official list "
+                              "and are rejected with a pointer to sgSAMELENGTH / sgATMIDDLE."),
         ],
     ),
     ToolSpec(

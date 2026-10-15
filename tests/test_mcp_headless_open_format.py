@@ -86,69 +86,99 @@ def _fea_request() -> dict:
 
 
 def test_mcp_prepare_fea_writes_without_loading_solidworks_automation(tmp_path: Path):
-    """@brief FEA MCP 工具只生成白名单输入，不加载 SolidWorks COM 自动化模块。"""
+    """@brief FEA 方法已移出 ⇒ 工具须**如实报 removed**，且不加载 SolidWorks 自动化。"""
+#: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+#:   业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+#:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+#:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+#:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ **是方法** ✗
+#:   ★ 已移出：★ `archive/inherited-methods/scripts/`（★ **只搬不删**）✓
     source = tmp_path / "fea.json"
     source.write_text(json.dumps(_fea_request()), encoding="utf-8")
     params = server.CadStudioFeaPrepareInput(input_path=str(source), output_dir=str(tmp_path / "fea-out"))
 
     payload = json.loads(server.cadstudio_prepare_fea(params))
 
-    assert payload["status"] == "pass"
-    assert Path(payload["artifacts"][0]["path"]).is_file()
+    assert payload["status"] == "removed"
+    assert "archive/inherited-methods" in payload["where"]
     assert server._automation_loaded is False
 
 
-def test_mcp_run_fea_uses_structured_runner_without_loading_solidworks(tmp_path: Path, monkeypatch):
-    """@brief FEA 执行工具只调用结构化求解器封装，不加载 SolidWorks 自动化。"""
+def test_mcp_run_fea_uses_structured_runner_without_loading_solidworks(tmp_path: Path):
+    """@brief FEA 方法已移出 ⇒ 工具须**如实报 removed**，且不加载 SolidWorks 自动化。"""
+#: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+#:   业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+#:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+#:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+#:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ **是方法** ✗
+#:   ★ 已移出：★ `archive/inherited-methods/scripts/`（★ **只搬不删**）✓
     source = tmp_path / "fea.json"
     source.write_text(json.dumps(_fea_request()), encoding="utf-8")
-    expected = {"status": "review_required", "stage": "review", "artifacts": []}
-    monkeypatch.setattr("scripts.fea_analysis.run_analysis", lambda *_args, **_kwargs: expected)
     params = server.CadStudioFeaRunInput(input_path=str(source), output_dir=str(tmp_path / "fea-run"), timeout_seconds=30)
 
     payload = json.loads(server.cadstudio_run_fea(params))
 
-    assert payload == expected
+    assert payload["status"] == "removed"
+    assert "archive/inherited-methods" in payload["where"]
     assert server._automation_loaded is False
 
 
-def test_mcp_run_fea_convergence_uses_whitelisted_sequence_runner(tmp_path: Path, monkeypatch):
-    """@brief 收敛工具只调用结构化序列执行器，不暴露任意求解器命令。"""
+def test_mcp_run_fea_convergence_uses_whitelisted_sequence_runner(tmp_path: Path):
+    """@brief 收敛方法已移出 ⇒ 工具须**如实报 removed**，且不加载 SolidWorks 自动化。"""
+#: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+#:   业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+#:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+#:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+#:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ **是方法** ✗
+#:   ★ 已移出：★ `archive/inherited-methods/scripts/`（★ **只搬不删**）✓
     source = tmp_path / "convergence.json"
     source.write_text("{}", encoding="utf-8")
-    expected = {"status": "review_required", "converged": False, "artifacts": []}
-    monkeypatch.setattr("scripts.fea_convergence.run_convergence_study", lambda *_args, **_kwargs: expected)
     params = server.CadStudioFeaConvergenceInput(
         input_path=str(source), output_dir=str(tmp_path / "convergence-out"), timeout_seconds_per_case=30
     )
 
     payload = json.loads(server.cadstudio_run_fea_convergence(params))
 
-    assert payload == expected
+    assert payload["status"] == "removed"
+    assert "archive/inherited-methods" in payload["where"]
     assert server._automation_loaded is False
 
 
-def test_mcp_create_ocp_loft_uses_restricted_backend(tmp_path: Path, monkeypatch):
-    """@brief OCP Loft MCP 只调用结构化几何封装，不加载 SolidWorks。"""
+def test_mcp_create_ocp_loft_uses_restricted_backend(tmp_path: Path):
+    """@brief OCP 放样方法已移出 ⇒ 工具须**如实报 removed**，且不加载 SolidWorks。"""
+#: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+#:   业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+#:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+#:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+#:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ **是方法** ✗
+#:   ★ 已移出：★ `archive/inherited-methods/scripts/`（★ **只搬不删**）✓
     source = tmp_path / "loft.json"
     source.write_text("{}", encoding="utf-8")
-    expected = {"status": "review_required", "geometryProduced": True, "artifacts": []}
-    monkeypatch.setattr("scripts.advanced_geometry_ocp.execute_ocp_loft", lambda *_args: expected)
     params = server.CadStudioOcpLoftInput(input_path=str(source), output_dir=str(tmp_path / "loft-out"))
+
     payload = json.loads(server.cadstudio_create_ocp_loft(params))
-    assert payload == expected
+
+    assert payload["status"] == "removed"
+    assert "archive/inherited-methods" in payload["where"]
     assert server._automation_loaded is False
 
 
-def test_mcp_create_ocp_surface_uses_restricted_backend(tmp_path: Path, monkeypatch):
-    """@brief 高级曲面 MCP 工具只调用结构化 OCP 后端。"""
+def test_mcp_create_ocp_surface_uses_restricted_backend(tmp_path: Path):
+    """@brief OCP 曲面方法已移出 ⇒ 工具须**如实报 removed**，且不加载 SolidWorks。"""
+#: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+#:   业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+#:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+#:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+#:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ **是方法** ✗
+#:   ★ 已移出：★ `archive/inherited-methods/scripts/`（★ **只搬不删**）✓
     source = tmp_path / "surface.json"
     source.write_text("{}", encoding="utf-8")
-    expected = {"status": "review_required", "geometryProduced": True, "artifacts": []}
-    monkeypatch.setattr("scripts.advanced_surface_ocp.execute_advanced_surface", lambda *_args: expected)
     params = server.CadStudioOcpSurfaceInput(input_path=str(source), output_dir=str(tmp_path / "surface-out"))
+
     payload = json.loads(server.cadstudio_create_ocp_surface(params))
-    assert payload == expected
+
+    assert payload["status"] == "removed"
+    assert "archive/inherited-methods" in payload["where"]
     assert server._automation_loaded is False
 
 

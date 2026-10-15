@@ -1,0 +1,1 @@
+[FAIL] 无法读取 origin/main，请确认上游锚点已配置

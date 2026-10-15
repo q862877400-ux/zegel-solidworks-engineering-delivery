@@ -1,0 +1,28 @@
+| 246 | **SolidWorks 自带示例图是「有内容的测试夹具」** —— 比自造图硬（2026-10-01，轮 318）。
+
+**位置**：`C:\Users\Public\Documents\SOLIDWORKS\SOLIDWORKS 2026\samples\introsw\*.slddrw`
+（★ 另有 `samples\tutorial\advdrawings\` 与 `samples\tutorial\api\`）。
+
+## ★★ 为什么它比自造强
+```
+★ 自造的空图**没有视图** ⇒ ★ 凡「读视图」的工具**得不到非空结果**（★ 判据落不了地）；
+★ 而示例图有**真视图、真图纸** —— ★ 真机：
+   `bolt-assembly.slddrw` ⇒ `list_views` **5 个**（`Drawing View1/2/3`…）
+   `box.slddrw`           ⇒ `list_views` **4 个**
+   ★ 两张都是 `1` 张 `Sheet1` ✓
+```
+
+## ★★★ 而它当场暴露了一处「探针假阳性」
+```
+★ 在**新建的空图**上跑 `sheets_summary` 报 **`TypeError: 'int' object is not callable`**
+   —— ★ 那**看起来像事实 227** 的「取或调」bug（★ 传了实参 ⇒ 先无参调一次、再拿返回值去"调用"）。
+★ 而在**干净图**上重跑：★ **四个函数全过** ——
+   `sheet_count` = 1 · `sheet_names` = `['图纸1']` · `current_sheet_name` = `'图纸1'`
+   · `sheets_summary` = `{'count': 1, 'names': ['图纸1'], 'current': '图纸1'}`
+⇒ ★★ **真因是探针**（★ 同一文档上先调了会抛异常的 `list_views`），**不是工具的 bug**。
+⇒ ★★★ **教训：在「还带着上一次失败状态」的对象上测出的失败，不算数** ——
+   ★ 那与「在干净环境里重跑一次」是两条不同的证据，★ **而后者才是判据**。
+```
+
+**依据**：`output/drawing-views-evidence.json`（★ **PASS 2/2**）· `output/sheets-summary-probe.json`（★ 四个全过）·
+`capabilities.yaml` 的 `drawing_views_and_summary`（★ 已升 `verified`：59 verified / 19 stitched）· 事实 227 / 242

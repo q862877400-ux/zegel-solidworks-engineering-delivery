@@ -1,0 +1,56 @@
+fix(阶段1): ★★★★★ **真机定案一个真 bug** —— ★ `Get/SetSystemValue3` 吃的**就是文档单位**、★ 而代码硬编码 `×/÷1000`；★ 顺带修掉**两个存量失败**
+
+■ 一 · ★ 起因：★ 上一轮（轮 55）跑 A4 证据时**顺带量到一处可疑**
+  > ★ `before_mm.current` 是 **20000.0**，★ 而那个尺寸的本意是 **20 mm** ✓
+
+■ 二 · ★★★★ 定案 —— ★ **两个独立证据交叉**（★ 我没有靠推理下结论）
+  | ★ 证据 | ★ 内容 |
+  |---|---|
+  | ★ **①** `tools/probe_dimension_unit.py` | ★ 新建文档 `GetUnits() = [**0**, 1, 8, 2, 0]` ⇒ ★★ **`swLengthUnit_e = 0 = `swMM`**；★ 而**厚 20 mm** 的板上，`GetSystemValue3` 原始回 **`(20.0,)`** ✓ |
+  | ★★ **②** `tools/probe_extrude_depth_unit.py` | ★ `extrude_boss(model,"Sketch1",**20.0**)` 建出的实体 **`size = [100, 60, **20**]`** ⇒ ★★ **实体真的是 20 mm 厚** ✓ |
+  ⇒ ★★★★ **∴ `GetSystemValue3` / `SetSystemValue3` 吃的就是**文档单位** —— ★ 不是米** ✓
+
+■ 三 · ★ 病灶（★ **两个相反方向的错、★ 互相掩盖**）
+  | ★ 位置 | ★ 旧代码 | ★ 后果 |
+  |---|---|---|
+  | ★ `_dimension_value_mm` | ★ `return float(raw) * **1000.0**`（★ 假定米）| ★★ 毫米文档下读数**大 1000 倍**（★ 20 → 20000）✓ |
+  | ★★ `update_dimension_mm` | ★ `SetSystemValue3(float(value_mm) / **1000.0**, …)` | ★★ **实际写进去的值小 1000 倍** ✓ |
+  | ★★★ 而"读回 ×1000" | ★ 又把它变回**看起来对**的 `35.0` | ★★★★ **所以它**看起来是对的、★ 实际全错**** ✓ |
+
+■ 四 · ★ 修法（★ **按文档单位换算**，★ 不再假定；★ **且向下兼容**）
+  ★ 新增 `_document_length_unit_scale(model)`：
+    ★ `swLengthUnit_e` → 倍数：`0(swMM) ⇒ **1.0**` · `1(swCM) ⇒ 10.0` · `2(swM) ⇒ 1000.0` ·
+      `3(swINCHES) ⇒ 25.4` · `4(swFEET) ⇒ 304.8` ✓
+  ★★ `_dimension_value_mm(..., *, model=None)`：★ **给了 `model` 就按单位算**；
+    ★★ **没给 ⇒ 回退旧行为 `1000.0`**（★ **不破坏既有调用方**）✓
+  ★★★ `update_dimension_mm` 里 `before` / `after` / `SetSystemValue3` **三处一起用同一个 `_scale`** ✓
+  ★★★★ **真机复核**：★ `before_mm.current` **20000.0 → `20.0`** ⇒ ★ **与实体一致** ✓
+
+■ 五 · ★★★ 而定案过程中**又挖出一个存量问题**（★ 如实记）
+  ★ `pytest tests/test_sw_document_data.py` 报 **2 failed** ⇒ ★ 我先用 `git stash` 判它是不是我引入的：
+    ★★ **撤掉本轮全部改动后** **同样 `2 failed / 8 passed`** ⇒ ★★★ **存量，不是我引入的** ✓
+  ★★ **而它有两个根因，逐个修掉**：
+    · ★ **根因 ①**：★ `_dimension_value_mm` 里 `from sw_connect import …` 是**裸顶层名**，
+      ★★ 而测试用 `from scripts import sw_document_data` ⇒ **`sw_connect` 不在 `sys.path`** ⇒
+      ★★★ **`ModuleNotFoundError`** ⇒ ★ 修成 `try: from .sw_connect … except ImportError: …`
+      （★ 与模块其他部分一致）✓
+    · ★ **根因 ②**：★ 假对象 `FakeDimension` **只有 `GetSystemValue2`**，★
+      ★★ 而**2026-10-03 那次换入口（`2` → `3`）没更新它** ⇒ ★ `AttributeError`
+      ⇒ ★ 补上 `GetSystemValue3`（★ 回**元组**，★ 照真机形态 `(0.01,)`）✓
+  ⇒ ★ **读数**：★ `tests/test_sw_document_data.py` **2 failed → 10 passed** ✓
+
+■ 六 · ★★ 新增测试（★ `tests/test_document_unit_scale.py` · **5 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★ **核心断言** | ★ `swMM`（`0`）⇒ 倍数 **1.0** —— ★ **这一条就是那个真 bug 的判据** ✓ |
+  | ★ 契约 | ★ `swM` ⇒ `1000.0` · ★ `swINCHES` ⇒ `25.4` ✓ |
+  | ★★ **负例** | ★ 读不到单位 ⇒ **回退 `1000.0`**（★ 明确的向下兼容、★ 不是静默成功）✓ |
+  | ★★ **核心断言** | ★ 模块里**不再有**硬编码的 `/ 1000.0` 或 `* 1000.0` ✓ |
+
+■ 七 · ★ 回归 + 收尾
+  ★ 相关回归（★ 我改了被多处调用的模块）：★ **`333 passed / 3 skipped`** ✓
+  ★★ 收尾链：**`release_check 第 1 轮 OK` · 5 passed** ✓
+  ★★★ **可复用判据（★ 本轮）**：★★★ **"两个相反方向的错"会让读数**看起来对** ——
+    ★ 所以**判"换算对不对"必须找一个**独立的量**（★ 本轮用的是 `bounding_box` 的 `size`）来锚定** ✓
+
+■ 八 · ★ `C_D_E` 的 🔴 16 条：★ **#1 · #2 · #3 · #4 · #7 · #9 · #10 完成** ⇒ **剩 9 条** ✓

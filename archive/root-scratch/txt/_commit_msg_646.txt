@@ -1,0 +1,46 @@
+fix(工具层): ★★★ 又抓到并修掉一条**经工具层调不通**的工具（缺 5 个必填形参）＋给检查器补**判据 ⑤**
+
+■ 一 · 怎么发现的（★ 来自 R3 探针的一次失败，顺着追下去）
+  `tools/probe_r3_tools.py` 跑 R3 四条时报
+  **`create_base_flange() missing 1 required positional argument: 'spec'`**。
+  ★ 追下去发现两件事，**都不是工具的错、而是我探针的错**（★ 已逐条改正，见 §三）：
+  ① ★ 我**漏应用 `param_alias`**（注册器 `tool_registry.py:493-498` 的口径是
+     `target = spec.param_alias.get(p.name, p.name)`；`alias[k] is None` = 由解析器消费、不进函数）；
+  ② ★ 我**漏跑 `pre_call` 与 `derived_args`**（同文件 `:510-523`）—— 而 `create_base_flange` 的
+     `spec` 形参**正是由 `derived_args` 供给的**。
+  ⇒ ★★ 两条都会把**好工具记成坏的**（★ 与事实 36 / 502 同族：**报错指向名字，真因在别处**）。
+
+■ 二 · ★★ 顺手写的静态检查器，抓出一条**真 bug**
+  我给 `tools/check_tool_param_binding.py` 加了**判据 ⑤**：
+  **「目标函数的必填形参，spec 必须声明」**。
+  · ★ 为什么必须有它：判据 ①②④ 问的都是「**声明了的名字有没有去处**」，
+    ★ **没有一条反过来问「函数要的东西，spec 给没给」**。
+  · ★ 豁免（写明理由、不静默）：该形参就是注入名；或 spec 有 `derived_args`（★ 静态判不了 ⇒ 只记数）。
+  · ★★ **命中并确认为真 bug**：`solidworks_delivery_pack_and_go_audit_matrix`
+    （`tool_specs_batch36.py`）**只声明了 3 个参数**，而函数要 **8 个** ⇒ 真机实测
+    `TypeError: build_pack_and_go_audit_matrix() missing 2 required positional arguments:
+     'associated_drawings' and 'outputs'`
+    （★ 另外 3 个是 `KEYWORD_ONLY`，Python 补上位置参数后**再报**）。
+  · ★ 修法：给那条 spec **补上 5 个 `Param`** ⇒ ★ **真机复验：调通了，返回 `dict`**；
+    ★ 检查器 **绑定不上的 11 → 5 → 0**（★ 5 的那一步是 ⑤ 的命中，修完即 0）。
+
+■ 三 · 我自己的两处探针缺陷（★ 都在本轮改正）
+  · `tools/probe_r3_tools.py` 的 `_call`：**逐字复刻注册器**（参数经 `param_alias` → 注入 →
+    `pre_call` → `derived_args`（★ 含"不得覆盖已直传参数名"的契约）→ 调函数）。
+  · `tools/check_tool_param_binding.py`：修掉**一处我自己的假阳性** ——
+    ★ 我把 `param_alias[k] = None` 当成「改名为 `None`」去查 ⇒ 报了 5 条；
+    ★ 它的真意是「**由解析器消费、不进目标函数**」⇒ 照仓内 `check_param_binding.py` 的口径先跳过。
+  · ★ 并把报错**分三类**打（`①声明名无去处` / `④注入键≠形参名` / `⑤函数要、spec 没给`）——
+    ★★ 我第一版把三者措辞混在一起，**自己把 ⑤ 的 5 条真命中误读成了 ① 的假阳性**（★ 差点放过一条真 bug）。
+
+■ 四 · 读数
+  | 指标 | 值 |
+  |---|---|
+  | `tools/check_tool_param_binding.py` | ★ **绑定不上的 0**（退出码 0）|
+  | 真机 | ★ `solidworks_delivery_pack_and_go_audit_matrix` **调通**，返回 `dict` |
+  | 收尾链 | ★ **`release_check 第 1 轮 OK` · 29 passed** |
+  ★ 覆盖率不变（**119/145**）—— 本轮修的是「**注册 ≠ 能跑**」这一类。
+
+★ 仍未验完（★ 如实记）：R3 四条的**前置**在本轮探针里仍没造出来
+  （`InsertStructuralWeldment5 创建失败`、基体法兰那张草图没建成）⇒
+  ★ **R3 四条仍算"未验证"**，★ 下一步是修探针的前置，不是改工具。

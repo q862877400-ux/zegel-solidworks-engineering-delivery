@@ -1,0 +1,74 @@
+| 372 | ★★★★★ **`AddLinkConnector` 的**正确调用形态找到了****（★ 从**五次全失败**走到**调用不报错**）—— ★ 而关键线索是**出厂程序集里的形参名 `VertexPoint*`**（★ 我此前没读）；★ 下一个维度是「**两个顶点要分属两个体**」（2026-10-03，轮 457）。
+
+## 一、★★★★★ 关键线索：★ **形参名**（★ 而出厂程序集里就有，★ 我此前没读）
+```
+★ 从 `SolidWorks.Interop.cosworks.dll` 读到的（★ `ICWLoadsAndRestraintsManager` · **45** 个成员）：
+   ```
+   ★ `AddLinkConnector( **VertexPoint**forFirstLocation: Object,
+                        **VertexPoint**forSecondLocation: Object,
+                        ByRef ErrorCode: Int32 ) ⇒ CWLinkConnector`   ← ★★ **arity 3**
+   ★ `AddPinConnector  ( DispArray**Comp**1, DispArray**Comp**2, ByRef ErrorCode )`  ← ★ 要**组件**
+   ★ `AddRigidConnector( PersistID**Face**Array, PersistID**TargetArray, ByRef ErrorCode )` ← ★ 要**面**
+   ```
+★★★ **而★ 那解释了事实 341**（★ 我此前对 B 组试过**五种给法**、全 `0→0`）：
+   ★ **我传给 `AddLinkConnector` 的是"面 / 组件"** —— ★★ **而它要的是**顶点**** ⚠✓✓✓
+```
+
+## 二、★★★★★ 真机三形态，而**三个报的错各不相同**（★ 那就是诊断信息）
+```
+   \| 形态 \| 结果 \|
+   |---|---|
+   | ★ **一个 `IVertex` 对象**（+ 普通整数 out） | `com_error(-2147352561, '**非选择性的参数。**')` |
+   | 单元素数组 `[vertex]` | `com_error(-2147352571, '**类型不匹配。**')`（★ 位置 1） |
+   | 点的三元组 `(x, y, z)` | ★ 同上 |
+★★★ **故两条读数**：
+   ```
+   ★ ① **数组 / 元组 ⇒ "类型不匹配"** ⇒ ★ **那两个形态是错的**（★ 它要**单个对象**）✓
+   ★ ② ★★ **对象形态报的是"非选择性的参数"** ⇒ ★ **那说明对象形态**对**了** ——
+     ★ **卡在**那个 out 参数**（★ 而★ 它**不是"类型不匹配"**）✓
+   ```
+```
+
+## 三、★★★★★ 修法：★ out 参数要用 **`VARIANT(VT_BYREF | VT_I4)`** ⇒ **调用不报错了** ✓
+```
+★★ 依据（★ 本仓**已有先例**）：★ `tools/audit_byref_args.py` 记着
+   `v = VARIANT(VT_BYREF | VT_R8, 0.0)` → `get_com_member(..., v)` ✓
+★ 真机：★ `vertex_objects` + `VARIANT(VT_BYREF | VT_I4)` ⇒ ★★ **没有异常了**（`err` 为空）✓✓✓
+   ★ 而★ 另两个形态**仍"类型不匹配"** ⇒ ★ **排除** ✓
+⇒ ★★★ **即：★ `AddLinkConnector` 的**正确形态**是**：
+   ```
+   ★★ `lm.AddLinkConnector(vertexA, vertexB, VARIANT(VT_BYREF | VT_I4, 0))`
+      ★ 其中 vertexA / vertexB 是 **`IVertex` 对象**（★ 不是数组、★ 不是坐标）✓
+   ```
+```
+
+## 四、★★★★★ 而**判据现在成了瓶颈**（★ 本阶段的命题又来了一次）
+```
+★ 三形态都报 `Count` **0 → 0** · 特征树 **7 → 7** ⇒ ★ **没建成**
+★★ 而★ `Count` 是**可用的读数**（★ 稳定回 0，★ 不是 -1）✓ —— ★ 而本仓旧包装用的正是它 ✓
+★ 而★ 我另加那条 `GetLoadsAndRestraints` 读数是**坏的**：
+   ```
+   ★ `TypeError: 'method' object is not iterable` ⇒ ★ 我对它的读法错了
+     （★ `get_com_member` **无实参**时会"取或调"，★ 而这次它**取了方法本身**）⚠
+   ```
+⇒ ★★ **故"它建成没有"这一轮读不出来** —— ★★ **而那正是本阶段的命题**：
+   ★ **判据可能比能力更容易错** ⇒ ★ 而★ 我**这次在正确的时刻**认出来了（★ 没去乱改调用）✓
+```
+
+## 五、★ 而**下一个维度**是具体的：★ 「两个顶点要分属**两个体**」
+```
+★★ 依据（★ 与 `rigid` 那条**已验**的路同形）：
+   ```
+   ★ **`AddRigidConnector` 在**两个体**上才成**（★ 而★ 在**单体**上它"成功返回却不建" —— **事实 338**）
+   ★★ 而它的形参名叫 `PersistIDFace**Array**`；★ 而 `AddPinConnector` 的形参**直接叫 `DispArray**Comp**1/2`**（两个组件）
+   ⇒ ★★★ **故"连接件连的是**两个东西**"** —— ★ 而★ `AddLinkConnector` 的两个顶点**很可能也要分属两个体** ✓
+   ```
+★ 真机：★ 我这一轮的测试件**体数 = 1**（★ 一个 16×16 拉伸 ⇒ 单体）⇒ ★★ **故那个维度**根本没试到**** ⚠
+   ★ **下一轮的动作**：★ **先建两个不相连的凸台**（一个零件两个体）⇒ ★ 再各取一个顶点 ⇒ 再调 ✓
+★ ⚠ 而**按事实 53**：★ 本探针这一轮已改 **5 次** ⇒ ★ **停手**，★ 而把上面那条留作**下一轮的单动作** ✓
+```
+
+**依据**：`output/link-connector-vertex-evidence.json`（★ 三形态各自的错 · `Count` 0→0 · 体数 1）·
+`tools/prove_link_connector_vertex.py` · 出厂程序集 `SolidWorks.Interop.cosworks.dll` 的**形参名**
+（★ `VertexPoint*` · 45 个成员）· `tools/audit_byref_args.py`（★ `VARIANT(VT_BYREF\|VT_R8)` 先例）·
+事实 33 / 53 / 338 / 341 · `plan-200r-v3.md` §七 W2（★ 那一条是 `1/2`）

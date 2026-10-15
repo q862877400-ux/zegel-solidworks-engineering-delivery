@@ -1,0 +1,61 @@
+fix(阶段1): ★★★★★ **`create_extruded_surface_report` 从「建不出」变成「建得出」** —— ★ 补官方 Remarks 要求的**选草图**；★ 而**正解是复用本仓既有的四级回退**
+
+■ 一 · ★ 起点（★ 上一轮的否定结果）
+  ★ 真机跑 `create_extruded_surface(depth_mm=10.0)` ⇒ **`ok: False` · `new_features: []`** ✓
+  ★★ **回原文查到真因**：★ `IFeatureManager.FeatureExtruRefSurface3` 的 **`## Remarks` 逐字**：
+    > ★ 「Before calling this method, **select the entities for the extruded surface**
+    >   using `IModelDocExtension::SelectByID2`.」
+    ★★ 而 **Base** 的 **mark 表逐字**：★ **2D/3D 草图 ⇒ mark `0`** · ★ 草图段 ⇒ `0` 或 `4` ✓
+  ★★★ **⇒ 那是**前置**问题，★ 而更糟的是：★ 本函数**根本没有选中步骤**
+    （★ `sketch_name` **只被记进返回值**）✓
+
+■ 二 · ★★★★ **而第一版修法是错的**（★ 值记 —— ★ 那是本轮最有价值的一课）
+  ★ 我**自己写了一级**选中：★ `SelectByID2("草图1", "SKETCH", 0,0,0, …)` ✓
+  ★★ **真机结果**：★ `select_returned: **False**` · ★ `selection_count: **0**` ⇒
+    ★★★ **`stage: select` · `error: ★ 按名字选草图回读计数为 0 ⇒ 前置未成立`** ✓
+  ★★★★ **而 `extrude_boss` 明明能建成** ⇒ ★ 它的**秘密**是：★
+    **它走 `sw_part._ensure_sketch_selected` —— 本仓既有的**四级回退**选中器**：
+      ① ★ `_capture_sketch_ref`（★ **活动草图对象** ⇒ 按**对象**选）·
+      ② ★ `_find_cached_sketch_ref`（★ 缓存）·
+      ③ ★ `_select_sketch_feature_by_name`（★ `FeatureByName`）·
+      ④ ★ `_select_first_candidate(…, "SKETCH")`（★ **中英文候选名**）✓
+    ⇒ ★★★ **我那个"一级选中"只是第 ④ 级的一种形式、★ 而且没用候选名** ⇒ **四级一次都没走** ✓
+  ★★★★ **⇒ 可复用判据**：★★★ **本仓已有的东西，先找、再写** ——
+    ★★ 而且**判据可核**：★ **同一件事若别处已经做成过（★ `extrude_boss` 建成），
+      ★ 那它的做法就在仓里** ✓
+
+■ 三 · ★ 修法
+  ★ `create_extruded_surface_report` 现在**复用** `sw_part._ensure_sketch_selected`
+    （★ 并把**回读选区计数**写进返回值 —— ★ 事实 8：★ 不信返回值、只看回读）✓
+  ★★ 保留**明确的早退**：★ 四级回退走完仍选不中 ⇒ `ok: False` + `stage: "select"` +
+    ★ **写明官方依据**（★ 不静默往下调）✓
+  ★★★ 并**在代码里写明官方 Remarks 与 mark 表**（★ 否则后人不知道为什么要选）✓
+
+■ 四 · ★★★★★ **真机复核**（★ 走 `sw_guard` · ★ `PYTHONIOENCODING=utf-8`）
+  ```
+  ★ create_extruded_surface(depth_mm=10.0) ⇒ ok: **True** · new_features: **['曲面-拉伸1']**
+  ★ 树 6 → 7 · selection: 已走四级回退选中 '草图1' · 回读选区计数 = **1**
+  ★ GetUnits = [0, 1, 8, 2, 0]（★ 毫米文档）
+  ```
+  ⇒ ★★★★ **从「建不出」变成「建得出」** ⇒ ★ **一个实打实的修复** ✓
+
+■ 五 · ★★ 而**同一探针也如实记下两件事**（★ 未定案的继续留账）
+  ★ ⚠ **① `thicken_surface(thickness_mm=2.0)` 仍 `ok: False`**：★
+    `solid_before/after: **0**` · `surface_before/after: 1` ⇒ ★★ **加厚没有产生实体**
+    ⇒ ★★★ **它也有自己的前置问题**（★ 与本轮同一类）⇒ **待下一轮回原文查它的 `## Remarks`** ✓
+  ★★ ⚠ **② 所以 `*0.001` 的单位问题**仍**未定案** ★ —— ★ 因为**量不到曲面体的尺寸**
+    （★ `get_bounding_box` 只量实体、★ 而曲面不是实体）✓
+    ★★★ **如实留在事实 517 的待核项上**（★ 铁律 5：★ 未核不写成缺陷）✓
+
+■ 六 · ★★ 新增测试（★ `tests/test_surface_extruded_sketch_selection.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★ **核心断言** | ★ **必须复用** `_ensure_sketch_selected`（★ 不许再写一级选中）✓ |
+  | ★ 契约 | ★ **必须回读选区计数**（★ 事实 8）✓ |
+  | ★★ **负例** | ★ 选不中 ⇒ **必须** `ok: False` + `stage: "select"`（★ 不许静默往下调）✓ |
+  | ★ 契约 | ★ **必须写明官方 Remarks 与 mark 表**（★ 否则后人不知道为什么要选）✓ |
+
+■ 七 · ★ 回归 + 收尾
+  ★ 相关回归：★ **76 passed / 11 skipped** ✓
+  ★★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★★ **`C_D_E` 的 🔴 16 条**：★ **#1 · #2 · #3 · #4 · #7 · #9 · #10 完成** ⇒ **剩 9 条** ✓

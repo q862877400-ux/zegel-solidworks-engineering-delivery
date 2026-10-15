@@ -1,0 +1,37 @@
+规格 209 · B4-5：模型标注插入工程图（idx 205）—— 如实记 stitched（可达 + 回读可用，未产出非空插入）
+
+来源：docs/recon-207/adjudication.md §九（idx 205 model_annotations）。
+
+改了什么
+· scripts/sw_drawing_create_missing.py 追加 insert_model_annotations + 两张常量表
+  （swImportModelItemsSource_e 四值 · swInsertAnnotation_e **26 个成员一个不漏**）
+· mcp-server/tool_specs_batch96.py（新）+ register_capabilities ⇒ 445 个工具
+· tests/test_tool_specs_batch96.py（9 条：26 成员逐值断言 + 调用序契约 + 负例）
+· tools/probe_spec209_b4_model_annotations.py（真机探针）· tools/add_s209_b4e_capabilities.py
+· capabilities.yaml +1 条（drawing_model_annotations，**stitched** ⇒ 123 条）
+
+★ level = stitched（不是 verified）—— 原因已查明且如实
+真机只验到"可达 + 回读可用"：
+· 调用不抛异常、回的是数组（长度 0）
+· IView::GetAnnotationCount() 前后回读 0 → 0
+· 两个负例都大声报（空图纸 / 什么都没让它插）
+★ 没能产出非空插入，原因是**数据相关**的：我们的零件是纯坐标画出来的 ⇒ 一个尺寸都没有；
+  而本仓的 add_horizontal_dimension / add_vertical_dimension 都回 None
+  （官方 AddDimension2 摘要逐字 "for selected entities" ⇒ 要先选中实体）
+⇒ 夹具里没有可插的东西。★ 这与"后端到不了"必须分开记账。
+
+★ 两处我自己写错并修掉（都记进 capabilities.yaml 的 limitations）
+① 把 _find_view 的 (view, error) 元组当成视图对象用 ⇒ 报"取不到视图名"（指不出真因）
+② AllViews=False 时无脑清选区 ⇒ 官方要的是 "currently selected drawing view" ⇒ 回空数组
+   ★ 已加静态断言 if all_views: 钉住
+
+★ 落点偏离裁决书建议（已写进 tasks.md，不静默）
+它建议 scripts/sw_drawing.py —— 而那是 29 行的**桥接壳**（exec_module 加载 subskill 再
+globals().update），往里加会被覆盖；实际落 sw_drawing_create_missing.py ——
+裁决书自己要求"复用该文件已有的读侧助手"，那就只能落那里。
+
+门禁
+· check_specs(all_specs()) = 445 个工具 · 0 问题；契约测试 9 passed
+· capabilities.yaml 123 条（37 行纯插入 / 0 删除）
+· 收尾链 16.0 s（★ 链尾自动关了本会话拉起的 SolidWorks）
+· ⚠ 仍有一处**既有**红（非本次改动）：tools/verify_union_349.py:112

@@ -1,0 +1,49 @@
+fix(阶段1): ★★★★★ **A4 存量 4 → 2** —— ★ **真机跑掉了 `parameter_updates`**；★ 并顺带量到两处**可疑**（★ 未定性）
+
+■ 一 · ★ 本轮做了什么（★ 对真缺口**真机跑一遍**）
+  ★ 新增 `tools/probe_a4_runtime_evidence.py`，★ 走 `sw_guard` 真机执行：
+    ★ `python tools/sw_guard.py --timeout 300 -- python tools/probe_a4_runtime_evidence.py` ✓
+  ★★ **结果**：★ `ok: true` · ★ **`sw_alive: true`** · ★★ **零弹窗**（`dialogs: []`）· ★ 2.7 s ✓
+  ★★★ 证据文件：★ **`output/a4-runtime-evidence.json`** ✓
+
+■ 二 · ★★★★ `parameter_updates` —— **真机验证通过**（★ 已补进 `evidence`）
+  ★ 步骤：★ 建 100×60×20 板（★ 草图矩形 + `extrude_boss(20mm)`）⇒
+    ★★ **改 `D1@凸台-拉伸1` 为 `35.0`** ⇒
+    ★★★ 读数逐字：★ `set_status: **0**` · ★ `after_mm.current = **35.0**` ✓
+  ★★★★ **判据**：★ **回读等于所要求的值**（★ 且 `set_status == 0`）✓
+  ★ **顺带探明了尺寸名的规律**（★ 那对后来人有用）：
+    ★★ `D1@草图1` / `D2@草图1` / `D1@Sketch1` / `D2@Sketch1` **全部 `LookupError`**；
+    ★★★ **成功的那个在 `D1@凸台-拉伸1`**（★ 即**拉伸特征的尺寸不在草图里**）✓
+  ⇒ ★★ `parameter_updates` 的 `evidence` **1 → 3 条** ✓
+
+■ 三 · ★★★★★ 而**同一个探针**顺带量到**两处可疑**（★ **都未定性，如实记下**）
+  ★ **可疑 ①**：★ `parameter_updates` 那次调用的 **`before_mm.current` 是 `20000.0`**，
+    ★★ 而该尺寸的**本意是 `20 mm`**（★ `extrude_boss(..., 20.0)`）⇒
+    ★★★ **20 → 20000 正好是 `×1000` 两次** ⇒ **可能是 `_dimension_value_mm` 的单位换算多做了一次** ✓
+    ★★★★ **而我不写成缺陷**（★ 铁律 5）—— ★ 因为**也可能是我读错了对象**
+      （★ 那个名字其实指**别的**尺寸）⇒ ★ **只把这次读数如实记进 `capabilities.yaml` 的 evidence** ✓
+  ★★ **可疑 ②**：★ `custom_properties_and_bom` ⇒ ★ `set_custom_properties` 回的
+    `properties[i]` 里 **`verified: True`** **而** **`readback_value: None`** ⇒
+    ★★★ **两者矛盾** —— ★ 一个说"验过了"、★ 一个说"没读到值" ✓
+    ★★ 而 `write_return_success: True` · ★ `n_asked: 3` · ★ `n_returned: 3` ✓
+    ★★★ **⇒ 所以是"读法"还是"字段"的问题，★ 要另核**（★ 同一轮里我甚至怀疑过是自己读错——
+      ★★ 第一版我用 `read_custom_property` 去读，★ 那一路也回 `None`）✓
+
+■ 四 · ★★ 读数的账
+  ★ A4 存量：★ **4 → 2**（★ `BASELINE = 2`）✓
+  ★★ 剩下的 2 个：★ `custom_properties_and_bom`（★ **真缺口 · 探针已跑但未定性**）·
+    ★★ `autocad_script_backend`（★ **口径问题** —— ★ 非 SolidWorks 线）✓
+
+■ 五 · ★★★ 可复用判据（★ 本轮新增）
+  > ★★★★ **写探针时，"我读错了"与"能力坏了"长得一模一样** ——
+  > ★ 所以**第一步不是改能力、★ 是把中间量全部打进证据文件** ✓
+  ★ 本条里：★ 若没有把 `tried`（★ 每次尝试的原话）与 `write_return`（★ 原样）落盘，
+    ★★ 我会把 `readback=None` 读成"自定义属性写不进去" ⇒ ★★★ **而真因是**我读了另一个函数**** ✓
+  ★★ **∴ 判据**：★★★ **探针必须把"每一次尝试 + 原始返回值"落盘** ——
+    ★ 只落"最终 ok"就会把**两类不同的失败**混成一种 ✓
+  ★★★ 与**事实 62**（★ 负例是门禁有效的唯一证明）**互补**：
+    ★ 62 说"门禁要能抓"、★ **本条说"探针要能被读懂"** ✓
+
+■ 六 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 3 passed** ✓
+  ★★ **`C_D_E` 的 🔴 16 条**：★ **#1 · #2 · #3 · #4 · #7 · #9 · #10 完成** ⇒ **剩 9 条** ✓

@@ -121,6 +121,37 @@ def check_sources() -> list[str]:
     return bad
 
 
+def normalize_generated_text(text: str) -> str:
+    """★ 把**非数据字段**（生成日期/时间戳）换成占位，再用于比对生成物。
+
+    ## 为什么必须有它（★ 2026-10-10 实测 · 规格 295）
+
+    R8 做的是**逐字节比对**（「重生成出来的」vs「盘上那份」），而
+    `scripts/gen_level_audit.py:81` **把 `date.today()` 写进正文**：
+
+        > 生成日期：2026-10-10 ｜ 数据源：`capabilities.yaml`（`schema_version` = `2.0`）
+
+    ⇒ ★★ **跨过午夜 ⇒ 即便数据零变化，两份也必然不同** ⇒ **每天一次假红**。
+    ★ 实测：只改那一个日期字段（数据一字不改）⇒ `[FAIL] … 与最新数据**不一致**`；
+    ★ 而 `git diff` 只有 **2 行**、只差那个日期。
+
+    ⇒ ★★★ **定则：比生成物时先剥掉时间戳/日期** ——
+      否则「日期变了」被误判成「数据变了」，而**假红会淹没真红**。
+
+    ⚠ **不是静默吞掉**：只有**已知的非数据字段**被替换成占位（字段名保留），
+      其余一字不动 ⇒ ★ **真数据变化照样报红**（判据 `test_real_data_difference_is_still_red` 守着）。
+
+    ★ 与 `docs/AUTO_HANDOFF.md` ③ 第 **74** 条同源（上一轮记下的坑，本轮修）。
+    """
+    #: ★ 只认「字段名 + 值」的形状；★ 字段名保留、只把值换成占位
+    #:   · 生成日期：2026-10-10
+    #:   · 生成时间：2026-10-10 12:34:56
+    text = re.sub(r"(生成日期\s*[:：]\s*)\d{4}-\d{2}-\d{2}", r"\g<1><DATE>", text)
+    text = re.sub(r"(生成时间\s*[:：]\s*)\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}",
+                  r"\g<1><TIMESTAMP>", text)
+    return text
+
+
 def check_docs() -> list[str]:
     """规范与地图必须存在，且地图是生成物；**R8 的等级审计也要在且是最新的**。"""
     bad: list[str] = []
@@ -137,6 +168,10 @@ def check_docs() -> list[str]:
     #     「等级已经审计过了」，**而审计根本没发生**（「文档串与代码不符比没有文档更糟」）。
     #   ⚠ 判据是**内容一致**（不是存在）：把当下数据重新生成一遍，逐字节比对
     #     ⇒ 「忘记重生成」当场变成红灯，而不是等评审时才发现。
+    #   ★★ **2026-10-10（规格 295）订正**：比对前**先剥掉非数据字段**（生成日期/时间戳）——
+    #     ★ 生成器**应当**记录生成时间，而「日期变了」**不是**「数据变了」
+    #     ⇒ 不剥的话**每天一次假红**（★ 假红会淹没真红）。
+    #     ★ 归一化在 `normalize_generated_text()`，★ 只替换**已知的**非数据字段。
     audit = ROOT / "docs" / "union-level-audit.md"
     if audit.is_file():
         gen = ROOT / "scripts" / "gen_level_audit.py"
@@ -148,9 +183,12 @@ def check_docs() -> list[str]:
                 _spec.loader.exec_module(_mod)
                 want = _mod.build(json.loads(
                     (ROOT / "capabilities.yaml").read_text(encoding="utf-8")), sys.modules[__name__])
-                if want != audit.read_text(encoding="utf-8"):
+                #: ★★ 两侧都归一化（★ 生成器写「今天」、盘上那份写「昨天」⇒ 都换成占位）
+                if normalize_generated_text(want) != normalize_generated_text(
+                        audit.read_text(encoding="utf-8")):
                     bad.append("docs/union-level-audit.md 与最新数据**不一致** —— "
-                               "跑 `python scripts/gen_level_audit.py` 重生成（R8）")
+                               "跑 `python scripts/gen_level_audit.py` 重生成（R8）"
+                               "（★ 已忽略**非数据字段**：生成日期/时间戳）")
             except Exception as exc:  # noqa: BLE001 —— 生成器自身坏了要说出来，不能吞
                 bad.append("R8 新鲜度检查无法执行（生成器报错）：%s: %s"
                            % (type(exc).__name__, exc))

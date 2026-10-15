@@ -88,10 +88,14 @@ def test_hem_real_member_name_is_used_not_the_external_hallucination():
 
 
 def test_hem_position_and_relief_tables():
-    """★ 官方 `swHemPositionTypes_e`（Inside=1 · Outside=2）与 `swSheetMetalReliefTypes_e`
-    （Rectangular=1 · Tear=2 · Obround=3 · None=4 · TearBend=5）逐值对齐 ✓"""
+    """★ 官方 `swHemPositionTypes_e` 与 `swSheetMetalReliefTypes_e`
+    （Rectangular=1 · Tear=2 · Obround=3 · None=4 · TearBend=5）逐值对齐 ✓
+
+    ★★ 2026-10-08（spec 223）：`HEM_POSITIONS` 是**两源冲突** —— md 写 `Inside=1/Outside=2`，
+      而**出厂反射**写 `0/1` ⇒ ★ 按**铁律 4**（冲突以出厂类型库为准）取 **0/1**。
+      ⚠ 真机未复核（`create_hem` 五种形态全 `None`，事实 34/53）。"""
     from sw_sheet_metal import HEM_POSITIONS, HEM_RELIEFS, HEM_RELIEF_TEARS
-    assert HEM_POSITIONS == {"inside": 1, "outside": 2}, HEM_POSITIONS
+    assert HEM_POSITIONS == {"inside": 0, "outside": 1}, HEM_POSITIONS
     assert HEM_RELIEFS == {"rectangular": 1, "tear": 2, "obround": 3, "none": 4,
                            "tear_bend": 5}, HEM_RELIEFS
     assert HEM_RELIEF_TEARS == {"rip": 1, "extend": 2}, HEM_RELIEF_TEARS

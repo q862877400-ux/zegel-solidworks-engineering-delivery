@@ -1,0 +1,55 @@
+docs(支线): 100 路 Bunny 扫描的产出是「我给的判据有洞」——四条，逐条带族与个数
+
+■ 一 · 这一轮到底跑成了什么
+  · 用 `workflow` 扇出 **100 路**子代理，每路 `provider=opencode-zen` / `model=space-bunny-free`（Bunny），
+    读一个接口族的全部成员 `.md`，按我给的**三条判据**计数。
+  · **实际回 99 路、失败 1 路**（`ILocalLinearPatternFeatureData`）。守卫报的是
+    `{expected: 100, requested: 100, returned: 99, failed_families: [...]}`。
+  · ★ **但这一批的直接产出不是数字，是那 99 路一致指出的「判据有洞」** ——
+    四条，都在 8 个以上的族里独立复现，不是偶发。
+
+■ 二 · 四条洞（详见 `docs/recon/family-scan-100-criteria-defects.md`）
+  ① **指针串常常不在 `## Returns` 段** ⇒ 按字面系统性漏计：
+     `IMacroFeatureData` **17 个全在 `## Parameters`**（`## Returns` 里一个都没有 ⇒ 报 pointer=0）·
+     `IModelDocExtension` 9 个（10 而不是 19）· `ILoftFeatureData` 3 个 ·
+     `ILinearPatternFeatureData` 4 个（4 → 8）· `IFace2` 3 个 · `ISweepFeatureData` 2 个。
+  ② **废弃标记有变体** ⇒ 严格「行首 `Obsolete.`」漏计：
+     `INote` 13（带句点）vs **31**（含 `Obsolete for documents created in SOLIDWORKS 2016 and later.`
+     那 18 个）· `IModelView` 11 vs 15（`Obsolete and not superseded. …` 4 个）——
+     而那 4 个里有两个**因此被算进了「零参可读」**。
+     同时 **不是所有族都有差异**（`IConfiguration`/`IAssemblyDoc`/`IBody2`/`ISketch` 报严格与宽松一致）⇒
+     不能一刀切说全部漏计。
+  ③ **「零参可读」把属性也算进去 ⇒ 虚增，且幅度极大**：
+     `IDSPBRMaterial` **52 个成员 zero=52 而 kind 全是 property** ⇒ 该列**退化成等于成员总数**；
+     `IRayTraceRendererOptions` 35 里 **34 个是属性**（真方法只有 `UpdateGraphics`，它自己注明若只认 `X()` 则为 1）；
+     `IWizardHoleFeatureData2` 65 里只有 5 个真方法。
+     ⇒ **同一个列名在两族里含义完全不同 ⇒ 不能跨族比较。**
+  ④ **官方原文有笔误**：`IDrawingDoc` 的 `IGetPenInfo` 写的是 **`in-porcess`**（`process` 拼错）
+     ⇒ 按字面串判不算指针、于是被算进「零参可读」；该路自己注明按纠正口径 pointer 应为 4、零参应为 78。
+
+■ 三 · 另外两类是**数据本身的形状**，不是判据的洞
+  · **空壳页**（只有 YAML frontmatter + 标题，无 Signature、无 Returns）：至少 8 个族报出，
+    最多的 `IModelDoc2` 有 **7 个**、`IModelDocExtension` **9 个**。
+    ⇒ 它们**计入 `members_total` 但不落任何一类** ⇒ 「三类之和 ≠ 成员总数」是**应然**。
+  · **大量成员没有 `## Returns` 段**（多为 `void`）：`IDrawingDoc` 162 个 · `ISldWorks` 104 个 ·
+    `IMacroFeatureData` 38/84 ⇒ 判据 2 在这些文件上**无从适用**，各族都按「无该字符串」记为非指针并写明。
+
+■ 四 · 结论（怎么用、以及一条更重要的元结论）
+  · **不许拿 `zero_arg_read` 排优先级**：洞③ 让它虚增（属性算成方法）、洞① 也让它虚增
+    （真正读不到的指针接口留在里面）⇒ **两个方向都会错**。
+  · ★ **元结论**：把判据交出去批量执行，能得到**我自己逐个读发现不了的样本量** ——
+    洞①在 8 个以上的族里独立复现、洞③ 让一整族整列退化，这些靠人工读是抓不到的。
+    这条比这一批的数字值钱。
+  · **修法待主线定，不擅改已发布数字**（合并两段会立刻改 `pointer`，如 45 → 46）：
+    指针改成**两段分别报**、废弃同时报**严格与宽松**、零参**拆成方法与属性且永不合并**。
+
+■ 五 · 两条通道教训（本批的代价换来的）
+  · 上一批 175 KB 的结果**挂在 job 返回通道上，被截断在 60,159 字节丢了**
+    （落盘文件第 1055 行逐字就是 `… [truncated: 115202 more characters]`）。
+    ⇒ **大批量产物不要走返回通道**：重跑已改成**每路自写一个
+    `docs/recon/families/<族>.json`**，返回只给短数字。
+    ⇒ 可复用判据：**凡是"结果要能完整落盘"的批量活，产出必须落成文件，
+      返回通道只传摘要** —— 与"证据要是路径而不是散文"同族。
+  · ★ **差点覆盖另一个对话的文件**：我想写 `_commit_msg_810.txt`，而它**已经是另一个对话
+    的提交信息**（SPEC202 T302+T303）—— 文件系统那道「先读再写」的策略挡住了我。
+    ⇒ **两个对话同仓时，临时文件名也要带自己的前缀**（本文件改用 `_cm-bunny-scan100.txt`）。

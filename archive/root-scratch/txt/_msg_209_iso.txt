@@ -1,0 +1,32 @@
+规格 209 · 收口（续）：修好收集期导入失败 + 定性"顺序污染"
+
+★ 全量 pytest 从 38 failed / 7 errors 降到 18 failed（2105 passed），本轮再定位一处的根因。
+
+改了什么
+· tests/test_sw_part_sketch_selection.py：给 `sys.modules["sw_connect"]` 的**桩**补上
+  `safe_get_com_member`（★ 真模块有这个成员，桩里没有 ⇒ `import sw_part` 在**收集期**就炸）。
+  ★ 这条桩的注释里本来就写着「桩要跟着真模块走」—— ★★ **同一处又栽了一次**
+  （`scripts/sw_feature_readback.py` 后来加了 `safe_get_com_member`，是阶段3/5 那条线加的，
+  见 `git log -S safe_get_com_member -- scripts/sw_feature_readback.py`）。
+  ⇒ 结果：该文件从 **收集期 ERROR + 2 failed** 变成 **8 passed** ✓
+
+★★ 仍未修（根因已定性，下一轮做）
+`tests/test_sw_part_sketch_selection.py` **把假 `sys.modules["sw_connect"]` 泄漏给了后续测试**
+（导入完不还原）⇒ 后面的测试拿到的是**假模块** ⇒ 成批变红。
+★ 证据（可复现）：
+  · `python -m pytest tests/test_tool_specs_batch92.py` ⇒ **25 passed**
+  · 跟在上面那个文件之后跑 ⇒ **成批 FAILED**
+⇒ ★ 修法：导入完 `sw_part` 后**还原/删除**那两个 `sys.modules` 假条目（★ 要确认 `sw_part`
+  没有在调用期再懒导入 `sw_connect`；★ 有风险 ⇒ **不在本轮余量里硬改**，已列下一轮第一件）。
+
+★★ 仍未修（非本次改动，已逐条定性）
+· tools/verify_union_349.py:112 的既有红（check_negative_input_selfproof）
+· test_rule2_length_suffix_is_enforced（solidworks_view_set_frame/top_px 的理由措辞）
+· test_sw_connect_open_document（step_import 的替身返回 bool）
+· test_sketch_slot_params（剥注释后解析不出 CreateSketchSlot 实参）
+· test_tool_specs_batch79（17 个宏工具没全进 specs）
+
+门禁
+· 全量：18 failed / 2105 passed / 20 skipped（444.76 s）
+· 本轮定点复验：test_sw_part_sketch_selection 8 passed · batch92 单独 25 passed
+· ★ 规格 209 的 15 件活**全部收口**，逐条证据在 specs/209-union-adopt-18/tasks.md

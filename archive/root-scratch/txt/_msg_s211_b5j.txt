@@ -1,0 +1,45 @@
+规格 211 · B5 翻案收口：登记 `curve_driven_pattern` + ★★ 给「官方页三样」补上**第 ④ 样**
+
+一、★ 登记
+· ★ `capabilities.yaml`：★ 新增 **`curve_driven_pattern`** ⇒ ★★ **共 134 条**
+  ★★ **`stitched` 19 → 20** ✓（★ **取 `stitched` 而非 `verified`** —— ★ **两档有效读数皆不建** ✓）
+· ★ 条目带：★ `source_evidence` 5 条（★ 含**完整 mark 表** + **枚举逐字** + **NOTE 逐字** ✓）·
+  ★ `evidence` 4 条（★ 两步真机 + **三成因逐条** ✓）· ★ `limitations` 9 条 ✓
+· ★★ **`limitations` 里最要紧的三条**：
+  ★ ① **"必须精确，不许说三档全试过"**（★ 两档有效 / 第三档无效 ✓）
+  ★ ② **"布尔字段第三次救命"** ✓
+  ★ ③ **"这是一次翻案的兑现"** + 那条定则「**某个入口要 ACL ≠ 这个能力要 ACL**」✓
+
+二、★★★★★ **本批的方法论收获：给「官方页三样」补第 ④ 样**（★ 落到它的家）
+★ 家 = `docs/official-docs-first.md`（★ **One home per fact** ✓）
+★★ 新增第 ④ 样：★ **`## Parameters` 里每个枚举形参的 `C:\swapi\enums\<枚举名>.md`** ✓
+★★★ **起因是一次真实误判**（★ 逐字记进那份文档）：
+· ★ 我读完了 `FeatureLocalCurveDrivenPattern` 的**签名**与 **`## Remarks` 的 mark 表** ✓
+· ★★ 而**没读** `ReferencePoint` 那个形参的**枚举** ✗ ⇒ ★ 取了 `0`
+· ★★★ 一读枚举才看到：★ **`swLocalSketchPatternSelectedPoint = 0`** ——
+  ★★ 而 **`## Remarks` 的 NOTE 明写**：★ 取这一档时「the selected reference point
+  **must be a vertex**」✗ ⇒ ★ **那正是"仍不建"的那处前置缺口** ✓
+· ★★ **对照**：★ 同一枚举的 `BoundingBoxCenter = 1` 与 `ComponentOrigin = 2` **都不需要选点** ✓
+  ⇒ ★ **换成 1 才是有效实验** ✓
+⇒ ★★★ **定则（写进那份文档）**：
+  ★★ **枚举形参的"哪一档需要额外前置"写在枚举页里，★ 而签名与 Remarks 都不一定说** ✓
+  ★ **取一档之前，先读那一档的名字与它的 NOTE** ——
+  ★★ **因为「档位选错」与「能力不行」在读数上**长得一模一样**** ✓
+
+三、★★ **这条与既有纪律的关系**（★ 不是新纪律、是既有那条的补全）
+· ★ 既有：★ **官方文档是第 0 步**、三样缺一不可 ✓
+· ★★ 而**三样都是"成员页"上的东西** ✗ —— ★★ **枚举是**另一页**** ✓（★ `C:\swapi\enums\` ✓）
+⇒ ★★★ **所以第 ④ 样补的是"别名空间"**：★ 一个方法的语义**有一部分住在它形参的类型页里** ✓
+★ **与本规格反复证明的那条同源**：★★ **「读数无效 ≈ 真的不建」** ✓ ——
+  ★ 档位选错 ⇒ 读数无效 ⇒ ★ 而**看起来就是"能力不行"** ✗✓
+
+四、★ 交付物
+· `capabilities.yaml`（★ +`curve_driven_pattern` ⇒ **134 条** ✓）+ `docs/metrics.md` 重生成 ✓
+· `docs/official-docs-first.md`（★ **+第 ④ 样** + 那段起因 + 定则；★ 末尾「三样」改「四样」✓）
+
+五、★ 下一轮
+★ **推进余下四项可做未做**：★ **焊接符号**（★ 宿主已核明：★ `IModelDoc2::InsertWeldSymbol3` /
+  `IDrawingDoc::InsertWeldSymbol` ✓）· ★ **成形工具**（★ 参数式 `InsertFormToolFeature` ✓）·
+  ★ **爆炸直线**（★ `ISketchManager::InsertExplodeLineSketch`，**零参** ✓）·
+  ★ **SpeedPak**（★ `IAssemblyDoc::CreateSpeedPak(int)`，★ 前置 = 选中的子装配 ✓）
+★ 然后 **PDM** 待实测 + **B8 文档部分**（★ `tasks.md` / `goal-bar.md` / `HANDOFF.md` ✓）

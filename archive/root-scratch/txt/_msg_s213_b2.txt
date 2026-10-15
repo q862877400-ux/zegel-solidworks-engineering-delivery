@@ -1,0 +1,49 @@
+规格 213 · B2 + B3（前半）：★★★ **B 类前两项「先缝模块、再挂工具」全通** —— ★ 真机复现
+
+一、★★★★★ **B 类的两步，本批把前两项走完了**
+★ **起因回顾**：★ B 类 = 「★ **只在探针里验过、`scripts/` 里没有模块函数**」的那五项 ✓
+★ **第一步（B2）**：★ 把探针里**已证实**的调用序**缝进模块**（★ 铁律 3 + 铁律 1：只缝合、不发明 ✓）：
+  · ★ `scripts/sw_weldment.py` 的 `insert_weld_symbol_report`（★ 来自 `probe_spec211_weldsymbol_real.py` ✓）
+  · ★ `scripts/sw_sheet_metal.py` 的 `insert_form_tool_report`（★ 来自 `probe_spec211_formtool.py` ✓）
+★ **第二步（B3）**：★ 挂成 ToolSpec —— `mcp-server/tool_specs_batch101.py` ✓
+  · ★ `solidworks_insert_weld_symbol` · ★ `solidworks_insert_form_tool` ✓
+  · ★★ 登记进 `BATCH_MODULES` ✓ ⇒ ★ 工具数 **454 → 456** ✓
+
+二、★★★★★ **真机复现（★ 关键：★ 验的是**缝进去之后那条路**、★ 不是再跑探针 ✗）**
+★ 依据官方纪律逐字：「写探针验能力时，★ **按 `ToolSpec` 的契约调，别手调内部实现**」✓
+★ 新写 `tools/probe_spec213_b2_modules.py`，★ **只调模块函数**：
+| 项 | 真机读数（★ 一律回读） |
+|---|---|
+| ★ **`weld_symbol`** | ★★ `ok=True` · ★ **`GetLineCount = 3`** · ★ `IsAttached = True`（★ 回读、★ 不是信 `SetText` 的 bool ✓）|
+| ★ **`forming_tool`** | ★★ `ok=True` · ★ **特征树新增 `['circular emboss1']`** ✓ |
+⇒ ★★★★ **两个模块函数都在真机上成立** ✓ ⇒ ★★ 声明的 `verified` **在「模块」这条路上复现了** ✓
+★★ **为什么必须分开验**（★ 本批的理由）：★ 「探针能跑」与「模块函数能跑」**不是同一件事** ✗ ——
+  ★ 缝合过程会引入新错 ✓（★ 本会话有先例：★ 我第一版写成 `_feature_mgr(model)` 那种**不存在的 helper** ✗，
+  ★ 而它是**静态检查抓到的**，★ 真机那次才证明修对了 ✓）
+
+三、★★★★ **本批被门禁拦了**三次**（★ 逐条记，★ 都是可判定的）**
+1. ★★★ **规则 3（裸坐标）** —— ★ 上一次在 batch100 是 `x`/`y`/`z`；★ 本批**没再犯** ✓
+2. ★★★ **相对导入棘轮 35 → 36**（★ 拦了**两次** ✗）：
+   · ★ 第一次：★ 我在**函数体里**写了 `from .sw_connect import mm as _mm` ⇒ **新增了一行** ✗
+   · ★ 第二次：★ 改成"加名字到已有行"之后，★ **我又在 `try:` 与导入行之间插了注释** ✗ ——
+     ★★ 而那条棘轮的判据是「**前一行为 `try:`**」⇒ ★ **插注释就等于把这一行从"有兜底"变成"无兜底"** ✓
+   ⇒ ★★★ **定则（★ 本批补）**：★ **加名字、不加行**，★ **且注释要放在 `try:` 的上面** ✓
+3. ★★ **`test_spec213_batch100_tools.py` 变红** ✗ —— ★ 它断言"工具数 **= 448 + 6**"（★ 绝对数 ✓），
+   ★★ 而 batch101 又挂了 2 个 ⇒ **456 ≠ 454** ✓
+   ⇒ ★★★ **定则（★ 又一次，★ 而这次是我自己刚写下的）**：★ **钉"关系"、★ 不钉"数字"** ✓ ——
+     ★ 改成"★ **这 6 个都在里面** + ★ **总数不少于 448 + 6**" ✓；★ 精确的最终数由**收口时量一次** ✓
+
+四、★ 契约与负例（★ `tests/test_spec213_batch101_tools.py`）
+· ★ **正例**：★ 2/2 过 `check_spec` ✓ · ★ 2/2 进 `all_specs()` ✓ · ★ 无重名 ✓
+· ★★ **正例（B 类特有）**：★ **声明的模块函数真的存在** ✓ —— ★ 对 B 类尤其要紧（★ 函数是**本批新写的** ✓）
+· ★★ **正例**：★ 两个模块函数的**签名对得上官方参个数** ✓（`SetText` 6 参 · `InsertFormToolFeature` 9 参 ✓）
+· ★★ **负例①**：★ `forming_tool` 的角度参数**必须** `_deg` 结尾 ✓（规则 2）
+· ★★ **负例②**：★ `weld_symbol` 的字符串/枚举参数**不许**带单位后缀 ✓（规则 2b）
+· ★★ **负例③**：★ 两项都**不许**声明 `read_only=True` ✓（★ 它们**都会新建特征** ✓）
+⇒ ★ 两个文件合跑 **22 passed** ✓
+
+五、★ 交付物
+`scripts/sw_weldment.py` · `scripts/sw_sheet_metal.py`（★ + `deg` 进已有导入行 ✓）·
+`mcp-server/tool_specs_batch101.py` · `mcp-server/register_capabilities.py`（+`BATCH_MODULES` 一行）·
+`tests/test_spec213_batch101_tools.py` · `tests/test_spec213_batch100_tools.py`（★ 钉关系修正 ✓）·
+`tools/probe_spec213_b2_modules.py` · `specs/213-hook-up-tools/` ✓

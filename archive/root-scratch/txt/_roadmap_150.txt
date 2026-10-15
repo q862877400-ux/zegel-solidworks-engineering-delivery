@@ -1,0 +1,35 @@
+     ★ 2026-10-01（轮 258 / **24h 计划 段 5「方程 / 渲染材质」那一半**）· ★★★★★ **"逐域判断" vs "数函数"：一次产出 2 个真缺口，而不产出 106 个假缺口**
+         ▶ **那个对照（★ 本轮的实证）**：
+           ```
+           | 做法 | 产出 | 真伪 |
+           | 数函数（audit_real_gaps.py，轮 256） | 106 个"真缺口" | ★★ 全是假报（shell/rib/add_pressure/get_topology_study_manager… 都已挂过） |
+           | 逐域判断（轮 258：对照仓库自己的 14 个域） | ★ 2 个真缺口 | ★★ 两个都真（appearance / render 各出现 0 次） |
+           ⇒ ★★★ 106 个假 vs 2 个真 —— ★ 这就是 known-facts 190 那条的**量化证据**。
+           ```
+         ▶ **逐域判断的具体做法（★ 可复用）**：① 取**仓库自己的域清单**（`docs/capability-matrix.md`
+           §一「域 1–12 官方接口族全景」+ 13 仿真 + 14 反射可达）；② 对每个域在 `capabilities.yaml`
+           里**按语义**找条目；③ 找不到 ⇒ **那才是真缺口**，**再判**它该不该补
+           （★ 规则 3 / 明确不做 / 已被上游覆盖）。
+           ★ 执行结果：13 个域都有条目；★ **`appearance` / `render` 各 0 次** ⇒ **1 个真缺口**。
+         ★★★ **而它的形态是「有工具、没条目」**：`solidworks_list_render_materials` /
+           `solidworks_collect_appearance_evidence` / `solidworks_refresh_scene_graph`
+           —— ★ **三个工具早就在**（`module=sw_render_material`），还有 `scripts/sw_appearance.py`
+           ⇒ ★★ **所以补**条目**，不建工具** —— ★ **两个动作的代价差一个数量级**。
+         ★★ **§5.0 这次做到了**：★ 判据**用既有的**读写配对（`set_document_appearance` +
+           `verify_appearance`，**不新搓**）；★ 证据脚本 `tools/` 里搜 `appearance`/`render`/`material`
+           ⇒ **没有** ⇒ 自己搓 `tools/capture_appearance_evidence.py`，★ **并在来源块里写明"找过"**。
+         ▶ **真机 `verdict: pass`（4/4）**：`collect_appearance_evidence` ✓（keys: appearance_count /
+           appearances / has_appearance）· `list_render_materials` ✓（★ 新零件回 **0** 个 ⇒ 正常初值）·
+           ★★★ **`set_document_appearance` + `verify_appearance` ✓（设 (0.2,0.6,0.9) 后 verify 回 true
+           ⇒ 值真的对上了）** · `refresh_scene_graph` ✓
+           ⇒ ★ 能力条目 `render_materials_and_appearance` = **`verified`**。
+         ★★★ **定则**：★ **"缺口"在**域**这一级找，"证伪一个缺口"在**工具**这一级找** ——
+           ★ 域级给出"该不该有"，工具级给出"是不是已经有了"；★ **只做一级就会出错**
+           （★ 只做工具级 ⇒ 假报 106 个；★ 只做域级 ⇒ 会把"有工具的域"也算成缺）。
+         ▶ **验收**：① 门禁链 **18 道** exit 0 ✓ · 全量 pytest **1278 passed / 0 failed** ✓
+           ② ★ 真机 `output/appearance-evidence.json` = **verdict: pass** ✓
+           ⇒ ★★ **能力清单 57 → 58 条**（verified **48 → 49**）。
+         ▶ **状态**：`all_specs()` **117** · 能力 **58** 条（verified **49** · stitched **8**）·
+           known-facts **190** 条。
+         ▶ **队列续作**：★ 按同一手法把**其余 13 个域**逐个过一遍（★ 找"有工具/有需求但没条目"的）；
+           ★ 段 5 的另一半（**方程**，★ `equations` 条目已有，★ 要核是否已真机验过）。

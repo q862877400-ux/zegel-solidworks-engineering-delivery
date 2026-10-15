@@ -1,0 +1,49 @@
+feat(覆盖): ★★★ R1 完成 —— 把工程图「**已实现却没挂**」的 8 项挂成工具 ⇒ **覆盖率 103/145 → 111/145（77%），★ 验收线 ≥110 已过**
+
+■ 一 · 本批做了什么（★ **一行实现逻辑都不新写**）
+  ★ 依据 `recon/drawing-existing-coverage.md`：工程图 13 项里**本仓已实现 8 项，而挂成工具的只有 4 项**
+    （且那 4 项全靠**同一个** `solidworks_drawing` 工具）⇒ ★ **该挂不该重写**（重写 = 造第二个家）。
+  · 新增 **`scripts/sw_drawing_expose.py`**（转接层，163 行）：对外收**毫米**（`x_mm`/`y_mm`），
+    ★ **换算只在这一处发生一次**（规则 2）；并在返回值里带回 `preconditions_held`（事实 496）。
+  · 新增 **`mcp-server/tool_specs_batch75.py`**（8 条 ToolSpec）：`module="sw_drawing_expose"`、
+    ★ **`inject="drawing_model"`**（该键已在 `RESOLVERS` 里 —— 事实 491）。
+  · `register_capabilities.py` 的 `BATCH_MODULES` 加一行。
+
+  | 覆盖率项 | 工具名（★ 含逐字计数关键词）| 关键词来源 |
+  |---|---|---|
+  | 投影视图 | `solidworks_drawing_create_projected_view` | `projected_view` |
+  | 剖面视图 | `solidworks_drawing_create_section_view` | `section_view` |
+  | 局部视图 | `solidworks_drawing_create_detail_view` | `detail_view` |
+  | 图纸格式/模板 | `solidworks_drawing_set_sheet_format` | `sheet_format` |
+  | 注释/文字 | `solidworks_drawing_add_note` | `add_note` |
+  | 孔表 | `solidworks_drawing_create_hole_table` | `hole_table` |
+  | 修订表 | `solidworks_drawing_create_revision_table` | `revision_table` |
+  | 中心符号线 | `solidworks_drawing_insert_center_marks` | `center_mark` |
+  ★ 关键词逐字取自 `D:\SW-coverage-tool\gen_user_feature_coverage.py:130-148`。
+  ★★ 而名字本身**也要准确** —— 计划里写明：★ **不许**把"改个名字让计数涨上去"当成"能力补上了"。
+
+■ 二 · ★★ 读数（`gen_user_feature_coverage.py` 重跑）
+  | 指标 | 本批前 | 本批后 |
+  |---|---|---|
+  | **本仓库** | 103/145 (71%) | ★★ **111/145 (77%)** ⇒ ★ **验收线 ≥110 已过** |
+  | **工程图域** | 10/19 (53%) | ★★ **18/19 (95%)** ⇒ ★ **反超全场**（对手最高 16/19）|
+  | §八 缺口 | 28 | ★★ **20** |
+  ★ 本轮从**起点**算：**99/145 (68%) → 111/145 (77%)**，工程图 **6/19 → 18/19**，§八 **32 → 20**。
+
+■ 三 · 机器核验（★ 全 COM-free）
+  · `all_specs` 条数增加、8 条新工具**逐条在**、`tool_registry.check_specs` ⇒ **problems: NONE**
+  · 验收工具：`tools/audit_gap_implementations.py` **退出 0** · `scripts/check_union_conventions.py` **退出 0**
+    （★ 首跑曾报"未通过 1 项"，**同序复跑两次均通过** ⇒ 判为生成物新鲜度，★ 已用收尾链的生成器消掉）
+  · 收尾链：**`release_check 第 1 轮 OK` · 29 passed**
+
+■ 四 · ★ 如实标注的**未验证**部分（★ 不许读成"全都能用"）
+  · ★ 底层**能力**有真机证据（`output/drawing-batch-evidence.json`：V1 投影 / V3 局部 / A2 粗糙度 /
+    A3 基准 / A4 注释 / A6 孔表 / A7 修订表 / V4 断裂 / V5 辅助），★ 但**经工具层**端到端**尚未跑**。
+  · ⚠ **中心符号线那条**：它走**批量**入口 `AutoInsertCenterMarks2`，★ **尚未单独真机验证**；
+    而**单点**入口 `InsertCenterMark3` 已实测为**阴性**（两格都不成，其中一格前置成立）⇒ ★ 已在 doc 里写明。
+  · ⚠ **剖面视图**：真机那一格**前置未成立**（选区为空）⇒ ★ 不能据此判"不成"，也没正例。
+  · ⚠ `table_type`（孔表/修订表）的**取值表官方两源都查不到** ⇒ ★ 本批**原样透传、不猜**（铁律 5）。
+
+■ 五 · 修掉一处**语法坑**（★ 本仓栽过 7 次的同一形态）
+  batch75 的 `doc` 里我先写了 ASCII 双引号（`据此判"剖面视图不成"`）⇒ 当场 `SyntaxError`
+  （"Perhaps you forgot a comma?"）⇒ ★ 改用「」中文引号。

@@ -245,6 +245,7 @@ def _document_dependency_paths(model, source_path: str) -> list[str]:
     return paths
 
 
+#: dispatch-guard: exempt internal-helper
 def _optional_com_member(obj, name, *args, default=None):
     """@brief 安全读取审计用 COM 成员，无法判断时保留 unknown。"""
     if obj is None:

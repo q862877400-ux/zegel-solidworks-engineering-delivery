@@ -224,11 +224,22 @@ def main(argv: list[str] | None = None) -> int:
         }, ensure_ascii=False, indent=2))
         return 0
     if args.command == "check-dfm":
-        from dfm_review import write_dfm_report
-
-        result = write_dfm_report(args.input, args.output, process=args.process, profiles=args.profile, brep_evidence=args.brep_evidence)
-        print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 1 if result.get("status") in {"blocked", "failed"} else 0
+        #: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+        #:   ★ 原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+        #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+        #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+        #:   ★★ **本子命令的落点 `dfm_review` 是方法**（★ DFM 规则库）——
+        #:     ★ 判据：★「**规则错了，回读能不能查出来**」⇒ ★ **不能** ⇒ ★ 是方法 ✗
+        #:   ★ 已移出：★ `archive/inherited-methods/scripts/dfm_review.py` ✓
+        #:   ★★ **本分支改为如实报「已移出」**（★ 不静默 2 —— ★ 那会让人以为命令错了）✓
+        print(json.dumps({
+            "status": "removed",
+            "command": "check-dfm",
+            "reason": "★ 该方法已按业主架构指令移出继承面（★ 只继承工具）",
+            "where": "archive/inherited-methods/scripts/dfm_review.py",
+            "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
+        }, ensure_ascii=True, indent=2))
+        return 1
     if args.command == "check-routing":
         from routing_review import review_routing_file
 
@@ -241,65 +252,29 @@ def main(argv: list[str] | None = None) -> int:
         result = probe_solidworks_routing()
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 1 if result.get("status") in {"blocked", "failed"} else 0
-    if args.command == "fea-preflight":
-        from fea_analysis import discover_solver
-
-        result = discover_solver(args.solver)
-        print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 1 if result.get("status") in {"blocked", "failed"} else 0
-    if args.command == "prepare-fea":
-        from fea_analysis import build_calculix_input, validate_analysis
-
-        request = validate_analysis(args.input)
-        if args.solver != "auto":
-            request["solver"] = args.solver
-        if request["solver"] == "elmer":
-            result = {
-                "schemaVersion": "1.0",
-                "status": "blocked",
-                "stage": "generate_input",
-                "checks": [],
-                "artifacts": [],
-                "manual_review_required": True,
-                "retryable": False,
-                "error_code": "fea_elmer_adapter_not_implemented",
-                "message": "Elmer 安全输入适配器尚未实现；当前 prepare-fea 只生成 CalculiX .inp。",
-            }
-        else:
-            args.out_dir.mkdir(parents=True, exist_ok=True)
-            result = build_calculix_input(request, args.out_dir / f"{request['analysisId']}.inp")
-        print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 1 if result.get("status") in {"blocked", "failed"} else 0
-    if args.command == "run-fea":
-        from fea_analysis import run_analysis
-
-        result = run_analysis(args.input, args.out_dir, timeout_seconds=args.timeout)
-        print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 1 if result.get("status") in {"blocked", "failed"} else 0
-    if args.command == "run-fea-convergence":
-        from fea_convergence import run_convergence_study
-
-        result = run_convergence_study(args.input, args.out_dir, timeout_seconds_per_case=max(1, min(args.timeout_per_case, 86400)))
-        print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 1 if result.get("status") in {"blocked", "failed"} else 0
-    if args.command == "review-advanced-geometry":
-        from advanced_geometry import write_preflight_report
-
-        result = write_preflight_report(args.input, args.output)
-        print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 1 if result.get("status") in {"blocked", "failed"} else 0
-    if args.command == "create-ocp-loft":
-        from advanced_geometry_ocp import execute_ocp_loft
-
-        result = execute_ocp_loft(args.input, args.out_dir)
-        print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 1 if result.get("status") in {"blocked", "failed"} else 0
-    if args.command == "create-ocp-surface":
-        from advanced_surface_ocp import execute_advanced_surface
-
-        result = execute_advanced_surface(args.input, args.out_dir)
-        print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 1 if result.get("status") in {"blocked", "failed"} else 0
+    #: ★★★ 2026-10-10 **以下 5 个子命令的落点都是「方法」**（★ 业主架构指令 ⇒ 移出）：
+    #:   ★ `fea-preflight` / `prepare-fea` / `run-fea` → `fea_analysis`（★ FEA 判据）
+    #:   ★ `run-fea-convergence` → `fea_convergence`（★ 收敛判据）
+    #:   ★ `review-advanced-geometry` → `advanced_geometry`（★ 几何可行性判据）
+    #:   ★ `create-ocp-loft` / `create-ocp-surface` → `*_ocp`（★ 几何配方）
+    #:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ 方法 ✗
+    #:   ★ 已移出：★ `archive/inherited-methods/scripts/` ✓
+    _METHOD_COMMANDS = {
+        "fea-preflight": "fea_analysis", "prepare-fea": "fea_analysis",
+        "run-fea": "fea_analysis", "run-fea-convergence": "fea_convergence",
+        "review-advanced-geometry": "advanced_geometry",
+        "create-ocp-loft": "advanced_geometry_ocp",
+        "create-ocp-surface": "advanced_surface_ocp",
+    }
+    if args.command in _METHOD_COMMANDS:
+        print(json.dumps({
+            "status": "removed",
+            "command": args.command,
+            "reason": "★ 该方法已按业主架构指令移出继承面（★ 只继承工具）",
+            "where": "archive/inherited-methods/scripts/%s.py" % _METHOD_COMMANDS[args.command],
+            "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
+        }, ensure_ascii=True, indent=2))
+        return 1
     return 2
 
 

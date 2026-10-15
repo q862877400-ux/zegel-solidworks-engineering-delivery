@@ -1,0 +1,58 @@
+| 207 | **Costing 是"护城河域"，而它 25 个公开函数只挂了 1 个** —— 用"注入 manager + 内部取下游"一次挂 8 个（2026-10-01，轮 274）。
+
+## 一、★★★★★ 为什么这一片是**真价值**（而不是凑数）
+```
+★ **成本（Costing）是 AGENTS.md §〇 点名的三个「真正全网空白域」之一**
+  （拓扑优化 · 动画导出 AVI · **Costing**）—— ★ 而三个里**这个最容易挂**（★ 另两个都有硬障碍：
+   拓扑迭代选项 `0x80010105` · 动画缺 Motion 加载项）。
+★ 清点：`sw_costing` 有 **25 个公开函数**，★ 而**只挂了 1 个**（`get_costing_manager`）
+  ⇒ ★★ **那"1 个"是入口**，★ 而**下游 24 个全没挂**。
+```
+
+## 二、★★ 要点是"怎么拿到下游对象"（★ 而答案在**已有 resolver** 里）
+```
+★ 那 24 个的入参都是**宿主对象**：`cost_manager` / `cost_part` / `cost_analysis` /
+  `cost_body` / `defaults`。
+★ 而链条是：`get_costing_manager(model)` → `CostingModel`（= `CostPart`）→
+  `GetCostAnalysis()` / `GetBodies()` · 以及 `CostingDefaults`。
+⇒ ★★★ **正解与轮 272 的求解器设置**完全同一手法****：
+   ★ **注入 `manager`（已有 resolver）+ 包装内部取下游** ⇒ ★ **不动 `RESOLVERS`**。
+⇒ ★ `all_specs()` **144 → 152**（★ **推过了 145 这个目标**）· 归属 **152/152** ✓
+```
+
+## 三、★ 真机 5/6（★ 而 4 个读数是**真的读到了数据**）
+```
+| 工具 | 结果 | 说明 |
+|---|---|---|
+| `get_costing_manager` | ★ pass | 入口 |
+| `costing_evidence` | ★ pass | ★ **`{body_count: 1, has_cost_analysis: True}`** |
+| `costing_body_count` | ★ pass | 1 |
+| `costing_list_bodies` | ★ pass | 1 个（⚠ 名字回 `'?'` ⇒ ★ 那个对象**没有 `Name` 属性**） |
+| `costing_read_analysis` | ★ pass | ★★ **读到真数据**（含 `template: '…\\chinese-simplified\\co…'`） |
+| `costing_list_templates` | ⚠ fail | ★ `AttributeError: <unknown>.GetTemplatePathnames` |
+⇒ ★ **5/6** ⇒ ★ 能力 `costing` 的 `mcp_tools` 从 **1 → 9**。
+```
+
+## 四、★★ 两条如实记
+```
+★ `costing_list_bodies` 的实体名回 **`'?'`** ⇒ ★★ **说明那个 body 对象上取 `Name` 取不到**
+  ⇒ ★ 我的包装**回退成 `'?'`**（★ 不静默报空）—— ★ **而"名字取不到"意味着 `read_cost_body`
+    的**按名字找**那条路在本机走不通** ⇒ ★ 要改用**索引**（★ 待做）。
+★ `costing_list_templates` 报 **`<unknown>.GetTemplatePathnames`**
+  ⇒ ★★ **那是事实 36 的形态**（★ 见 `<unknown>.` ⇒ 去查它挂在谁身上）⇒ ★ **待查**。
+```
+
+## 五、★ 定则
+```
+★★★ **"护城河域"未必难挂 —— 难的是**找入口**** —— ★ Costing 的入口
+   （`get_costing_manager`）**早就挂了**，★ 而**下游 24 个一直没人接**。
+   ⇒ ★★ **可操作形态**：★ **清点"某模块的入口工具挂了、而下游没挂"** 这种形态 ——
+     ★ **它是最肥的一类缺口**（★ 入口通了 ⇒ 下游只需**包一层**）。
+★★ **同一手法用了两次**（★ 轮 272 求解器设置 · 轮 274 Costing）⇒ ★ 那说明它是**一般化的**：
+   ★ **"注入一个上游已有对象 + 包装内部往下取"** —— ★ 而它的**前提**是**入口已经被挂过**。
+   ⇒ ★★★ 所以**"先挂入口"是有复利的**（★ 入口挂一次，下游能接一串）。
+```
+
+**依据**：`mcp-server/tool_specs_batch38.py`（★ 8 个 ToolSpec）· `output/costing-evidence.json`（★ 5/6 · 读到真数据）·
+`scripts/sw_costing.py`（★ 8 个包装 + `_costing_chain`）· AGENTS.md §〇（★ 三个全网空白域）·
+事实 36 / 202 / 206

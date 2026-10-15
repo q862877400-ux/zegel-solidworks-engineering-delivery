@@ -634,7 +634,8 @@ def set_standard_view(model, view_name="isometric"):
     try:
         av = get_com_member(model, "ActiveView")
         if av is not None:
-            got = str(get_com_member(av, "Name"))
+            #: ★★★ spec 256 换路由：`IView::Name` 已废弃 ⇒ 用官方后继 `GetName2`（★ 真机已证等价）。
+            got = str(get_com_member(av, "GetName2"))
             why = None
     except Exception as exc:                                   # noqa: BLE001
         got = None

@@ -78,12 +78,23 @@ __all__ = [
 #         C:\swapi\enums\swPatternElementSelection_e.md
 #         C:\swapi\enums\swFeaturesToPatternType_e.md
 # 定位:   阵列的端条件 / 阵列元素 / 可阵列特征类型。
-# 取值:   swPatternEndCondition_e **全量照录**（官方只有 2 项）。
+# 取值:   swPatternEndCondition_e 官方只有 2 项 —— **全量照录** ✓
+#         swPatternElementSelection_e 官方只有 3 项 —— **全量照录**（★ 2026-10-08 spec 223 订正）
+#         swFeaturesToPatternType_e 官方只有 2 项 —— **全量照录**（★ 2026-10-08 spec 223 订正）
 # ⚑ 查证过程: 我先按印象写 `swPatternObjectType_e` / `swPatternDirection_e`，
 #   sw_know 两者都报无 ⇒ 真实名字是 swPatternElementSelection_e /
 #   swFeaturesToPatternType_e。**方向**方向的枚举名本机查不到
 #   （`sw_know find PatternDirection` 只返回 IFillPatternFeatureData 的两个成员，
 #    不是枚举）⇒ 方向参数一律 int 透传，不臆造枚举名。
+# ★★ 2026-10-08（spec 223）**订正**：后两张表原先是**自造抽象冒官方名** ——
+#   键 `point/edge/face/feature/body/sketch/curve` 与 `solid/surface/…/refpoint`
+#   **在任何官方枚举里都不存在**，值也全错（官方分别只有 3 项 / 2 项）。
+#   ⇒ ★ 已按官方页 + 出厂反射（`_raw/enum_values_sldworks.txt`）**逐项重写**，
+#     且每行带 `# sw<官方成员名>` 注释 —— 那正是 `check_enum_values_vs_reflection.py`
+#     能覆盖的唯一形式 ⇒ ★ **修一次、以后改错会被机器抓住** ✓
+#   ★ 官方依据（逐字）：`C:\swapi\types\ILinearPatternFeatureData\PatternElement.md`
+#     的 `## Returns` 写明该属性取值域**就是** `swPatternElementSelection_e`
+#     ⇒ 旧表会让调用方**按错值解读**，重写即修复 ✓
 # 覆盖:   后续同级定义
 # ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
@@ -92,29 +103,23 @@ SWS_PATTERN_END_CONDITIONS = {
     "up_to_reference": 1,         # swPatternEndCondition_UpToReference
 }
 
+#: ★ 官方 `swPatternElementSelection_e` **全量 3 项**（spec 223 订正）。
 SWS_PATTERN_ELEMENT_SELECTION = {
-    "point": 0,
-    "edge": 1,
-    "face": 2,
-    "feature": 3,
-    "body": 4,
-    "sketch": 5,
-    "curve": 6,
+    "error": 0,            # swErrorInPatternElementSelection
+    "feature_faces": 1,    # swFeatureFaces
+    "bodies": 2,           # swBodiesToPattern
 }
 
+#: ★ 官方 `swFeaturesToPatternType_e` **全量 2 项**（spec 223 订正）。
 SWS_FEATURES_TO_PATTERN = {
-    "solid": 1,
-    "surface": 2,
-    "sketch": 3,
-    "curve": 4,
-    "trim": 5,
-    "dressup": 6,
-    "apex": 7,
-    "refpoint": 8,
+    "selected_features": 0,  # swFeaturesToPatternSelectedFeatures
+    "create_seed_cut": 1,    # swFeaturesToPatternCreateSeedCut
 }
 
 #: 两个 FeatureData 共有的「方法型」成员的实参个数
 #: （属性型成员不进这张表 —— 它们由下面的显式 setter 负责）
+#: enum-gate: not-enum arity
+#: arity-reflect: byref=excluded
 PATTERN_MEMBER_ARITY: dict[str, int] = {
     "AccessSelections": 2,
     "ReleaseSelectionAccess": 0,
@@ -132,6 +137,7 @@ PATTERN_MEMBER_ARITY: dict[str, int] = {
 }
 
 
+#: dispatch-guard: exempt internal-helper
 def _checked(target, member: str, *args):
     """按签名表校核实参个数，通过后才发起调用（开发期护栏）。"""
     expected = PATTERN_MEMBER_ARITY.get(member)

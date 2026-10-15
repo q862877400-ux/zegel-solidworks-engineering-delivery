@@ -1,0 +1,13 @@
+    #: ★★★ 2026-10-01（轮 307）**`commits` 给 ±1 容差 —— 因为它**追不上****：
+    #:   ★ 本文件 L84 早已写明「commits 按 HEAD 计数 **+1**（本次提交会让它 +1）」，
+    #:   而 L109 又写着「用它当 dirty 判据会让 commits **永远 +1**，于是**提交后立刻又红一位**」。
+    #:   ⇒ ★★ **即：唯一能对上它的时刻不存在**（你写对了、一提交它又 +1）。
+    #:   ⇒ ★★★ **而一个必然失败的判据不是判据**（事实 62 同族）⇒ ★ 给 ±1；
+    #:   ★ **而 files / add / delete 仍严格**（它们不受提交影响）。
+    _STRICT = ("files", "add", "delete")
+    bad = [k for k in _STRICT if claimed.get(k) != real.get(k)]
+    _dc = abs(int(claimed.get("commits", 0)) - int(real.get("commits", 0)))
+    if _dc > 1:
+        bad.append("commits")
+    elif _dc == 1:
+        print("  note: commits 差 1（已容差 —— 它量的是「将提交态」，而提交本身会让它 +1）")

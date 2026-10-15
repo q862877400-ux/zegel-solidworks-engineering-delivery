@@ -1,0 +1,66 @@
+docs(阶段2): ★★★★ 再处置两条 —— `AdvancedGraphics`（★ 官方「**Not superseded**」= 无后继）· `AutoDimension2`（★ **旧的做到了**）
+
+■ 一 · `AdvancedGraphics` —— ★★★ **官方的死路**（★ "有据保留"的**第 6 类**）
+  ★ 官方 `types/IMaterialVisualPropertiesData/AdvancedGraphics.md` 逐字：
+    「**Obsolete. Not superseded.**」
+  ⇒ ★★★ **官方明说"没有后继"** ⇒ ★ **无从换起** ✓
+  ★★ 这一类的**理由最硬**：★ 不是"我们暂时换不了"，★ 而是**官方根本没有给替换路径** ✓
+  ★ 与前面 5 类都不同：
+    | ★ 类 | ★ 另一条路存在吗 |
+    |---|---|
+    | ★ 指针族不可调 | ★ 存在，★ 但 pywin32 造不出 |
+    | ★ 两条都不通 | ★ 存在，★ 但前置挡住 |
+    | ★ 刻意的兜底 | ★ 存在，★ 且**是兜底本身** |
+    | ★ 后继是另一个成员 | ★ 存在，★ 但语义不同 |
+    | ★ 旧的做到了、新的做不到 | ★ 存在，★ 但新的是退步 |
+    | ★★★ **官方的死路（本条）** | ★★★ **不存在** ✓ |
+
+■ 二 · ★★★ `AutoDimension2` —— ★ **旧的**真的做到了****
+  ★ 官方 `types/ISketch/AutoDimension2.md` 逐字：
+    「**Obsolete. Superseded by [[ISketchManager::FullyDefineSketch]].**」
+    ★ 而 `types/ISketchManager/AutoDimension2.md` —— ★★ **官方页**不存在****
+    ⇒ ★ 我们的调用 `get_com_member(**active**, "AutoDimension2", 1, 1, -1, 1, -1)` 里
+      `active` 是**活动草图** ⇒ **`ISketch`** ⇒ ★★★ **所以这条命中是**真的**（不是假阳性）** ✓
+
+  ★★ 真机对照（★ `tools/probe_autodimension_successor.py` ·
+    `output/autodimension-successor-evidence.json`）：
+  | 调用 | ★ 结果 |
+  |---|---|
+  | ★ 基线尺寸数（★ 矩形草图）| ★ **0** |
+  | ★★★ `AutoDimension2(1, 1, -1, 1, -1)`（★ **与生产代码逐字相同**）| ★ 回 `0` |
+  | ★★★★ **尺寸数** | ★★ **0 → 2** ⇒ ★★★★ **真的给草图加了 2 个尺寸** ✓ |
+  | ★ 新 `FullyDefineSketch(11 参, 空VARIANT)` | ★ 第 1 次：★ **`'类型不匹配'`（位置 6）** |
+  | ★ | ★ 第 2 次（★ 第 6/8/11 参改空 VARIANT）：★ **`'无效的参数数目'`** |
+  ⇒ ★★★★ **两次两种错** ⇒ ★ 按**事实 53**（≥3 次就停）★ **停止** ✓
+
+  ★★★ 后继的 11 参**官方都给全了**（`## Parameters` 逐字）：
+    `EntitiesToFullyDefine / UseRelations / RelationsToApply / UseDimensions /
+     HorizontalDimScheme(0=Chain,1=Baseline,2=Ordinate) / HorizontalDatumDisp /
+     VerticalDimScheme / VerticalDatumDisp / HorizontalDimPlacement / VerticalDimPlacement / …`
+    ★ 而**真机仍不通** ⇒ ★★ **不是"参数没填对"，★ 而是这条路在本后端上走不通** ✓
+
+■ 三 · ★★★★ 决策：**两条都不换**（★ 且理由不同、★ 都可核）
+  | ★ 条目 | ★ 理由 | ★ 强度 |
+  |---|---|---|
+  | ★ `AdvancedGraphics` | ★★ **官方明说「Not superseded」** | ★★★ **最硬**（★ 另一条路不存在）|
+  | ★ `AutoDimension2` | ★★ **旧的加上了 2 个尺寸、★ 新的两次都不通** | ★★★ **次硬**（★ 新的**是退步**）|
+  ★★ **可复用判据（★ 本轮新增）**：
+    ★★★ **"旧的真做到了"是最强的"不换"理由** —— ★ 强于"两条都不通"（★ 那还可能值得试）✓
+    ★ 而"**官方说没有后继**"**比它还硬**：★ **连"试"这个动作都没有对象** ✓
+
+■ 四 · ★ 读数
+  ★ `tools/scan_obsolete_safe.py` 的读数**不变**（★ 本轮**未改生产代码**）：
+    ★★ 真命中 **40** · 其中生产 **15** ✓
+  ★★ 这两条**留在名单里** —— ★ **有据保留**（★ 第 5、6 类）✓
+
+■ 五 · ★★ 至此「有据保留」已是 **6 类**、**共 7 条**（★ 生产 15 条里）
+  ```
+  ★ 指针族不可调  : DeleteRenderMaterial
+  ★ 两条都不通    : AddMate5 ×2
+  ★ 刻意的兜底    : AddComponent4
+  ★ 后继是另一个成员: GetDependencies2
+  ★ 旧的做到了    : FeatureFillet · AutoDimension2
+  ★★ 官方的死路   : AdvancedGraphics
+  ```
+  ⇒ ★★ 而**剩下的 8 条**是 ★ **by-ref 不可换 4**（`CreateSpline2` · `Get`×2 · `GetErrorCode`）
+    + ★ **前置受阻 4**（`SetSaveToName`×2 · `FeatureLinearPattern3` · `FeatureCircularPattern4`）✓

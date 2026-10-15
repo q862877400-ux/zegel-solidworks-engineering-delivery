@@ -1,0 +1,58 @@
+规格 211 · B3「焊接符号」第三步：★★★ **判据落到位了** —— ★ 得到的是一个**有效负读数**
+
+一、★★★★★ **读数**
+```
+★ ③ 本机焊接符号名 ⇒ ['0.25 fillet both side', 'blend weld', 'fillet-allround', 'plug-bevelfillet'] ✓
+★ ① 零件落盘 ⇒ True ✓ · ★ ② 工程图 ⇒ True · 三视图 ⇒ True ✓
+★★ 调用后 ⇒ 回 None · ★ 异常 None            ← ★★ **调用完成、不抛**
+★★★ 读回 ⇒ chain_len = 4 · first_is_sheet = True · view_count = 3 · ★ **total_weld_symbols = 0**
+   ★ 视图[0] 工程图视图1 · weld = 0 · anno = 0
+   ★ 视图[1] 工程图视图2 · weld = 0 · anno = 0
+   ★ 视图[2] 工程图视图3 · weld = 0 · anno = 0
+```
+⇒ ★★★★ **两个要点**：
+  ★ ① ★★ **`weld = 0` 而**不是 `None`**** ✓✓ ⇒ **读回成员取到了、★ 判据落到位了** ✓
+  ★ ② ★★ **而 0** ✗ ⇒ **焊接符号**没插进去**** ✓
+⇒ ★★★ **所以本项的性质是**：「★ **调用完成、不抛、而什么都没插进去**」✗ ——
+  ★★ 与**事实 40** 同类（★ "调用成功而返回值/结果不可靠" ✓）
+
+二、★★★★★ **本批的关键：★ 官方 Remarks 又救了一次场**
+★ 上一轮我拿到 `weld_symbol_count = None` ✗ —— ★★ 当时以为是"成员不可用" ✗
+★★★ **一读官方 Remarks 就明白了**（★ `IDrawingDoc::GetFirstView` 逐字）：
+> ★ **Because the drawing sheet also has sketch geometry, notes, GTols, and so on, this method
+> returns the current drawing sheet.** ★ The **next** view returned by `IView::GetNextView` is the
+> **first drawing view** in the current sheet. ✓✓
+★★ 且 `GetViews` 的 `## Returns` 逐字：「★ **An array of arrays**」+「the first view in the list
+being **the sheet itself**」✓
+⇒ ★★★★ **所以链首那个对象是**图纸**、★ 不是视图** ✗ —— ★ 我在图纸上调
+  `GetWeldSymbolCount` ⇒ **回 `None` 是应然的** ✓✓
+⇒ ★★★ **修法**：★ **跳过链首**（★ `chain[1:]` ✓）⇒ 读数从 `None` 变成 **`0`** ✓ ——
+  ★★ **即"取不到"变成了"取到了、是 0"** ✓ —— ★★ **这一步的差别，正是"判据落到位"的标志** ✓
+
+三、★★★★ **按三成因定则的定位**
+| 成因 | 状态 |
+|---|---|
+| ★ ① **前置** | ★✓ **全部对上**：★ 符号名清单（4 个，现场列目录 ✓）· ★ 工程图 · ★ 三视图（`view_count = 3` ✓）|
+| ★ ② **参数/档位** | ★★ **【还没追完】** —— ★ 10 个实参是按官方 `## Parameters` **逐位**给的 ✓，★ 而★ **`ShowOtherSide` / `DashOnTop` / `Symmetric` / `FieldWeld` / `Peripheral` 我全传了 `False`** ✗；★ 且 `Symbol` 的**名字格式**可能还有讲究（★ 官方只说"清单在 ProgramData" ✗）|
+| ★ ③ **后端受限** | ★ ⇒ ★ **追完 ② 才能下** ✗ |
+⇒ ★★★ **所以本项记 `stitched`** ✗（★ **不记 `verified`、也不叫"试死"** ✓）
+
+四、★★ **下一步（★ 判据已想好，★ 且都是**可判定的形态**）**
+★ ① **`Symbol` 的形态遍历**：★ 试 ★ **纯名 `fillet-allround`**（★ 本次用的 ✓）·
+  ★ **带扩展名** · ★ **完整路径**（★ 官方 Remarks 只给了目录、★ 没说传什么形态 ✗）
+★ ② **开关位遍历**：★ `DashOnTop = True`（★ 官方逐字："True puts the dash line on top" ✓ ——
+  ★★ **焊接符号的标志就是那条基准线** ✓）· ★ `Symmetric = True` · ★ `Peripheral = True`
+★ ③ ★ 而★ **每一次都回读 `total_weld_symbols`** ✓ —— ★★ 那**就是**"它真正改变的东西" ✓
+
+五、★ 交付物
+· `tools/probe_spec211_weldsymbol.py`（★ 判据已落到位：★ 跳过图纸 + 逐视图 `GetWeldSymbolCount` ✓）
+· `tools/probe_close_our_docs.py`（★ 三类判据 + 加固 + 关闭顺序 ✓ —— 本批起**每次都用它清场** ✓）
+· ★ 证据在 `output/`（★ gitignore ✓）
+
+六、★ 21 项现状
+★ **可做 12**（★ 已做 9 · ★ **未做 3**：★ 焊接符号（★ 本批到 `stitched` 档、★ **已有有效负读数** ✓）·
+  ★ 零部件阵列 · ★ 曲线驱动阵列）· ★ **不做 7** · ★ **已覆盖 1** · ★ **待实测 1**（PDM ✓）
+
+七、★ 下一轮
+★ ① **追焊接符号的第二个成因**（★ `Symbol` 形态 × ★ 开关位，★ 每次回读 `total_weld_symbols` ✓）
+★ ② 然后 **零部件阵列 / 曲线驱动阵列** · ★ **PDM** ⇒ ★ 最后 **B8 文档部分**（★ 那是规格的收口 ✓）

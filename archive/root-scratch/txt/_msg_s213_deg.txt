@@ -1,0 +1,28 @@
+规格 213 · 补：★★★ **`sw_sheet_metal.py` 的 `deg` 取法**（★ 那正是全量抓到的那处收集错误）
+
+一、★★★★★ **本批修的是什么**
+★ `scripts/sw_sheet_metal.py` 里「度 ⇒ 弧度」的换算入口，★ **取法改过两次、★ 两次都栽了** ✗：
+· ★ **第一版**：★ 函数里裸写 `from .sw_connect import mm as _mm` ✗ ⇒
+  ★ **相对导入棘轮 35 → 36** 被拦 ✓
+· ★★ **第二版**：★ 把 `deg` 加进**模块级**那行 ✓ ⇒ ★ **棘轮过了** ✗ ——
+  ★★★ 而 `tests/test_sw_sheet_metal.py` **收集期炸** ✗，逐字：
+  ```
+  scripts\sw_sheet_metal.py:18: from sw_connect import get_com_member, call_com_member, deg
+  E   ImportError: cannot import name 'deg' from '<unknown module name>' (unknown location)
+  ```
+  ★★ **真因**：★ 那个测试只往 `sys.path` 塞 **`scripts/`**（★ **不是包** ✓）⇒
+  ★ 模块级相对导入走进**半初始化**路径 ✓ —— ★★ **别的名字在缓存里已有、★ 只有新加的 `deg` 暴露了它** ✓
+  ★★★ 而★ **单跑该文件 6 passed** ✓、★ **只做收集也通过** ✓ ⇒ ★★ **不是稳定复现** ✗
+· ★ **第三版（正解）**：★ 放回**函数内**、★ 且写**完整的 `try:/except ImportError:`** ✓
+  ⇒ ★ 既满足棘轮判据（★ 「紧跟 `try:` 的那一行」✓）、★ 又不碰模块级导入 ✓
+
+二、★★★★★ **一条新定则（★ 补进 `docs/HANDOFF.md`）**
+★★ **改了「模块级导入」⇒ 必须跑一次全量 pytest** ✗ ——
+★ 因为那影响的是**收集期**，★ **而聚焦测试看不到收集期** ✓✓
+★ 实例就在本批：★ **棘轮绿了**、★ **而收集期炸了** ✓ —— ★ 两者**不是同一道关** ✓
+
+三、★★ **同时如实记**：这类 `ImportError` 在仓里**另有存量** ✗ ——
+★ 残留失败里有一整族同型（★ `sw_sketch.py:49` 的 `set_com_member` ·
+★ `sw_session.py:15` 的 `close_owned_solidworks` ✓）⇒ ★★ 而那些模块**我一次都没改过** ✓
+★ **`scripts/check_relative_imports.py` 的存在正说明仓里已知它有 35 处欠账** ✓
+（★ 该门禁来源块逐字：「★ **先钉住不许增长**，★ **再逐个还**」✓）⇒ ★ **不在本规格范围内** ✓

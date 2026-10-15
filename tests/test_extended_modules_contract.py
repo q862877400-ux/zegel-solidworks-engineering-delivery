@@ -190,11 +190,24 @@ def test_constraint_enum_only_contains_members_from_official_enum():
 
 
 def test_slot_and_entity_enums_match_official_counts():
-    """槽与关系实体的枚举是全量照录，项数必须与官方一致。"""
+    """槽与关系实体的枚举是全量照录，项数必须与官方一致。
+
+    ★★ 2026-10-08（spec 222）**订正**：本判据原先断言 `3 / 2 / 6`，
+       而官方实为 **4 / 2 / 15**（槽创建漏 `line=0`、实体类型漏 9 项）。
+       ⇒ ★ 那时这条测试把**错的项数**当成「与官方一致」来钉 —— 属**空判据**
+         （它会为错误实现背书）。现按官方订正，并已把两张表补齐。
+       依据：`C:/swapi/enums/swSketchSlotCreationType_e.md`（4 项）、
+             `swSketchSlotLengthType_e.md`（2 项）、
+             `swSketchRelationEntityTypes_e.md`（15 项）。
+    """
     m = _load("sketch_relations")
-    assert len(m.SKETCH_SLOT_CREATION_TYPES) == 3   # center_line / arc / 3pointarc
-    assert len(m.SKETCH_SLOT_LENGTH_TYPES) == 2     # CenterCenter / FullLength
-    assert len(m.SKETCH_RELATION_ENTITY_TYPES) == 6  # line/arc/ellipse/hatch/cylinder/dimension
+    assert len(m.SKETCH_SLOT_CREATION_TYPES) == 4    # line/center_line/arc/3pointarc
+    assert len(m.SKETCH_SLOT_LENGTH_TYPES) == 2      # CenterCenter / FullLength
+    assert len(m.SKETCH_RELATION_ENTITY_TYPES) == 15  # Unknown…Dimension
+    #: 抽查三个容易漏的项，防止「凑够 15 个但内容是别的」
+    assert m.SKETCH_SLOT_CREATION_TYPES["line"] == 0
+    assert m.SKETCH_RELATION_ENTITY_TYPES["unknown"] == 0
+    assert m.SKETCH_RELATION_ENTITY_TYPES["dimension"] == 14
 
 
 # ── sw_render_material ────────────────────────────────────────────────
@@ -369,7 +382,10 @@ def test_add_relation_passes_two_arguments():
     m.add_relation(_Sketch(), ["E1", "E2"], m.SKETCH_CONSTRAINT_TYPES["coincident"])
     assert len(calls) == 1 and calls[0][0] == "AddRelation", calls
     ents, kind = calls[0][1]
-    assert kind == 1, "关系类型要原样透传"
+    #: ★ 2026-10-08（spec 222）：本断言原先把 `coincident` 的值**写死成 1**，
+    #:   而官方 `swConstraintType_COINCIDENT` 是 **9** —— 写死错值会让「原样透传」
+    #:   这条真正的不变量在枚举被修正后**误报失败**。⇒ 改成引用模块自己的常量 ✓
+    assert kind == m.SKETCH_CONSTRAINT_TYPES["coincident"], "关系类型要原样透传"
     #: ★ 实体**必须**是包过的 SAFEARRAY（`VARIANT`），不是裸 list
     assert hasattr(ents, "varianttype"), (
         "实体没包成 VARIANT ⇒ 真机会报 com_error 0x80010105（「服务器出现意外情况」）")
@@ -476,37 +492,40 @@ def test_weldment_has_no_create_weld_member():
     assert not hasattr(m, "create_weld_member")
 
 
-def test_create_profile_center_mate_uses_fm_101_and_five_properties():
-    """官方 IProfileCenterMateFeatureData 全部是属性，共 5 个。"""
+def test_create_profile_center_mate_uses_official_entry_and_five_properties():
+    """★ spec 240：官方入口 = `IAssemblyDoc::CreateMateData(24)` + `CreateMate(data)`。
+
+    ★ 不再走 `IFeatureManager::CreateDefinition(swFmMateProfileCenter=101)` ——
+      该常量**不在任何**官方 `CreateDefinition` 宿主页的 `Type` 清单里（只有枚举页收录）。
+    ★ `IProfileCenterMateFeatureData` 官方**全部是属性**，共 5 个（0 个方法）。
+    """
     m = _load("sw_weldment")
-    used: list[int] = []
+    calls: list[tuple] = []
     props: list[str] = []
 
-    class _Mgr:
-        def CreateDefinition(self, kind):
-            used.append(kind)
+    class _Data:
+        #: ★★★ 2026-10-03（轮 470）**mock 随实现形态更新**（★ 同本文件
+        #:   `test_tap_configure_sets_expected_properties` 那处）：
+        #:   原来是 `__getattr__` 返回可调用（假设成员是**方法**），
+        #:   ★★ 而实现已改为 `set_com_member`（属性赋值 ⇒ `setattr`）⇒
+        #:     `__getattr__` 不会被调用 ⇒ 记录恒空 ⇒ 改记 **`__setattr__`** ✓
+        def __setattr__(self, name, value):
+            props.append(name)
 
-            class _Data:
-                #: ★★★ 2026-10-03（轮 470）**mock 随实现形态更新**（★ 同本文件
-                #:   `test_tap_configure_sets_expected_properties` 那处）：
-                #:   原来是 `__getattr__` 返回可调用（假设成员是**方法**），
-                #:   ★★ 而实现已改为 `set_com_member`（属性赋值 ⇒ `setattr`）⇒
-                #:     `__getattr__` 不会被调用 ⇒ 记录恒空 ⇒ 改记 **`__setattr__`** ✓
-                def __setattr__(self, name, value):
-                    props.append(name)
+    data = _Data()
 
-            return _Data()
+    def _fake_call_assembly_doc(doc, member, *args):
+        calls.append((member, args))
+        return data if member == "CreateMateData" else "FEAT"
 
-        def CreateFeature(self, data):
-            return "FEAT"
-
-    class _Model:
-        FeatureManager = _Mgr()
-
-    m.create_profile_center_mate(_Model(), "ENTS", mate_alignment=1,
-                                 offset_distance=0.5, flip_dimension=True,
-                                 lock_rotation=False)
-    assert used == [m.SW_FM_MATE_PROFILE_CENTER]
+    m.call_assembly_doc = _fake_call_assembly_doc
+    result = m.create_profile_center_mate(object(), "ENTS", mate_alignment=1,
+                                          offset_distance=0.5, flip_dimension=True,
+                                          lock_rotation=False)
+    assert result == "FEAT"
+    assert calls == [("CreateMateData", (m.SW_MATE_PROFILE_CENTER,)),
+                     ("CreateMate", (data,))]
+    assert m.SW_MATE_PROFILE_CENTER == 24
     assert props == ["EntitiesToMate", "MateAlignment", "OffsetDistance",
                      "FlipDimension", "LockRotation"]
 

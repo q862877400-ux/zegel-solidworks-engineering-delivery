@@ -1,0 +1,53 @@
+规格 211 · B8 收口（四）：★★★ 纠正一处**传播到两个文件**的混淆 —— 「边界曲面」≠「直纹曲面」
+
+一、★★★★★ **发现经过**（★ 又是"覆盖表先知道"）
+· ★ 我去核实「边界曲面」时，★ **先读了覆盖表那一行** ⇒ ★★ 它**自己就分两行**：
+  | 覆盖表行 | 本仓 |
+  |---|---|
+  | ★「曲面 / **边界曲面**」 | ★ **❌** |
+  | ★「曲面 / **直纹曲面**」 | ★ **✅** |
+  ⇒ ★★★ **两个不同功能** ✓ —— ★ 而**我台账把它们混成了一个** ✗
+
+二、★★★★ **实测（★ 铁律 5）**
+· ★ 全扫 `C:\swapi\types` ⇒ ★★ **没有任何 `*BoundarySurface*` 的入口** ✗
+· ★ 最接近的两个**都不是它**：★ `IFeatureManager::SetFreeformBoundaryContinuity`
+  （★ **自由形**的边界连续性 ✗）· ★ `IFillSurfaceFeatureData::GetPatchBoundary` 一族
+  （★ **填充曲面**的边界 ✗）
+· ★★ 且 `docs/toolbar-ledger.md` **早就写着**：「边界曲面 | **待查**」✓
+⇒ ★★★ **判「查不到官方入口」** ✓ —— ★ **铁律 5：查不到就说查不到** ✓
+
+三、★★★ **而"直纹曲面"确实有、仓里也确实有** ✓
+· ★ `sw_surface_edit_ops.insert_ruled_surface` 走 `IFeatureManager.InsertRuledSurfaceFromEdge2(…)` ✓
+· ★★ 而**它不在本规格的 21 项里** ✗ —— ★ 所以**它被覆盖 ≠ 边界曲面被覆盖** ✓
+
+四、★★★★ **这处混淆传播到了两个文件**（★ 这是本批的重点）
+| 文件 | 原先写的 | 现在 |
+|---|---|---|
+| ★ `tools/spec211_manual_verdicts.py` | ★「边界曲面 ⇒ **可做** · `CreateRuledSurface`/`InsertRuledSurfaceFromEdge2`」✗ | ★★「**不做 · 查不到官方入口**」+ **纠混淆说明** ✓ |
+| ★ `docs/spec211-negative-conditions.md` | ★「B2-3 边界曲面 — `IModeler::CreateRuledSurface`」+ 负例设计 ✗ | ★★ **标"本段作废"** + **保留原文作混淆的实物** ✓ |
+
+★★ **为什么保留原文而删掉**：★ 那段**负例依据本身是对的**（`CreateRuledSurface` 确实要求
+b-curves ✓）—— ★ **只是它属于直纹曲面** ✗ ⇒ ★★ **留下它，后人才看得见"混淆长什么样"** ✓
+  ★（★ 与本规格的既有做法一致：★ 错读**不删**、★ 并列更正 ✓）
+
+五、★ 台账随之变化
+· ★★ **可做 13 → 12** · ★★ **不做 6 → 7** ✓
+· ★ 21 项终判分布（★ `tools/gen_spec211_final_table.py` 复算）：
+  ★★ **可做 12 · 不做 7 · 已覆盖 1 · 待实测 1** ✓
+
+六、★ 顺带核对（★ 本批的另一半）
+· ★★ **焊接符号**：★ 全扫后确认真宿主是 **`IModelDoc2::InsertWeldSymbol3`**（★ 与 `InsertWeldSymbol2`、
+  `IInsertWeldSymbol3` ✓）★ **与 `IDrawingDoc::InsertWeldSymbol`** ✗ ——
+  ★ 而台账把它写作 `IFeatureManager` ✗（★ **依据不精确、★ 非判错** ✓）
+  ★★ 且 ★ **"焊接符号"是**工程图**上的标注** ⇒ ★ **`IDrawingDoc::InsertWeldSymbol` 更可能是正解** ✓
+  ★ 已记入台账修正（★ 下一批把它当"待核实宿主"处理 ✓）
+
+七、★ 交付物
+· `tools/spec211_manual_verdicts.py`：★ 边界曲面**可做 → 不做** + 完整纠错说明 ✓
+· `docs/spec211-negative-conditions.md`：★ B2-3 段**标作废 + 保留原文** ✓
+· `docs/spec211-entry-ledger.md` · `specs/211-user-feature-gaps/b8-final-table.md` 已重生成 ✓
+
+八、★ 下一轮
+★ **推进余下 8 项**：★ 焊接符号（★ **宿主已核明** ✓）· 平板型式/导出 DXF · 成形工具 ·
+★ 爆炸直线 · 零部件阵列 · SpeedPak（★ **装配 3 项** —— ★ 按 `spec.md` 约定：
+★ **若发现要补配合链/标准件底子 ⇒ 停下报出来** ✓）· PDM（★ 待实测 ✓）

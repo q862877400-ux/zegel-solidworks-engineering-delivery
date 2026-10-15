@@ -1,0 +1,48 @@
+feat(gui): 输入层配置化 + 控件标注 —— 模式借自 microsoft/UFO (MIT)，零依赖
+
+## 决策：为什么是「借模式」而不是「依赖 UFO」
+用户问「换成 UFO 会不会硬依赖微软 UFO」——会。实测成本：
+  UFO requirements.txt 40 条声明依赖，含 langchain / openai / msal / faiss-cpu
+  317 个 .py / 2.8 MB，.venv 191 MB，且**硬 pin pywinauto==0.6.8**（我们在 0.6.9）
+而它那 5 个设计模式里，我们对照下来已独立实现 4 条：
+  自写 children() 递归 / 回读验证 / Enter 提交 / 逐键输入+清空
+  第 5 条「标注 ID」是给 agent 自由决策用的中介编号，**确定性脚本不需要**
+⇒ 结论：**借模式自实现（B 方案），运行时零依赖 UFO。**
+
+## 新增 scripts/sw_gui_input.py
+UFO 的配置项 → 本模块（同名同义，改配置不改代码）：
+    system.input_text_api             → CONFIG["input_api"]        set_text | type_keys
+    system.input_text_enter           → CONFIG["commit_key"]       enter | tab | none
+    system.input_text_inter_key_pause → CONFIG["inter_key_pause"]
+    _generate_node_id() 的 node_N     → label()，做成**可读标注**
+                                        （ctl_03 Edit「花键轴长度（L）」@(2225,937)）
+    UFO 自带**读回验证**              → CONFIG["verify"]，打完回读确认
+
+## 重构 scripts/sw_jlcfa_fill.py
+`type_into` 只保留**界面层职责**（清模态 → 确认焦点 → 点中目标），
+输入本身委托 `sw_gui_input.type_text`。此前输入方式/提交键/间隔**全硬编码**，
+换一次要动代码。
+
+## 顺带修掉两个**基线就有的** provenance 门禁违规
+`git stash` 掉本轮改动后门禁仍 `[FAIL] 75 行` exit=1 ⇒ 与本轮无关，是既有文件：
+  · scripts/sw_selection_tx.py  —— 根本没有 `# ── 来源 ──` 块
+  · scripts/sw_toolbox_index.py —— 有四字段但缺 `覆盖:` 标记
+⇒ 两者补齐后 **check_provenance exit=0 PASS**，合规来源块 255 → **257**。
+
+## 验证（实际跑的命令）
+  python -m pytest tests -q            → 738 passed / 2 failed / 15 skipped
+      738 - 721(基线) = 17 = 本轮新增测试数；2 个失败与基线相同
+      （test_release_check 失败于 bundled-skill-missing，release_check.py
+        自己的注释已写明这是上游基线同样存在的既有失败）
+  python scripts/check_provenance.py   → exit=0  [PASS] 257 个合规来源块
+  python scripts/check_member_names.py → [PASS]
+  python scripts/check_diff_markers.py → [PASS] 239 个 .py
+  python -m compileall -q scripts      → OK
+  A6 禁词（git diff origin/main 新增行）→ 0 命中
+  tests/test_sw_gui_input.py           → 17 passed（静态断言，用假控件对象）
+
+## ⚠ 未完成的验证（不写「已验证」）
+**端到端 12/12 复测未做** —— 本轮重构期间 SolidWorks 退出，进程列表为空
+（实测：`Get-Process SLDWORKS` 无结果；PID 8692 的顶层窗口数为 0）。
+⇒ 重构后的真实链路**尚未在本机跑过**。下次 SolidWorks 可用时须补跑
+   `python D:\AI\SW\run12.py`，确认仍为 12/12。

@@ -1,0 +1,37 @@
+规格 209 · B1 批收口：idx 209 move_body 落地 + 修掉我自己写的一处「静默空转判据」
+
+本笔接 8c868a4（B1 头 4 件活）。做三件事：
+
+一、B1 第 5 件活：idx 209 move_body（★ 裁决书称它「本批最干净的一条」）
+· scripts/sw_body_ops.py（新，铁律 3：scripts/ 下，本仓没有多体/布尔那一族）
+· 工具 solidworks_part_move_copy_body（batch92 ⇒ 439 个工具）
+· ★ 选体按**官方示例的调用序**（ClearSelection2 → GetBodies2 → CreateSelectData + Mark=1
+  → body.Select2(True, data)）；★ mark 不在 Select2 的形参里，它设在 ISelectData 上
+· ★ 判据是回读：移动 ⇒ 包围盒必变；复制 ⇒ 实体个数必增（★ 不用它回的 IFeature 指针 ——
+  真机拿到的是 <COMObject <unknown>>）
+
+二、★★ 真机定死三件官方没写的事（都随返回值带出，不写就是静默错）
+1. **长度参数是 mm 不是米**：先按「COM 惯例=米」换算传 0.025 ⇒ 只挪了 **0.025**
+   ⇒ 那是**静默的 1000× 错误**，而且它**能过**「包围盒变了」那条判据。传 25.0 ⇒ 正好挪 25 mm。
+2. **同一调用里角度是弧度**：传 30.0 得到约 81°（30 rad ≡ 278.87° ≡ −81.1°）
+   ⇒ 一个接口**混两种口径**（长度 mm / 角度 rad）。
+3. **官方参数名与实际作用轴 X↔Z 互换**（RotAngleX 实际绕 Z、RotAngleZ 实际绕 X，Y 是对的）
+   ⇒ 用 T5b「只给一个角、看**哪一轴跨度不变**」三格互证定出，并写成单源常量 ROTATION_AXIS_MAP；
+   ★ 补偿后复验：rotate_angle_z_deg=30 ⇒ 跨度 [60,40,20] → [71.9615,64.641,20]，
+   而 71.9615 = 60cos30+40sin30、64.641 = 60sin30+40cos30 **逐位吻合**
+   ⇒ 单位换算与轴映射**同时被几何证实**。
+
+三、★ 修掉我自己写的一处「静默空转判据」（spec.md §六 逐条记账）
+· rebuild_report 的包围盒判据第一版把 get_bounding_box 回的**字典**当可迭代对象用 ⇒
+  float("min") 抛异常被 except 吞掉 ⇒ **bbox_changed 恒 False** —— 判据看着在、其实没在判。
+· 修法：① 取对字段；② 返回值里显式加 bbox_comparable —— **None（读不到）与 False（没变）
+  必须分得开**；③ 加回归测试 test_rebuild_bbox_criterion_is_not_vacuous。
+· 同批还修了探针自己的两处错判据（T2 负例以为会抛、T3 用"本来就是活动的"那条去验变化）。
+
+门禁
+· check_union_conventions / check_param_binding(439) / check_tool_param_binding / check_python_syntax 全 exit 0
+· 聚焦测试 25 passed；收尾链 33.3 s（★ 链尾自动关了本会话拉起的 SolidWorks）
+· capabilities.yaml：117 条（本笔 39 插入 / 1 删除 —— 那 1 删除是 session_rebuild 的 evidence[0]
+  被有意替换，不是误删）
+· ⚠ 仍有一处**既有**红（不是我改的）：tools/verify_union_349.py:112 的变换未自证；
+  ★ 按本仓红线「tools/ 的探针/证据脚本只报不动」⇒ 未处置

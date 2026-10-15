@@ -1,0 +1,33 @@
+| 248 | **`AddRenderMaterial` 回 `True` 而文档里的材质计数**不变** —— 返回值不能当"加上了"**（2026-10-01，轮 320）。
+
+## 一、★ 官方签名（三源之一：`C:\swapi\types\IModelDocExtension\`）
+```
+★ `AddRenderMaterial( RenderMaterial PRenderMaterial, **out System.int PwMaterialId** )` ⇒ **2 参**，第 2 个是 **out**
+★ `GetRenderMaterialsCount()` ⇒ **0 参**
+★ `GetRenderMaterialsCount2( Int32 DisplayStateOption, Object DisplayStateNames )` ⇒ **2 参**
+★ `GetRenderMaterials()` ⇒ 0 参 · `GetRenderMaterials2( Int32, Object )`
+```
+
+## 二、★★ 真机（同一文档，`add` 前后各读一遍）
+```
+★ `AddRenderMaterial(mat, out_i4())` ⇒ **回 `True`** ✓（★ 形态是对的 —— ★ 少一个参数会报 `非选择性的参数`）
+★ **而 `GetRenderMaterialsCount()` 仍 `0`** · ★ `GetRenderMaterialsCount2(0, out)` 也 `0`
+★ `GetRenderMaterials()` ⇒ 回 **`None`**（★ 不是 list ⇒ 所以既有 `list_render_materials` 的 `isinstance(list)` 判空**是对的**）
+⇒ ★★★ **即：★ `True` 只表示"没报错"，不表示"加上了"** ✓
+```
+
+## 三、★★★★ 定则
+```
+★★ 这是**事实 8**（`AddSelectionListObject` 的 bool 不可信）的**又一个实例** ——
+   ★ 而且它是**同一个错误类型在不同接口上的复现**：
+   **凡 `out` 参数 + 返回 bool 的 COM 方法，bool 都只说明"调用没抛"**。
+   ⇒ ★★ **可操作**：★ 见到 `out` 参数，**判据必须落在被 out 的那个值上，或落在回读上** ——
+     ★ 本处该读的是 **`PwMaterialId`**（★ 我们传了 `out_i4()` 却**没看它回来是什么**）✓
+★★ **同一处试到第 2 次就该换思路**（★ 事实 53）—— ★ 本轮已试「两种 add 形态」+「两类计数入口」共 4 组，
+   ★ **全为 0** ⇒ ★★ **不再换参数**；★ 下一层要查的是**"材质必须来自材质库"这类先决**，
+   ★ 或**照官方 `IRenderMaterial` 的示例走一遍**（★ 官方有 `IModelDocExtension` 的相关示例）。
+```
+
+**依据**：`output/render-material-counts-probe.json`（★ 四种组合全 0）· `output/render-material-evidence.json`（★ PARTIAL）·
+`C:\swapi\types\IModelDocExtension\AddRenderMaterial.md` · `...\GetRenderMaterialsCount.md` · `...\GetRenderMaterialsCount2.md` ·
+`scripts/sw_render_material.py` 的 `add_render_material` / `list_render_materials` · 事实 8 / 53 / 227 / 247

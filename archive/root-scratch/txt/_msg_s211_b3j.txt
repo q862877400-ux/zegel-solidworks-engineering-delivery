@@ -1,0 +1,62 @@
+规格 211 · B3「焊接符号」：★★★★★★ **真机建成** —— ★ 而真因是**我走了另一条 API**
+
+一、★★★★★★ **读数**
+```
+★ ① 选面（★ 官方示例的前置）⇒ True
+★ ② `InsertWeldSymbol3()` ⇒ ★ **回了对象** ✓
+★ ③ `SetText(True, 'Left', 'BUTT', 'Right', 'Stagger', 0)` ⇒ 回 True
+★ ④ 回读 ⇒ {'GetLineCount': 3, 'GetArrowHeadCount': 1, 'GetLeaderCount': 1,
+            'IsAttached': True, 'GetTextCount': 0, 'GetArcCount': 0, 'GetTriangleCount': 0}
+★★★ 判定 ⇒ ★★★★★ **建成** —— ★ `GetLineCount = 3` · ★ `IsAttached = True`（★ 回读 ✓）
+```
+⇒ ★★★★ **这是本规格第五个新 `verified`** ✓
+  ★（★ 前四个：`sweep_surface` · `forming_tool` · `explode_line_sketch` · `speedpak` ✓）
+
+二、★★★★★ **真因：★ 前四步我走的是**另一条 API**** ✗（★ 这是本规格最有教育意义的一处）
+| # | 我原先做的 | 真的 |
+|---|---|---|
+| ★ ① **入口** | ★ `IDrawingDoc::InsertWeldSymbol`（★ **10 个参数** ✗）| ★★ **`IModelDoc2::InsertWeldSymbol3()` —— **零参**、回 `IWeldSymbol` 对象** ✓ |
+| ★ ② **用法** | ★ 一次调用就完事 ✗ | ★★ **两步式**：★ 拿对象 → **再调 `IWeldSymbol::SetText`** ✓ |
+| ★ ③ **符号名来源** | ★ `design library\annotations\*.sldweldfvt` ✗ | ★★★ **`…\*lang*\*english*\gtol.sym` 的**短名****（`BUTT` / `FILL` / `PLUG` …）✓ |
+| ★ ④ **前置** | ★ 我以为是"工程图 + 视图" ✗ | ★★ **在**零件**上选面 / 边 / 草图段** ✓（★ 官方示例 Preconditions 逐字 ✓）|
+⇒ ★★★ **而①那一步的读数正是**12 组形态 × 开关位全部 `0 → 0`**** ✗ ——
+  ★★ **它调完**不抛**、★ 而**静默无效**** ✓ —— ★★★ **与**事实 40**同类** ✓
+
+三、★★★★★ **找到它的路：★ 搜官方示例**（★ "调用序只在示例里"的**第四次**实证 ✓）
+· ★ 我先在官方 `examples/` 里**按名字搜** ⇒ ★★ 命中 **`Insert_Weld_Symbol_Example_VB.md`** ✓
+· ★★ 而它的**两样东西**是页面上**没有**的：
+  ★ ① **Preconditions 逐字**：「★ **Select a face, edge, or sketch segment for Weld Symbol
+    insertion**」✓ —— ★★ **那就是我上一批推断出的"选择前置"那一维** ✓
+  ★ ② **代码的调用序**：★ `Set swWeldSymbol = swModel.InsertWeldSymbol3` ⇒
+    ★ `swWeldSymbol.SetText True, "Left", "BUTT", "Right", "Stagger", …` ✓✓
+⇒ ★★★ **而 `InsertWeldSymbol3` 的官方页 `## Remarks` 还有第三样**：
+  ★★ 「★ To use this method, **insert the weld symbol into the model and then manipulate the
+    properties and methods on the `IWeldSymbol` object**」✓ —— ★ **那正是"两步式"的说明** ✓
+  ★★★ 以及 ★ **符号名清单的**真位置****（★ `gtol.sym` ✓）+ ★ **官方逐条列出的 16 个短名** ✓
+⇒ ★★★★ **所以这一处，★ 三样**各自给了一块**：
+  ★ **签名**给了入口与参数 ✓ · ★★ **`## Remarks`** 给了"两步式"与**符号名的真来源** ✓ ·
+  ★★★ **示例**给了**前置**与**调用序** ✓✓
+
+四、★★★★ **判据（★ 合规）**
+· ★ 主判据 = **回读**：★ `IWeldSymbol` **自带一整套读回**（★ 官方示例里逐个用过 ✓）——
+  ★ `GetLineCount = 3`（★ 符号有 3 条线段 ✓）· ★ `GetArrowHeadCount = 1`（★ 1 个箭头 ✓）·
+  ★ `GetLeaderCount = 1`（★ 1 条引线 ✓）· ★★ **`IsAttached = True`**（★ **已附着** —— ★ 最强的那条 ✓）
+· ★ `SetText` 回 `bool` 只是**旁证** ✓（★ 事实 8：★ **bool 返回值不可信** ✓）
+
+五、★ 登记
+· ★ `capabilities.yaml`：★ 新增 **`weld_symbol`** ⇒ ★★ **共 138 条** · ★★ **`verified` 115 → 116** ✓
+· ★ 终表：★ **12 项有能力条目** · ★ `verified` **6** · ★ `stitched` **5** ✓
+
+六、★ 21 项现状（★ 本轮终）
+| 终判 | 数 | 说明 |
+|---|---|---|
+| ★★ **可做** | ★ **12** | ★ **已做 10 项**（★ `verified` **6** · ★ `stitched` **5**）· ★ **未做 2 项**：★ **零部件阵列** · ★ **曲线驱动阵列**（★ 共用入口、★ 已有 `stitched` 读数 ✓）|
+| ★ **不做** | ★ **7** | ★ 剪裁曲面 · 边界凸台 · Instant3D · 序列/说明书 · 装配体性能分析 · 边界曲面 · 平板型式/导出 DXF |
+| ★ **已覆盖** | ★ **1** | ★ 展开/折叠 |
+| ★ **待实测** | ★ **1** | ★ PDM |
+⇒ ★★ **还差 3 项**（★ 2 项可做未做 + 1 项待实测 ✓）
+
+七、★ 下一轮
+★ ① **零部件阵列 / 曲线驱动阵列**（★ 共用 `FeatureLocalCurveDrivenPattern` ✓）——
+  ★★ **而本批刚证明"我可能走的是另一条 API"** ✗ ⇒ ★ **先搜它们的官方示例** ✓✓
+★ ② **PDM** 待实测 · ★ ③ 最后 **B8 文档部分**（★ 规格的收口 ✓）

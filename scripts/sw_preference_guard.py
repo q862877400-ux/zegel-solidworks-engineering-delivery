@@ -93,6 +93,7 @@ class GuardReport:
         return out
 
 
+#: dispatch-guard: exempt internal-helper
 def _member(obj, name: str, *args):
     """★ 走本仓统一的 `get_com_member`（★ 有实参 ⇒ 一定**调用**）。"""
     from sw_connect import get_com_member

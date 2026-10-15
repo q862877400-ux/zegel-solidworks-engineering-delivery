@@ -1,0 +1,128 @@
+
+### OUR projected curve header  (scripts/sw_curve_and_split.py lines 1-60)
+    1| """★ B7 特征下拉（第一组）：分割线 / 通过参考点的曲线 / 配合参考。"""
+    2| 
+    3| # ── 来源 ─────────────────────────────────────────────────────────────
+    4| # 仓库:   本项目自身（本任务新增的能力层）
+    5| # 文件:   scripts/sw_curve_and_split.py
+    6| # 定位:   ★ 2026-10-03（轮 481）★ 承 `specs/201-toolbar-gaps` 的 **B7**（特征下拉）。
+    7| #
+    8| #   ====================  ==================================================  ==================
+    9| #   工具栏原文             官方成员                                             判据
+   10| #   ====================  ==================================================  ==================
+   11| #   分割线（投影）          `IModelDoc2.InsertSplitLineProject`（2 参）→ void     **树增量 + 面数 + 环数**
+   12| #   分割线（轮廓）          `IModelDoc2.InsertSplitLineSil()` → void             **只有树增量**
+   13| #   分割线（相交）          `IFeatureManager.InsertSplitLineIntersect`          另见模块尾
+   14| #   通过参考点的曲线        `IModelDoc2.InsertCurveFileBegin/Point/End`（三步）  Begin/Point/End 各自的 bool
+   15| #   配合参考               `IFeatureManager.InsertMateReference2`（12 参）      回 Feature + 树增量
+   16| #   ====================  ==================================================  ==================
+   17| #
+   18| #   ★★ **两条官方标 Obsolete 的，本模块不做**（★ 铁律 4 要看后继，★ 而后继是**新架构**）：
+   19| #     · **变量阵列**：台账给的 `InsertVaryInstanceIncrement` 与 `…Override` **两个都标**：
+   20| #       > Obsolete. Superseded by [[IInstanceToVaryOptions]].
+   21| #       ⇒ ★ 继任者是个 **Options 数据接口** ⇒ ★ 要走 `IFeatureManager::CreateDefinition` 那族
+   22| #         ⇒ ★ 与"直接调一个方法"是**两种形态** ⇒ **另列**（★ 不硬塞进本模块）。
+   23| #     · **投影曲线**：`IModelDoc2.InsertProjectedSketch2` **标**：
+   24| #       > Obsolete. See [[IProjectionCurveFeatureData]] and [[IFeatureManager::CreateDefinition]].
+   25| #       ⇒ ★ 同上，走 `CreateDefinition` 那族 ⇒ **另列**。
+   26| #
+   27| #   ★★★ **曲线那族是"三步式"**（★ 官方三个方法是**成对**的，别只调中间那个）：
+   28| #     ```
+   29| #     InsertCurveFileBegin()            → void     ★ 开
+   30| #     InsertCurveFilePoint(X, Y, Z)     → bool     ★ 逐点（可多次）
+   31| #     InsertCurveFileEnd()              → bool     ★ 收尾
+   32| #     ```
+   33| #     ⚠ 三个的 X/Y/Z **官方只说 "X value for the point"**，★ **没说单位** ——
+   34| #       而 SolidWorks 的 API 坐标**惯例是米** ⇒ ★ 本模块按**毫米**收、在边界换算一次（规则 2），
+   35| #       ★ 并把这个**假设写进返回值**（★ 铁律 5：查不到就说清楚自己假设了什么）★ 且由真机验证。
+   36| #     ⚠ 而 `InsertCurveFile(FileName)` 是**另一条路**（从曲线文件读）⇒ ★ 本模块**不混用**。
+   37| #
+   38| # 官方依据（三源）:
+   39| #   · `C:\swapi\types\IModelDoc2\InsertSplitLineProject.md`（`void (IsDirectional: bool, FlipDir: bool)`）
+   40| #     ★★ **它的 `## Remarks` 里就有 mark 表**：草图 mark **4** · 面 mark **1**（★ 逐字）。
+   41| #     ★ `## Examples`「Create Projection Split Line Feature」给的**调用序**是四步：
+   42| #       实体特征(mark 0) → 投影草图(**mark 4**) → 面(**mark 1**，按**坐标**) → `InsertSplitLineProject(True, True)`。
+   43| #     ⇒ ★★ 例子的**隐含几何前提**（★ 签名/Remarks 都没写、★ 只有例子给得出）：
+   44| #       投影草图所在面在**实体之外**、与目标面**平行**、沿投影方向隔开。★ 见事实 484。
+   45| #   · `C:\swapi\types\IModelDoc2\InsertSplitLineSil.md`（`void ()`）
+   46| #   · `C:\swapi\types\IFeatureManager\InsertSplitLineIntersect.md`
+   47| #   · `C:\swapi\types\IModelDoc2\InsertCurveFileBegin.md`（`void ()`）
+   48| #   · `C:\swapi\types\IModelDoc2\InsertCurveFilePoint.md`（`bool (X, Y, Z)`）
+   49| #   · `C:\swapi\types\IModelDoc2\InsertCurveFileEnd.md`（`bool ()`）
+   50| #   · `C:\swapi\types\IFeatureManager\InsertMateReference2.md`（12 参 · 两组枚举）
+   51| #   · `C:\swapi\types\IModelDoc2\InsertVaryInstanceIncrement.md` / `…Override.md`（★ Obsolete 行）
+   52| #   · `C:\swapi\types\IModelDoc2\InsertProjectedSketch2.md`（★ Obsolete 行）
+   53| # 许可:   本仓库 MIT。无第三方代码引入。
+   54| # 覆盖:   全文件（★ 逐函数另有来源块）。
+   55| # ─────────────────────────────────────────────────────────────────────
+   56| #
+   57| # ★ 判据：★ 每个函数回 `{"ok": …, "verified_by": …}`；★ 判据 = **回对象非 None** + **特征树增量**
+   58| #   （★ 事实 8 / 规则 6）。★ 树增量**必须**走 `sw_part.feature_names`（★ 轮 473 的教训）。
+   59| 
+   60| from __future__ import annotations
+
+### sw_feature_entry_ops.py public defs
+   39| def _feature_names(model):
+   58| def find_cylindrical_face(model, *, visible_only: bool = True):
+   70| def insert_cosmetic_thread(model, *, standard: int = STD_ANSI_METRIC, standard_type: str = "",
+  144| def thicken_surface(model, *, thickness_mm: float, cut: bool = False, direction: int = 0,
+  241| def create_flatten_surface(model, *, accuracy_factor: int = 4, should_use_tears: bool = False,
+
+### grep SheetMetalFold|InsertSheetMetalFold|CreateFold (FOLD-API)
+  sw_api_sldworks.py:465: 'ISheetMetalFolder',
+  sw_api_sldworks.py:4341: 'GetSheetMetalFolder': 0,
+  sw_api_sldworks.py:5727: 'InsertSheetMetalFold': 0,
+  sw_api_sldworks.py:6347: 'InsertSheetMetalFold': 0,
+  sw_api_sldworks.py:8094: 'ISheetMetalFolder': {
+  sw_api_sldworks.py:15362: 'ISheetMetalFolder': (
+  sw_api_sldworks.py:21098: 'GetSheetMetalFolder': 217,
+  sw_api_sldworks.py:22464: 'InsertSheetMetalFold': 66174,
+  sw_api_sldworks.py:23084: 'InsertSheetMetalFold': 66174,
+  sw_api_sldworks.py:24797: 'ISheetMetalFolder': {
+
+### grep HideAllPlanes|ShowAllPlanes|HidePlane|ShowPlane (PLANE-VIS-API)
+
+### grep ^def .*bod (BODIES-DEF)
+  sw_costing.py:230: def get_body_count(cost_part) -> int:
+  sw_costing.py:235: def get_bodies(cost_part):
+  sw_costing.py:240: def include_body(cost_part, body_name: str, include: bool = True) -> int:
+  sw_costing.py:265: def update_cost_for_all_bodies(cost_part):
+  sw_costing.py:386: def set_default_lot_size(defaults, single_body: int, multibody: int) -> dict[str, Any]:
+  sw_costing.py:426: def read_cost_body(cost_body) -> dict[str, Any]:
+  sw_costing.py:439: def assign_custom_cost(cost_body, amount: float) -> bool:
+  sw_costing.py:532: def get_body_count_report(cost_manager) -> dict:
+  sw_costing.py:544: def list_cost_bodies_report(cost_manager) -> dict:
+  sw_costing.py:563: def read_cost_body_report(cost_manager, body_name: str) -> dict:
+  sw_geometry_selectors.py:113: def resolve_point(model, selector: str, *, body_index: int = 0) -> tuple:
+  sw_part.py:1666: def get_bounding_box(model, *, body_index: int = 0, include_hidden: bool = False):
+  sw_selection_spec.py:144: def entities_on_body(model, kind: str, *, body_index: int = 0) -> list[Any]:
+  sw_selection_spec.py:210: def resolve_entity(model, selector, kind: str, *, body_index: int = 0):
+  sw_selection_spec.py:253: def resolve_selection(model, selector, kind: str, *, body_index: int = 0) -> int:
+  sw_selection_spec.py:418: def resolve_entity_report(model, selector, kind: str = "EDGE", *, body_index: int = 0) -> dict:
+  sw_selection_spec.py:464: def entities_as_array(model, kind: str, indices, *, body_index: int = 0) -> list:
+  sw_sheet_metal_weld_entry.py:200: def _body_face_count(model) -> int | None:
+  sw_sheet_metal_weld_entry.py:215: def _surface_body_count(model) -> int | None:
+  sw_sheet_metal_weld_entry.py:774: def insert_mid_surface(model, body, part_doc, *,
+  sw_sheet_metal_weld_entry.py:884: def create_midsurface(model, *, body_index: int = 0, placement: float = 0.0,
+  sw_simulation_results.py:178: def create_deformed_body(results, plot_type: int, name: str = ""):
+  sw_simulation_study_options.py:728: def configure_static_solver(options, *, free_body_force: bool | None = None,
+  sw_surface_features.py:205: def _body_count(model) -> int:
+  sw_surface_features.py:214: def _solid_body_count(model) -> int:
+  sw_surface_features.py:228: def _surface_body_count(model) -> int:
+  sw_weldment.py:215: def _body_length_key(body) -> int:
+  sw_weldment.py:224: def _body_cut_list_key(body) -> tuple[int, int, int]:
+  sw_weldment.py:778: def create_cut_list(model, sort_options=None, *, collect_identical_bodies: bool = False):
+
+### grep InsertProjectedSketch2|InsertProjectedSketch (PROJCURVE-API)
+  sw_api_sldworks.py:5705: 'InsertProjectedSketch': 0,
+  sw_api_sldworks.py:5706: 'InsertProjectedSketch2': 1,
+  sw_api_sldworks.py:6322: 'InsertProjectedSketch': 0,
+  sw_api_sldworks.py:6323: 'InsertProjectedSketch2': 1,
+  sw_api_sldworks.py:22442: 'InsertProjectedSketch': 65687,
+  sw_api_sldworks.py:22443: 'InsertProjectedSketch2': 66003,
+  sw_api_sldworks.py:23059: 'InsertProjectedSketch': 65687,
+  sw_api_sldworks.py:23060: 'InsertProjectedSketch2': 66003,
+  sw_curve_and_split.py:23: #     · **投影曲线**：`IModelDoc2.InsertProjectedSketch2` **标**：
+  sw_curve_and_split.py:52: #   · `C:\swapi\types\IModelDoc2\InsertProjectedSketch2.md`（★ Obsolete 行）
+  sw_curve_and_split.py:82: "投影曲线": "★ 台账给的 InsertProjectedSketch2 标 **Obsolete**（继任者 IProjectionCurveFeatureData）⇒ 另列",
+  sw_curve_and_split.py:436: # ② **投影曲线**（`IModelDoc2.InsertProjectedSketch2`）：

@@ -1,0 +1,43 @@
+规格 209 · B2-3：工程图中心线（idx 52）—— 真机定案「选中了也没产出」，如实记 stitched
+
+来源：docs/recon-207/adjudication.md §一（idx 52 centerline）。
+裁决书要求"须真机定案"（两家外部项目结论互相矛盾）。
+
+改了什么
+· scripts/sw_drawing_create_missing.py 追加 insert_center_lines + VIEW_ENTITY_TYPES（四值）
+· mcp-server/tool_specs_batch98.py（新）+ register_capabilities ⇒ 447 个工具
+· tests/test_tool_specs_batch98.py（8 条：四值断言 + 两种失败必须分开 + 空 Dispatch 断言）
+· tools/probe_spec209_b2_centerline.py（真机探针）· tools/add_s209_b2c_capabilities.py
+· capabilities.yaml +1 条（drawing_center_lines，**stitched** ⇒ 125 条）
+
+★★ 真机定案（最干净的一句）
+圆柱零件的工程图视图：GetVisibleEntities2 回 edge=1 · face=1；用 Select4 按对象选上后
+**选区回读 = 1**；而 InsertCenterLine2 **回 None**、GetCenterLineCount **0 → 0（Δ=0）**
+⇒ ★★ 「选中了也没产出」。
+⇒ ★ **两家各对一半**：说"静默无效"的**不准确**（它并不静默 —— 返回 None）；
+  说 bool(result) 的**在本例里恰好对**，但**不能通用**（"回非 None 而几何没变"只有回读抓得住）。
+
+★ level = stitched，主要原因是「官方前置只复现了一半」
+官方示例是先选 COMPONENT、再按点选 FACE，且它的视图来自装配（cylinder20-9@Drawing View1）
+⇒ 本轮只复现了「选实体」那半、夹具是零件视图 ⇒ 结论限定在这条路径上。
+下一步：装配图 + 先选组件 + 再选面。
+
+★★ 我踩了已知事实 33 的同一形态
+GetVisibleEntities2 的 LpViewComponent **不能传 Python None** ⇒ com_error -2147352571 类型不匹配。
+第一次四种实体类型全报这个错 —— 看着像"读不到"，实际是我传错了。
+现在包 create_empty_dispatch_variant()。★ 与事实 33 记的 SelectByID2/Select4 的 Callout 坑一模一样。
+
+★★ 判据纪律（本条的要点）：把「选不上」与「选了也没用」分开
+选区回读 0 ⇒ 本函数在调 InsertCenterLine2 **之前**就报错（那不构成"能力无效"的证据）；
+只有选到了（回读 1）仍 Δ=0，才是「选了也没用」。
+
+★ 裁决书建议"与 idx 30 auto_center_marks 合并成一条工具两种模式"——我没照做
+两条入口入参形状不同（本条形参可全标量；auto_center_marks 收结构化 requirements 列表）
+⇒ Param 表达不了 ⇒ 硬合并会造出「一半参数对一半模式无意义」的工具 ⇒ 偏离已记账。
+⚠ 裁决书 §一 第 2 条点名的缺口（批量路 AutoInsertCenterMarks2 从未单独真机验证）本轮仍未补，已列为下一步。
+
+门禁
+· check_specs(all_specs()) = 447 个工具 · 0 问题；契约测试 8 passed
+· capabilities.yaml 125 条（37 行纯插入 / 0 删除）
+· 收尾链 13.8 s（★ 链尾自动关了本会话拉起的 SolidWorks）
+· ⚠ 仍有一处**既有**红（非本次改动）：tools/verify_union_349.py:112

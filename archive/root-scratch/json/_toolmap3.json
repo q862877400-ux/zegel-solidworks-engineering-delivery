@@ -1,0 +1,53 @@
+{
+  "modeling_feature_readback_tools": [
+    "solidworks_part_shell",
+    "solidworks_part_rib",
+    "solidworks_part_insert_dome",
+    "solidworks_part_insert_composite_curve",
+    "solidworks_part_bounding_box"
+  ],
+  "part_and_features": [
+    "solidworks_circular_pattern",
+    "solidworks_mirror_feature",
+    "solidworks_revolve_boss"
+  ],
+  "sketch_build": [
+    "solidworks_sketch_start",
+    "solidworks_sketch_end",
+    "solidworks_sketch_add_line",
+    "solidworks_sketch_add_circle",
+    "solidworks_sketch_add_rectangle"
+  ],
+  "simulation_study_create": [
+    "solidworks_simulation_create_study",
+    "solidworks_simulation_find_study",
+    "solidworks_simulation_list_studies",
+    "solidworks_simulation_set_material"
+  ],
+  "mesh_create_readback": [
+    "solidworks_simulation_create_mesh",
+    "solidworks_simulation_mesh_size",
+    "solidworks_simulation_default_element_size_and_tolerance"
+  ],
+  "analysis_run_readback": [
+    "solidworks_simulation_run_analysis",
+    "solidworks_simulation_collect_evidence"
+  ],
+  "topology_readback_and_parameters": [
+    "solidworks_topology_list_constraints",
+    "solidworks_topology_manager_report",
+    "solidworks_topology_options_report",
+    "solidworks_topology_set_goal",
+    "solidworks_topology_set_iteration_options"
+  ],
+  "selection_helpers": [
+    "solidworks_clear_selection",
+    "solidworks_current_selection",
+    "solidworks_entities_on_body",
+    "solidworks_available_direction_selectors",
+    "solidworks_available_point_selectors"
+  ],
+  "geometry_and_delivery_review": [
+    "solidworks_set_standard_view"
+  ]
+}

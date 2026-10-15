@@ -1,0 +1,49 @@
+     ★ 2026-10-01（轮 280 / **24h 计划 段 6「把 8 条空壳填实」**）· ★★★★★ **`cadstudio_*` 工具**不在**归属检查的视野里 —— 那解释了 8 条"verified 却 0 工具"**
+         ▶ **起点**：★ 轮 279 留下 **16 条「`verified` 却 0 工具」**。★ 逐条看 `evidence` ⇒ ★★ 分**四类**：
+           ★ **A 类 · 由无 CAD 后端实现**（`cadstudio_*`）：headless_open_format_writing ·
+             autocad_headless_preview · dxf_preview_scene · dfm_checks · routing · autocad_script_backend ·
+             autocad_dotnet_backend · autocad_basic_drafting
+           ★ **B 类 · 工具已存在、只是条目没认领**：solidworks_addin_host · pack_and_go · assembly_and_mates
+           ★ **C 类 · 纯 Python 能力**（★ 无 COM、**不该有工具**）：requirements_planning · feature_readback_criterion
+           ★ **D 类 · 还没定性**：external_spur_gear_geometry · drawing_dimension_insertion ·
+             topology_optimization · standard_parts_toolbox · sketch_chamfer
+         ★★★★★ **根因**：★ `rc.all_specs()` 返回 **164 个工具** —— ★★ 而**全部是 `solidworks_*`**
+           （★ 实测：里面**一个 `cadstudio_*` 都没有**）
+           ★★ 而 `check_tool_capability_coverage.py` 判的是「工具 → 有没有条目认领」
+           ⇒ ★★★ **它看不见 `cadstudio_*`** ⇒ ★ **所以那些条目一直空着而门禁不报**！
+           ★ 查真名（grep 仓库）⇒ ★ **13 个 `cadstudio_*`**：build_dxf_preview_scene · check_dfm ·
+             check_routing · create_ocp_loft · create_ocp_surface · fea_preflight · prepare_fea ·
+             resolve_backend · review_advanced_geometry · routing_preflight · run_fea ·
+             run_fea_convergence · write_open_format
+         ★ **处置：填 8 条**（★ 零新代码、**零真机成本**）：
+           ```
+           | headless_open_format_writing | cadstudio_write_open_format |
+           | autocad_headless_preview | cadstudio_build_dxf_preview_scene |
+           | dxf_preview_scene | cadstudio_build_dxf_preview_scene（★ 同一能力的两面） |
+           | dfm_checks | cadstudio_check_dfm |
+           | routing | cadstudio_check_routing + cadstudio_routing_preflight |
+           | solidworks_addin_host | solidworks_addin_host_status |
+           | pack_and_go | solidworks_pack_and_go + delivery_pack_and_go_audit_matrix |
+           | assembly_and_mates | assembly_list_components / list_mates / check_interference |
+           ```
+           ⇒ ★★ 「verified 却 0 工具」**16 → 9 条** · 能力仍 **69** · `all_specs()` 仍 **164**
+           ⇒ ★★★ **注意：这一步一个工具都没新增** —— ★ **它提升的是清单的**可信度****（与事实 209 同类）。
+         ★★★ **定则**：
+           ★ **"一个检查看不见某类东西"，会让那一类长期空着而门禁不报** —— ★ 本处：归属检查的输入是
+             `all_specs()`，★ 而 `cadstudio_*` **不在其中**
+             ⇒ ★★★ **所以"门禁全绿"与"清单没有空壳"是**两件事****（★ 门禁只看得到它的输入域）
+             ★★ **可操作形态**：★ 报"清单为空"的那类检查，**先问它的输入域覆盖了什么** ——
+               ★ 本处应当**再扫一遍"仓库里实际存在的工具名"**（★ 我 grep 出 13 个）。
+           ★★ **填实与新增要分清**（★ 事实 209 已立）：★ 本轮**填 8 条、新增 0** ⇒
+             ★ `all_specs()` 与能力数**都不动**，★ 而那 8 条从「说了却没底」变成「说了有底」
+             ⇒ ★★ **所以"数字不动"不等于"没进展"** —— ★ 要能指出**动的是哪一项**
+               （★ 本处动的是「verified 却 0 工具」：**16 → 9**）。
+         ▶ **验收**：① `all_specs()` = **164** · 能力 **69** · 归属 **164/164** ✓
+           · 门禁链 **8 段全 PASS** ✓ · `release_check` exit 0 ✓ · 全量 pytest **1284 passed / 0 failed** ✓
+           ② ★ 证据**沿用各条自己的**（★ 本轮**没挂新工具** ⇒ **不新增真机证据**，如实）
+         ▶ **状态**：`all_specs()` **164** · 能力 **69** 条（verified **52** · stitched **16**）·
+           known-facts **212** 条。
+         ▶ **队列续作**：★ 剩下 **9 条**「verified 却 0 工具」逐条定性（★ 其中 D 类 5 条最需要看）·
+           ★ ★ **`autocad_script_backend` / `autocad_dotnet_backend` 也应由 `cadstudio_*` 实现** ——
+             ⚠ 而 13 个工具里**没有对应名** ⇒ ★★ 那说明**它们的工具真缺**（★ 要查 autocad 那条线）·
+           ★ 能力 69 → 75 还差 6。

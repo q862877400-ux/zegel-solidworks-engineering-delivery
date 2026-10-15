@@ -1,0 +1,65 @@
+规格 211 · B8 收口（二）：★★ **与 `git worktree` 基线对照** —— ★ 把"我的"与"既有的"分开
+
+一、★★★ 为什么必须这么做（★ 事实 57 的原话）
+「**一个「一直是绿的」测试，可能只是每次跑的时候环境恰好满足** —— 不是它真的在测」；
+★ 而它的**推论**同样重要：★★ **"一个红的测试"也未必是我弄的** ✗ ——
+★ **红与绿都要用基线量** ✓
+
+二、★ 做法（★ 一步到位）
+· ★ `git worktree add --detach D:\AI\SW-baseline-210 9f1834f3`
+  ★（★ `9f1834f3` = **规格 210 之前**的提交 ✓）
+· ★ 在**基线里**跑那批可疑套件 ⇒ ★★ **得到"与我无关的红"** ✓
+
+三、★★★★ **基线读数**（★ 8 个套件）
+``` ★ 5 failed, 83 passed in 238.46s ```
+| 基线里**就红**的（★ 与我无关 ✓） |
+|---|
+| ★ `test_com_member_helpers.py::test_every_helper_user_can_actually_import_it` |
+| ★ `test_no_bare_byref_args.py::test_no_bare_byref_scalar_out_params` |
+| ★ `test_no_uncalled_helpers.py::test_no_uncalled_helpers_in_gates_and_tools` |
+| ★ `test_gate_negative_cases.py::test_level_audit_is_fresh` |
+| ★ `test_gate_negative_cases.py::test_gate_details_exposed_for_every_gate` |
+
+★★★ **而基线里是绿的、现在红的** ⇒ ★ **那才是我引入的** ✗：
+1. ★ **`test_result_serializer.py`**（★ 4 条 ✗）⇒ ★ **上一批已修** ✓
+2. ★ **`test_unattended_equivalence.py`**（★ 7 条 ✗）⇒ ★ **上一批已修** ✓
+3. ★ **`test_language_backend_matrix.py`**（★ 8 条 ✗）⇒ ★★ **上一批修 `allowed_modes` 时**顺带**修好了** ✓
+   ★（★ 它红的**根因就是同一处** —— ★ 非法 `allowed_modes` 让 `load_capabilities` 抛 ✗ ✓）
+4. ★★★ **`test_signature_audit_freshness_gate.py::test_current_table_is_fresh`** ✗
+   ⇒ ★ **本批修掉** ✓
+
+四、★★★★ **本批修的那条：签名审计表的"新鲜度"**
+· ★ 门禁输出（★ **它自己给了修法** ✓）：
+  ```
+  [FAIL] 1/6 个模块的数字已失真：
+  · sw_weldment.py  文档 65 → 实际 68
+  修法：把 docs/signature-audit.md 那张表里对应行改成：
+  | `sw_weldment.py` | 68 | **68** | 0 | 0 |
+  ⚠ 口径：调用点数会随代码增长（新增 COM 调用即变）⇒ 这是应该的；
+    门禁要的是「文档跟得上代码」，不是「数字永远不变」。
+  ```
+· ★★ 真因：★ 我在 `sw_weldment.py` 里加了 `insert_weldment_trim_report`（★ 含 COM 调用 ✓）
+  + ★ 它调 `create_empty_dispatch_variant()` ⇒ ★ **调用点 65 → 68** ✓
+· ★ 修：★ **按门禁给的改法改那一行** ✓ ⇒ 复跑 ⇒ ★★ **[PASS] 6 个模块逐项相符** ✓
+· ★★ **这条纪律值得记**：★ **新增 COM 调用 ⇒ 签名审计表要跟着改** ✓ ——
+  ★ 门禁**不要求数字不变**、★ **只要求文档跟得上代码** ✓
+
+五、★ 复验（★ 五个套件合跑）
+★ `test_signature_audit_freshness_gate` · `test_language_backend_matrix` ·
+`test_result_serializer` · `test_unattended_equivalence` · `test_relative_imports_gate`
+⇒ ★★ **34 passed** ✓
+
+六、★★ **净账（★ 全量 pytest 的 39 failed 拆开了）**
+| 类 | 数 | 说明 |
+|---|---|---|
+| ★★ **基线里就红的** | ★ **5 条**（★ 本批核对过的 8 个套件里）| ★ **与我无关** ✓ |
+| ★★ **我引入的、★ 已修** | ★ **4 组共 20 条**（★ 4 + 7 + 8 + 1 ✓）| ★ **全绿** ✓ |
+| ★ **其余待核** | ★ 余下那些套件（★ `test_release_check` · `test_tool_specs_batch79` · `test_tool_specs_batch92` · `test_mcp_protocol_layer` · `test_registry_wiring` · `test_sw_connect_open_document` · `test_sketch_slot_params` · `test_sw_capability_probe` · `test_matrix_tool_name_normalization` · `test_real_gap_triage_contract` · `test_mcp_backend_router` · `test_cad_reliability`）| ★★ **下一批用同一手法逐个与基线对照** ✓ |
+
+七、★ 交付物
+· `docs/signature-audit.md`：★ `sw_weldment.py` 那行 **65 → 68** ✓
+· ★ 基线 worktree 保留在 `D:\AI\SW-baseline-210`（★ 下一批还要用 ✓）—— ★ **用完要 `git worktree remove`** ✓
+
+八、★ 下一轮
+★ **继续 B8**：★ ① 把余下那 12 个套件**逐个与基线对照**（★ 同一手法 ✓）⇒ ★ 分清"既有/我的" ✓ ·
+★ ② 修掉属于我的 · ★ ③ 更新 `tasks.md` / `goal-bar.md` / `docs/HANDOFF.md` ✓

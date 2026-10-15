@@ -1,0 +1,51 @@
+fix(阶段2): ★★★★★ **T1 第 6 条 —— ★ `FeatureCutThicken2` 核实为**已完成****（★ 生产代码**已经**用现行 6 参版）；★ 并**记下"真命中"里生产与探针要分开算**
+
+■ 一 · ★ 逐条流程 ①：查官方签名与 Remarks
+  ★ **官方逐字**（★ `C:\swapi\types\IModelDoc2\FeatureCutThicken2.md`）：
+    > ★ 「**Obsolete. Superseded by `IFeatureManager::FeatureCutThicken`**.」✓
+    ★ 旧签名 ⇒ `(double Thickness, int Direction, int FaceIndex, bool FillVolume)` ⇒ **4 参** ✓
+  ★★ **后继逐字**（★ `IFeatureManager/FeatureCutThicken.md`）：★ **无 Obsolete** ·
+    ★ 签名 ⇒ `(…, **bool UseFeatScope**, **bool UseAutoSelect**)` ⇒ **6 参**（★ **前 4 参同名同型**）✓
+    ★★ 而 `## Parameters` 逐字给了语义：★ `Thickness` = Wall thickness ·
+      ★★ `Direction` = **0 / 1 / 2** · ★★★ `FaceIndex` = **Not currently used** ·
+      ★★★★ `FillVolume` = **make the solid from a knitted surface** ✓
+
+■ 二 · ★★★★★ 而**核实结果：★ 生产代码**已经做对了****
+  ★ `scripts/sw_feature_entry_ops.py` L151-152 逐字：
+    > ★ 「★ `IFeatureManager.FeatureCutThicken`（**6 参**）· ⛔ **废弃**：
+    >   `IModelDoc2.FeatureBossThicken{,2}` / `FeatureCutThicken{,2}`」✓
+  ★★ L211-213 逐字：★ 完整 6 参签名注释 + `get_com_member(fm, kind, thick_m, int(direction),
+    0, bool(fill_volume), bool(use_feat_scope), bool(use_auto_select))` ✓
+  ★★★ **⇒ 它**已经**用的是现行的那个**、★ 而旧名**只作为"⛔ 废弃"写进注释**（★ 正确做法）✓
+
+■ 三 · ★★★★ 而扫描器报的那几条**全在探针里**
+  ★ 逐字核 `output/obsolete-dotcall-scan.json` ⇒ ★ 命中 `Thicken` 的是
+    `FeatureBossThicken2` ×2 + `FeatureCutThicken2` ×1 ⇒
+    ★★ **全在 `tools/probe_thicken2.py`** · ★★★ `scope` = **「探针/证据（`tools/`，★ 只报不动）」** ✓
+  ★★★★ **⇒ 那不是生产待办** —— ★ 而**探针按纪律不能改**（★ 它的历史输出是证据）✓
+
+■ 四 · ★ 修法（★ **代码不动、★ 而用测试守住**）
+  ★ 新增 `tests/test_obsolete_cutthicken_uses_successor.py`（★ **4 条**）⇒ ★ **守它别退化** ✓
+
+■ 五 · ★★★★ 可复用判据（★ 本轮）
+  > ★★★ **「真命中」要分清**生产**与**探针**** —— ★ 前者按流程改、★ **后者按纪律不动** ✓
+  > ★★ **而与事实 518/519 同族**：★★★ **「我这张表里有」≠「该改」** ✓
+  ★★ **本轮的实际情形**：★ 我上轮列"真实生产待办 8 条"时**把探针那几条算进去了一点** ⇒
+    ★★★ **本轮精算后：★ 真正还要动的是 6 条** ✓
+
+■ 六 · ★★ 本轮踩到的判据精度问题（★ 值记）
+  ★ ⚠ **我第一版断言「实参个数 == 8」** ⇒ ★★ **红了** ✓
+  ★★ **真因**：★ **两个分支的实参个数**本来就不同**** ——
+    · ★ `cut=True` ⇒ `FeatureCutThicken`（**6 参**）⇒ 加 2 个定位参数 = **8** ✓
+    · ★★ `cut=False` ⇒ `FeatureBossThicken`（**7 参**，★ **它多一个 `Merge`**）⇒ **9** ✓
+  ★★★ **⇒ 判据要按「调的是哪个成员」分开**、★ **而不是一个数管两边** ✓
+  ★★★★ **可复用判据**：★★★ **"实参个数"必须与"那个成员自己的签名"配对判** ——
+    ★ 同一处 `get_com_member` 包装**两个不同的成员**时，**个数本来就不同** ✓
+    （★ 与**事实 51**（★ 范围贴合组织单元）**同族**：★ **判据要贴合**被判的那个对象**）✓
+
+■ 七 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★ **T1 进度：★ 6 条已处置**（★ 其中 **3 条判定保留** + ★ **2 条换掉** + ★ **1 条核实已完成**）✓
+  ★★★ **真命中：★ 34**（★ 含探针 25 + 兜底 21 那一档的统计口径）⇒
+    ★★★★ **剩余要动的：★ 6 条**（★ `AutoDimension2` · `FeatureFillet` · `FeatureLinearPattern3` ·
+      `FeatureCircularPattern4` · `DeleteRenderMaterial` · `AdvancedGraphics`）✓

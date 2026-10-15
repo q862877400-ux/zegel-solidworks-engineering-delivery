@@ -114,5 +114,14 @@ def test_negative_case_the_new_rules_come_from_real_tool_names() -> None:
     import re as _re
     tools = mb.our_tools()
     joined = " ".join(mb.tool_text(t) for t in tools).lower()
-    for word in ("gear", "helix", "fastener", "costing", "delivery", "motion", "flatten"):
+    #: ★★★ 2026-10-10 **`gear` 已从词表移除**（★ 业主架构指令 —— ★ 如实）：
+    #:   ★ 业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+    #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+    #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+    #:   ★★ 齿轮的 2 个工具（★ 渐开线齿形公式 = **方法**）已移出 ⇒
+    #:     ★ 工具名里**不再有 `gear`** ⇒ ★★ **本判据不能再要求它** ✓
+    #:   ★ **这不是放宽判据** —— ★ 本判据的**用意**是「补的词要来自**真**工具名」，
+    #:     ★★ 而 `gear` **本来确实是真工具名**（★ 它**合法**移出了）⇒ ★ 从词表去掉 ✓
+    #:   ★ 原件在 `archive/inherited-methods/`（★ 只搬不删）
+    for word in ("helix", "fastener", "costing", "delivery", "motion", "flatten"):
         assert word in joined, "★ 补的词 `%s` **没有任何真工具名含它** ⇒ 那是凑数" % word

@@ -1,0 +1,57 @@
+fix(能力层): ★★★★★ `GetSystemValue2`/`SystemValue` → `GetSystemValue3`（真机 PASS）；★ 并发现**新入口回的是数组**
+
+■ 一 · ★★★★★ 本轮最重要的**方法论**：**"造不出前置"时，换路比继续造更有效**
+  ★ 这一条我**前几轮卡了三次**（★ 都卡在"要有一个真实尺寸"）：
+    | ★ 轮 | ★ 尝试的造法 | ★ 结果 |
+    |---|---|---|
+    | ★ 前 | `IFeature.GetFirstDisplayDimension()` | ★★ 拉伸特征**没有** display dimension |
+    | ★ 前 | `IModelDoc2.Parameter("D1@草图1")` | ★★ 矩形草图**本来就没有尺寸** |
+    | ★ 前 | `AutoDimension2` + `FullyDefineSketch` | ★★ 一个**不可调**、★ 一个**类型不匹配** |
+  ★★ 按**事实 53**（同一处 ≥3 次就停）★ 停下之后，★ **本轮换了路子**：
+    ★★★ **"打开仓里**现成**的 `.SLDPRT`"** —— ★ 仓里有 **68 个**，
+      ★ 而 `output/_probe_drawing_part.SLDPRT` **正好带尺寸**（★ 它是给工程图探针用的）✓
+  ⇒ ★★★★ **一次就成** ✓
+  ★★ **可复用判据**：★★★ **当"构造前置"连续失败 ≥3 次，★ 先问"仓里有没有**现成**的同类对象"** ——
+    ★ 那往往比继续构造便宜得多（★ 与**事实 53** 是配套的两条：★ **53 说"该停"，★ 本条说"停下之后往哪走"**）✓
+
+■ 二 · ★★★★ 官方例子的**完整链条**（`examples/Change_Dimensions_of_Gear_Mate_Example_VB.md` 逐字）
+  ```vbnet
+  Set swDispDim_1 = swMate.DisplayDimension2(0)      ' ← 从 IMate2 拿 DisplayDimension
+  Set swDim_1 = swDispDim_1.GetDimension             ' ← DisplayDimension → Dimension
+  dimValue_1 = swDim_1.GetSystemValue3(swInConfigurationOpts_e.swThisConfiguration, Empty)
+  errors = swDim_1.SetSystemValue3(dimValue_1(0), …) ' ★★★ **注意它取 (0)**
+  ```
+
+■ 三 · ★★★★ 本轮的**关键发现**：★ **`GetSystemValue3` 回的是**数组/元组**，不是标量**
+  ★ 官方例子那一行 `dimValue_1(**0**)` 就是证据 ✓
+  ★★ 而本仓原来是 `float(dimension.GetSystemValue2(名))` —— ★ **直接把返回值喂给 `float()`**
+    ⇒ ★★★ **换成新入口会 `TypeError`** ⇒ ★ **必须多取一层 `[0]`** ✓
+  ★★★ 本会话**第二次**见到这个形态：★ 上一轮 `GetExcludeFromBOM2` 也回 **`(False,)`** ✓
+  ⇒ ★★ **可复用判据**：★ **凡从"属性/旧方法"换到"`Get*2/Get*3` 家族"，都要问一句
+    「**它回的是标量还是数组？**」** —— ★ 这一族的命名升级**顺手也改了返回形态** ✓
+
+■ 四 · ★★★★★ 真机证据（★ `tools/probe_getsystemvalue_on_existing.py` ·
+    `output/getsystemvalue-on-existing-evidence.json`）
+  ★ 用的文档：★ `output/_probe_drawing_part.SLDPRT` · ★ 挖到的尺寸：
+    `D1@凸台-拉伸1@_probe_drawing_part.Part` ✓
+  | ★ 调用 | ★ 读数 |
+  |---|---|
+  | ★ 旧 `GetSystemValue2("")` | ★ **0.01** |
+  | ★ 旧 `SystemValue`（属性）| ★ **0.01** |
+  | ★★ 新 `GetSystemValue3(1, 空VARIANT)` | ★ **`(0.01,)`** |
+  | ★★ 新 `GetSystemValue3(2, 空VARIANT)` | ★ **`(0.01,)`** |
+  ⇒ ★★ **三者数值一致、★ 且新的是元组 ⇒ 可换** ✓
+
+■ 五 · ★ 实际改动（`scripts/sw_document_data.py::_dimension_value_mm`）
+  · ★ 带配置名 ⇒ `GetSystemValue3(3, [配置名])`（★ `swSpecifyConfiguration = 3`）
+  · ★★ 不带 ⇒ `GetSystemValue3(1, 空VARIANT)`（★ `swThisConfiguration = 1`）
+  · ★★★ **两处都取了 `[0]`**（★ 若是数组），★ 并**保留了"不是数组"的兼容分支** ✓
+  · ★ docstring 里带**完整官方依据 + 真机对照表**（★ 免得后人再探一遍）✓
+
+■ 六 · ★ 读数
+  | | ★ 改前 | ★★ 改后 |
+  |---|---|---|
+  | ★★ 真命中 | 42 | ★★ **40** |
+  | ★★ 其中生产 | 17 | ★★ **15** |
+  | ★ `GetSystemValue2` · `SystemValue` | 各 1 条 | ★★ **两条均已消失** ✓ |
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 6 passed** ✓

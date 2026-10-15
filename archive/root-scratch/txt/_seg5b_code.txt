@@ -1,0 +1,61 @@
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力层）
+# 文件:   scripts/sw_simulation_loads.py —— 追加 3 个"数参型"载荷的 report 封装
+# 定位:   ★ 2026-10-03（轮 414）24h 计划 v2 段 5（仿真载荷族）**A 组的收尾**。
+#   ★★ **为什么是这三条**：重跑分诊后 `sw_simulation_loads` 的该挂剩 17 条，
+#     其中**与已验证的 6 条同形**（`(manager, entities, 若干普通数)`）的只剩：
+#     `add_distributed_mass` · `add_force` · `add_remote_load`
+#     （另两条 `add_reference_geometry_restraint` / `add_prescribed_displacement` 要**引用几何对象**，
+#      ★ 那需要另一条前置链 ⇒ 留后批）。
+#   ★★ **而本批带着轮 408 学到的那条纪律**：★ **算例类型**是"调用前提"的一维 ——
+#     这三条都是**结构载荷** ⇒ ★ 预期要 **`static`**（★ 而热载荷要 `thermal`），
+#     ★ 所以探针必须**分别验**、★ 不能一概而论（事实 323 §四）。
+#   ⚠★ **一处形态要特别处理**：`add_force` 的裸函数默认传 `ref_geom=None`
+#     —— ★ 而**事实 12**（与 `add_pressure` 的 docstring）明写：
+#     ★★ 官方的 Object 入参**不能裸传 `None`**（会 `类型不匹配`），
+#     要用本项目的空 Dispatch 参数包 `create_empty_dispatch_variant()`。
+#     ⇒ ★ 本包装**显式补它**（★ 而**不改裸函数** —— 免得动到别的调用方）。
+# 官方依据: CHM `ICWLoadsAndRestraintsManager~Add{DistributedMass,Force,RemoteLoad}.html` 的 VB 声明 ·
+#   本模块既有的来源块（`AddDistributedMass` / `AddRemoteLoad` 的官方声明**逐字抄在 L441-449**）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def apply_distributed_mass_report(manager, model, mass: float, units: int = 0):
+    """**加分布质量**并回**回读报告**（★ 与 `apply_pressure_report` 同一套机器）。"""
+    from .sw_simulation import _selected_dispatch_array
+    entities = _selected_dispatch_array(model)
+    return _report(manager, lambda: add_distributed_mass(manager, entities, float(mass), int(units)),
+                   "distributed_mass", model)
+
+
+def apply_force_report(manager, model, force_type: int = 1):
+    """**加力/力矩**并回**回读报告**（★ `force_type` 是官方的种类枚举）。
+
+    ⚠★ 本包装**显式补 `ref_geom`**（空 Dispatch）—— ★ 裸函数的默认值是 `None`，
+    而**事实 12** 明写 Object 入参裸传 `None` 会 `类型不匹配`。
+    """
+    from .sw_connect import create_empty_dispatch_variant
+    from .sw_simulation import _selected_dispatch_array
+    entities = _selected_dispatch_array(model)
+    return _report(manager,
+                   lambda: add_force(manager, entities, int(force_type),
+                                     create_empty_dispatch_variant()),
+                   "force", model)
+
+
+def apply_remote_load_report(manager, model, load_type: int, units: int,
+                             dx: float, dy: float, dz: float):
+    """**加远程载荷**（位置 + 方向 + 幅值）并回**回读报告**。
+
+    ⚠ `load_type` / `units` 的枚举在本仓的来源块里注明"反射 dump 未收录 ⇒ 只做 int 透传"。
+    """
+    from .sw_simulation import _selected_dispatch_array
+    entities = _selected_dispatch_array(model)
+    return _report(manager,
+                   lambda: add_remote_load(manager, entities, int(load_type), int(units),
+                                           float(dx), float(dy), float(dz)),
+                   "remote_load", model)

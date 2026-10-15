@@ -1,0 +1,15 @@
+★★★ 2026-10-01（轮 292）**入口链的真机证据（★ 视图级仍未验）**：★ 跑了既有的
+  `python tools/capture_drawing_query_evidence.py`（★ §5.0：那正是同族的证据脚本）⇒ **结论 PASS**，
+  证据 `output/drawing-query-evidence.json` ——
+  · ★★ **`list_views_on_empty_sheet` ⇒ `{"ok": true, "got": []}`** ⇒ ★ **空图纸上回空表**，
+    而那正是那条陷阱的**正例**（★ 官方 `GetFirstView()` 在空图纸上返回的是**图纸本身**，`Type == 1`，
+    ★ 不滤掉就会列出名叫「图纸1」的**假视图**）；
+  · `sheets_summary` ✓ `{count: 1, names: ["图纸1"], current: "图纸1"}` · `current_sheet_info` ✓ ·
+    `negative_on_part` ✓（★ 非工程图如实抛：`当前文档不是工程图（GetType()=1）`）· `negative_bad_shape` ✓。
+★★ **而它与本条的关系**：★ 本条的 `_iter_views` **现在借道 `sw_drawing_query.list_views`**
+  ⇒ ★★★ **所以它**继承了那条过滤**（★ 而这一条已被真机验过：空图纸回空表）✓
+★★ **而**视图级**仍未验**（★ 如实）：★ 要验"有视图的图"，需要**插一个视图** ——
+  ★ 而 `sw_drawing_view` 的 **12 个函数里没有"插视图"**（★ 全是读 + 设比例）·
+  ★ 而 `scripts/sw_drawing.py` 有 **0 个公开函数** ⇒ ★★ **所以"插视图"在本仓库**目前没有入口****
+  ⇒ ★ **下一步线索**：★ 查 `generate_drawing`（★ 它按 DrawingSpec 建图 —— ★ 而它会不会自动放视图？）
+    或查 `sw_drawing_view` 之外有没有插视图的路径。

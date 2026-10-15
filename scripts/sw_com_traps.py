@@ -285,14 +285,113 @@ DEPRECATED_ENTRIES: dict[tuple[str, str], str] = {
     #:   `InsertWrapFeature`（3 参）与 `InsertWrapFeature2`（5 参）⇒ ★ **该用带 2 的那个**；
     #:   ★ 证据 `output/wrap-v1-vs-v2.json`）
     ("IFeatureManager", "InsertWrapFeature"): "InsertWrapFeature2",
+    #: ★ 装配族（★ 2026-10-09 spec 241 新增；★ 官方依据逐字已核）：
+    #:   `C:\swapi\types\IAssemblyDoc\AddMate5.md:12` ⇒
+    #:     「**Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]**」✓
+    #:   ★★ **后继页自证**：`IAssemblyDoc/CreateMate.md` **无** `Obsolete`（`grep -c -i obsolete` = **0**）✓
+    #:   ★★ **后继在仓库里真的被调用**（★ 判据② 的前提）：
+    #:     `scripts/sw_weldment.py` 走 `call_assembly_doc(model, "CreateMate", data)` ✓（spec 240）
+    #:   ⚠ **不是"同名替换"**：`AddMate5` 是 **15 参参数式**，而 `CreateMate` 收
+    #:     `System.object MateData`（★ 要**先造 `I*MateFeatureData`**）⇒
+    #:     ★★ **官方 Remarks 的三条分流**（★ 标准/高级/机械 ⇒ `CreateMate` ·
+    #:     **偏心同心** ⇒ `AddConcentricMateWithTolerance` · **柱面距离** ⇒ `AddDistanceMate`）
+    #:     ★ 说明**分流语义靠 `mate_type` 一个参数定不下来** ⇒ ★ 换它**必须真机验** ✓
+    #:   ⇒ ★ **本表只登记"它已废弃、后继是谁"**；★ **换与不换由调用方各自的记档决定**
+    #:     （★ 现行两处调用点的理由写在 `tests/test_deprecated_entry_interlock.py` 的 `_REGISTERED`）。
+    ("IAssemblyDoc", "AddMate5"): "CreateMate",
+    #: ★★ 2026-10-09（spec 246）新增 **5** 条 —— ★ 来自「242/243 口径的 `admissible` 候选」逐条复核
+    #:   （探针 `output/_probe246_candidates.py` + `output/_probe246_signatures.py`；★ **每条读了两边签名**）。
+    #:   ★★ **入选条件（三条全中）**：① **六关全过**（243 的 `_admission_failures`）·
+    #:     ② ★ **真树调用点的宿主接口 == 本条目的接口**（★ 245 的教训：按裸成员名判会**一半是假命中**）·
+    #:     ③ ★ **两边签名已读**（见下）。
+    #:   ★ 官方依据逐条（`C:\swapi\types\<接口>\<成员>.md` 的 `Obsolete. Superseded by [[…]]`）：
+    #:     · `ISldWorks\ActivateDoc2.md` ⇒ `[[ISldWorks::ActivateDoc3]]`
+    #:       （`ActivateDoc2(Name, Silent, out Errors)` → `ActivateDoc3(Name, UseUserPreferences, Option, out Errors)`）
+    #:     · `ISketch\AutoDimension2.md` ⇒ `[[ISketchManager::FullyDefineSketch]]`
+    #:       （★ **跨接口**：`ISketch` → `ISketchManager`；★ 语义 auto-dimension → fully-define）
+    #:     · `IFeatureManager\FeatureCircularPattern4.md` ⇒ `[[IFeatureManager::FeatureCircularPattern5]]`，
+    #:       ★★ **而 `FeatureCircularPattern5` 自己也废弃** ⇒ ★ 链终点 = `[[IFeatureManager::CreateFeature]]`
+    #:       （★ 242 定则：官方那句是**字面后继**、不是"该用哪个"）
+    #:     · `IAssemblyDoc\GetExplodedViewCount.md` ⇒ `[[IAssemblyDoc::GetExplodedViewCount2]]`
+    #:       （`GetExplodedViewCount()` → `GetExplodedViewCount2(ConfigurationName)`）
+    #:     · `ISelectionMgr\ResumeSelectionList.md` ⇒ `[[ISelectionMgr::ResumeSelectionList2]]`
+    #:       （`ResumeSelectionList()` → `ResumeSelectionList2(Append)`）
+    #:   ⚠ ★ **五条都不是 drop-in 替换**（★ 参数都变了；`FeatureCircularPattern4` 更是换了整族）
+    #:     ⇒ ★ **本表只登记"它已废弃、后继是谁"**；★ **换与不换由调用方各自的记档决定**
+    #:     （★ 现行调用点的理由写在 `tests/test_deprecated_entry_interlock.py` 的 `_REGISTERED`）。
+    #:   ★★ **被拒的候选（留档，防重走）**：`FeatureLinearPattern5` / `FeatureLocalCurveDrivenPattern` /
+    #:     `InsertFormToolFeature` / `SketchTrim` ⇒ **关 5**（官方那句点名多个后继，须人工表态）；
+    #:     `GetActiveSketch2` ⇒ **关 6**（后继页 `SketchManager::ActiveSketch` 在 `C:\swapi` 里**不存在**）；
+    #:     `Add2`（宿主是 `IEquationMgr`）/ `GetModelDoc`（宿主是 `IView`）/
+    #:     `GetUserPreferenceIntegerValue`（宿主是 `ISldWorks`）⇒ ★ **宿主接口不匹配**（假命中）。
+    ("ISldWorks", "ActivateDoc2"): "ActivateDoc3",
+    ("ISketch", "AutoDimension2"): "FullyDefineSketch",
+    ("IFeatureManager", "FeatureCircularPattern4"): "CreateFeature",
+    ("IAssemblyDoc", "GetExplodedViewCount"): "GetExplodedViewCount2",
+    ("ISelectionMgr", "ResumeSelectionList"): "ResumeSelectionList2",
+    #: ★★ 2026-10-09（spec 247）新增 **2** 条 —— ★ 243 关 5 说「多后继**必须人工表态**」；
+    #:   ★ 247 把「表态」机械化了：★ **官方那句的措辞**决定「几个是真后继」（★ 纯函数
+    #:   `tests/test_deprecated_table_admission._official_successor_count`）：
+    #:     · 「`Superseded by A and B`」⇒ ★ **两个都是后继** ⇒ ★ 靶子表的值是**裸成员名**、
+    #:       **表达不了"两个都要"** ⇒ ★ **一律不收**（★ 16 条真树在调的都在这一类）。
+    #:     · 「`See X and the Remarks in/of Y`」⇒ ★ **只有 X 是后继**（★ Y 是数据接口 ——
+    #:       ★ 实测 `ILinearPatternFeatureData` 的页**根本不存在**）⇒ ★ **可以收**。
+    #:   ★ 官方依据逐字（`C:\swapi\types\<接口>\<成员>.md`）：
+    #:     · `IFeatureManager\FeatureLinearPattern5.md` ⇒
+    #:       「Obsolete. See [[IFeatureManager::CreateFeature]] and the Remarks in
+    #:        [[ILinearPatternFeatureData]] and [[ILocalLinearPatternFeatureData]].」
+    #:       ★ 两边签名：`FeatureLinearPattern5(22 参)` → `CreateFeature(System.object FeatureData)`
+    #:     · `IFeatureManager\FeatureLocalCurveDrivenPattern.md` ⇒
+    #:       「Obsolete. See [[IFeatureManager::CreateFeature]] and the Remarks in
+    #:        [[ILocalCurvePatternFeatureData]].」
+    #:       ★ 两边签名：`FeatureLocalCurveDrivenPattern(13 参)` → `CreateFeature(System.object FeatureData)`
+    #:   ⚠ ★ **两条都不是 drop-in**（★ 都要**先造 `I*PatternFeatureData`**）
+    #:     ⇒ ★ **本表只登记"它已废弃、后继是谁"**；★ **换路由必须真机验**。
+    #:   ★★ **被拒的两条（留档，防重走）**：
+    #:     `IFeatureManager::InsertFormToolFeature`（「`Superseded by [[CreateDefinition]] and
+    #:       [[CreateFeature]]`」⇒ ★ **两个都是后继**：一个造 definition、一个建 feature ⇒ 表表达不了）·
+    #:     `IModelDoc2::SketchTrim`（★ 官方点名的两个里该取**同名**的 `ISketchManager::SketchTrim`
+    #:       ⇒ ★ **关 4 拒**：后继名 == 被废弃名）。
+    ("IFeatureManager", "FeatureLinearPattern5"): "CreateFeature",
+    ("IFeatureManager", "FeatureLocalCurveDrivenPattern"): "CreateFeature",
 }
 
 
-def deprecated_successor(member: str) -> str | None:
-    """★ 给定**成员名**，回它该用的后继名；★ 不认识的回 `None`（★ 不猜 —— 铁律 5）。"""
-    for (_iface, m), succ in DEPRECATED_ENTRIES.items():
-        if m == member:
-            return succ
+def ambiguous_deprecated_members(
+        table: "dict[tuple[str, str], str] | None" = None) -> dict[str, list[str]]:
+    """★★ 回本表里的**按名歧义**：`{成员名: [不同后继, …]}`（★ 空 = 没有歧义）。
+
+    ★★ 为什么必须有它（★ spec 242）：★ 本表的**键**是 `(接口, 成员)`，而
+      :func:`deprecated_successor` 的**入参只有成员名** ⇒ ★ 一旦同一个名字在**两个接口**上
+      映射到**不同后继**，按名查就**没有唯一答案**。
+    ★ 实测（spec 242）：官方废弃索引 1671 条 / 1455 个成员名里，**115 个**是歧义名；
+      真树在调的 82 个废弃名里有 **11** 个（`Select2` 一名有 **6** 个不同后继）。
+    ⇒ ★★ 所以**扩容的前置条件**是：让歧义**不可能静默存在** —— ★ 有歧义就**报出来**
+      （★ 而不是让 :func:`deprecated_successor` 猜一个）。
+    ★ `table` 缺省 = 本模块的 `DEPRECATED_ENTRIES`；★ 显式传入是为了让单测能喂合成表。
+    """
+    src = DEPRECATED_ENTRIES if table is None else table
+    seen: dict[str, set[str]] = {}
+    for (_iface, m), succ in src.items():
+        if succ:
+            seen.setdefault(m, set()).add(succ)
+    return {m: sorted(s) for m, s in seen.items() if len(s) > 1}
+
+
+def deprecated_successor(member: str, interface: str = "") -> str | None:
+    """★ 给定**成员名**，回它该用的后继名；★ 不认识的回 `None`（★ 不猜 —— 铁律 5）。
+
+    ★★ `interface`（★ spec 242 新增，★ 缺省空 = 按名查）：
+      · 给了接口 ⇒ **精确查 `(接口, 成员)`**；★ 查不到回 `None`。
+      · 没给接口 ⇒ ★ **只有该名在本表里映射到唯一后继时**才回它；
+        ★★ 若**按名歧义**（★ 同名 · 不同后继）⇒ 回 `None`（★ **不猜** —— 猜出来的那个
+        对**别家接口**的调用方就是**错的**；★ 用 :func:`ambiguous_deprecated_members` 定位）。
+    """
+    if interface:
+        return DEPRECATED_ENTRIES.get((interface, member))
+    succs = {succ for (_iface, m), succ in DEPRECATED_ENTRIES.items() if m == member and succ}
+    if len(succs) == 1:
+        return next(iter(succs))
     return None
 
 # ── 来源 ─────────────────────────────────────────────────────────────

@@ -1,0 +1,34 @@
+规格 209 · B2-4：隐藏/显示**选中的**草图（idx 175）—— 真机双向过，并定案"隐藏了没有"的回读入口
+
+来源：docs/recon-207/adjudication.md §九（idx 175 blank_sketch）。
+裁决书硬约束：官方 BlankSketch 逐字「Hides the **selected** sketches」⇒ 官方没有 "all" 的语义
+⇒ 工具名不许叫 hide_all_sketches；且别家「零选区 + 返回常量」是规则 6 的反例。
+
+改了什么
+· scripts/sw_sketch.py 追加 feature_visibility / set_sketch_blanked（落已有模块，铁律 3）
+· mcp-server/tool_specs_batch94.py（新）+ register_capabilities ⇒ 443 个工具
+· tests/test_tool_specs_batch94.py（8 条：含 2 条裁决书强制的静态断言）
+· tools/probe_spec209_b2_blank_sketch.py（真机探针）· tools/add_s209_b4a_capabilities.py
+· capabilities.yaml +1 条（sketch_visibility，verified ⇒ 121 条）
+
+★★ 本条的真正产出：把裁决书点名的真风险「怎么回读『隐藏了没有』」**定案**
+· 官方 BlankSketch 回 void，那一页**既无 Returns 也无 Remarks**，官方示例的判据**只有肉眼**
+  （逐字 "Examine the graphics area"）
+· ⇒ 真机定出那个回读入口：**IFeature::Visible**（`System.int Visible {get;}`）→ swVisibilityState_e
+  （Hide=1 · Shown=2 · Unknown=3，★ 没有 0）
+
+真机证据（走 tools/sw_guard.py，0 弹窗；output/spec209-blank-sketch.json）
+· 隐藏档 ⇒ ok=True · 回读 shown(2) → hide(1)
+· 显示档 ⇒ ok=True · 回读 hide(1) → shown(2)      ← ★ 两个方向都验
+· 负例（名字不存在）⇒ 选区计数 0 + 大声报（不静默当成功）
+
+★ 工具名 —— 我按裁决书自己的理由改了它给的建议名
+裁决书建议 `solidworks_sketch_set_all_blanked`，但它给的**理由是"不许许下官方没有的 all"** ⇒
+那个建议名同样含 all ⇒ 本批定为 **solidworks_sketch_set_blanked**，并加静态断言
+「名字里不许出现 all」。★ 这条偏离**已写进 tasks.md**（不静默）。
+
+门禁
+· check_specs(all_specs()) = 443 个工具 · 0 问题；契约测试 8 passed
+· capabilities.yaml 121 条（35 行纯插入 / 0 删除）
+· 收尾链 17.9 s（★ 链尾自动关了本会话拉起的 SolidWorks）
+· ⚠ 仍有一处**既有**红（非本次改动）：tools/verify_union_349.py:112

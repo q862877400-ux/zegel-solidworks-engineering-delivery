@@ -88,6 +88,7 @@ def create_sweep_report(model, cut: bool = False, mutate=None) -> dict:
     #: ★ 官方调用序：CreateDefinition ⇒ ISweepFeatureData ⇒ CreateFeature
     try:
         fm = get_com_member(model, "FeatureManager")
+        #: cd-site: no-members-used 本站点只调 `AccessSelections` / `CreateFeature`，**不设任何成员**（实测 0 个 `data.X`）⇒ 确实无事可查
         data = get_com_member(fm, "CreateDefinition", SW_FM_SWEEP_CUT if cut else SW_FM_SWEEP)
     except Exception as exc:                                   # noqa: BLE001
         return {"ok": False, "stage": "CreateDefinition", "selected_by_mark": sel,
@@ -203,6 +204,7 @@ def create_sweep_surface_report(model) -> dict:
     before = feature_names(model)
     try:
         fm = get_com_member(model, "FeatureManager")
+        #: cd-site: no-members-used 本站点只调 `AccessSelections` / `CreateFeature`，**不设任何成员**（实测 0 个 `data.X`）⇒ 确实无事可查
         data = get_com_member(fm, "CreateDefinition", SW_FM_REF_SURFACE)
     except Exception as exc:                                   # noqa: BLE001
         return {"ok": False, "stage": "CreateDefinition", "selected_by_mark": sel,

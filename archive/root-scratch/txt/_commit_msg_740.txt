@@ -1,0 +1,56 @@
+fix(阶段1): ★★★★★ 处置 **`JUDGE-C_D_E` 🔴 #14 的第 1 条**（★ `E-1 #5`）—— ★ `topology_run` **承诺「报告结果是否存在」实则只返回码**；★ 已兑现
+
+■ 一 · ★ 裁判逐字（★ 🔴 #14 · `E-1 #5 / #6 / #9` —— ★ 本轮做**第 1 条**）
+  > ★ 「`topology_run` 承诺「**报告结果是否存在**」★ 实则**只返回码**」✓
+
+■ 二 · ★★★★ 实测复核
+  ★ **承诺逐字在 ToolSpec 里**（★ `mcp-server/tool_specs_batch1.py`）：
+    > ★ 「Mesh and solve the topology study and **report whether results exist**.
+    >   ★★ A zero RunAnalysis return code does NOT mean success — **judge by study results**.」✓
+  ★★ **而能力层**（★ `scripts/sw_topology.py::run_topology_study`）逐字：
+    ```python
+    code = call_com_member(study, "MeshAndRun")
+    ...
+    code = call_com_member(study, "RunAnalysis")
+    return code                                  # ★★ 只回码
+    ```
+  ⇒ ★★★ **承诺没兑现** ⇒ ★ **裁判判定完全正确** ✓
+
+■ 三 · ★★★★★ 而**正解就在同一个模块里**
+  ★ `collect_topology_numbers(study)` ⇒ ★ 回：
+    · ★ 有结果 ⇒ `{"status": "ok", "plot_count": …, "plot_names": […], "material_mass_plot": …}` ✓
+    · ★★ 无结果 ⇒ `{"status": "no_results", "reason": …}` ✓
+  ★★ 而它 docstring 里的判据逐字：★
+    「**不用任何返回码判成功** —— ★ 「有结果」的判据是
+     **`Results` 对象非 None 且 `GetPlotCount() > 0`**」⇒
+    ★★★★ **那正是 ToolSpec 那句承诺要的东西** ✓
+
+■ 四 · ★ 修法
+  ★ 跑完（★ `MeshAndRun` 或回退的 `CreateMesh` + `RunAnalysis`）**就调 `collect_topology_numbers`** ✓
+  ★★ **返回**：★ `{code, results_present, results}` ——
+    ★★★ **`results_present` 才是真相**（★ 而 `code` **保留**，★ 向后兼容）✓
+  ★★★ **并兜住读结果时的异常**：★ 抛 ⇒ `{"status": "unknown", "reason": …}`
+    （★ **不静默**、★ 也不假装"没有结果"）✓
+  ★★★★ **⇒ 两种"没有结果"因此可分开**：★ `no_results`（★ 真没跑出）与
+    `unknown`（★ 读不到）—— ★ 与轮 56 定的**三态判据**同形 ✓
+
+■ 五 · ★★ 新增测试（★ `tests/test_topology_run_reports_results.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★ **前提断言** | ★ **ToolSpec 那句承诺确实还在**（★ `report whether results exist`）✓ |
+  | ★★ **核心断言** | ★ **不许**只 `return code`；★ 必须有 `results_present` ✓ |
+  | ★★ **核心断言** | ★ 判据必须**来自结果**（★ 调 `collect_topology_numbers`、★ 看 `status`）✓ |
+  | ★★★ **负例 · 兼容** | ★ **`code` 必须保留**（★ 向后兼容 —— 别处还在读它）✓ |
+
+■ 六 · ★★ 两处如实记录
+  ★ ⚠ **存量失败**：★ `tests/test_tool_specs_batch2.py::test_declared_params_match_real_signature`
+    报错 ⇒ ★★ **我用 `git stash` 判明它是**存量****（★ 撤掉本轮改动后**同样失败**）✓
+  ★★ ⚠ **`collect_topology_numbers` 定义在 `run_topology_study` **之后****
+    （★ 实测：`find(...)` 的比较是 `False`）⇒ ★ **但 Python 在**调用时**解析模块级名字
+    ⇒ 不构成问题** ✓（★ 值记：★ **"定义位置在后"不等于"不能用"**，★ 要看是**模块级**还是**闭包**）
+
+■ 七 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★ **`C_D_E` 的 🔴 16 条**：★ **完成 14 条**（★ #14 的第 1 条）⇒
+    ★★★ **剩 #14 的另两条**（★ `create_study` 的「同名先删」· ★ `mold_evidence` 的「可回读但恒 None」）
+    + ★ **#11** + ★ **#12 的「断裂视图」那半** ✓

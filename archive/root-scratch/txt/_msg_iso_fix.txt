@@ -1,0 +1,28 @@
+fix(test-isolation): 归还测试伪造的模块身份 —— 假 sys.modules 泄漏会污染后续所有测试
+
+★ 按高级模型裁决 §5 的例外处置：**阻塞验收链的测试基础设施问题可以修，但要与能力实现分开提交**。
+★ 本提交**不含任何能力改动**。
+
+根因（比"桩缺一个成员"更深一层）
+tests/test_sw_part_sketch_selection.py 在模块级往 sys.modules 里塞了假的 sw_connect / sw_preflight，
+然后 import sw_part。★ 问题有两层：
+① 桩缺 safe_get_com_member（前一个提交已补）⇒ 收集期就炸；
+② ★★ **更深的一层**：sw_part 在导入时把假函数**按名字绑走了**
+   （`from sw_connect import get_com_member`）⇒ ★ 假替身 + "绑了假替身的那些模块"
+   **一直留在 sys.modules 里** ⇒ 后面所有测试拿到的是**假模块**。
+
+证据（可复现）
+· pytest tests/test_tool_specs_batch92.py                       ⇒ 25 passed
+· pytest tests/test_sw_part_sketch_selection.py tests/test_tool_specs_batch92.py ⇒ 成批 FAILED
+
+修法
+· 装桩**前**拍 sys.modules 快照（_PRE_MODULES）+ 存下两个被顶替的原值（_saved_modules）；
+· import sw_part 之后记下本次**新拉进来**的模块名（_LEAKED）；
+· 加一个 module 作用域的 autouse fixture，**跑完把所有 _LEAKED 从 sys.modules 摘掉、
+  并把两个假替身还原/删除** ⇒ 后续模块重新干净导入。
+★ 本模块自己的 sw_part 全局引用不受影响（★ 摘 sys.modules 不动已绑定的对象）。
+
+验证
+· pytest tests/test_sw_part_sketch_selection.py tests/test_tool_specs_batch92.py tests/test_tool_specs_batch79.py
+  ⇒ 1 failed, 38 passed（★ 只剩 test_tool_specs_batch79，已定性为**非本次改动**）
+· 单跑 tests/test_sw_part_sketch_selection.py ⇒ 8 passed

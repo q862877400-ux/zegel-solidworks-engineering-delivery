@@ -1,0 +1,65 @@
+规格 211 · B8 收口（七）：★★★ 五项可做未做的**宿主核实** —— ★ 又抓到一处"宿主写错"，★ 并立下一条定则
+
+一、★★★★ **覆盖表这次的读数与前面几项**完全不同**** ✓
+★ 焊接符号 · 成形工具 · 爆炸直线 · 零部件阵列 · SpeedPak —— 这 5 项在覆盖表里**备注栏全是空的** ✓
+⇒ ★★★ **没有"试死/回退"记录** ⇒ ★★ **它们是**干净的缺口**** ✓
+  ★（★ 对比：★ 剪裁曲面有"真机全不成"· ★ 平板型式有"已回退注册"· ★ 边界曲面有"待查" ✓）
+
+二、★★★★★ **又一处"宿主写错"：爆炸直线在 `ISketchManager`，★ 不在 `IAssemblyDoc`** ✗
+· ★★★ 官方页 **`ISketchManager\InsertExplodeLineSketch.md`**：
+  ```
+  Signature: System.bool InsertExplodeLineSketch()
+  Returns:   True if the explode line sketch is inserted or closed, false if not
+  Examples:  ★★ 六份（VB.NET×2 · VBA×2 · C#×2）
+  ```
+· ★★ **示例名本身就说清用法**：★「…and **Route Line**」· ★「…and **Jog Line**」⇒ ★ **先插图、再画线两步** ✓
+· ★★ **而 `IAssemblyDoc` 下没有它** ✗ —— ★ 那里只有 `CreateExplodedView`/`AutoExplode`/`ShowExploded2`/
+  `ViewExplodeAssembly` ✓（★ **那些是"爆炸视图"** ✓）
+⇒ ★★★★ **所以「爆炸视图」与「爆炸直线」是两件事** ✓（★ 覆盖表也分两行 ✓）
+
+三、★★★★ **SpeedPak 的入口与前置都核明了** ✓
+· ★★★ `IAssemblyDoc::CreateSpeedPak(int SpeedPakType)` ✓（★ 1 = Mated · 2 = Graphics ✓）
+· ★★★ **前置逐字**：「for the active configurations of the **selected subassemblies** in this assembly」✗
+  ⇒ ★★ **它要"选中的**子装配**"** ✓（★ 不是顶层零件 ✓）
+· ★★ **另有三份官方示例**（C#/VB.NET/VBA ✓）⇒ ★ 调用序可读 ✓
+· ★ **Remarks**：★ 已选子装配**已有 SpeedPak 时再调不会新建** ✓
+
+四、★★★★ **其余三项的宿主也全扫到了** ✓
+| 项 | 真入口 | 备注 |
+|---|---|---|
+| ★★ **成形工具** | ★ `IFeatureManager::CreateFormTool`/`CreateFormTool2`/★ **`InsertFormToolFeature`** ✓ | ★ 另有 `ILibraryFormToolFeatureData`（**属性式** ✗ ⇒ **要核 ACL**）|
+| ★★ **零部件阵列** | ★★ **`IFeatureManager::FeatureLocalCurveDrivenPattern`** ✓（★ `*LocalPattern*` **全扫为空** ✗）| ★★★ **见五** |
+| ★ **焊接符号** | ★ `IModelDoc2::InsertWeldSymbol3`/`2` · ★ `IDrawingDoc::InsertWeldSymbol` ✓ | ★★ **宿主待定**（★ 工程图标注 ⇒ **`IDrawingDoc` 更可能**）|
+
+五、★★★★★ **必须点出的观察：「零部件阵列」与「曲线驱动阵列」共用同一个入口** ✗
+· ★ 覆盖表把它们**分在两域**：★「特征 / **曲线驱动阵列**」· ★「装配 / **零部件阵列**」✓
+· ★★★ 而**官方入口是同一个**：★ **`IFeatureManager::FeatureLocalCurveDrivenPattern`** ✓
+  ★（★ 我早先查「曲线驱动阵列」时拿到的也是它 ✓）
+⇒ ★★★ **所以这两项**很可能是同一个 API 的两个语境****（★ 特征 vs 装配 ✓）
+★★★ **而本批**不替它们下结论**** ✗ —— ★ 因为：
+  ★ ① **是否真是同一件事**要**读那份 `## Remarks`** 才能定 ✓
+  ★ ② ★ 我判「曲线驱动阵列 = 不做」的**依据是"现代入口要 `AccessSelections`"** ✗ ——
+    ★★ **若那条链成立，「零部件阵列」也该跟着是"不做"** ✓ —— ★ **而★ 那要**同一份证据**** ✓
+  ★ ③ ★★ **不许因"名字像"就推广**（★ 硬约束：★ **全称断言必须带同等数量运行记录** ✓）
+⇒ ★★ **下一步**：★ **读 `FeatureLocalCurveDrivenPattern` 的 `## Remarks`** ⇒ **一处证据同时定两项** ✓
+
+六、★★★★ **本批的核心收获：一条定则**（★ "宿主写错"已四次）
+| # | 项 | 我以为的宿主 | 真宿主 |
+|---|---|---|---|
+| ★ 1 | 曲线驱动阵列 | `IFeatureManager` ✗ | `IModelDoc2` ✗（**且已 `Obsolete`**）|
+| ★ 2 | 焊接符号 | `IFeatureManager` ✗ | `IModelDoc2` / `IDrawingDoc` ✓ |
+| ★ 3 | **爆炸直线** | `IAssemblyDoc` ✗ | ★★ **`ISketchManager`** ✓ |
+| ★ 4 | 成形工具 | — | ★ `IFeatureManager` ✓（★ 这次**对了** ✓）|
+⇒ ★★★ **定则**：★ **判"可做"之前，先用 `Get-ChildItem -Recurse -Filter '*<名字>*'` 全扫一遍** ✓
+★★ **为什么这条特别值**：★ **事实 36** 逐字「**同名接口分属不同族、用错接口 = 对象对任何成员都没反应**」✗，
+  ★★ 而 **`scripts/check_member_names.py` 抓不到这一类** ✗（★ 它判"名字在**某个**接口里存在" ✓）
+  ⇒ ★★★ **那是本仓**已知的盲区**** ✓ —— ★ **而全扫一次就能绕过它** ✓
+
+七、★ 交付物
+· `docs/spec211-b8-host-verification.md`（★ 106 行：★ 五项宿主核实 + 两处纠错 + 那条定则 ✓）
+
+八、★ 下一轮
+★ ① **读 `FeatureLocalCurveDrivenPattern` 的 `## Remarks`** ⇒ **一处证据同时定「曲线驱动阵列」与「零部件阵列」** ✓
+★ ② 核「成形工具」的 `ILibraryFormToolFeatureData` 要不要 ACL ✓ · ★ 定「焊接符号」的宿主 ✓
+★ ③ ★**那三项定完** ⇒ ★★ **21 项就只剩 PDM** ✓
+★ ④ 然后 **B8 的文档部分**（★ `tasks.md` / `goal-bar.md` / `HANDOFF.md` ✓）

@@ -1,0 +1,51 @@
+fix(reflect)+feat(api): 修好反射工具，补 5 个程序集 —— 881 族 / 12,859 能力
+
+## ⚑ 工具为什么坏（不是官方的问题，是我脚本的）
+`reflect-interop.ps1` 第 39 行 `$asm.GetTypes()` —— 只要**有一个**类型加载不了
+就抛 ReflectionTypeLoadException，而 `$ErrorActionPreference='Stop'` 让它
+**中断整轮** ⇒ 后面 6 个程序集一个都没处理，文件压根没生成。
+我的 Python 调用又 `capture_output=True` 且**从不看 stderr** ⇒ 只看到
+「文件不在」⇒ 断定「无接口」。
+
+**212 个接口差点被当成不存在。**
+
+修了三处：
+1. `GetTypes()` 改为捕获异常并用**已成功加载的那部分类型**继续，
+   且把「有几个类型没加载」写进输出文件头 ——
+   让「没读到」与「确实没有」**可区分**
+2. 单个程序集失败**不再中断整轮**（`try/catch` + `continue`）
+3. 调用方**必须打印 stderr**（第二个 bug：静默吞掉）
+
+另修：param 顺序（`$Out` 声明在 `$Targets` 前 → 多余值按位置绑过去）、
+`pwsh -File` 对 `[string[]]` 支持有限（改用 `-Command`）。
+⚑ 还发现早先的坏产物是**目录**不是文件（`Set-Content` 对空内容建了目录），
+已用 .NET API 清理。
+
+## 新增 5 个程序集（按用户指示）
+    sw_api_swdimxpert.py            51 族 /  136 能力 /  101 属性
+    sw_api_swpublished.py           31 族 /  354 能力 /   37 属性
+    sw_api_gtswutilities.py         11 族 /  120 能力 /   28 属性
+    sw_api_dsgnchk.py               1 族 /   19 能力 /    0 属性
+    sw_api_sldtoolboxconfigureaddin.py 2 族 /   5 能力 /    3 属性
+
+⚑ 明确**不收录**（用户指示）：sw3dprinter / swbrowser / sustainability。
+
+## 索引合计：12 份 / 881 族 / 12,859 能力
+    sldworks 523 · swdocumentmgr 138 · cosworks 84 · swdimxpert 51 ·
+    swpublished 31 · SWRoutingLib 14 · sldcostingapi 14 · swmotionstudy 11 ·
+    gtswutilities 11 · sldtoolboxconfigureaddin 2 · fworks 1 · dsgnchk 1
+
+## 门禁也跟着修
+test_official_names_only_contract.py 的反射清单原本**写死 7 个程序集名**，
+加程序集就必漏（已因此连栽两次）。改为：
+  · **自动发现 + 递归**（反射散在 _raw\reflect\ 和 _raw\reflect_sldworks\ 两处，
+    只扫一处会漏掉 15,297 条）
+  · **逐程序集**比对（混起来比会把「故意不收的 sustainability」误报成漏抄）
+  · 计数阈值提高到 20,000
+
+## 验证
+- 新门禁 8/8
+- 三门禁全绿：成员名 PASS / 来源门禁 235 块 0 违规
+- compileall 通过（含 examples/）
+- 全量测试 721 passed / 2 failed（2 个为上游既有）
+- A6 0 命中

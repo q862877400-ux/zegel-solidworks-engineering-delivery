@@ -941,6 +941,7 @@ def _read_feature_params(model, feature_name: str, type_substring: str,
             return out
         for name in readable:
             try:
+                #: dispatch-arg: dynamic `readable` 是形参：成员名元组由调用方给，本函数内无绑定
                 out[name] = get_com_member(fd, name)
             except Exception as exc:                                      # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]

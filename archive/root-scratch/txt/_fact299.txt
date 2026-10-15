@@ -1,0 +1,62 @@
+| 299 | **objective④ 收口：绝对 mm 判据**第一次真机使用**（PASS）—— 三条都"正例过、负例不过"，数据取自真机几何**（2026-10-02，轮 382）。
+
+## 一、★★★★★ 补的是什么缺口
+```
+★ objective④ 的原始要求：★ **「加（不是替换）绝对 mm + 逐轴定位判据」**。
+★ 现状（轮 382 开查时）：★ **实现早在** —— `tools/compare_geometry.py` 里有
+   `check_axis_alignment(delta_mm, orientation, tol_mm)` · `check_radii(radii_mm, expected, tol_mm)` ·
+   `check_same_level(z_pairs_mm, level_mm, tol_mm)`（★ 默认容差 `ABS_TOL_MM` / `RADIUS_TOL_MM`），
+   ★★ **而它们**从未在真机上用过** —— ★ 只有**契约测试**。
+⇒ ★★ 而"写过测试"与"真机用过"是两件事（★ 事实 57 同族：★ 一个测试一直是绿的，可能只是环境恰好满足）。
+   ⇒ ★ 硬约束③ 要的正是 **`output/*-evidence.json` 的 `verdict: pass`** ✓
+```
+
+## 二、★★★★★ 做法：**数据取自真机几何，不硬编码**
+```
+★ 新增 `tools/prove_absolute_criteria.py`（★ 走 `sw_guard` 护栏跑）：
+   ① 建一块 **100 × 60 × 20 mm** 的板 ⇒ 期望体积 **120000** mm³ · 表面积 **18400** mm²（★ 手算可核）
+   ② **从真机几何取顶点坐标**（`IVertex.GetPoint` ⇒ 24 个顶点）⇒ ★ **用两个顶点的实际坐标差**
+      当定位判据的输入：★ 实测 **`delta_mm = [0.0, 0.0, -20.0]`**（★ **正是板厚**）✓
+   ③ 三条判据**各带正例与负例** —— ★ 判据是"**正例过 且 负例不过**"才算 ok（★ 只看正例不算验过）
+   ④ `same_level` 的基准 z 取**真机顶面**（★ 而不是写死的 20.0）
+⇒ ★ 于是判据的**输入是实测值、期望值由尺寸推出** —— ★ 那是"真机用过"的实质 ✓
+```
+
+## 三、★★★★★ 结果（★ `verdict=PASS`）
+```
+geometry                 volume_mm3 = **120000.0**（★ 精确）· area_mm2 = **18400.0**（★ 精确）· faces = 6
+volume_matches_expected  expected 120000.0 · got 120000.0 ⇒ ✓
+vertices_from_real_geometry  count = **24**（★ 按 loop 计：6 面 × 4）
+delta_from_real_vertices     delta_mm = **[0.0, 0.0, -20.0]**（★ 真机顶点坐标差 = 板厚）
+**axis_alignment**   ok=True · 正例 ok=True · **负例 ok=False**
+**radii**            ok=True · 正例 ok=True · **负例 ok=False**
+**same_level**       ok=True · 正例 ok=True · **负例 ok=False**
+⇒ **verdict = PASS** ✓
+```
+★ 依据（★ 调研 v2 发现①）：★ **定位用绝对、等价用相对** —— ★ 两条互补，只留一条会各瞎一半；
+   ★ 现在**两条都真机 PASS 过**了 ✓
+
+## 四、★ 三轮都栽在"我调错了"上（★ 判据本身一直是对的）
+```
+① ★ 第一版读 `v["pass"]` ⇒ 全 `None` ⇒ `ok=False` ⇒ `verdict=PARTIAL`
+   ⇒ ★ 真因：★ 判据返回的键是 **`ok`**（★ 我用 AST 把三个函数的 return 键列出来才确认）。
+② ★ `check_same_level` 我传了**三元组** `(x, y, z)` ⇒ 它 `ValueError` **被自己接住**并回
+   `{"ok": False, "reasons": ["…要是二元组列…"]}` ⇒ ★★ **判据行为正确、是我调错了**
+   —— ★ 契约是 **`z_pairs_mm = [(z_a, z_b), …]`（二元组）**，★ `level_mm` 是那条水平面。
+③ ★ 两者都属同一族：★ **"按契约调"** —— 与 `create_static_study`（★ 回 `(study, entry, err)` 要解包）、
+   `classify_dialog`（★ 字段不匹配致静默失效）**同一天踩的第三次**。
+   ⇒ ★ 定则：★ **调一个已有函数前，先看它的 `return` 键与参数形状**（★ AST 一跑就知道），
+     ★ **不要凭名字猜**。
+```
+
+## 五、★ 产物
+```
+★ `tools/prove_absolute_criteria.py`（★ 可复跑 · 走护栏）·
+   `output/absolute-criteria-evidence.json`（★ `verdict: pass`）
+★ `capabilities.yaml` 的 `geometry_comparison` 相关条目**接到这份 evidence**（★ 硬约束③）。
+```
+
+**依据**：`output/absolute-criteria-evidence.json`（★ `verdict=PASS`：★ `volume=120000.0` ·
+`area=18400.0` · `delta_mm=[0,0,-20.0]` · 三条判据 `ok=True` 且负例 `ok=False`）·
+`tools/compare_geometry.py`（★ 三函数的 AST return 键：`ok` / `reasons` / `max_dev` / `tol_mm` …）·
+`tools/sw_guard.py`（★ 护栏：`seconds: 4.46` · `timed_out: false`）· 事实 57 / 62 / 297

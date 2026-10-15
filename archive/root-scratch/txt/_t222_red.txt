@@ -1,0 +1,168 @@
+test_string_entry_refuses_when_sketch_not_underconstrained (__main__.PublicSurfaceTests.test_string_entry_refuses_when_sketch_not_underconstrained)
+非欠定义状态下，字符串入口必须在修改前拒绝。 ... D:\AI\SW\scripts\sw_part.py:674: SyntaxWarning: invalid escape sequence '\s'
+  ★ **官方逐字**（★ `C:\swapi\types\ISketchManager\CreateSpline3.md`）：
+D:\AI\SW\scripts\sw_part.py:1230: SyntaxWarning: invalid escape sequence '\s'
+  ★ 证据：`C:\swapi\types\IFeatureManager\FeatureRevolveCut2.md`（Obsolete 那句）
+ERROR
+test_sw_part_whitelist_only_official_names (__main__.PublicSurfaceTests.test_sw_part_whitelist_only_official_names)
+_SG_RELATIONS 去 sg 前缀后必须都在官方 Remarks 清单里。 ... D:\AI\SW\scripts\sw_part.py:674: SyntaxWarning: invalid escape sequence '\s'
+  ★ **官方逐字**（★ `C:\swapi\types\ISketchManager\CreateSpline3.md`）：
+D:\AI\SW\scripts\sw_part.py:1230: SyntaxWarning: invalid escape sequence '\s'
+  ★ 证据：`C:\swapi\types\IFeatureManager\FeatureRevolveCut2.md`（Obsolete 那句）
+ERROR
+test_tool_spec_description_lists_only_official_names (__main__.PublicSurfaceTests.test_tool_spec_description_lists_only_official_names)
+公开工具的参数描述不得出现非官方名。 ... FAIL
+test_legacy_name_does_not_leak_into_dispatch_table (__main__.RelationEnumAlignmentTests.test_legacy_name_does_not_leak_into_dispatch_table)
+反别名不得让 EQUAL / MIDPOINT 作为键混进映射表。 ... FAIL
+test_legacy_names_resolve_to_official_members (__main__.RelationEnumAlignmentTests.test_legacy_names_resolve_to_official_members)
+EQUAL / MIDPOINT 若被接受，必须归一为官方成员名，不得原样派发。 ... FAIL
+test_relation_types_has_no_non_official_name (__main__.RelationEnumAlignmentTests.test_relation_types_has_no_non_official_name)
+表里不得出现官方枚举里不存在的名字（EQUAL / MIDPOINT 属此类）。 ... FAIL
+test_relation_types_values_match_official_enum (__main__.RelationEnumAlignmentTests.test_relation_types_values_match_official_enum)
+RELATION_TYPES 每个键的数值必须等于官方 swConstraintType_e。 ... FAIL
+test_every_unaligned_name_is_registered (__main__.UndecidedRegistryTests.test_every_unaligned_name_is_registered)
+SKETCH_CONSTRAINT_TYPES 的每项要么对齐官方，要么进入未决登记。 ... FAIL
+
+======================================================================
+ERROR: test_string_entry_refuses_when_sketch_not_underconstrained (__main__.PublicSurfaceTests.test_string_entry_refuses_when_sketch_not_underconstrained)
+非欠定义状态下，字符串入口必须在修改前拒绝。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\AI\SW\tests\test_relation_enum_alignment.py", line 251, in test_string_entry_refuses_when_sketch_not_underconstrained
+    m = _load_sw_part()
+  File "D:\AI\SW\tests\test_relation_enum_alignment.py", line 111, in _load_sw_part
+    spec.loader.exec_module(module)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "<frozen importlib._bootstrap_external>", line 1023, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "D:\AI\SW\scripts\sw_part.py", line 2070, in <module>
+    def _feature_report(model, feature_name: str, call, label: str) -> dict[str, Any]:
+                                                                                 ^^^
+NameError: name 'Any' is not defined. Did you mean: 'any'?
+
+======================================================================
+ERROR: test_sw_part_whitelist_only_official_names (__main__.PublicSurfaceTests.test_sw_part_whitelist_only_official_names)
+_SG_RELATIONS 去 sg 前缀后必须都在官方 Remarks 清单里。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\AI\SW\tests\test_relation_enum_alignment.py", line 227, in test_sw_part_whitelist_only_official_names
+    m = _load_sw_part()
+  File "D:\AI\SW\tests\test_relation_enum_alignment.py", line 111, in _load_sw_part
+    spec.loader.exec_module(module)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "<frozen importlib._bootstrap_external>", line 1023, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "D:\AI\SW\scripts\sw_part.py", line 2070, in <module>
+    def _feature_report(model, feature_name: str, call, label: str) -> dict[str, Any]:
+                                                                                 ^^^
+NameError: name 'Any' is not defined. Did you mean: 'any'?
+
+======================================================================
+FAIL: test_tool_spec_description_lists_only_official_names (__main__.PublicSurfaceTests.test_tool_spec_description_lists_only_official_names)
+公开工具的参数描述不得出现非官方名。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\AI\SW\tests\test_relation_enum_alignment.py", line 244, in test_tool_spec_description_lists_only_official_names
+    self.assertNotIn(
+    ~~~~~~~~~~~~~~~~^
+        legacy.lower(), text,
+        ^^^^^^^^^^^^^^^^^^^^^
+        "公开描述仍把非官方名 %s 写给用户" % legacy,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError: 'equal' unexpectedly found in "add a sketch geometric relation to the current selection. relation name. valid values (from the function's own docstring): fixed, horizontal, vertical, colinear, parallel, perpendicular, tangent, concentric, equal, symmetric, midpoint, coincident." : 公开描述仍把非官方名 EQUAL 写给用户
+
+======================================================================
+FAIL: test_legacy_name_does_not_leak_into_dispatch_table (__main__.RelationEnumAlignmentTests.test_legacy_name_does_not_leak_into_dispatch_table)
+反别名不得让 EQUAL / MIDPOINT 作为键混进映射表。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\AI\SW\tests\test_relation_enum_alignment.py", line 182, in test_legacy_name_does_not_leak_into_dispatch_table
+    self.assertNotIn(
+    ~~~~~~~~~~~~~~~~^
+        legacy.upper(),
+        ^^^^^^^^^^^^^^^
+        {k.upper() for k in m.RELATION_TYPES},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "旧名 %s 仍在映射表里 ⇒ 会被原样派发" % legacy,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError: 'EQUAL' unexpectedly found in {'SYMMETRIC', 'CONCENTRIC', 'TANGENT', 'VERTICAL', 'PERPENDICULAR', 'MIDPOINT', 'PARALLEL', 'EQUAL', 'COINCIDENT', 'FIXED', 'HORIZONTAL'} : 旧名 EQUAL 仍在映射表里 ⇒ 会被原样派发
+
+======================================================================
+FAIL: test_legacy_names_resolve_to_official_members (__main__.RelationEnumAlignmentTests.test_legacy_names_resolve_to_official_members)
+EQUAL / MIDPOINT 若被接受，必须归一为官方成员名，不得原样派发。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\AI\SW\tests\test_relation_enum_alignment.py", line 173, in test_legacy_names_resolve_to_official_members
+    self.assertIn(
+    ~~~~~~~~~~~~~^
+        normalized, OFFICIAL_CONSTRAINT_TYPES,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "%s 归一成了 %r，不是官方成员名" % (legacy, normalized),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError: 'EQUAL' not found in {'DISTANCE': 1, 'ANGLE': 2, 'RADIUS': 3, 'HORIZONTAL': 4, 'VERTICAL': 5, 'TANGENT': 6, 'PARALLEL': 7, 'PERPENDICULAR': 8, 'COINCIDENT': 9, 'CONCENTRIC': 10, 'SYMMETRIC': 11, 'ATMIDDLE': 12, 'ATINTERSECT': 13, 'SAMELENGTH': 14, 'DIAMETER': 15, 'FIXED': 17, 'COLINEAR': 27, 'CORADIAL': 28} : EQUAL 归一成了 'EQUAL'，不是官方成员名
+
+======================================================================
+FAIL: test_relation_types_has_no_non_official_name (__main__.RelationEnumAlignmentTests.test_relation_types_has_no_non_official_name)
+表里不得出现官方枚举里不存在的名字（EQUAL / MIDPOINT 属此类）。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\AI\SW\tests\test_relation_enum_alignment.py", line 166, in test_relation_types_has_no_non_official_name
+    self.assertEqual(illegal, [], "出现了官方枚举里没有的名字: %r" % illegal)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['EQUAL', 'MIDPOINT'] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+'EQUAL'
+
+- ['EQUAL', 'MIDPOINT']
++ [] : 出现了官方枚举里没有的名字: ['EQUAL', 'MIDPOINT']
+
+======================================================================
+FAIL: test_relation_types_values_match_official_enum (__main__.RelationEnumAlignmentTests.test_relation_types_values_match_official_enum)
+RELATION_TYPES 每个键的数值必须等于官方 swConstraintType_e。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\AI\SW\tests\test_relation_enum_alignment.py", line 160, in test_relation_types_values_match_official_enum
+    self.assertEqual(mismatches, {}, "RELATION_TYPES 与官方枚举不符: %r" % mismatches)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'COINCIDENT': '表内 0，官方 9', 'PARALLEL': '表[238 chars] 17'} != {}
++ {}
+- {'COINCIDENT': '表内 0，官方 9',
+-  'CONCENTRIC': '表内 11，官方 10',
+-  'EQUAL': '不是官方成员名',
+-  'FIXED': '表内 19，官方 17',
+-  'HORIZONTAL': '表内 15，官方 4',
+-  'MIDPOINT': '不是官方成员名',
+-  'PARALLEL': '表内 8，官方 7',
+-  'PERPENDICULAR': '表内 9，官方 8',
+-  'SYMMETRIC': '表内 13，官方 11',
+-  'TANGENT': '表内 10，官方 6',
+-  'VERTICAL': '表内 16，官方 5'} : RELATION_TYPES 与官方枚举不符: {'COINCIDENT': '表内 0，官方 9', 'PARALLEL': '表内 8，官方 7', 'PERPENDICULAR': '表内 9，官方 8', 'TANGENT': '表内 10，官方 6', 'CONCENTRIC': '表内 11，官方 10', 'EQUAL': '不是官方成员名', 'SYMMETRIC': '表内 13，官方 11', 'HORIZONTAL': '表内 15，官方 4', 'VERTICAL': '表内 16，官方 5', 'MIDPOINT': '不是官方成员名', 'FIXED': '表内 19，官方 17'}
+
+======================================================================
+FAIL: test_every_unaligned_name_is_registered (__main__.UndecidedRegistryTests.test_every_unaligned_name_is_registered)
+SKETCH_CONSTRAINT_TYPES 的每项要么对齐官方，要么进入未决登记。
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\AI\SW\tests\test_relation_enum_alignment.py", line 208, in test_every_unaligned_name_is_registered
+    self.assertIsNotNone(
+    ~~~~~~~~~~~~~~~~~~~~^
+        registry,
+        ^^^^^^^^^
+        "sketch_relations 缺未决登记 ⇒ 无法区分「对齐」「别名」「未决」三类",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+AssertionError: unexpectedly None : sketch_relations 缺未决登记 ⇒ 无法区分「对齐」「别名」「未决」三类
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.042s
+
+FAILED (failures=6, errors=2)

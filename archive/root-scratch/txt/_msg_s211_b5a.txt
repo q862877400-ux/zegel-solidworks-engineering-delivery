@@ -1,0 +1,57 @@
+规格 211 · B5-1「曲线驱动阵列」：★★ 判「不做（后端限制）」—— ★ 并纠两处台账错
+
+一、★★★ 结论（★ 依据链四步，★ 每步都读过官方页）
+1. ★ 老的参数式入口 **`IModelDoc2::FeatureCurvePattern` 已标 `Obsolete`** ✗
+   ★ 官方逐字：`Obsolete. See IFeatureManager::CreateFeature and the Remarks of
+   ICurveDrivenPatternFeatureData.`
+2. ★ 现代唯一入口 = `IFeatureManager::CreateFeature` + **`ICurveDrivenPatternFeatureData`**
+   ⇒ ★ 那是**属性式** ✗
+3. ★★ 而那个 Data 接口**带 `AccessSelections`** ✓（★ 逐文件核过：`AccessSelections.md` 与
+   `IAccessSelections.md` 都在 ✓）
+4. ★★ 而 `AccessSelections` 族在 pywin32 后端**不可调用**（**事实 47**，20+ 形态穷尽）✗
+⇒ ★★★ **「曲线驱动阵列」= 不做（后端限制）** ✓
+
+★★ **旁证**：★ 仓里已有的 `sw_pattern.configure_curve_driven_pattern` **走的正是**那条属性式路
+（★ `with edit_selection(data, model, "ICurveDrivenPatternFeatureData")` ✓）⇒
+★ **它到不了建成** —— ★ 与**事实 47** 记的 `create_one_bend` / `create_edge_flange` /
+`create_gusset` 三条**同型** ✓
+
+二、★★★★ **纠了两处台账错**（★ 这是本批最值钱的副产）
+| # | 错 | 正 |
+|---|---|---|
+| ★ ① | ★ 宿主写作 **`IFeatureManager::FeatureCurvePattern`** ✗ | ★★ 真宿主是 **`IModelDoc2::FeatureCurvePattern`** ✓ |
+| ★ ② | ★ 判 **「可做」**（★ 依据"参数式、无 ACL"）✗ | ★★ 判 **「不做（后端限制）」** ✓ |
+· ★★ ① 那处**正是事实 36 说的形态**：★「同名接口分属不同族 —— **用错接口 = 对象对任何成员都没反应**」
+  ★ 而我 B0 查它时**只查了"名字在哪个接口里存在"** ✗ —— ★ **`check_member_names.py` 那类门禁
+  抓不到"接口写错"** ✓（★ 事实 36 明写 ✓）
+· ★★★ ② 那处是**第二次**「B0 判据不够深」：
+  ★ **第一次是「剪裁曲面」**（★ 我只查"有没有入口"、★ 没查已知事实里的试死记录 ⇒ 已纠 ✓）
+  ★ **这一次是「曲线驱动阵列」**（★ 我只查"入口存不存在"、★ 没追"入口**现代不现代**、
+    ★ 也没追"Data 接口要不要 ACL"✗）
+  ⇒ ★★★★ **两次同型** ⇒ ★ **定则**：★ **B0 判"可做"至少要追三层**：
+    ★ **① 入口存在吗 → ② 它是不是现代版（`Obsolete` 没有）→ ③ 它的 `*FeatureData` 要不要 `AccessSelections`** ✓
+    ★★ 而**第三层**其实**已经有机器判据**了 —— ★ `scripts/check_backend_limited_completeness.py`
+    就是干这个的（★ 它判"成员是否标 `Obsolete` + 后继者是否指向带 ACL 的 `*FeatureData`" ✓）
+    ⇒ ★ **B0 应该先跑它、再逐项读官方页** ✓
+
+三、★ 台账与覆盖表
+· ★ `tools/spec211_manual_verdicts.py`：★ 曲线驱动阵列 **可做 → 不做**（★ 附**四步依据链** ✓）
+· ★ 重生成台账 ⇒ ★★ **可做 13 · 不做 6 · 已覆盖 1 · 待实测 1** ✓
+  ★（★ 从最初的 **15/4** 走到 **13/6** —— ★★ **两次都是"把判错的捞回来"** ✓）
+· ★ `docs/user-feature-coverage.md` 重算 ✓
+
+四、★★ **规格 211 的进度（★ 如实）**
+| 批 | 项 | 状态 |
+|---|---|---|
+| ★ B1 | 截面属性 | ★ `stitched`（★ 单位未确证 ⇒ ★ 已登记 `unit-conflicts.md` 第 3 条 ✓）|
+| ★ B1 | 缩放/变形 | ★★ **`verified`** ✓（★ 体积比 `x³` 判据 ✓）|
+| ★ B2 | 剪裁曲面 | ★ **不做**（★ 事实 419）✓ |
+| ★ B2 | 取消剪裁 | ★ `stitched`（★ 正例未做）✓ |
+| ★ B2 | 扫描曲面 | ★★★★ **`verified`** ✓（★ 建成 `曲面-扫描1` · ★ 带引导线也成 ✓）|
+| ★ B2 | 边界曲面 / 直纹曲面 | ★ **已有** ✓ |
+| ★ B5 | 曲线驱动阵列 | ★ **不做**（★ 本轮 ✓）|
+| ★ B5 | 特征识别/Instant3D | ★ **不做**（★ 官方无 API 入口 ✓）|
+
+五、★ 下一轮
+★ **B3 焊件 4 项**（★ 裁剪/延伸焊件 · 焊接符号 · 圆角焊缝 · 角撑板）——
+★ 其中**角撑板**台账已判"不做"（★ 走 `AccessSelections`）⇒ ★ 先做**裁剪/延伸焊件** ✓

@@ -1,0 +1,53 @@
+feat(覆盖): ★★★ 加厚/加厚切除落地（**用 R4 自己查出的未废弃入口**）⇒ **119/145（82%）**，特征/加厚 转 ✅ ＋**经工具层真机验证通过**；另修 `_feature_names` 假判据与一处文档错
+
+■ 一 · ★★ 修掉**我自己上一轮留下的假判据**（自查发现）
+  上轮展平那条工具返回里 `new_features` 是 **`[]`**，而 `ret_type` 明明是 `FlattenSurface`
+  ⇒ ★ 说明我那个**自己走树**的 `_feature_names`（`GetFeatureTreeRootItem2` → `GetFirstChild`/`GetNext`）
+  **回表不完整** ⇒ ★ **"树增量"这条判据在本模块里是假的**（那一格的 `ok` 只是靠 `ret_type` 成立的）。
+  ★ 修法：**委托仓内规范助手** `scripts/sw_feature_readback.feature_names`。
+  ★ **复验**：重跑展平探针 ⇒ `new_features` 从 `[]` 变成 **`['曲面-展平1']`** ✓
+  ⇒ ★ **两条判据（`ret_type` 与树增量）现在都真了**。
+
+■ 二 · ★★★ 本轮主体：**加厚 / 加厚切除**（★ 这是 **R4「E 类换名重查」的产出闭环落地**）
+  · 成员（★ 都**未废弃**，逐字读过官方页）：**`IFeatureManager.FeatureBossThicken`（7 参）** ·
+    **`FeatureCutThicken`（6 参）**；★ 而 `IModelDoc2` 那份**同名**的已废弃
+    （`Superseded by [[IFeatureManager::FeatureBossThicken]]`）、`IModeler.ThickenSheet` 造的是**片体不是特征**；
+  · ★★ **官方前置（Remarks 逐字）**：参考面**必须按 `mark=1` 选中** · `FillVolume=true` 时
+    **其余参数被忽略**且**必须闭合曲面** · 切减时 `UseAutoSelect=false` 要**先选实体**
+    ⇒ ★ 工具**自己把第一张面按 `mark=1` 选上**（曲面体优先，退到实体体），选不上就**如实报前置**；
+  · 新增 `solidworks_thicken`（含覆盖率关键词 `thicken`）；
+  · `thickness_mm` 对外收**毫米**、**只在边界换算一次**。
+
+■ 三 · ★★★ **经工具层真机验证通过**（`tools/probe_thicken_tool.py`，走 `sw_guard`、零弹窗、8.3 s）
+  | 读数 | 值 |
+  |---|---|
+  | `call_path` | `module=sw_feature_entry_ops function=thicken_surface inject=model params=[…]` ⇒ **全解析** ✓ |
+  | **`member`** | ★ **`FeatureBossThicken`**（★ **正是 R4 查出的那个**）|
+  | **`ret_type` / `ret_name`** | ★ **`Thicken`** / **`加厚1`** |
+  | **`new_features`** | ★ **`['加厚1']`**（★ 修好的判据给出的真读数）|
+  | `ok` / `preconditions_held` | **true / true** |
+  证据 `output/thicken-tool-evidence.json`。
+
+■ 四 · 一处**文档错**（★ 由 R1 三路探针的裁判指出，已改）
+  `tool_specs_batch75.py` 里 `set_sheet_format` 的 `doc` 还写着 **`SetupSheet6`**，
+  ★ **而实现上一轮已改为 `ISheet.SetTemplateName`** ⇒ ★ **doc 与实现不符**（会误导）。
+  ★ 已更正，并写明两者的区别（`SetTemplateName` = **换图框**；`SetupSheet6` = **新建/重置图纸**）
+  以及那个 `找不到成员` 的真因（**通道**问题，known-facts 499）。
+
+■ 五 · ★★ R1 三路探针的判决（`recon/probe-verdict.md`）—— 它**印证了本会话的修复**
+  胜者 **A（18/20）**。★ 裁判指出的"三份共有错"是：**三份都按旧版 spec 调参**
+  （传 `projection` / `table_type`…）⇒ ★ 而**那正是我本会话已修掉的三处**
+  （`projection` → `view_name`；两张表 → `anchor_type/start_value/tag_order/tag_type`；孔表改走 `IView.InsertHoleTable3`）。
+  ★★ 候选 A 的**静态对差**独立得出同一结论：「**3/8 条声明与能力层签名对不上**」⇒ ★ **三方独立印证**。
+  ★ 另记 A 的一个**好设计**（本仓探针尚无）：它把"实参被拒收"判成**第四态
+    `tool_layer_contract_mismatch`** 并附直调能力层的分离诊断 ⇒ ★ **能把"工具层坏"与"能力坏"分开**，
+    ★ 值得在下一轮并进 `tools/probe_drawing_tools_e2e.py`。
+
+■ 六 · 读数
+  | 指标 | 本批前 | 本批后 |
+  |---|---|---|
+  | **本仓库** | 118/145 (81%) | ★ **119/145 (82%)** |
+  ★ 逐项确认：**特征/加厚加厚切除 ⇒ ✅**（改前 ❌）。★ `check_specs` ⇒ **problems: NONE**。
+  ★ 从 Goal 起点算：**99/145 (68%) → 119/145 (82%)**（★ 验收线 ≥110，**超 9 项**）。
+
+★ 收尾链：**`release_check 第 1 轮 OK` · 29 passed**。

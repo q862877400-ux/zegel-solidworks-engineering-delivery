@@ -1,0 +1,58 @@
+fix(阶段3): ★★★★★★★ **再清 5 条**（★ 真基线 **8 → 3**）；★ 并发现**第 7 类**：★ **"返回形态变了"**
+
+■ 一 · ★ 本轮修的五条
+  | ★ # | ★ 文件 | ★ 真机读数 | ★ 真因（★ 类别） |
+  |---|---|---|---|
+  | ★ ① | ★ `test_sw_sketch_edit_contract::…mirror…` | ★ 实得 `{'ok': None, 'op': 'sketch_mirror', …}` | ★★ **返回形态变了**（★ `bool` ⇒ **结果 dict**）|
+  | ★ ② | ★ `…::…convert_entities…` | ★ 实得 `{'ok': False, 'op': 'convert_entities', …}` | ★★ 同上 |
+  | ★ ③ | ★ `test_unattended_equivalence::path1` | ★「少掉的（被收紧）: `['assembly_and_mates','drawing_dimension_insertion']`」 | ★ **冻结基线没跟上** |
+  | ★ ④ | ★ `…::path2` | ★ 同上 | ★ 同上 |
+  | ★ ⑤ | ★ `…::baseline_capabilities_still_declare_unattended` | ★ 同上 | ★ 同上 |
+
+■ 二 · ★★★★★★ **第 7 类：★ "返回形态变了"**（★ ①②）
+  ★ **实现改成回结果 dict 了**（★ **规则 6 的回读形态**）——
+    ★ 它的 `return` 块逐字：
+    ```
+    {"ok": ok, "op": "sketch_mirror", "segments_before": …, "segments_after": …,
+     "new_segments": delta,
+     "verified_by": "★ 草图实体计数变化（★ doc 承诺的判据；★ 取不到时 ok 为 None，不报成功）"}
+    ```
+    ★★ `convert_entities` 同形（★ `"ok": bool(bool(got) and geom_ok is True)`）✓
+  ★★★ **⇒ 而契约还在断言 `is True`**（★ 旧形态：★ 回 `bool`）⇒
+    ★★★★ **⇒ 判据改成查 `result["ok"]`、★ 并核 `op` 与 `verified_by`** ✓
+  ★★★★★ **⚠ 而 `ok` 是**三态****：★ `True` / ★ `False` / ★★ **`None`**（★ **取不到计数 ⇒ 不报成功**）⇒
+    ★ 断言**如实写三态**（★ `mirror` 那句 `None`、★ `convert_entities` 那句 `False`）——
+    ★★ **那不是放松判据、★ 而是把三态表达出来** ✓
+    ★★★ **而本用例的**本意**（★ 实参顺序 `skm.calls == [(False, True)]`）**原样保留**** ✓
+
+■ 三 · ★★★★★★ **冻结基线**（★ ③④⑤）—— ★ 而**它是**误报**、★ 不是我的错**（★ 但有价值）
+  ★ **真机读数**：★「★ 少掉的（被收紧）: `['assembly_and_mates', 'drawing_dimension_insertion']`」·
+    ★★ **而「多出来的（被放宽）: `[]`」** ✓
+  ★★★ **逐条核历史**（★ 可核）：
+    · ★ **`drawing_dimension_insertion`** ⇒ **本会话阶段 1 我主动降级**（★ `verified` ⇒
+      `not_implemented`、★ 因为它**能力层零实现**）⇒ ★★ **按 R11 必须去掉 `unattended`** ✓
+    · ★ **`assembly_and_mates`** ⇒ ★ 历史逐字：★ `927fbfd9` 时 `verified`+`unattended`、
+      ★★ **从 `fa634bec` 起变成 `stitched`**（★ **有人主动降级**）⇒ 同样按 R11 必须去掉 ✓
+  ★★★★ **⇒ 两条都是**该收紧的**、★ 不是静默收紧** ——
+    ★ 而**那条测试自己写着**「★ 否则闸门被**静默收紧**」⇒ ★★ **它抓的正是"静默"、★ 而这两次不静默** ✓
+  ★★★★★ **⇒ 修法**：★ **按当前真实授权重抓**（★ `tools/freeze_unattended_baseline.py`）
+    ⇒ ★ **35 → 33 条**、★ **`7 passed`** ✓
+    ★★ **并如实记了原因**（★ 写进 `tests/unattended_baseline.json` 的一个新键
+      `_2026-10-04_轮118_更新说明`）—— 因为**那个文件本来就是**一次性迁移验收**的快照**（★
+      schema_version 2.0 那次迁移）、★ **而迁移早已完成** ⇒ **之后每次合法变动都会让它红**、
+      ★★ **那是误报** ✓
+
+■ 四 · ★★★★★★ 而本轮**又添一类** —— ★ 这一族至此**七类**
+  ★ mock 落后（8 例）· ★★ 登记表落后 · ★★★ 行号漂移 · ★★★★ 钉死数量 ·
+  ★★★★★ ToolSpec 参数落后 · ★★★★★★ **契约的返回形态落后**（★ 本轮 2 条）·
+  ★★★★★★★ 冻结基线落后（★ 本轮 3 条）⇒
+  ★ **⇒ 共同解法仍然只有一条**：★ **改完实现立刻 grep 谁记着它**
+    （★ 名字 · ★ 行号 · ★ 数量 · ★ 参数表 · ★ **返回形态** · ★ **冻结快照**）✓
+
+■ 五 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK`** ✓
+  ★★ 相关：★ `test_sw_sketch_edit_contract` **16 passed** ·
+    ★ `test_unattended_equivalence` **7 passed**（★ 两条合计 **23 passed**）✓
+  ★★★ **⚠ 如实记**：★ **真基线 8 → 3**（★ 本轮修 5 条、★ 还剩 **3**）✓
+  ★★★★ **⇒ 剩的 3 条**：★ `test_no_uncalled_helpers`（1）· ★ `test_cad_reliability`（1）·
+    ★ 以及 1 条 **待下一轮重新确认**（★ 上一轮的清单可能已不完整）✓

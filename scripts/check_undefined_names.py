@@ -15,6 +15,11 @@
 #       （★ 事实 53：需要反复修补的判据不该进工具）。
 #   ★★ **跳过注解**：★ Python 3.14 起注解是**惰性**的（PEP 649）⇒ 注解里的名字**不会**引发
 #     `NameError`（★ 只有 `get_type_hints()` 才会）⇒ ★ 把它算进来就是假阳性。
+#   ★★★ 2026-10-08（spec 223 / FR-010）**边界透明化**：★ 被整文件跳过的（`import *` /
+#     `globals()` 注入）原先**一个字都不打印** ⇒ ★ 实测静默跳过 **7** 个文件，
+#     含 `scripts/sw_part.py`（★ 222 那个 `from typing import Any` 致命缺陷**正藏在它里面**）。
+#     ⇒ ★ 现在**每次运行都打印**「跳过 N 个文件 + 逐个文件的原因」——
+#     ★ **退出码不变**（跳过不是失败，是**看得见的豁免**，与 `KNOWN_BROKEN` 同族）✓
 # 官方依据: 不适用（Python 语言作用域规则 + `ast` 标准库 + PEP 649）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -100,31 +105,52 @@ def _annotation_nodes(tree: ast.AST) -> set:
     return skip
 
 
-def _has_star_import(tree: ast.Module) -> bool:
-    """★ 名字来源**看不见**的两种情形 ⇒ 本文件**跳过**。
+def _skip_reason(tree: ast.Module) -> str | None:
+    """★ 名字来源**看不见**的三种情形 ⇒ 返回**原因串**（不跳过则 `None`）。
 
-    ① `from x import *`（★ 经典）；
-    ② ★★ **运行期动态注入全局**：`globals().update(...)` / `globals()[...] = ...`
-       —— ★ 真例：`mcp-server/server.py` 的 `globals().update(exports)`（★ `exports` 是一张
-       **100+ 项的绑定表**，★ 而那些名字在静态源码里**根本不存在**）。
-       ★ 不认这一类 ⇒ ★★ 会在那个文件上报 **300+ 处假阳性**（★ 而上游代码明明能跑）。
+    ① `star-import` —— `from x import *`（★ 经典）；
+    ② `globals-update` —— `globals().update(...)`（★ 真例：`mcp-server/server.py`
+       的 `globals().update(exports)`，`exports` 是一张 **100+ 项的绑定表**，
+       而那些名字在静态源码里**根本不存在**）；
+    ③ `globals-subscript` —— `globals()[...] = ...`。
+
+    ★★ **2026-10-08（spec 223 / FR-010）**：本函数**从布尔改成原因串** ——
+      原先是 `_has_star_import()` 回 `True/False`，而**主流程从不报告**跳过了谁
+      ⇒ ★ 实测**静默跳过 7 个文件**（含 `scripts/sw_part.py` —— 222 那个
+      `from typing import Any` 致命缺陷**正藏在它的跳过里**）。
+      ⇒ ★ 判据是「**看不见的豁免**」不可接受：跳过**不是失败**（那些文件本来就
+      无法静态判定），但**必须看得见** ✓
     """
     for n in ast.walk(tree):
         if isinstance(n, ast.ImportFrom) and any(a.name == "*" for a in n.names):
-            return True
+            return "star-import"
         #: ★ `globals().update(...)`
         if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == "update":
             base = n.func.value
             if (isinstance(base, ast.Call) and isinstance(base.func, ast.Name)
                     and base.func.id == "globals"):
-                return True
+                return "globals-update"
         #: ★ `globals()[...] = ...`
         if isinstance(n, ast.Assign):
             for tgt in n.targets:
                 if (isinstance(tgt, ast.Subscript) and isinstance(tgt.value, ast.Call)
                         and isinstance(tgt.value.func, ast.Name) and tgt.value.func.id == "globals"):
-                    return True
-    return False
+                    return "globals-subscript"
+    return None
+
+
+def _has_star_import(tree: ast.Module) -> bool:
+    """★ 兼容薄壳（旧名保留）：等价于 `_skip_reason(tree) is not None`。"""
+    return _skip_reason(tree) is not None
+
+
+def skip_reason_for(path: Path) -> str | None:
+    """★ 读一个文件 ⇒ 它的跳过原因（`None` = 会正常扫）。★ 供主流程**报告**用。"""
+    try:
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+    except Exception:                                          # noqa: BLE001
+        return None
+    return _skip_reason(tree)
 
 
 def scan_file(path: Path) -> list:
@@ -133,7 +159,7 @@ def scan_file(path: Path) -> list:
         tree = ast.parse(path.read_text(encoding="utf-8"))
     except Exception:                                          # noqa: BLE001
         return []
-    if _has_star_import(tree):                                 #: ★ 有 `import *` ⇒ 无法判定
+    if _skip_reason(tree):                                     #: ★ 有 `import *` / `globals()` 注入 ⇒ 无法判定
         return []
     file_bound = _bound_names(tree)                            #: ★ **整个文件**绑过的名字
     skip = _annotation_nodes(tree)                             #: ★ 注解里的不算读
@@ -158,14 +184,27 @@ def scan_file(path: Path) -> list:
 def main(argv: list) -> int:
     total = 0
     bad: list = []
+    skipped: list = []
     for d in SCAN_DIRS:
         for p in sorted((REPO_ROOT / d).rglob("*.py")):
             if "__pycache__" in p.parts:
                 continue
             total += 1
+            #: ★★ spec 223 / FR-010：跳过的文件**必须被报告**（★ 原先静默 ⇒ 看不见的豁免）。
+            reason = skip_reason_for(p)
+            if reason:
+                skipped.append((p.relative_to(REPO_ROOT).as_posix(), reason))
+                continue
             for ln, fn, name in scan_file(p):
                 bad.append((str(p.relative_to(REPO_ROOT)), ln, fn, name))
     print("  未定义名门禁 · 扫 **%d** 个文件 · 命中 **%d** 处" % (total, len(bad)))
+    if skipped:
+        print("  ★ 跳过 **%d** 个文件（判据无法判定 ⇒ 不静默；★ 跳过不是失败，"
+              "但**必须看得见**）：" % len(skipped))
+        for rel, reason in skipped:
+            print("      %-18s %s" % (reason, rel))
+    else:
+        print("  ★ 跳过 **0** 个文件（没有 `import *` / `globals()` 注入）")
     known = [b for b in bad if b[0].replace("\\", "/") in KNOWN_BROKEN]
     fresh = [b for b in bad if b[0].replace("\\", "/") not in KNOWN_BROKEN]
     for f, ln, fn, name in fresh[:40]:

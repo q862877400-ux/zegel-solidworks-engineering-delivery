@@ -1,0 +1,62 @@
+| 212 | **"缺加载项"这类理由，区别在于"有没有一个**可执行的探测**去问它"** —— 而本轮 Routing 有、Motion 缺（2026-10-01，轮 279）。
+
+## 一、★ 起因：`sw_routing` 是剩下最大的 vein（22 个公开函数 · 0 工具）
+```
+★ §5.0 先读既有 e2e（`tools/verify_routing_e2e.py`）与模块 docstring ⇒ ★★ 而 docstring 已写明：
+   「`IRouteManager` 的正常取得路径应是 `ISldWorks.GetAddInObject(<ProgID>)`，
+    但 **本机没有注册 Routing 加载项**」⇒ ★ **22 个函数全部"接收调用方传进来的"**
+   ⇒ ★★★ **即：模块**故意**不取得入口**（★ 因为本机没有）。
+⇒ ★ 那时这只是**一句声明** ⇒ ★★ **需要**可执行的探测**来验它**。
+```
+
+## 二、★★★★★ 用**已有的**探测去问（★ §5.0 的形态）
+```
+★ `cadstudio_routing_preflight`（★ 仓库里**早就有**这个工具）⇒ ★ 结果 **`blocked`**：
+   ```
+   readyForNativeWrite: false
+   error_code:           routing_addin_or_license_unavailable
+   blocker:              未检测到 SOLIDWORKS Routing 加载项注册或许可证可用证据。
+   typeLibrary:          D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\SWRoutingLib.tlb   ← ★ 在
+   interfacesFound:      [IAutoRoute, IRouteManager, IRouteProperty]                    ← ★ 都在
+   interfaceCoverage:    1.0
+   routingFiles:         3 个（.tlb / Interop DLL / sldroutingdveu.dll）               ← ★ 都在
+   addins:               []                                                             ← ★★ 空
+   retryable:            true
+   ```
+⇒ ★★★★ **所以 blocker 是**加载项/许可**，**不是接口定义**（★ 类型库与三个接口**都在**）。
+```
+
+## 三、★★★★★ 而与 Motion 那条**旧理由**的关键区别
+```
+| 能力 | 探测 | 结论 | 那条理由可靠吗 |
+|---|---|---|---|
+| **Routing** | `cadstudio_routing_preflight`（★ **专门探加载项**） | `addins: []` | ★★ **有据** ✓ |
+| **Motion** | `ensure_motion_type_library`（★ 探的是**类型库**） | 回真实路径 | ★★ **不可靠**（事实 211 待复核） |
+⇒ ★★★ **区别不在"哪家有加载项"，而在"有没有一个**可执行的探测**去问它"** ——
+   ★★★★ **一个探"类型库"的探测，不能回答"加载项在不在"**（★ 那是**两个问题**）。
+```
+
+## 四、★ 处置（★ 把账做实）
+```
+★★ `routing` 条目原本是 **`verified` 却 0 工具**（★ 即事实 210 说的"自相矛盾的账"）
+   ⇒ ★★★ **按证据降为 `stitched`**（★ `allowed_modes` 早就是 `["interactive","reviewed"]`，
+     ★ 已合 R11 —— **无需改**）
+   ⇒ ★ `verified` **53 → 52** · `stitched` **15 → 16**
+   ⇒ ★★ 而「`verified` 且 0 工具」从 **17 → 16 条**
+★ **`sw_routing` 的 22 个函数不挂工具**（★ 挂了也到不了）⇒ ★ 并写进条目：
+   「★ 那 22 个**不该按缺口处理**，而是**等加载项**」。
+```
+
+## 五、★ 定则
+```
+★★★ **一个"缺 X"的理由，必须能指向**一个问 X 的探测**** ——
+   ★ 若手上只有问 Y 的探测，★ **那"缺 X"就还只是**传闻****（★ 本轮的 Motion 正是如此）。
+★★ **降级也是**把账做实****（★ 与事实 208/209/210 同一条线）：
+   ★ 本会话至今为止的"降级"有 ★ `routing`（本轮 · 有 preflight 证据）·
+     ★ 事实 208 拆出的 5 条 stitched（★ 从过宽的 verified 里分出）——
+   ⇒ ★★ **它们让 `verified` 变小，而让**清单可信****。
+```
+
+**依据**：`cadstudio_routing_preflight` 的**真机输出**（★ `blocked` · `addins: []` · 接口齐全）·
+`scripts/sw_routing.py` 的模块 docstring（★ 22 个函数故意不取得入口）·
+`capabilities.yaml` 的 `routing`（★ verified → stitched）· 事实 208 / 210 / 211

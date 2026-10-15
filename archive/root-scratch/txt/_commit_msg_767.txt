@@ -1,0 +1,73 @@
+fix(阶段3): ★★★★★★ **补能力第 4 个 —— `hole_params`**；★ 并**实测出单位口径的**第五层**：★ **同一个接口内部就分裂****
+
+■ 一 · ★ 本轮换族（★ 第 3 个族 · ★ 那一格里**最大**的族）
+  ★ `IWizardHoleFeatureData2`（**23 个成员**）⇒ ★ 覆盖面 2 族 → **3 族** ✓
+  ★★ **而本仓有现成前置**：★ `sw_hole_features.create_hole_wizard_at_selection_report` ✓
+
+■ 二 · ★ 官方逐字（★ 逐个成员的 `## Returns`）—— ★ **而这一族**没写单位****
+  · ★ `HoleDiameter` / `HoleDepth` / `ThreadDepth` / `ThruHoleDiameter` /
+    `CounterBoreDiameter` / `CounterSinkDiameter` / `CounterSinkAngle` / `HeadClearance` ⇒
+    ★★ **`## Returns` 只写「Hole diameter」这种**光名字**、★ **没写单位**** ✓
+  · ★ `Standard` / `FastenerSize` ⇒ `string` · ★ `ThreadClass` ⇒ `1B`/`2B`/`3B` ✓
+  · ★ `Type` ⇒ `swWzdHoleTypes_e` · ★ `EndCondition` ⇒ `swEndConditions_e` ·
+    ★ `CosmeticThreadType` ⇒ `swWzdHoleCosmeticThreadTypes_e` ✓
+  · ★ `GetSketchPointCount()` ⇒ 「Number of center-hole sketch points」✓
+  · ★★ `FastenerType` ⇒ **已废弃** ⇒ **不读它** ✓
+  ⇒ ★★★ **铁律 5：★ 单位查不到 ⇒ ★ 返回值如实标 `unknown`、★ 不猜** ✓
+
+■ 三 · ★★★★★★ **真机测出来了 —— 而结果是**接口内部就分裂****
+  ★ `tools/probe_hole_params_recheck.py`（★ `sw_guard` · ★ **零弹窗** ⇒
+    `output/hole-params-capability-recheck.json`）：★ 建一个 **`M8` 通孔**（★ 板厚 20mm）✓
+  | ★ 成员 | ★ 读数 | ★ 口径 |
+  |---|---|---|
+  | ★★ **`ThruHoleDiameter`** | ★ **0.008** | ★★ **米**（★ M8 = 8mm）✓ |
+  | ★★ **`ThruHoleDepth`** | ★ **20.0** | ★★ **毫米**（★ 板厚 20mm）✓ |
+  | ★ `HoleDiameter` | ★ `0.0` | ★ 通孔类型下**不使用它** ✓ |
+  | ★ `Standard` / `FastenerSize` | ★ `"ANSI Metric"` / `"M8"` | ★ 字符串 ✓ |
+  | ★ `Type` / `EndCondition` | ★ `25` / `1` | ★ 枚举 ✓ |
+  ⇒ ★★★★★★ **⇒ **同一个接口里两个量的口径不同**！！** ——
+    ★ **`ThruHoleDiameter` 是米、★ 而 `ThruHoleDepth` 是毫米** ✓
+
+■ 四 · ★★★★★★ **单位口径的第五层**（★ 本会话已见五层）
+  | ★ 层 | ★ 成员 | ★ 口径 |
+  |---|---|---|
+  | ★ ① | ★ `IExtrudeFeatureData2.GetDepth` | ★★ **随文档单位**（★ 真机 20mm ⇒ 20.0）✓ |
+  | ★ ② | ★ `GetDraftAngle` | ★★ **写死 radians**（★ 官方逐字）✓ |
+  | ★ ③ | ★ `ILinearPatternFeatureData.D1Spacing` | ★★ **写死 meters**（★ 官方逐字）✓ |
+  | ★ ④ | ★ `IWizardHoleFeatureData2`（★ 本族） | ★★ **官方没写** ✓ |
+  | ★ ⑤ | ★★ **本族**内部**** | ★★★ **分裂**（★ 直径米 · ★ 深度毫米）✓ |
+  > ★★★★★ **可复用判据**：★★★ **「没写单位」≠「随文档单位」**、
+  >   ★★ 而 **「同一个接口」也**不**保证同一口径** ——
+  >   ★★★ **每读一个量都要单独真机验**（★ 官方没写时**只能这样**）✓
+
+■ 五 · ★★ 本轮踩到的两处（★ 都如实记）
+  ★ ⚠ **我把前置猜成 `hole_wizard`** ⇒ ★ **不存在** ⇒ 真名是
+    **`create_hole_wizard_at_selection_report`** ✓
+    ⇒ ★★★ **那正是上一轮那条判据**：★★★ **写新调用前，先在仓里搜同名成员怎么用的** ✓
+  ★★ ⚠ **SolidWorks 会话中途死了**（★ `远程过程调用失败` · ★ 新建文档失败）⇒
+    ★ **按 AGENTS.md「探不通就处置、★ 不要"再探一次"」** ⇒
+    ★★ `python tools/reclaim_solidworks.py --probe` ⇒ ★ 报「进程 **0 个**」+
+      ★「探测 ✓ 通（已连上）」⇒ ★★★ **原会话确实死了、★ 而 `--probe` 已新起一个** ⇒
+      ★★★★ **重跑即过** ✓
+  ★★★ ⚠ **我的单位判据第一版只看 `HoleDiameter`** ⇒ ★ **它在本例是 `0.0`**（★ 通孔下不用）⇒
+    ★★ **判不出** ⇒ ★ **改用通孔那两个量** ✓
+    ⇒ ★★★★ **可复用判据**：★★★ **"判不出"往往不是"没数据"、★ 而是**判据挑错了量**** ✓
+
+■ 六 · ★ 交付
+  ★ `scripts/sw_feature_readback.py::hole_params` ⇒
+    ★★ **一次读 17 个属性 + 1 个零参方法**、★★★ **逐项标口径**、
+    ★★★★ **并**保留「官方未写」这个事实**** ✓
+  ★★ **⚠ 不替调用方换算**（★ 米就是米、★ 毫米就是毫米）✓
+
+■ 七 · ★★ 新增测试（★ `tests/test_hole_params_capability.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★ **前提断言** | ★ **读官方两页**确认**都没写单位**（★ 判据的锚点）✓ |
+  | ★★★★ **核心断言** | ★ 证据里**同一接口两个量口径不同**（★ 直径米 / 深度毫米）✓ |
+  | ★★★ **核心断言** | ★ 返回值**保留「官方未写」** + ★ docstring 记实测 + ★ **不做换算** ✓ |
+  | ★★★★ **负例 · 五层要记全** | ★ 模块里要有「第五层」+「同一个接口也不保证同一口径」✓ |
+
+■ 八 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★ **成员名门禁**：★ **[PASS] 全部成员名都能在官方反射里查到**（★ 调用点 **926** 个）✓
+  ★★★ **阶段 3 的第四个补能力落地** —— ★ **`查 × 特征` 从 3 → 4**（★ 那一格官方 451）✓

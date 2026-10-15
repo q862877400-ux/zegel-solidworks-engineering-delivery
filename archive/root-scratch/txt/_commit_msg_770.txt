@@ -1,0 +1,64 @@
+fix(阶段3): ★★★★★★ **补能力第 5 个 —— `feature_info`**（★ `IFeature` 族 ×51）；★ 而**取哪个特征**这条判据我改了**三次**
+
+■ 一 · ★ 用**新判据**重扫 `IFeature` 那族（★ 上一轮修的 · ★ 上一轮**没补能力**、★ 先修的判据）
+  ★ **126 个成员** ⇒ ★ **真废弃 24** · ★★ **没废弃 102** ✓
+  ★★ **而旧判据会多报 2 个假阳性**：★ `GetTypeName` · ★★ **`GetTypeName2`** ⇒
+    ★★★ **⇒ 而 `GetTypeName2` 正是**本仓在用的那个**** ⇒ **用它是对的** ✓
+    （★ 上一轮的判据修正**在本轮立刻用上了** —— ★ **那次"没补能力"是有回报的**）✓
+  ★★★ **真废弃的 24 个**：★ `GetBody` / ★ `GetErrorCode` / ★ `IsSuppressed` / ★ `Select` /
+    ★ `SetBody` / ★ `MoveFreezeBarTo` … ⇒ ★★ **一个都不碰** ✓
+
+■ 二 · ★ 官方逐字（★ 逐个成员的 `## Returns`）
+  · ★ `GetID()` ⇒ 「Feature ID of this feature」⇒ **unique within the document** ✓
+  · ★ `GetFaceCount()` ⇒ 「Number of faces in this feature」✓
+  · ★ `Visible` ⇒ `swVisibilityState_e` · ★ `GetEditStatus()` ⇒ `swFeatureEditStatus_e` ✓
+  · ★ `GetChildren()` ⇒ 「Array of child features」· ★ `GetParents()` ⇒ 父特征 ✓
+  · ★ `Description` / ★ `CreatedBy` / ★ `GetMaterialIdName` ⇒ 字符串 ✓
+  · ★★ **`GetBox(out BBox)`** ⇒ ★★★ **官方 `## Remarks` 逐字**：
+    「**IMPORTANT:** The values returned are **approximate** and **should not be used for
+      comparison or calculation purposes**. Furthermore, the bounding box may vary after
+      rebuilding the model.」⇒ ★★★★ **⇒ **本函数**不用它**** ✓
+    （★ 而本仓 `part_bounding_box` **早已记着同一条** ⇒ ★ **两处一致** ✓）
+
+■ 三 · ★★★★★★ 真机 **8/8 全过**
+  | ★ 判据 | ★ 读数 |
+  |---|---|
+  | ★ `Name` 非空 | ★ `"凸台-拉伸1"` ✓ |
+  | ★★ **`GetFaceCount = 6`** | ★ **6** ✓ |
+  | ★ `GetID` 正整数 | ★ **79** ✓ |
+  | ★ `GetChildren = 0` | ★ **0** ✓ |
+  | ★ `GetParents ≥ 1` | ★ **2** ✓ |
+  | ★ `Visible` / ★ `GetEditStatus` 是 int | ★ **2** / ★ **0** ✓ |
+  | ★ `CreatedBy` | ★ `"Zegel"` ✓ |
+
+■ 四 · ★★★★★★ **⚠ 而"取哪个特征"这条判据我改了**三次****（★ 值记 —— ★ **三次都不是能力错**）
+  ★ **① 兜底取 `FirstFeature`** ⇒ ★ 中文 UI 下回 **`收藏`**（★ `FavoriteFolder` · ★ **容器**）⇒
+    ★ `GetFaceCount = 0` ✓
+  ★★ **② 加 `_is_real_feature`** ⇒ ★★ **而它只判"有没有类型名"**、
+    ★ **`收藏` 的 `FavoriteFolder` **是一个类型名**** ⇒ ★ **仍回 `收藏`** ⇒
+    ★★ **改成**两层过滤****（★ 名字不在 `_CONTAINER_NODES` + ★ `_is_real_feature`）✓
+  ★★★ **③ 过了两层 ⇒ 回 `前视基准面`**（★ `RefPlane` · ★ **官方文档说基准面也是合法特征**）⇒
+    ★★ **而 `GetFaceCount = 0` 是**应然的****（★ 基准面没有面）⇒
+    ★★★ **⇒ 是我的判据「面数 = 6」只对**拉伸**成立** ⇒ **要按名字取那个拉伸** ✓
+  ★★★★ **⇒ 三次全是**判据/兜底**的错、★ 能力一直是对的** ✓
+  > ★★★★★ **可复用判据**：★★★ **"读回来的值不对"时，先问**"我读的是那个对象吗"**** ——
+  >   ★ **本轮三次里有两次是**对象取错**、★ 一次是**判据只对某类对象成立**** ✓
+  >   ★★ 与**事实 51**（★ 判据要贴合被判的对象）**同族的第三次实例** ✓
+
+■ 五 · ★★ 本轮还顺手确认一件事
+  ★ **`_is_real_feature` 只判"有没有类型名"** ⇒ ★★ **对"有类型名的容器"（★ `收藏`）不够** ⇒
+    ★★★ **而 `feature_names()` 一直用**两层****（★ 所以它没这个问题）✓
+    ⇒ ★★★★ **⇒ 我在 `feature_info` 里补上了第一层** ✓
+
+■ 六 · ★★ 新增测试（★ `tests/test_feature_info_capability.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★★ **核心断言** | ★ 函数体**不调 `GetBox`**、★ 且**引官方那句 `approximate`**（★ 依据要落地）✓ |
+  | ★★★ **核心断言** | ★ 兜底过**两层**（★ `_CONTAINER_NODES` + ★ `_is_real_feature`）✓ |
+  | ★★★ **核心断言** | ★ 证据里 **8 条全过** ✓ |
+  | ★★★★ **负例 · 三次修正要记** | ★ 必须写明**容器**与**基准面**这两处 ✓ |
+
+■ 七 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★ **阶段 3 的第五个补能力落地** —— ★ **`查 × 特征` 从 4 → 5**（★ 那一格官方 451）·
+    ★★ **覆盖面 4 个族** ✓

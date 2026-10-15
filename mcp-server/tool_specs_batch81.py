@@ -23,7 +23,7 @@ SPECS_BATCH81 = [
         module="sw_review", function="review_drawing_layout",
         inject="",
         params=[
-            Param("structure", str, default="(required)", description="Structured drawing evidence dict, normally produced by the drawing inspection path. Optional keys read here: `views`, `dimensions`, `notes`, `title_block`; each item may carry `box` ({left,bottom,right,top}, metres), `name`, `view`, `sheet`, `note_kind`, `owner_view`, `type`, `box_source` (native | "),
+            Param("structure", str, description="Structured drawing evidence dict, normally produced by the drawing inspection path. Optional keys read here: `views`, `dimensions`, `notes`, `title_block`; each item may carry `box` ({left,bottom,right,top}, metres), `name`, `view`, `sheet`, `note_kind`, `owner_view`, `type`, `box_source` (native | "),
             Param("padding_m", float, default=0.001, description="Collision tolerance in METRES, applied to every edge comparison in _drawing_boxes_overlap (scripts/sw_review.py:73-85). ★ Keyword-only in the source. ★ It is a scalar margin, NOT a coordinate."),
             Param("preview_evidence", str, default="", description="Optional list of BMP preview evidence dicts (`exists`, `likely_blank`). ★ Keyword-only in the source. Used only to set the `drawing-pixel-preview` check; it never decides pass/fail on its own."),
         ],
@@ -37,7 +37,7 @@ SPECS_BATCH81 = [
         params=[
             Param("output_dir", str, default="", description="预览图输出目录。源码 sw_review.py:691 展开路径，:693 按 `{basename}_{view}.bmp` 命名。"),
             Param("basename", str, default="review", description="文件名前缀。"),
-            Param("views", str, default="None  →  (\"isometric\", \"front\", \"top\", \"right\")", description="要导出的视图名列表，元素与 `view_name` 同一套命名（源码 STANDARD_VIEWS）。★ 是**名字**不是坐标 ⇒ 不违反规则 3。"),
+            Param("views", str, default="", description="要导出的视图名列表（★ 空串 = 用源码回落值 `(\"isometric\", \"front\", \"top\", \"right\")` —— ★ 不要把那句回落说明当成默认值）。元素与 `view_name` 同一套命名（源码 STANDARD_VIEWS）。★ 是**名字**不是坐标 ⇒ 不违反规则 3。"),
         ],
         doc="★ 官方签名（逐字，来自 SaveBMP.md）：`System.bool SaveBMP( System.string FileNameIn, System.int WidthIn, System.int HeightIn )`。★ 本函数**本身不是 SolidWorks API 成员** —— scripts/sw_review.py:677-695 是纯 Python 编排（`[save_preview(model, output_dir / f'{basename}_{view}.bmp', view) for view in views]`），来源是本仓库自身既有模式，不是官方成员、不是第三方项目。所驱动的官方成员是 `IModelDoc2::SaveBMP`，其官方页存在且签名逐字为上面那一行（FileNameIn 须含完整路径 + .bmp；Width/Height <=0 时按窗口大小；True = 成",
     ),
@@ -69,7 +69,7 @@ SPECS_BATCH81 = [
         module="sw_review", function="run_review",
         inject="model",
         params=[
-            Param("output_dir", str, default="（必填，无默认值）", description="第二个形参。预览图与报告的输出目录；函数内先经 _expand_path() 展开环境变量并 resolve()，再 mkdir(parents=True, exist_ok=True)。⚠ 它是**文件系统路径、不是裸坐标** ⇒ 规则 3 不适用（scripts/sw_review.py:1180-1186）。"),
+            Param("output_dir", str, description="第二个形参（★ **必填**：源码 `run_review(model, output_dir, …)` 无默认值）。预览图与报告的输出目录；函数内先经 _expand_path() 展开环境变量并 resolve()，再 mkdir(parents=True, exist_ok=True)。⚠ 它是**文件系统路径、不是裸坐标** ⇒ 规则 3 不适用（scripts/sw_review.py:1180-1186）。"),
             Param("basename", str, default="review", description="第三个形参。输出文件名前缀；决定 {basename}_review_report.json / {basename}_review_summary.md / {basename}_{view}.bmp 的实际文件名（scripts/sw_review.py:1179,1194-1195）。"),
             Param("views", str, default="", description="第四个形参。要导出的标准视图名列表；为空时回落到 ('isometric','front','top','right')（scripts/sw_review.py:944）。⚠ **先例问题**：mcp-server/tool_specs_batch15.py:20-25 已记录『tool_specs_batch*.py 里没有任何 list 型 Param 的先例』，并据此**故意不暴露** build_review_report 的同名参数 ⇒ 若本工具要暴露它，须先决定 list 怎么过 MCP 边界并留下先例。"),
             Param("expected_outputs", str, default="", description="第五个形参。期望存在的交付文件路径列表（sldprt/step/stl 等），逐个做存在性+体积检查；为 None 时 checks.expected_outputs_exist=None 并记一条 warn（scripts/sw_review.py:947,955,1042-1049）。⚠ 同上的 list 型先例问题（tool_specs_batch15.py:20-25）。"),

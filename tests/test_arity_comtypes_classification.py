@@ -43,13 +43,27 @@ def test_the_two_sites_are_classified_as_comtypes_with_a_reason():
         ★★★ **⇒ 那正是「改了实现、★ 配套的定位就失配」的第 N 次** ✓
       ★★★★★ **⚠ 更稳的做法是改成**按成员名**登记**（★ 行号会一直漂）——
         ★ 那要改 `audit` 的接口 ⇒ **本轮不动、★ 如实留作待办** ✓
+
+    ★★★★★★ **2026-10-10（规格 300）★ 那个待办本轮做了** —— ★★ **表已改成按成员名**：
+      ★★ **起因**：★ **同一形态第三次** —— 工作树里给 `sw_delivery.py:248` 加了一行
+        `#: dispatch-guard: exempt internal-helper` ⇒ ★ **671/965 各 +1 漂到 672/966**
+        ⇒ ★ 本条报「应当恰好 **2** 条 comtypes，★ 实际 **0**」✗
+      ★★★ **⇒ 不再改行号**（★ 那只是把下一次漂移往后推）—— ★ **按成员名登记**
+        ⇒ ★★ **加注释 / 挪代码都不会让它失配** ✓
+      ★★ **依据**（`MEMORY.md` 规则 32 逐字）：
+        「★★★ **证据表不许钉行号，也不许判「站点逐字相等」**」✓
     """
     keys = set(ac.COMTYPES_CALL_SITES)
-    assert ("sw_delivery.py", 671) in keys
-    assert ("sw_delivery.py", 965) in keys
+    assert ("sw_delivery.py", "IGetDocumentNames") in keys, (
+        "★ 表里没有 `IGetDocumentNames`（★ 规格 300 起键是**成员名**、不是行号）")
+    assert ("sw_delivery.py", "OpenDoc6") in keys, (
+        "★ 表里没有 `OpenDoc6`（★ 规格 300 起键是**成员名**、不是行号）")
     for k, reason in ac.COMTYPES_CALL_SITES.items():
         assert len(reason) > 60, "%s 的理由太短: %r" % (k, reason)
         assert "comtypes" in reason, "%s 的理由要点明 comtypes" % (k,)
+    #: ★★ **键不许再是行号**（★ 那是本规格要消掉的形态 —— 加一条**负例**）
+    bad = [(f, m) for (f, m) in keys if isinstance(m, int)]
+    assert not bad, "★ 表里仍有**按行号**登记的键（★ 加注释就会漂）：%r" % bad
 
 
 def test_classification_is_not_silent_swallowing():

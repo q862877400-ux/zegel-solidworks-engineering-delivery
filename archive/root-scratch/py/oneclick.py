@@ -1,0 +1,31 @@
+import sys, time, warnings
+sys.stdout.reconfigure(encoding="utf-8")
+sys.path.insert(0, r"C:\swprojects\sw-skill-fork\scripts")
+import sw_jlcfa_cards as C, sw_jlcfa_locate as L, sw_jlcfa_steps as S
+warnings.filterwarnings("ignore")
+h, w = L.connect()
+S.log("模态窗检查: %d" % L._modal().modal_report(h)["count"])
+st = S.read_state(w); S.log("当前: %s" % S.page_kind(st))
+r = C.locate_category(w, "直线导轨")
+S.log("卡片矩形: %s" % (r,))
+if r is None:
+    S.log("当前可见卡: %s" % [t for t,_ in C.category_cards(w)][:20]); raise SystemExit(1)
+cx, cy = (r.left+r.right)//2, (r.top+r.bottom)//2
+S.log("焦点守卫: %s" % S.ensure_front(h))
+S.log("点击 (%d,%d)" % (cx, cy))
+import win32api, win32con
+win32api.SetCursorPos((int(cx), int(cy))); time.sleep(0.15)
+win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN,0,0,0,0); time.sleep(0.08)
+win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,0,0,0,0)
+S.log("已点，等 2 秒截图…")
+time.sleep(2.0)
+S.evidence("after_card_click", h, w, S.read_state(w), note="点击直线导轨后 2 秒")
+S.cache_drop()
+h2, w2 = L.connect()
+S.log("2 秒后: %s  模态 %d" % (S.page_kind(S.read_state(w2)), L._modal().modal_report(h2)["count"]))
+S.log("再等 5 秒…")
+time.sleep(5)
+S.cache_drop()
+h3, w3 = L.connect()
+st3 = S.read_state(w3)
+S.log("7 秒后: %s  代码卡 %d %s  分类卡 %d" % (S.page_kind(st3), len(st3["codes"]), st3["codes"][:3], len(st3["categories"])))

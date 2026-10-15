@@ -34,6 +34,8 @@ except ImportError:
 # ────────────────────────────────────────────────────────────────────
 __all__ = [
     "SKETCH_CONSTRAINT_TYPES",
+    "UNDECIDED_CONSTRAINT_TYPES",
+    "is_undecided_constraint",
     "SKETCH_SLOT_CREATION_TYPES",
     "SKETCH_SLOT_LENGTH_TYPES",
     "SKETCH_RELATION_ENTITY_TYPES",
@@ -66,26 +68,74 @@ __all__ = [
 # ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 SKETCH_CONSTRAINT_TYPES = {
-    "coincident": 1,        # swConstraintType_COINCIDENT
-    "concentric": 6,        # swConstraintType_CONCENTRIC
-    "coradial": 27,         # swConstraintType_CORADIAL
-    "distance": 20,          # swConstraintType_DISTANCE
-    "horizontal": 19,        # swConstraintType_HORIZONTAL
-    "vertical": 18,          # swConstraintType_VERTICAL
-    "parallel": 9,           # swConstraintType_PARALLEL
-    "perpendicular": 10,     # swConstraintType_PERPENDICULAR
-    "tangent": 21,           # swConstraintType_TANGENT
-    "equal": 3,              # swConstraintType_EQUAL
-    "midpoint": 26,          # swConstraintType_MIDPOINT
-    "intersect": 24,         # swConstraintType_INTERSECT
-    "symmetric": 28,         # swConstraintType_SYMMETRIC
+    "coincident": 9,         # swConstraintType_COINCIDENT
+    "concentric": 10,        # swConstraintType_CONCENTRIC
+    "coradial": 28,          # swConstraintType_CORADIAL
+    "distance": 1,           # swConstraintType_DISTANCE
+    "horizontal": 4,         # swConstraintType_HORIZONTAL
+    "vertical": 5,           # swConstraintType_VERTICAL
+    "parallel": 7,           # swConstraintType_PARALLEL
+    "perpendicular": 8,      # swConstraintType_PERPENDICULAR
+    "tangent": 6,            # swConstraintType_TANGENT
+    "equal": 14,             # swConstraintType_SAMELENGTH（官方**无** EQUAL 成员）
+    "midpoint": 12,          # swConstraintType_ATMIDDLE（官方**无** MIDPOINT 成员）
+    "intersect": 13,         # swConstraintType_ATINTERSECT
+    "symmetric": 11,         # swConstraintType_SYMMETRIC
     "angle": 2,              # swConstraintType_ANGLE
-    "fix": 34,               # swConstraintType_FIX
-    "pierce": 31,            # swConstraintType_PIERCE
-    "collinear": 12,         # swConstraintType_COLLINEAR
-    "block": 45,             # swConstraintType_BLOCK
-    "snappoint": 33,         # swConstraintType_SNAPPOINT
+    "fix": 17,               # swConstraintType_FIXED
+    "pierce": 40,            # swConstraintType_ATPIERCE
+    "collinear": 27,         # swConstraintType_COLINEAR
 }
+#: ⚠ `block` / `snappoint` **不在本表内** —— ★ 理由（2026-10-08 独立复核后改）：
+#:   官方枚举里**没有**这两个成员，且无法从三源唯一裁决 ⇒ 若留在表里**必须给一个数值**，
+#:   而任何数值都是猜的、且**会被派发**（`0` 在官方是 `INVALIDCTYPE`）。
+#:   ⇒ ★ 正确做法：只登记在 `UNDECIDED_CONSTRAINT_TYPES`，**不给数值**，
+#:     由 `is_undecided_constraint()` 在查表**之前**拦下 ✓
+#:   ★ 判据：tests/test_relation_enum_alignment.py 断言「登记里的名字不得出现在本表中」。
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   SolidWorks 官方 API 枚举（C:\swapi 收录的 swconst）
+# 文件:   C:\swapi\enums\swConstraintType_e.md
+# 定位:   上面这张表里**无法从三源唯一确定**的项 —— 单独登记，禁止用于派发。
+# ★★ 2026-10-08（spec 222）**整表按官方校正**：原表 19 项里只有 `angle`=2 与官方一致，
+#   其余 18 项全错（多数是数值填错，另有一批名字官方根本不存在）。
+#   ⇒ ★ 判据：tests/test_relation_enum_alignment.py（逐项钉住）。
+# ★ 为什么这些进「未决」而不是顺手改掉：
+#   官方枚举里**没有** `BLOCK` / `SNAPPOINT` 这两个名字，而同族各有多名候选：
+#     · `block`     ⇒ 候选 BLOCKFIXEDLOCK=70 / BLOCKNORMALLOCK=71 / BLOCKROTATELOCK=72，
+#                     三者语义不同且官方未说明哪个对应「块」本身；原表写的 45 在官方是 NORMAL。
+#     · `snappoint` ⇒ 候选 SNAPGRID=29 / SNAPLENGTH=30 / SNAPANGLE=31，
+#                     三者语义不同；原表写的 33 在官方是 ELLIPSEANG90。
+#   ⇒ ★ 按 AGENTS.md 铁律 5「查不到就说查不到」：**登记为未决 + 禁止派发**，不猜数字 ✓
+# ⚠ 本登记为静态比对结论，未在本机实测（见 AGENTS.md 铁律 2）
+# ────────────────────────────────────────────────────────────────────
+UNDECIDED_CONSTRAINT_TYPES = {
+    "block": {
+        "table_value": 45,
+        "why_undecided": "官方 swConstraintType_e 里没有名为 BLOCK 的成员；同族有三个语义不同的候选。",
+        "official_candidates": {
+            "BLOCKFIXEDLOCK": 70,
+            "BLOCKNORMALLOCK": 71,
+            "BLOCKROTATELOCK": 72,
+        },
+        "note": "原表 45 在官方是 swConstraintType_NORMAL，与「块」无关。",
+    },
+    "snappoint": {
+        "table_value": 33,
+        "why_undecided": "官方 swConstraintType_e 里没有名为 SNAPPOINT 的成员；同族有三个语义不同的候选。",
+        "official_candidates": {
+            "SNAPGRID": 29,
+            "SNAPLENGTH": 30,
+            "SNAPANGLE": 31,
+        },
+        "note": "原表 33 在官方是 swConstraintType_ELLIPSEANG90，与「捕捉点」无关。",
+    },
+}
+
+
+def is_undecided_constraint(name) -> bool:
+    """★ 该关系名是否属于**未决**（数值无法从官方源唯一确定）⇒ 禁止派发 ✓"""
+    return str(name or "").strip().lower() in UNDECIDED_CONSTRAINT_TYPES
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -94,12 +144,16 @@ SKETCH_CONSTRAINT_TYPES = {
 #         C:\swapi\enums\swSketchSlotLengthType_e.md
 #         C:\swapi\enums\swSketchRelationEntityTypes_e.md
 # 定位:   槽的创建方式、长度标注方式，以及关系对象的实体类型。
-# 取值:   各枚举**全量照录**（分别 3 / 2 / 6 项），未增删改。
+# 取值:   各枚举**全量照录**（分别 4 / 2 / 15 项），未增删改。
+# ★ 2026-10-08（spec 222）**订正项数**：原写「3 / 2 / 6 项」是**错的** ——
+#   槽创建官方 4 项（漏了 `line=0`）、关系实体类型官方 15 项（漏了 9 项）。
+#   已按官方补齐，故「全量照录」现在成立 ✓
 # ⚠ swSketchSlotCenterArcDirection_e 查不到（sw_know 报 [SWK_NOT_FOUND]），
 #   故槽的弧方向参数不设默认值，由调用方显式传。
 # ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 SKETCH_SLOT_CREATION_TYPES = {
+    "line": 0,               # swSketchSlotCreationType_line        （★ 2026-10-08 补）
     "center_line": 1,        # swSketchSlotCreationType_center_line
     "arc": 2,                # swSketchSlotCreationType_arc
     "three_point_arc": 3,    # swSketchSlotCreationType_3pointarc
@@ -110,12 +164,26 @@ SKETCH_SLOT_LENGTH_TYPES = {
     "full_length": 1,        # swSketchSlotLengthType_FullLength
 }
 
+#: ★★ 2026-10-08（spec 222）**补全** —— 原表只有 6 项却自称「全量照录」，
+#:   而官方该枚举有 **15** 项（缺 unknown/sub_sketch/point/parabola/spline/
+#:   text/plane/sphere/surface 共 9 项）。⇒ ★ 补齐后「全量照录」才成立。
+#:   ⚠ 该缺陷由独立核对 `output/222-verify/w2-37` 与 `w2-13` 系列发现；
+#:     当时既有测试把它断言成「与官方一致」的 6 项 —— **把错的项数当成正确**来钉。
 SKETCH_RELATION_ENTITY_TYPES = {
+    "unknown": 0,            # swSketchRelationEntityType_Unknown     （★ 补）
+    "sub_sketch": 1,         # swSketchRelationEntityType_SubSketch   （★ 补）
+    "point": 2,              # swSketchRelationEntityType_Point       （★ 补）
     "line": 3,               # swSketchRelationEntityType_Line
     "arc": 4,                # swSketchRelationEntityType_Arc
     "ellipse": 5,            # swSketchRelationEntityType_Ellipse
+    "parabola": 6,           # swSketchRelationEntityType_Parabola    （★ 补）
+    "spline": 7,             # swSketchRelationEntityType_Spline      （★ 补）
     "hatch": 8,              # swSketchRelationEntityType_Hatch
+    "text": 9,               # swSketchRelationEntityType_Text        （★ 补）
+    "plane": 10,             # swSketchRelationEntityType_Plane       （★ 补）
     "cylinder": 11,          # swSketchRelationEntityType_Cylinder
+    "sphere": 12,            # swSketchRelationEntityType_Sphere      （★ 补）
+    "surface": 13,           # swSketchRelationEntityType_Surface     （★ 补）
     "dimension": 14,         # swSketchRelationEntityType_Dimension
 }
 
@@ -230,6 +298,19 @@ def suppress_relation(relation, suppressed: bool = True):
 # ⚠ CreateSpline 第一个参数的期望类型（点数组 SAFEARRAY）两套官方源都未细说，
 #   按上游 sw_hole_features / sw_part 既有惯例由调用方构造 VARIANT SAFEARRAY。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
+#
+# ★★★ 2026-10-10（业主追问「还有没收口的吗」时的审计）—— **补一句单位契约**：
+#   ★★ **本函数收的是「米」**（★ **原样**送 COM，★ 不做任何换算）——
+#     依据：★ COM 侧单位是米（事实 2）· ★ 本函数**照官方签名**写、★ 不改调用方给的值 ✓
+#   ★★★ **与 `sw_part.sketch_spline` 的区别（★ 别混）**：
+#     · ★ `sketch_relations.create_spline`（**本函数**）= **库/内部入口**，★ 收**米**、
+#       ★ **未被挂成 ToolSpec** ✓
+#     · ★ `sw_part.sketch_spline` = **对外工具**，★ 收**毫米**、★ 函数内 `/1000.0` ✓
+#   ★★ **为什么现在补**：★ 2026-10-10 查出 `sw_part` 有 **4 个图元漏了换算**（★ 1000× bug）⇒
+#     ★ 顺手扫同族模块时发现**本函数没写单位** ⇒ ★ 下一个接手方**极可能**照 `sw_part` 的
+#     「对外毫米」惯例来调它 ⇒ ★ **再犯一次 1000×** ✓
+#   ★ 配套判据：★ `tests/test_ec00_sketch_unit_conversion.py` 第 4 例要求
+#     ★ **换算常量附近写明单位契约** ⇒ ★ 本条是那条要求**在库层的同类落实** ✓
 # ────────────────────────────────────────────────────────────────────
 def create_spline(sketch_manager, points, simulate: bool = False):
     """由点集创建样条曲线。

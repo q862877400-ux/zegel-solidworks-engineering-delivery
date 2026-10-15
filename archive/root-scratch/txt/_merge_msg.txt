@@ -1,0 +1,16 @@
+merge: 把代码仓 sw-skill-fork 并进工作区，两仓合一
+
+用户指示「把两个合并起来变成一个」，方向 B→A（A 无 remote，不会误推上游）。
+★ 红线遵守：**没有删除任何仓库** —— B 原地保留，成为归档；本次只把它的追踪文件并进 A。
+
+- 复制 920 个追踪文件（B 的 .gitignore / README.md 按名单跳过，单独手工处理）
+- 手工合并 2 个同名文件：
+    ① .gitignore = 两份的并集（上半保住 A 的 AI Solidworks/(314MB) / _raw/ 规则，删不得；
+       下半并入 B 的 Python / 构建 / CAD 产物规则）
+    ② README.md ← 代码仓的产品说明（合并后该有的门面）；A 的原文另存 README-workspace.md
+- 判据：文件级 0 删除 · 922 新增 · 2 修改；scripts/ mcp-server/ tests/ tools/ apps/ 全部到位
+- 未做（留给下一步）：代码里 163 处绝对路径仍指向 C:\swprojects\sw-skill-fork；
+  AGENTS.md 的工作区表与 §七 仍描述旧布局；自建远端的 URL 待用户给定
+
+★ 本轮踩到并记下的坑：`git add -A 2>&1 | Select-Object -First 3` 会被 -First 提前掐断
+   ⇒ add 被中途 kill ⇒ 暂存 0。这与「-First 截断输出被当成源里没有」同族，而更糟：它中止了写操作。

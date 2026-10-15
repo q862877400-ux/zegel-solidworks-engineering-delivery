@@ -1,0 +1,48 @@
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力层）
+# 文件:   scripts/sw_export.py —— 追加 export_image_report / export_flat_pattern_dxf_report
+# 定位:   ★ 2026-10-03（轮 403）24h 计划 v2 段 6（导出）。
+#   ★★ **本模块的判据机器已经有了**：`_export_report(model, output_path, call, fmt)` ——
+#     ★ 它**回读文件**（`ok = 无异常 且 文件存在 且 size > 0`）★ 并记 `size_before` /
+#     `grew_or_created` ⇒ ★ 能区分「**这次真导出了**」与「那个旧文件本来就在」。
+#   ⇒ ★ 所以本批**只写两层薄包装**，★ 判据完全复用既有助手（★ 不另造一套）。
+#   ★ 另有 `batch_export(sw, file_paths, output_dir, format_ext)` —— ★ 它吃 `ISldWorks`
+#     （`inject="sw_app"`）且回**一批**结果 ⇒ ★ 单独一批，本批不做。
+#   ★ 已核：`export_to_bmp` **不是缺口** —— ★ 它已由 `export_bmp_report`（工具
+#     `solidworks_export_bmp`）覆盖，★ 只是**基础名不同**（`export_bmp` vs `export_to_bmp`）。
+# 官方依据: `IModelDocExtension.SaveAs3`（★ `export_to_image` 走它）·
+#   `IModelDoc2.ExportToDWG2(..., swExportToDWG_e)`（★ `export_flat_pattern_dxf` 走它）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def export_image_report(model, output_path: str) -> dict:
+    """★ **把当前视图存成图片**（PNG / JPG）并回**回读报告**。
+
+    ★ `export_to_image` 回的是一个 `Path`（★ 取不到就抛），★ 而工具层要的是 **JSON**
+    ⇒ ★ 本包装用本模块既有的 `_export_report` 包一层 —— ★★ 判据是**文件**（存在且 size > 0），
+    ★ 并附 `size_before` / `grew_or_created`（★ 免得把"旧文件本来就在"当成"导出成功"）。
+    """
+    return _export_report(model, output_path,
+                          lambda: export_to_image(model, output_path), "image")
+
+
+def export_flat_pattern_dxf_report(model, output_path: str, *, include_bend_lines: bool = True,
+                                   include_sketches: bool = False,
+                                   include_hidden_edges: bool = False) -> dict:
+    """★ **导出钣金展开图为 DXF** 并回**回读报告**。
+
+    ⚠ ★ 这要求**钣金件**（★ 与既有的 `solidworks_export_dxf` 是同一条路的两端：
+    ★ 那个在非钣金件上会**显式拒绝**并提示「导出展开 DXF 前必须先保存钣金零件」）。
+    ★ 判据同样是**文件**（★ 复用 `_export_report`）。
+    """
+    return _export_report(
+        model, output_path,
+        lambda: export_flat_pattern_dxf(model, output_path,
+                                        include_bend_lines=include_bend_lines,
+                                        include_sketches=include_sketches,
+                                        include_hidden_edges=include_hidden_edges),
+        "dxf_flat_pattern")

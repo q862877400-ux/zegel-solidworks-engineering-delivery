@@ -1,0 +1,368 @@
+来源门禁 · 锚点 origin/main · 受检 .py 文件 89 个（其中未跟踪 2 个）
+合规来源块 256 个
+
+[FAIL] 180 行新增代码没有可追溯的出处：
+
+  scripts/sw_selection_tx.py:19
+      def edit_feature_selection(data, model, family: str) -> _FeatureSelection:
+  scripts/sw_selection_tx.py:20
+          """取得该族的选区事务上下文管理器。
+  scripts/sw_selection_tx.py:22
+          ⚑ **族名校验在构造时做**，不等 __enter__ ——
+  scripts/sw_selection_tx.py:23
+            否则「给一个没有选区事务的族（如 IFace2）建了事务对象却不报错」，
+  scripts/sw_selection_tx.py:24
+            错误会推迟到真正进入上下文才炸出来。
+  scripts/sw_selection_tx.py:25
+          """
+  scripts/sw_selection_tx.py:26
+          if family not in SELECTION_FAMILIES:
+  scripts/sw_selection_tx.py:27
+              raise KeyError(
+  scripts/sw_selection_tx.py:28
+                  f"{family} 没有选区事务（AccessSelections / ReleaseSelectionAccess）。"
+  scripts/sw_selection_tx.py:29
+                  f"有事务的族: {', '.join(SELECTION_FAMILIES)}。"
+  scripts/sw_selection_tx.py:30
+                  f"IFace2 / IBody2 是几何遍历对象、IMidSurface3 也没有 —— "
+  scripts/sw_selection_tx.py:31
+                  f"对它们建事务是概念错误。"
+  scripts/sw_selection_tx.py:33
+          return _FeatureSelection(data, model, family)
+  scripts/sw_selection_tx.py:35
+      def edit_sheet_metal_selection(data, model, family: str) -> _SheetMetalSelection:
+  scripts/sw_selection_tx.py:36
+          """取得钣金 FeatureData 的选区事务上下文管理器。"""
+  scripts/sw_selection_tx.py:37
+          if family not in SHEET_METAL_SELECTION_FAMILIES:
+  scripts/sw_selection_tx.py:38
+              raise KeyError(
+  scripts/sw_selection_tx.py:39
+                  f"{family} 没有选区事务（AccessSelections / ReleaseSelectionAccess）。"
+  scripts/sw_selection_tx.py:40
+                  f"有事务的族: {', '.join(SHEET_METAL_SELECTION_FAMILIES)}。")
+  scripts/sw_selection_tx.py:41
+          return _SheetMetalSelection(data, model, family)
+  scripts/sw_toolbox_index.py:34
+      def load_index(path: Path | None = None) -> dict[str, Any]:
+  scripts/sw_toolbox_index.py:35
+          """读入索引。⚠ 文件不存在时**明说**，不返回空壳冒充成功。"""
+  scripts/sw_toolbox_index.py:36
+          p = Path(path) if path else INDEX_PATH
+  scripts/sw_toolbox_index.py:37
+          if not p.is_file():
+  scripts/sw_toolbox_index.py:38
+              raise FileNotFoundError(
+  scripts/sw_toolbox_index.py:39
+                  f"Toolbox 索引不存在：{p}\n"
+  scripts/sw_toolbox_index.py:40
+                  f"⚠ SolidWorks Toolbox 装在 D:\\SOLIDWORKS Data\\。\n"
+  scripts/sw_toolbox_index.py:41
+                  f"  若刚装 Toolbox，用 tools/build_toolbox_index.py 重建。")
+  scripts/sw_toolbox_index.py:42
+          return json.loads(p.read_text(encoding="utf-8"))
+  scripts/sw_toolbox_index.py:45
+      def list_standards(index: dict[str, Any] | None = None) -> dict[str, int]:
+  scripts/sw_toolbox_index.py:46
+          """返回 {标准名: 零件数}。"""
+  scripts/sw_toolbox_index.py:47
+          data = index if index is not None else load_index()
+  scripts/sw_toolbox_index.py:48
+          out: dict[str, int] = {}
+  scripts/sw_toolbox_index.py:49
+          for item in data["parts"]:
+  scripts/sw_toolbox_index.py:50
+              out[item["standard"]] = out.get(item["standard"], 0) + 1
+  scripts/sw_toolbox_index.py:51
+          return dict(sorted(out.items(), key=lambda kv: -kv[1]))
+  scripts/sw_toolbox_index.py:54
+      def search(keyword: str, standard: str = "", category: str = "",
+  scripts/sw_toolbox_index.py:55
+                 index: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+  scripts/sw_toolbox_index.py:56
+          """按关键词 / 标准 / 大类查零件。**关键词只匹配零件名，不做模糊拼写纠正**。
+  scripts/sw_toolbox_index.py:58
+          返回的每条含 ``part`` / ``code`` / ``path`` / ``standard`` / ``category``。
+  scripts/sw_toolbox_index.py:59
+          ⚠ 官方命名里**不含尺寸**（尺寸是文件内配置）⇒ 按「Φ20」这种查不到，
+  scripts/sw_toolbox_index.py:60
+             要按零件名关键词（如 ``ball bearing``、``hex head``）。
+  scripts/sw_toolbox_index.py:61
+          """
+  scripts/sw_toolbox_index.py:62
+          data = index if index is not None else load_index()
+  scripts/sw_toolbox_index.py:63
+          kw = keyword.strip().lower()
+  scripts/sw_toolbox_index.py:64
+          hits = []
+  scripts/sw_toolbox_index.py:65
+          for item in data["parts"]:
+  scripts/sw_toolbox_index.py:66
+              if standard and item["standard"].lower() != standard.strip().lower():
+  scripts/sw_toolbox_index.py:67
+                  continue
+  scripts/sw_toolbox_index.py:68
+              if category and item["category"].lower() != category.strip().lower():
+  scripts/sw_toolbox_index.py:69
+                  continue
+  scripts/sw_toolbox_index.py:70
+              if kw and kw not in item["part"].lower() and kw not in item["code"].lower():
+  scripts/sw_toolbox_index.py:71
+                  continue
+  scripts/sw_toolbox_index.py:72
+              hits.append(item)
+  scripts/sw_toolbox_index.py:73
+          return hits
+  scripts/sw_toolbox_index.py:76
+      def part_path(standard: str, part_name: str,
+  scripts/sw_toolbox_index.py:77
+                    index: dict[str, Any] | None = None) -> str:
+  scripts/sw_toolbox_index.py:78
+          """取某个零件的**完整路径**（供 `IAssemblyDoc.AddComponent5` 的 File 参数用）。
+  scripts/sw_toolbox_index.py:80
+          ⚠ 查不到就抛错，**不返回猜测的路径** —— 猜出来的路径插进装配会静默失败。
+  scripts/sw_toolbox_index.py:81
+          """
+  scripts/sw_toolbox_index.py:82
+          data = index if index is not None else load_index()
+  scripts/sw_toolbox_index.py:83
+          hits = [i for i in data["parts"]
+  scripts/sw_toolbox_index.py:84
+                  if i["standard"].lower() == standard.strip().lower()
+  scripts/sw_toolbox_index.py:85
+                  and i["part"].lower() == part_name.strip().lower()]
+  scripts/sw_toolbox_index.py:86
+          if not hits:
+  scripts/sw_toolbox_index.py:87
+              near = search(part_name, standard=standard, index=data)[:5]
+  scripts/sw_toolbox_index.py:88
+              hint = ("；相近的: " + ", ".join(h["part"] for h in near)) if near else ""
+  scripts/sw_toolbox_index.py:89
+              raise KeyError(
+  scripts/sw_toolbox_index.py:90
+                  f"Toolbox 里没有 {standard} / {part_name}{hint}\n"
+  scripts/sw_toolbox_index.py:91
+                  f"⚠ 尺寸是零件文件内的配置，不在文件名里 —— "
+  scripts/sw_toolbox_index.py:92
+                  f"用 list_standards() + search() 先定位零件名。")
+  scripts/sw_toolbox_index.py:93
+          if len(hits) > 1:
+  scripts/sw_toolbox_index.py:94
+              paths = "\n    ".join(h["path"] for h in hits[:5])
+  scripts/sw_toolbox_index.py:95
+              raise KeyError(f"{standard} / {part_name} 命中多个，请写全路径:\n    {paths}")
+  scripts/sw_toolbox_index.py:96
+          return hits[0]["path"]
+  scripts/sw_gui_input.py:72
+      def _tap(vk: int, pause: float = 0.06) -> None:
+  scripts/sw_gui_input.py:75
+          win32api.keybd_event(vk, 0, 0, 0)
+  scripts/sw_gui_input.py:76
+          time.sleep(0.03)
+  scripts/sw_gui_input.py:77
+          win32api.keybd_event(vk, 0, win32con.KEYEVENTF_KEYUP, 0)
+  scripts/sw_gui_input.py:78
+          time.sleep(pause)
+  scripts/sw_gui_input.py:81
+      def _tap_ctrl(vk: int, pause: float = 0.1) -> None:
+  scripts/sw_gui_input.py:84
+          win32api.keybd_event(win32con.VK_CONTROL, 0, 0, 0)
+  scripts/sw_gui_input.py:85
+          _tap(vk, 0.03)
+  scripts/sw_gui_input.py:86
+          win32api.keybd_event(win32con.VK_CONTROL, 0, win32con.KEYEVENTF_KEYUP, 0)
+  scripts/sw_gui_input.py:87
+          time.sleep(pause)
+  scripts/sw_gui_input.py:91
+      _LABEL_SEQ: dict[str, int] = {}
+  scripts/sw_gui_input.py:94
+      def label(ctrl, prefix: str = "ctl") -> str:
+  scripts/sw_gui_input.py:95
+          """给控件发一个**稳定、可读**的本地标注，用于日志与自愈定位。
+  scripts/sw_gui_input.py:97
+          ⚑ 为什么不直接抄 UFO 的 ``node_N``：我们跑的是**确定性脚本**，
+  scripts/sw_gui_input.py:98
+            日志里需要一眼看出「这是哪个控件」。所以标注含类型 + 名字 + 位置，
+  scripts/sw_gui_input.py:99
+            并在同一次会话里保持稳定（同名同位的控件复用同一个编号）。
+  scripts/sw_gui_input.py:101
+          形如 ``ctl_03 Edit「花键轴长度（L）」@(2225,937)``
+  scripts/sw_gui_input.py:102
+          """
+  scripts/sw_gui_input.py:104
+              ct = ctrl.element_info.control_type
+  scripts/sw_gui_input.py:106
+              ct = "?"
+  scripts/sw_gui_input.py:108
+              nm = (ctrl.window_text() or "").strip()[:20]
+  scripts/sw_gui_input.py:110
+              nm = ""
+  scripts/sw_gui_input.py:112
+              r = ctrl.rectangle()
+  scripts/sw_gui_input.py:113
+              pos = "(%d,%d)" % (r.left, r.top)
+  scripts/sw_gui_input.py:115
+              pos = "(?,?)"
+  scripts/sw_gui_input.py:116
+          key = "%s|%s|%s" % (ct, nm, pos)
+  scripts/sw_gui_input.py:117
+          if key not in _LABEL_SEQ:
+  scripts/sw_gui_input.py:118
+              _LABEL_SEQ[key] = len(_LABEL_SEQ) + 1
+  scripts/sw_gui_input.py:119
+          return "%s_%02d %s「%s」@%s" % (prefix, _LABEL_SEQ[key], ct, nm, pos)
+  scripts/sw_gui_input.py:122
+      def reset_labels() -> None:
+  scripts/sw_gui_input.py:123
+          """清空标注表（换页面后调用，避免编号膨胀）。"""
+  scripts/sw_gui_input.py:124
+          _LABEL_SEQ.clear()
+  scripts/sw_gui_input.py:128
+      def set_text(ctrl, text: str) -> bool:
+  scripts/sw_gui_input.py:129
+          """UIA ValuePattern 设值。**快，但插件可能不登记**（见模块头 ②）。
+  scripts/sw_gui_input.py:131
+          ⚠ 该插件实测：框里有字，型号行仍是 ``【去填写】`` ⇒ 只能用 type_text。
+  scripts/sw_gui_input.py:132
+            保留此函数是为了**别的应用**（如搜索框）能用快路。
+  scripts/sw_gui_input.py:133
+          """
+  scripts/sw_gui_input.py:134
+          for meth in ("set_edit_text", "set_text"):
+  scripts/sw_gui_input.py:136
+                  getattr(ctrl, meth)(text)
+  scripts/sw_gui_input.py:137
+                  return True
+  scripts/sw_gui_input.py:139
+                  continue
+  scripts/sw_gui_input.py:140
+          return False
+  scripts/sw_gui_input.py:143
+      def get_text(ctrl) -> str:
+  scripts/sw_gui_input.py:144
+          """回读控件当前文字（Edit 用 ValuePattern，其余用名字）。"""
+  scripts/sw_gui_input.py:146
+              v = ctrl.get_value()
+  scripts/sw_gui_input.py:147
+              if v is not None:
+  scripts/sw_gui_input.py:148
+                  return str(v)
+  scripts/sw_gui_input.py:150
+              pass
+  scripts/sw_gui_input.py:152
+              return str(ctrl.window_text() or "")
+  scripts/sw_gui_input.py:154
+              return ""
+  scripts/sw_gui_input.py:157
+      def clear(ctrl, log=None) -> bool:
+  scripts/sw_gui_input.py:158
+          """清空输入框并**回读确认**。返回是否确认为空。"""
+  scripts/sw_gui_input.py:160
+          for _ in range(3):
+  scripts/sw_gui_input.py:161
+              if CONFIG["clear_with"] == "backspace":
+  scripts/sw_gui_input.py:162
+                  for _ in range(20):
+  scripts/sw_gui_input.py:163
+                      _tap(win32con.VK_BACK, 0.02)
+  scripts/sw_gui_input.py:165
+                  _tap_ctrl(ord("A"), 0.05)
+  scripts/sw_gui_input.py:166
+                  _tap(win32con.VK_DELETE, 0.05)
+  scripts/sw_gui_input.py:167
+                  for _ in range(16):
+  scripts/sw_gui_input.py:168
+                      if not get_text(ctrl).strip():
+  scripts/sw_gui_input.py:169
+                          break
+  scripts/sw_gui_input.py:170
+                      _tap(win32con.VK_BACK, 0.02)
+  scripts/sw_gui_input.py:171
+              time.sleep(0.2)
+  scripts/sw_gui_input.py:172
+              if not get_text(ctrl).strip():
+  scripts/sw_gui_input.py:173
+                  return True
+  scripts/sw_gui_input.py:174
+          if log:
+  scripts/sw_gui_input.py:175
+              log("      ⚠ 未能清空（现 %r）" % get_text(ctrl)[:14])
+  scripts/sw_gui_input.py:176
+          return False
+  scripts/sw_gui_input.py:179
+      def commit(log=None) -> None:
+  scripts/sw_gui_input.py:180
+          """按配置提交（实测该插件**只认 Enter**，Tab 无效）。"""
+  scripts/sw_gui_input.py:182
+          k = CONFIG["commit_key"]
+  scripts/sw_gui_input.py:183
+          if k == "enter":
+  scripts/sw_gui_input.py:184
+              _tap(win32con.VK_RETURN, 0.3)
+  scripts/sw_gui_input.py:186
+              _tap(win32con.VK_TAB, 0.2)
+  scripts/sw_gui_input.py:187
+          time.sleep(0.8)
+  scripts/sw_gui_input.py:190
+      def type_text(ctrl, text: str, log=None) -> bool:
+  scripts/sw_gui_input.py:191
+          """用**真键盘逐键**把 ``text`` 打进 ``ctrl`` 并提交。**不做焦点管理**（调用方负责）。
+  scripts/sw_gui_input.py:193
+          返回是否**文本已落地**（``CONFIG["verify"]`` 为真时回读确认）。
+  scripts/sw_gui_input.py:194
+          """
+  scripts/sw_gui_input.py:195
+          if CONFIG["input_api"] == "set_text":
+  scripts/sw_gui_input.py:196
+              ok = set_text(ctrl, text)
+  scripts/sw_gui_input.py:197
+              if CONFIG["verify"] and ok:
+  scripts/sw_gui_input.py:198
+                  got = get_text(ctrl)
+  scripts/sw_gui_input.py:199
+                  ok = text in got
+  scripts/sw_gui_input.py:200
+              commit(log)
+  scripts/sw_gui_input.py:201
+              return ok
+  scripts/sw_gui_input.py:203
+          if not clear(ctrl, log=log):
+  scripts/sw_gui_input.py:204
+              return False
+  scripts/sw_gui_input.py:205
+          pause = float(CONFIG["inter_key_pause"])
+  scripts/sw_gui_input.py:206
+          for ch in text:
+  scripts/sw_gui_input.py:207
+              if ch in VK_DIGIT:
+  scripts/sw_gui_input.py:208
+                  _tap(VK_DIGIT[ch], pause)
+  scripts/sw_gui_input.py:210
+                  _tap(VK_PERIOD, pause)
+  scripts/sw_gui_input.py:212
+                  _tap(0xBD, pause)
+  scripts/sw_gui_input.py:215
+                  vk = win32api.VkKeyScan(ch) & 0xFF
+  scripts/sw_gui_input.py:216
+                  if vk and vk != 0xFF:
+  scripts/sw_gui_input.py:217
+                      _tap(vk, pause)
+  scripts/sw_gui_input.py:218
+          time.sleep(0.3)
+  scripts/sw_gui_input.py:219
+          got = get_text(ctrl)
+  scripts/sw_gui_input.py:220
+          if log:
+  scripts/sw_gui_input.py:221
+              log("      打完 框内=%r（目标 %s）" % (got, text))
+  scripts/sw_gui_input.py:222
+          commit(log)
+  scripts/sw_gui_input.py:223
+          if CONFIG["verify"]:
+  scripts/sw_gui_input.py:224
+              return text in get_text(ctrl) or text in got
+  scripts/sw_gui_input.py:225
+          return True
+
+修法：在该段代码上方加 AGENTS.md §四 4.3 规定的来源块，
+      必须含 仓库 / 文件 / 定位 / 未在本机实测 四个字段。

@@ -1,0 +1,75 @@
+规格 211 · B8 收口（九）：★★★★★ **第二次翻案被翻回来** —— ★ 两项回判「不做（后端受限）」
+
+一、★★★★★ **本批做了什么：★ 搜官方示例**（★ 上一批教训的直接应用 ✓）
+★ 上一批（焊接符号）证明：★★ **"我可能走的是**另一条 API**"** ✗ ⇒ ★ **本批先搜示例** ✓
+★★ 一搜就命中**两个不同的示例**：
+| 覆盖表行 | 官方示例 | `Postconditions` 逐字 |
+|---|---|---|
+| ★ **曲线驱动阵列**（特征域）| ★ `Create_and_Access_Curve-driven_Pattern_Feature_Example_VB.md` | ★「Creates a **cut extrude feature** … creates a curve-driven pattern feature **using the cut extrude feature**」⇒ **零件** ✓ |
+| ★★ **零部件阵列**（装配域）| ★★ `Create_Local_Curve-driven_Pattern_Example_CSharp.md` | ★「**Selects the component and edge** for the local curve-driven pattern feature」⇒ **装配** ✓ |
+
+二、★★★★★ **两个示例的**真正入口**（★ 逐行摘出来的 ✓）
+```vbnet
+' 曲线驱动阵列（VB 示例）
+Set swCurveDrivenPatternFeatureData = swFeatureMgr.CreateDefinition(swFmCurvePattern)
+Set swFeature = swFeatureMgr.CreateFeature(swCurveDrivenPatternFeatureData)
+```
+```csharp
+// 零部件阵列（C# 示例）
+swLocalCurvePatternFeat = (LocalCurvePatternFeatureData)swFeatMgr.CreateDefinition(
+    (int)swFeatureNameID_e.swFmLocalCurvePattern);
+swFeat = (Feature)swFeatMgr.CreateFeature(swLocalCurvePatternFeat);
+```
+⇒ ★★★★ **两条都是**属性式**那条**（★ `CreateDefinition` + `CreateFeature` ✗）✓
+  ★★ **而★ 我 B8 认的那个参数式入口 `FeatureLocalCurveDrivenPattern` ——
+  官方示例根本不用它** ✗✓
+
+三、★★★★★ **两条路的 Data 逐文件核过：★ 全都带 `AccessSelections`** ✗
+```
+★ ICurveDrivenPatternFeatureData ⇒ ★★ 带 AccessSelections ✗
+★ ILocalCurvePatternFeatureData  ⇒ ★★ 带 AccessSelections ✗
+★ ILocalSketchPatternFeatureData ⇒ ★★ 带 AccessSelections ✗   ← ★ 旁证：同族全都带 ✓
+```
+⇒ ★★★ **事实 47 一挡就到不了建成** ✓
+  ★★ 而★ **我 B8 调参数式那条的真机读数**是「★ **两档有效读数皆不建**」✗
+  （★ 第 0 / 1 档 `mark1=True · mark2=True · 选区=2` 而新增 `[]` ✓）
+⇒ ★★★★★ **所以两项的终判都回到「不做（后端受限）」** ✓
+
+四、★★★★★ **这是本规格**第二次翻案被翻回来** —— ★ 而两次的教训是**同一条****
+| # | 项 | 我当时以为的"真入口" | 官方示例真正走的 |
+|---|---|---|---|
+| ★ 1 | ★ **焊接符号** | ★ `IDrawingDoc::InsertWeldSymbol`（★ 10 参 ✗）| ★★ **`IModelDoc2::InsertWeldSymbol3()`**（★ 零参 ✓）|
+| ★ 2 | ★★ **曲线驱动 / 零部件阵列** | ★ `IFeatureManager::FeatureLocalCurveDrivenPattern`（★ 参数式 ✗）| ★★ **`CreateDefinition` + `CreateFeature`**（★ 属性式 ✓）|
+⇒ ★★★★ **定则（★ 本规格第二次证明，★ 而这次是**推广到"入口选择"这一层**）**：
+  ★★★★★ **「某个入口存在且无 ACL」≠「这个能力可做」** ✗ ——
+  ★★★★ **因为官方示例可能走**另一条**入口** ✓✓
+  ★★ **判据（★ 可机械执行）**：★★ **搜一遍官方 `examples/` 里那个成员的示例，
+    看它**实际调的是哪一条**** ✓ —— ★ 那**比读签名更接近真相** ✓
+
+五、★★ **一处我该说清的（★ 诚实）**
+★ 我 B8 那次改判时写的定则是「★★ **某个入口要 ACL ≠ 这个能力要 ACL**」✗ ——
+★★ **那条**本身没错**** ✓（★ 确实存在一条无 ACL 的参数式入口 ✓）
+★★★ **而它不完整** ✗ —— ★★ **漏了"那条入口是不是官方推荐/示例用的那条"** ✓
+⇒ ★★★ **所以定则要补后半句**：
+  ★★ **「★ 某个入口无 ACL」也不等于「这个能力可做」** ✓ —— ★ **两句话都要** ✓
+
+六、★ 台账随之变化
+· ★★ **不做 7 → 9** · ★★ **可做 12 → 10** ✓
+· ★ 21 项终判：★ **可做 10 · 不做 9 · 已覆盖 1 · 待实测 1** ✓
+
+七、★ 交付物
+· `tools/spec211_manual_verdicts.py`：★ 两条**可做 → 不做** + ★ **完整依据**（★ 官方示例逐字 +
+  ★ 三个 Data 的 `AccessSelections` 实测 ✓）
+
+八、★ 21 项现状（★ 本轮终）
+| 终判 | 数 | 说明 |
+|---|---|---|
+| ★★ **可做** | ★ **10** | ★ **已做 10** ⇒ ★★ **可做项**全部**做完**了** ✓✓（★ `verified` **6** · `stitched` **4**）|
+| ★ **不做** | ★ **9** | ★ 剪裁曲面 · 边界凸台 · Instant3D · 序列/说明书 · 装配体性能分析 · 边界曲面 · 平板型式/导出 DXF · **曲线驱动阵列** · **零部件阵列** |
+| ★ **已覆盖** | ★ **1** | ★ 展开/折叠 |
+| ★ **待实测** | ★ **1** | ★ PDM |
+⇒ ★★★★ **21 项里"可做"的 10 项**全部有真机结论**** ✓✓ ⇒ ★ **只剩 PDM 那一项待实测** ✓
+
+九、★ 下一轮
+★ ① **PDM 待实测**（★ 判"不做（需另装）"或最小闭环 ✓）·
+★ ② **B8 文档部分**（★ `tasks.md` / `goal-bar.md` / `docs/HANDOFF.md` + ★ 逐项结论表 ✅）—— ★ **规格的收口** ✓

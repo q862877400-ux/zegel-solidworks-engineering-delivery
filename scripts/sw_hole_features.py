@@ -7,6 +7,14 @@ import math
 from dataclasses import asdict, dataclass
 from typing import Iterable, Sequence
 
+#: ★ 长度换算助手：`_mm(v)` = **毫米→米**（恰好一次）。
+#:   依据：`FeatureCut4.md:22`「D1 … in meters」+ `output/probe-unit-decisive/decisive.json`。
+try:
+    from sw_connect import mm as _mm          # noqa: F401
+except Exception:                             # noqa: BLE001
+    _mm = lambda v: float(v) / 1000.0         # noqa: E731
+
+
 try:
     from .sw_connect import get_com_member, set_com_member
     from .sw_part import _select_com_object, extrude_cut, sketch, sketch_circle, sketch_slot
@@ -92,7 +100,12 @@ def _circle_cut(model, plane_name: str, center: tuple[float, float], diameter: f
         segment = sketch_circle(model, center[0], center[1], diameter / 2.0)
         if segment is None:
             raise RuntimeError(f"创建圆草图失败: {feature_name}")
-    feature = extrude_cut(model, sketch_name, depth)
+    #: ★★ 2026-10-11 **单位修复**（孔族共用落点）—— 官方 `FeatureCut4.md:22`
+    #:   逐字「D1: Depth of extrusion for the first end **in meters**」，
+    #:   而 `sw_part.extrude_cut` **不换算**（真代码里 `depth` 原样进 `FeatureCut4`）。
+    #:   ⇒ 调用方必须换算一次。★ 直径/中心已由 `sketch_circle` 换算 ⇒ 只补 `depth`。
+    #:   定案：`output/probe-unit-decisive/decisive.json`。
+    feature = extrude_cut(model, sketch_name, _mm(depth))
     return _feature_name(feature, feature_name)
 
 
@@ -892,7 +905,7 @@ def create_semicircular_slot_at_selection_report(model, start_selection: str, en
         if err:
             return {"ok": False, "kind": "semicircular_slot", "selection": str(sel), "error": err}
         pts.append(pt)
-    ev = _with_tree_judgement(model, create_semicircular_slot, pts[0], pts[1], width_mm, depth_mm,
+    ev = _with_tree_judgement(model, create_semicircular_slot, pts[0], pts[1], width_mm, _mm(depth_mm),
                               plane_name=plane_name, name=name)
     ev.update({"start_selection": str(start_selection),
                "end_selection": str(end_selection),
@@ -1074,7 +1087,7 @@ def hole_pattern_report(model, positions, *, kind: str = "through", diameter_mm:
         if depth_mm is None:
             out["error"] = "kind=blind 时 depth_mm 必填"
             return out
-        kwargs["depth"] = float(depth_mm)
+        kwargs["depth"] = _mm(depth_mm)   #: ★ 单位修复：FeatureCut4 的 D1 吃米
     import sw_hole_features as _self                               #: ★ 自引用取 creator（避免循环导入的写法）
     creator = getattr(_self, _HOLE_PATTERN_CREATORS[kind])
     from sw_feature_readback import feature_names
@@ -1128,6 +1141,7 @@ SW_END_BLIND = 0                #: `swEndConditions_e`：`swEndCondBlind = 0`
 SW_WZD_ANSI_METRIC = 1          #: `swWzdHoleStandards_e`：ANSI Metric
 
 #: ANSI Metric + `swWzdHole` 下**真机查到的合法** `FastenerTypeIndex`
+#: enum-gate: not-enum observed
 WZD_FASTENER_ANSI_METRIC_SIMPLE = {
     "螺钉间隙": 40,
     "螺纹钻孔": 41,

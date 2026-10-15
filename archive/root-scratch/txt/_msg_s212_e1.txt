@@ -1,0 +1,50 @@
+规格 212 · E-1：★★ "未确证必须说出来" —— ★ 并**缝回仓里的既有约定 `unit_assumption`**
+
+★★ 本批的关键动作是**缝合而不是加固我自己的临时设计**（★ 铁律 1「只缝合不发明」）✓
+
+一、★★★ 发现经过（★ 这一步比写代码重要）
+· ★ 我在**规格 211 · B1-1** 里落地"截面属性"时，**临时造**了两个键：
+  ★ `units_verified: False` + `unit_caveat` ✓
+· ★★ 而在**规格 212 · D 批扫描输出键**时，**发现仓里早有** `unit_assumption` ——
+  ★ **7 处**：`sw_curve_and_split.py` · `sw_drawing_create_missing.py`（×2）·
+  ★ `sw_sheet_metal_weld_entry.py`（×4）✓
+  ★ 例：★「★ 官方未给单位；按 SolidWorks API 惯例当作**米** ⇒ 入参毫米已换算」✓
+· ⇒ ★★★ **所以我该做的是"让临时键与既有约定对上"，不是给临时键再加个检查** ✗✓
+
+二、★ 正解：**三个键并存、各有用途**（★ 不是二选一）
+| 键 | 类型 | 用途 |
+|---|---|---|
+| ★ `unit_assumption` | 字符串 | ★★ **说法** —— ★ 统一格式、★ 人读、★ **仓里的既有约定** ✓ |
+| ★ `unit_caveat` | 字符串 | ★ **为什么未确证的细节**（★ 证据指向）✓ |
+| ★ `units_verified` | 布尔 | ★★ **机器可判** —— ★ 供门禁与调用方**一眼判断** ✓ |
+
+★★ **为什么三者都要**：★ `unit_assumption` 是**文本**（★ 机器判不了 ✓）·
+★ 而门禁需要**一个布尔**才能机械判（★ 这正是规格 212 的中心思想 ✓）✓
+
+三、★ 落到代码（★ `scripts/sw_mass_property.py`）
+· ★ 新增常量 `SECTION_UNIT_ASSUMPTION` —— ★ 它**指向 `docs/unit-conflicts.md` 第 1 条** ✓
+  ★（★ 让读者能查到"**为什么**未确证"，★ 而不只是"未确证" ✓）
+· ★ `section_properties()` 的返回**同时带三个键** ✓
+
+四、★ 契约/负例（★ 新 `tests/test_spec212_unit_declaration.py`，**与既有 6 条合跑 11 passed**）
+· ★ ① `units_verified is False` ⇒ ★ **必须带 `unit_caveat`**（★ 要求的原文 ✓）
+· ★ ② 同上 ⇒ ★ **还必须带 `unit_assumption`**（★ "统一到既有约定" ✓）
+· ★ ③ **三键语义不许自相矛盾**：★ 说 `True` 却带 `caveat` ⇒ **负例** ✓
+· ★ ④ 常量非空 · ★ 且 `unit_assumption` **必须指向 `unit-conflicts`**（★ 可追证据 ✓）
+· ★ ⑤ 负例：★ **工程图先拒**那条路上不该冒出单位声明（★ 免得误读 ✓）
+
+五、★ 条文落进它的家（★ `docs/union-conventions.md` 规则 2b 第 ③ 条）
+· ★ 写明三键关系 · ★★ 写明 `unit_assumption` **是仓里的既有约定**（★ 并列出 7 处出处）⇒
+  ★★ **后人不必再自造词** ✓
+· ★ 并给出机械判据：★ `units_verified: false` ⇒ **必须同时有 `unit_caveat` 与 `unit_assumption`** ✓
+  ★ 附测试路径（★ `tests/test_spec212_unit_declaration.py`）✓
+
+六、★ 交付物
+· `scripts/sw_mass_property.py`：★ +`SECTION_UNIT_ASSUMPTION` · ★ 返回 dict +1 键 ✓
+· `tests/test_spec212_unit_declaration.py`（★ 5 条契约/负例）✓
+· `docs/union-conventions.md`：★ 规则 2b 第 ③ 条补细节 + 既有约定出处 ✓
+
+七、★ 下一轮
+· ★ **C-4**：★ ① 档最后一项目前**挂起**（★ 只剩 `relief_width_mm`，★ 取决于 `unit-conflicts.md`
+  第 2 条的**真机结论** ✓）
+· ★ **212 收口验收**：★ 逐条对照 `spec.md §五` 的 C1–C7 ⇒ ★ **然后切回规格 211 的 21 项** ✓

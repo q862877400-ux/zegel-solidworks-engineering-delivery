@@ -1,0 +1,37 @@
+fix(工程图): 修掉 `set_sheet_format` 的"找不到成员" ⇒ 工具层 e2e **3/8 → 4/8** + 事实 499
+
+■ 一 · 官方成员名**是对的**，错的是**调用通道**
+  · 官方逐字：`ISheet.SetTemplateName(System.string NameIn)` ⇒ **`void`、未废弃**。
+  · 经工具层调 subskill 的 `set_sheet_format` ⇒ 真机报 **`com_error: (-2147352573, '找不到成员。')`**。
+  · ★★ **定点诊断**（`output/_diag_sheetfmt.json`，**同一张** `工程图64`、**同一个** `sheet` 对象）：
+    · `get_com_member(drw, "GetCurrentSheet")` ⇒ `CDispatch`，`GetName` → `图纸1`（★ 确实是 `ISheet`）
+    · `get_com_member(sheet, "SetTemplateName", <slddrt>)` ⇒ **返回 `None`（= `void` 成功）** ✓
+  · ★ 而 subskill 那个函数写的是**直接属性访问**：
+    `sheet = drawing_model.GetCurrentSheet(); return sheet.SetTemplateName(path)`
+  ⇒ ★★ **同一个成员、同一个对象、同一张文档，两条通道结果不同** ⇒ ★ 是**通道**问题，不是**名字**问题。
+
+■ 二 · 改法
+  `scripts/sw_drawing_expose.set_sheet_format` **不再调 subskill 的那个函数** ⇒
+  自己两步 `get_com_member`，并在之后补 `ForceRebuild3`（★ 官方 Remarks 逐字要求），
+  再把 `GetTemplateName` 的**回读**一起带回来当判据。
+
+■ 三 · 真机读数（`output/drawing-tools-e2e-evidence.json`）
+  | 指标 | 上轮 | 本轮 |
+  |---|---|---|
+  | `passed` | 3/8 | ★ **4/8** |
+  ★ **建成 4 条**：`create_projected_view`（`view_delta=1`）· **`set_sheet_format`（本轮转正）** ·
+    `add_note`（72→73）· `create_revision_table`（72→73）
+  ★ **前置未成立 4 条（如实标注，★ 不作能力证据）**：`create_section_view`（未选剖面线）·
+    `create_detail_view`（无局部圆）· `create_hole_table`（**未选 mark 1+2**）·
+    `insert_center_marks`（探针传了空 `requirements`）
+
+■ 四 · ★ 一条可复用的判据（已写进事实 499）
+  **碰到 `找不到成员` / `Property … can not be set` 这类"看似成员不存在"的错时，先别改成员名** ——
+  ★ 先用 `get_com_member` 在**同一个对象**上试**同一个成员**；★ 两条通道结果不同 ⇒ 是**通道**问题。
+  ★ 这与本仓既有事实 **78/79「直接成员访问盲点」同一族**，★ 本轮给了一个**新实例**：
+  **同一个成员、同一个对象、同一张文档，两条通道一个失败一个成功**。
+
+■ 五 · 事实
+  `docs/known-facts.md` 新增 **499**。
+
+★ 收尾链：**`release_check 第 1 轮 OK` · 29 passed**。★ 覆盖率不变（**111/145**，★ 本轮只改实现方式，没加工具）。

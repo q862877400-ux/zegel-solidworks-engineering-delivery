@@ -1,0 +1,82 @@
+[
+  {
+    "op": "fill",
+    "id": "export_delivery",
+    "tools": [
+      "solidworks_export_step",
+      "solidworks_export_stl",
+      "solidworks_export_iges",
+      "solidworks_export_parasolid",
+      "solidworks_export_dxf",
+      "solidworks_export_bmp"
+    ],
+    "note": "★ 从 `config_and_export` 拆出（轮 276）：★ 那一条把「配置」与「导出」两种意图塞在一起，而**导出**本身是独立且常用的能力。★ 依据：它有**自己的真机证据** —— 导出族 5/6（step/stl/iges/parasolid/bmp 都产出非空文件）。⚠ `export_dxf` 是**钣金展开图**导出，非钣金件会被拒（已在工具说明里写准）。"
+  },
+  {
+    "op": "fill",
+    "id": "configurations_and_design_tables",
+    "tools": [
+      "solidworks_config_activate",
+      "solidworks_config_create",
+      "solidworks_config_inspect",
+      "solidworks_config_read_custom_property",
+      "solidworks_config_set_custom_properties",
+      "solidworks_config_update_dimension"
+    ],
+    "note": "★ 从 `config_and_export` 拆出（轮 276）：★ **配置生命周期**（建/激活/查）+ **属性与命名尺寸**是独立意图。★ 依据：配置族真机 5/6（判据 = 能力层自己回的 dict 非空）。"
+  },
+  {
+    "op": "fill",
+    "id": "drawings_and_bom",
+    "tools": [
+      "solidworks_collect_assembly_bom",
+      "solidworks_delivery_export_bom_csv",
+      "solidworks_delivery_bom_traceability"
+    ],
+    "note": "★ 从 `custom_properties_and_bom` 拆出（轮 276）：★ 那一条覆盖**自定义属性**，而**BOM 的收集/导出/追溯**是独立意图（★ 装配级、交付物）。"
+  },
+  {
+    "op": "new",
+    "entry": {
+      "id": "mold_analysis",
+      "label": "模具分析（拔模分析 / 底切检测）",
+      "level": "stitched",
+      "backends": ["solidworks-com-pywin32"],
+      "verified_versions": ["2026"],
+      "dependencies": ["solidworks"],
+      "limitations": [
+        "★ 从 `mold_tools` **拆出**（轮 276）：★ 依据是**意图不同** —— 本族是**分析**（拔模/底切），而另一条是**造分型几何**（分型线/面/关断/分型）",
+        "⚠⚠ **官方没给判据**：`MoldUndercutDetect` 官方是 **Void**（检测结果**不在返回值里**、如何获取**未查证**）；`MoldDraftAnalysis` 返回 Int32 但**官方未给返回码枚举** ⇒ 本模块**原样返回、不判定成败**",
+        "⚠ 真机冒烟 `tools/verify_mold_evidence_smoke.py` = **3/5 fail**，而它自己标注「**未验**：`MoldDraftAnalysis` / `MoldUndercutDetect` / `InsertMold*` —— 在**未准备的分型件上会弹框**」",
+        "⚠ **未真机验证**（★ 因为无法判定成败，且前置未准备）"
+      ],
+      "allowed_modes": ["interactive", "reviewed"],
+      "evidence": ["⚠ **无真机证据**（★ 官方无判据 ⇒ 无法判成败）· python tools/verify_mold_evidence_smoke.py ⇒ 3/5 fail（自标注「未验」）"],
+      "mcp_tools": ["solidworks_mold_draft_analysis", "solidworks_mold_undercut_detect"],
+      "source": "original",
+      "source_evidence": "scripts/sw_mold.py 的 mold_draft_analysis / mold_undercut_detect"
+    }
+  },
+  {
+    "op": "new",
+    "entry": {
+      "id": "preview_and_review_report",
+      "label": "预览准备与模型审查报告",
+      "level": "stitched",
+      "backends": ["solidworks-com-pywin32"],
+      "verified_versions": ["2026"],
+      "dependencies": ["solidworks"],
+      "limitations": [
+        "★ 从 `geometry_and_delivery_review` **拆出**（轮 276）：★ 依据是**意图不同** —— 本族是**出报告 / 摆好视图供人看**，而那一条还含几何与交付读数",
+        "⚠ **未真机验证** —— 本族的 3 个工具（`build_review_report` / `collect_model_summary` / `set_standard_view`）**未单独跑过**；★ 硬约束③：标明",
+        "★ `build_review_report` 会导出预览图片并写报告（★ 属「生成产物」，★ 不是只读）"
+      ],
+      "allowed_modes": ["interactive", "reviewed"],
+      "evidence": ["⚠ **无真机证据**（★ 未单独验过）"],
+      "mcp_tools": ["solidworks_build_review_report", "solidworks_collect_model_summary",
+                    "solidworks_set_standard_view"],
+      "source": "original",
+      "source_evidence": "scripts/sw_review.py 的 build_review_report / collect_model_summary + sw_part 的 set_standard_view"
+    }
+  }
+]

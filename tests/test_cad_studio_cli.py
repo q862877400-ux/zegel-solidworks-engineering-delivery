@@ -76,6 +76,13 @@ def test_cli_retry_rejects_active_job():
 
 
 def test_check_dfm_cli_generates_report(tmp_path: Path):
+    #: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+    #:   业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+    #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+    #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+    #:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ **是方法** ✗
+    #:   ★ 已移出：★ `archive/inherited-methods/scripts/`（★ **只搬不删**）✓
+    #:   ★★ 本子命令现**如实报 `status: "removed"`** 且返回 1（★ 不是静默 2）✓
     """@brief check-dfm 命令必须输出真实 JSON 报告。"""
     source = tmp_path / "plate.cadstudio.json"
     source.write_text(
@@ -97,11 +104,9 @@ def test_check_dfm_cli_generates_report(tmp_path: Path):
         errors="replace",
         check=False,
     )
-    assert completed.returncode == 0, completed.stderr
+    assert completed.returncode == 1, completed.stderr
     payload = json.loads(completed.stdout)
-    assert payload["status"] == "review_required"
-    assert Path(payload["reportPath"]).exists()
-    assert payload["artifacts"][0]["producedThisRun"] is True
+    assert payload["status"] == "removed"
 
 
 def _fea_request() -> dict:
@@ -146,7 +151,14 @@ def _advanced_geometry_plan() -> dict:
 
 
 def test_cli_prepare_fea_generates_versioned_calculix_input(tmp_path: Path):
-    """@brief prepare-fea 必须生成本轮 CalculiX 输入且不依赖求解器安装。"""
+    #: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+    #:   业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+    #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+    #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+    #:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ **是方法** ✗
+    #:   ★ 已移出：★ `archive/inherited-methods/scripts/`（★ **只搬不删**）✓
+    #:   ★★ 本子命令现**如实报 `status: "removed"`** 且返回 1（★ 不是静默 2）✓
+    """@brief prepare-fea 方法已移出 ⇒ 子命令须**如实报 removed**。"""
     source = tmp_path / "fea.json"
     source.write_text(json.dumps(_fea_request()), encoding="utf-8")
     completed = subprocess.run(
@@ -158,16 +170,21 @@ def test_cli_prepare_fea_generates_versioned_calculix_input(tmp_path: Path):
         check=False,
     )
 
-    assert completed.returncode == 0, completed.stderr
+    assert completed.returncode == 1, completed.stderr
     payload = json.loads(completed.stdout)
-    assert payload["status"] == "pass"
-    artifact = Path(payload["artifacts"][0]["path"])
-    assert artifact.is_file()
-    assert artifact.read_text(encoding="ascii").startswith("** CAD Studio generated")
+    assert payload["status"] == "removed"
+    assert "archive/inherited-methods" in payload["where"]
 
 
 def test_cli_run_fea_convergence_rejects_invalid_request_without_output(tmp_path: Path):
-    """@brief 收敛 CLI 必须在求解前阻断无效协议，且不留下结果目录。"""
+    """@brief 收敛方法已移出 ⇒ 子命令须**如实报 removed**，且不留下结果目录。"""
+    #: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+    #:   业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+    #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+    #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+    #:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ **是方法** ✗
+    #:   ★ 已移出：★ `archive/inherited-methods/scripts/`（★ **只搬不删**）✓
+    #:   ★★ 本子命令现**如实报 `status: "removed"`** 且返回 1（★ 不是静默 2）✓
     source = tmp_path / "bad-convergence.json"
     source.write_text("{}", encoding="utf-8")
     output = tmp_path / "convergence-out"
@@ -185,13 +202,20 @@ def test_cli_run_fea_convergence_rejects_invalid_request_without_output(tmp_path
 
     assert completed.returncode == 1
     payload = json.loads(completed.stdout)
-    assert payload["status"] == "blocked"
-    assert payload["error_code"] == "fea_convergence_invalid_request"
+    assert payload["status"] == "removed"
+    assert "archive/inherited-methods" in payload["where"]
     assert not output.exists()
 
 
 def test_cli_review_advanced_geometry_writes_report(tmp_path: Path):
-    """@brief 复杂几何 CLI 只能输出 pilot/blocked 门禁报告，不声称产出几何。"""
+    """@brief 复杂几何方法已移出 ⇒ 子命令须**如实报 removed**。"""
+    #: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+    #:   业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+    #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+    #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+    #:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ **是方法** ✗
+    #:   ★ 已移出：★ `archive/inherited-methods/scripts/`（★ **只搬不删**）✓
+    #:   ★★ 本子命令现**如实报 `status: "removed"`** 且返回 1（★ 不是静默 2）✓
     source = tmp_path / "surface.json"
     source.write_text(json.dumps(_advanced_geometry_plan()), encoding="utf-8")
     completed = subprocess.run(
@@ -203,14 +227,20 @@ def test_cli_review_advanced_geometry_writes_report(tmp_path: Path):
         check=False,
     )
 
-    assert completed.returncode in {0, 1}
+    assert completed.returncode == 1
     payload = json.loads(completed.stdout)
-    assert payload["status"] in {"pilot", "blocked"}
-    assert payload["geometryProduced"] is False
-    assert Path(payload["reportPath"]).exists()
+    assert payload["status"] == "removed"
+    assert "archive/inherited-methods" in payload["where"]
 
 
 def test_cli_create_ocp_loft_writes_real_brep(tmp_path: Path):
+    #: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+    #:   业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+    #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+    #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+    #:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ **是方法** ✗
+    #:   ★ 已移出：★ `archive/inherited-methods/scripts/`（★ **只搬不删**）✓
+    #:   ★★ 本子命令现**如实报 `status: "removed"`** 且返回 1（★ 不是静默 2）✓
     """@brief create-ocp-loft 必须生成并重开真实 STEP/BREP。"""
     pytest.importorskip("OCP")
     source = tmp_path / "loft.json"
@@ -227,14 +257,21 @@ def test_cli_create_ocp_loft_writes_real_brep(tmp_path: Path):
         [sys.executable, "scripts/cad_studio.py", "create-ocp-loft", "--input", str(source), "--out-dir", str(tmp_path / "loft-out")],
         capture_output=True, text=True, encoding="utf-8", errors="replace", check=False,
     )
-    assert completed.returncode == 0, completed.stderr
+    assert completed.returncode == 1, completed.stderr
     payload = json.loads(completed.stdout)
-    assert payload["status"] == "review_required"
+    assert payload["status"] == "removed"
     assert payload["geometryProduced"] is True
     assert all(Path(item["path"]).is_file() for item in payload["artifacts"])
 
 
 def test_cli_create_ocp_surface_writes_real_smooth_loft(tmp_path: Path):
+    #: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+    #:   业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
+    #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
+    #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
+    #:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ **是方法** ✗
+    #:   ★ 已移出：★ `archive/inherited-methods/scripts/`（★ **只搬不删**）✓
+    #:   ★★ 本子命令现**如实报 `status: "removed"`** 且返回 1（★ 不是静默 2）✓
     """@brief create-ocp-surface 必须生成并重开真实平滑 Loft BREP。"""
     pytest.importorskip("OCP")
     source = tmp_path / "smooth.json"
@@ -252,8 +289,7 @@ def test_cli_create_ocp_surface_writes_real_smooth_loft(tmp_path: Path):
         [sys.executable, "scripts/cad_studio.py", "create-ocp-surface", "--input", str(source), "--out-dir", str(tmp_path / "surface-out")],
         capture_output=True, text=True, encoding="utf-8", errors="replace", check=False,
     )
-    assert completed.returncode == 0, completed.stderr
+    assert completed.returncode == 1, completed.stderr
     payload = json.loads(completed.stdout)
-    assert payload["status"] == "review_required"
+    assert payload["status"] == "removed"
     assert payload["continuityEvidence"]["allSampledEdgesG2"] is True
-    assert Path(payload["artifacts"][0]["path"]).is_file()

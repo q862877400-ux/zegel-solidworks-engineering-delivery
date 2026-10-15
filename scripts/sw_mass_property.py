@@ -166,6 +166,7 @@ def mass_property_object(model):
 #: ★★ **截面属性**（规格 211 · B1-1）—— 官方 24 元数组的**下标定义**
 #:   ★ 官方依据：`C:\swapi\types\IModelDocExtension\GetSectionProperties2.md` 的 `## Remarks`
 #:   「The format of the returned array (retval) of size 24」+ 逐项下标 ✓
+#: enum-gate: not-enum index
 SECTION_INDEX = {
     "status": 0, "area": 1,
     "centroid_x": 2, "centroid_y": 3, "centroid_z": 4,
@@ -353,6 +354,7 @@ def mass_properties(model) -> dict[str, Any]:
     """
     mp = mass_property_object(model)
 
+#: dispatch-guard: exempt internal-helper
     def _num(name):
         try:
             return float(get_com_member(mp, name))

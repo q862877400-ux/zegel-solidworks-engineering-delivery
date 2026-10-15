@@ -1,0 +1,36 @@
+fix(R3 探针): 修三处**我自己的前置缺陷** ⇒ R3 四条终于有了**诚实读数**（★ 两条前置未成立、两条仍未造出前置）
+
+■ 一 · ★★★ 本轮最大的收获是**一条反复出现的陷阱**，而它**三次都出在我自己写的探针里**
+  `param_alias` **必须应用**，否则会把**好工具记成坏的**：
+  · 第 1 次：`tools/probe_r3_tools.py` 初版漏了它 ⇒ 误报 `insert_weldment_end_cap()` 的参数名不符；
+  · 第 2 次：同一处（上轮）—— 已按注册器 `tool_registry.py:493-498` 的口径逐字复刻修好；
+  · ★ 第 3 次：**本轮的临时诊断脚本又漏了** ⇒ 误报
+    `create_base_flange() got an unexpected keyword argument 'sketch_name'. Did you mean 'sketch_ref'?`
+    —— ★★ 而真相是那条 spec 有 `param_alias={'sketch_name': 'sketch_ref', 其余全部 → None}`
+    （★ 其余形参由 **`derived_args`** 现造 `BaseFlangeSpec` 吃掉）⇒ **工具本来就是好的**。
+  ⇒ ★ 教训（★ 已写进 `docs/team-roles.md` 的派活纪律）：★ **写探针/诊断脚本时，
+    "按 ToolSpec 的契约调"这句话里包含三样** —— `param_alias` · **注入** · `pre_call`/`derived_args`，
+    ★ **少一样就会把好工具报成坏的**。
+
+■ 二 · 本轮修掉的**三处探针前置缺陷**（★ 全在 `tools/probe_r3_tools.py`）
+  ① ★ **焊件轮廓挑错了目录**：上一版 `rglob("*.sldlfp")` 取第一个 ⇒ 挑到
+     `...\design library\features\inch\fluid power ports\...sldlfp` ——
+     ★ **那是"库特征"、不是焊件轮廓** ⇒ `InsertStructuralWeldment5` 必失败（★ 报"创建失败"，**指不出真因**）。
+     ★ 现限定在 **`weldment profiles`** 目录下 ⇒ 真机选中
+     `...\weldment profiles\ansi\al cs.sldlfp` ⇒ **`setup=True`** ✓
+  ② ★ **基体法兰的草图形态**：上一版画两条线（想当"开放折线"）⇒ 真机 `create_base_flange`
+     **回 `ok=False` 且不抛错**（★ 静默无输出）⇒ ★ 换成**闭合矩形**（官方文档里最明确的那个形态）。
+  ③ ★ 已在上轮修好的两项（★ 本轮沿用）：`param_alias` 与 `pre_call`/`derived_args`。
+
+■ 三 · ★★ R3 四条的**诚实读数**（`output/r3-tools-evidence.json`，走 `sw_guard`、零弹窗）
+  | 工具 | 前置 | 工具的调用 | 判定 |
+  |---|---|---|---|
+  | `sheet_metal_insert_miter_flange` | ✗ **未造出**（基体法兰 `ok=False`，★ 无异常）| 无契约错 | ★ **前置未成立** |
+  | `sheet_metal_insert_closed_corner` | ✗ 同上 | 无契约错 | ★ **前置未成立** |
+  | `weldment_insert_end_cap` | ✗ **未成立**（`pre=False`）| ★ **调得到** | ★ **前置未成立**（官方要**先选端面**）|
+  | `weldment_gusset_create` | ✗ 同上 | ★ **调得到** | ★ **前置未成立**（官方要**两个面 + mark=1**）|
+  ★★ **结论（如实）**：这四条**没有任何契约层错误**（模块名 / 注入键 / 形参名 / 必填形参全对），
+    ★★ 但**前置都没造出来** ⇒ ★ **R3 四条仍算"未验证"**，
+    ★ 下一步是**修探针的前置**（选中端面 / 两个面并给 mark），★ **不是改工具**。
+
+★ 覆盖率不变（**119/145**）。★ 收尾链见提交后。

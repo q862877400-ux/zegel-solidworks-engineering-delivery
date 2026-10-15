@@ -36,8 +36,18 @@ from sw_connect import get_com_member
 #:   而 `GetSensorValue(out double Value, out string Units)` 要 `VT_R8` 与 `VT_BSTR` 两个。
 #:   ★ 依据：`sw_connect.out_i4` 的**真机结论**（★ 唯一通过的形态是 `VARIANT(VT_BYREF | VT_xxx, 默认值)`；
 #:   ★ 裸值 / 不带 BYREF / `VT_VARIANT` 全报"类型不匹配"）⇒ ★ 这里照同一形态造另外两种。
+#:   ⚠⚠★ **2026-10-10（spec 274）真机反例**：★ 这条「照同一形态造」的**类推在 `Double&` 上不成立** ——
+#:     ★ 真机（34.4.1）实测 `IBody2.GetExtremePoint(Double, Double, Double, Double&, Double&, Double&)`
+#:     ⇒ ★ 三个 `Double&` 传 by-ref VARIANT **一律抛 `TypeError`**
+#:     （`float() argument must be a string or a real number, not 'VARIANT'`）；
+#:     ★ 而**裸 `0.0` / 省略**通过、★ 出参**随返回元组回来**（`(True, 0.0275, 0.0, 0.0)`）。
+#:     ★ 同机对照 `IModelDocExtension.GetWhatsWrong(Object&, Object&, Object&)` ⇒ ★ **只**吃 by-ref VARIANT
+#:     （★ 裸值 ⇒ `DISP_E_TYPEMISMATCH` · ★ 省略 ⇒ `DISP_E_PARAMNOTOPTIONAL`）。
+#:     ⇒ ★★ **传法取决于该形参怎么声明，★ 不能按「出参」一刀切**（★ 读数原文 `output/_probe274_double_out.txt`）。
+#:     ⇒ ★★ 故本函数的 `VT_BYREF | VT_R8` 形态**只有类推、没有 `Double&` 的真机正例**，
+#:     ★ 且已有一个 `Double&` 反例 ⇒ ★ **用之前先真机核，别默认它通**（★ 判据 `tests/test_double_out_param_form.py`）。
 def out_double(value: float = 0.0):
-    """★ `Double&` 出参的 VARIANT 包装（★ 形态照 `sw_connect.out_i4` 的真机结论）。"""
+    """★ `Double&` 出参的 VARIANT 包装（★ 形态照 `sw_connect.out_i4` 的类推 —— ⚠★ **无 `Double&` 真机正例**）。"""
     import pythoncom  # noqa: PLC0415
     return pythoncom.VARIANT(pythoncom.VT_BYREF | pythoncom.VT_R8, float(value))
 

@@ -96,7 +96,17 @@ def test_explicit_plumbing_names_are_internals(module: str, name: str) -> None:
     #:   `got empty parameter set`）⇒ ★★ **那条反向保护根本没在跑**（静默失效）。
     #:   ★ 教训：改完参数化要看 `-rs` 输出里有没有 `empty parameter set` ——
     #:   ★ 那等于把一个守卫**悄悄关掉**。
-    ("sw_part", "linear_pattern"),                 #: ★ 故意未挂（真机未建成，事实 315）
+    #: ★★★ 2026-10-10（规格 275）**样本第 5 次随事实更新**：
+    #:   ★ 原样本 `("sw_part","linear_pattern")` 的注释写着「★ 故意未挂（真机未建成，事实 315）」，
+    #:   ★★ 而它**现在已被包装暴露**：实测 `T.classify("sw_part","linear_pattern")` ⇒
+    #:     `('已有', '功能已由 linear_pattern_report 包装暴露')`；
+    #:   ★ 而 `linear_pattern_report` 由**规格 217**（`mcp-server/tool_specs_batch106.py`，**已提交**）注册
+    #:     ⇒ ★ 故这条**不再是真缺口**（★ 与轮 432/436/470 三次同类更新同一形态）。
+    #:   ★ 换成**实测仍是真缺口**的 `("sw_hole_features","create_hole_pattern")`
+    #:     （★ 实测 `T.classify(...)` ⇒ `('该挂', '')` —— ★ 无任何 `*_report` 包装）✓
+    #:   ★★ **注意**：本测试的样本**必须定期随事实更新**（★ 见上面那句「那是**有意**的」）——
+    #:     ★ 换样本**不是**放宽判据，★ 而是**保持它的判别力**（★ 绝不能换成已覆盖的名字，★ 更不能清空）。
+    ("sw_hole_features", "create_hole_pattern"),   #: ★ 规格 275 换上（★ 实测仍「该挂」· 无 `*_report`）
     #: ★★ 2026-10-03（轮 432）**两处样本已随事实更新**（★ 而那两件事**确实做完了**）：
     #:   · `sw_part.add_dimension` ⇒ ★ **已由 `add_dimension_report` 包装**（★ 事实 320 恢复注册）
     #:   · `sw_weldment.create_structural_member` ⇒ ★ **已由 `create_structural_member_from_sketch` 包装**
@@ -180,7 +190,11 @@ def test_wrapper_rule_does_not_swallow_real_gaps() -> None:
     #:   ★ `export_flat_pattern_dxf` **已归入「已有」**（★ 规格 213 把它挂成工具 ✓，
     #:     前置是**用户授权的受控例外** ✓）⇒ ★ **换上它的 `_report` 兄弟** ✓
     #:     （★ 实测仍是 `该挂` ✓ —— ★ 保持这条测试的**判别力**，★ 而不是把它删空 ✗）
-    for module, name in (("sw_part", "linear_pattern"),
+    #: ★★★ 2026-10-10（规格 275）**再一次随事实更新**（★ 同上面那条 parametrize 的理由）：
+    #:   ★ `("sw_part","linear_pattern")` **已被 `linear_pattern_report` 包装暴露** ⇒
+    #:   ★ 换成**实测仍是真缺口**的 `("sw_hole_features","create_hole_pattern")` ✓
+    #:   （★ 保持这条测试的**判别力**，★ 而不是把它删空 ✗）
+    for module, name in (("sw_hole_features", "create_hole_pattern"),
                          ("sw_export", "export_flat_pattern_dxf_report"),
                          ("sw_simulation_loads", "add_pin_connector")):
         kind, _ = T.classify(module, name)

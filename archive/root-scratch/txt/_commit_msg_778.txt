@@ -1,0 +1,60 @@
+fix(阶段3): ★★★★★★ **补能力第 8 个 —— `base_flange_params`**（★ **钣金域** · ★ `IBaseFlangeFeatureData`）；★ 并测出**单位口径的第七族**
+
+■ 一 · ★ 挑族：★ **钣金域**（★ 任务书阶段 4 点名的那域）
+  ★ `IBaseFlangeFeatureData`（★ 那格里 ×13、★ **本族共 54 个成员**）⇒
+  ★★ **第七个族**、★ **第八个补能力** ✓
+
+■ 二 · ★ 官方逐字（★ 逐个成员的 `## Returns`）—— ★ **七个长度量都没写单位**
+  ★ `Thickness` ⇒ 「Value for thickness」· ★ `BendRadius` ⇒ 「Value of the bend radius」·
+    ★ `TableRadius` ⇒ 「Bend radius」· ★ `TableThickness` ⇒ 「Thickness」·
+    ★ `ReliefWidth` / ★ `ReliefDepth` ⇒ 光名字 ⇒
+    ★★ **⇒ 与 `IWizardHoleFeatureData2` **同型**（★ 官方没写）⇒ ★ 按铁律 5 真机测** ✓
+  ★★ `KFactor` / ★ `TableKFactor` / ★ `ReliefRatio` ⇒ **无量纲比例** ✓
+  ★★★ `ReliefType` ⇒ `swSheetMetalReliefTypes_e` · ★ `D1EndConditionType` ⇒ `swFlangeOffsetTypes_e` ✓
+  ★★★★ **`D1OffsetDistance` ⇒ **真废弃****（★ **新判据也认** —— ★ 不是假阳性）⇒ **不读** ✓
+  ★★★★★ **七个只读**（★ `{get;}`）：★ `UseDefaultBendAllowance` · ★ `UseDefaultBendRelief` ·
+    ★ `ReliefType` · ★ `ReliefRatio` · ★ `ReliefWidth` · ★ `ReliefDepth` · ★ `UseReliefRatio` ✓
+
+■ 三 · ★★★★★★ 而**判据是**从仓里搜出来的****（★ 不是猜的 —— ★ 按上一轮那条判据）
+  ★ **按功能词搜 `sheet_metal`** ⇒ ★ `scripts/sw_sheet_metal.py`：
+    ★ `create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` ✓
+  ★★ **而 `BaseFlangeSpec` 的 docstring 逐字**：
+    ★★ **「基体法兰的可制造参数，**全部长度单位为米**」** ⇒
+    ★★★ **⇒ 那给了**极干净的判据**：★ 传 `0.002`（米 ⇒ 2mm）⇒ 若 `Thickness` 回 `0.002` ⇒ **同口径** ✓
+  ★★★★ **⇒ 可复用判据**：★★★ **"单位口径"这条判据，有时**不用真机就能先立起来**** ——
+    ★ **只要仓里那个 spec 自己声明了口径** ⇒ ★★ **而真机要做的只是**确认一致**** ✓
+
+■ 四 · ★ 真机 **8/8 全过**（★ `output/base-flange-params-capability-recheck.json`）
+  | ★ 判据 | ★ 读数 |
+  |---|---|
+  | ★ 找到基体法兰特征 | ★ **`基体-法兰1`** ✓ |
+  | ★ `Thickness` | ★ **`0.002`**（★ 传的也是 0.002）✓ |
+  | ★ `BendRadius` | ★ **`0.001`** ✓ |
+  | ★ `KFactor` | ★ **`0.42`**（★ `BaseFlangeSpec` 的默认值）✓ |
+  | ★ `ReliefType` / ★ `ReliefRatio` / ★ `ReliefWidth` | ★ **`1`** / ★ **`0.5`** / ★ **`0.001`** ✓ |
+  | ★ `D1EndConditionType` 是 int | ★ ✓ |
+  | ★ **不读 `D1OffsetDistance`** | ★ ✓ |
+  ★★ **⇒ 单位判定：★ 与 `BaseFlangeSpec` **同口径（米）**** ✓
+
+■ 五 · ★★★★★ 而那三个"表值"**自证**了
+  ★ `TableKFactor` / ★ `TableRadius` / ★ `TableThickness` **全是 `0.0`** ⇒
+    ★★ **应然的**（★ 没用 gauge table）⇒ ★★★ **⇒ 它们与 `UseGaugeTable` **互相印证**** ✓
+  ★★★★ **可复用判据**：★★★ **"读数为 0"有两种 —— ★ 一种是"没读到"、★ 另一种是"本来就没有"** ⇒
+    ★ **要靠**另一个成员**把它们分开**（★ 本轮：★ 表值 0 ⇔ `UseGaugeTable`）✓
+
+■ 六 · ★★ 交付
+  ★ `scripts/sw_feature_readback.py::base_flange_params` ⇒ ★ **`__all__` 12 项** ✓
+  ★★ **挂 ToolSpec** ⇒ ★ **`ToolSpec 总数 287 → **288**** ✓ · ★ 成员名门禁 **[PASS]** ✓
+
+■ 七 · ★★ 新增测试（★ `tests/test_base_flange_params_capability.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★★ **前提断言** | ★ `BaseFlangeSpec` 的 docstring **仍写「米」**（★ 判据的锚点）✓ |
+  | ★★★ **核心断言** | ★ 函数体**不读 `D1OffsetDistance`**（★ 官方标真废弃）+ ★ 那份清单在 ✓ |
+  | ★★★ **核心断言** | ★ 兜底过**两层**（★ `_CONTAINER_NODES` + ★ `BaseFlange`）✓ |
+  | ★★★★ **负例 · 口径 + 自洽** | ★ `0.002 ⇒ 0.002` + ★ **三个表值全 `0.0`** + ★ 判定写「米」✓ |
+
+■ 八 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★ **阶段 3 的第八个补能力落地** —— ★ **`查 × 特征` 7 → 8** · ★ **覆盖面 7 个族** ✓
+  ★★★ **而这是**钣金域**的第一个回读能力** ✓

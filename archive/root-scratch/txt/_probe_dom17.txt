@@ -1,0 +1,91 @@
+DOMAIN other (⑰ 未归类)
+  cell Eduardof0nt/Solidworks-MCP-Server    18
+  cell andrewbartels1/SolidworksMCP-python  17
+  cell vespo92/SolidworksMCP-TS             10
+  cell Slacker-LLC/solidworks-mcp           16
+  cell 本仓库                                  107
+  external_union=45  u=149  our_cell=107
+  gap(u-ours)=42   exclusive=31
+
+=== GAP 42 (op | owners | in_our_MCP) ===
+advanced_features                | vespo92                                    | ourMCP=False
+api_automation                   | vespo92                                    | ourMCP=False
+arc                              | andrewbartels1,Slacker-LLC                 | ourMCP=False
+bodies                           | Eduardof0nt,Slacker-LLC                    | ourMCP=False
+classify_feature_tree            | andrewbartels1                             | ourMCP=False
+composite_curve                  | Eduardof0nt                                | ourMCP=False
+delete_feature                   | Eduardof0nt,andrewbartels1,Slacker-LLC     | ourMCP=False
+edges                            | Slacker-LLC                                | ourMCP=False
+error_handling                   | vespo92                                    | ourMCP=False
+execute_workflow                 | andrewbartels1                             | ourMCP=False
+faces                            | Slacker-LLC                                | ourMCP=False
+features                         | Eduardof0nt,andrewbartels1,Slacker-LLC     | ourMCP=False
+file_properties                  | andrewbartels1                             | ourMCP=False
+fold                             | Eduardof0nt                                | ourMCP=False
+gdt                              | Eduardof0nt                                | ourMCP=False
+hide_all_planes                  | Eduardof0nt                                | ourMCP=False
+line                             | andrewbartels1,Slacker-LLC                 | ourMCP=False
+load_part                        | andrewbartels1                             | ourMCP=False
+mate                             | Eduardof0nt,andrewbartels1,Slacker-LLC     | ourMCP=False
+mates                            | Slacker-LLC                                | ourMCP=False
+model_info                       | Eduardof0nt,andrewbartels1                 | ourMCP=False
+operations                       | vespo92                                    | ourMCP=False
+optimize_performance             | andrewbartels1                             | ourMCP=False
+pdm_operations                   | vespo92                                    | ourMCP=False
+point                            | Slacker-LLC                                | ourMCP=False
+projected_curve                  | Eduardof0nt                                | ourMCP=False
+rename_feature                   | andrewbartels1,Slacker-LLC                 | ourMCP=False
+rib                              | Eduardof0nt,Slacker-LLC                    | ourMCP=False
+security                         | vespo92                                    | ourMCP=False
+security_info                    | vespo92                                    | ourMCP=False
+select_entity                    | Eduardof0nt                                | ourMCP=False
+sheet                            | Slacker-LLC                                | ourMCP=False
+show_all_planes                  | Eduardof0nt                                | ourMCP=False
+suppress                         | Eduardof0nt,andrewbartels1,Slacker-LLC     | ourMCP=False
+units                            | andrewbartels1                             | ourMCP=False
+unsuppress_feature               | Eduardof0nt                                | ourMCP=False
+update_sheet_format              | andrewbartels1,vespo92                     | ourMCP=False
+update_title_block               | andrewbartels1                             | ourMCP=False
+vertices                         | Slacker-LLC                                | ourMCP=False
+view                             | Slacker-LLC                                | ourMCP=False
+view_grayscale_enhanced          | vespo92                                    | ourMCP=False
+view_rotate                      | Eduardof0nt                                | ourMCP=False
+
+=== EXCLUSIVE 31 (op | sole owner) ===
+advanced_features                | vespo92/SolidworksMCP-TS | in_gap=True
+api_automation                   | vespo92/SolidworksMCP-TS | in_gap=True
+classify_feature_tree            | andrewbartels1/SolidworksMCP-python | in_gap=True
+composite_curve                  | Eduardof0nt/Solidworks-MCP-Server | in_gap=True
+edges                            | Slacker-LLC/solidworks-mcp | in_gap=True
+error_handling                   | vespo92/SolidworksMCP-TS | in_gap=True
+execute_workflow                 | andrewbartels1/SolidworksMCP-python | in_gap=True
+faces                            | Slacker-LLC/solidworks-mcp | in_gap=True
+file_properties                  | andrewbartels1/SolidworksMCP-python | in_gap=True
+fold                             | Eduardof0nt/Solidworks-MCP-Server | in_gap=True
+gdt                              | Eduardof0nt/Solidworks-MCP-Server | in_gap=True
+hide_all_planes                  | Eduardof0nt/Solidworks-MCP-Server | in_gap=True
+load_part                        | andrewbartels1/SolidworksMCP-python | in_gap=True
+mates                            | Slacker-LLC/solidworks-mcp | in_gap=True
+operations                       | vespo92/SolidworksMCP-TS | in_gap=True
+optimize_performance             | andrewbartels1/SolidworksMCP-python | in_gap=True
+pdm_operations                   | vespo92/SolidworksMCP-TS | in_gap=True
+point                            | Slacker-LLC/solidworks-mcp | in_gap=True
+projected_curve                  | Eduardof0nt/Solidworks-MCP-Server | in_gap=True
+security                         | vespo92/SolidworksMCP-TS | in_gap=True
+security_info                    | vespo92/SolidworksMCP-TS | in_gap=True
+select_entity                    | Eduardof0nt/Solidworks-MCP-Server | in_gap=True
+sheet                            | Slacker-LLC/solidworks-mcp | in_gap=True
+show_all_planes                  | Eduardof0nt/Solidworks-MCP-Server | in_gap=True
+units                            | andrewbartels1/SolidworksMCP-python | in_gap=True
+unsuppress_feature               | Eduardof0nt/Solidworks-MCP-Server | in_gap=True
+update_title_block               | andrewbartels1/SolidworksMCP-python | in_gap=True
+vertices                         | Slacker-LLC/solidworks-mcp | in_gap=True
+view                             | Slacker-LLC/solidworks-mcp | in_gap=True
+view_grayscale_enhanced          | vespo92/SolidworksMCP-TS | in_gap=True
+view_rotate                      | Eduardof0nt/Solidworks-MCP-Server | in_gap=True
+
+=== exclusive owner histogram ===
+Counter({'Eduardof0nt': 9, 'vespo92': 8, 'andrewbartels1': 7, 'Slacker-LLC': 7})
+
+=== ALL 107 our 'other'-domain MCP ops ===
+['activate_model_for_preview', 'addin_host_status', 'api_deprecated_successor', 'automation_enter_command_lock', 'automation_exit_command_lock', 'automation_explain_hresult', 'automation_get_flag', 'automation_is_command_locked', 'automation_set_flag', 'available_direction_selectors', 'available_point_selectors', 'basic_part', 'center_of_mass', 'clear_selection', 'clear_selection_for_preview', 'collect_model_summary', 'collect_view_evidence', 'coordinate_system', 'csys_params', 'current_selection', 'curve_through_points', 'custom_prop', 'custom_property_count', 'custom_property_get', 'custom_property_list', 'custom_property_names', 'delivery_bom_traceability', 'delivery_pack_and_go_audit_matrix', 'dxf_preview_scene', 'fastener_table_types', 'fastener_types', 'fea_preflight', 'feature_cosmetic_thread', 'feature_delete', 'feature_info', 'feature_list_names', 'feature_present', 'feature_suppress', 'feature_unsuppress', 'feature_whats_wrong', 'gear_calculate_spur', 'gear_create_spur', 'gtol_insert', 'gui_assert_focus', 'gui_assert_no_modal', 'gui_ensure_focus', 'gui_find_modals', 'gui_focus_state', 'gui_get_foreground_window', 'gui_modal_report', 'gui_screen_png', 'health_check', 'misumi_suggest_part', 'pack_and_go', 'part_insert_composite_curve', 'prepare_fea', 'refresh_scene_graph', 'replace_face', 'repo_find_real_implementations', 'resolve_backend', 'resolve_entity', 'resolve_selection', 'review_active', 'review_evaluate_report', 'review_pdf_text_layout', 'review_report', 'review_run', 'review_write_report', 'review_write_summary', 'rotary_motor', 'run_fea', 'run_fea_convergence', 'select_by_selector', 'select_entity_by_index', 'select_face_selector', 'selection_collect_evidence', 'selection_count', 'selection_deselect', 'selection_enable', 'selection_enable_contour', 'selection_is_coord_sys_element_selected', 'selection_is_in_edit_target', 'selection_point', 'selection_set_object_mark', 'selection_suspend_list', 'selector_resolve_direction', 'selector_resolve_point', 'session_busy_status', 'session_solver_processes', 'session_stuck_status', 'session_wait_until_idle', 'undo', 'view_activate', 'view_add_perspective', 'view_get_camera', 'view_get_frame', 'view_get_next', 'view_has_perspective', 'view_initialize_shading', 'view_model_doc', 'view_redraw', 'view_remove_perspective', 'view_rotate_about_center', 'view_set_camera_by_name', 'view_set_frame', 'view_start_dynamics', 'view_stop_dynamics']

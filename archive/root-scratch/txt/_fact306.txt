@@ -1,0 +1,58 @@
+| 306 | **★ 更正事实 301：`mold_parting_geometry` 的"死路"**是误判** —— 边线打 mark 4 **做得到**（要用边的**中点**）⇒ `insert_parting_line` 真机 PASS（`分型线1`）**（2026-10-03，轮 389）。
+
+## 一、★★★★★ 用新发现回头解旧死路
+```
+★ 轮 388（事实 305）在 `filled_surface` 上查明：★ **`SelectByID2` + **边的中点** + 正确的 mark ⇒ 有效**
+   （★ 回读计数对得上）；★ 而**mark 给错**或**点没命中边** ⇒ **回 true 而计数 0**（静默失败，事实 8）。
+★ 而轮 51（事实 301）我判 `mold_parting_geometry` 的写入那半**走死**，理由是
+   「★ `IEntity.Select4` **没有 mark 参数**（事实 32），★ 而 `SelectByID2("", "EDGE", x, y, z, …, 4, …)`
+     **回 true 而计数 0**」。
+   ⇒ ★★ **真因（本轮查明）**：★ 我当时传的 `x, y, z` 是**猜测的坐标**（★ 例如 `(0, 20, 0)`），
+     ★★ **根本没落在边上** ⇒ **自然选不中** ⇒ 那不是"做不到"，**是我把点给错了** ✓
+```
+
+## 二、★★★★★ 重试（★ 官方 Remarks 的 mark 表 + 边的**中点**）
+```
+★ 官方 `InsertMoldPartingLine` 的 Remarks：
+   「select **the direction of pull** and **the edges for the parting line** by calling
+     `IModelDocExtension::SelectByID2` with Marks: **Direction of pull = 1** · **Parting line edges = 4**」
+★ 做法（★ 全部照契约）：
+   ① `SelectByID2("前视基准面", "PLANE", …, mark = **1**)` ⇒ 拔模方向
+   ② 取所有边的**中点**（`GetStartVertex` / `GetEndVertex` 各取 `GetPoint` 求平均）
+   ③ 对**同一 z 那一圈**（★ 4 条）逐条 `SelectByID2("", "EDGE", <中点>, …, mark = **4**)`
+   ④ **回读** `GetSelectedObjectCount2(-1)`
+★ 真机结果（★ `output/mold-parting-line-marks-evidence.json` · `verdict: pass` · 6.73 s · 无弹窗）：
+   ```
+   select_marks     pull_ok = true · edges_picked = **4** · **readback = 5**   ← 1 基准面 + 4 条边
+   insert_parting_line  ⇒ **`分型线1`** ✓
+   ```
+   ⇒ ★★★★ **即：★ 官方那个组合**在 pywin32 上**做得到** ✓
+```
+
+## 三、★★★★★ 更正与处置
+```
+① ★ **事实 301 的定性作废** —— 它写的「**"给边线打 mark 4"在 pywin32 这条后端上做不到**」是**错的**；
+   ★ 正确的说法是：★ **`SelectByID2` 按边选**必须给**真实的边上的点**（用中点），
+   ★ 而**给错点会**静默成功**（回 true 而计数 0）** ⇒ ★ 所以**永远要回读计数**（事实 8）。
+② ★ `capabilities.yaml` 的 `mold_parting_geometry`：★ **补 evidence**（★ 写入那半**真机通过**）·
+   ★ 并**改掉**那条"写死"的 limitation（★ 把"做不到"换成"要给中点 + 回读计数"）✓
+③ ★ **不升 verified**（★ 只验了 `insert_parting_line` 一个；★ 另有 `insert_parting_surface` /
+   `insert_shut_off_surface` / `insert_core_cavity_solids` 三个**未验** —— ★ 硬约束③⑥）✓
+```
+
+## 四、★ 一条方法收获（★ 今天最值钱的一条）
+```
+★★ **"做不到"与"我调错了"必须分清** —— ★ 而两者的**表面症状一样**（★ 都回 false / 都没效果）。
+   ⇒ ★★ 分清的**唯一办法**：★ **回读一个不依赖返回值的量**（★ 这里是 `GetSelectedObjectCount2`）。
+     ★ 轮 51 我看了"回 true"就以为"选了但 API 不认"；★ 本轮看到"回 true **而计数 0**"
+       ⇒ ★★★ **正确结论是"点没命中边"**，★ 而不是"mark 打不了" ✓
+   ⇒ ★★★ **而"死路"最危险的地方正在这里**：★ **它会被记进 `limitations`，然后再也没人回头查**
+     （★ 事实 301 就是如此 —— ★ 而它只活了 2 轮就被本轮推翻）✓
+   ★ 依据（事实 53 同族）：★ **判"这条路走死"之前，先证明"我调对了"** ——
+     ★ 用**不依赖返回值**的回读量当证据。
+```
+
+**依据**：`output/mold-parting-line-marks-evidence.json`（★ `verdict: pass` · `readback = 5` ·
+`edges_picked = 4` · `feature_name = 分型线1`）· `tools/prove_mold_parting_line_marks.py` ·
+`D:\AI\SW\AI Solidworks\官方文档\…\IFeatureManager~InsertMoldPartingLine.html`（★ mark 1 / 4）·
+`tools/sw_guard.py`（★ 6.73 s · 无弹窗）· 事实 8 / 32 / 53 / 301（★ 本条更正它）/ 305

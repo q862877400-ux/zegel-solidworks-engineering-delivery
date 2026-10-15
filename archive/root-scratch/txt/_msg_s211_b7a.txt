@@ -1,0 +1,59 @@
+规格 211 · B7「成形工具」：★★★★★ **真机建成 `circular emboss1`** —— ★ 本规格**第二个新 `verified`**
+
+一、★★★★★ **读数**
+```
+★ 成形工具文件 ⇒ 'C:\ProgramData\SolidWorks\SOLIDWORKS 2026\design library\forming tools\embosses\circular emboss.sldftp'（★ 直命中 ✓）
+★ 钣金前置 ⇒ True · 特征 5 → 9
+★ 前置：选面 ⇒ True · ★ 选区计数 = 1
+★★ 调用后 ⇒ ★★ 新增 ['circular emboss1'] · ★ 回 'circular emboss1'
+★★★ 判定 ⇒ ★★★★★ **建成** ⇒ ★ 成形工具**走得通** ✓
+```
+
+二、★★★★★ **三个前置层次，逐条对上**（★ 这是本批的关键结构）
+| 层 | 前置 | 本次 |
+|---|---|---|
+| ★ ① **文档层** | ★ 必须是**钣金件** | ★ 本仓 `create_base_flange` 真机可建 ⇒ 特征 5→9 ✓ |
+| ★ ② **文件层** | ★ **Design Library 里要有 `.sldftp`** | ★★ **现场查的、不是假设**：`…\design library\` 下有 `circular emboss` / `counter sink emboss` / `counter sink emboss2` / `dimple` ✓ |
+| ★ ③ **选择层** | ★ **先选一个面、或含点的 2D 草图**（★ 官方 `## Remarks` 逐字 ✓）| ★ `select_entity_by_index(model, FACE, 0)` ⇒ 选区计数 1 ✓ |
+
+三、★★★★★ **三次无效读数、三次都被抓出来**（★ 本批最值钱的部分）
+| # | 症状 | 真因 | 谁抓到的 |
+|---|---|---|---|
+| ★ 1 | ★ `钣金前置 ⇒ False · 特征 5 → 5` | ★★ 我把 `create_base_flange` 当 `(model, 80.0, 60.0, 2.0)` 调 ✗（★ **真契约**：`(model, sketch_ref, spec: BaseFlangeSpec)` ✓）⇒ ★ **它不抛、只回 `None`** ✗ | ★ **前置布尔字段** `flange_created=False` ✓ |
+| ★ 2 | ★ 钣金件 True、工具文件 True、**仍不建** | ★★ **官方 `## Remarks` 要求"先选面"、而我没选** ✗ | ★ **判定文字**里那句"前置复核" ✓ |
+| ★ 3 | ★ 探针**没被改动**（★ 输出里缺一行 ✓）| ★★ **我补丁脚本自己的 `print` 里嵌了裸引号** ✗ ⇒ **脚本没运行** ✓ | ★ **输出的行数少了** ✓ |
+
+★★★ **定则（★ 本规格已**四次**证明）**：
+  ★★★★ **为每一处前置单独落一个布尔字段 —— 因为「读数无效」与「真的不建」长得一模一样** ✓
+  ★（★ 前三次：★ B3-1 的 `append` 默认值 · ★ 曲线驱动的 `特征树 = []` · ★ 本次的 `flange_created=False` ✓）
+★★ **另一条（★ AGENTS.md 早就写着、本次又验证一次）**：
+  ★★★ **「按 `ToolSpec` 的契约调，别手调内部实现」** ✗ ——
+  ★ 我不按契约调时，★ **它不抛、只回 `None`** ⇒ ★★ **看起来就像"能力坏了"** ✓
+
+四、★★★ **官方页的第 ④ 样定则**（★ 上一批刚立）**立刻派上用场**
+★ 我在写探针前，★ **按第 ④ 样把 `## Parameters` 里每个枚举/路径形参都读了** ✓ ⇒
+  ★ 于是**一读就知道** `Path` 要的是 **Design Library 的成形工具零件文件**（★ 而不是随便一个路径 ✓）
+  ⇒ ★★ **所以本轮没有在"找一个不存在的文件"上浪费一轮** ✓
+
+五、★ 登记
+· ★ `capabilities.yaml`：★ 新增 **`forming_tool`** ⇒ ★★ **共 135 条** · ★★ **`verified` 112 → 113** ✓
+  ★★ **这是本规格第二个新 `verified`**（★ 第一个是 `sweep_surface` ✓）
+· ★ 条目带：★ `source_evidence` 4 条（★ **含 `## Remarks` 的前置逐字** ✓）· ★ `evidence` 4 条 ·
+  ★ `limitations` 7 条（★ **三层前置** · ★ **按契约调那条** · ★ **不许推广**（★ 只试了一个工具 + 一个面 ✓））
+· ★ `tools/gen_spec211_final_table.py` 的映射**补上两条**（★ `curve_driven_pattern` · `forming_tool` ✓）
+  ⇒ 终表：★ **9 项有能力条目** · ★ `verified` **3** · ★ `stitched` **5** ✓
+
+六、★ 21 项现状（★ 本轮终）
+| 终判 | 数 | 说明 |
+|---|---|---|
+| ★★ **可做** | ★ **12** | ★ **已做 7 项**（★ `verified` **3** · `stitched` **4**）· ★ **未做 5 项**：★ 焊接符号 · 爆炸直线 · 零部件阵列 · SpeedPak · 曲线驱动阵列（★ 已有 `stitched` 读数 ✓）|
+| ★ **不做** | ★ **7** | ★ 剪裁曲面 · 边界凸台 · Instant3D · 序列/说明书 · 装配体性能分析 · 边界曲面 · 平板型式/导出 DXF |
+| ★ **已覆盖** | ★ **1** | ★ 展开/折叠 |
+| ★ **待实测** | ★ **1** | ★ PDM |
+⇒ ★★ **还差 6 项**（★ 5 项可做未做 + 1 项待实测 ✓）
+
+七、★ 下一轮
+★ **推进**：★ **爆炸直线**（★ `ISketchManager::InsertExplodeLineSketch`，**零参** ✓；★ 前置 = 装配体 + 爆炸 ✓
+  —— ★ 而仓里 `create_exploded_view` 已覆盖 ✓）· ★ **SpeedPak**（★ `IAssemblyDoc::CreateSpeedPak(int)` ✓）·
+  ★ **焊接符号**（★ `IDrawingDoc::InsertWeldSymbol`，★ 前置 = 工程图 ✗ + 符号名清单**本机已有** ✓）
+★ 然后 **PDM** + **B8 文档部分** ✓

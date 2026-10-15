@@ -78,26 +78,44 @@ __all__ = [
 ]
 
 #: ★ 官方 `swRefPlaneReferenceConstraints_e`（★ 逐字抄自 `C:\swapi\enums\`）
+#: ★★ 2026-10-08（spec 223）**订正两个值**：`OptionProjectToNearestLocation` 1028 → **1024**、
+#:   `OptionProjectAlongSketchNormal` 2056 → **2048**。
+#:   ★ 证据：官方 md 那一行**自己就矛盾** —— `| …NearestLocation | 1028 or 0x400 |`、
+#:     `| …AlongSketchNormal | 2056 or 0x800 |`，而 `0x400 = 1024`、`0x800 = 2048`
+#:     ⇒ ★ md 的**十进制列抄错了**，十六进制列与**出厂反射**一致 ⇒ 按铁律 4 取反射 ✓
+#:   ★ 并给每行补 `# sw<官方成员名>` 注释 ⇒ 本表**首次进入** `check_enum_values_vs_reflection.py`
+#:     的覆盖面（★ 原先无注释 ⇒ 门禁看不见 ⇒ 值错了也没人抓）✓
+#:   ⚠ 本表是官方 14 项里的**子集 10 项**（未收 `Perpendicular`/`Tangent`/`Project`/`ParallelToScreen`）。
 REF_PLANE_CONSTRAINTS = {
-    "Parallel": 1, "Coincident": 4, "Distance": 8, "Angle": 16, "MidPlane": 128,
-    "OptionFlip": 256, "OptionOriginOnCurve": 512,
-    "OptionProjectToNearestLocation": 1028, "OptionProjectAlongSketchNormal": 2056,
-    "OptionReferenceFlip": 8192,
+    "Parallel": 1,                                        # swRefPlaneReferenceConstraint_Parallel
+    "Coincident": 4,                                      # swRefPlaneReferenceConstraint_Coincident
+    "Distance": 8,                                        # swRefPlaneReferenceConstraint_Distance
+    "Angle": 16,                                          # swRefPlaneReferenceConstraint_Angle
+    "MidPlane": 128,                                      # swRefPlaneReferenceConstraint_MidPlane
+    "OptionFlip": 256,                                    # swRefPlaneReferenceConstraint_OptionFlip
+    "OptionOriginOnCurve": 512,                           # swRefPlaneReferenceConstraint_OptionOriginOnCurve
+    "OptionProjectToNearestLocation": 1024,               # swRefPlaneReferenceConstraint_OptionProjectToNearestLocation
+    "OptionProjectAlongSketchNormal": 2048,               # swRefPlaneReferenceConstraint_OptionProjectAlongSketchNormal
+    "OptionReferenceFlip": 8192,                          # swRefPlaneReferenceConstraint_OptionReferenceFlip
 }
 
 #: ★ 官方 `swRefPointType_e`
+#: enum-gate: enum swRefPointType_e
 REF_POINT_TYPES = {
     "Invalid": 0, "Undefined": 1, "AlongCurve": 2, "CenterEdge": 3,
     "FaceCenter": 4, "FaceVertexProjection": 5, "Intersection": 6, "SketchPoint": 7,
 }
 
 #: ★ 官方 `swRefPointAlongCurveType_e`
+#: enum-gate: enum swRefPointAlongCurveType_e
 REF_POINT_ALONG_CURVE_TYPES = {"Distance": 0, "Percentage": 1, "EvenlyDistributed": 2}
 
 #: ★ 官方 `swGlobalBoundingBoxFitOptions_e`（★ 逐字抄自 `C:\swapi\enums\`）
+#: enum-gate: enum swGlobalBoundingBoxFitOptions_e
 GLOBAL_BBOX_FIT_OPTIONS = {"BestFit": 1, "CustomPlane": 2, "CustomCoordSys": 3}
 
 #: ★ 官方 `swGlobalBoundingBoxResult_e` —— ★ **`Success = 0`**（★ 本模块据此判成败）
+#: enum-gate: enum swGlobalBoundingBoxResult_e
 GLOBAL_BBOX_RESULT = {
     "Success": 0, "NoValidBodiesFound": 1, "NonPlanarFaceSelected": 2,
 }

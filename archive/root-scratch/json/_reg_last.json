@@ -1,0 +1,1294 @@
+{
+  "IAdvancedRouteSelector": {
+    "interface": "IAdvancedRouteSelector",
+    "raw_members": 4,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 4,
+    "distinct_capabilities": 4,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "Find",
+        "arity": 4
+      },
+      {
+        "name": "Select",
+        "arity": 5
+      },
+      {
+        "name": "SetSelectionColor",
+        "arity": 2
+      },
+      {
+        "name": "getAttachedComponentsCount",
+        "arity": 1
+      }
+    ]
+  },
+  "IAutoRoute": {
+    "interface": "IAutoRoute",
+    "raw_members": 8,
+    "internal_dispatch": 1,
+    "property_count": 0,
+    "method_count": 7,
+    "distinct_capabilities": 7,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "ConvertGuidelinesToRoute",
+        "arity": 0
+      },
+      {
+        "name": "CreatePointToPointAutoRoute",
+        "arity": 1
+      },
+      {
+        "name": "CreateRouteThroughSketchEntities",
+        "arity": 4
+      },
+      {
+        "name": "DeleteAllGuidelines",
+        "arity": 0
+      },
+      {
+        "name": "MergeGuidelines",
+        "arity": 0
+      },
+      {
+        "name": "SelectGuidelines",
+        "arity": 0
+      },
+      {
+        "name": "ShowGuidelines",
+        "arity": 0
+      }
+    ]
+  },
+  "ICable": {
+    "interface": "ICable",
+    "raw_members": 7,
+    "internal_dispatch": 1,
+    "property_count": 2,
+    "method_count": 4,
+    "distinct_capabilities": 4,
+    "folded": false,
+    "properties": [
+      "UserName"
+    ],
+    "members": [
+      {
+        "name": "GetCableProperty",
+        "arity": 0
+      },
+      {
+        "name": "GetCores",
+        "arity": 0
+      },
+      {
+        "name": "GetCoresCount",
+        "arity": 0
+      },
+      {
+        "name": "GetCuttingLength",
+        "arity": 0
+      }
+    ]
+  },
+  "ICableProperty": {
+    "interface": "ICableProperty",
+    "raw_members": 5,
+    "internal_dispatch": 1,
+    "property_count": 2,
+    "method_count": 2,
+    "distinct_capabilities": 2,
+    "folded": false,
+    "properties": [
+      "Diameter",
+      "Name"
+    ],
+    "members": [
+      {
+        "name": "GetCoreProperties",
+        "arity": 0
+      },
+      {
+        "name": "GetCorePropertyCount",
+        "arity": 0
+      }
+    ]
+  },
+  "ICovering": {
+    "interface": "ICovering",
+    "raw_members": 8,
+    "internal_dispatch": 0,
+    "property_count": 8,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "Color",
+      "Name",
+      "OuterDiameter",
+      "PartNumber"
+    ],
+    "members": []
+  },
+  "IElectricalFlatRoute": {
+    "interface": "IElectricalFlatRoute",
+    "raw_members": 7,
+    "internal_dispatch": 2,
+    "property_count": 0,
+    "method_count": 5,
+    "distinct_capabilities": 5,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "GetConnectorData",
+        "arity": 4
+      },
+      {
+        "name": "GetElectricalDrawingSettings",
+        "arity": 3
+      },
+      {
+        "name": "GetFittingFilePath",
+        "arity": 1
+      },
+      {
+        "name": "GetSketchSegments",
+        "arity": 1
+      },
+      {
+        "name": "GetSketchSegmentsCount",
+        "arity": 1
+      }
+    ]
+  },
+  "IElectricalRoute": {
+    "interface": "IElectricalRoute",
+    "raw_members": 14,
+    "internal_dispatch": 3,
+    "property_count": 0,
+    "method_count": 11,
+    "distinct_capabilities": 11,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "GetActiveRouteSketch",
+        "arity": 0
+      },
+      {
+        "name": "GetCables",
+        "arity": 0
+      },
+      {
+        "name": "GetCablesCount",
+        "arity": 0
+      },
+      {
+        "name": "GetRibbonCableDispatch",
+        "arity": 0
+      },
+      {
+        "name": "GetRouteProperty",
+        "arity": 1
+      },
+      {
+        "name": "GetRouteSegmentID",
+        "arity": 1
+      },
+      {
+        "name": "GetSketchSegments",
+        "arity": 1
+      },
+      {
+        "name": "GetSketchSegmentsCount",
+        "arity": 1
+      },
+      {
+        "name": "GetWires",
+        "arity": 0
+      },
+      {
+        "name": "GetWiresCount",
+        "arity": 0
+      },
+      {
+        "name": "RouteWires",
+        "arity": 0
+      }
+    ]
+  },
+  "IElectricalRouteProperty": {
+    "interface": "IElectricalRouteProperty",
+    "raw_members": 9,
+    "internal_dispatch": 0,
+    "property_count": 9,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "BundleDiameter",
+      "BundleMinimumBendRadius",
+      "IsOuterDiameterFixed",
+      "OuterDiameter",
+      "SubType"
+    ],
+    "members": []
+  },
+  "IRibbonCable": {
+    "interface": "IRibbonCable",
+    "raw_members": 2,
+    "internal_dispatch": 0,
+    "property_count": 2,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "GetRibbonCableThickness",
+      "GetRibbonCableWidth"
+    ],
+    "members": []
+  },
+  "IRouteManager": {
+    "interface": "IRouteManager",
+    "raw_members": 22,
+    "internal_dispatch": 1,
+    "property_count": 0,
+    "method_count": 21,
+    "distinct_capabilities": 21,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "AddToRoute",
+        "arity": 0
+      },
+      {
+        "name": "ChangeRoutingLibComponentPaths",
+        "arity": 2
+      },
+      {
+        "name": "CreateFlattenRoute",
+        "arity": 11
+      },
+      {
+        "name": "CreatePipeDrawingforPipeRoute",
+        "arity": 12
+      },
+      {
+        "name": "CreateRouteLine",
+        "arity": 6
+      },
+      {
+        "name": "EditRoute",
+        "arity": 0
+      },
+      {
+        "name": "ExitRoute",
+        "arity": 0
+      },
+      {
+        "name": "ExportPipeData",
+        "arity": 3
+      },
+      {
+        "name": "ExportTubeData",
+        "arity": 3
+      },
+      {
+        "name": "GetAdvancedRouteSelector",
+        "arity": 0
+      },
+      {
+        "name": "GetAllRouteSegmentCount",
+        "arity": 0
+      },
+      {
+        "name": "GetAllRouteSegmentIDs",
+        "arity": 0
+      },
+      {
+        "name": "GetAutoRoute",
+        "arity": 0
+      },
+      {
+        "name": "GetElectricalComponentFromSearchpath",
+        "arity": 1
+      },
+      {
+        "name": "GetElectricalFlatRoute",
+        "arity": 1
+      },
+      {
+        "name": "GetElectricalRoute",
+        "arity": 0
+      },
+      {
+        "name": "GetRouteProperty",
+        "arity": 0
+      },
+      {
+        "name": "GetRoutingComponentFromSearchpath",
+        "arity": 1
+      },
+      {
+        "name": "GetRoutingLibComponentReferences",
+        "arity": 1
+      },
+      {
+        "name": "ImportFromToList",
+        "arity": 6
+      },
+      {
+        "name": "StartRoute",
+        "arity": 2
+      }
+    ]
+  },
+  "IRouteProperty": {
+    "interface": "IRouteProperty",
+    "raw_members": 11,
+    "internal_dispatch": 0,
+    "property_count": 5,
+    "method_count": 6,
+    "distinct_capabilities": 6,
+    "folded": false,
+    "properties": [
+      "BendRadius",
+      "HasCovering",
+      "MinimumBendRadius",
+      "RouteType"
+    ],
+    "members": [
+      {
+        "name": "AddCovering",
+        "arity": 1
+      },
+      {
+        "name": "CreateCovering",
+        "arity": 0
+      },
+      {
+        "name": "GetCovering",
+        "arity": 0
+      },
+      {
+        "name": "GetFixedLength",
+        "arity": 0
+      },
+      {
+        "name": "RemoveCovering",
+        "arity": 0
+      },
+      {
+        "name": "SetFixedLength",
+        "arity": 1
+      }
+    ]
+  },
+  "IRoutingComponentManager": {
+    "interface": "IRoutingComponentManager",
+    "raw_members": 20,
+    "internal_dispatch": 0,
+    "property_count": 0,
+    "method_count": 20,
+    "distinct_capabilities": 20,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "CreateEndConnectorIllustration",
+        "arity": 0
+      },
+      {
+        "name": "GetCPointConfiguration",
+        "arity": 0
+      },
+      {
+        "name": "GetComponentCrossSectionType",
+        "arity": 0
+      },
+      {
+        "name": "GetComponentRouteType",
+        "arity": 0
+      },
+      {
+        "name": "GetComponentRouteTypeFromCustomProperty",
+        "arity": 0
+      },
+      {
+        "name": "GetComponentType",
+        "arity": 0
+      },
+      {
+        "name": "GetComponentUserDefinedRouteTypeName",
+        "arity": 0
+      },
+      {
+        "name": "GetRouteComponentSubType",
+        "arity": 0
+      },
+      {
+        "name": "GetRouteComponentTypeSetThrRLM",
+        "arity": 0
+      },
+      {
+        "name": "GetRoutingComponentDescription",
+        "arity": 0
+      },
+      {
+        "name": "GetRoutingStringValue",
+        "arity": 1
+      },
+      {
+        "name": "SetCPointConfiguration",
+        "arity": 1
+      },
+      {
+        "name": "SetComponentCrossSectionType",
+        "arity": 1
+      },
+      {
+        "name": "SetComponentRouteTypeToCustomProperty",
+        "arity": 1
+      },
+      {
+        "name": "SetComponentType",
+        "arity": 1
+      },
+      {
+        "name": "SetComponentUserDefinedRouteTypeName",
+        "arity": 1
+      },
+      {
+        "name": "SetRouteComponentSubType",
+        "arity": 1
+      },
+      {
+        "name": "SetRouteComponentTypeSetThrRLM",
+        "arity": 1
+      },
+      {
+        "name": "SetRouteTypeAndSubRouteType",
+        "arity": 2
+      },
+      {
+        "name": "SetRoutingComponentDescription",
+        "arity": 1
+      }
+    ]
+  },
+  "IWire": {
+    "interface": "IWire",
+    "raw_members": 20,
+    "internal_dispatch": 3,
+    "property_count": 10,
+    "method_count": 7,
+    "distinct_capabilities": 7,
+    "folded": false,
+    "properties": [
+      "FromComponentReference",
+      "FromPinReference",
+      "ToComponentReference",
+      "ToPinReference",
+      "UserName"
+    ],
+    "members": [
+      {
+        "name": "GetCuttingLength",
+        "arity": 0
+      },
+      {
+        "name": "GetRouteErrors",
+        "arity": 0
+      },
+      {
+        "name": "GetRouteErrorsCount",
+        "arity": 0
+      },
+      {
+        "name": "GetRouteSegmentIDs",
+        "arity": 0
+      },
+      {
+        "name": "GetRouteSegmentIDsCount",
+        "arity": 0
+      },
+      {
+        "name": "GetWireProperty",
+        "arity": 0
+      },
+      {
+        "name": "SetRoutePathForWire",
+        "arity": 1
+      }
+    ]
+  },
+  "IWireProperty": {
+    "interface": "IWireProperty",
+    "raw_members": 5,
+    "internal_dispatch": 0,
+    "property_count": 5,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "Color",
+      "Diameter",
+      "Name",
+      "PartNumber",
+      "Size"
+    ],
+    "members": []
+  },
+  "ICostAnalysis": {
+    "interface": "ICostAnalysis",
+    "raw_members": 23,
+    "internal_dispatch": 0,
+    "property_count": 16,
+    "method_count": 7,
+    "distinct_capabilities": 7,
+    "folded": false,
+    "properties": [
+      "CostingTemplateName",
+      "CostingType",
+      "CurrencyCode",
+      "CurrencyName",
+      "CurrencySeparator",
+      "LengthUnit",
+      "LotSize",
+      "MarkUpPercent",
+      "MarkUpType",
+      "MassUnit",
+      "TotalQuantity",
+      "UnitSystem"
+    ],
+    "members": [
+      {
+        "name": "GetFirstCostFeature",
+        "arity": 0
+      },
+      {
+        "name": "GetManufacturingCost",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCost",
+        "arity": 0
+      },
+      {
+        "name": "GetSetupCost",
+        "arity": 0
+      },
+      {
+        "name": "GetSpecificAnalysis",
+        "arity": 0
+      },
+      {
+        "name": "GetTotalCostToCharge",
+        "arity": 0
+      },
+      {
+        "name": "GetTotalCostToManufacture",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostAnalysis3dPrinting": {
+    "interface": "ICostAnalysis3dPrinting",
+    "raw_members": 23,
+    "internal_dispatch": 0,
+    "property_count": 18,
+    "method_count": 5,
+    "distinct_capabilities": 5,
+    "folded": false,
+    "properties": [
+      "CurrentMaterial",
+      "CurrentMaterialClass",
+      "FlipDirection",
+      "OrientationPlane",
+      "PercentInfill",
+      "ShopRate",
+      "ShopRateApplied",
+      "StructuralMaterialCost",
+      "WallThickness"
+    ],
+    "members": [
+      {
+        "name": "GetMaterialClasses",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClassesCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterials",
+        "arity": 1
+      },
+      {
+        "name": "ResetShopRate",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostAnalysisCasting": {
+    "interface": "ICostAnalysisCasting",
+    "raw_members": 19,
+    "internal_dispatch": 0,
+    "property_count": 14,
+    "method_count": 5,
+    "distinct_capabilities": 5,
+    "folded": false,
+    "properties": [
+      "CurrentMaterial",
+      "CurrentMaterialClass",
+      "CycleTime",
+      "MoldCost",
+      "PercentWasteMaterial",
+      "ShopRate",
+      "ShopRateApplied"
+    ],
+    "members": [
+      {
+        "name": "GetMaterialClasses",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClassesCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterials",
+        "arity": 1
+      },
+      {
+        "name": "ResetShopRate",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostAnalysisMachining": {
+    "interface": "ICostAnalysisMachining",
+    "raw_members": 46,
+    "internal_dispatch": 4,
+    "property_count": 32,
+    "method_count": 10,
+    "distinct_capabilities": 10,
+    "folded": false,
+    "properties": [
+      "BlankSize",
+      "CurrentMaterial",
+      "CurrentMaterialClass",
+      "CurrentPlateThickness",
+      "CurrentStockType",
+      "CustomStockBodyName",
+      "CustomStockCostInfoType",
+      "CustomStockCustomCost",
+      "CustomStockImportType",
+      "IBlankSize",
+      "IMargins",
+      "Margins",
+      "PreviewShown",
+      "ShopRate",
+      "ShopRateApplied",
+      "SpecificSizeEnabled"
+    ],
+    "members": [
+      {
+        "name": "GetBlankDimensionCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMarginDimensionCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClasses",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClassesCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterials",
+        "arity": 1
+      },
+      {
+        "name": "GetMinimumBlankSize",
+        "arity": 0
+      },
+      {
+        "name": "GetStockTypeCount",
+        "arity": 2
+      },
+      {
+        "name": "GetStockTypes",
+        "arity": 2
+      },
+      {
+        "name": "ResetShopRate",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostAnalysisPlastic": {
+    "interface": "ICostAnalysisPlastic",
+    "raw_members": 25,
+    "internal_dispatch": 0,
+    "property_count": 20,
+    "method_count": 5,
+    "distinct_capabilities": 5,
+    "folded": false,
+    "properties": [
+      "CalculationMethod",
+      "CurrentMaterial",
+      "CurrentMaterialClass",
+      "CycleTime",
+      "MaxWallThickness",
+      "MoldCost",
+      "PercentWasteMaterial",
+      "RunnerSystem",
+      "ShopRate",
+      "ShopRateApplied"
+    ],
+    "members": [
+      {
+        "name": "GetMaterialClasses",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClassesCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterials",
+        "arity": 1
+      },
+      {
+        "name": "ResetShopRate",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostAnalysisSheetMetal": {
+    "interface": "ICostAnalysisSheetMetal",
+    "raw_members": 32,
+    "internal_dispatch": 3,
+    "property_count": 22,
+    "method_count": 7,
+    "distinct_capabilities": 7,
+    "folded": false,
+    "properties": [
+      "BlankAreaFromModel",
+      "BlankOffset",
+      "BlankSizeType",
+      "CurrentMaterial",
+      "CurrentMaterialClass",
+      "CurrentThickness",
+      "CustomBlankArea",
+      "CustomBlankSize",
+      "FinalAreaFromModel",
+      "MaterialCost",
+      "MaterialCostFromTemplate",
+      "PreviewShown",
+      "Weight"
+    ],
+    "members": [
+      {
+        "name": "GetMaterialClasses",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClassesCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterials",
+        "arity": 1
+      },
+      {
+        "name": "GetModelThickness",
+        "arity": 0
+      },
+      {
+        "name": "GetThicknesses",
+        "arity": 2
+      },
+      {
+        "name": "GetThicknessesCount",
+        "arity": 2
+      }
+    ]
+  },
+  "ICostAnalysisStructural": {
+    "interface": "ICostAnalysisStructural",
+    "raw_members": 21,
+    "internal_dispatch": 0,
+    "property_count": 15,
+    "method_count": 6,
+    "distinct_capabilities": 6,
+    "folded": false,
+    "properties": [
+      "CurrentCostMethodType",
+      "CurrentMaterial",
+      "CurrentMaterialClass",
+      "CurrentProfileSize",
+      "CurrentProfileStandard",
+      "CurrentProfileType",
+      "CurrentStockUnitLength",
+      "ShopRate",
+      "ShopRateApplied"
+    ],
+    "members": [
+      {
+        "name": "GetMaterialClasses",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClassesCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterials",
+        "arity": 1
+      },
+      {
+        "name": "ResetShopRate",
+        "arity": 0
+      },
+      {
+        "name": "SetCurrentProfile",
+        "arity": 3
+      }
+    ]
+  },
+  "ICostBlankSize": {
+    "interface": "ICostBlankSize",
+    "raw_members": 4,
+    "internal_dispatch": 0,
+    "property_count": 4,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "Length",
+      "Width"
+    ],
+    "members": []
+  },
+  "ICostBody": {
+    "interface": "ICostBody",
+    "raw_members": 7,
+    "internal_dispatch": 0,
+    "property_count": 1,
+    "method_count": 6,
+    "distinct_capabilities": 6,
+    "folded": false,
+    "properties": [
+      "BodyStatus"
+    ],
+    "members": [
+      {
+        "name": "AssignCustomCost",
+        "arity": 1
+      },
+      {
+        "name": "CreateCostAnalysis",
+        "arity": 1
+      },
+      {
+        "name": "GetBodyType",
+        "arity": 0
+      },
+      {
+        "name": "GetCostAnalysis",
+        "arity": 0
+      },
+      {
+        "name": "GetName",
+        "arity": 0
+      },
+      {
+        "name": "GetSWBody",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostFeature": {
+    "interface": "ICostFeature",
+    "raw_members": 15,
+    "internal_dispatch": 0,
+    "property_count": 9,
+    "method_count": 6,
+    "distinct_capabilities": 6,
+    "folded": false,
+    "properties": [
+      "CombinedCost",
+      "CombinedTime",
+      "Description",
+      "IsOverridden",
+      "IsSetup",
+      "Name"
+    ],
+    "members": [
+      {
+        "name": "GetFirstSubFeature",
+        "arity": 0
+      },
+      {
+        "name": "GetNextFeature",
+        "arity": 0
+      },
+      {
+        "name": "GetNextSubFeature",
+        "arity": 0
+      },
+      {
+        "name": "GetType",
+        "arity": 0
+      },
+      {
+        "name": "RemoveOverrideCostTime",
+        "arity": 0
+      },
+      {
+        "name": "SelectFaces",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostManager": {
+    "interface": "ICostManager",
+    "raw_members": 7,
+    "internal_dispatch": 1,
+    "property_count": 2,
+    "method_count": 4,
+    "distinct_capabilities": 4,
+    "folded": false,
+    "properties": [
+      "CostingDefaults",
+      "CostingModel"
+    ],
+    "members": [
+      {
+        "name": "Close",
+        "arity": 0
+      },
+      {
+        "name": "GetTemplateCount",
+        "arity": 1
+      },
+      {
+        "name": "GetTemplatePathnames",
+        "arity": 1
+      },
+      {
+        "name": "WaitForUIUpdate",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostPart": {
+    "interface": "ICostPart",
+    "raw_members": 13,
+    "internal_dispatch": 2,
+    "property_count": 2,
+    "method_count": 9,
+    "distinct_capabilities": 9,
+    "folded": false,
+    "properties": [
+      "ActiveBody",
+      "TemplateOverrides"
+    ],
+    "members": [
+      {
+        "name": "ActivateBody",
+        "arity": 2
+      },
+      {
+        "name": "CreateCostAnalysis",
+        "arity": 1
+      },
+      {
+        "name": "GetBodies",
+        "arity": 0
+      },
+      {
+        "name": "GetBodyCount",
+        "arity": 0
+      },
+      {
+        "name": "GetCostAnalysis",
+        "arity": 0
+      },
+      {
+        "name": "GetCostingMethod",
+        "arity": 1
+      },
+      {
+        "name": "IncludeBody",
+        "arity": 2
+      },
+      {
+        "name": "SetCostingMethod",
+        "arity": 2
+      },
+      {
+        "name": "UpdateCostForAllBodies",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostingDefaults": {
+    "interface": "ICostingDefaults",
+    "raw_members": 22,
+    "internal_dispatch": 0,
+    "property_count": 14,
+    "method_count": 8,
+    "distinct_capabilities": 8,
+    "folded": false,
+    "properties": [
+      "LotSizeForMultibody",
+      "LotSizeForSingleBody",
+      "MachiningStockBodyType",
+      "SheetmetalBlankSizeType",
+      "StructuralMemberStockType",
+      "TotalNumberOfPartsForMultibody",
+      "TotalNumberOfPartsForSingleBody"
+    ],
+    "members": [
+      {
+        "name": "GetManufacturingMethod",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterialClass",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterialName",
+        "arity": 1
+      },
+      {
+        "name": "GetTemplateName",
+        "arity": 1
+      },
+      {
+        "name": "SetManufacturingMethod",
+        "arity": 2
+      },
+      {
+        "name": "SetMaterialClass",
+        "arity": 2
+      },
+      {
+        "name": "SetMaterialName",
+        "arity": 2
+      },
+      {
+        "name": "SetTemplateName",
+        "arity": 2
+      }
+    ]
+  },
+  "ITemplateOverrides": {
+    "interface": "ITemplateOverrides",
+    "raw_members": 39,
+    "internal_dispatch": 0,
+    "property_count": 36,
+    "method_count": 3,
+    "distinct_capabilities": 3,
+    "folded": false,
+    "properties": [
+      "CustomBendCost",
+      "CustomHemCost",
+      "CustomLibraryFeatureCost",
+      "DefaultFinishingOperation",
+      "DefaultMachiningOperationTool",
+      "FinishingCostPerVolume",
+      "FinishingOffset",
+      "RemovedMaterialProcessingType",
+      "RoughingCostPerVolume",
+      "SemiFinishingCostPerVolume",
+      "SemiFinishingOffset",
+      "ShowUndeterminedSlotsInNCAFolder",
+      "SlotFeatureRecognitionType",
+      "UseCustomBendCost",
+      "UseCustomHemCost",
+      "UseCustomLibraryFeatureCost",
+      "UseOffsetBasedFinishing",
+      "VolumeFeatureCalculationType"
+    ],
+    "members": [
+      {
+        "name": "ApplyOverrides",
+        "arity": 0
+      },
+      {
+        "name": "ResetAll",
+        "arity": 0
+      },
+      {
+        "name": "SaveCostingOverrideSettings",
+        "arity": 0
+      }
+    ]
+  },
+  "ISurfacePlanarFeatureData": {
+    "interface": "ISurfacePlanarFeatureData",
+    "raw_members": 8,
+    "internal_dispatch": 3,
+    "property_count": 2,
+    "method_count": 3,
+    "distinct_capabilities": 3,
+    "folded": false,
+    "properties": [
+      "BoundingEntities"
+    ],
+    "members": [
+      {
+        "name": "AccessSelections",
+        "arity": 2
+      },
+      {
+        "name": "GetBoundingEntitiesCount",
+        "arity": 0
+      },
+      {
+        "name": "ReleaseSelectionAccess",
+        "arity": 0
+      }
+    ]
+  },
+  "ISurfaceTrimFeatureData": {
+    "interface": "ISurfaceTrimFeatureData",
+    "raw_members": 14,
+    "internal_dispatch": 5,
+    "property_count": 4,
+    "method_count": 5,
+    "distinct_capabilities": 5,
+    "folded": false,
+    "properties": [
+      "PiecesToKeep",
+      "TrimTools"
+    ],
+    "members": [
+      {
+        "name": "AccessSelections",
+        "arity": 2
+      },
+      {
+        "name": "GetPiecesToKeepCount",
+        "arity": 0
+      },
+      {
+        "name": "GetTrimToolsCount",
+        "arity": 0
+      },
+      {
+        "name": "GetType",
+        "arity": 0
+      },
+      {
+        "name": "ReleaseSelectionAccess",
+        "arity": 0
+      }
+    ]
+  },
+  "IMidSurface3": {
+    "interface": "IMidSurface3",
+    "raw_members": 23,
+    "internal_dispatch": 10,
+    "property_count": 0,
+    "method_count": 13,
+    "distinct_capabilities": 13,
+    "folded": false,
+    "properties": [],
+    "members": [
+      {
+        "name": "EdgeGetFace",
+        "arity": 1
+      },
+      {
+        "name": "GetFaceCount",
+        "arity": 0
+      },
+      {
+        "name": "GetFacePairCount",
+        "arity": 0
+      },
+      {
+        "name": "GetFaces",
+        "arity": 0
+      },
+      {
+        "name": "GetFirstFace",
+        "arity": 3
+      },
+      {
+        "name": "GetFirstFaceArray",
+        "arity": 1
+      },
+      {
+        "name": "GetFirstFacePair",
+        "arity": 2
+      },
+      {
+        "name": "GetFirstNeutralSheet",
+        "arity": 0
+      },
+      {
+        "name": "GetNeutralSheetCount",
+        "arity": 0
+      },
+      {
+        "name": "GetNextFace",
+        "arity": 3
+      },
+      {
+        "name": "GetNextFaceArray",
+        "arity": 1
+      },
+      {
+        "name": "GetNextFacePair",
+        "arity": 2
+      },
+      {
+        "name": "GetNextNeutralSheet",
+        "arity": 0
+      }
+    ]
+  }
+}

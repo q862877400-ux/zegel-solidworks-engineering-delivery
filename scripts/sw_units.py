@@ -110,6 +110,7 @@ def read_units_report(model) -> dict:
         app = None
         for getter in ("GetSldWorks", "IGetSldWorks"):
             try:
+                #: dispatch-arg: probe 试名探测：`GetSldWorks`/`IGetSldWorks` 两源均查不到，按序试
                 app = get_com_member(model, getter)
                 if app is not None:
                     break

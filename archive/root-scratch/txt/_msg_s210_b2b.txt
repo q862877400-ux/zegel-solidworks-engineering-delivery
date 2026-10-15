@@ -1,0 +1,40 @@
+规格 210 · B2 收口第 4 条：查明并修掉「门禁瞎着放行」的根因（★ 本轮最值钱的一件）
+
+★ 上一轮真机查出 B5 的门禁曾在"读不到任何文档"时**照样放行**。本轮把根因查清了 ✓
+
+一、根因（真机诊断，`tools/diag_getdocuments.py`）
+★ `ISldWorks.GetDocumentCount` 与 `GetDocuments` 在这个组合下**是属性、不是方法**：
+· `getattr(sw, 'GetDocumentCount')` ⇒ **int 0**（真机实测）✓
+· `sw.GetDocumentCount()` ⇒ ★ **`TypeError: 'int' object is not callable`** ✗
+★★ 而本仓 `get_com_member(obj, attr, *args)` **没有 `default=`** ⇒ 我传 `default=None` 被当成
+**位置实参** ⇒ ★★ 变成「**用 `None` 去调那个成员**」⇒ 抛异常 ⇒ **读出来全是 `None`** ✓
+⇒ ★★ 后果链条：COM 路**一直读出 0 个文档** ⇒ 门禁**瞎着放行**（而 SolidWorks 明明开着文档）✗
+
+二、修法三件（都做完并验过）
+1. ★ `scripts/sw_session.py` 里 **5 处** `default=` 误用**全部改掉**
+   —— ★ **全库排查只有这 5 处**，且都是我 B5 时写的（★ 其余代码是干净的）✓
+   ★ 并把这条坑写进该函数的来源块（★ 免得下一个人再踩）✓
+2. ★★ **加门禁从根上拦住这个形态**：`scripts/check_env_pitfalls.py` 第 **⑤** 条
+   `find_get_com_member_default` —— ★ 按**括号配对**切调用（★ 事实 58 的教训：不能按第一个 `)` 截）✓
+   ★★ 并配**负例测试**：★ 用 `git show HEAD:` 取**修复前原文**当输入 ⇒ **命中 5 处** ✓
+   （★ 这是事实 62 的**可复用手法**：拿修复前的原文当负例，比手写"像 bug 的样本"硬得多 ✓）
+3. ★★ **真机验证**：开一个自己的临时件 ⇒
+   `count = 1 · 文档数 = 1 · count_matches = True · readback_problem = (无)` ✓
+   ⇒ ★ **COM 路真的在读**（修前是 `count=None · 0 个`）✓
+   ★ 清场后（关掉我们自己的临时件）门禁放行 · `ok: true` · `PROBE_RAN` ✓
+
+三、测试
+★ `tests/test_env_pitfalls_gate.py` **16 passed**（含新增的两条：★ **带 `default=` 必须报** ·
+★ **不带必须不报**）✓
+
+四、★ 顺带记一条：这轮**又一次**证明了"真机跑"的价值
+★ 根因**不是** `GetDocuments` 有 bug、也**不是** SolidWorks 不配合 ——
+★★ 而是**我把一个属性当方法调**，且**用一个不存在的关键字参数**把它掩盖成了"读不到" ✓
+★ 而"读不到"被上层当成"没有" ⇒ 门禁失效 —— ★ 与"把选不上当成能力不行"是**同一个族** ✓
+
+五、下一批（B2 收口剩下三条，已写进 goal-bar）
+1. 按官方签名补 `GetBodies2(BodyType, BVisibleOnly)` ⇒ 修 `bodies`/`faces` 读数
+2. 第 0 格改成**连读三次、比第 2 与第 3 次**（首次读数会赶上"文档还在自行稳定"）
+3. 写操作**按 ToolSpec 契约**接 ⇒ 把 `features`/`bodies`/`faces`/`dirty`/`config` 从 `untested`
+   推到**有证据**或**明写不可见**
+4. ⇒ 三条做完 **B2 才算收口**；★ 然后进 **B3 存活普查**（★ 现在它有**可用的指纹量具**了）✓

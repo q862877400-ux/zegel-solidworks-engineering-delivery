@@ -1,0 +1,79 @@
+DSH · 新建 preset「Lean 模式（SW工程师）」：★★★ 把本机全部工具（含 SW 的 504 个）挂进去 + 交接
+
+★★ 用户 2026-10-07 指令（原话）：「★ 建一个新 preset 可以，就叫 **Lean模式（SW工程师）**，然后要把这个
+DSH 上**所有的工具**都挂上，包括 SW 的、GitHub 的，但是 **comfyui 的不挂**；★ 然后你把你的工作写好交接
+我让新对话接手」✓ —— ★ 另加两条纠正：「★ **你可不要直接让所有 lean 模式的对话都生效啊**」✗ ·
+（★ 起因）「★ 你用 pwsh 调 tools/sw_guard.py 起探针的方式我怕你会**忘记你有哪些工具**」
+
+一、★★★★ 一、★ 用户担心的那件事**是真的**（★ 我给了实测证据，★ 没打保票）
+★ `tools/probe_*.py` **246 个** + `tools/prove_*.py` **110 个** = ★★ **356 个手搓探针** ✗
+★ 而 `AGENTS.md:105` 那条纪律管的是「★ **怎么调**（按 ToolSpec 契约）」、★ **不管「该不该自己调」** ✗
+⇒ ★★★ **本仓没有任何门禁能拦住"手搓一个已有工具的替代品"** ✓
+⇒ ★★★★ **所以"挂进每轮注入的工具目录"是机制性解法** ✓（★ 我默认能用的、成本最低的路就是手搓 ✓）
+
+二、★★★★★ 机制（★ 读官方文档读出来的，★ 不是猜的）
+· ★ `docs/subsystems/mcp.zh.md:24`：「MCP 服务器需要主动配置。★ **在目标 Cordis 作用域中**，为每台
+  服务器配置一个 `@deepseek-ai/dsh-mcp-client` 条目」✓
+· ★★ `docs/glossary.zh.md:20`：「★ **setup window**：创建者组装 **agent 作用域**环境的**创建时隙**
+  （`CreateAgentOptions.setup`）：此时 scope 和 agent 对象**已存在**，但 agent 或会话**尚未发布**」✓
+  ⇒ ★★★ **本会话的作用域在 agent 创建时就组装完了** ⇒ ★★ **配置改不进"正在跑的这个会话"** ✗
+  ⇒ ★ **所以必须新建会话** ✓
+· ★★ 官方 presets 只有 `cordis`/`minimal`/`ptc`/`standard` ⇒ ★ **"lean 模式"是本地插件**
+  `@local/dsh-lean-mode` ✓
+· ★★★ 该插件**按 preset 名**做两层变换（`index.mjs`）：① `shallowParameters()` 把工具 schema
+  **投影成「顶层键 → 类型」**；② 追加 `tools:catalog` 段 ✓
+  ⇒ ★★★★ **不被点名 ⇒ 504 个工具以「完整 JSON Schema」注入 ≈ 175k tokens** ✗
+  （★ 记忆库实测：478 工具 原生 175k vs Lean 19k ✓）
+
+三、★★★★ 实际改了什么（★ 唯一改动的文件 = `~/.dsh/profiles/web/cordis.patch.yml` · 853 → 1068 行）
+· ★ **只追加、不改任何已有行** ✓
+· ★ 追加两块：① `lean-mode-sw`（★ **第二个同插件实例**、`presets: [sw-engineer]` ✓ ——
+  ★★ 这样**不碰 `lean`** ✓ 且**避免 175k token** ✓；★ 该插件**没有 `provide`** ⇒ ★ 不撞 realm ✓）
+  ② `preset-sw-engineer`（★ 组成 = **从 `preset-lean` 逐行克隆**的官方标准模式 · 20 个插件 ✓，
+  `config.id: sw-engineer` · `name: Lean 模式（SW工程师）` · `order: 9` ✓）
+· ★ **唯一增量** = `mcp-solidworks`（★ 路径是**现值** `D:/AI/SW/mcp-server/server.py` ✓ ——
+  ★★ **不是**旧配置里的归档路径 `C:/Users/Zegel/solidpilot-mcp/...` ✗）
+· ★ **comfyui 没挂** ✓（★ 用户明令 ✓）
+
+四、★★★★★ 已验（★ 机器判据、★ 全部可复算）
+| # | 判据 | 读数 |
+|---|---|---|
+| ★ 1 | ★ 真 JSON-RPC stdio 握手（`tools/probe_mcp_stdio_handshake.py`） | `initialize` ok（`solidworks_mcp` 1.29.0）· `tools/list` **504** · 前缀 `{'solidworks_': 491, 'cadstudio_': 13}` ✓ |
+| ★ 2 | ★ **504 的对账** | ★★ **504 = 459（`all_specs()` 声明式）+ 45（`server.py` 装饰器）** ✓ —— ★ 顺带解释长期红门禁 `test_mcp_protocol_layer`（它说「504 条 vs 上次 339 条」⇒ ★ **504 是真值、339 过期** ✓）|
+| ★ 3 | ★ 配置可解析 | ★ 阳性对照（改前）ok · 合并体 ok · ★ **落盘后** ok ✓ |
+| ★ 4 | ★★ **没碰别人的 preset** | ★ 原有 id **丢失 = []** ✓（顶层 15 → 17 条 ✓）|
+| ★ 5 | ★ 新 preset 真声明出来了 | ★ `presets ⇒ ['sw-engineer']` · 20 个插件 · ★ **含 `mcp-solidworks=True`** ✓ |
+
+五、★★ 未验（★ 交接给新对话 —— ★ **别把"配好了"当"能用了"** ✗）
+★ ① **真实会话里选中该 preset 后，504 个工具是否真进目录** ✗
+★ ② **MCP 子进程是否真连上**（★ 建议调**只读**工具试，★ 真机走 `tools/sw_guard.py` ✓）
+★ ③ **hmr 是否已热加载**（★ 本仓既有更正：web-app 的 patch 层**没有** `hmr disabled` ⇒ 保存即热生效 ✓，
+  而★ **会话作用域仍要新建会话** ✓）
+
+六、★★★ 三件**没完成**的（★ 明确留档）
+★ ① **GitHub MCP 没挂** ✗ —— 查证：npm 全局包**没有** GitHub MCP ✗ · `D:\AI\DSH\mcp-servers\`
+  只有 comfyui-mcp ✓ · `github` 在活配置 **0 处** ✗ · ★★ **`gh` CLI 装了**（`C:\Program Files\GitHub CLI\gh.exe` ✓）
+  但那是**命令行、不是可挂的 MCP** ✗ ⇒ ★ **要挂必须先装 ⇒ 撞硬约束「不装不改系统层」** ✗
+  ⇒ ★★ **留槽位、等用户拍板** ✓
+★ ② **`tools/check_probe_reuse.py` 门禁没建** ✗（★ 扫探针调到的 `scripts/` 函数名 × `all_specs()`
+  求交 ⇒ 命中即报"请走工具层" ✓ —— ★ 今天就能抓到 `insert_form_tool`/`insert_weld_symbol` 的探针 ✓）
+★ ③ **`AGENTS.md` 那条注入纪律没写** ✗ —— ★ 该文件由**另一个对话**拥有 ✓（★ 用户已说他有专门的对话维护 ✓）
+
+七、★★★★ 本轮的**四个坑**（★ 请继承）
+★ **坑 1 · 缩进不许靠眼看**：★ 我读源块时被自己的格式化前缀（每行 +3 空格）**污染了读数** ✗ ⇒
+  把 10 看成 12 ⇒ ★ **`js-yaml` 报 `bad indentation of a sequence entry`** ✓
+  ⇒ ★★ **定则：报错给行号列号 ⇒ 数空格** ✓（★ 权威层级：insert 0 / 条目 4 / name·config 6 /
+  config 子级 8 / **plugins 列表项 10** / 字段 12 / 子级 14 ✓）
+★ **坑 2 · `node` 参数位有两种**：`node -e "<代码>" <arg>` ⇒ **`argv[1]`** ✗；
+  `node <文件> <arg>` ⇒ **`argv[2]`** ✓ ⇒ ★★ **我栽了两次**（一次**误判配置被写坏、当场回滚** ✗ ——
+  ★ 真因是校验器把 `.cjs` **自己**当 YAML 解析、报"顶层 968 条" ✗）⇒ ★ **定则：别用 `-e` 带参数校验，
+  写文件再调** ✓
+★ **坑 3 · `!!js` 是 Cordis 自定义标签** ⇒ ★ 校验前先 `replace(/!!js/g,'')` ✓
+★ **坑 4 · 动活配置要"三段校验 + 自动回滚"**：★ 该文件由 **hmr 热加载** ⇒ ★ **写坏立刻影响在跑的 DSH** ✗
+  ⇒ ★ `tools/apply_dsh_sw_preset.py` 把三道钉在一起：★ 写前临时合并体验 · ★ 写前自动备份 ·
+  ★ 落盘后再验 · ★★ **任一步不过自动回滚** ✓
+
+八、★ 交付物
+· `docs/HANDOFF-dsh-sw-engineer-preset.md`（★ **给新对话的交接** ✓）
+· `tools/probe_mcp_stdio_handshake.py` · `tools/gen_dsh_sw_preset.py` · `tools/apply_dsh_sw_preset.py`
+· ★ `~/.dsh/profiles/web/cordis.patch.yml`（★ 已改，★ **有备份**：`.bak-20261007-062023-before-apply-sw-preset` ✓）

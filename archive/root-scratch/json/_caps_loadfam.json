@@ -1,0 +1,29 @@
+[
+  {
+    "id": "simulation_load_family_breadth",
+    "label": "仿真载荷族广度（压力 / 力矩 / 重力 / 离心力 4 类）—— ★ 未真机验证",
+    "level": "stitched",
+    "backends": ["solidworks-com-pywin32"],
+    "verified_versions": [],
+    "dependencies": ["solidworks", "simulation-addin"],
+    "limitations": [
+      "⚠⚠⚠ **未真机验证**（按硬约束③明确标注；等级 = `stitched`）—— ★ 真机四类**全部失败**",
+      "★★ **真机报错形态（2026-10-01 轮 245，两轮）**：",
+      "　· 修 `reg_geom` 之前：`AddPressure` / `AddForce(torque)` ⇒ `com_error(-2147352571, '类型不匹配', None, 3)`（★ 位置 3 = `RegGeom`）；`AddGravity` / `AddCentrifugalForce` ⇒ `com_error(-2147352561, '非选择性的参数')`",
+      "　· ★ **修了 `reg_geom`（改用既有空 Dispatch `VARIANT(VT_DISPATCH, None)`）之后：「类型不匹配」消失** ✓ —— ★ 但那一条修复**不足以让它们跑起来**：四类**全部**变成 `非选择性的参数`",
+      "★★ **已查清的**：① `RegGeom` / `RefGeom` **不能裸传 `None`**（有真机证据：位置 3 的类型错）⇒ ★ 已在**能力层**修（任何调用方受益）；② ★ 报错的**位置**（arg 3、以及「参数个数不符」）**指向「实参形态/重载解析」**，而不是选面或管理器",
+      "★★ **未查清的（★ 不猜）**：★ 为什么 `AddRestraint`（**能跑通**）与 `AddPressure`（**不能**）在**同样传裸 list** 的情况下结果相反？★ 候选：`AddPressure` 在类型库里有**多个重载**，而 `(int, list, VARIANT)` 这个组合**匹配不上任何一个**（★ COM 的「非选择性的参数」也可能表示「重载选不出唯一那个」）",
+      "★★ **按事实 53 停手**：★ 在这个「实参形状」上已经改了 **2 次**（arity 修正 + `reg_geom`）⇒ 不再试第 3、第 4 种数组包装；★ 正路是**先把类型库里 `AddPressure` 的重载表读出来**（而不是继续猜）",
+      "★ 本组函数的来源块**自己早就写着**「⚠ 本组为照官方签名新写，**未在本机实测**」（`sw_simulation_loads.py` 的 `Add{Pressure,...}` 与 `Add{Gravity,...}` 两处）⇒ ★ 本批真机**正好把这句话兑现了**：★ **「照官方签名写」≠「能跑」**",
+      "⚠ 能力清单里 `simulation_loads_wiring` = `verified`，但★ **它只覆盖「夹具 + 法向力」两个**（W7 验过的那两个）⇒ ★ **本批的 4 类不在那条覆盖面里**（本条的等级**不可从那条继承**）"
+    ],
+    "allowed_modes": ["interactive", "reviewed"],
+    "evidence": [
+      "⚠ **无**（真机四类全失败）—— ★ `tools/capture_loadfamily_evidence.py` 的输出已如实落 `output/loadfamily-evidence.json`（`verdict: fail`）",
+      "★ **静态那一半是绿的**：`all_specs()` 出现 4 个工具（**90 → 94**）· `scripts/check_param_binding.py` **PASS**（0 处）· 门禁链 18 道 exit 0",
+      "★ **有诊断价值的对照**：★ 「修 `reg_geom` 前」与「修之后」的**报错形态不同** ⇒ 那一条修复**确实生效**（只是不够）—— 这是**可复现的两态对照**"
+    ],
+    "source": "original",
+    "source_evidence": "scripts/sw_simulation_loads.py 的 add_pressure / add_torque / add_gravity / add_centrifugal_force + 四个 apply_*_report 回读报告包装；官方签名见同文件来源块（CHM cosworks 册 ICWLoadsAndRestraintsManager~Add*.html）"
+  }
+]

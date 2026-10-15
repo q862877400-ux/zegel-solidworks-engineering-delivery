@@ -1,0 +1,26 @@
+[
+  {
+    "id": "render_materials_and_appearance",
+    "label": "渲染材质与外观（★ 真机 4/4，含读写配对）",
+    "level": "verified",
+    "backends": ["solidworks-com-pywin32"],
+    "verified_versions": ["2026"],
+    "dependencies": ["solidworks"],
+    "limitations": [
+      "★ 真机 **4/4**（`output/appearance-evidence.json` · `verdict: pass`）：`collect_appearance_evidence` ✓ · `list_render_materials` ✓ · **`set_document_appearance` + `verify_appearance` ✓** · `refresh_scene_graph` ✓",
+      "★★★ 核心那条是**读写配对**：设 `(0.2, 0.6, 0.9)` 之后 `verify_appearance` 回 **true** ⇒ ★ **值真的对上了**（★ 比「函数没报错」硬得多）",
+      "★ **本条的由来是「逐域判断」而不是数函数**：对照仓库自己的 **14 个域**（`docs/capability-matrix.md` §一）核 `capabilities.yaml` ⇒ 发现 ★ **`appearance` / `render` 各出现 0 次** ⇒ ★★ **这个域**有工具、没条目**** ⇒ 补条目 + 取证据",
+      "★ §5.0 先找了：★ **这个域**没有**既有证据脚本**（`tools/` 里搜 `appearance` / `render` / `material` ⇒ 无）⇒ ★ 自己搓 `tools/capture_appearance_evidence.py`，**并说明找过**",
+      "★ 判据**用的是既有的**读写配对（`sw_appearance.set_document_appearance` + `verify_appearance`），★ **不新搓**",
+      "⚠ `list_render_materials` 在新零件上回 **0** 个 ⇒ ★ 说明「没有渲染材质」是**正常初值**（★ 本批**没有**测「建一个渲染材质再列出来」那条路）",
+      "⚠ 只在 **100×60×20 mm 单实体板**上验过"
+    ],
+    "allowed_modes": ["interactive", "reviewed", "unattended"],
+    "evidence": [
+      "python tools/capture_appearance_evidence.py（真机，2026-10-01 轮 258：**verdict: pass** · 4/4；★ 证据落 output/appearance-evidence.json）",
+      "★ 既有工具（本批**没有**新建工具）：`solidworks_list_render_materials` / `solidworks_collect_appearance_evidence` / `solidworks_refresh_scene_graph`"
+    ],
+    "source": "original",
+    "source_evidence": "scripts/sw_render_material.py（collect_appearance_evidence / list_render_materials / refresh_scene_graph）+ scripts/sw_appearance.py（set_document_appearance / verify_appearance）"
+  }
+]

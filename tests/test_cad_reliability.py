@@ -29,7 +29,6 @@ from sw_connect import _prog_id_for_version, close_owned_solidworks  # noqa: E40
 import cad_installation  # noqa: E402
 from cad_installation import discover_installation, resolve_shortcut_target  # noqa: E402
 import cad_doctor  # noqa: E402
-import fea_analysis  # noqa: E402
 
 
 def test_capability_manifest_marks_unverified_workflows():
@@ -185,7 +184,14 @@ def test_doctor_missing_environment_includes_download_remediations(monkeypatch):
         "discover_all",
         lambda: {"autocad": {"installed": False, "executable": None}},
     )
-    monkeypatch.setattr(fea_analysis, "discover_solver", lambda _solver: {"status": "blocked"})
+    #: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
+    #:   ★ `fea_analysis` 是**方法**（★ FEA 判据）⇒ 已移出到
+    #:     `archive/inherited-methods/scripts/` ⇒ ★★ **不能再 monkeypatch 它** ✗
+    #:   ★★ 而 `cad_doctor` 里那处 `from fea_analysis import discover_solver`
+    #:     **本来就有 `try/except`**（★ 找不到就 `calculix_ready = False`）✓
+    #:   ⇒ ★ **本测试不需要那处 stub** —— ★ 删掉它，★ 剩下的 12 个断言照旧 ✓
+    #:   ★ 判据：★ 本测试测的是**诊断器的机器可读输出**（★ 工具），
+    #:     ★★ **不是** FEA 方法本身 ⇒ ★ **它该留下** ✓
 
     result = run_doctor()
     remediations = {item["id"]: item for item in result["remediations"]}

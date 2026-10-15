@@ -1,0 +1,70 @@
+| 362 | ★★★★★ **普查：`IModelDocExtension` 的 396 个成员，在这个真机对象上**能用的 334、取不到的 62****；★ 而"取不到"里**除 46 个属性访问器**（应然）外，★ **只有 15 个是真冷门的** —— ★★ 而**它们里没有一个已被做成工具**（2026-10-03，轮 447）。
+
+## 一、★★★★★ 那两个地基 + 一次普查（★ 而普查只有现在能做）
+```
+★ 本轮新增两件（★ `tools/`）：
+   ```
+   ★ `com_member_probe.py`        —— ★ ① 从出厂程序集读**某接口的成员名单**（★ 纯反射）
+                                      ★ ② 逐个问真机 `getattr(obj, 名, None)` ⇒ **三态**（可调/属性/取不到）
+   ★ `prove_member_availability.py` —— ★ **普查**：把①的名单整体丢给②
+   ```
+★ 真机（`output/member-availability-evidence.json` · **verdict: pass**）：
+   ```
+   ★ **查了 396 个**（★ 先报数量 —— 事实 357 那条纪律）
+   ★ 能用 **334** · 取不到 **62**
+   ★★ 取不到的按类：★ `get_X`/`set_X` 访问器 **46**（★ **应然** —— 迟到绑定下它们叫 `X`）
+                    ★ `plain` **15** · ★ `I` 前缀 **1**（★ 指针变体，与事实 47 同族）
+   ```
+```
+
+## 二、★★★★★ 那 **15 个**的名单（★ 而它有一个**极清楚的规律**）
+```
+   Capture3DView · CreateMassProperty2 · **CreateStructureSystem** · Get3DViewNames · Get3DViews ·
+   GetAnnotations · GetDecals · GetObjectByPersistReference · GetPrint3DDialog ·
+   GetRenderCustomReferences · GetRenderMaterials · GetSceneBkgDIBx64 · GetTemplateSheetMetal ·
+   IGetAnnotations · InsertChainDimensions · IsVirtualComponent2
+★★★ **规律**：★ **`Get*` · `Create*2` · `Capture3D*` · `x64` 后缀 · `I` 前缀** ——
+   ★ 全是「**冷门 / 新加 / 指针变体**」那一族 ⚠
+   ★★ 而**能用的那 334 个**：★ `ActiveCommandTab` · `AddDimension` · `AddComment` · `AddDecal` … ——
+     ★ 全是「**日常**」那一族 ✓
+⇒ ★★★ **即：★ 结论是一条规律，★ 而不是一堆个案**：
+   ```
+   ★★ pywin32 的迟到绑定对一个接口暴露的，**不是"接口的全部"**，★ 而是「**它认得的那一批**」——
+      ★ 而认不出的**恰是冷门 / 新加 / 指针变体** ✓
+   ```
+```
+
+## 三、★★★★★ 而那两条**对照**把一个判断钉死了
+```
+★ 同一接口 · 同一对象 · **相邻的两个名字**：
+   ```
+   ★ `CreateStructureSystemMemberData` ⇒ **callable**（★ 事实 360 真机建成对象）✓
+   ★ `CreateStructureSystem`           ⇒ **missing**（★ 而它**在程序集的 396 个成员里**）✗
+   ```
+⇒ ★★★ **故判据是**按成员**判的，★ 不是按接口判的** —— ★
+   ★★ 事实 361 那条（"看 `getattr`"）**由此得到最强的证据**：
+     ★ **同一个接口可以有"能用的成员"与"取不到的成员"相邻共存** ✓✓✓
+```
+
+## 四、★★★★★ 而**核对过**：★ 那 15 个**没有伤到既有工具**
+```
+★★ 我逐个查了「那 15 个里有哪些**已经被我们做成了工具**」⇒ ★ **一个都没有**（★ 按裸函数名查）✓
+   ⇒ ★★ 故**如实报**：★ 这份名单**目前不构成对既有工具的威胁** ——
+     ★ 而★ 我不把它渲染成"一片地雷"（★ 那会是**用恐慌代替事实**）✓
+★ **而它的用处是**：★ 此后判「某成员能不能用」**不必再猜** ——
+   ★★ **跑一次普查就有名单**（★ 而普查**只要几秒**）✓
+```
+
+## 五、★ 处置与下一步
+```
+★ ① ★ **两个工具留着**（★ 它们把"查文档"变成了"**问真机**"）✓
+★ ② ★ **`配置/成员能不能用` 那条判据此后自动化** ——
+   ★★ 写新能力前先跑 `python tools/prove_member_availability.py`（★ 或对目标接口跑 `members`）✓
+★ ③ ★ **结构系统那条链的结论不变**（★ 事实 361）：★ 走的正是 `CreateStructureSystem`（**取不到**）
+   ⇒ ★ **它与事实 47 同族，★ 到此为止**（★ 事实 53：不再试）✓
+```
+
+**依据**：`output/member-availability-evidence.json`（★ 396 / 334 / 62 · 分组计数）·
+`tools/com_member_probe.py` · `tools/prove_member_availability.py`（★ 新）·
+`IModelDocExtension` 的 396 个成员（★ 含 `CreateStructureSystem`，★ 而真机取不到）·
+事实 47 / 53 / 227 / 357 / 360 / 361 · pywin32 迟到绑定（`IDispatch::GetIDsOfNames`）

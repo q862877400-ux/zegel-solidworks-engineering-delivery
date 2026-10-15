@@ -94,7 +94,9 @@ __all__ = ["AXIS_INDEX", "BODY_MARKS", "BODY_TYPES", "ROTATION_AXIS_FINDING", "R
 #:   ```
 #:   ★ 若哪天 SW 修正了这个映射 ⇒ **只改这一个常量**（★ 而 `T5b` 会当场红）✓
 #:   ⚠ **未验**：★ **三轴同时给**时的合成顺序（Euler 序）官方没写 ⇒ 本模块**不承诺**那个语义 ✓
+#: enum-gate: not-enum index
 AXIS_INDEX = {"x": 0, "y": 1, "z": 2}
+#: enum-gate: not-enum derived
 ROTATION_AXIS_MAP = {"x": 2, "y": 1, "z": 0}
 
 ROTATION_AXIS_FINDING = (
@@ -132,6 +134,7 @@ UNIT_FINDINGS = (
 )
 
 #: ★ 官方 `InsertMoveCopyBody2` 的 **mark 表**（★ 逐字抄自该页 `## Remarks`；★ **不许跨条复制**）
+#: enum-gate: member InsertMoveCopyBody2
 BODY_MARKS = {
     "body_or_surface": 1,
     "rotation_reference": 2,          # Rotation edge / vertex / coordinate system

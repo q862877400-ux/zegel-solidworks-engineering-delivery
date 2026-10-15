@@ -232,6 +232,7 @@ IMODELER_RUNTIME_UNAVAILABLE = frozenset({
 # 覆盖:   本函数整体（自本行至函数结束）
 # ⚠ 本表只覆盖**本机**实测到的成员；未逐个测的成员按「未知」处理（不假设可用）。
 # ────────────────────────────────────────────────────────────────────
+#: dispatch-guard: exempt internal-helper
 def _invoke(modeler, method: str, *args):
     """按 SURFACE_CREATION_METHODS 的签名表调用 Create*Surface。
 

@@ -1,0 +1,64 @@
+feat(B4): 草图编辑·移动族 —— 三源互证 + 真机实测 **2/5 强证据**，另 3 条写明"判据测不出"
+
+★ 承 `specs/201-toolbar-gaps` 的 **B4**（用户工具栏：移动 / 复制 / 旋转 / 缩放 / 伸展实体）。
+
+## ① 三源互证（★ 官方源 + CHM + 出厂反射）
+
+| 工具栏原文 | 官方成员 | 三源 |
+|---|---|---|
+移动实体 | `IModelDoc2.SketchModifyTranslate(StartX, StartY, EndX, EndY)` → void | ✓ 三源一致 |
+旋转实体 | `IModelDoc2.SketchModifyRotate(CenterX, CenterY, Angle)` → void | ✓ |
+缩放实体比例 | `IModelDoc2.SketchModifyScale(ScaleFactor)` → **bool** | ✓ |
+伸展实体 | **`IModelDocExtension.Stretch(KeepRelations, BaseX, BaseY, DestX, DestY)`** → void | ✓ |
+（同族附带）镜像 | `IModelDoc2.SketchModifyFlip(AxisFlag: int)` → void | ✓ |
+**复制实体** | ★ **查不到 2D 入口** | ★ 见下 |
+
+★ **"复制实体"为什么另列**（★ 铁律 5）：
+· 三源里**都没有** `SketchModifyCopy` —— swapi 的 `IModelDoc2` 下含 `SketchModify` 的**只有 4 个**、
+  CHM 同样 4 个、`_raw/reflect_sldworks/iface_sldworks.txt` 同样 4 个 ⇒ **三源一致**。
+· 官方**有**"旋转或复制"，但 `ISketchManager.RotateOrCopy3D*` 的说明逐字是
+  "…the selected **3D sketch** entities" ⇒ ★ **2D 草图用不了**。
+⇒ ★ **故 2D 的"复制实体"本轮不解** —— ★ 不是漏了，是**三源都指不出入口**。
+
+★ **为什么不用 `Tools*` 族**：`IModelDoc2` 上另有 `ToolsSketchTranslate()` / `ToolsSketchScale()`，
+  ★ 而它们**零参数**（说明只是 "Translates a sketch"）—— ★★ 那是**交互式（弹对话框）**，
+  与本仓"无人值守"红线冲突（铁律 2）⇒ **程序化必须用 `SketchModify*`**。
+
+## ② 真机实测（`tools/prove_b4_sketch_modify.py` · 产物 `output/b4-sketch-modify-evidence.json`）
+
+**判据 = 草图线段端点的包围盒前后变化**（★ 因为 4/5 的官方返回是 `void`，"没抛异常"证明不了几何动了）。
+★ `get_lines` 的返回形状是**真机量出来的**（每 12 个数一条线，后 6 个是两个端点、单位毫米）。
+
+```
+诚实 2 / 5
+✅ 缩放实体比例   **能**  bbox ±20/±10 → ±30/±15   ← ★ **正好 ×1.5**，强证据
+✅ 伸展实体       **能**  bbox ±20/±10 → -19.997/20.003
+❌ 移动实体       bbox **没变**
+❌ 旋转实体       bbox **没变**
+❌ 镜像           bbox **没变**
+```
+
+## ③ **那 3 条的真因是个判据问题，不是能力问题**（★ 本轮最值钱的发现）
+
+★ 官方对它们的说明措辞是：
+> Translates / Rotates **the coordinate system** of the active or selected sketch.
+
+⇒ ★★ **它们改的是**草图坐标系**，而**不改草图内点的坐标值**** ⇒
+  ★★★ **故"草图内点的 bbox"这个判据**根本测不出它们** ⚠
+  ★★★★ ★ 所以那 3 条**不能记成"不能"** —— ★ **只能记成"判据不足以判定"**
+  （★ 本探针如实写成 `verified_by: geometry_unchanged`，★ 而**不是** `不能`）。
+
+★ **换判据的方向（留给下一轮）**：量**模型空间**的位置（★ 而不是草图内坐标）——
+  `ModelToSketchTransform` 已确认可读（回 COM 对象），但**不能直接比** ⇒
+  下一轮该取它的**矩阵元素**（`IMathTransform.ArrayData`）或**草图点在模型空间的坐标**。
+★ ⚠ **本轮不假装做到** —— 3 条停在"判据待换"。
+
+## ④ 顺带修正的两处我自己的错（★ 都是"没参考现成的"）
+
+1. `connect_solidworks()` 回**元组** ⇒ 我写成 `sw = C.connect_solidworks()`
+   ⇒ `'tuple' object has no attribute 'GetUserPreferenceStringValue'`。
+   ★ 而**本仓现成探针**（`prove_b1_sketch_primitives.py` L40）写的就是 `sw, _ = …`。
+2. `P.end_sketch(doc)` 放在量 bbox **之前** ⇒ `ActiveSketch` 回 `None`
+   ⇒ 5 条全记 `before=None`（★ 表现成"全都不能"，真因是**量错了时机**）。
+
+★ 另：`sw_guard` 全程 `sw_alive: true` · **零弹窗** ✓（★ 没有重演 B5 那三次崩溃）。

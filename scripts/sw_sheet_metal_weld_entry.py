@@ -220,6 +220,7 @@ def _surface_body_count(model) -> int | None:
     """
     for member in ("GetSurfaceBodies", "GetSurfaceBodyCount"):
         try:
+            #: dispatch-arg: probe 试名探测：`GetSurfaceBodies`/`GetSurfaceBodyCount` 两源均查不到，按序试
             value = get_com_member(model, member)
         except Exception:                                            # noqa: BLE001
             continue
@@ -312,6 +313,7 @@ def _read_definition(feature, members, scale_mm: bool = True):
         return {}, ["GetDefinition 回 None"]
     for name, factor in members:
         try:
+            #: dispatch-arg: dynamic `members` 是形参：`(成员名, 系数)` 列表由调用方给
             raw = get_com_member(definition, name)
         except Exception as exc:                                     # noqa: BLE001
             unreadable.append("%s(%s)" % (name, str(exc)[:60]))

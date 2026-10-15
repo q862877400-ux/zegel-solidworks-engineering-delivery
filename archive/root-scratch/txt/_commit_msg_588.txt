@@ -1,0 +1,42 @@
+test(调查): 高级孔 —— ★ **路径②被两条独立理由关掉**，只剩 `HoleWizard5`（事实 465）
+
+★ 承**事实 464**（它留了两条路，都是 `HoleWizard5` 自己的 Remarks 指的）。
+
+## 一、★ 两条路
+
+```
+① `HoleWizard5`（27 参 + `SelectByRay` 定孔位）
+② `IWizardHoleFeatureData2`（★ 官方说它适合 "**simple holes and slots**"）
+```
+
+## 二、★★★ 而路径 ② 被**两条独立理由**关掉
+
+```
+① ★ **它带 `AccessSelections`** —— `IWizardHoleFeatureData2` 共 **75** 个成员，
+   而 `AccessSelections` 正是**指针族**（★ 事实 47）⚠
+② ★ **`IFeatureManager.CreateDefinition` 那张 35 常量表里没有 Hole\***（★ 官方查不到）⚠
+   （★ 事实 43：★ `CreateDefinition` 只接受官方列出的常量）
+```
+  ⇒ ★★ **故只剩路径 ①**：`HoleWizard5`（27 参）+ 它的前置 **`SelectByRay`** ✓
+
+## 三、★ 而这不是我捣的结论
+
+★ 两条路**都是官方自己指的**（★ `HoleWizard5` 的 Remarks）；
+★ 而判路的依据**是静态的**（★ 成员表里有没有 `AccessSelections` + 常量表里有没有那个常量）。
+
+## 四、★★ 方法论
+
+★ **当官方给了两条路时，先把"哪条走得通"查完再动手** ——
+  ★ 而**判路的依据可以是静态的**（★ 不必每条都真机试一遍）✓
+
+## 五、★ 下一步
+
+★ 把 **`SelectByRay`** 那一步搭出来（★ 它是路径 ① 的前置）。
+
+## 六、交付
+
+```
+docs/known-facts.md   **事实 465**（+19 · ★ 含两条独立理由 + 方法论）
+★ 本轮**不登记能力**（★ 只完成了路径判定 —— 不假装做到）
+★ 语法门禁 0 处（779 个文件）
+```

@@ -1,0 +1,54 @@
+docs(支线): Bunny 批量产物归位 docs/recon/ + 支线开工提示词 + 项目级角色表改 Bunny
+
+■ 一 · 修我自己的错：`recon/` 违反铁律 3
+  · `AGENTS.md` 铁律 3：顶层结构目录只允许 14 个（`.github agents ai_team apps assets docs
+    dotnet examples mcp-server references scripts subskills tests tools`）。
+  · 我派 B1..B5 时把产物路径写成**顶层 `recon/`** ⇒ **那是我派活时给错的路径**，
+    不是执行者的错（B1 按指令建了，并主动把这一点提出来问）。
+  · 处置：整体挪到 `docs/recon/`（`docs/` 在白名单内，子目录不违反铁律 3），
+    空的 `recon/` 已删 ⇒ **顶层白名单恢复**。
+  · 挪之前先核过：`recon/` 下**只有 1 个文件**（B1 的产物）⇒ 没牵动别人的东西。
+
+■ 二 · B1 的产出与它自己报的两处待决断
+  · `docs/recon/iview-read-members.md`（543 行）：`IView` 全部 **461** 个成员页真读过
+    （外加 `_overview.md` 做交叉验算）⇒ **非废弃非指针 267 · 零参 200**
+    （空括号 169 + 无括号 31）· 它自己验算过 `149 废弃 + 45 指针 − 0 重叠 + 267 可用 = 461`。
+  · **待决断一（判据的洞）**：指针标记**不一定在 `## Returns` 段** ——
+    `ISetBodies` 的 `ref Body2 BodyArray` 标记在 `## Parameters` 上。
+    按字面判据指针数是 **45**，全文含该标记的是 **46**，差额就是它。
+    B1 **没偷偷合进去**，而是单列并附原文片段 ⇒ 对的做法。**放宽会改变已发布数字，故不擅改。**
+  · **待决断二**：`RootDrawingComponent2.md` 是**空壳页**（只有 YAML 头 + 标题），
+    B1 三项都写「查不到」、未补未猜。
+  · B1 另修掉 4 个会让它**静默产错数据**的自身缺陷（PowerShell 把单元素数组拆成标量 ⇒
+    取到第一个字符；断句把 `[[IView::…]]` 切开；反引号转义吃掉统计表；
+    指针判据写成「出现 `Pointer to`」误抓 `GetCorresponding`）——
+    都记在 `docs/recon/README.md`。
+
+■ 三 · 支线开工提示词
+  · `docs/kickoff-bunny-sideline.md`：给**另开一个对话**用的第一句话，定位是「只干可穷举、
+    可核、不需要判断力的批量辅助活，全部派 Bunny」；含四条开工前必读、两条硬纪律、
+    产物格式要求、以及**这次先干的三件**（IDrawingDoc + ISheet 两份成员表 ·
+    全仓 COM 成员清单 · docs 交叉矛盾扫描）。
+  · 里面写进了两条**实测得来**的坑：① `spawn_teammate` 硬上限 8 ⇒ 大批量改用 `workflow`；
+    ② workflow 的 `agent()` 里 **provider 与 model 必须成对写** ——
+       只写 `model` 会**整批静默失败**（实测 `{requested:100, returned:0, rows:[]}`，
+       返回值里没有任何错误信息）；补 `provider` 后 2 路探针即通。
+
+■ 四 · 项目级角色表改 Bunny
+  · `D:\AI\SW\.dsh\team-roles.yaml`（项目级覆盖件）：`coder` / `researcher` / `reviewer`
+    由 omniroute+deepseek-v4-flash / ninfer+qwen / mimo 全部改成
+    `opencode-zen` + `space-bunny-free`；`persona` 与 `denyTools`（46 个 SolidWorks 工具锁）**未动**。
+  · 改前留 `.bak-20261004-084336-before-bunny-subagents`（未入库，属备份）。
+  · 与 `$DSH_HOME/team-roles.yaml` 同批改（那个不在本仓库里）。
+
+■ 五 · 防覆盖（业主说有两个对话同时在这个仓库干活）
+  · 实测：**最近 6 次提交的作者名都写 `DSH Lead`** —— 含 `ed2d140b`（SPEC202 T302+T303）
+    那一次**不是我做的** ⇒ **靠作者名分不开谁是谁**。
+  · 所以本批**只用显式路径** `git add`，并在提交前逐项核对暂存区：
+    `docs/metrics.md` / `docs/signature-audit.md` / `docs/union-coverage-matrix.md`
+    是生成物且**可能来自另一个对话那一轮** ⇒ **一律不提交、不触碰**。
+    另一个对话正在产的 `docs/t003-spotcheck-l1-record.md` / `-l2-record.md` /
+    `tools/spotcheck_t003_l1.py` / `-l2.py` / `tools/probe_analysis_run_long_timeout.py` /
+    `tools/close_own_solidworks.py` ⇒ **一律不碰**。
+  · 另记一条索引纪律：`git add -A` 放进索引的东西，后续 `git add <路径>` **不会**把它撤出来；
+    要清就 `git reset`（只清索引、不动工作树）。我上一批就是在这一点上又扫进了别人的件。

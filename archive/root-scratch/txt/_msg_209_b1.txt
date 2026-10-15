@@ -1,0 +1,36 @@
+规格 209 · B1 批：把规格 207 的 4 件采纳候选落地（真机全过 + 抓到 2 处官方与真机不一致）
+
+来源：docs/HANDOFF.md §二「下一件该干的活：实现那 18 条」。
+分批与硬约束照 docs/recon-207/adjudication.md（Lead 裁决 17 条 ⇒ 合并成 15 件活）。
+本批 = B1 的 4 件活（第 5 件 idx 209 move_body 要新建模块，单独一轮）。
+
+改了什么
+· scripts/sw_session.py            idx 235+236 重建：三档 mode 一条工具（裁决书强制合并）
+· scripts/sw_sketch_edit_ops.py    idx 79 构造几何：置位走官方零参入口、复位走属性 setter
+· scripts/sw_render_material.py    idx 97 显示状态：读 + 激活两条，装配上带 ambiguous
+· scripts/sw_document_data.py      idx 244 引用文档：补 pack_and_go 的读侧
+· mcp-server/tool_specs_batch92.py + register_capabilities.py   5 个工具 ⇒ 433 → 438
+· tests/test_tool_specs_batch92.py  19 条契约/负例（含 5 条裁决书硬约束的回归测试）
+· tools/probe_union_adopt_b1.py     真机探针（一次会话跑完四格）
+· tools/add_s209_b1_capabilities.py capabilities.yaml 的追加脚本（只做文本插入）
+· capabilities.yaml                 +4 条（139 行纯插入 / 0 删除）
+· specs/209-union-adopt-18/         spec / plan / tasks
+
+真机证据（走 tools/sw_guard.py，两次均 0 弹窗；output/union-adopt-b1-evidence.json）
+· T1 重建：edit/force/all 三档 ok=True · needs_rebuild 0→0 · tree 7→7 · bbox_changed=False
+· T2 构造几何：置位/复位双向 ok=True；★ 定死「连调两次 = 置位（幂等）」，不是 toggle
+· T3 显示状态：['<默认>_显示状态 1'] → 建第二条 → 激活另一条 ⇒ changed=True；负例不猜
+· T4 引用文档：自建 1 零件 + 1 装配 ⇒ ok=True · count=1 · raw_len=2；开只读信息 ⇒ raw_len=3
+
+★ 抓到两处「官方文档 / 例子与真机读数不一致」（spec.md §五 逐条记账，按读数走）
+1. EditRebuild3 是方法，而 pywin32 下**「读」就等于「调」**（读到的是 bool、恒真）⇒
+   三家外部项目那条 `_get(doc,'EditRebuild3')` 写法不能当判据。
+2. AddReadOnlyInfo 的第三个串：官方例子给空串，**真机回字符串 "FALSE"**（类型内省 = str）⇒
+   按「非空即只读」写会把非只读的判成只读；本仓改成白名单判、认不出回 None。
+
+门禁
+· check_union_conventions / check_param_binding / check_tool_param_binding / check_python_syntax 全 exit 0
+· 聚焦测试 19 passed；收尾链 33.4 s 跑完（★ 链尾自动关了本会话拉起的 SolidWorks）
+· ⚠ release_check 有一处**既有**红（不是我改的）：scripts/check_negative_input_selfproof.py
+  报 tools/verify_union_349.py:112 的变换未自证 —— 该文件自 38bd4f3c 起未改过，
+  ★ 且 tools/ 的探针/证据脚本按本仓红线「只报不动」⇒ 未处置，留给该文件的作者。

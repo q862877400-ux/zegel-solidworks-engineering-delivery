@@ -1,0 +1,46 @@
+feat(草图): **样条曲线真机建成** —— ★ 三个条件缺一不可（事实 452）· ★ 而**答案本仓早就有**
+
+## 一、★★★ 本轮按「**先扫已走死的路**」查到了**旧探针与旧证据**
+
+```
+tools/probe_spline_forms.py  +  output/spline-forms.json（★ 四格早已试过）：
+  ① 扁平 list                 ⇒ ret=None · 段 0→0   ✗
+  ② 扁平 tuple                ⇒ ret=None · 段 0→0   ✗
+  ③ **VARIANT(VT_ARRAY|VT_R8)** ⇒ ret=**CDispatch** · **段 0→1** ✓
+  ④ list of tuples（对照）     ⇒ ret=None            ✗
+```
+  ⇒ ★★ **故正确形态早就写在证据里了** —— ★ 而**我上一轮传的是第 ① 种**（已知不成的那个）⚠
+
+## 二、★ 真机四个条件（`tools/prove_spline_with_variant.py`，走 `sw_guard`、零弹窗）
+
+```
+★★ **前人原样** `CreateSpline2(VARIANT(VT_ARRAY|VT_R8, 扁平 list), False)`
+   ⇒ **段 0 → 1** · 回 `CDispatch` ✓
+`CreateSpline(data)`（★ 不带 2）  ⇒ ★ **"成员不可调用"**（★ 第**四**类形态）✗
+扁平 list · list of tuples        ⇒ 回 `None` ✗
+```
+  ⇒ ★★ **故三个条件，缺一不可**：
+    ① 成员名 **`CreateSpline2`**（★ **`CreateSpline` 在迟到绑定下取不到**）⚠
+    ② 数组形态 **`VARIANT(VT_ARRAY|VT_R8, 扁平 list)`**
+    ③ 第二参 **`False`**（`SimulateNaturalEnds`）
+
+## 三、★★ 顺带纠正一个容易误会的事
+
+★ **`call_com_member` 就是 `get_com_member` 的别名** —— ★ 实现只有一行
+  `return get_com_member(obj, attr_name, *args)`，而它自己的 docstring 就写着
+  「行为**完全相同**，差别在**名字**」
+  ⇒ ★ **故"把它换成 `call_com_member`"不会改行为** —— ★ 真正管用的是**成员名与参数形态** ⚠
+
+## 四、交付
+
+- `capabilities.yaml` 新增 **`sketch_spline`**（`level = verified`）⇒ 共 **102** 条
+- 台账「曲面上的样条曲线」补 `capability_id` ⇒ **已能 76**（★ 原始"能"只有 47）
+- 记成 **事实 452**
+- ★ **而它顺手解开了另一条**：事实 451 里复合曲线卡在"造样条"上 ⇒ **现在那一步可以跑了** ✓
+
+## 五、★★ 方法论
+
+★ **一个失败的探针与一个成功的探针之间，差异可能只在一个成员名的后缀上** ——
+  ★ 而**先读旧探针的原文**比重写一个快得多 ⚠
+
+★ 语法门禁 0 处（770 个文件）。

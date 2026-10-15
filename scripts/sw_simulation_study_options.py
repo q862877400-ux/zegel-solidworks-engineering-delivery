@@ -599,6 +599,7 @@ def _coerce(raw_type: str, value):
     return value
 
 
+#: dispatch-guard: exempt module-local
 def set_option(options, family: str, name: str, value) -> bool:
     """按登记表设一个求解器选项。
 
@@ -660,6 +661,7 @@ def set_options(options, family: str, values: dict[str, Any]) -> dict[str, Any]:
     for name, value in values.items():
         if value is None:
             continue
+        #: dispatch-fwd: dynamic `values` 是调用方给的 dict ⇒ 键（成员名）在静态范围外
         set_option(options, family, name, value)
         applied[name] = value
     return applied
@@ -900,6 +902,7 @@ def set_study_option_report(study, family: str, name: str, value) -> dict:
     if err:
         return {"ok": False, "family": family, "name": name, "error": err}
     try:
+        #: dispatch-fwd: upstream set_study_option_report tool-only 二级转发：**仅由工具层按名注册**（tool_specs_batch37.py 的 function=），name 来自工具实参
         r = set_option(opts, family, name, value)
     except Exception as exc:                                   # noqa: BLE001
         return {"ok": False, "family": family, "name": name,

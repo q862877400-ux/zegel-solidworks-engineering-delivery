@@ -52,6 +52,8 @@
 
 from __future__ import annotations
 
+_MM_TO_M = 1.0 / 1000.0      #: ★ 毫米 → 米（事实 2 的换算口径）
+
 import math
 import sys
 from pathlib import Path
@@ -65,14 +67,33 @@ import sw_sketch as _SK  # noqa: E402
 from sw_connect import get_com_member, set_com_member as _set_com_member  # noqa: E402
 from sw_part import _empty_callout  # noqa: E402
 
+#: ★ 长度换算助手：`_mm(v)` = **毫米→米**（恰好一次）。
+#:   依据：本仓定案 `output/probe-unit-decisive/decisive.json`。
+try:
+    from sw_connect import mm as _mm          # noqa: F401
+except Exception:                             # noqa: BLE001
+    _mm = lambda v: float(v) / 1000.0         # noqa: E731
+
+
+#: ★ 长度换算助手：`_f(v)` = 先收窄成 float、再**毫米→米**（恰好一次）。
+#: ★★ 依据（定案）：`output/probe-unit-decisive/decisive.json` —— 同文档同会话单变量：
+#:   草图 40×40 回读 `[40,40,0]` ✓ 而 `extrude_boss(20.0)` 回读 Z = **20000 mm**
+#:   ⇒ COM 吃**米**，用户传毫米 ⇒ 进 COM 前必须换算恰好一次。
+#: ⚠ 用单 token 替换（`float(` → `_f(`）落地，避免括号配对出错（事实 61）。
+_f = lambda v: v * _MM_TO_M          # noqa: E731
+
+
 #: ★ 官方 `swSketchTrimChoice_e`（★ 逐值抄自 `C:\swapi\enums\`）
+#: enum-gate: enum swSketchTrimChoice_e
 TRIM_CHOICES = {
     "closest": 0, "corner": 1, "two_entities": 2, "entity_point": 3,
     "entities": 4, "outside": 5, "inside": 6,
 }
 #: ★ 官方 `swSkOffsetCapEndType_e`
+#: enum-gate: enum swSkOffsetCapEndType_e
 OFFSET_CAPS = {"none": 0, "arc": 1, "line": 2}
 #: ★ 官方 `swSkOffsetMakeConstructionType_e`
+#: enum-gate: enum swSkOffsetMakeConstructionType_e
 OFFSET_CONSTRUCTION = {"dont": 0, "orig": 1, "offs": 2, "both": 3}
 
 
@@ -143,7 +164,7 @@ def sketch_trim(model, selection: str, option: str = "closest", x: float = 0.0, 
         raise ValueError("未知的剪裁选项 %r；合法：%s" % (option, ", ".join(sorted(TRIM_CHOICES))))
     _select_spec(model, selection)
     return get_com_member(_sketch(model) and get_com_member(model, "SketchManager"),
-                          "SketchTrim", TRIM_CHOICES[key], float(x), float(y), 0.0)
+                          "SketchTrim", TRIM_CHOICES[key], _f(x), _f(y), 0.0)
 
 
 def sketch_extend(model, selection: str, x: float = 0.0, y: float = 0.0):
@@ -164,7 +185,7 @@ def sketch_offset(model, selection: str, offset_mm: float, *, both_directions: b
                          % (make_construction, ", ".join(sorted(OFFSET_CONSTRUCTION))))
     _select_spec(model, selection)
     return get_com_member(get_com_member(model, "SketchManager"), "SketchOffset2",
-                          float(offset_mm), bool(both_directions), bool(chain),
+                          _f(offset_mm), bool(both_directions), bool(chain),
                           OFFSET_CAPS[cap_ends], OFFSET_CONSTRUCTION[make_construction],
                           bool(add_dimensions))
 
@@ -173,7 +194,7 @@ def sketch_fillet(model, selection: str, radius_mm: float, constrained_corners: 
     """★ 绘制圆角：`CreateFillet(Radius, ConstrainedCorners)`（★ 用**选中的两条**草图段）。"""
     _select_spec(model, selection)
     seg = get_com_member(get_com_member(model, "SketchManager"), "CreateFillet",
-                         float(radius_mm), int(constrained_corners))
+                         _f(radius_mm), int(constrained_corners))
     if seg is None:
         raise RuntimeError("CreateFillet 返回 None ⇒ 草图圆角没建出来"
                            "（★ 官方要求两条草图段**相交**且都已选中）")
@@ -190,7 +211,7 @@ def sketch_linear_pattern(model, selection: str, num_x: int = 2, num_y: int = 1,
     _select_spec(model, selection)
     return get_com_member(get_com_member(model, "SketchManager"),
                           "CreateLinearSketchStepAndRepeat",
-                          int(num_x), int(num_y), float(spacing_x_mm), float(spacing_y_mm),
+                          int(num_x), int(num_y), _f(spacing_x_mm), _f(spacing_y_mm),
                           math.radians(float(angle_x_deg)), math.radians(float(angle_y_deg)),
                           str(delete_instances or ""),
                           bool(spacing_dim_x), bool(spacing_dim_y), bool(angle_dim),
@@ -206,7 +227,7 @@ def sketch_circular_pattern(model, selection: str, arc_radius_mm: float = 20.0,
     _select_spec(model, selection)
     return get_com_member(get_com_member(model, "SketchManager"),
                           "CreateCircularSketchStepAndRepeat",
-                          float(arc_radius_mm), math.radians(float(arc_angle_deg)),
+                          _f(arc_radius_mm), math.radians(float(arc_angle_deg)),
                           int(pattern_num), math.radians(float(pattern_spacing_deg)),
                           bool(pattern_rotate), str(delete_instances or ""),
                           bool(radius_dim), bool(angle_dim), bool(count_dim))

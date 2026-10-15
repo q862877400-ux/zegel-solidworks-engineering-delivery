@@ -1,0 +1,63 @@
+规格 211 · B8 收口（八）：★★★★★ **一次翻案** —— 「曲线驱动阵列」与「零部件阵列」从**不做**改回**可做**
+
+一、★★★★★ **翻案经过（★ 读一份 `## Remarks` 定两项的打算，★ 结果读出一处自己的错）**
+★ 我原打算读 `FeatureLocalCurveDrivenPattern` 的 `## Remarks` 来**同时定两项** ✓
+★★ 而**一读签名就发现**：★ **它根本不需要 ACL** ✗✗
+
+二、★★★★ **官方签名（★ 逐字读过）**
+```
+Feature FeatureLocalCurveDrivenPattern(
+    bool FlipDir1, int Num1, bool EqualSpacing1, double Spacing1,
+    int ReferencePoint, int CurveMethod, int AlignMethod,
+    bool Direction2, bool FlipDir2, int Num2, bool EqualSpacing2,
+    double Spacing2, bool PatternSeedOnly )
+```
+⇒ ★★★★ **纯参数式 13 参 · ★ 不带 `AccessSelections`** ✓✓
+
+三、★★★★★ **我原判「不做」的链条错在哪**（★ 这是本批真正值钱的地方）
+★ 原链条四步：★ ① `IModelDoc2::FeatureCurvePattern` **已 `Obsolete`** ✗ ·
+★ ② 现代入口 = `CreateFeature` + `ICurveDrivenPatternFeatureData`（**属性式**）✗ ·
+★ ③ 那个 Data **带 `AccessSelections`** ✗ · ★ ④ **事实 47**：该族在 pywin32 到不了建成 ✗
+⇒ ★★★ **四步本身每一步都对** ✓ —— ★★ **错的是"覆盖范围"** ✗✗：
+  ★★★ **它只覆盖了「别人家的入口」，★ 而漏掉了这个名字里就写着 `CurveDriven` 的入口** ✗✓
+★★★ **定则（★ 本批立）**：
+  ★★★★ **「某个入口要 ACL」≠「这个能力要 ACL」** ✗ ——
+  ★★ **判「不做」之前，要把同族的入口**全列一遍**** ✓
+  ★（★ 而我这次用的正是**上一批刚立的定则**：★ `Get-ChildItem -Recurse -Filter '*<名字>*'` 全扫 ✓✓）
+
+四、★★★★ **两项共用同一个入口**（★ 覆盖表却分在两域）
+| 覆盖表行 | 域 | 真入口 |
+|---|---|---|
+| ★ 曲线驱动阵列 | ★ 特征 | ★★ **`IFeatureManager::FeatureLocalCurveDrivenPattern`** ✓ |
+| ★ 零部件阵列 | ★ 装配 | ★★ **同一个** ✓ |
+⇒ ★★★ **所以两项同判「可做」** ✓（★ **一处证据同时定两项** —— ★ 与计划一致 ✓）
+
+五、★★ **旁证（★ 顺手核到的）**
+· ★★ **「零部件阵列」的原依据**写「创建要走 `CreateDefinition` 类的 **5 个 `swFmLocal*Pattern` 常量**」✗
+  ⇒ ★★★ **而 `*LocalPattern*` 全扫**为空**** ✗ —— ★ 那句话**查不到落实** ✓
+  ★（★ 它的**第 ② 步**写的其实就是"属性式那条路" ⇒ **与曲线驱动阵列原判同源同错** ✓）
+· ★★ **「成形工具」**：★ 参数式入口 `CreateFormTool2`/`InsertFormToolFeature` **无 ACL** ✓；
+  ★ 而 `ILibraryFormToolFeatureData` **带 `AccessSelections`** ✗ ⇒ ★★ **只走参数式** ✓（★ 台账已这么写 ✓）
+· ★ **「SpeedPak」**：★ `IAssemblyDoc::CreateSpeedPak(int)` ✓（★ 前置 = **选中的子装配** ✓）
+
+六、★ 台账随之变化
+· ★★ **不做 8 → 7** · ★★ **可做 11 → 12** ✓
+· ★ 21 项终判：★ **可做 12 · 不做 7 · 已覆盖 1 · 待实测 1** ✓
+
+七、★★★★ **本批又踩了事实 48 的坑（★ 如实记）**
+★ 我用「补丁文件 + 短脚本搬运」时，★ **把 `p.write_text(...)` 写在了 `ast.parse(...)` **之前** ✗**
+⇒ ★★ **语法错的内容**已经落盘**，★ 只是紧接着的 `ast.parse` 才报出来 ✗
+★ 修法：★ 把补丁里**两处裸引号**换成 `「」` ✓（★ 一处是 `"5 个常量"`、★ 一处是 `"5 个 swFmLocal*Pattern"` ✓）
+★★ **事实 48 定则②明写**：★ **批量脚本跑完必须核对落盘** ✗ ——
+  ★★ 而**更稳的顺序是「先 `ast.parse` 再 `write_text`」** ✓ ⇒ ★ **本批把它补进定则** ✓
+
+八、★ 交付物
+· `tools/spec211_manual_verdicts.py`：★ 两条**不做 → 可做** + ★ 完整翻案依据 ✓
+· `docs/spec211-entry-ledger.md` · `specs/211-user-feature-gaps/b8-final-table.md` 待重生成 ✓
+
+九、★ 下一轮
+★ ① 重生成台账与终表 · ★ ② **21 项现在的账**：
+  ★★ **可做 12**（★ 已做 6：`verified` 2 + `stitched` 4 · ★ **未做 6**：★ **曲线驱动阵列 · 零部件阵列 ·
+  焊接符号 · 成形工具 · 爆炸直线** · SpeedPak ✓）· ★ **不做 7** · ★ **已覆盖 1** · ★ **待实测 1**（PDM ✓）
+  ⇒ ★★★ **还差 7 项**（★ 6 项可做未做 + 1 项待实测 ✓）
+★ ③ 然后 **B8 的文档部分**（★ `tasks.md` / `goal-bar.md` / `HANDOFF.md` ✓）

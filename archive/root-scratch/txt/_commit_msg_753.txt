@@ -1,0 +1,54 @@
+fix(阶段2): ★★★★★ **T1 第 4 条 —— ★ `AddMate5` 判定为「记档保留」**（★ 官方废弃、★ 而**后继是换范式**）；★ 并按官方 Remarks 的三条分流**写清了该怎么换**
+
+■ 一 · ★ 逐条流程 ①：查官方签名与 Remarks
+  ★ **官方逐字**（★ `C:\swapi\types\IAssemblyDoc\AddMate5.md`）：
+    > ★ 「**Obsolete. Superseded by `IAssemblyDoc::CreateMate`**.」✓
+  ★★ **而它的 `## Remarks` 逐字给了**三条分流****（★ 这很关键）：
+    · ★ 「Standard, advanced, and mechanical mates, use **`IAssemblyDoc::CreateMate`**」✓
+    · ★★ 「**Misaligned concentric** mates, use `IAssemblyDoc::AddConcentricMateWithTolerance`」✓
+    · ★★★ 「**Cylindrical distance** mates, use `IAssemblyDoc::AddDistanceMate`」✓
+  ★★★ **后继逐字**：★ `System.object CreateMate(System.object MateData)` ⇒ 回 `IFeature` ✓
+    ★★ 而它的 Remarks 逐字：★ 「**`IMateFeatureData` is the base interface for the following
+      mate-specific interfaces**（★ 带 `*` 的表示**支持预选配合实体**）」✓
+    ⇒ ★★★★ **即：★ 要先按配合种类**造一个 `I*MateFeatureData`**、★ 设好属性、★ 再 `CreateMate`** ✓
+
+■ 二 · ★★★★ 为什么本处**不能**直接换（★ 判据是"能不能一处替换"）
+  ★ **本仓是**通用包装****：★ `scripts/sw_assembly.py::add_mate` 的 `mate_type` 是**运行时参数**、
+    ★★ 而 `scripts/sw_assembly_doc.py::add_mate(doc, *args)` 是 **15 个实参直传** ✓
+  ★★ ⇒ ★ **要换就得**先按 `mate_type` 分流**** ⇒ ★★ **不是一处替换、★ 是重构调用方** ✓
+  ★★★ **而 `AddMate5` **当前仍可调****（★ 「废弃 ≠ 不可达」—— ★ **事实 12** 那族）✓
+  ★★★★ **⇒ 硬换成错的分流会**直接坏掉装配功能**** ⇒ ★ **本轮**记档保留**** ✓
+
+■ 三 · ★ 修法（★ **不换、★ 而写清"该怎么换"**）
+  ★ **两处都加**详尽的来源块**（★ 对称 —— 读者从任一处进来都看得到）：
+    · ★ 官方逐字（★ 废弃行 + 三条分流 + 后继前置）✓
+    · ★★ **为什么不能一处替换**（★ 通用包装 + `mate_type` 是参数）✓
+    · ★★★ **该怎么换**（★ 就用 `mate_type` 分流：★ 同心 ⇒ `AddConcentricMateWithTolerance` ·
+      ★ 距离 ⇒ `AddDistanceMate` · ★ 其余 ⇒ `I*MateFeatureData` + `CreateMate`）✓
+    · ★★★★ **前置条件**：★ 每条分流都要**先真机验证**（★ 逐条流程第 ② 步）——
+      ★ 而**装配域当前 `level` 是 `stitched`**（★ 本会话早先降过级）⇒
+      ★★★ **不满足"有真机证据"** ⇒ **本轮不换** ✓
+
+■ 四 · ★★★ 可复用判据（★ 本轮）
+  > ★★★★ **「不可换」也要是**有据的判定**、★ 而且要写进**第一现场**** ——
+  > ★ 判据是**能不能一处替换**：★ 能 ⇒ 换；★ **不能 ⇒ 记档、★ 并写清"该怎么换"** ✓
+  ★★ **与轮 66/76 那条「旧句必须消失是错的判据」同族**：
+    ★★★ **"没换"与"换了"都可能是对的 —— ★ 关键是**有没有写清依据**** ✓
+  ★★★ **而本轮的"该死线"是**装配域 `stitched`****：★ 官方说「要真机验证」、
+    ★★ 而**那正是任务书说的「不可换 18 条（★ 事实 47）」那一档** ⇒ ★ **按档保留** ✓
+
+■ 五 · ★★ 新增测试（★ `tests/test_obsolete_addmate5_kept_on_purpose.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★ **前提断言** | ★ **读官方页**确认三条分流都在（★ 判据的锚点）✓ |
+  | ★★★ **核心断言** | ★ **两处**都要写明「**记档保留（★ 有意不换）**」+ 官方废弃依据 ✓ |
+  | ★★★ **负例 · 理由要具体** | ★ 至少要写**两条分流** + ★ **`IMateFeatureData` 那个前置** —— ★ 证明理由是从**官方原文**读出来的、★ 不是我推的 ✓ |
+  | ★★★★ **负例 · 别乱换** | ★ **在这条记档期间，★ 代码仍要调 `AddMate5`** —— ★ 「没换」必须是**有意的**、★ 而不是"忘了" ✓ |
+
+■ 六 · ★ 收尾
+  ★ 相关回归：★ **20 passed / 1 skipped**（★ 装配族）✓
+  ★★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★★ **真命中：★ 34**（★ 那 2 条**按档保留**、★ **不是消掉**）⇒ ★ **剩余生产待办：★ 12 条**
+    （★ 其中 2 条是**已判定保留**的）✓
+  ★★★★ **下一轮**：★ `FeatureFillet` / `FeatureLinearPattern3` / `FeatureCircularPattern4` /
+    `CreateSpline2` / `AutoDimension2` 等 ×1 的那些（★ 各有明确后继、★ 多是**同名 +1 代**）✓

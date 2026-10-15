@@ -1,0 +1,542 @@
+
+==========================================================================================
+### advanced_features  (pat=advanced_feature|advanced features)  hits=0
+
+==========================================================================================
+### api_automation  (pat=api_automation)  hits=0
+
+==========================================================================================
+### arc  (pat=sketch_add_arc|add_3point_arc|create_arc|sketch_arc)  hits=9
+  tool_specs_batch16.py:13: | ⚠ 碰**规则 3**（裸坐标）| 6 | `add_dimension` · `hole_wizard` · `linear_pattern` · `sketch_arc` · `sketch_centerline` · `sketch_polygon` |
+  tool_specs_batch16.py:37: → 规则 3（裸坐标）：add_dimension · hole_wizard · linear_pattern · sketch_arc ·
+  tool_specs_batch21.py:13: `sketch_circle` · `sketch_corner_rectangle` · `sketch_polygon` · `sketch_slot` · `sketch_arc` …
+  tool_specs_batch54.py:11: #   挂：sketch_arc · sketch_ellipse · sketch_polygon · sketch_slot · sketch_centerline
+  tool_specs_batch54.py:44: name="solidworks_sketch_add_arc",
+  tool_specs_batch54.py:46: module="sw_part", inject="model", function="sketch_arc",
+  tool_specs_batch65.py:96: name="solidworks_sketch_add_3point_arc",
+  sw_part.py:564: def sketch_arc(model, cx, cy, x1, y1, x2, y2, direction=1):
+  sw_part.py:2045: "sketch_line", "sketch_rectangle", "sketch_circle", "sketch_arc",
+
+==========================================================================================
+### bodies  (pat=def .*\bbodies\b|solid_bodies|get_bodies|body_count|list_bodies)  hits=48
+  tool_specs_batch2.py:108: doc=("Read back the sheet-metal state of the active part: thickness, bend radius, bend allowance settings, flat-pattern state. Read-only. VERIFIED ON 
+  tool_specs_batch38.py:18: ★ ⚠ `body_name` 的合法值由 `solidworks_costing_list_bodies` 给出；`method_name` 由
+  tool_specs_batch38.py:69: name="solidworks_costing_body_count",
+  tool_specs_batch38.py:71: module="sw_costing", function="get_body_count_report",
+  tool_specs_batch38.py:77: name="solidworks_costing_list_bodies",
+  tool_specs_batch38.py:92: description="A body name from solidworks_costing_list_bodies."),
+  tool_specs_batch89.py:27: #     · `sw_costing.get_body_count` / `get_bodies` / `get_costing_method` /
+  tool_specs_batch89.py:29: #       （`get_body_count_report` 等）已挂成工具**（`solidworks_costing_body_count` /
+  tool_specs_batch89.py:30: #       `…_list_bodies` / `…_method_value` / `…_read_analysis` / `…_evidence`）⇒ **FR-006 去重** ✓
+  tool_specs_batch89.py:50: "★ 可用 `solidworks_costing_list_bodies` 先列出实体名。"),
+  tool_specs_batch89.py:59: "`get_body_count_report` 逐字把 `_costing_chain(cost_manager)` 取出的对象喂给 "
+  tool_specs_batch89.py:60: "`get_body_count(cost_part)`）✓ ⚠ **未在本机实测**（铁律 2）。",
+  sw_costing.py:59: "get_bodies",
+  sw_costing.py:60: "get_body_count",
+  ... (+34 more)
+
+==========================================================================================
+### classify_feature_tree  (pat=classify)  hits=1
+  server.py:2520: #         `tools/sw_guard.py`（★ `scan_family_windows` / `classify_dialog` / `dismiss`）
+
+==========================================================================================
+### composite_curve  (pat=composite_curve)  hits=13
+  tool_specs_batch16.py:12: | ★ **干净**（无坐标/长度/角度）| 3 | `add_sketch_relation` · **`insert_composite_curve`** · `mirror_feature` |
+  tool_specs_batch16.py:17: ★★ **而"干净"里的 `insert_composite_curve` 必须排除**（不是规则问题，是**它本来就坏**）：
+  tool_specs_batch16.py:42: → 本来就坏：insert_composite_curve ⇒ ★ **不挂**，等成因查明（事实 124）
+  tool_specs_batch32.py:35: `insert_dome(model, height, reverse, elliptic)` · `insert_composite_curve(model)`
+  tool_specs_batch32.py:126: name="solidworks_part_insert_composite_curve",
+  tool_specs_batch32.py:128: module="sw_part", function="insert_composite_curve_report",
+  sw_part.py:1862: # 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `composite_curve`。
+  sw_part.py:1868: #           ③ ★ 官方示例 `examples\Insert_a_Composite_Curve_Example_CSharp.md`：
+  sw_part.py:1879: # 覆盖:   后续同级定义 —— 本块文档化 `insert_composite_curve` 一个单元。
+  sw_part.py:1881: def insert_composite_curve(model):
+  sw_part.py:1968: def insert_composite_curve_report(model, feature_name: str = ""):
+  sw_part.py:1971: ★ 能力层的 `insert_composite_curve` **本身已经 raise on False**（★ 不是"假通过"），
+  sw_part.py:1976: lambda: insert_composite_curve(model), "composite_curve")
+
+==========================================================================================
+### delete_feature  (pat=feature_delete|delete_feature)  hits=4
+  tool_specs_batch23.py:196: name="solidworks_feature_delete",
+  tool_specs_batch23.py:198: module="sw_part", function="feature_delete",
+  sw_part.py:1401: def feature_delete(model, feature_name: str) -> None:
+  sw_surface_features.py:413: #   （★ 另两条 `delete_feature` / `rename_feature` 是**高风险写**，按硬约束⑦不碰）。
+
+==========================================================================================
+### edges  (pat=\"EDGE\"|'EDGE'|entities_on_body)  hits=53
+  tool_specs_batch14.py:6: 队列 A3 原本列了 4 个（`get_active_view` / `activate_view` / `add_perspective` / `entities_on_body`），
+  tool_specs_batch14.py:12: | `sw_selection_spec.entities_on_body` | `(model, kind: str, *, body_index: int = 0)` | `model` ✓ | **挂** |
+  tool_specs_batch14.py:55: name="solidworks_entities_on_body",
+  tool_specs_batch14.py:57: module="sw_selection_spec", function="entities_on_body",
+  tool_specs_batch23.py:14: `resolve_selection(_model(), params.selection, "EDGE")`
+  tool_specs_batch23.py:94: return resolve_selection(_model(), params.selection, "EDGE")
+  tool_specs_batch4.py:7: | `create_edge_flange(model, spec)` | C2 | 文档串：「调用前必须先用 `_select_by_id` 把目标**边**选入选区」 | `pre_call` → `resolve_selection(selection, "EDGE")` |
+  tool_specs_batch4.py:172: _select(params, "EDGE")
+  tool_specs_batch4.py:226: path_ref = resolve_entity(model, p.path_selection, "EDGE")
+  tool_specs_batch53.py:57: "⚠ 序号顺序官方**未承诺稳定**（★ 见 `entities_on_body`）⇒ 不要把它当跨重建的持久引用。",
+  tool_specs_batch53.py:78: Param("kind", str, default="EDGE", description="实体种类：EDGE / FACE / VERTEX"),
+  tool_specs_batch53.py:110: Param("kind", str, default="EDGE", description="实体种类：EDGE / FACE / VERTEX"),
+  tool_specs_batch53.py:130: Param("kind", str, default="EDGE", description="实体种类：EDGE / FACE / VERTEX"),
+  tool_specs_batch56.py:59: Param("kind", str, default="EDGE", description="实体种类：EDGE / FACE / VERTEX"),
+  ... (+39 more)
+
+==========================================================================================
+### error_handling  (pat=error_handling|explain_hresult|hresult)  hits=27
+  tool_specs_batch80.py:1: """★ 批次 80：自动化**诊断知识**（HRESULT 释义 / 命令锁 / 首选项开关）+ COM 陷阱判定 + 会话忙闲检测。"""
+  tool_specs_batch80.py:4: # 文件:   `scripts/sw_automation_knowledge.py`（HRESULT 释义 · 命令锁 · 首选项开关）
+  tool_specs_batch80.py:11: #           · `explain_hresult` / `explain` 的释义表出自本仓（★ 不是官方枚举页）；
+  tool_specs_batch80.py:23: #     · `sw_com_traps.explain` —— ★ 与 `sw_automation_knowledge.explain_hresult` **同一件事**
+  tool_specs_batch80.py:39: # ── ① HRESULT 释义与命令锁（6）────────────────────────────────────────
+  tool_specs_batch80.py:41: name="solidworks_automation_explain_hresult",
+  tool_specs_batch80.py:42: title="Explain an HRESULT in Plain Words (repo's own table)",
+  tool_specs_batch80.py:43: module="sw_automation_knowledge", function="explain_hresult",
+  tool_specs_batch80.py:45: params=[Param("code", int, description="The HRESULT as an integer (e.g. -2147352571 for "
+  tool_specs_batch80.py:49: doc="Turn an HRESULT into plain words using THIS REPO's table. ★★ Its own docstring states the discipline: when the code is not in the table it says s
+  sw_automation_knowledge.py:15: #   ③ 第三方项目记录的 HRESULT 含义（codestack 记的 PDM 建连接错误）
+  sw_automation_knowledge.py:30: "HRESULTS",
+  sw_automation_knowledge.py:34: "explain_hresult",
+  sw_automation_knowledge.py:45: # 仓库:   C:\swprojects\codestack (MIT License)  +  COM 标准 HRESULT
+  ... (+13 more)
+
+==========================================================================================
+### execute_workflow  (pat=execute_workflow|workflow)  hits=14
+  tool_specs_batch19.py:7: （其实现的内核正是 `drawing_workflow.inspect_drawing_structure`）。
+  tool_specs_batch75.py:74: "（`1st` 非 `First`）⇒ ★ 已在 `drawing_workflow.py` 修正。该限制**未**挂成工具。",
+  tool_specs_batch77.py:295: "`1st` 非 `First`）⇒ 已在 `drawing_workflow.py` 修正、**待真机复验** ⇒"
+  server.py:698: """Input for the structured SolidWorks engineering drawing workflow."""
+  sw_api_cosworks.py:2891: 'SwxDRDOneClickWorkflowInfo',
+  sw_api_cosworks.py:2892: 'SwxDRDOneClickWorkflowInfo',
+  sw_drawing.py:17: / "drawing_workflow.py"
+  sw_drawing.py:19: _SPEC = importlib.util.spec_from_file_location("solidworks_drawing_workflow", _IMPLEMENTATION)
+  sw_drawing_expose.py:6: #   ① ★ **不重写实现**：真正的实现早已在 `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py`，
+  sw_drawing_expose.py:75: **是假阴性**，已在 `drawing_workflow.py` 修掉（★ 修完**仍需真机复验**）。
+  sw_drawing_expose.py:94: 真名是 **`Create1stAngleViews2`**（`1st` 非 `First`）⇒ 已在 `drawing_workflow.py` 修正。
+  sw_drawing_view_types.py:8: #     · `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py:1798`
+  sw_review.py:178: #   ⇒ ★ 同一份知识不再两个家（另一处是 subskills/.../drawing_workflow.py）。
+  sw_weldment.py:589: #         `workflow-15` 的 **B-3** 逐字点出：「★ 我们**实际调用**的 `IFeature.GetErrorCode()`
+
+==========================================================================================
+### faces  (pat=\"FACE\"|'FACE')  hits=67
+  tool_specs_batch1.py:14: - **内部**：`SelectByID2("", "FACE", x, y, z, …)` **必须**给一个**面上的点** —— 官方 API 的形状
+  tool_specs_batch26.py:104: """★ **调用目标函数之前**：把 `selection`（声明式）解析成真实选区（`kind="FACE"`）。
+  tool_specs_batch26.py:111: return resolve_selection(_model(), params.selection, "FACE")
+  tool_specs_batch29.py:90: """★ **调用目标函数之前**：把 `selection`（声明式）解析成真实选区（`kind="FACE"`）。"""
+  tool_specs_batch29.py:93: return resolve_selection(_model(), params.selection, "FACE")
+  tool_specs_batch4.py:8: | `create_gusset(model, spec)` | C2 | 来源块：「**支撑面须由调用方先用 `SelectByID2` 选好**」 | `pre_call` → `resolve_selection(selection, "FACE")` |
+  tool_specs_batch4.py:176: _select(params, "FACE")
+  tool_specs_batch4.py:180: _select(params, "FACE")
+  tool_specs_batch61.py:47: #                                                *, kind="FACE", source_body_index=0, target_body_index=0)
+  tool_specs_batch61.py:63: Param("kind", str, default="FACE",
+  tool_specs_batch63.py:25: # 官方依据: `IModelDocExtension.SelectByID2("", "FACE", x, y, z, …)`（★ 按**面上的点**定位 —— 事实 32）·
+  tool_specs_batch82.py:160: Param("face1_name", str, default="", description="第一个要配合的**面**名（字符串，**不是坐标**）。★ 源码 sw_assembly.py:691 把实体类型**写死**为 'FACE'（与 add_mate_distance 不同，后者把 t
+  sw_api_sldworks.py:11161: 'Face',
+  sw_api_sldworks.py:11162: 'Face',
+  ... (+53 more)
+
+==========================================================================================
+### features  (pat=feature_list_names|feature_present|iter_features)  hits=27
+  tool_specs_batch35.py:19: · ⚠ `iter_features_recursive(model)` ⇒ ★ **内部辅助**，不是工具候选（事实 191）
+  tool_specs_batch6.py:6: * **COM 辅助/内部函数**（`get_extension` / `byref_pair` / `iter_features_recursive`）—— 不是用户操作；
+  tool_specs_batch7.py:18: | `sw_weldment.iter_features_recursive` | **生成器**：注册器按值传参/返回，生成器需先物化，**本批不动** |
+  tool_specs_batch81.py:123: name="solidworks_feature_list_names",
+  tool_specs_batch81.py:133: name="solidworks_feature_present",
+  tool_specs_batch81.py:135: module="sw_feature_readback", function="feature_present",
+  tool_specs_batch81.py:140: doc="★ 官方签名（逐字，来自 sw_feature_readback.py）：`查不到（本函数不是 API 成员，无签名可抄）。★ 间接触达的成员官方 `**Signature**:` 逐字：`System.object FirstFeature()`（IModelDoc2/FirstFeat
+  tool_specs_batch84.py:86: name="solidworks_weldment_iter_features",
+  tool_specs_batch84.py:88: module="sw_weldment", function="iter_features_recursive",
+  tool_specs_batch84.py:92: doc="★ 官方签名（逐字，来自 sw_weldment.py）：`查不到（本函数不是 API 成员，无官方签名可抄）。★ 真源是本仓 scripts/sw_weldment.py 第 294-306 行（`def iter_features_recursive(model)` → 内部 `wal
+  sw_feature_readback.py:49: __all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
+  sw_feature_readback.py:99: def feature_present(model, feature_name: str) -> bool:
+  sw_feature_readback.py:161: res["present"] = feature_present(model, feature_name)
+  sw_part.py:1921: from sw_feature_readback import feature_readback, feature_present
+  ... (+13 more)
+
+==========================================================================================
+### file_properties  (pat=custom_propert|file_propert)  hits=68
+  tool_specs_batch20.py:5: · `solidworks_set_custom_properties`（**写**）—— 上游 45 个工具之一，早就在。
+  tool_specs_batch20.py:7: `sw_pdm.get_custom_property_names_and_values` 要 **PDM 许可证**（`sw_pdm` 模块头自述
+  tool_specs_batch20.py:13: ## ★★★ 调用形态由**真机探针**定死（`tools/probe_custom_property_reads.py`，轮 227）
+  tool_specs_batch20.py:32: 能力层还有 `custom_property_count` 与 `custom_property_names`，但
+  tool_specs_batch20.py:33: **它们的结果已被「读全部」包含**（`custom_properties` 同时回 `count` 与逐条 `name`）⇒
+  tool_specs_batch20.py:38: | `solidworks_custom_property_get` | 读**一个**属性的值 + 类型（AI 问"这个零件的零件号是什么"）|
+  tool_specs_batch20.py:39: | `solidworks_custom_property_list` | 读**全部**属性（AI 问"这个零件有哪些属性"）|
+  tool_specs_batch20.py:48: #          `tools/probe_custom_property_reads.py`（见上）
+  tool_specs_batch20.py:61: _WHY = ("★ Reading only — writing is solidworks_set_custom_properties. The API's by-ref "
+  tool_specs_batch20.py:68: name="solidworks_custom_property_get",
+  tool_specs_batch20.py:70: module="sw_custom_property", function="custom_property",
+  tool_specs_batch20.py:84: name="solidworks_custom_property_list",
+  tool_specs_batch20.py:86: module="sw_custom_property", function="custom_properties",
+  tool_specs_batch33.py:15: · 配置族 ⇒ ★ **有现成的**：`tools/capture_custom_property_evidence.py` + `tools/probe_custom_property_reads.py`
+  ... (+54 more)
+
+==========================================================================================
+### fold  (pat=\bfold\b|unfold|flat_pattern)  hits=20
+  tool_specs_batch59.py:15: # ★★ **`export_flat_pattern_dxf` 本批不注册**：★ 它的前置是**钣金件**，
+  sw_api_sldworks.py:3560: 'CreateUnfoldedViewAt': 3,
+  sw_api_sldworks.py:3561: 'CreateUnfoldedViewAt2': 4,
+  sw_api_sldworks.py:3562: 'CreateUnfoldedViewAt3': 4,
+  sw_api_sldworks.py:5729: 'InsertSheetMetalUnfold': 0,
+  sw_api_sldworks.py:6351: 'InsertSheetMetalUnfold': 0,
+  sw_api_sldworks.py:20437: 'CreateUnfoldedViewAt': 14,
+  sw_api_sldworks.py:20438: 'CreateUnfoldedViewAt2': 119,
+  sw_api_sldworks.py:20439: 'CreateUnfoldedViewAt3': 222,
+  sw_api_sldworks.py:22466: 'InsertSheetMetalUnfold': 66175,
+  sw_api_sldworks.py:23088: 'InsertSheetMetalUnfold': 66175,
+  sw_drawing_view_types.py:24: #     | swDrawingProjectedView         |  4 = Projected (unfolded) view|
+  sw_drawing_view_types.py:45: SW_DRAWING_PROJECTED_VIEW = 4              # swDrawingProjectedView         = 4  Projected (unfolded) view
+  sw_export.py:231: return export_flat_pattern_dxf(model, output_path)
+  ... (+6 more)
+
+==========================================================================================
+### gdt  (pat=gtol|gdt)  hits=152
+  tool_specs_batch39.py:10: · `gtol_insert`（verified · 0 工具）⇒ `sw_gtol.insert_gtol(model)`（**零参**）
+  tool_specs_batch39.py:11: ★ 而 `verify_gtol_smoke.py` 真机 **3/5**（★ `insert_gtol` 那半通过）。
+  tool_specs_batch39.py:28: ★ `insert_helix` / `insert_gtol` ⇒ 判"不抛异常 **且** 特征树有变化"（★ 规则 6：不静默成功）。
+  tool_specs_batch39.py:34: # 定位:   24h 计划 段 5 续（Spec Kit `156`）—— 填 `equations` / `helix_and_spiral` / `gtol_insert` 三条空条目。
+  tool_specs_batch39.py:37: #          `IModelDoc2.InsertGtol`（★ 见 `scripts/sw_gtol.py`）
+  tool_specs_batch39.py:106: #: ── 形位公差（★ 空条目 `gtol_insert` 的填实）────────────────────────
+  tool_specs_batch39.py:108: name="solidworks_gtol_insert",
+  tool_specs_batch39.py:109: title="Insert a GTol Annotation (gets the object back)",
+  tool_specs_batch39.py:110: module="sw_gtol", function="insert_gtol",
+  tool_specs_batch39.py:113: doc='Insert a GTol annotation (★ zero-argument: IModelDoc2.InsertGtol()). ★ The criterion is that it returns an object and the feature tree changes. ⚠
+  tool_specs_batch73.py:231: "★ **判据 = 全图纸 `IView.GetDatumTagCount` 求和的增量**，★ 不是「返回非 None」。 ★ 别名: annotation, balloon, datum, gdt, gtol, note, tolerance",
+  sw_api_sldworks.py:269: 'IGtol',
+  sw_api_sldworks.py:270: 'IGtolFrame',
+  sw_api_sldworks.py:368: 'IPMIGtolBoxData',
+  ... (+138 more)
+
+==========================================================================================
+### hide_all_planes  (pat=hide_all_planes|hide_plane|show_all_planes|plane.*visib)  hits=0
+
+==========================================================================================
+### line  (pat=sketch_add_line|create_line)  hits=1
+  tool_specs_batch21.py:101: name="solidworks_sketch_add_line",
+
+==========================================================================================
+### load_part  (pat=open_document|open_model|load_part)  hits=27
+  tool_specs_batch26.py:8: （`andrewbartels1` 那 2 个是**误命中** —— 它的 "load" 指 `load_part` / `load_assembly`）
+  server.py:75: "open_document": connect.open_document,
+  server.py:932: raise RuntimeError("No active SolidWorks document. Use solidworks_open_document or solidworks_new_document first.")
+  server.py:1579: name="solidworks_open_document",
+  server.py:1588: def solidworks_open_document(params: SolidWorksOpenDocumentInput) -> str:
+  server.py:1593: model = open_document(
+  server.py:2165: source_model = open_document(sw, str(source_path), read_only=False, silent=True, raise_on_error=True)
+  server.py:2230: drawing_model = open_document(sw, params.drawing_path, read_only=True, silent=True, raise_on_error=True)
+  server.py:2270: drawing_model = open_document(sw, params.drawing_path, read_only=True, silent=True, raise_on_error=True)
+  sw_assembly.py:29: from .sw_connect import call_com_member, get_com_member, open_document, safe_get_com_member, set_com_member
+  sw_assembly.py:32: from sw_connect import call_com_member, get_com_member, open_document, safe_get_com_member, set_com_member
+  sw_assembly.py:185: opened = open_document(sw, component_path, read_only=False, silent=True)
+  sw_connect.py:862: （★ 本文件 `open_document` 的 `LoadFile4` 分支就是这么用的）✓
+  sw_connect.py:869: #   在调用方的 `finally` 里还回去（★ 事实 525 —— 见 open_document 的 LoadFile4 分支）
+  ... (+13 more)
+
+==========================================================================================
+### mate  (pat=add_mate|_mate\b|list_mates)  hits=51
+  tool_specs_batch23.py:144: #:     （★ 已有的是**组件**的 `suppress_component` · **配合**的 `suppress_mate`）✓
+  tool_specs_batch25.py:5: ★ 已有工具：`add_component` · `add_*_mate` · `collect_assembly_bom` · `pack_and_go` ·
+  tool_specs_batch25.py:85: name="solidworks_assembly_list_mates",
+  tool_specs_batch35.py:13: · ✅ `create_profile_center_mate(model, entities, *, mate_alignment=0, offset_distance=0.0, …)`
+  tool_specs_batch35.py:110: name="solidworks_weldment_create_profile_center_mate",
+  tool_specs_batch35.py:112: module="sw_weldment", function="create_profile_center_mate",
+  tool_specs_batch82.py:21: name="solidworks_assembly_add_mate_checked",
+  tool_specs_batch82.py:23: module="sw_assembly", function="add_mate5_checked",
+  tool_specs_batch82.py:155: name="solidworks_assembly_add_parallel_mate",
+  tool_specs_batch82.py:157: module="sw_assembly", function="add_mate_parallel",
+  tool_specs_batch82.py:160: Param("face1_name", str, default="", description="第一个要配合的**面**名（字符串，**不是坐标**）。★ 源码 sw_assembly.py:691 把实体类型**写死**为 'FACE'（与 add_mate_distance 不同，后者把 t
+  tool_specs_batch82.py:163: doc="★ 官方签名（逐字，来自 sw_assembly.py）：`def add_mate_parallel(asm_model, face1_name, face2_name):`。查不到同名官方成员（source_kind=repo_original）—— 本函数不是 SolidWorks 
+  server.py:112: "add_mate5_checked": assembly.add_mate5_checked,
+  server.py:118: "select_entities_for_mate": assembly.select_entities_for_mate,
+  ... (+37 more)
+
+==========================================================================================
+### mates  (pat=list_mates|mates_count)  hits=1
+  tool_specs_batch25.py:85: name="solidworks_assembly_list_mates",
+
+==========================================================================================
+### model_info  (pat=collect_model_summary|model_info)  hits=7
+  tool_specs_batch23.py:49: （读数走 `solidworks_collect_model_summary` 的那条能力层路径）
+  tool_specs_batch8.py:5: 轮 97 想暴露"特征树遍历"时撞见 `sw_review.collect_model_summary` ——
+  tool_specs_batch8.py:14: | ✅ | `sw_review.collect_model_summary` | **特征树摘要**（本轮起念的那个能力）|
+  tool_specs_batch8.py:45: name="solidworks_collect_model_summary",
+  tool_specs_batch8.py:47: module="sw_review", function="collect_model_summary",
+  sw_review.py:698: def collect_model_summary(model):
+  sw_review.py:948: summary = collect_model_summary(model)
+
+==========================================================================================
+### operations  (pat=operations)  hits=24
+  tool_specs_batch25.py:82: "whether it is suppressed and whether it is visible. ★ Reading only. ★ 别名: batch, list, operation, operations",
+  tool_specs_batch33.py:54: _CFG = ("Configuration name (e.g. \"默认\" / \"Default\"). ⚠ Leave empty for operations that "
+  tool_specs_batch43.py:11: ⇒ ★ 批：**4 个工具** + **新能力 `drawing_view_operations`** ⇒ ★ 能力 **74 → 75** ✓
+  tool_specs_batch75.py:182: "★ 真机证据：`output/drawing-batch-evidence.json` 的 A7 格（两格都返回非 None）。 ★ 别名: pdm, pdm_operations, revision, vault",
+  tool_specs_batch80.py:57: doc="Set `ISldWorks.CommandInProgress = True` to stop the operations that pop modal dialogs. "
+  tool_specs_batch80.py:60: "operations — pair it with `solidworks_automation_exit_command_lock`.",
+  tool_specs_batch80.py:70: "refusing operations.",
+  tool_specs_batch80.py:147: "because an ORPHAN `OperationStatusWindow` left behind by Explorer otherwise produces a "
+  sw_api_cosworks.py:1219: 'GetTimeTakenForGapIterationsAndContactOperations': 0,
+  sw_api_sldworks.py:2061: 'Operations': 3,
+  sw_api_sldworks.py:2062: 'Operations2': 2,
+  sw_api_sldworks.py:2185: 'Operations': 3,
+  sw_api_sldworks.py:2186: 'Operations2': 2,
+  sw_api_sldworks.py:18978: 'Operations': 83,
+  ... (+10 more)
+
+==========================================================================================
+### optimize_performance  (pat=optimize_performance|performance)  hits=6
+  sw_api_fworks.py:74: 'SetPerformanceOptions': 1,
+  sw_featureworks.py:70: "set_performance_options",
+  sw_featureworks.py:80: "SetPerformanceOptions": 1,
+  sw_featureworks.py:108: #     Boolean SetPerformanceOptions(Int16)                 → 1
+  sw_featureworks.py:139: def set_performance_options(featureworks, options: int) -> bool:
+  sw_featureworks.py:141: return bool(_checked(featureworks, "SetPerformanceOptions", int(options)))
+
+==========================================================================================
+### pdm_operations  (pat=pdm)  hits=67
+  tool_specs_batch20.py:7: `sw_pdm.get_custom_property_names_and_values` 要 **PDM 许可证**（`sw_pdm` 模块头自述
+  tool_specs_batch20.py:8: 「域 14 · 路由 / Composer / PDM（**需许可证**）」），不是这条路。
+  tool_specs_batch20.py:10: ★ 而它走的是 `IModelDocExtension.CustomPropertyManager`（**不需要 PDM**）。
+  tool_specs_batch75.py:182: "★ 真机证据：`output/drawing-batch-evidence.json` 的 A7 格（两格都返回非 None）。 ★ 别名: pdm, pdm_operations, revision, vault",
+  tool_specs_batch90.py:9: #           `route_manager`/`target`/`pdm_document`/`ctrl`/`study_name`/`obj`/`h`）⇒ **一律不碰**；
+  sw_api_sldtoolboxconfigureaddin.py:83: 'PDMDocManager',
+  sw_api_swdocumentmgr.py:4: SolidWorks Enterprise PDM（**需独立许可**）
+  sw_automation_knowledge.py:15: #   ③ 第三方项目记录的 HRESULT 含义（codestack 记的 PDM 建连接错误）
+  sw_automation_knowledge.py:49: # ⚑ 这是**官方文档不会给**的：它只在「你调 PDM 而没买许可」时出现，
+  sw_automation_knowledge.py:58: "（PDM / Simulation / Routers 等独立许可产品）",
+  sw_com_traps.py:83: 0x80040112: "COM 类未授权 —— 通常是**该产品没许可**（PDM/Simulation/Routers）",
+  sw_costing.py:4: 域 14 · 路由 / Composer / PDM（需许可证）—— 本文件是其中 **Composer 成本** 部分
+  sw_costing.py:10: PDM（swdocumentmgr，296 接口 / 3771 成员）尚未覆盖
+  sw_custom_property.py:7: `sw_pdm` 那一族（`get_custom_property_names_and_values`）要 **PDM 许可证**，不是这条路。
+  ... (+53 more)
+
+==========================================================================================
+### point  (pat=reference_point|insert_reference_point)  hits=5
+  tool_specs_batch70.py:138: name="solidworks_insert_reference_point",
+  tool_specs_batch70.py:140: module="sw_ref_geometry", function="insert_reference_point",
+  sw_ref_geometry.py:68: "insert_reference_point",
+  sw_ref_geometry.py:212: def insert_reference_point(model, ref_point_type: int, along_curve_type: int = 0,
+  sw_ref_geometry.py:245: "reference_point")
+
+==========================================================================================
+### projected_curve  (pat=projected_curve|project_curve)  hits=0
+
+==========================================================================================
+### rename_feature  (pat=rename)  hits=107
+  tool_specs_batch76.py:133: #:   （`recon/r4-e-class-rename-lookup.md`）⇒ ★ 两个都**未废弃**、官方 Remarks 给了明确前置。
+  tool_specs_batch79.py:158: "String ModuleName, String ProcedureName, Int32 Options, out Int32 Error)` — **4 in + 1 "
+  tool_specs_batch88.py:69: Param("index", int, default=0, description="★ RENAMED at the tool surface: the source spells this parameter `kind` (`def is_coord_sys_element_selected
+  tool_specs_batch88.py:70: Param("mark", int, default=0, description="★ RENAMED at the tool surface: the source spells this parameter `index` (scripts/sw_selection.py:382, passe
+  tool_specs_batch88.py:81: Param("index", int, default=0, description="Source spelling is `index` and it is also the official first parameter name, so **no rename**. Official se
+  tool_specs_batch88.py:82: Param("mark", int, default=0, description="★ RENAMED: the source spells this parameter `secondary` (`def is_in_edit_target(selection, index: int, seco
+  sw_api_cosworks.py:635: 'RenameLoadCaseCombination': 2,
+  sw_api_cosworks.py:636: 'RenamePrimaryLoadCase': 2,
+  sw_api_cosworks.py:1244: 'RenameStudyFromID': 2,
+  sw_api_cosworks.py:1245: 'RenameStudyFromName': 2,
+  sw_api_cosworks.py:1560: 'FixtureNameInSelectedExcitation',
+  sw_api_cosworks.py:1561: 'FixtureNameInSelectedExcitation',
+  sw_api_gtswutilities.py:136: 'GetFeatureNameFilter': 0,
+  sw_api_gtswutilities.py:151: 'SetFeatureNameFilter': 1,
+  ... (+93 more)
+
+==========================================================================================
+### rib  (pat=\brib\b|part_rib)  hits=24
+  tool_specs_batch16.py:14: | ⚠ 碰**规则 2**（长度未带 `_mm`）| 5 | `circular_pattern` · `insert_dome` · `rib` · `shell` · `sketch_polygon` |
+  tool_specs_batch16.py:39: → 规则 2（长度 _mm）：insert_dome · rib · shell ⇒ 名字改 `_mm` + `param_alias` 即可，**低风险**，
+  tool_specs_batch32.py:34: `shell(model, thickness)` · `rib(model, sketch_name, thickness, direction)`
+  tool_specs_batch32.py:73: _SKETCH = ("Name of an EXISTING sketch to use as the rib profile (e.g. 「草图2」). "
+  tool_specs_batch32.py:94: name="solidworks_part_rib",
+  tool_specs_batch32.py:95: title="Create a Rib from a Sketch (read-back confirmed)",
+  tool_specs_batch32.py:104: description="Rib direction flag (official InsertRib arg 4)."),
+  tool_specs_batch32.py:106: doc="Create a rib from an existing sketch and return a READ-BACK report (feature in "
+  tool_specs_batch77.py:166: #:   ★ **真机量到了**（★ `output/rib-dome-params-capability-recheck.json`）：
+  sw_feature_readback.py:886: #: ★ 证据：★ `output/rib-dome-params-capability-recheck.json`（★ `圆顶1`）
+  sw_feature_readback.py:888: #: ★ 证据：★ `output/rib-dome-params-capability-recheck.json`（★ **⚠ 还没打出过真名**）
+  sw_feature_readback.py:889: "rib": "unknown（★ 未核 —— ★ 那个族至今没在真机建成过）",
+  sw_feature_readback.py:911: · `type_substring`：★ 类型名里含它即算（★ 如 `"Rib"` / `"Dome"`）✓
+  sw_feature_readback.py:956: `## Returns` **只写 `Thickness of the rib`、★ 没写单位** ⇒
+  ... (+10 more)
+
+==========================================================================================
+### security  (pat=macro_security|security_level|SecurityLevel)  hits=0
+
+==========================================================================================
+### security_info  (pat=security_info|security)  hits=9
+  sw_api_sldworks.py:4439: 'InsertSecurityNote': 2,
+  sw_api_sldworks.py:13227: 'SecurityHandleMacroFileName',
+  sw_api_sldworks.py:13228: 'SecurityHandleMacroFileName',
+  sw_api_sldworks.py:13229: 'SecurityHandleModuleName',
+  sw_api_sldworks.py:13230: 'SecurityHandleModuleName',
+  sw_api_sldworks.py:13231: 'SecurityHandleProcedureName',
+  sw_api_sldworks.py:13232: 'SecurityHandleProcedureName',
+  sw_api_sldworks.py:21196: 'InsertSecurityNote': 117,
+  sw_api_swpublished.py:460: 'Security': 3,
+
+==========================================================================================
+### select_entity  (pat=select_by_selector|select_entity_by_index|selection_count)  hits=53
+  tool_specs_batch53.py:8: #      get_selection_count · select_entity_by_index · resolve_selection · selection_point
+  tool_specs_batch53.py:9: #      ★ 其中 `selection_point` 本来就回 `{ok, point_mm, selection_count, error}` ⇒ 零改造
+  tool_specs_batch53.py:12: #      ⇒ 已在 `scripts/sw_selection_spec.py` 尾部加 `select_by_selector_report` /
+  tool_specs_batch53.py:36: name="solidworks_selection_count",
+  tool_specs_batch53.py:39: function="get_selection_count",
+  tool_specs_batch53.py:49: name="solidworks_select_entity_by_index",
+  tool_specs_batch53.py:52: function="select_entity_by_index",
+  tool_specs_batch53.py:92: "★ 回 `{ok, point_mm, selection_count, error}`；⚠ **不猜**："
+  tool_specs_batch53.py:98: name="solidworks_select_by_selector",
+  tool_specs_batch53.py:101: function="select_by_selector_report",
+  tool_specs_batch82.py:84: doc="★ 官方签名（逐字，来自 DissolveSubAssembly.md）：`**Signature**: `System.bool DissolveSubAssembly()``。官方 Remarks 逐字：「You must preselect the subassembly to di
+  tool_specs_batch88.py:48: Param("enabled", bool, default=False, description="True = 允许选择（官方 Returns 逐字「True if selection is enabled」）；False = 禁用选择。★ 无量纲布尔开关（不是长度/角度，规则 2 不适用）★ 
+  sw_drawing_create_missing.py:293: def _selection_count(model) -> int | None:
+  sw_drawing_create_missing.py:468: sel = _selection_count(model)
+  ... (+39 more)
+
+==========================================================================================
+### sheet  (pat=sheet_metal|drawing_sheet|current_sheet)  hits=147
+  tool_specs_batch19.py:77: name="solidworks_drawing_get_current_sheet",
+  tool_specs_batch19.py:79: module="sw_drawing_query", function="current_sheet_info",
+  tool_specs_batch2.py:36: #:   `Select-String scripts/sw_sheet_metal.py -Pattern '^def sheet_metal_evidence'`
+  tool_specs_batch2.py:100: # 签名: def sheet_metal_evidence(model) -> dict[str, Any]
+  tool_specs_batch2.py:102: name="solidworks_sheet_metal_evidence",
+  tool_specs_batch2.py:104: module="sw_sheet_metal", function="sheet_metal_evidence",
+  tool_specs_batch2.py:108: doc=("Read back the sheet-metal state of the active part: thickness, bend radius, bend allowance settings, flat-pattern state. Read-only. VERIFIED ON 
+  tool_specs_batch2.py:133: "sheet_metal": ["sheet_metal_evidence"],
+  tool_specs_batch2.py:158: "sheet_metal": ["create_base_flange", "create_one_bend", "create_edge_flange",
+  tool_specs_batch2.py:162: "⚠ **不能猜字段** —— 要读 `scripts/sw_sheet_metal.py` 里的 dataclass 定义。"
+  tool_specs_batch21.py:9: `solidworks_create_hole_feature` · 钣金 `solidworks_sheet_metal_create_base_flange` …
+  tool_specs_batch3.py:4: 逐一读 `scripts/sw_sheet_metal.py` 的函数体后（**不是猜**）：
+  tool_specs_batch3.py:35: __all__ = ["SPECS_BATCH3", "SHEET_METAL_SPEC_MAP"]
+  tool_specs_batch3.py:53: from scripts.sw_sheet_metal import BaseFlangeSpec
+  ... (+133 more)
+
+==========================================================================================
+### show_all_planes  (pat=show_all_planes|plane.*visib)  hits=0
+
+==========================================================================================
+### suppress  (pat=feature_suppress|suppress_component|_suppress)  hits=54
+  tool_specs_batch23.py:144: #:     （★ 已有的是**组件**的 `suppress_component` · **配合**的 `suppress_mate`）✓
+  tool_specs_batch23.py:148: #:     （★ `tools/probe_feature_suppress_e2e.py` · `output/feature-suppress-e2e-evidence.json`）
+  tool_specs_batch23.py:152: name="solidworks_feature_suppress",
+  tool_specs_batch23.py:154: module="sw_part", function="feature_suppress",
+  tool_specs_batch23.py:181: "`solidworks_feature_suppress`.",
+  tool_specs_batch23.py:193: #:     （★ 对比 `feature_suppress`：★ 它的判据要读 `IsSuppressed2`，
+  tool_specs_batch36.py:153: Param("include_suppressed", bool, description="Include suppressed components."),
+  tool_specs_batch80.py:14: #           · `set_flag` / `get_flag` 的 `pref` 优先用本仓 `DIALOG_SUPPRESSORS` 里的名字
+  tool_specs_batch80.py:88: "`DIALOG_SUPPRESSORS` table — they are the ones the repo "
+  tool_specs_batch82.py:47: name="solidworks_assembly_suppress_component",
+  tool_specs_batch82.py:49: module="sw_assembly", function="suppress_component",
+  tool_specs_batch82.py:57: name="solidworks_assembly_unsuppress_component",
+  tool_specs_batch82.py:59: module="sw_assembly", function="unsuppress_component",
+  server.py:679: include_suppressed: bool = Field(default=False)
+  ... (+40 more)
+
+==========================================================================================
+### units  (pat=read_document_units|SetUnits|swUnitsLinear|GetUnits)  hits=51
+  tool_specs_batch52.py:4: #   ★ `GetUnits()` ⇒ **`(0, 1, 8, 2, 0)`** ⇒ `LengthUnit = 0` = **`swMM`** · `is_mm = true` ✓
+  tool_specs_batch52.py:5: #   ★ 对照源 `ISldWorks.GetUserPreferenceIntegerValue(swUnitsLinear = 47)` ⇒ **0**（系统默认也是毫米）✓
+  tool_specs_batch52.py:11: #   · `IModelDoc2.GetUnits()` ⇒ **这一个文档**的单位（★ 官方 Remarks：5 个 short =
+  tool_specs_batch52.py:13: #   · `ISldWorks.GetUserPreferenceIntegerValue(swUnitsLinear)` ⇒ **系统默认**（★ 新建文档的默认）
+  tool_specs_batch52.py:28: # 官方签名依据: `C:\swapi\types\IModelDoc2\GetUnits.md`（0 参 · ★ Remarks 给了 5 元组格式）·
+  tool_specs_batch52.py:29: #   `IModelDoc2/SetUnits.md`（5 参）· `C:\swapi\enums\swLengthUnit_e.md`（`swMM=0` 等 11 项）·
+  tool_specs_batch52.py:32: #   ★ 反射 `scripts/sw_api_sldworks.py`（`GetUnits: 0` · `GetUserPreferenceIntegerValue: 1`）·
+  tool_specs_batch52.py:33: #   ★ `swUnitsLinear = 47` 取自 `D:\AI\SW\_raw\**\enum_values_sldworks.txt`
+  tool_specs_batch52.py:42: name="solidworks_read_document_units",
+  tool_specs_batch52.py:49: "★ 主源 `IModelDoc2.GetUnits()`（**0 参**）—— 官方 Remarks 原话：返回 **5 个 short 的数组** "
+  tool_specs_batch52.py:52: "★ 对照源 `ISldWorks.GetUserPreferenceIntegerValue(swUnitsLinear = 47)` —— ★ **1 参**（★ 三源一致："
+  tool_specs_batch52.py:56: "★ 真机证据（PASS 4/4）：`GetUnits()` ⇒ `(0, 1, 8, 2, 0)` ⇒ `LengthUnit = 0` = `swMM` · "
+  tool_specs_batch52.py:58: "⚠ **未真机验证**：`SetUnits`（★ 5 参，★ 本工具只读不写）· 非毫米文档下的读数"
+  tool_specs_batch77.py:45: "★ ⚠ **本工具不替调用方换算**（★ 要毫米自己按 `GetUnits()` 判）。",
+  ... (+37 more)
+
+==========================================================================================
+### unsuppress_feature  (pat=unsuppress)  hits=55
+  tool_specs_batch23.py:169: name="solidworks_feature_unsuppress",
+  tool_specs_batch23.py:170: title="Unsuppress a Feature",
+  tool_specs_batch23.py:171: module="sw_part", function="feature_unsuppress",
+  tool_specs_batch23.py:179: doc="Unsuppress one FEATURE via the successor entry point `IModelDoc2.EditUnsuppress2()` "
+  tool_specs_batch82.py:57: name="solidworks_assembly_unsuppress_component",
+  tool_specs_batch82.py:58: title="Unsuppress an Assembly Component",
+  tool_specs_batch82.py:59: module="sw_assembly", function="unsuppress_component",
+  tool_specs_batch82.py:64: doc="★ 官方签名（逐字，来自 EditUnsuppress2.md）：`System.bool EditUnsuppress2()`。官方页 IModelDoc2/EditUnsuppress2.md 的 ## Remarks 逐字：「This routine is identical to 
+  sw_api_cosworks.py:282: 'SuppressUnSuppress': 0,
+  sw_api_cosworks.py:299: 'SuppressUnsuppressComponentContact': 2,
+  sw_api_cosworks.py:300: 'SuppressUnsuppressComponentContact2': 2,
+  sw_api_cosworks.py:301: 'SuppressUnsuppressContactPair': 2,
+  sw_api_cosworks.py:302: 'SuppressUnsuppressContactPair2': 2,
+  sw_api_cosworks.py:313: 'SuppressUnSuppress': 0,
+  ... (+41 more)
+
+==========================================================================================
+### update_sheet_format  (pat=set_sheet_format|SetTemplateName|update_sheet_format)  hits=27
+  tool_specs_batch75.py:23: #   图纸格式/模板                       solidworks_drawing_set_sheet_format            sheet_format
+  tool_specs_batch75.py:108: name="solidworks_drawing_set_sheet_format",
+  tool_specs_batch75.py:110: module=_EXPOSE, function="set_sheet_format",
+  tool_specs_batch75.py:115: doc="★ **图纸格式/模板**：**`ISheet.SetTemplateName(String NameIn)`**（官方 **`void`、未废弃**）。"
+  tool_specs_batch75.py:117: "`ISheet.SetTemplateName` 才是**换图框**的成员；`SetupSheet6` 是用来**新建/重置图纸**的"
+  tool_specs_batch75.py:119: "★★★ **而真机踩过一个坑**：能力层原先是 `sheet = GetCurrentSheet(); sheet.SetTemplateName(p)`"
+  tool_specs_batch75.py:124: "★ 判据：`SetTemplateName` 回 `None` **且** `GetTemplateName` 回读等于新路径。",
+  tool_specs_batch87.py:38: doc="★ 官方签名（逐字，来自 sw_costing.py）：`查不到（C:\\swapi\\types\\ICostingDefaults\\SetTemplateName.md 不存在 ⇒ 无 **Signature**: 行可抄）。★ 第三源（出厂程序集纯元数据反射）逐字：`Void Se
+  sw_api_sldcostingapi.py:182: 'SetTemplateName': 2,
+  sw_api_sldworks.py:8077: 'SetTemplateName': 1,
+  sw_api_sldworks.py:24780: 'SetTemplateName': 6,
+  sw_costing.py:101: "SetTemplateName": 2,
+  sw_costing.py:375: #     Void   SetTemplateName(Int32, String) / SetMaterialName(Int32, String) /
+  sw_costing.py:398: _checked(defaults, "SetTemplateName", int(category), str(template_name))
+  ... (+13 more)
+
+==========================================================================================
+### update_title_block  (pat=title_block)  hits=8
+  tool_specs_batch81.py:26: Param("structure", str, default="(required)", description="Structured drawing evidence dict, normally produced by the drawing inspection path. Optiona
+  sw_review.py:96: title_block = structure.get("title_block") or {}
+  sw_review.py:97: title_box = title_block.get("box")
+  sw_review.py:117: add_finding("DRAWING_VIEW_TITLE_BLOCK_INTRUSION", "fail", "view", view.get("name"), "title_block", "title_block")
+  sw_review.py:140: "DRAWING_DIMENSION_TITLE_BLOCK_INTRUSION", dimension_severity,
+  sw_review.py:141: "dimension", dimension.get("name"), "title_block", "title_block",
+  sw_review.py:189: "DRAWING_NOTE_TITLE_BLOCK_INTRUSION", note_severity,
+  sw_review.py:190: "note", note.get("text"), "title_block", "title_block",
+
+==========================================================================================
+### vertices  (pat=VERTEX|GetVertices)  hits=150
+  tool_specs_batch14.py:59: doc="List the entities of one body (kind EDGE, FACE, or VERTEX). "
+  tool_specs_batch14.py:61: "body_index as a persistent reference across rebuilds. ★ 别名: body, edge, edges, entit, vertex, vertices",
+  tool_specs_batch14.py:65: "\"EDGE\", \"FACE\", or \"VERTEX\". "
+  tool_specs_batch14.py:66: "★ VERTEX uses the official IBody2.GetVertices() (0 args); "
+  tool_specs_batch14.py:67: "★ a 20×20×10 box returns FACE=6 · EDGE=12 · VERTEX=8, "
+  tool_specs_batch23.py:28: `InsertFeatureChamfer(Options, ChamferType, Width, Angle, OtherDist, VertexChamDist1/2/3)`
+  tool_specs_batch53.py:54: doc="★ **按序号选中体上的一个实体**（`kind` = `EDGE` / `FACE` / `VERTEX`，`index` 从 0 起）。"
+  tool_specs_batch53.py:60: Param("kind", str, description="实体种类：EDGE / FACE / VERTEX"),
+  tool_specs_batch53.py:78: Param("kind", str, default="EDGE", description="实体种类：EDGE / FACE / VERTEX"),
+  tool_specs_batch53.py:110: Param("kind", str, default="EDGE", description="实体种类：EDGE / FACE / VERTEX"),
+  tool_specs_batch53.py:130: Param("kind", str, default="EDGE", description="实体种类：EDGE / FACE / VERTEX"),
+  tool_specs_batch56.py:59: Param("kind", str, default="EDGE", description="实体种类：EDGE / FACE / VERTEX"),
+  tool_specs_batch61.py:64: description="实体种类：`FACE` / `EDGE` / `VERTEX`（★ 两侧同一类）"),
+  tool_specs_batch64.py:7: #   ① ★ **形态错**：★ `AddLinkConnector` 的形参名是 **`VertexPointforFirst/SecondLocation`**
+  ... (+136 more)
+
+==========================================================================================
+### view  (pat=set_standard_view|active_view|view_get_)  hits=21
+  tool_specs_batch14.py:6: 队列 A3 原本列了 4 个（`get_active_view` / `activate_view` / `add_perspective` / `entities_on_body`），
+  tool_specs_batch14.py:11: | `sw_view.get_active_view` | `(model)` | `model` ✓ | **挂** |
+  tool_specs_batch14.py:47: name="solidworks_get_active_view",
+  tool_specs_batch14.py:49: module="sw_view", function="get_active_view",
+  tool_specs_batch5.py:12: | `set_standard_view` | `sw_review` | 切标准视图（出图/复核前的准备）|
+  tool_specs_batch5.py:18: `clear_selection` 与 `set_standard_view` 改的是**视图/选择状态**，不碰几何。
+  tool_specs_batch5.py:64: name="solidworks_set_standard_view",
+  tool_specs_batch5.py:66: module="sw_review", function="set_standard_view",
+  tool_specs_batch81.py:183: doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 该函数不是 SolidWorks API 成员，是纯 Python 文件检查（open() + int.from_bytes 手工解析 BI_RGB BMP 头与像素网格），不碰 COM ⇒ 官方页无从查起。来源：本仓 
+  tool_specs_batch81.py:201: doc="★ 官方签名（逐字，来自 GetPartBox.md）：`**Signature**: `System.object GetPartBox( System.bool NoConversion )``。★ 重要前提：**本函数本身不是一个官方成员**，它是能力层对多个官方成员的**聚合**（
+  tool_specs_batch86.py:70: name="solidworks_view_get_frame",
+  tool_specs_batch86.py:113: name="solidworks_view_get_display_mode",
+  tool_specs_batch86.py:132: name="solidworks_view_get_scale",
+  tool_specs_batch86.py:196: name="solidworks_view_get_camera",
+  ... (+7 more)
+
+==========================================================================================
+### view_grayscale_enhanced  (pat=grayscale|grey_scale|gray_scale)  hits=0
+
+==========================================================================================
+### view_rotate  (pat=rotate_about_center|roll_view|view_rotate)  hits=8
+  tool_specs_batch86.py:173: name="solidworks_view_rotate_about_center",
+  tool_specs_batch86.py:175: module="sw_view", function="rotate_about_center",
+  tool_specs_batch86.py:185: name="solidworks_view_roll_view",
+  tool_specs_batch86.py:187: module="sw_view", function="roll_view",
+  sw_view.py:92: "rotate_about_center",
+  sw_view.py:93: "roll_view",
+  sw_view.py:333: def rotate_about_center(view, angle_x: float, angle_y: float) -> bool:
+  sw_view.py:340: def roll_view(view, angle: float) -> bool:

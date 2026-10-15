@@ -1,0 +1,70 @@
+| 358 | ★★★★★ **结构系统那条链的完整官方序列**（★ 从 CHM 的**示例页**读到，★ 而它**此前我们一条都没有**）—— ★★ 而它顺带对**事实 337** 提了一个**精确的收紧方向**（2026-10-03，轮 443）。
+
+## 一、★★★★★ 那条链（★ 官方 VBA 示例逐句，★ 三源里只有 CHM 的**示例页**有）
+```
+来源：★ `Access_Structure_System_Corner_Treatments_Example_VB.htm`（**71,049 字节** / 451 行）
+   ★★ 而★ 那棵树里 `StructureSystem` 相关 **126 个文件**，★ 其中**示例页只有 3 个**
+     （★ VBA / VB.NET / C#）—— ★ 按**事实 357**，★ 先报数量 ✓
+
+★ 序列（★ 逐句）：
+   ```
+   ① ★ modDocExt.SelectByID2("Line4@3DSketch1", "EXTSKETCHSEGMENT", 0, 0, 0, True, 0, Nothing, 0)
+      ★ **6 次**（Line1@Sketch2 · Line3@3DSketch1 · Line6@3DSketch1 · Line3@Sketch1 · Line4@Sketch1 …）
+      ★★ 逐条 **Append = True** ⇒ ★ **选区先行**（★ 与本阶段主线同一模式）
+   ② ★ Set structMemDef = modDocExt.CreateStructureSystemMemberData(0)
+      ★ `0` = `swStructureSystemMemberCreationType_Primary_PathSegment`（★ 事实 357）
+   ③ ★ Set profDef = structMemDef.MemberProfile
+      ★ profDef.ProfileStandard = "GB"
+      ★ profDef.ProfileType     = "round-rods"
+      ★ profDef.ProfileSize     = "ROUND BAR 23"
+      ★★ ⇒ ★ **就是我本机那 111 个轮廓库里的 `GB\round-rods.sldlfp`**（★ 事实 342）✓
+   ④ ★ Set PrimDef = structMemDef                     ' PrimaryStructuralMemberFeatureData
+      ★ Set memPathSegDef = PrimDef
+      ★ Set segments(0) = swSelMgr.GetSelectedObject6(1, 0)
+        …（★ 一直到 segments(5) = GetSelectedObject6(6, 0)）
+      ★ stat = memPathSegDef.SetPathSegments(segments)     ← ★★ **线段组从这里进去**
+   ⑤ ★ Set memData(0) = structMemDef
+      ★ memDataArray = memData
+   ⑥ ★ modDocExt.CreateStructureSystem memDataArray, Nothing     ← ★★★ **建！**
+      ★ 官方 Remarks：★ 返回的是 **IStructureSystemFolder**（★ 用 `GetSpecificFeature2` 取）
+   ```
+```
+
+## 二、★★★★★ 而它**顺带**给事实 337 提了一个**精确的收紧方向**
+```
+★ 事实 337（本会话实测）：★ 「`GetSelectedObject6(2, -1)` 回 `None` 而计数为 2
+   ⇒ ★ **读多实体那条路不通**」⇒ ★ 于是我改用 `entities_as_array`（★ 按已知清单取）✓
+★★ 而**官方示例用的是 `GetSelectedObject6(i, **0**)`** —— ★★ 第二参数是 **0**，★ 而我试的那一版是 **-1** ⚠
+   ★ 而★ 我早先**确实**也试过 `(i, 0)`（★ 在事实 337 那五个入口里）⇒ ★ **而它也回 `None`** ⚠
+   ⇒ ★★★ **即：★ 参数不是原因** ⇒ ★★ **故真正该收紧的是**选择的方式****：
+     ```
+     ★ 官方示例：★ 用 **`SelectByID2` 按名字选**（"Line3@3DSketch1", "EXTSKETCHSEGMENT"）
+     ★ 我实测的：★ 用 **按点**（`SelectByID2("", "EDGE", x,y,z, …)`）或**按对象**（`Select4`）
+     ⇒ ★★ **假设：★ 只有"按名字选"选出来的，`GetSelectedObject6` 才读得到** ⚠
+     ```
+   ★★★ **而那与事实 32 吻合**：★★ 「**按名字选**只对**特征**成立，对**实体**不成立」——
+     ★★ 而★ 这里 `"Line3@3DSketch1"` + `"EXTSKETCHSEGMENT"` **恰恰是"名字"那一族**（★ 草图线段**有**名字）⚠
+     ⇒ ★ **即：★ 事实 32 的边界要再收一格**：★ **"实体没有名字"**说的是**边/面**；
+       ★★ 而**草图线段有**（★ `Line3@3DSketch1`）✓✓✓
+```
+
+## 三、★ 处置与下一步（★ 具体到动作）
+```
+★ ①②③ 本轮**完成**：★ 那条链的**完整序列已拿到并入库**（★ 本事实）。
+★★ ④ ★ **下一步（单一动作）**：★ **真机验那个假设** ——
+   ★ 拿一个带草图的零件，★ 用 `SelectByID2("Line1@Sketch1", "EXTSKETCHSEGMENT", …)` 选，
+   ★★ 再读 `GetSelectedObject6(1, 0)` ⇒ ★ **看它回不回对象** ⇒
+     ★ 若回 ⇒ ★ **事实 337 收紧为"只在按点/按对象选时读不到"**（★ 而那是**一条重要更正**）✓
+★ ⑤ ★ 而**那条链本身可以开始建**（★ 入口与序列都清楚了）——
+   ★★ 而它**与我既有的 `create_structural_member_from_sketch` 是**两条不同的链****（★ 勿混）：
+     ```
+     ★ 经典焊件（★ 已做）：★ `InsertStructuralWeldment5` ⇒ 特征类型 `WeldMemberFeat`
+     ★★ 结构系统（★ 本条）：★ `CreateStructureSystemMemberData` + `CreateStructureSystem`
+        ⇒ ★ 特征类型 **`IStructureSystemFolder`**（★ 另一族）✓
+     ```
+```
+
+**依据**：CHM `Access_Structure_System_Corner_Treatments_Example_VB.htm`（★ 71,049 B / 451 行）·
+`IModelDocExtension~CreateStructureSystem(.MemberData).html` · `swconst~…swStructureSystemMemberCreationType_e.html` ·
+`C:\swapi\enums\swStructureSystemMemberCreationType_e.md` · 反射 dump（★ 7 个取值）·
+`GB\round-rods.sldlfp`（★ 本机 111 个轮廓之一）· 事实 32 / 337 / 342 / 355 / 356 / 357 · 铁律 4

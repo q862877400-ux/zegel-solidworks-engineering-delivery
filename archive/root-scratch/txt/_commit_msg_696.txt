@@ -1,0 +1,48 @@
+fix(阶段1): ★★★★★ 处置 `workflow-15` 的 **A-2** —— ★ 一条**挂错文件的断言**（★ 裁判原话：**"等同于把 1/4 写成 PASS"**）
+
+■ 一 · ★ 裁判的原话（★ `recon/verify-done/VERIFY-DONE-SUMMARY.md` 逐字）
+  > ★ 条目把「`list_setter_summary` ok=True（9 个族 / 202 个 setter 名）」挂在一份
+  > **顶层 `passed=1 of=4 · verdict=partial`、且 `setter` 零命中**的文件上；
+  > ★★ 而那份文件的**三步 `ok:false`**，★ **条目其余 evidence 一字未提**
+  > ⇒ ★ **现状是「挑了那一份里最像的一句」，这在排期上等同于把 1/4 写成 PASS** ✓
+
+■ 二 · ★★★★ 我核了两份文件（★ 实测 `verdict` 与 `steps`）
+  | ★ 文件 | ★ 顶层 | ★ 含 `list_setter_summary` 吗 |
+  |---|---|---|
+  | ★★ **`output/batch36-evidence.json`** | ★★ **`passed=6` / `of=6` / `verdict=pass`** | ★★★ **含 —— `steps.list_setter_summary.ok` = `True`** ✓ |
+  | ★ `output/batch37-evidence.json` | ★ **`passed=1` / `of=4` / `verdict=partial`** | ★★ **不含**（★ 四个 step 里没有一个叫它）|
+  ★★ `batch37` 的四个 step 逐字：★ `create_study.ok` **`True`** ·
+    ★★ `set_option_ComputeFrequencyModes` **`False`** ·
+    ★★ `set_option_ContactPenetrationStiffness` **`False`** · ★★ `set_options.ok` **`False`**
+  ⇒ ★★★★ **裁判说得对**：★ 断言**挂错了文件**，★ 而**真文件是 `batch36`**（★ 6/6 PASS）✓
+
+■ 三 · ★ 修法（★ 两件都做 —— ★ 不是只改指针）
+  ① ★ **改指向**：★ 断言现在挂 `output/batch36-evidence.json`，★ **并逐字给出它的顶层读数**
+     （`passed=6` / `of=6` / `verdict=pass`）★ **与 `steps.list_setter_summary.ok=True`** ✓
+  ② ★★ **如实补写 `batch37` 的真实状态**（★ 3 步 false、★ 1/4 partial）——
+     ★★★ **而不是让它沉默**（★ 这正是裁判说的"一字未提"那一半）✓
+  ③ ★★★ **并说明它为什么不改变本条的 `level`**：★ 那三步测的是**另一些求解器选项**
+     （`ComputeFrequencyModes` / `ContactPenetrationStiffness`）★ **不属本条**
+     （★ 本条是"清单读取"那一件事）⇒ ★ **但后续若要攻那两项，★ 起点就是这份 1/4 的证据** ✓
+
+■ 四 · ★★ 可复用判据（★ 本轮新增）
+  ★★★ **一条断言要挂证据时，必须核两件事**：
+    ★ **① 那份文件里**真的有**这个结果吗**（★ 不是"名字像"）？
+    ★★ **② 那份文件的**顶层读数**是什么**（★ `passed/of/verdict`）？
+  ★ 本条里：★ ① 不成立（★ `batch37` 里**没有**那个结果）· ★★ ② **1/4 partial** ⇒
+    ★★★ **两个问题叠在一起就成了"把 1/4 写成 PASS"** ✓
+  ★★★ 与**事实 514 的第 ③ 条**（★ "废弃≠不能用"的两个可核问题）**同构**：
+    ★ **挂证据也要问两个可核的问题，★ 而且两个都要答对** ✓
+
+■ 五 · ★★ 顺带：**同一个 YAML 坑又踩了一次**（★ 本会话第 2 次）
+  ★ 我新写的行里有 `"9 个族 / 202 个 setter 名"` —— ★ **用了 ASCII 双引号** ⇒
+    ★★ `yaml.safe_load` 当场报 `expected ',' or ']'`（★ 指向的列号**不是**真因那一列）✓
+  ★★★ **这与上一轮的 `"真正的带孔平面"` / `"调了就行"` 是同一个坑** ⇒
+    ★ **往 YAML 里写中文时，引号一律用 `「」`** ✓
+  ★★ 而它**每次都被 `yaml.safe_load` 抓到**（★ 收尾链里也有它）⇒ ★ **判据在尽职** ✓
+
+■ 六 · ★ 收尾
+  ★ `capabilities.yaml` 解析 OK（★ **110 个条目** · `simulation_solver_options` 的 `evidence` 现 **6 条**）✓
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 6 passed** ✓
+  ★★ **待办**：★ **A-3**（`GATE-FINAL` 的 C8 —— ★ 它自称"唯一常驻硬门禁"，
+    ★ 而 `docs/refuted-patterns.json` 在仓里不存在）✓

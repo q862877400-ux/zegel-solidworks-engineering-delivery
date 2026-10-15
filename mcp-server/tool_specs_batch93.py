@@ -45,8 +45,11 @@ SPECS_BATCH93 = [
         module="sw_sheet_metal", function="create_unfold",
         inject="model",
         params=[
-            Param("bend_feature_names", str, default=_BENDS.split("——")[0],
-                  description=_BENDS),
+            Param("bend_feature_names", str,
+                  description=_BENDS + " ★★ **本参数在源码里是必填的**"
+                              "（`create_unfold(model, bend_feature_names, *, face_index=0)` 无默认值）"
+                              "⇒ ★ 要「留空」就显式传空串，★ **不要**给一个默认值 —— "
+                              "那样调用方不传时会把**这段说明**当成特征名传下去。"),
             Param("face_index", int, default=0, description=_FACE_INDEX),
         ],
         doc="★ **插入展开特征**（官方 `IModelDoc2::InsertSheetMetalUnfold()`，**零参**）—— "
@@ -93,7 +96,10 @@ SPECS_BATCH93 = [
                   description="`open`(0) · `closed`(1) · `teardrop`(2) · `rolled`(3) · **`double`(4)**"
                               " —— ★ 官方 `swHemTypes_e` **五个成员一个不漏**"
                               "（★ 别家把 Open/Closed 互换、还漏了 `double`）✓"),
-            Param("position", str, default="outside", description="`inside`(1) · `outside`(2)。"),
+            Param("position", str, default="outside",
+                  description="`inside`(0) · `outside`(1) —— ★ 按**出厂反射**取 0/1"
+                              "（★ 2026-10-08 spec 223：官方 md 写 1/2，**两源冲突**，"
+                              "铁律 4 定「以出厂类型库为准」；⚠ 真机未复核）。"),
             Param("reverse", bool, default=False, description="官方 `Reverse`：反转方向。"),
             Param("length_mm", float, default=0.01, description="折边长度（**毫米**；官方 `DLength`）。"),
             Param("gap_mm", float, default=0.01, description="间隙（**毫米**；官方 `DGap`，只对开口折边有效）。"),

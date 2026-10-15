@@ -1189,6 +1189,7 @@ def untrim_surface_report(model, *, face_untrim_type: int = 0, edge_untrim_type:
 #       ★ 而**本文件没有**、★ 本批**也不发明它**（★ 铁律 1 + 只读优先 ✓）
 # ⚠ ★ `TwistAngle` 只在 `TwistCtrlOption = swTwistControlConstantTwistAlongPath` 时有意义（官方逐字）✓
 #: ★ 官方 `## Remarks` 的 **mark 表**（★ 逐字）✓
+#: enum-gate: member InsertSweepSurface2
 SWEEP_MARKS = {"profile": 1, "guide": 2, "path": 4}
 
 

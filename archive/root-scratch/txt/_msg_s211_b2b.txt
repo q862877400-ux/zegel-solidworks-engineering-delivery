@@ -1,0 +1,67 @@
+规格 211 · B2-2/B2-3：★★ 三处**实测纠正** —— 其中一处推翻了我 B0 的判
+
+★★ 本批**没写新能力**，★ 而产出的是**三个"查清了"** ✓ —— ★ 按本仓纪律，**"不做"本身也是交付** ✓
+
+一、★★★★ **纠正 ①（最重要）：我在 B2-1 里说「剪裁曲面本身仓里已有」—— 那是错的** ✗
+· ★ **覆盖表早就写着**（★ 我 B2-1**没读它**）：
+  「| 曲面 / **剪裁曲面** | `scripts/sw_surface.py` 有实现，但**三条入口真机全不成**
+  （**已知事实 417–419**）⇒ 工具面不计。|」✓
+· ★★ 依据 **事实 419 逐字**：「★★★ 一类现象单列：**照官方例子把前置完全对上**」
+  **而特征仍不建** —— 两个案例（**剔裁曲面** + 投影型分割线）✓
+· ⇒ ★★★ **「剪裁曲面」的正确终判 = 不做（后端受限）** ✓
+  ★★ 而 **"取消剪裁"是另一半** —— ★ 那一半 B2-1 已补包装、`untrim_surface` = `stitched` ✓
+· ⚠ ★ **教训**：★ 我 B0 判"可做"时**只查了"有没有入口"** ✗ ⇒
+  ★★ **没查"覆盖表 / 已知事实里有没有它已经试死的记录"** ✓ ——
+  ★ 那正是 AGENTS.md 要求的「**先扫已走死的路**」（`docs/dead-ends.md` + `known-facts.md`）✓
+  ★★★ **故台账已改**：★ **可做 15 → 14 · 不做 4 → 5** ✓
+
+二、★★★ **纠正 ②：`check_backend_limited_completeness.py` 的一句注释与官方页不符** ✗
+· ★ 那句写：★「`InsertSweepSurface` **三代也全废弃**」✓
+· ★★ **实测（逐页读过头 20 行）**：★ `InsertSweepSurface` / `2` / `3` **三代全「未标 `Obsolete`」** ✗
+  ★ 且 **`InsertSweepSurface2` 是纯参数式签名**（★ 11 参、★ **不要求 `AccessSelections`**）✓
+· ⇒ ★★ **所以"带 `AccessSelections`"的是属性式的 `ISweepFeatureData`**（★ 那条**确实带** ✓），
+  ★★★ **而不是"扫描曲面这件事本身做不了"** ✓ —— ★ **两者要分开** ✗
+· ★ 已在该处**并列实测读数**（★ **原文不删** —— ★ 它可能指**另一个成员**的继任链 ✓）
+
+三、★★★★ **发现 ③：`InsertSweepSurface2` 的 `## Remarks` 给了完整「调用序」** ✓✓
+★ 逐字：
+```
+Because you are creating a surface, the sections can be open.
+Use IModelDocExtension::SelectByID2 to select the profile and sweep curves. The mark for:
+- 1 = Profile selection
+- 2 = Guide curve selection, if provided
+- 4 = Sweep path
+The PathAlign argument is available when TwistCtrlOption is set to swTwistControlFollowPath…
+- 0 = None · 2 = Direction vector · 3 = All faces
+```
+⇒ ★★★ **这正是 AGENTS.md 说的"示例/Remarks 给调用序"** ✓ ——
+  ★★ 而**记忆里明写它「从没被查过」**（★ `InsertSweepSurface2`）✓ ⇒ **本轮真查了** ✓
+⇒ ★★ **结论：「扫描曲面」可做**（★ 参数式 + 明确 mark 表 ✓）—— ★ **B0 台账判"可做"是对的** ✓
+  ★（★ 故**不改**它的终判 ✓）
+
+四、★ B2 三项的**真相表**（★ 全部有依据）
+| 项 | 真相 | 依据 |
+|---|---|---|
+| ★ **剪裁曲面** | ★★ **不做（后端受限）** | ★ **事实 419**（★ 前置全对上仍不建）|
+| ★ **取消剪裁** | ★ 本批（B2-1）已补 ✓ · `stitched` | ★ 负例真机实证 ✓ |
+| ★ **扫描曲面** | ★★ **可做**（★ 参数式 + mark 表）| ★ 官方 `## Remarks` 逐字 ✓ |
+| ★ **边界曲面 / 直纹曲面** | ★ **已有**（★ `sw_surface_edit_ops.py` 的 `insert_ruled_surface`）| ★ 且它**已纠过台账一次**：★ 真名是 `InsertRuledSurfaceFromEdge2`（★ 后继版）✓ |
+
+五、★ 交付物
+· `tools/spec211_manual_verdicts.py`：★ **剪裁曲面终判改为「不做」** + ★ 附**完整纠错说明** ✓
+· `docs/spec211-entry-ledger.md`：★ 重生成 ⇒ **可做 14 · 不做 5 · 已覆盖 1 · 待实测 1** ✓
+· `scripts/check_backend_limited_completeness.py`：★ 并列**实测更正**（★ 原文不删 ✓）
+· `docs/user-feature-coverage.md`：★ 重算 ⇒ +`untrim_surface`（★ `stitched`）✓ · `--check` **通过** ✓
+
+六、★★ 一条**流程上的教训**（★ 值得记）
+★ **"每批开头先跑覆盖表的 `--check`"** 这条纪律，★ 两次都在**同一批开头**报了"不一致"✗
+⇒ ★★ **因为上一批刚加了能力** ✓ —— ★★★ **说明它不只是"查表过期"**，
+  ★★ **它还是"上一批成果有没有被外部生成器认下来"的机械检查** ✓✓
+★ 而本批**又发现它的另一半用途**：★★ **它是"这个缺口别人试死过没有"的第一现场** ✓
+  —— ★ 我 B0/B2-1 **两次没读它** ✗ ⇒ ★ **两次都判错了** ✓ ⇒ ★★ **以后 B0 的判据要加一步：
+  先读覆盖表该行的备注栏（★ 那里常写着"真机全不成"）✓**
+
+七、★ 下一轮
+★ **B2-2 扫描曲面**落地（★ 官方 mark 表已到手：★ `1 = Profile` · `2 = Guide curve` · `4 = Sweep path` ✓）——
+★ 落点：★ `scripts/sw_surface_features.py`（★ 与 `create_extruded_surface_report` 同族 ✓）
+★ 负例已备：★ **`UseAutoSelect=false` 且不选体**（★ 官方逐字 "the user **must select the bodies**" ✓）

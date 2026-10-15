@@ -14,6 +14,7 @@
 """
 from __future__ import annotations
 
+import ast
 import inspect
 import re
 import sys
@@ -47,13 +48,40 @@ def _source_imports_helper(src: str, helper: str) -> bool:
     return False
 
 
+def _uses_helper_call(src: str, helper: str) -> bool:
+    """★ **纯函数**：这段源码里有没有**裸调用** `helper(` —— ★ **注释 / 字符串 / 限定名都不算** ✓
+
+    ★★ 2026-10-10（规格 275）**为什么要加它**：
+      ★ 原实现是**正则扫源码文本**（`re.search(r"(?<![\\w.])%s\\s*\\(" …)`）⇒
+      ★★ **把注释也算成「用到」** —— ★ 实测假阳性 **2 处**：
+        · `scripts/sw_net_blend.py:57` ⇒ `#:   ★ **取盒走 `get_com_member(face, "GetBox")`** ✓`
+        · `scripts/sw_weld_bead.py:117` ⇒ `#:   ★ 取体走 **`get_com_member(model, "GetBodies2")`** ✓`
+      ★★ **而注释里提到一个函数名，当然不需要 import 它** ⇒ ★ 那是**判据自身的缺陷**（★ 事实 245 同族：
+        ★「一个存在但**判错对象**的守卫」）。★ 该缺陷让本文件**恒红**（223 的 B8）。
+    ⚠ 判据**没有被放宽**（★ 铁律：修宽判据必须能红）：
+      ★ 它仍要求**裸调用** ⇒ ★ 一个「裸调用、哪儿都没导入」的模块**照样被抓**
+        （★ 见 `test_negative_no_import_anywhere_is_still_caught`）；
+      ★ **限定名调用**（`sw_part.get_com_member(...)`）**本来就不需要本模块导入**
+        ⇒ ★ 不算 —— ★ 与原意图一致（★ 原正则的 `(?<![\\w.])` 就是这个意思）✓
+    """
+    try:
+        tree = ast.parse(src)
+    except SyntaxError:
+        return False
+    for node in ast.walk(tree):
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+                and node.func.id == helper):
+            return True
+    return False
+
+
 def _modules_using(helper: str) -> list:
-    """`scripts/` 下**源码里用到** `helper(` 的模块名。"""
+    """`scripts/` 下**源码里裸调用** `helper(` 的模块名（★ 注释/字符串/限定名不算）。"""
     out = []
     for p in sorted((REPO_ROOT / "scripts").glob("sw_*.py")):
         src = p.read_text(encoding="utf-8", errors="replace")
-        #: 只看**调用形态**（`helper(`），且排除它自己那个文件
-        if re.search(r"(?<![\w.])%s\s*\(" % helper, src) and p.stem != "sw_connect":
+        #: ★ 只看**代码里的裸调用形态**，且排除它自己那个文件
+        if _uses_helper_call(src, helper) and p.stem != "sw_connect":
             out.append(p.stem)
     return out
 

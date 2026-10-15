@@ -1,0 +1,24 @@
+外部审阅简报 + 撤销后的生成物刷新
+
+一、新增 docs/reports/sw-project-briefing-for-external-review.md
+★ 用户要一份**自足**的文档，拿去请教高级 AI（对方完全不了解本项目）⇒ 文档不假设任何前置知识。
+十二节：§0 三分钟速览 · §1 为什么难（COM/迟绑定、弹窗冻死、返回值不可信、单实例）·
+§2 架构五层 · §3 核心方法论（判据一律用回读）· §4 规格 209 已完成的 15 件活（★ 保留）·
+§5 现在在哪里（含 ROADMAP 游标滞后）· §6 ★ **MCP 工具数问题已由 lean preset 解决**
+（机制 + 5 个交付物 + 三个"装上之后会怎样"的事实）· §7 目前问题（★ 18 failed 逐类拆开，
+说明**没有一条是能力坏了**）· §8 刚被整体撤销的一批改动（免得外部读者被现状困惑）·
+§9 技术难点（真墙 vs 看起来像墙）· §10 未来计划 + 请高级 AI 判断的 5 个问题 · §11 术语表 · §12 去哪看
+
+★ 文档末尾写了**诚实边界**四条（哪些数字未复核、哪些判断未经用户确认）。
+
+二、生成物刷新（撤销 capabilities.yaml 之后按本仓规矩重跑收尾链）
+docs/dead-ends.md · docs/harvest-digest.md · docs/metrics.md ·
+docs/recon-206/more-specific-audit.md · docs/union-coverage-matrix.md · docs/union-level-audit.md
+
+★ 收尾链会把各线未跟踪的临时文件 `git add -A` 进来（实测 **1022 个**）—— 已按本仓规矩
+`git reset` 后**只提交上面点名的路径** ✓
+
+门禁
+· 收尾链 35.4 s；release_check 仍只有那 1 处**既有**红（tools/verify_union_349.py:112）
+· 全量基线（撤销后重测）：2105 passed / 18 failed / 20 skipped（532 s）
+· 本提交不含任何能力改动

@@ -91,7 +91,11 @@ def test_counterbore_creates_through_and_recess_cuts(fake_ops) -> None:
     evidence = holes.create_counterbore_hole(FakeModel(), (0.02, 0.03), 0.006, 0.012, 0.004)
 
     assert fake_ops["circles"] == [(0.02, 0.03, 0.003), (0.02, 0.03, 0.006)]
-    assert [depth for _sketch, depth in fake_ops["cuts"]] == [0.0, 0.004]
+    #: ★★ 2026-10-11 **单位修复**后，`_circle_cut` 把深度**毫米→米**换算一次
+    #:   （官方 `FeatureCut4.md:22` 逐字「D1 … **in meters**」）。
+    #:   ⇒ 传 4（mm）⇒ 进 `extrude_cut` 的是 **4e-06**（米）。
+    #:   依据：`output/probe-unit-decisive/decisive.json`（同文档单变量定案）。
+    assert [depth for _sketch, depth in fake_ops["cuts"]] == [0.0, 4e-06]
     assert evidence["feature_kind"] == "counterbore"
     assert evidence["counterbore_diameter_mmm"] == 12.0
     assert evidence["counterbore_depth_mmm"] == 4.0

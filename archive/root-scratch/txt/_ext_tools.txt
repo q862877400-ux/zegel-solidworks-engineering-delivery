@@ -1,0 +1,511 @@
+
+###############################################################################################
+## bodies/sheet/edges/faces/vertices/point/view/mates  [Slacker-LLC]
+
+--- tool 'bodies' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'sheet' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'edges' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'faces' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'vertices' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'point' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'view' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'mates' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'delete_feature' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'rename_feature' ---
+  (NOT FOUND as a tool name literal)
+
+###############################################################################################
+## hide_all_planes/show_all_planes/fold/projected_curve/select_entity/view_rotate  [Eduardof0nt]
+
+--- tool 'hide_all_planes' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'show_all_planes' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'fold' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'projected_curve' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'select_entity' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'view_rotate' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'unsuppress_feature' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'gdt' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'composite_curve' ---
+  (NOT FOUND as a tool name literal)
+
+###############################################################################################
+## classify_feature_tree/execute_workflow/optimize_performance/update_title_block/units/load_part/file_properties/rename_feature  [andrewbartels1]
+
+--- tool 'classify_feature_tree' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'execute_workflow' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'optimize_performance' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'update_title_block' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'units' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'load_part' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'file_properties' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'rename_feature' ---
+  (NOT FOUND as a tool name literal)
+
+--- tool 'model_info' ---
+  (NOT FOUND as a tool name literal)
+
+###############################################################################################
+## vespo92 vba_* + macro security + grayscale  [vespo92]
+
+--- tool 'vba_advanced_features' ---
+  >>> src\tools\vba-part.ts
+Not swRefPoint Is Nothing Then
+        MsgBox "Reference point created"
+    End If
+End Sub`,
+      };
+
+      return templates[args.geometryType] || 'Geometry type not supported';
+    },
+  },
+
+  {
+    name: 'vba_advanced_features',
+    description: 'Generate VBA for advanced features (sweep, loft, boundary)',
+    inputSchema: z.object({
+      featureType: z.enum(['sweep', 'loft', 'boundary', 'wrap', 'flex', 'deform']),
+      profiles: z.array(z.string()).describe('Sketch names for profiles'),
+      guideCurves: z.array(z.string()).optional().describe('Guide curve names'),
+      path: z.string().optional().describe('Path for sweep'),
+      twistAngle: z.number().optional(),
+      thinFeature: z.boolean().optional(),
+      thickness: z.number().optional().describe('Thickness in mm for thin features'),
+    }),
+    handler: (args: any) => {
+      const templates: Record<string, string> = {
+        sweep: `
+Sub CreateSweepFeature()
+    Dim swApp As SldWorks.SldWorks
+    Dim swModel As SldWorks.ModelDoc2
+    Dim swFeatureMgr As SldWorks.FeatureManager
+    Dim swFeature As SldWorks.Feature
+    Dim swSweep As SldWorks.Sw
+
+--- tool 'vba_api_automation' ---
+  >>> src\tools\vba-advanced.ts
+se
+            MsgBox "Failed to create mesh. Error: " & errCode
+        End If
+    End If
+    
+    MsgBox "Simulation study '${args.studyName}' created and configured"
+End Sub`;
+    },
+  },
+
+  {
+    name: 'vba_api_automation',
+    description: 'Generate VBA for advanced API automation and event handling',
+    inputSchema: z.object({
+      automationType: z.enum(['event_handler', 'macro_feature', 'property_page', 'add_in']),
+      eventTypes: z
+        .array(
+          z.enum([
+            'file_save',
+            'file_open',
+            'rebuild',
+            'selection_change',
+            'dimension_change',
+            'feature_add',
+            'configuration_change',
+          ])
+        )
+        .optional(),
+      className: z.string().optional(),
+      methods: z
+        .array(
+          z.object({
+            name: z.string(),
+            parameters: z.array(z.string()).optional(),
+            returnType: z.string().optional(),
+          })
+        )
+        .optional(),
+    }),
+    handler: (args: any) => {
+      const eventHandlers: Record<string, string> = {
+        file_save: `
+Private Functi
+
+--- tool 'vba_error_handling' ---
+  >>> src\tools\vba-advanced.ts
+pes_e.swDocASSEMBLY, _
+        swToolbarOptions_e.swToolbarOptions_ShowInAllDocuments)
+End Sub
+
+Public Sub OnCommand1()
+    MsgBox "Custom command executed"
+End Sub`
+    : ''
+}`;
+    },
+  },
+
+  {
+    name: 'vba_error_handling',
+    description: 'Generate VBA with comprehensive error handling and logging',
+    inputSchema: z.object({
+      functionName: z.string(),
+      operationType: z.string(),
+      logToFile: z.boolean().optional(),
+      logPath: z.string().optional(),
+      emailOnError: z.boolean().optional(),
+      emailAddress: z.string().optional(),
+    }),
+    handler: (args: any) => {
+      return `
+' Error handling and logging utilities
+Option Explicit
+
+Private Const LOG_FILE As String = "${args.logPath || 'C:\\Temp\\SolidWorksVBA.log'}"
+
+Sub ${args.functionName}_WithErrorHandling()
+    On Error GoTo ErrorHandler
+    
+    Dim swApp As SldWorks.SldWorks
+    Dim swModel As SldWorks.ModelDoc2
+    Dim startTime As Double
+    Dim endTime As Double
+    
+    startTime = Timer
+    
+    ' Initialize
+    Set swApp = Application.SldWorks
+    Set swModel = swApp.ActiveDoc
+    
+    ' Log operation start
+    L
+
+--- tool 'vba_custom_properties' ---
+  >>> src\tools\vba-file-management.ts
+f
+    Next file
+    
+    MsgBox "Pack and Go complete. Processed " & packCount & " assemblies"
+End Sub`,
+      };
+
+      return operations[args.operation] || operations.open_all;
+    },
+  },
+
+  {
+    name: 'vba_custom_properties',
+    description: 'Generate VBA for managing custom properties',
+    inputSchema: z.object({
+      operation: z.enum(['add', 'modify', 'delete', 'copy', 'export', 'import']),
+      properties: z
+        .array(
+          z.object({
+            name: z.string(),
+            value: z.string(),
+            type: z.enum(['text', 'date', 'number', 'yesno']).optional(),
+            configuration: z.string().optional(),
+          })
+        )
+        .optional(),
+      sourcePath: z.string().optional(),
+      templatePath: z.string().optional(),
+      exportFormat: z.enum(['excel', 'csv', 'xml']).optional(),
+    }),
+    handler: (args: any) => {
+      return `
+Sub ManageCustomProperties_${args.operation}()
+    Dim swApp As SldWorks.SldWorks
+    Dim swModel As SldWorks.ModelDoc2
+    Dim swCustPropMgr As SldWorks.CustomPropertyManager
+    Dim propType As Long
+    Dim propValue As String
+    Dim 
+
+--- tool 'vba_pdm_operations' ---
+  >>> src\tools\vba-file-management.ts
+      Next i
+        End If
+        
+        swApp.CloseDoc swSourceModel.GetPathName
+        MsgBox "Properties copied from source file"
+    End If`
+        : ''
+    }
+End Sub`;
+    },
+  },
+
+  {
+    name: 'vba_pdm_operations',
+    description: 'Generate VBA for PDM vault operations',
+    inputSchema: z.object({
+      operation: z.enum(['check_in', 'check_out', 'get_latest', 'add_file', 'change_state', 'search', 'copy_tree']),
+      vaultName: z.string(),
+      filePath: z.string().optional(),
+      comment: z.string().optional(),
+      stateName: z.string().optional(),
+      searchCriteria: z.record(z.string()).optional(),
+      includeChildren: z.boolean().optional().default(true),
+    }),
+    handler: (args: any) => {
+      return `
+Sub PDMOperation_${args.operation}()
+    Dim pdmVault As Object ' EdmVault5
+    Dim pdmFile As Object ' IEdmFile5
+    Dim pdmFolder As Object ' IEdmFolder5
+    Dim pdmSearch As Object ' IEdmSearch5
+    Dim pdmSearchResult As Object ' IEdmSearchResult5
+    Dim bRet As Boolean
+    
+    ' Create PDM vault object
+    Set pdmVault = CreateObject("ConisioLib.EdmVault")
+    
+    ' Log
+
+--- tool 'macro_set_security' ---
+  >>> src\tools\macro-security.ts
+import { z } from 'zod';
+import type { SolidWorksAPI } from '../solidworks/api.js';
+
+export const macroSecurityTools = [
+  {
+    name: 'macro_set_security',
+    description: 'Attempt to set macro security level',
+    inputSchema: z.object({
+      level: z.enum(['low', 'medium', 'high']).describe('Security level to set'),
+    }),
+    handler: (args: any, swApi: SolidWorksAPI) => {
+      try {
+        const swApp = (swApi as any).swApp;
+        if (!swApp) {
+          throw new Error('Not connected to SolidWorks');
+        }
+
+        const levels: Record<string, number> = { low: 0, medium: 1, high: 2 };
+        const targetLevel = levels[args.level as string];
+
+        // Try to set the macro security level
+        // 77 = swUserPreferenceIntegerValue_e.swMacroSecurityLevel
+        try {
+          swApp.SetUserPreferenceIntegerValue(77, targetLevel);
+
+          // Verify the change
+          const newLevel = swApp.GetUserPreferenceIntegerValue(77);
+          const levelNames = ['Low', 'Medium', 'High'];
+
+          return `Macro security set 
+
+--- tool 'macro_get_security_info' ---
+  >>> src\tools\macro-security.ts
+ not change security level: ${e}. You may need to change it manually in SolidWorks.`;
+        }
+      } catch (error) {
+        return `Failed to set security: ${error}`;
+      }
+    },
+  },
+
+  {
+    name: 'macro_get_security_info',
+    description: 'Get detailed macro security information',
+    inputSchema: z.object({}),
+    handler: (_args: any, swApi: SolidWorksAPI) => {
+      try {
+        const swApp = (swApi as any).swApp;
+        if (!swApp) {
+          throw new Error('Not connected to SolidWorks');
+        }
+
+        const info: string[] = [];
+
+        // Get current security level
+        try {
+          const level = swApp.GetUserPreferenceIntegerValue(77);
+          const levels = ['Low (All macros run)', 'Medium (Prompt for macros)', 'High (Macros disabled)'];
+          info.push(`Current Security Level: ${levels[level] || 'Unknown'}`);
+        } catch (e) {
+          info.push(`Could not read security level: ${e}`);
+        }
+
+        // Check if VBA is enabled
+        try {
+          // 197 = swUserPreferenceToggle_e.swMacroEnable
+          const vbaEnabled = swApp.GetUserPreferenceToggle(197);
+    
+
+--- tool 'set_view_grayscale_enhanced' ---
+  >>> src\tools\enhanced-drawing.ts
+t dimension type');
+          }
+        }
+
+        return 'Diameter dimension added';
+      } catch (error) {
+        return `Failed to add diameter dimension: ${error}`;
+      }
+    },
+  },
+
+  {
+    name: 'set_view_grayscale_enhanced',
+    description: 'Enhanced method to set view to grayscale',
+    inputSchema: z.object({
+      viewName: z.string().describe('Name of the view to set grayscale'),
+    }),
+    handler: (args: any, swApi: SolidWorksAPI) => {
+      try {
+        const model = swApi.getCurrentModel();
+        if (!model) throw new Error('No drawing open');
+
+        const drawing = model;
+        const view = drawing.GetFirstView();
+
+        // Find target view
+        let targetView = view.GetNextView();
+        while (targetView) {
+          if (targetView.GetName2() === args.viewName) {
+            break;
+          }
+          targetView = targetView.GetNextView();
+        }
+
+        if (!targetView) throw new Error('View not found');
+
+        const results: string[] = [];
+
+        // Method 1: SetDisplayMode with various options
+        try {
+          targetView.SetDisplayMode3(false, 4, false, false);
+
+--- tool 'update_sheet_format' ---
+  >>> src\tools\drawing.ts
+         0 // Offset
+        );
+
+        return `Added dimensions to view: ${args.viewName}`;
+      } catch (error) {
+        return `Failed to add dimensions: ${error}`;
+      }
+    },
+  },
+
+  {
+    name: 'update_sheet_format',
+    description: 'Update drawing sheet format and properties',
+    inputSchema: z.object({
+      properties: z.object({
+        title: z.string().optional(),
+        drawnBy: z.string().optional(),
+        checkedBy: z.string().optional(),
+        date: z.string().optional(),
+        scale: z.string().optional(),
+        material: z.string().optional(),
+        finish: z.string().optional(),
+      }),
+    }),
+    handler: (args: any, swApi: SolidWorksAPI) => {
+      try {
+        const model = swApi.getCurrentModel();
+        if (!model || model.GetType() !== 3) {
+          throw new Error('Current document must be a drawing');
+        }
+
+        // Update custom properties
+        const customPropMgr = model.Extension.CustomPropertyManager('');
+
+        for (const [key, value] of Object.entries(args.properties)) {
+          if (value) {
+            customPropMgr.Add3(
+              ke
+
+--- tool 'solidworks_operations' ---
+  >>> src\knowledge\chromadb.ts
+t}`,
+    });
+  }
+
+  async initialize(): Promise<void> {
+    try {
+      // Create or get collection for SolidWorks operations
+      this.collection = await this.client.getOrCreateCollection({
+        name: 'solidworks_operations',
+        metadata: { description: 'SolidWorks operation history and patterns' },
+      });
+    } catch {
+      logger.warn('ChromaDB not available, running without knowledge base');
+    }
+  }
+
+  async recordOperation(operation: {
+    tool: string;
+    input: any;
+    output: any;
+    success: boolean;
+    timestamp: Date;
+  }): Promise<void> {
+    if (!this.collection) return;
+
+    try {
+      await this.collection.add({
+        ids: [`op_${Date.now()}`],
+        documents: [JSON.stringify(operation)],
+        metadatas: [
+          {
+            tool: operation.tool,
+            success: operation.success.toString(),
+            timestamp: operation.timestamp.toISOString(),
+          },
+        ],
+      });
+    } catch (error) {
+      logger.error('Failed to record operation', error);
+    }
+  }
+
+  async findSimilarOperations(query: string, limit: number = 5): Promise<any[]> {
+    if (!

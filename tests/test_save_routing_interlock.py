@@ -80,7 +80,13 @@ _REGISTERED_OBSOLETE = {
     #:   ★★★★★ **可复用判据**：★★★ **这与"mock 落后于换代"是**同一个病**** ——
     #:     ★ **"改了实现"之后，一切**与它配套的东西**都要跟着改**：
     #:     ★★ mock · ★ 登记表 · ★ 钉死数量 · ★ 契约测试 ⇒ ★ 而它们**都不会自己报错** ✓
-    "sw_connect.py": {(916, "SaveAs")},
+    #: ★★★★★★★ 2026-10-09（spec 241）**本条改成"按名字"** —— ★ 原写 `(916, "SaveAs")`：
+    #:   ① ★ **行号早漂了**（真位置是 `sw_connect.py:1167` 的 `model.Extension.SaveAs(...)`）；
+    #:   ② ★★ **它从没被任何判据读过** —— `test_export_route_never_uses_obsolete_saveas`
+    #:      只看 `sw_export.py` ⇒ ★ **一条"登记了却没人查"的死数据** ✓
+    #:   ⇒ ★ 按本仓纪律「判据按**名字**定位，不按行号」，改成**成员名集合**，
+    #:     ★★ 并由新增的 `test_registered_entries_are_not_dead` **真的去核它** ✓
+    "sw_connect.py": {"SaveAs"},
 }
 
 
@@ -131,12 +137,32 @@ def test_export_route_never_uses_obsolete_saveas():
     """
     source = (REPO_ROOT / "scripts" / "sw_export.py").read_text(encoding="utf-8")
     found = [(ln, nm) for ln, nm, _ in _iter_com_calls(source) if nm in OBSOLETE]
-    registered = set(_REGISTERED_OBSOLETE.get("sw_export.py", ()))
-    offenders = [(ln, nm) for ln, nm in found if (ln, nm) not in registered]
+    registered = _REGISTERED_OBSOLETE.get("sw_export.py", set())
+    offenders = [(ln, nm) for ln, nm in found if nm not in registered]
     assert not offenders, (
         "★ sw_export.py 里出现了**新增**的废弃路由（★ 本仓库判据：一律用 SaveAs3）：%s\n"
         "★ 已登记的既有偏差 = %s（★ 修好后请从登记表删掉）"
         % (offenders, sorted(registered)))
+
+
+def test_registered_entries_are_not_dead():
+    """★★★ **登记表不许有死条目**（★ spec 241 新增）—— ★ 登记了、而真树上**已经不存在** ⇒ 红。
+
+    ★ 为什么单列一条：★ 登记表是"**现状**"，不是"历史"。★ 有人把废弃路由修好之后忘了删登记
+      ⇒ ★ 那条登记就变成**假数据**，★ 而**它不会自己报错** ✓
+      ★★ 实录：本文件原先那条 `("sw_connect.py", (916, "SaveAs"))` **同时**踩两个坑 ——
+        ① 行号漂到了 **1167**；② **它从没被任何判据读过**（本测试只看 `sw_export.py`）⇒
+        ★ 一条**死数据**在仓库里躺了 **5 天**，★ 谁都没发现 ✓
+    ★ 修法：★ 真修好了 ⇒ ★ **把登记删掉**（★ 这是好事，不是失败）。
+    """
+    for name, registered in _REGISTERED_OBSOLETE.items():
+        source = (REPO_ROOT / "scripts" / name).read_text(encoding="utf-8")
+        actually = {nm for _, nm, _ in _iter_com_calls(source) if nm in OBSOLETE}
+        dead = sorted(registered - actually)
+        assert not dead, (
+            "★ %s 的登记表里有**死条目** %s ⇒ ★ 要么是**修好了**（请删掉登记）、"
+            "要么是**改名/搬家了**（请把登记改对）；★ 真树实得 %s"
+            % (name, dead, sorted(actually)))
 
 
 def test_saveas3_is_present_where_image_or_pdf_is_written():

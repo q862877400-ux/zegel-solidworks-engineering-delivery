@@ -1,0 +1,58 @@
+| 301 | **`mold_parting_geometry` 的写入那半：官方要 mark 1 + mark 4，而"给边线打 mark 4"在 pywin32 上**做不到**（`Select4` 无 mark 参数 · `SelectByID2` 回 true 而计数 0）**（2026-10-02，轮 384）。
+
+## 一、★★★★★ 为什么挖它
+```
+★ 12 条 stitched 里：★ **10 条在 `docs/dead-ends.md` 上**（★ 不该挖）· `weldment_cut_list` **已查明是环境**
+   （★ 本机没装焊件轮廓库）⇒ ★★ **真正可挖的只有 `mold_parting_geometry`** ✓
+★ 而既有探针 `verify_mold_evidence_smoke.py` **只覆盖只读那半**（★ 5/5 pass：`mold_evidence()` 可调用 ·
+   含 6/6 官方只读键 · 新零件上计数都是 0/空），★ 而它**自己明写**：
+   「**未验**：`InsertMoldDraftAnalysis` / `MoldUndercutDetect` / `InsertMold*` —— 在未准备的分型件上会弹框」。
+⇒ ★ 本轮的活：★ **补写入那半** ✓
+```
+
+## 二、★★★★★ 官方契约（★ 铁律 4：CHM 的 Remarks 给出答案）
+```
+★ `IFeatureManager.InsertMoldPartingLine(BFlipDir)` 的 Remarks **原话**：
+   「Before calling this method, you must select **the direction of pull** and **the edges for the
+     parting line** by calling **IModelDocExtension::SelectByID2** with the following **Marks**:
+       Direction of pull   = **1**
+       Parting line edges  = **4**」
+⇒ ★★ **即：★ 两件都要带 mark 选，★ 而且**指定必须走 `SelectByID2`** ✓
+★ 我第一版**两处都错**：★ mark 传 **0** · 且**完全没选边线** ⇒ 官方回 `None` ✓
+```
+
+## 三、★★★★★ 真机把这条路走死了（★ 两步都试过、都失败）
+```
+① ★ **`IEntity.Select4(Append, Callout, mark)`** ⇒ `com_error: (-2147352562, '无效的参数数目。')`
+   ⇒ ★★ **即它只有 **2 个参数**** —— ★ 与**事实 32** 完全一致（「`IEntity.Select4` 没有 mark 参数」）✓
+② ★ **`SelectByID2("", "EDGE", x, y, z, False, **4**, callout, 0)`**（★ 按**边上的点**定位，事实 32 给的路）
+   ⇒ ★★ **`y=+20边` / `y=-20边` / `x=+30边` 三条都回 `True`**，
+   ★★★★ **而 `SelectionManager.GetSelectedObjectCount2(-1)` = **0**** ⇒ ★★ **实际什么都没选中** ✓✓✓
+   ⇒ ★ 那正是**事实 8**（「`AddSelectionListObject` 的 bool 返回值不可信，用计数回读」）——
+     ★ **我第一版信了 `True`**（★ 于是以为"选中了"）。
+```
+
+## 四、★★★★★ 结论（★ 穷尽式）
+```
+★ **官方要求的两件里，"给边线打 mark 4" 在 pywin32 这条后端上**做不到****：
+   ★ 要么**没有 mark 参数**（`Select4`），★ 要么**静默失败**（`SelectByID2` 回 true 而计数 0）。
+⇒ ★★ 于是 `insert_parting_line` **恒回 None**（★ 官方在缺前置时返回 None）——
+   ★★★ **那不是"我们没做对"，★ 而是**同族的后端限制****（★ 事实 8 / 32 / 47）✓
+⇒ ★ 处置：★ **写准 limitation**（★ 把上面那条链如实记下）· ★ **不升 verified**（★ 硬约束③⑥）·
+   ★ **不再换参数试**（★ 事实 47 的定则）。
+```
+
+## 五、★ 本轮还顺手确认的两件事
+```
+① ★ **`mold_evidence()` 的 `counts` 值全是 `null`**（★ 不是 `0`）——
+   ★ 而只读探针的判据③是「**都是空/0**」⇒ ★ **`null` 被当成 0**，★ 判据仍成立
+   （★ 空件上确实没有分型线）；★ 而**读的时候要留意 `null` ≠ `0`**（★ 事实 8 同族：★ 别把"读不到"当"是 0"）。
+② ★ **我在代码里写了 `**1**`（markdown 的强调标记）** ⇒ Python 把它当**幂运算** ⇒ `SyntaxError`。
+   ⇒ ★ 教训：★ **给文档用的强调标记不要进代码**（★ 与事实 48「长文本不要内联进源码」同族）。
+```
+
+**依据**：`D:\AI\SW\AI Solidworks\官方文档\…\IFeatureManager~InsertMoldPartingLine.html`（★ Remarks 的 mark 1 / mark 4）·
+本机实测（★ `Select4` 3 参 ⇒ `-2147352562 '无效的参数数目。'` · `SelectByID2(..., mark=4, ...)` ⇒ `True`
+而 `GetSelectedObjectCount2(-1)` = **0** · `insert_parting_line` ⇒ `RuntimeError`）·
+`tools/prove_mold_parting_geometry.py` + `output/mold-parting-geometry-evidence.json`（★ `verdict: partial`）·
+`tools/verify_mold_evidence_smoke.py`（★ 只读 5/5）· 事实 8 / 32 / 47 / 48

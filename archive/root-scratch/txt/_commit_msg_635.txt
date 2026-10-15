@@ -1,0 +1,41 @@
+feat(覆盖): ★★ R3 接线 ⇒ **覆盖率 111/145 → 114/145（79%）**，钣金 **6/11→8/11**、焊件 **2/7→3/7**、§八 **20→17**
+
+■ 一 · 接线（Lead 做）
+  `mcp-server/register_capabilities.py` 的 `BATCH_MODULES` 加 **`tool_specs_batch74`**。
+  · 机器核验：`all_specs` 里有那 4 条 · `check_specs` ⇒ **problems: NONE**
+  · ★ 5 个能力层函数的**首参都是 `model`** ⇒ `inject="model"` **与源码一致** ✓
+  · 覆盖率重跑：**本仓库 114/145 (79%)** · 钣金 **8/11** · 焊件 **3/7** · §八缺口 **17**
+
+■ 二 · ★★ R3 队友这轮的**核心产出是废弃链查证**（★ 三条都不是线性的，逐条核过官方页）
+  ① `IModelDoc2.InsertSheetMetalMiterFlange`（**11 参**·回 `void`）**废弃**
+     → **`IFeatureManager.InsertSheetMetalMiterFlange`（14 参**·回 `Feature`）
+     ⇒ ★★ **同名两份、参数个数不同** —— 用错的后果**不只是"没反应"，而是个数对不上**；
+  ② `InsertEndCapFeature` → `…3`，★ 而 **`InsertEndCapFeature2` 不在链上**（其官方页**无 Obsolete 句**，
+     末位是 `System.object Faces`）⇒ ★ **不是 1→2→3 线性**；
+  ③ `InsertGussetFeature` → **`…3`**，★ 而 `…2` 的官方页**无 Obsolete 句** ⇒ ★ **中间那代的废弃状态官方没写**；
+  ④ 「中面」：`InsertMidSurfaceExt`/`IInsertMidSurfaceExt` **都废弃**，而后者点名的后继
+     **`IFeatureManager::IInsertMidSurface` 官方没写**（全库仅 3 个 `*MidSurface*` 页）
+     ⇒ ★ **链断、无签名可抄** ⇒ ★ 队友**没有拿非 `I` 前缀那份顶替**（★ 正确 —— 铁律 5）。
+
+■ 三 · 一条工具名改了（★ 更准确 **且** 才计数）
+  `solidworks_weldment_insert_gusset` → **`solidworks_weldment_gusset_create`**
+  ★ 原因：覆盖率对「焊件/角撑板（焊件）」的关键词是 **`weldment_gusset`**（逐字在
+    `gen_user_feature_coverage.py:139`），而原名中间插了 `insert_` ⇒ **不含该子串** ⇒ 不计数。
+  ★★ **不是"为计数改名"**：它创建的**就是焊件 gusset**（`InsertGussetFeature3`）
+    ⇒ 新名（`weldment_gusset_create`）**比原名更准确**；★ 而计划里那条红线照旧：
+    **不许**把"改名字让计数涨上去"当成"能力补上了"。
+  ⚠ 改完该**仍计 ❌** —— ★ 生成器对那一项有一条**排除注记**
+    （「命中的是 `sheet_metal_create_gusset`（**钣金** gusset）…照事实 36 不可互认」），
+    ★ 那是**生成器侧（仓外）**的逻辑，★ 本仓**不去动它**；★ 故本轮净增 **+3** 而非 +4。
+
+■ 四 · ★★ 如实标注：**这 4 条工具尚未真机验证**
+  ★ 与 batch72/73 一样：**注册 ≠ 能跑**（★ 本会话已两次证实：`InsertTableAnnotation` 那条、
+   以及 `create_hole_table` 最初的名不符实）。
+  ★ 已把这句话写进 `register_capabilities.py` 的批次注释里，★ **并明令**：
+    **在工具层 e2e 探针给出读数之前，不许把这 4 条的 `level` 写成 `verified`**。
+  ★ 队友自己也把前置**如实**标了：斜接法兰与闭合角的官方页**没有 `## Remarks`** ⇒
+    前置**查不到** ⇒ `preconditions_held` 报 **`None`**（★ 不是 `False`，★ 那是**如实**不是漏填）；
+    闭合角还是**零参 + 回 `void`** ⇒ ★ "返回非 None"这条判据**根本不存在** ⇒
+    判据改成**树增量 + 面数增量 + 体积增量三个一起**（★ 与事实 486 同族：不能只看树）。
+
+★ 收尾链见下（`release_check` 必须第 1 轮 OK）。

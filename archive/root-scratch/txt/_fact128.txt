@@ -1,0 +1,40 @@
+**可达性结论必须带「绑定层次」限定 —— 轮 186 记的「`ISafeArrayUtility` 到不了」过强，本轮更正** —— 2026-10-01（轮 188）。
+
+★★★ **为什么必须更正**：轮 186 我在 pywin32 **迟到绑定**下测得 21/21 不可达，就记成「**到不了**」。
+⚠ 而**没限定层次** —— 下一轮（本轮）用 `comtypes` **早绑定**一试：
+```
+① comtypes.client.GetActiveObject('SldWorks.Application') ⇒ **附着同一实例**
+   （comtypes PID=20456 ⇒ 与运行中的那个同一个；**没起第二个实例** —— 事实 24 红线）
+② cc.GetModule('D:/Program Files/SOLIDWORKS Corp/SOLIDWORKS/sldworks.tlb')
+   ⇒ 模块 comtypes.gen.SldWorks，**里面有 ISafeArrayUtility**
+③ ★★★ **QueryInterface(ISafeArrayUtility) 成功** ⇒ 对象**真的实现**那个 vtable 接口
+```
+⇒ ★★ 正确的是「**pywin32 迟到绑定看不到它**」，**不是**「接口不存在 / 到不了」。
+
+⚠ **而往返仍未走通**：`PutDouble(arr, 0, 1.5)` 不报错（类型库说它确实要 **3** 参、
+`VariantArray` 是 **in,out**），但 `arr.value=None`、`GetDouble` 读回 **0.0**
+⇒ **`in,out` 的 VARIANT 数组没回写**（与事实 68 同族）⇒ 按事实 53 **不继续凑形态**。
+
+★★ **而无论走不走得通它都没有净收益**：pywin32 的 `VARIANT(VT_ARRAY|VT_R8, [...])` 与
+`VARIANT(VT_ARRAY|VT_DISPATCH, [...])` **本来就能构造数组**（事实 123 / 167 就是这么修的）⇒
+★ 它是**给 C++ 弥补「没有原生数组」**的，脚本语言的绑定层**已经替我们做了**。
+⇒ ★ 本后端仍然「**不做**」，但**理由从「够不到」改成「够得到但没有净收益」**。
+
+★★★ **新定则**：**可达性结论必须带「绑定层次」限定** —— `pywin32 迟到绑定` / `comtypes 早绑定` /
+`C# PIA` / `进程内 C++` 四层，**各层结论不能互相顶替**。
+⚠ 不带层次的「到不了」会被后来人读成「**官方没这个能力**」。
+
+★★★ **副产（本轮最有复用价值的一条）**：**类型库的方法表是第 4 套官方签名源**：
+```
+comtypes.client.GetModule('<xxx.tlb>').<IIface>._methods_
+  每条 = (HRESULT, 名字, argtypes, flags(名 + 方向), id, 描述)
+★ 它**直接给出 [in] / [out] / [in,out]** —— 而**反射文本**只给 `&`、**swapi md** 只给措辞
+  （`out` / `ref`）⇒ ★ **两套源都没这么直白的方号**。
+实例（本轮读到的权威形态）：
+  PutDouble(VariantArray=**in,out** · Index=in · Value=in)     ⇒ **3 参**
+  GetDouble(VariantArray=in · Index=in · Value=**out**)        ⇒ 2 参，出参作返回值
+⇒ ⚠ 我第一版**按 md 的措辞**传 2 个实参 ⇒ `TypeError: required argument 'Value' missing`
+```
+
+**依据**：`tools/probe_safearray_comtypes.py`；`D:/AI/SW/output/safearray-comtypes-probe.json`；
+`capabilities.yaml` 的 `backend_catalog`（已带轮 188 更正）；事实 24 / 47 / 53 / 68 / 126

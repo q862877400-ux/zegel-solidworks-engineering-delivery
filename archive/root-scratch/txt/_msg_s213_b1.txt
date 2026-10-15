@@ -1,0 +1,63 @@
+规格 213 · B1：★★★ **A 类 6 项挂上工具** —— ★ 工具数 448 → **454**，★ 覆盖率**实测**涨了
+
+一、★★★★ **本批做了什么**（★ 纯声明、★ 因为 6 项的实现早就在 `scripts/` 里 ✓）
+· ★ 新建 `mcp-server/tool_specs_batch100.py` —— **6 个 ToolSpec** ✓：
+  `solidworks_section_properties`（`sw_mass_property.section_properties`）·
+  `solidworks_scale_feature`（`sw_part.insert_scale`）·
+  `solidworks_untrim_surface`（`sw_surface_features.untrim_surface_report`）·
+  `solidworks_sweep_surface`（`sw_surface_features.sweep_surface_report`）·
+  `solidworks_weldment_trim`（`sw_weldment.insert_weldment_trim_report`）·
+  `solidworks_export_flat_pattern_dxf`（`sw_export.export_flat_pattern_dxf`）✓
+· ★★ **登记进** `register_capabilities.py` 的 `BATCH_MODULES` **显式清单**（★ 不登记不生效 ✓）
+
+二、★★★★★ **门禁教了我一次（★ 而那是本批最值钱的一处）**
+★ 第一版我把 `scale_feature` 的三个参数**照函数原样**声明成 `x` / `y` / `z` ✗ ⇒
+  ★★ `check_spec` **当场拦下**，逐字：
+  > ★ 规则 3 违反：工具 `solidworks_scale_feature` 的入参 `x` 是**裸坐标**
+  > —— 必须改用具名实体 + 声明式 selection
+⇒ ★★★ **而它们其实是无量纲缩放比例、★ 不是坐标** ✗ ⇒ ★★ **正解**：
+  ★ 线名改成 `x_factor` / `y_factor` / `z_factor`（★ 语义更准 ✓）+
+  ★★ **`param_alias={"x_factor": "x", …}`** 把它们映射回函数形参 ✓
+  （★ `make_tool_function` 逐字：`target = spec.param_alias.get(p.name, p.name)` ✓）
+★ 6/6 过 `check_spec` ✓
+
+三、★★★★★ **覆盖率实测（★ 不许估数，★ 前后都从盘上取）**
+| 域 | 挂之前 | 挂之后 | Δ |
+|---|---|---|---|
+| ★★ **曲面** | 11/14 = 79% | ★★ **13/14 = 93%** | ★ **+2** ✓ |
+| ★★ **焊件** | 3/7 = 43% | ★★ **4/7 = 57%** | ★ **+1** ✓ |
+| ★ **特征** | 24/28 = 86% | 24/28 = 86% | ★ **不变** ✗ |
+| ★ **装配** | 5/10 = 50% | 5/10 = 50% | ★ **不变** ✗ |
+
+★★ **曲面 +2** = `untrim_surface` + `sweep_surface` ✓ · ★★ **焊件 +1** = `weldment_trim` ✓
+  （★ 焊件另三项属 **B 类**、★ 还没挂 ✓）
+
+四、★★★★ **两个"不变"我都查了真因，★ 不许含糊过去**
+· ★ **装配不变 —— 预期的** ✓：★ 爆炸直线 · SpeedPak **属 B 类**（★ 只在探针里验过、
+  ★ `scripts/` 里没有模块函数 ✓）⇒ ★ **它们要 B2 先落模块、B3 才挂** ✓
+· ★★★ **特征不变 —— 不是我的问题，★ 是仓外生成器有一条过时的硬编码备注** ✗：
+  ★ 生成器 `D:\SW-coverage-tool\gen_user_feature_coverage.py` 里 ——
+  ★ L79 的判据是关键词：`("特征", "缩放/变形", ("scale", "deform"))` ✓
+  ★★ 而 L185 的 `NOTES` **逐字**写着：
+  > 「命中的是 `drawing_set_sheet_scale`（**工程图比例**），不是实体缩放。
+  > ★ **本仓库没有实体缩放/变形**。」
+  ⇒ ★★★★ **那条备注把"含 `scale` 的命中"**一律当成假阳性排除**** ✗ ——
+    ★ 而**我新加的 `solidworks_scale_feature` 含 `scale`、★ 也确实进了 `all_specs()`** ✓
+    ★★ ⇒ **备注过时了** ✓
+  ⚠ ★ 那个生成器**刻意不在本仓里**（★ 它自己的 README 说"主仓库不依赖它"✓）⇒
+    ★★ 改它属于**仓外改动**、★ 本批**只记录、不擅自改** ✓
+
+五、★ 契约与负例（★ `tests/test_spec213_batch100_tools.py` ⇒ **12 passed**）
+· ★ **正例**：★ 6/6 过 `check_spec` ✓ · ★★ **6/6 进了 `all_specs()`** ✓（★ 那才是"用户能发现" ✓）·
+  ★★ 工具数 **= 448 + 6 = 454** ✓ · ★ 全仓**无重名** ✓
+· ★★ **负例①**：★ `scale_feature` 的**线名不许**是裸 `x`/`y`/`z` ✓（★ 那正是被拦过的那处 ✓）
+· ★★ **负例②**：★ 线名改了 ⇒ ★ **必须靠 `param_alias` 映射回形参** ✓
+  （★ 漏了的话，★ 函数会收到 `x_factor=` ⇒ ★ **真机调用当场炸** ✓）
+· ★ 附：★ 逐项断言**被包函数真的存在**（★ 防"声明了但模块里没有" ✓）
+· ★★ **注册路冒烟**（★ 本会话的教训：★ `all_specs()` 不报错 ≠ `register()` 不崩 ✗）：
+  ★ 用**真** `BaseInput` + `ResponseFormat` 建 input model ⇒ **6 建成 · 0 崩** ✓
+
+六、★ 交付物
+· `mcp-server/tool_specs_batch100.py` · `mcp-server/register_capabilities.py`（+`BATCH_MODULES` 一行）·
+  `tests/test_spec213_batch100_tools.py` · `specs/213-hook-up-tools/`（spec / plan / tasks / goal-bar）·
+  `docs/user-feature-coverage.md`（★ 重生成，★ 曲面 13/14 · 焊件 4/7 ✓）

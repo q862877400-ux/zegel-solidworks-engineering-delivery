@@ -1,0 +1,56 @@
+| 311 | **objective② 判定补第三层证据（枚举常量/文档串）—— 因为前两层**看不到参数取值**；★ 而第三层自己也要**全词匹配**（`THEME` 含 `HEM`）**（2026-10-03，轮 394）。
+
+## 一、★★★★★ 起因：`vertices` 被**误判**
+```
+★ 轮 393 的两层证据（★ 函数名 + COM 成员）判 `vertices` 为「**有原语、无工具**」——
+   ★ 依据是 `GetStartVertex` / `GetEndVertex` / `GetPoints` 都在用，★ 而**没有名字含 vertex 的工具**。
+★ 而本轮查落点时**一眼看到它早就是工具**：
+   ```
+   mcp-server/tool_specs_batch14.py:55  name="solidworks_entities_on_body"
+     module="sw_selection_spec" · function="entities_on_body" · inject="model"
+     params: kind ∈ sw_selection_spec.ENTITY_KINDS —— **"EDGE" / "FACE" / "VERTEX"**
+     doc: 「★ VERTEX uses the official IBody2.GetVertices() (0 args)；
+            ★ a 20×20×10 box returns FACE=6 · EDGE=12 · **VERTEX=8**，so Euler's V−E+F=2 holds」
+   ```
+⇒ ★★★ **即：★ `vertices` **早就有工具**（★ `solidworks_entities_on_body(kind="VERTEX")`）** ✓
+   ⇒ ★★ **真因：★ 前两层证据**看不到"参数取值"** ——
+     ★ 函数名 `entities_on_body` 里**没有 vertex**，★ 而"VERTEX"是**参数的合法取值** ✓
+```
+
+## 二、★★★★★ 补第三层：**枚举常量与文档串**
+```
+★ 第三层扫两处：① 形如 `"VERTEX"` 的**大写常量串**（★ 在 `scripts/` + `mcp-server/`）；
+   ② 形如 `XXX_KINDS = {...}` 的**枚举字面量**（★ 若其内容含功能词）。
+★ 生效证据（★ 真机跑）：★ 第三层把 `vertices` 判回 **已有**，★ 佐证是
+   **`sw_selection_spec.py:VERTEX`** —— ★ **正是那个工具的 `ENTITY_KINDS`** ✓
+```
+
+## 三、★★★★★ 而第三层**自己也有假阳性**（★ 与 `close`/`lose` 同族）
+```
+★ 第一版第三层用**子串**匹配 ⇒ `hem` 被判成「已有」，★ 佐证是
+   `sw_jlcfa_locate.py:**THEME**_BLUES` —— ★★ **`THEME` 里含 `HEM`** ✗
+⇒ ★ **修法：按 `_` 切词后做**全词匹配**（★ 与事实 381 那条 `lose`/`close` 同族的定则）。
+★ 修后：★ `hem` 回到「需人工核」（★ 假阳性消掉）· ★ `vertices` 仍「已有」（★ 真阳性保住）✓
+```
+
+## 四、★★★★★ 12 条的**最终判定**（★ 三层证据 + 全词匹配）
+| 判定 | 条目 | 依据 |
+|---|---|---|
+| **已有 6** | `gdt` · `units` · `wrap` · `sensor` · `referenced_documents` · **`vertices`** | 函数 + COM 成员；★ `vertices` 靠**第三层**（`ENTITY_KINDS` 里的 `VERTEX`） |
+| **真缺 4** | `balloon` · `datum` · `jog` · `undo` | ★ **三层都无** |
+| **需人工核 2** | `hem` · `unfold` | ★ 有入口而同名 COM 成员为空 ⇒ ★ 人工查过：★ **`hem` 真缺可补**（官方 `IHemFeatureData`，Sheet Metal 族 10 属性 + 8 方法）· ★ **`unfold` 部分已有**（`sw_export.py:156` 的 `export_flat_pattern_dxf` **真的是钣金展开导出**；★ 而"建展开特征"未核） |
+
+## 五、★ 一条方法收获
+```
+★★ **判"有没有这个能力"，证据层数要多于一**，★ 而且**每层都要防假阳性**：
+   · 第一层（函数名）⇒ ★ `entities_on_body` **漏掉** VERTEX（★ 参数取值里才有）
+   · 第二层（COM 成员）⇒ ★ 对"读原语"够用，★ 对"能力在参数里"**看不见**
+   · 第三层（枚举/文档串）⇒ ★ **补上了**，★ 而它自己**必须全词匹配**（★ `THEME`/`HEM`）
+⇒ ★★ **三层都"无"才判真缺** —— ★ 而本轮 4 条真缺正是**三层都无** ✓
+   ★ 与事实 52（名字是弱信号）/ 302（两层证据）/ 381（词边界）同一条线上的继续收窄。
+```
+
+**依据**：`mcp-server/tool_specs_batch14.py:55`（`solidworks_entities_on_body` 的 `kind ∈ ENTITY_KINDS`）·
+`scripts/sw_selection_spec.py` 的 `ENTITY_KINDS`（★ 含 `VERTEX`）·
+`output/naked-batch2-judgement.json`（★ 三层证据的判定）·
+`tools/judge_naked_batch2.py`（★ 第三层 + 全词匹配）· 事实 52 / 302 / 381 / 393

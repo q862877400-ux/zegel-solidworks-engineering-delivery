@@ -1,0 +1,60 @@
+fix(阶段2): ★★★★★ **T1 第 5 条 —— ★ `CreateSpline2` 的「不可换」从**断言**升级为**真机否证****（★ 逐条流程第 ② 步）
+
+■ 一 · ★ 逐条流程 ①：查官方签名与 Remarks
+  ★ **官方逐字**（★ `C:\swapi\types\ISketchManager\CreateSpline3.md`）：
+    ★ `CreateSpline3(object PointData, object Surfs, object Direction, bool SimulateNaturalEnds,
+      **out object Status**)` ⇒ **5 参** ✓
+    ★★ 而它的 `## Remarks` 逐字：★ 「To create a **2D spline**… ★ **All other parameters with
+      null or Nothing.**」⇒ ★ **2D 情形下 `Surfs` / `Direction` 都传 null** ✓
+  ★★ **而本仓 `sw_part.py` 的 docstring 逐字断言**：「★ `CreateSpline2` 官方已标 **Obsolete**
+    （★ 后继 `CreateSpline3` 末参是 **BYREF `Object&`**、★ **pywin32 到不了**）⇒
+    ★ **能用的是这个已废弃的 `CreateSpline2`**」✓
+    ★★★ **⇒ 那是一句**断言**（★ 没有可复跑的证据）** ⇒ ★ **按流程第 ② 步去真机验它** ✓
+
+■ 二 · ★★★★★ 逐条流程 ②：真机验证后继可不可调
+  ★ 新增探针 `tools/probe_createspline3.py`（★ **只报不动**）⇒ 走 `sw_guard` ✓
+  ★★ **结果**（★ `sw_alive: true` · ★ **零弹窗** · ★ 2.14 s ⇒ `output/createspline3-probe-evidence.json`）：
+    | ★ 形态（★ 2D 样条、三个点） | ★ 结果 |
+    |---|---|
+    | ★ `CreateSpline3(data, None, None, False, **out_dispatch()**)` | ★★ **`类型不匹配`（位置 5）** |
+    | ★ `CreateSpline3(data, None, None, False, **空 Dispatch**)` | ★★ **`类型不匹配`（位置 5）** |
+    | ★ `CreateSpline3(data, None, None, False, **None**)` | ★★ **`类型不匹配`（位置 5）** |
+    | ★★ **基线：`CreateSpline2(data, False)`** | ★★★ **`built=True` · 段数 0→1**（★ 建成）✓ |
+  ★★★ **⇒ 三种出参包装**全败**、★ 而基线建成** ⇒ ★ **那才叫"后继到不了"** ✓
+    ★ **位置 5 = 末参 `Status`** —— ★ 与 docstring 的断言**逐字对上** ✓
+
+■ 三 · ★ 修法（★ **不换、★ 而把断言升级为证据**）
+  ★ **代码不动**（★ 继续调能用的 `CreateSpline2`）✓
+  ★★ **docstring 加**完整的真机证据表****（★ 含三种失败的包装 + 基线成功的读数）·
+    ★★★ **并写明证据文件与探针名**（★ 让**后人可复跑**）✓
+  ★★★★ **并写清判据（★ 本轮定的）**：★★★ **"不可换"要有**真机证据**、★ 而不是"看起来复杂"** ✓
+
+■ 四 · ★★★★ 可复用判据（★ 本轮两条）
+  > ① ★★★★ **「不可换」的门槛是**真机否证**、★ 不是"官方废弃了"或"看起来复杂"** ——
+  >    ★ 而**证据要能复跑**（★ 探针名 + 证据文件名 + **失败位置**）✓
+  > ② ★★★ **分析范围要贴合**组织单元****（★ **事实 51**）——
+  >    ★ 我写测试第一版取**整个模块**的代码 ⇒ ★★ **而别的函数的 docstring 里也在讲同一个成员名**
+  >    （★ "补正而不删除"的产物）⇒ ★★★ **误判** ⇒ **改成只取那一个函数** ✓
+
+■ 五 · ★★ 本轮踩到的两处（★ 都如实记）
+  ★ ⚠ **测试里"剥注释"只跳了 `#` 开头的行** ⇒ ★★ **而模块头 docstring 极长** ⇒
+    ★★★ **说明文字被当成代码** ⇒ **改用 AST** ✓
+  ★★ ⚠ **然后**范围又太宽****（★ 全模块）⇒ ★ **再收窄到函数**（★ 事实 51）✓
+  ★★★ ⚠ **顺手删掉一个没人用的 `_code_only`**（★ 本仓有门禁查未用的 helper）✓
+  ★★★★ ⚠ **存量失败 3 个**（★ `test_sw_sketch_contract` 1 · `test_sw_sketch_edit_contract` 2）⇒
+    ★ **我用 `git stash` 判明是**存量****（★ 撤掉本轮改动后**同样 3 failed / 33 passed**）✓
+
+■ 六 · ★★ 新增测试（★ `tests/test_obsolete_createspline3_unreachable.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★ **前提断言** | ★ **读官方页**确认后继 5 参 + 2D 调法（★ 判据的锚点）✓ |
+  | ★★★ **核心断言** | ★ **证据文件里**三种包装全报「类型不匹配」**且位置是 5** · ★ 基线建成 ✓ |
+  | ★★ **核心断言** | ★ 记档期间**仍要调 `CreateSpline2`**、★ **不许**调到不了的后继 ✓ |
+  | ★★★ **负例 · 理由要有证据** | ★ 必须引**证据文件名 + 探针名 + 失败位置**（★ 证据要可复跑）✓ |
+
+■ 七 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★ **真命中：★ 34** —— ★ 其中 **4 条已判定保留**（★ `AddMate5` 2 条 + `CreateSpline2` 1 条 +
+    ★ `Get` ×2 是假阳性）⇒ ★★★ **真实生产待办：★ 8 条** ✓
+  ★★★★ **下一轮**：★ `FeatureCutThicken2`（★ 后继**未废弃**、★ 4→6 参）·
+    ★ `AutoDimension2`（★ 后继 `FullyDefineSketch` **未废弃**、★ 但**范式变**）✓

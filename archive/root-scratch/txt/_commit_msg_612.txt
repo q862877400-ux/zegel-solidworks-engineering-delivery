@@ -1,0 +1,64 @@
+feat(草图): ★★★★ **曲面上偏移真机建成** —— ★ 而它靠的是**官方例子里的"两遍选边" + 收尾 `InsertSketch`**（事实 482）
+
+★ 承台账那条的**待办**（★ 我自己写的："读它的 `## Remarks` 看**选区与面的要求**"）⇒ 本轮做了。
+
+## 一、★★★ 官方三样齐（★ 而三条 Remarks 我一条都没做全）
+
+```
+① 签名 `(Offset, Reverse, UseFront, MakeConstruct)` · `UseFront` 逐字 "**must be set to true**"
+② **`## Remarks` 三条**：
+   a) 要**测地线**偏移请用 `GeodesicSketchOffset`（★ 另一个方法）
+   b) ★★ "Before…call `SelectByID2` for **each edge** to offset and set **Append to true** and **Mark …**"
+   c) ★★ "After…call **`ISketchManager::InsertSketch`** to rebuild the model with the 3D sketch"
+③ ★★★ **`## Examples` 给了三个**（C#/VB.NET/VBA）—— ★ **而例子给出"两遍选边"**，
+    ★ 那是**签名与 Remarks 都给不出**的：
+   ```
+   SelectByID2("", "EDGE", x,y,z, True, **0**, Nothing, 0)  ×4   ← 第一遍 mark=0
+   ClearSelection2 True
+   SelectByID2("", "EDGE", x,y,z, True, **1**, Nothing, 0)  ×4   ← 第二遍 mark=1
+   SketchOffsetOnSurface(0.01, False, True, False)
+   ClearSelection2 True
+   swSketchManager.InsertSketch True                          ← ★ **收尾**
+   ```
+```
+
+## 二、★★ 而本轮修了**两个真因**（★ 全靠真机逼出来）
+
+```
+① ★ **`SelectByID2("", "EDGE", x,y,z, …)` 一条边都选不中**
+   （★ 真机：**角点与中点两种坐标都 `selected = 0`**）⚠
+   ★ 而**事实 32 早就写着**：选实体要用 **`IEntity.Select4`（按对象）**
+   ⇒ ★ 故改用本仓的 `entities_on_body` + `select_object` ⇒ **选中 4** ✓
+② ★ **`Select4` 没有 mark 参数** ⇒ 用 **`ISelectionMgr.SetSelectedObjectMark(i, mark, -1)`** 补设 ✓
+```
+
+## 三、★★★★ 而结果（★ 三格对照，★ 那才是判据）
+
+```
+★ 官方参数 + **收尾 `InsertSketch`**  ⇒ 特征 7 → **9** · 新增 **`基准面1`** + **`草图2`** ✓
+对照：官方参数 · **不收尾**            ⇒ 特征 **7 → 7** · 新增 **[]**                        ⚠
+对照：**`Reverse=True`**              ⇒ 特征 7 → 9（★ 方向变了而特征照建）
+```
+
+⇒ ★★ **故对照那格**证明**了官方 Remarks 第 ③ 条**：★ **`InsertSketch` 就是"把它重建出来"的那一步**
+   —— ★ 不做它，**一条特征都不长** ✓
+⇒ ★★★ **故它的工作流是**：★ **它回 `False` 是**正常的****（★ 它只"创建了 3D 草图"），
+   ★ **而 `InsertSketch` 之后才成形** ✓
+⇒ ★★ **故 2026-10-01 那次"前置全满足仍回 False"的结论要**更正****：
+   ★ 那个 `False` **不是失败** —— ★ 而是**缺了收尾那一步** ⚠
+
+## 四、交付
+
+```
+docs/known-facts.md  **事实 482**（+40）
+capabilities.yaml    + **`sketch_offset_on_surface`**（verified）⇒ **109 条**
+tools/prove_offset_on_surface_per_example.py  新（★ 三格 · 零弹窗）
+★ 台账「曲面上偏移」的 `note` 待更新 · 并入规范门禁 **PASS** · A4 门禁 `[ok]`
+★ 语法门禁 0 处（793 个文件）
+```
+
+## 五、★★ 方法论
+
+> ★ **官方的 `## Examples` 那一段，价值常常等于甚至高于 `## Remarks`** ——
+> ★ 因为**只有例子给得出"调用序"**（★ 本例：**两遍选边** + **收尾 `InsertSketch`**）✓
+> ★★ 而**这次我没读例子就直接试了三轮** —— ★ 而**例子一直在那**（★ `## Examples` 就在同一页上）⚠

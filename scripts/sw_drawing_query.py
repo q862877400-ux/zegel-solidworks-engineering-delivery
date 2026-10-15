@@ -191,7 +191,11 @@ def list_views(model) -> list[dict[str, Any]]:
         try:
             name = str(get_com_member(view, "GetName2"))
         except Exception:                                       # noqa: BLE001
-            name = str(get_com_member(view, "Name") or "")
+            #: ★★★ spec 256：**不再回落调废弃的 `IView::Name`** —— 官方 `IView/Name.md` 首行
+            #:   「Obsolete. Superseded by [[IView::GetName2]] and [[IView::SetName2]]」；
+            #:   ★ 真机（SW 34.4.1）在 4 个视图上证明 `Name` == `GetName2`（★ 3 个真实模型视图）
+            #:   ⇒ ★ 这里失败就是**取不到名字**，★ 报空串，**不换一个废弃成员再试**。
+            name = ""
         if vtype != SHEET_PSEUDO_VIEW_TYPE:                     #: ★ 跳过"图纸本身"
             views.append({"name": name, "type": vtype})
         nxt = get_com_member(view, "GetNextView")
@@ -260,8 +264,12 @@ def view_annotations_report(model) -> dict:
             vtype = -1
         try:
             name = str(get_com_member(view, "GetName2"))
-        except Exception:                                                 # noqa: BLE001
-            name = str(get_com_member(view, "Name") or "")
+        except Exception:                                       # noqa: BLE001
+            #: ★★★ spec 256：**不再回落调废弃的 `IView::Name`** —— 官方 `IView/Name.md` 首行
+            #:   「Obsolete. Superseded by [[IView::GetName2]] and [[IView::SetName2]]」；
+            #:   ★ 真机（SW 34.4.1）在 4 个视图上证明 `Name` == `GetName2`（★ 3 个真实模型视图）
+            #:   ⇒ ★ 这里失败就是**取不到名字**，★ 报空串，**不换一个废弃成员再试**。
+            name = ""
         if vtype == SHEET_PSEUDO_VIEW_TYPE:                               #: ★ 跳过"图纸本身"
             nxt = get_com_member(view, "GetNextView")
             if nxt is None:

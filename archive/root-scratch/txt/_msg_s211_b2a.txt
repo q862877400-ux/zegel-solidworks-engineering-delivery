@@ -1,0 +1,66 @@
+规格 211 · B2-1：★★ 「剪裁曲面 · 取消剪裁」—— ★ 并实证了官方那条前置
+
+一、★★ **先说边界**（★ 如实，不夸大）
+· ★★ **「剪裁曲面」本身仓里已有** —— `trim_surface_report` + `cut_surface_report`
+  （★ 走 `PreTrimSurface` + `PostTrimSurface` **两段式** ✓）
+  ★ 而且它**参数语义是从 CHM 逐字读的**（★ 因为 swapi 的 md 里那四个**全是 `No description`** ⚠）
+  ⇒ ★★ **这是"三源互证"的一个实例** ✓
+· ★ 故本批补的是「**取消剪裁**」（`InsertUntrimSurface2`）✓
+
+二、★ 官方页三样（★ 逐字）
+· ★ 签名：`Feature InsertUntrimSurface2(int FaceUntrimType, int EdgeUntrimType,
+  double Distance, bool BMerge, bool BTrimOppositeSide)` ✓
+· ★ `## Parameters`：★ `FaceUntrimType`（`swFaceUntrimType_e`；**valid only if a face is
+  selected**）· ★ `EdgeUntrimType`（**valid only of one or more edges are selected**）·
+  ★★ `Distance` —— ★ **没给单位** ✗ · ★ `BMerge`（True ⇒ 合并；false ⇒ **另建独立面体**）·
+  ★ `BTrimOppositeSide`（**valid only if BMerge is false**）✓
+· ★★★ `## Remarks` **两条**（★ **都写成前置** ⇒ ★ 都能当"必然失败"的依据 ✓）：
+  「This method **is valid only for surface parts**.」
+  「**requires preselection of the face or edges you want to untrim**.」✓
+
+三、★★★★ **真机结果 —— 三条负例 + 一条官方前置的实证**
+| 项 | 读数 |
+|---|---|
+| ★ 负例 ① `face_untrim_type=9` | ★ 拒（★ 不在官方枚举内 ⇒ **必然非法**）✓ |
+| ★ 负例 ② `edge_untrim_type=9` | ★ 拒 ✓ |
+| ★★★ **负例 ③ 普通零件上、能选到面** | ★★ **`ok=False` · 特征树 7→7 · 新增 `[]`** ✓✓ |
+| ★★ 没预选 | ★ `stage='selection'` · `faces_selected=0` ✓ |
+| ★ `BTrimOppositeSide` 在 `merge=True` | ★ `trim_opposite_side_valid=False` ✓（★ 官方逐字）|
+
+★★★★ **③ 的意义**：★ 在**普通零件**上、★ **能选到面**、★ 调用**没抛** ⇒ ★★ **而特征树一点没变** ✓
+⇒ ★★★ **这正是官方那句「is valid only for surface parts」的真机实证** ✓
+  ★（★ 比"读一句文档"硬得多 —— ★ 它是**在真机上把那条前置撞出来的** ✓）
+
+四、★ 一处**我选择"不发明判据"**（★ 铁律 5 的现场）
+· ★ 我本想做一个"**是不是曲面零件**"的静态判据 ⇒ ★★ **但**官方**没给现成的** ✗
+  （★ 要判"体里有没有曲面" ⇒ ★ 那需要自己造一个判据 ✓）
+· ⇒ ★★ **不做** ⇒ 改为：★ **调用后特征树没变** ⇒ ★ 报错信息**逐字引用官方那两条前置**，
+  ★ 让读者知道该查什么 ✓
+· ★★ 并把官方那两条前置**放进返回值**（`documented_preconditions`，★ 测试断言它必须在 ✓）
+
+五、★ 落点与判据（★ 全部照本仓既有模式）
+· ★ 落 **`scripts/sw_surface_features.py`**（★ 曲面**特征**的家 —— ★ `trim_surface_report` 就在那 ✓）
+  ★（★ **不是** `sw_surface.py` —— ★ 那个是 `IModeler.Create*Surface` 造几何面的族 ✗）
+· ★★ 主判据 = **特征树多了新特征**（★ 与 `trim_surface_report` **同一判据** ✓，★ **回读** ✓）
+· ★★ **「选不上」与「选了没用」分开记**：★ 选择计数单独落 `faces_selected` 字段 ✓
+· ★ 新增 `UNT_FACE_UNTYPES` / `UNT_EDGE_UNTYPES`（★ 与官方枚举逐字一致 ✓）· 补 `mm` 导入 ✓
+
+六、★ 交付物
+· `scripts/sw_surface_features.py`：★ +`untrim_surface_report` + 两个枚举 ✓
+· `tools/probe_spec211_untrim.py` · `output/spec211-b2-untrim.json` ✓
+· `capabilities.yaml`：★ **129 条** · ★★ **`stitched` 15 → 16** ✓
+  ★★ 取 **`stitched`**（★ **不是 `verified`**）—— ★ **因为正例未做** ✗ ⇒ ★ 按本仓口径
+  **不完整就不许标 `verified`** ✓（★ 与 B1-1 同一纪律 ✓）
+· `tests/test_spec211_untrim.py`（★ **10 passed**）✓ · `docs/metrics.md` 已重生成 ✓
+
+七、★★ **挂起项（★ 如实列出）**
+★ **正例（曲面零件上真的取消剪裁）未做** ✗ —— ★ 它需要「**先建出被剪裁的曲面**」那一条链：
+★ 造曲面（★ `create_extruded_surface`）→ ★ 与另一张面相交 → ★ 剪裁（★ `trim_surface_report`）
+→ ★ **然后才谈"取消剪裁"** ✓
+★★ 那是**一条链**，★ 不在本批范围 ⇒ ★ 已写进该能力的 `limitations` 第一条 ✓
+★（★ 而 B2 的另外两项 —— **扫描曲面** · **边界曲面** —— 尚未开工 ✓）
+
+八、★ 下一轮
+★ **B2-2 扫描曲面**（★ 记忆里明写「**从没查过 `InsertSweepSurface2`**」⇒ ★ **先查官方页** ✓）
+★ **B2-3 边界曲面**（★ `CreateRuledSurface` —— ★ 官方写「**Valid input curves are b-curves**」
+★ ⇒ **类型级**的必然失败负例已备 ✓）

@@ -26,7 +26,9 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 import register_capabilities as rc                            # noqa: E402
 import tool_specs_batch91 as b91                              # noqa: E402
 
-EXPECTED = 11
+EXPECTED = 8  # ★ 2026-10-10：11 → 8 —— ★ 业主架构指令移出 3 个**倒角几何方法**
+# ★ 判据：★「那个数字错了，回读能不能查出来」⇒ ★ 不能 ⇒ 方法 ✗
+# ★ 原件在 `archive/inherited-methods/scripts/sw_chamfer_geometry.py`（只搬不删）
 #: ★ 窗口句柄类参数（★ 句柄**不是**几何坐标 ⇒ 不违反规则 3；★ 但要与 x/y/z 明确区分）
 HWND_PARAMS = ("main_hwnd", "hwnd", "want")
 GEOM = ("x", "y", "z", "point", "coord", "center", "origin")
@@ -37,7 +39,7 @@ def test_batch91_registered():
     assert '"tool_specs_batch91"' in t
 
 
-def test_eleven_specs_declared_and_resolve():
+def test_eight_specs_declared_and_resolve():
     assert len(b91.SPECS_BATCH91) == EXPECTED, len(b91.SPECS_BATCH91)
     for s in b91.SPECS_BATCH91:
         m = importlib.import_module("scripts.%s" % s.module)
@@ -65,16 +67,9 @@ def test_renamed_param_has_alias():
     assert alias.get("settle_seconds") == "settle", alias
 
 
-def test_missing_required_param_was_added():
-    """★★ 回归：`chamfer_volume_report` 的**第 4 个必填形参**曾被漏抄 ⇒ 门禁当场抓到 ⇒ 现须在 ✓"""
-    s = next(x for x in b91.SPECS_BATCH91
-             if x.name == "solidworks_chamfer_volume_report")
-    names = [p.name for p in s.params]
-    assert "expected_removed_mm3" in names, names
-    m = importlib.import_module("scripts.sw_chamfer_geometry")
-    sig = inspect.signature(m.chamfer_volume_report)
-    #: ★ 判据按**门禁的口径**：**必填**形参（无默认值）必须全都声明；
-    #:   ★ 有默认值的可省略（`rel_tol` 就是这种 —— ★ 我第一版写 `names == real` 太严，被测试自己抓住）✓
-    required = [n for n, p in sig.parameters.items() if p.default is inspect.Parameter.empty]
-    missing = [n for n in required if n not in names]
-    assert not missing, "★ 漏了必填形参: %r（声明=%r）" % (missing, names)
+#: ★★★ 2026-10-10 **`test_missing_required_param_was_added` 已移除**（★ 业主架构指令）：
+#:   ★ 那个测试守的是 `solidworks_chamfer_volume_report` 的必填形参 ——
+#:   ★★ 而**那个工具已按业主指令移出**（★ 倒角体积公式 = **方法**）⇒
+#:     ★ 判据守一个不存在的东西 ⇒ ★ **跟着走** ✓
+#:   ★ 原件：★ `archive/inherited-methods/`（★ 只搬不删）
+#:   ★★ **不是丢判据** —— ★ 是那个判据的**被测对象合法移出**了（★ 判据本身没错）✓

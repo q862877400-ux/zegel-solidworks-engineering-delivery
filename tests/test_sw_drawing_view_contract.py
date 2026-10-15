@@ -317,14 +317,27 @@ def test_scale_and_name_are_properties_not_methods():
     #:   ★★★★ **⇒ 断言："先试 `GetName2`；★ 它给了值就**只调它一个**"** ——
     #:     那不是放松判据：★ 它守的是**顺序**（★ 后继在前）+ ★ **早退语义** ✓
     assert seen2 == [("GetName2", ())], seen2
-    #: ★★★★ **并补一条负例**：★ 当 `GetName2` **给不出值**时，
-    #:   ★ **必须**回落到老成员 `Name`（★ 兜底不能丢）✓
+    #: ★★★★ **2026-10-10（规格 301）订正：负例已随 `spec 256` 反转** ——
+    #:   ★★ **原文**（已作废）逐字是：
+    #:     「★★★ **并补一条负例**：★ 当 `GetName2` **给不出值**时，
+    #:      ★ **必须**回落到老成员 `Name`（★ 兜底不能丢）✓」
+    #:   ★★★ **而 `spec 256` 把兜底**有意删掉**了** —— ★ 它的 docstring 逐字：
+    #:     「★ **真机**（SW **34.4.1**）在 **5 个视图**上测得 `Name` == `GetName2` **全部相同**
+    #:      ⇒ ★ **两代不等价的风险已排除** ⇒ ★ **不再调用废弃成员**」+
+    #:     「★★★ **行为变化（★ 如实记）**：★ 若 `GetName2` 抛异常 ⇒ ★ 现在报 **空串**
+    #:      （★ 原先会回落取 `Name`）。★ 这是**有意的**：★ 失败就是**取不到名字**，
+    #:      ★ **不换一个废弃成员再试**。」
+    #:   ★★★★ **⇒ 本条负例改成守「**不再回落**」**（★ 与 `spec 256` 的结论一致）：
+    #:     ★ `GetName2` 给不出值 ⇒ ★ 回**空串**、★ 且 **`Name` 一次都不许被调** ✓
+    #:   ★★ **依据**（`MEMORY.md` 规则 28）：「改实现前先搜『有没有测试钉住旧行为』——
+    #:     ★ 不同步改就等于**在断言错的东西**」✓
     seen3 = []
     m.get_com_member = lambda o, n, *a, **k: (seen3.append((n, a)) or ("" if n == "GetName2" else "V2"))
     m.set_com_member = lambda o, n, v: (seen3.append((n, (v,))) or "V2")
     m.call_com_member = lambda o, n, *a, **k: (seen3.append((n, a)) or "V2")
-    assert m.get_view_name(object()) == "V2"
-    assert seen3 == [("GetName2", ()), ("Name", ())], seen3
+    assert m.get_view_name(object()) == "", "★ `GetName2` 给不出值 ⇒ 应回**空串**（★ spec 256 起不再回落）"
+    assert seen3 == [("GetName2", ())], (
+        "★ 回落到了废弃成员 `Name` ⇒ 与 `spec 256` 的结论（**有意不回落**）矛盾：%r" % seen3)
 
 
 

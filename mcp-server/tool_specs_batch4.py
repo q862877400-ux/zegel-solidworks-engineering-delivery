@@ -176,8 +176,110 @@ def _pre_gusset(params):
     _select(params, "FACE")
 
 
+#: ★★★★ 2026-10-10（规格 296）**`create_draft` 的 `pre_call` 必须建立**两个**选择** ——
+#:   ★★ 起因：**283 的真机读数**逐字（`output/_probe283_draft_dir.txt`）：
+#:     · **只给面**（6 面 × 3 标记 = **18 臂**）⇒ ★ **全失败**，★ 报文**恒定**
+#:       「**此拔模方向尚未定义。**」⇒ ★★ 排除了「选错面 / 选错 mark」；
+#:     · **`Front Plane`（mark 1）+ 面#0（mark 2）** ⇒ ★★ **成功**（新特征 **`拔模1`**）。
+#:   ★★★ **⇒ 前置是**两个**选择**，而本模块原先**只给了一个**：
+#:     ```python
+#:     def _pre_draft(params):
+#:         _select(params, "FACE")          # ★ 只有面 ⇒ 真机必报「方向尚未定义」
+#:     ```
+#:     ⇒ ★★ 于是「283 真机建成」这个结论**经工具层复现不了**（★ 事实 503 那一族：
+#:       「代码里写了」≠「真机上前置真的上了」）。
+#:   ★ 官方 mark 逐字（`C:\swapi\types\IFeatureManager\InsertMultiFaceDraft.md`）：
+#:     「direction **mark 1**, faces to draft **mark 2**, draft edges **mark 4**」。
+#:   ★ 方向项用**平面名**（★ 声明式，★ 规则 3：不收裸坐标）——
+#:     ★ 走 `SelectByID2(name, "PLANE", …, mark=1)`（★ 平面**是特征**，★ 事实 32 说按名字选只对特征成立 ⇒ 可行）。
+#:   ★★ **前置没备齐就抛**（★ 不静默继续 —— 那会把「前置没上」记成「能力不成」）。
+def _face_object(params):
+    """★ 取「待拔模面」的 COM 对象（★ **只取对象、不选择** —— 选择由调用方按 mark 做）。
+
+    ★ 为什么不能直接用 `_select(params, "FACE")`：★★ 它内部走 `resolve_selection`
+      → `select_object(append=False)` ⇒ **会清空**刚选好的**方向项**
+      （★ 296 真机实测：`mark1` 从 1 变 **0**，★ 而真机随即报 `InsertMultiFaceDraft 创建失败`）。
+    ⇒ ★★ 所以「取对象」与「选择」**必须分开**：先选平面（mark 1），再 `append=True` + `mark=2` 选面。
+    """
+    from scripts.sw_connect import get_com_member
+    from scripts.sw_selection_spec import current_selection, entities_on_body
+
+    model = _model()
+    sel = str(getattr(params, "selection", "") or "").strip()
+    if sel == "__current_selection__":
+        found = current_selection(model)
+        if not found:
+            raise RuntimeError("★ 前置未成立：`selection='__current_selection__'` 但当前**没有选中项**")
+        return found[0]
+    if sel.startswith("index:"):
+        try:
+            idx = int(sel.split(":", 1)[1])
+        except ValueError:
+            raise RuntimeError("★ 非法的 `selection`：%r（`index:` 后面要跟整数）" % sel)
+        items = entities_on_body(model, "FACE", body_index=0)
+        if idx < 0 or idx >= len(items):
+            raise RuntimeError("★ 前置未成立：FACE 序号 %d 越界（共 %d 个）" % (idx, len(items)))
+        return items[idx]
+    raise RuntimeError(
+        "★ 非法的 `selection`：%r（应为 `__current_selection__` 或 `index:<n>`）" % sel)
+
+
+def _select_plane(params, mark: int) -> int:
+    """按**平面名**选一个基准面并给 `mark`；★ 回读计数为准（★ 事实 8：布尔返回值不可信）。"""
+    from scripts.sw_connect import get_com_member
+    from scripts.sw_part import _empty_callout, _get_plane_name_candidates
+
+    model = _model()
+    ext = get_com_member(model, "Extension")
+    name = str(getattr(params, "direction_plane", "") or "").strip()
+    if not name:
+        raise RuntimeError(
+            "★ 前置未成立：`direction_plane` 是空的 —— "
+            "★ `InsertMultiFaceDraft` 的官方 `## Remarks` 要求**方向项 mark 1**（283 真机：缺它必报"
+            "「此拔模方向尚未定义。」）⇒ ★ 请给出一个基准面名（如 `Front Plane` / `前视基准面`）")
+    for cand in _get_plane_name_candidates(name):
+        if get_com_member(ext, "SelectByID2", cand, "PLANE", 0.0, 0.0, 0.0,
+                          False, int(mark), _empty_callout(), 0):
+            break
+    sm = get_com_member(model, "SelectionManager")
+    got = int(get_com_member(sm, "GetSelectedObjectCount2", int(mark)) or 0)
+    if got < 1:
+        raise RuntimeError(
+            "★ 前置未成立：平面 %r（候选 %r）按 mark=%d **一个都没选上**"
+            % (name, _get_plane_name_candidates(name), mark))
+    return got
+
+
 def _pre_draft(params):
-    _select(params, "FACE")
+    """★★ 283 的真机配方：**方向项（平面 · mark 1）** + **待拔模面（mark 2）**。
+
+    ★★ **顺序与 `append` 都必须对**（★ 296 真机实测的坑，★ 见 `output/_probe296_draft_precall.txt`）：
+      · 第一版写成 `_select_plane(mark=1)` 然后 `_select(params, "FACE")`
+        —— ★★ `_select` 内部走 `resolve_selection` → `select_object(append=False)`
+        ⇒ ★★ **把刚选好的方向项清掉了**（实测 `mark1` 由 1 → **0**，合计只剩 1）
+        ⇒ ★ 真机报 `InsertMultiFaceDraft 创建失败`（★ 与 283 的「方向尚未定义」同一病灶）。
+      · **正解** = ★ **先选平面（mark 1）**，★ **再以 `append=True` + `mark=2` 选面** ——
+        ★ 走本仓既有的「按对象选 + 带 mark」那条路：`_select_com_object(obj, append, mark, model)`
+        （★ 它内部用 `CreateSelectData().Mark` + `IEntity::Select4`，见 `MEMORY.md` 规则 37）。
+      · ★★ **两个 mark 都要回读**（★ 事实 8：布尔返回值不可信）⇒ 缺任一个就**抛**。
+    """
+    from scripts.sw_connect import get_com_member
+    from scripts.sw_part import _select_com_object
+
+    model = _model()
+    get_com_member(model, "ClearSelection2", True)      #: ★ 官方示例第 ① 步：先清选区
+    _select_plane(params, mark=1)                       #: ★ 方向项 —— ★ 缺它真机必报「此拔模方向尚未定义。」
+    face = _face_object(params)                         #: ★ 待拔模面（★ 只取对象，不选）
+    if not _select_com_object(face, append=True, mark=2, model=model):
+        raise RuntimeError("★ 前置未成立：待拔模面（mark 2）没选上")
+    sm = get_com_member(model, "SelectionManager")
+    got1 = int(get_com_member(sm, "GetSelectedObjectCount2", 1) or 0)
+    got2 = int(get_com_member(sm, "GetSelectedObjectCount2", 2) or 0)
+    if got1 < 1 or got2 < 1:
+        raise RuntimeError(
+            "★ 前置未成立：需要**两个**选择 —— 方向项(mark1)=%d · 待拔模面(mark2)=%d"
+            "（283 真机：缺任一个必报「此拔模方向尚未定义。」）" % (got1, got2))
+    return got1 + got2
 
 
 # ── spec 装配（`derived_args`）─────────────────────────────────────
@@ -332,7 +434,10 @@ SPECS_BATCH4: list[ToolSpec] = [
         module="sw_sheet_metal", function="create_draft",
         inject="model",
         param_alias=dict(
-            {"selection": None},
+            #: ★★ `direction_plane` 由 `pre_call` 消费（★ 不传给目标函数 ——
+            #:   `create_draft(model, face_ref, spec)` **没有**这个形参）。
+            #:   ★ 这正是本仓既有形态（同段的 `selection` 也是 `None`）✓
+            {"selection": None, "direction_plane": None},
             **_consumed("angle_deg", "depth_mm", "reverse_direction"),
         ),
         pre_call=_pre_draft,
@@ -341,12 +446,30 @@ SPECS_BATCH4: list[ToolSpec] = [
         params=[
             Param("selection", str,
                   description="Declarative FACE selection: '__current_selection__' or 'index:<n>'."),
+            Param("direction_plane", str, default="Front Plane",
+                  description="★★ 方向项（官方 mark 1）。一个**基准面名**（如 `Front Plane` / `前视基准面`）"
+                              "—— ★ 是**名字**不是坐标 ⇒ 不违反规则 3。"
+                              "★★ 283 真机：**缺它必报「此拔模方向尚未定义。」**（18 臂全失败），"
+                              "★ 给了它（`Front Plane`）+ 面 ⇒ **建成 `拔模1`**。"),
             Param("angle_deg", float, description="Draft angle in DEGREES."),
             Param("depth_mm", float, description="Draft depth in MILLIMETRES."),
             Param("reverse_direction", bool, default=False, description="Reverse the draft direction."),
         ],
-        doc=("★★ **本机（SW 2026 SP4.1 + pywin32）NOT USABLE**：`CreateDefinition(3)`（`swFmDraft`）**不是合法类型** ⇒ 回 `None`；★ 且实现里的 `face_ref` 形参**从未被使用**（见原描述）。"
-             "Create a native draft on a SELECTED face. NOTE: the implementation's own `face_ref` parameter is accepted but NEVER USED (verified by reading the body); this tool therefore omits it and selects from `selection` instead, matching the docstring ('on the already-selected face'). *** NOT USABLE ON THE TEST MACHINE *** run 2026-10-01 on SW 2026 SP4.1 and it FAILED with: CreateDefinition(3) returned None. The correct call shape has not been determined yet - see scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS. The tool is kept so the failure stays diagnosable, not because it works."),
+        doc=("★★ **2026-10-09（规格 239）创建路径已按官方页改写**：**旧描述（已作废）** —— "
+             "`CreateDefinition(3)`（`swFmDraft`）**不是合法类型** ⇒ 回 `None`；★ 那是**真机事实**，"
+             "但**根因**是「`swFmDraft` 不在任何官方 `CreateDefinition` 宿主页的 `Type` 清单里」"
+             "（规格 238 已证）⇒ **这条路径官方根本不支持**，不是参数没调对。"
+             "★★ **现在的路径**：官方入口 **`IFeatureManager::InsertMultiFaceDraft`**"
+             "（★ 其前代 `IModelDoc2::InsertMfDraft` / `InsertMfDraft2` 两页都写着 "
+             "`Obsolete. Superseded by IFeatureManager::InsertMultifaceDraft`）。"
+             "Create a native draft on a SELECTED face. The face is selected for you from `selection` "
+             "BEFORE the call; per the official `## Remarks` the selections must be made with "
+             "`IModelDocExtension::SelectByID2` (direction mark 1, faces to draft mark 2, draft edges mark 4). "
+             "NOTE: the implementation's own `face_ref` parameter is accepted but NEVER USED (verified by "
+             "reading the body); this tool therefore omits it and selects from `selection` instead, matching "
+             "the docstring ('on the already-selected face'). *** NOT VERIFIED ON THE TEST MACHINE *** "
+             "The path was rewritten from the official page in an OFFLINE slice (no COM run) - see "
+             "scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS (still `None` = untested)."),
     ),
     # 签名: def create_swept_flange(model, path_ref, profile_ref, spec: SweptFlangeSpec)
     ToolSpec(

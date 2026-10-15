@@ -1,0 +1,20 @@
+import sys, time, warnings
+sys.stdout.reconfigure(encoding="utf-8")
+sys.path.insert(0, r"C:\swprojects\sw-skill-fork\scripts")
+import sw_jlcfa_locate as L, sw_jlcfa_steps as S, sw_jlcfa_search as SR, sw_jlcfa_grid as G, sw_jlcfa_select as SEL
+warnings.filterwarnings("ignore")
+h, w = L.connect(); S.cache_drop()
+print("① 搜索 EGH25SAZ0C")
+SR.search(h, w, "EGH25SAZ0C")
+time.sleep(4)
+S.cache_drop(); h,w = L.connect()
+G._capture(h,w)[0].save(r"D:\AI\SW\shots\s1.png")
+print("② 首个结果卡")
+pt = SR.first_result_point(h, w)
+print("   ->", pt)
+if pt:
+    S.ensure_front(h); S.click(pt[0], pt[1], 2.5)
+    S.cache_drop(); h,w = L.connect()
+    st = S.read_state(w)
+    print("③ 点后 kind=%s pct=%s combos=%s" % (S.page_kind(st), st["pct"], list(st["combos"])[:8]))
+    G._capture(h,w)[0].save(r"D:\AI\SW\shots\s2.png")

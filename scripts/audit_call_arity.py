@@ -203,14 +203,22 @@ def direct_call_sites(path, table):
 #     ★★ **而它**不会自己报错**（★ 只在跑那条测试时才现形）✓
 #   ★★★★★ **⇒ 下次改这个文件时，★ 记得同步这两行**；★ 更稳的做法是改成**按成员名**登记
 #     （★ 那要改 `audit` 的接口 —— ★ **本轮不动**、★ 如实留给后人）✓
-COMTYPES_CALL_SITES: dict[tuple[str, int], str] = {
-    ("sw_delivery.py", 671):
+# ★★★★★★ **2026-10-10（规格 300）★ 那个「更稳的做法」本轮做了** —— ★★ 改成**按成员名**登记：
+#   ★★ **起因**：★ 又一次**同一形态**的失配 —— 工作树里给 `sw_delivery.py:248` 加了一行
+#     `#: dispatch-guard: exempt internal-helper` ⇒ ★ **671/965 各 +1 漂到 672/966** ⇒
+#     `test_arity_comtypes_classification` 报「应当恰好 **2** 条 comtypes，★ 实际 **0**」✗
+#   ★★★ **⇒ 这次不再改行号**（★ 那只是把下一次的漂移往后推）—— ★ **按成员名登记**：
+#     ★ 键 = `(文件名, 成员名)` ⇒ ★★ **加注释/挪代码都不会让它失配** ✓
+#   ★★ **代价（如实记）**：★ 同一文件里**同名成员有多处**时，键会**覆盖** ⇒
+#     ★ 所以配一条**回读断言**：★ 每条登记的成员必须**真的在目标文件里**（★ 见 `audit()`）。
+COMTYPES_CALL_SITES: dict[tuple[str, str], str] = {
+    ("sw_delivery.py", "IGetDocumentNames"):
         "`package.IGetDocumentNames(document_count)` —— 走 **comtypes 早绑定**"
         "（`_comtypes_document_names()`，由 `comtypes.client.GetModule` 得到）。"
         "注释写明：「comtypes 会自动分配 [out] 数组，只需传入 Count」。"
         "官方 arity = 2（`Int32&` + `Object&`）⇒ 在 **pywin32** 上要传 2，"
         "在 **comtypes** 上只传入参即正确。**不是缺陷。**",
-    ("sw_delivery.py", 965):
+    ("sw_delivery.py", "OpenDoc6"):
         "`sw.OpenDoc6(path, type, options, empty)` —— 同样是 **comtypes 早绑定**"
         "（`sw` 由 `comtypes` 创建）。官方 arity = 6（含两个 `[out] long`）⇒ "
         "comtypes 代理自行分配出参。**不是缺陷。**"
@@ -230,7 +238,10 @@ def audit(target, signature_paths):
     stem = _stem(target)
     for lineno, fn, member, argc in sites:
         # ⚑ 轮 130：先看是不是**已知的 comtypes 早绑定站点** —— 那类本工具判不了
-        reason = COMTYPES_CALL_SITES.get((stem, lineno))
+        #: ★★★★★ 2026-10-10（规格 300）**键改成按成员名** —— ★ 加注释/挪代码**不再失配** ✓
+        #:   ★★ 代价：同一文件里同名成员多处时会命中多行 ⇒ ★ 那正是**我们要的**
+        #:     （★ 它们**同一病因**、★ 理由同一条）。
+        reason = COMTYPES_CALL_SITES.get((stem, member))
         if reason is not None:
             comtypes.append((lineno, member, argc, reason))
             continue

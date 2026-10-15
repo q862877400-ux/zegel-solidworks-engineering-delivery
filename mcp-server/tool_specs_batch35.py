@@ -122,7 +122,9 @@ SPECS_BATCH35 = [
         #:   工具层的 `offset_distance_mm` 映过去 —— ★ 那正是本项目的统一形态
         #:   （★ 工具层带 `_mm`、能力层不带；★ 由 `check_param_binding.py` 盯着）。
         param_alias={"offset_distance_mm": "offset_distance"},
-        doc="Create a profile-center mate between declaratively selected structural members.",
+        doc="Create a profile-center mate between declaratively selected structural members. "
+            "★ Uses the official entry IAssemblyDoc::CreateMateData(swMatePROFILECENTER=24) + "
+            "IAssemblyDoc::CreateMate (spec 240); the deprecated AddMate* family is NOT used.",
     ),
     ToolSpec(
         name="solidworks_weldment_create_weldment_profile",

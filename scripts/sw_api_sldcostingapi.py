@@ -442,6 +442,7 @@ def _require(obj, what: str = "对象"):
 # 覆盖:   后续同级定义
 # ⚠ 本组为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
+#: dispatch-guard: exempt generated-api
 def call_index(obj, family: str, member: str, *args):
     """按登记表校核实参个数，通过后调用该族的成员。
 

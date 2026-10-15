@@ -35,6 +35,8 @@
 
 from __future__ import annotations
 
+_MM_TO_M = 1.0 / 1000.0      #: ★ 毫米 → 米（事实 2 的换算口径）
+
 import sys
 from pathlib import Path
 
@@ -44,6 +46,14 @@ for _p in (_HERE.parent, _HERE.parent.parent):
         sys.path.insert(0, str(_p))
 
 from sw_connect import get_com_member  # noqa: E402
+
+#: ★ 长度换算助手：`_f(v)` = 先收窄成 float、再**毫米→米**（恰好一次）。
+#: ★★ 依据（定案）：`output/probe-unit-decisive/decisive.json` —— 同文档同会话单变量：
+#:   草图 40×40 回读 `[40,40,0]` ✓ 而 `extrude_boss(20.0)` 回读 Z = **20000 mm**
+#:   ⇒ COM 吃**米**，用户传毫米 ⇒ 进 COM 前必须换算恰好一次。
+#: ⚠ 用单 token 替换（`float(` → `_f(`）落地，避免括号配对出错（事实 61）。
+_f = lambda v: v * _MM_TO_M          # noqa: E731
+
 
 
 def _sm(model):
@@ -68,8 +78,8 @@ def sketch_3point_corner_rectangle(model, x1, y1, x2, y2, x3, y3):
     """★ 3 点边角矩形：`Create3PointCornerRectangle`（三点定一个**任意角度**的矩形）。"""
     return _need(
         get_com_member(_sm(model), "Create3PointCornerRectangle",
-                       float(x1), float(y1), 0.0, float(x2), float(y2), 0.0,
-                       float(x3), float(y3), 0.0),
+                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0,
+                       _f(x3), _f(y3), 0.0),
         "Create3PointCornerRectangle")
 
 
@@ -77,8 +87,8 @@ def sketch_3point_center_rectangle(model, x1, y1, x2, y2, x3, y3):
     """★ 3 点中心矩形：`Create3PointCenterRectangle`（★ 第一点是**中心**）。"""
     return _need(
         get_com_member(_sm(model), "Create3PointCenterRectangle",
-                       float(x1), float(y1), 0.0, float(x2), float(y2), 0.0,
-                       float(x3), float(y3), 0.0),
+                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0,
+                       _f(x3), _f(y3), 0.0),
         "Create3PointCenterRectangle")
 
 
@@ -86,8 +96,8 @@ def sketch_parallelogram(model, x1, y1, x2, y2, x3, y3):
     """★ 平行四边形：`CreateParallelogram`（三点：一角 + 两条邻边的端点）。"""
     return _need(
         get_com_member(_sm(model), "CreateParallelogram",
-                       float(x1), float(y1), 0.0, float(x2), float(y2), 0.0,
-                       float(x3), float(y3), 0.0),
+                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0,
+                       _f(x3), _f(y3), 0.0),
         "CreateParallelogram")
 
 
@@ -99,7 +109,7 @@ def sketch_tangent_arc(model, x1, y1, x2, y2, arc_type=1):
     """
     return _need(
         get_com_member(_sm(model), "CreateTangentArc",
-                       float(x1), float(y1), 0.0, float(x2), float(y2), 0.0,
+                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0,
                        int(arc_type)),
         "CreateTangentArc", "★ 切线弧要求草图上**已有**一条线段可供相切")
 
@@ -108,8 +118,8 @@ def sketch_3point_arc(model, x1, y1, x2, y2, x3, y3):
     """★ 3 点圆弧：`Create3PointArc`（起点 / 终点 / 弧上一点）。"""
     return _need(
         get_com_member(_sm(model), "Create3PointArc",
-                       float(x1), float(y1), 0.0, float(x2), float(y2), 0.0,
-                       float(x3), float(y3), 0.0),
+                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0,
+                       _f(x3), _f(y3), 0.0),
         "Create3PointArc")
 
 
@@ -118,10 +128,10 @@ def sketch_elliptical_arc(model, cx, cy, major_x, major_y, minor_x, minor_y,
     """★ 部分椭圆：`CreateEllipticalArc`（★ 中心 + 长短轴点 + 起终点 + 方向）。"""
     return _need(
         get_com_member(_sm(model), "CreateEllipticalArc",
-                       float(cx), float(cy), 0.0,
-                       float(major_x), float(major_y), 0.0,
-                       float(minor_x), float(minor_y), 0.0,
-                       float(x1), float(y1), 0.0, float(x2), float(y2), 0.0,
+                       _f(cx), _f(cy), 0.0,
+                       _f(major_x), _f(major_y), 0.0,
+                       _f(minor_x), _f(minor_y), 0.0,
+                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0,
                        int(direction)),
         "CreateEllipticalArc")
 
@@ -130,8 +140,8 @@ def sketch_parabola(model, fx, fy, ax, ay, x1, y1, x2, y2):
     """★ 抛物线：`CreateParabola`（焦点 + 顶点 + 两点定端点）。"""
     return _need(
         get_com_member(_sm(model), "CreateParabola",
-                       float(fx), float(fy), 0.0, float(ax), float(ay), 0.0,
-                       float(x1), float(y1), 0.0, float(x2), float(y2), 0.0),
+                       _f(fx), _f(fy), 0.0, _f(ax), _f(ay), 0.0,
+                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0),
         "CreateParabola")
 
 
@@ -139,8 +149,8 @@ def sketch_conic(model, fx, fy, ax, ay, x1, y1, x2, y2):
     """★ 圆锥曲线：`CreateConic`（★ 官方签名与 `CreateParabola` **同形**）。"""
     return _need(
         get_com_member(_sm(model), "CreateConic",
-                       float(fx), float(fy), 0.0, float(ax), float(ay), 0.0,
-                       float(x1), float(y1), 0.0, float(x2), float(y2), 0.0),
+                       _f(fx), _f(fy), 0.0, _f(ax), _f(ay), 0.0,
+                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0),
         "CreateConic")
 
 
@@ -148,7 +158,7 @@ def sketch_perimeter_circle(model, x1, y1, x2, y2, x3, y3):
     """★ 周边圆：`PerimeterCircle`（★ 官方签名**只有 6 个参数 —— 没有 Z**）。"""
     return _need(
         get_com_member(_sm(model), "PerimeterCircle",
-                       float(x1), float(y1), float(x2), float(y2), float(x3), float(y3)),
+                       _f(x1), _f(y1), _f(x2), _f(y2), _f(x3), _f(y3)),
         "PerimeterCircle")
 
 

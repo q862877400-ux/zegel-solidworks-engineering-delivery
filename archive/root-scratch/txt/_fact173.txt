@@ -1,0 +1,57 @@
+| 173 | **24h 计划 段 1.1 交付：仿真研究族（补 W7 硬前置）+ ★★ 把「漏写 param_alias」这个反复犯的错**机器化**了** —— 2026-10-01（轮 239）。
+
+★★★ **交付**：`solidworks_simulation_create_study` / `_list_studies` / `_find_study`；
+  `all_specs()` **83 → 86**；能力清单 **47 → 48** 条。★ 能力层既有四个函数**一行未改**（只**加** 3 个薄函数）。
+
+★★★★ **补的是 W7 的硬前置**：W7 的 `limitations` 第一条写「**没有**「建研究」的工具
+  ⇒ `study_name` 只能引用**已存在**的研究」⇒ 那意味着**用户必须先手动在 SolidWorks 里建一个研究**
+  ⇒ ★ 本批补上 ⇒ **仿真链从"能用"变成"闭环"**。
+
+★★★★★ **本批最值钱的一处：同一个 bug 犯了两次，于是把它**机器化****
+```
+★ 事故史（同一族）：
+   · W7（`specs/140`）：对外 `magnitude_n`、能力层形参 `magnitude` ⇒ **漏写 `param_alias`** ⇒ 真机 TypeError
+   · 本批（`specs/141`）：对外 `study_name`、能力层形参 `name`     ⇒ **又漏写**   ⇒ **同样的 TypeError**
+★ 两次都是**「证据走工具真实路径」当场抓住的**（★ 那条纪律有效）
+★★★ 但 W7 之后我把它**记进了 tasks 与第 4 条套路** —— ★ **而本批照犯**
+   ⇒ ★ 定则：**"记下来"不等于"下次不犯"。**
+⇒ ★★ 于是加了 **`scripts/check_param_binding.py`**（★ 接进 `release_check.py`，成为第 **18** 道门禁）：
+     判据三条 —— ① 声明名 ∈ 目标形参 **或** ∈ `param_alias`；② `param_alias` 的目标名必须存在；
+     ③ `inject` 必须是 `RESOLVERS` 的键（事实 169 的教训）。
+   ★★ **并用负例证明它抓得住**：临时摘掉 `param_alias` ⇒ **exit 1**，且输出精确指出是哪个参数
+     （★ 事实 62：**门禁"写了"≠"有效"，负例是唯一证明**）。
+   ★ 顺带证实：除刚修的两处，**其余 84 个工具的绑定都是对的**。
+```
+
+★★★ **探针先行的价值（W1 的教训再次生效）**：
+```
+★ `iter_studies` **从没被任何工具或证据脚本用过** ⇒ ★ **形状未知**。
+   ★ 若直接挂（猜它 yield 字符串）⇒ 会挂一个**回不了的东西**。
+⇒ ★ T1 先核 ⇒ 实测：`iter_studies` yield **`(index, study)` 元组**（含 COM 对象）
+  ⇒ ★ 三个函数**都要包一层**只回可 JSON 化的东西。
+★ 另一条：`get_study_by_name` 找不到 ⇒ **回 `None`、不抛错** ⇒ ★ 对外用**显式 `found` 字段**。
+★ 真机读数：★ **`entry_name` = `"CreateNewStudy3"`**（**最高版本入口，非降级**）· `error_code` = 0 ·
+  建完回读名字**逐字相等** · 列出 count 1 且含该名字 · 负例 `found` 为 **False**。
+```
+
+★ **两条新的工作纪律**（本批踩出来的）：
+```
+· ★ **能力清单是上游** ⇒ 改了它**再**跑依赖它的生成器（★ 我先跑了 `gen_level_audit` ⇒ 5 个测试红）
+· ★ **改了模块就要看签名审计表**：`docs/signature-audit.md` 的逐模块调用点数会变
+  （本批 `sw_simulation.py` **47 → 50**）★ 门禁会给出新数字与修法；
+  ⚠ **注意该文档里同一模块可能有**两张表**（6 列与 5 列）⇒ 两处都要改**。
+```
+
+⚑ **限度**：① **只支持静力学研究**（其它类型未验 ⇒ **不暴露** `study_type` 开关）·
+  ② **重名研究的行为未验**（能力层不检查重名）· ③ `sw_simulation_study` 的 8 个未挂（★ 段 1.2/1.3）·
+  ④ ★ 事实 48（内层直引号）本会话已第 N 次 ⇒ **待办：能不能也给它加道门禁**。
+
+▶ **队列续作**：★ **段 1.2**（`create_mesh` / `run_analysis` / `collect_study_evidence` /
+  `default_element_size_and_tolerance`）→ 段 1.3（`sw_simulation_study` 的 `mesh_and_run` 等）
+  ⇒ ★ **仿真闭环就贯通了**。★ 可复用套路已增至 **16 条**。
+
+**依据**：`specs/141-simulation-study-create/` 五件套 · `scripts/sw_simulation.py`（+3 薄函数）·
+`mcp-server/tool_specs_batch27.py` · `scripts/check_param_binding.py`（**新门禁**）·
+`docs/gate-classification.json` · `tools/probe_simulation_study_shapes.py` ·
+`tools/capture_simulation_study_evidence.py` + `output/simulation-study-evidence.json`（`verdict: pass`）·
+`docs/plan-24h.md` 段 1.1 · 事实 62 / 169 / 40

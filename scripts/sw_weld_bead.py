@@ -22,8 +22,11 @@ from __future__ import annotations
 from typing import Any
 
 #: ★ 官方枚举（★ 逐字抄自上页参数表）✓
+#: enum-gate: member InsertFilletBeadFeature2
 BEAD_TYPE = {"full_length": 0, "intermittent": 1, "staggered": 2}
+#: enum-gate: member InsertFilletBeadFeature2
 PENETRATION_TYPE = {"full": 0, "partial": 1, "no": 2}
+#: enum-gate: member InsertFilletBeadFeature2
 FLAG = {"one_side": 0, "two_side": 1, "tangent": 2, "two_side_tangent": 3}
 
 _MM = 0.001                                                                        #: ★ 毫米 → 米（事实 2）

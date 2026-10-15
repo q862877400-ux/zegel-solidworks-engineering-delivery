@@ -1,0 +1,40 @@
+**`release_check` 的返回体只把 4 道门禁的**明细**放进去（13 道只给 `status`）—— 「覆盖面隐形」** —— 2026-10-01（轮 191）。
+
+★★ **起因**：轮 190 立了定则「**报 0 命中时必须同时报覆盖面之外的量**」，本轮把它**推广到基础设施层**：
+不让 17 道门禁**各自**去写覆盖面文档（那样只会变成样板话），而是让 **`release_check` 的返回体**
+把**每道门禁的明细**都带上 ⇒ 一处改，**全部**受益。
+
+★★★ **实测（读 `release_check` 的实际输出，而不是源码里有没有那几个词）**：
+```
+轮 74 **已经修了一半**（`test_gate_negative_cases.py` L783 记着「此前只汇总了 4 个门禁」）：
+  ✅ 13 个门禁的 **`status`** 都进返回体（`"gates"`）· ✅ **`skipped` 显式列出**
+★ 但 **每道门禁的 `output`（「扫了多少 / 跳过了什么」）仍只有 4 道有**：
+  `provenance` / `diff_markers` / `member_names` / `interface_ownership`
+⇒ ★★ 其余 **11 道在结果里只有 `"status": "pass"`** ⇒
+  **「status 隐形」修了，「覆盖面隐形」没修** —— 而
+  **`status: pass` 与「没覆盖任何东西」在输出上长得一模一样**。
+```
+
+★★★ **修法（一处）**：`gates` 与 `gate_details` 在**同一个循环**里一起建（⇒ **不可能分叉**），
+每道门禁的明细取 `output` > `reason` > `status`（**绝不返回空串**）。改后实测：
+```
+16 道门禁（`gates` 16 = `gate_details` 16）· **空明细 0 个** · 键集合相同 ✓
+★ 11 道此前的"光秃秃 pass"现在都可读，例：
+  env_pitfalls             「环境坑静态检查 · 扫 413 个 .py」
+  license_redlines         「A6 许可红线门禁 · 扫 413 个 .py」
+  gate_wiring              「门禁接线元门禁 · `scripts/check_*.py` 17 个 · 豁免登记 1 条」
+  negative_input_selfproof 「负例输入自证审计 · 扫 …/tools」
+  workspace_shadowing      「server.py 用到的顶层第三方包 2 个；工作区 D:\AI\SW」
+```
+
+★★ **并按事实 62 加了**带负例的测试**（`tests/test_gate_negative_cases.py` 的「第六层」）：
+```
+判据 `_detail_gaps(gates, details)`：**键集合必须相等且每条非空** ⇒ 四种输入都验了：
+  ① 全都有 ⇒ 通过   ② 少一道 ⇒ 报   ③ **有键但值为空** ⇒ 报（★ 最隐蔽：看起来像"有明细"）
+  ④ 两种同时 ⇒ 都报
+⇒ ★ 与已有测试的区别：轮 74 那条只断言 `"gates": gates` **在源码里出现过**；
+  本轮断言的是**运行时返回体的不变量**，并用负例证明判据**有牙**。
+```
+
+**依据**：`scripts/release_check.py`（`_gate_detail` + `gate_details`）；
+`tests/test_gate_negative_cases.py`（第六层 2 条测试）；事实 46 / 62 / 130

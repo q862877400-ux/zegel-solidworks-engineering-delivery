@@ -1,0 +1,42 @@
+规格 209 · B4-1：原生宏录制（idx 211）—— 真机证明返回值不可用，且永不点 StopMacro(31)
+
+来源：docs/recon-207/adjudication.md §一（idx 211 native_macro_recording）。
+裁决书点名头号风险：swCommands_e 对 swCommands_StopMacro 逐字写 "opens the Save As dialog"
+⇒ 无头下 RunCommand(31) 会弹模态框。
+
+改了什么
+· scripts/sw_macro.py 追加 toggle_macro_recording / record_line / record_macro_lines
+  + RECORD_COMMANDS（29/31 两条）+ STOP_MACRO_DIALOG_WARNING
+· mcp-server/tool_specs_batch99.py（新）+ register_capabilities ⇒ 448 个工具
+· tests/test_tool_specs_batch99.py（8 条：含"永不调 31"的静态守卫 + finally 停录制）
+· tools/probe_spec209_b4_macro_recording.py（真机探针）
+· tools/add_s209_b4f_capabilities.py + _s209_b4f_caps.json（★ 内容放 JSON，见下）
+· capabilities.yaml +1 条（macro_native_recording，stitched ⇒ 126 条）
+· specs/209 tasks.md
+
+★★★ 头号风险已绕开
+官方枚举页逐字：swCommands_StopMacro(31) "opens the Save As dialog" ⇒ 本模块**永不调 31**，
+停录制改走 swCommands_RecordPauseMacro(29) 这个**切换**（官方 RecordLine 的 Remarks 也正是用 29）。
+★ 静态守卫断言源码里不许出现把 31 传给 RunCommand 的调用（只扫代码，注释里引用它是防它的证据）。
+
+★★ 真机读数（最干净的一句）
+· 未开录制时 RecordLine 也回 True
+· 成对（29 → RecordLine ×3 → 29）⇒ 开 True · 逐行 [True,True,True] · 停 True
+· 空文本入口就拒；31 一次都没调；0 弹窗
+⇒ ★★ 官方 Remarks 说"只有录制开着才写得进去"，可真机"未开录制"也回 True
+⇒ 那个 bool 证明不了任何事；要真证得看落盘的宏文件，那要 31 的 Save As
+⇒ 本条只到「成对调用可达」这一级 ⇒ level = stitched。
+
+⚠ 未接：裁决书提到的 DSldWorksEvents::{BeginRecordNotify,EndRecordNotify}（事件）—— 如实记"未接"。
+
+★ 过程记录：这个能力条目的 Python 版我踩了引号坑（散文里的 ASCII 引号与字符串分隔符打架），
+  按本仓事实 48「长文本不要内联进 Python 源码，先写成独立文件再用最短脚本搬运」改成
+  JSON 承载内容 + 最短搬运脚本。另：新做的 tools/fix_cjk_quotes.py 在这次也确实救命
+  （batch99 的 spec 与测试各改 6 处 / 3 处，FAIL → OK），但它对"引号当字符串分隔符"的形态
+  会误伤 ⇒ 它内置了"改完语法不过就不写盘"的安全阀，这次正是它挡住的。
+
+门禁
+· check_specs(all_specs()) = 448 个工具 · 0 问题；契约测试 8 passed
+· capabilities.yaml 126 条（37 行纯插入 / 0 删除）
+· 收尾链 14.4 s（★ 链尾自动关了本会话拉起的 SolidWorks）
+· ⚠ 仍有一处**既有**红（非本次改动）：tools/verify_union_349.py:112

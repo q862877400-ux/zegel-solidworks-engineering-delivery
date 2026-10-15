@@ -1,0 +1,35 @@
+chore(工程图批): 落盘**真机探针**与**独立复核报告** —— ★ 并据复核修掉我的预取管道缺陷
+
+> 承接 `f32b294`（落盘 bunny 契约 + arity 表）。本提交落第二拨：
+> `impl-drawing` 的探针骨架 · `rev-drawing` 的复核报告 · 第 13 份契约。
+
+■ 产物 1 · **真机探针** `tools/prove_drawing_batch.py`（1591 行 / 19 格，`impl-drawing`）
+  13 项 + 6 个单变量对照格；`ast.parse` 通过（并用 `-W error::SyntaxWarning` 复验，零告警）。
+  ★ 每格都写了**官方前置**与**判据**，判据一律是**视图数 / 各型注解数增量**（不是特征树增量）：
+  `GetSFSymbolCount` / `GetDatumTagCount` / `GetNoteCount` / `GetTableAnnotationCount` /
+  `GetCenterMarkCount2` / `GetBreakLineCount` / `list_views`。
+  ★★ **它标出的共同前置**：新建工程图需要 `.drwdot` 模板，而 `sw_connect.find_template` 只搜 C: 两处
+  ⇒ ★ Lead 已核实**本机有 13 个 `.drwdot`**（含 `C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\templates\gb_a0.drwdot`、
+  `D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\data\templates\ansi.drwdot`）⇒ 该前置**可解**。
+  ★ 未决项它自己列清了（V5/A3/A8 都需要「在工程图视图里选中边/顶点」而官方不给做法；
+  `IView.GetOutline` 推候选点逐点试 + 回读计数；备选 `IView.GetVisibleEntities2` 未核）。
+
+■ 产物 2 · **独立复核报告** `recon/review-T-B.md`（289 行 / 30721 B，`rev-drawing`）
+  ★ **它明确写了「签名逐条比【尚未执行】」**（被判的 4 个文件当时还不存在）—— ★ 没有假装比过。
+  ★ 控制组读数：既有 `subskills/…/drawing_workflow.py` 6 个调用点全 OK（5/5·5/5·7/7·12/12·17/17·17/17）⇒ 证明脚本真在抽实参个数。
+  ★★ **4 必修 + 4 建议**，其中两条**改动了 Lead 的做法**：
+    ① `InsertBreak` 是**三级**废弃链（→2→3）⇒ 只修到 2 等于没修
+    ② ★★ **13 份 `recon/api/*.md` 系统性丢掉官方页的 `Obsolete` 行**，且把 `sw_api_sldworks.py`
+       （**生成的反射索引**）当成「本仓现状」⇒ ★ **Lead 据此停掉并重写了 bunny 预取管道的模板**
+       （v2：逐字粘页头 15 行 · Remarks 以标题是否存在为准 · 强制排除 `sw_api_*`）——
+       ★ 即「常驻前置资料管道」这个机制**第一次跑就被复核打回并改对**
+  ★ **两条前置事实**：`CreateDrawViewFromModelView3` **arity 5/5 全对而真机回 `None`**
+    （`output/datum-tag-selfcontained2-evidence.json:11-14`）⇒ ★ **arity 对 ≠ 能建成**；
+    `output/` 里**无**这 13 成员的真机读数 ⇒ 落盘后写 `verified`/「能」即判**越级声称**。
+  ★ 另报既有代码 1 处：`scripts/sw_drawing_view.py:415` 用**废弃属性** `IView::Name`
+    （后继 `GetName2`/`SetName2`），而同文件 `:211`/`:304` 已登记后继 ⇒ **自相矛盾**（★ 留下一轮修）。
+
+■ 产物 3 · 第 13 份契约 `recon/api/InsertCenterMark3.md`（bunny 13/13 完成）
+
+★ 仍未落盘：`workflow-4`（本地 Qwen 写 `scripts/sw_drawing_create.py` + `tool_specs_batch73.py`）
+  ⇒ ★ 落盘后需**重开** `task-3` 跑真正的签名逐条比。

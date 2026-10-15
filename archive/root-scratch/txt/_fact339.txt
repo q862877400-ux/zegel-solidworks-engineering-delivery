@@ -1,0 +1,61 @@
+| 339 | **B 组第一条拿下：刚性连接件** —— ★★ **两条假设同时被证实**（★ 崩的真因是"读选区只拿 1 个" + 它**要两个体**）；★ `all_specs` 217 → **218**（2026-10-03，轮 425）。
+
+## 一、★★★★★ 真机（★ 无弹窗）
+```
+tools/prove_rigid_twobody.py：
+   two_bodies      body_count       = **2**     ✓   （★ 双体零件：两次拉伸，★ 第二次 merge=False）
+   entry_check     faces_per_body   = [6, 6]    ✓   （★ 先验入口：两个体上各取到一个面）
+   rigid_twobody   count            = **[0, 1]** ✓✓✓ （★ 判据：计数恰好 +1）
+```
+★★ **而它一次证实了前面两条链上的假设**：
+```
+① ★ **事实 336/337**（崩的真因）：★ 换成"**按已知实体清单装数组**"（★ 不读选区）之后
+   ★★ **不再崩** —— ★ 而前四次分别是 `-1`、两条判据都崩、`0x800706BA`/`0x800706BE`。
+② ★ **事实 338**（它要两个体）：★ 双体零件上**建成了**；★ 而**单体零件**上
+   ★ **成功返回却不建**（★ 计数 `0→0`、★ 无错误）—— ★ 那**是应然的** ✓
+```
+
+## 二、★★★★★ 而这条链的**形状**值得记下来（★ 它是本计划的样板）
+```
+★ **四次尝试、两个真因、★ 而每次都换的是"维度"**：
+   ```
+   ① 轮 417/418：换**算例名**（疑重名）         ⇒ 仍 `-1`
+   ② 轮 419    ：换**判据**                     ⇒ 两条都崩
+   ③ 轮 421    ：换**选择方式**（按面上的点）    ⇒ `0x800706BA`/`BE`（★ **而崩在这里暴露了真因**）
+   ④ 轮 424    ：换**假设**（★ 不读选区）        ⇒ ★ **不崩了**，★ 而计数 `0→0`（★ 暴露出下一层）
+   ⑤ 轮 425    ：换**文档形态**（★ 单体 → 双体）  ⇒ ★★ **`[0, 1]`** ✓
+   ```
+⇒ ★★★ **定则**：★ 「**每次换的是不同的东西**」**不是**"还没调对"的信号，
+   ★★ 而是**"每换一次就剥掉一层"**的信号 —— ★ 而**真因常常在**第三、第四层****。
+   ★ 反面（★ 事实 53）：★ **在同一层里连着修补 ≥3 次**才是该停的信号。
+   ★★★ **区分它们的方法**：★ **问"我这次换的是不是同一个假设？"** ——
+     ★ 换假设 ⇒ 继续；★ 换参数 ⇒ 停 ✓
+```
+
+## 三、★ 恢复注册的 1 条
+```
+★ `solidworks_simulation_apply_rigid_connector` ⇒ ★ `apply_rigid_connector_by_objects_report`
+   ★ 形参：`source_indices` / `target_indices`（★ **list** —— ★ 仓里有先例，batch33/36）·
+     `kind` · `source_body_index` / `target_body_index`
+   ★★ **文档里写清了两条前提**：① 不读选区（它自己按序号装）② **两侧体号要指向不同的体**。
+⇒ ★ `all_specs` 217 → **218**。
+```
+
+## 四、★ 而它给同族开的门（★ 下一个该做的）
+```
+★★ 同族那几条**只差"两个零件"**（★ 而不是两个体）：
+   `AddPinConnector(DispArrayComp1, DispArrayComp2)` ·
+   `AddSpringConnector(NSpringSubType, DispArrayComp1, DispArrayComp2)` ·
+   `AddBoltConnector(NBoltType, DispArrayBoltHead, DispArrayBoltNut)` ·
+   `AddSpotWeldConnector(FirstFace, SecondFace, DispArrayWeldLocations)`
+⇒ ★★ **要一条装配体链**（★ 而硬约束⑦ 禁保存 ⇒ ★ 用**已在盘上的**自带零件，
+   ★ 本机 `…\samples\tutorial\api\` 下有几十个 `.sldprt` ✓）——
+   ★ 仓里已有 `sw_assembly.add_component(asm_model, part_path, x, y, z, config_name, sw)` ✓
+⇒ ★ 判据照本条：★ **先验入口**（★ 两个体/两个零件的实体都能取到）★ 再施加、★ 看计数 +1。
+```
+
+**依据**：`output/rigid-twobody-evidence.json`（★ **`verdict: pass`** · `[0, 1]`）·
+`output/rigid-by-objects-evidence.json`（★ 单体上 `0→0`、无错误）·
+`output/selected-objects-face-evidence.json`（★ 五入口都只回第 1 个）·
+`mcp-server/tool_specs_batch61.py`（★ 新）· `scripts/sw_selection_spec.entities_as_array` ·
+`scripts/sw_simulation_loads.apply_rigid_connector_by_objects_report` · 事实 32 / 336 / 337 / 338 · 事实 53

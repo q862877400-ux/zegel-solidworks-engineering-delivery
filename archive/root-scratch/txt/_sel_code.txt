@@ -1,0 +1,73 @@
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力层）
+# 文件:   scripts/sw_selection_spec.py —— 追加两个 report 包装
+# 定位:   objective「真缺口」的 `sw_selection_spec` 族（24h 计划 v2 段 1 · 选择底座）。
+#   ★ 该模块已有 `select_object`（吃一个 **COM 对象**）与 `resolve_entity`（**返回**一个 COM 对象）
+#   ★★ 而 **这两者的返回值 MCP 层过不去**（COM 对象不可 JSON 序列化）⇒ 本段给它们各加一层
+#   **只回 JSON** 的 report 包装（★ 而"选中"这个动作本身靠 `Select4` —— 事实 32：对边/面按名字选不中）。
+# 官方依据: `C:\swapi\types\IModelDocExtension\SelectByID2.md` · `IEntity` 的 `Select4` ·
+#   `ISelectionMgr.GetSelectedObjectCount2`（★ 判据永远是这个回读数 —— 事实 8）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def select_by_selector_report(model, selector, kind: str = "EDGE", *,
+                              body_index: int = 0, append: bool = False) -> dict:
+    """★ **用声明式选择器选中一个实体**（★ MCP 可用的形态 —— 只回 JSON，不回 COM 对象）。
+
+    ★ 它把 `select_object`（吃 COM 对象）与 `resolve_entity`（吐 COM 对象）**接起来**，
+    对外只暴露**选择器字符串**（★ 规则 3：不传坐标、不传对象）。
+
+    :param selector: ``"__current_selection__"`` · ``"index:<n>"`` · 或一个 COM 对象（内部用）。
+    :param kind: ``"EDGE"`` / ``"FACE"`` / ``"VERTEX"``。
+    :returns: `{ok, selector, kind, count}` —— ★★ **判据是 `count`**（★ 事实 8：`Select4` 的
+        返回值不可信，只有 `GetSelectedObjectCount2(-1)` 的回读算数）。
+    """
+    out: dict = {"ok": False, "selector": str(selector)[:60], "kind": str(kind).upper(),
+                 "count": None, "error": None}
+    try:
+        obj = resolve_entity(model, selector, kind, body_index=body_index)
+    except Exception as exc:                                       # noqa: BLE001
+        out["error"] = "解析选择器失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+    try:
+        out["count"] = int(select_object(model, obj, append=append))   #: ★ 它自己回读计数
+    except Exception as exc:                                       # noqa: BLE001
+        out["error"] = "Select4 失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+    out["ok"] = bool(out["count"])
+    if not out["ok"]:
+        out["error"] = "选完**回读计数为 0** ⇒ 没选中（★ 事实 8：不许信返回值）"
+    return out
+
+
+def resolve_entity_report(model, selector, kind: str = "EDGE", *, body_index: int = 0) -> dict:
+    """★ **解析声明式选择器并回报结果**（★ 只回 JSON —— 把 COM 对象挡在里面）。
+
+    ★ `resolve_entity` 本身**返回 COM 对象** ⇒ MCP 层过不去 ⇒ 本包装把它换成
+    **可核对的描述**：选到什么、选区现在有几个。
+
+    :returns: `{ok, selector, kind, count, resolved}` —— ★ `resolved=True` 表示解析出了对象；
+        ★ 而**是否真的在选区里**看 `count`（★ 解析出来 ≠ 选中 —— 事实 8）。
+    """
+    out: dict = {"ok": False, "selector": str(selector)[:60], "kind": str(kind).upper(),
+                 "count": None, "resolved": False, "error": None}
+    try:
+        obj = resolve_entity(model, selector, kind, body_index=body_index)
+        out["resolved"] = obj is not None
+    except Exception as exc:                                       # noqa: BLE001
+        out["error"] = "解析选择器失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
+        return out
+    try:
+        out["count"] = int(get_selection_count(model))
+    except Exception as exc:                                       # noqa: BLE001
+        out["error"] = "回读选区计数失败：%s" % str(exc)[:120]
+        return out
+    out["ok"] = bool(out["resolved"]) and bool(out["count"])
+    if not out["ok"] and out["resolved"] and not out["count"]:
+        out["error"] = ("解析出了对象**而选区计数为 0** ⇒ 选择器是 `__current_selection__` 时"
+                        "常见（★ 它不重选）；★ 要真的选中请用 `select_by_selector_report`")
+    return out

@@ -1,0 +1,37 @@
+规格 210 · B4 预检：★ 按 ingest 自动生成（★ 作者不手写）—— 12 passed
+
+★★★ 评审的原话「**预检由共享装饰器按声明的 `requires` 自动生成，作者不手写，
+★ 复杂性就留在一处**」—— ★ 本轮**落地了**，★ 而且**没有一个工具需要手写预检** ✓
+
+一、★ 本轮交付（加在 `scripts/sw_applicability.py` 里）
+· ★ `precheck(inject_name, obj, tool_name=…)`：★ **通过回 `{"ok": True}`**；★ 不适用则**抛
+  `NotApplicable`**（★ 用**已有码集**，★ **不加码**）✓
+  · `model`/`doc` ⇒ 没有活动文档 ⇒ `no_document` ✓
+  · `asm_model`/`component` ⇒ 空 ⇒ `no_document`；★ **不是装配体 ⇒ `wrong_doc_type`** ✓
+  · `drawing_model` ⇒ 空 ⇒ `no_document`；★ 不是工程图 ⇒ `wrong_doc_type` ✓
+  · `sldworks`/`sw_app`/… ⇒ 空 ⇒ `no_document`（★ `needs` 里写明要哪个对象）✓
+  · ★★ **其余（`view`/`study`/`cost_manager`/`selection`）⇒ 预检还没建** ⇒
+    ★ 回 `{"ok": True, "unchecked": True, "why": …}` ——
+    ★★ **如实说"没查"、不假装查过**（★ 与「判不出就写未知」同一条纪律）✓
+· ★ `doc_kind(doc)`：★ 读 `IModelDoc2.GetType` 映射成 `part/assembly/drawing`（★ 取不到 ⇒ `unknown`，不猜）✓
+· ★ `precheck_tool(tool_name, inject_objects)`：★ **从声明读 `inject`** ⇒ ★ 调用方**不用知道**该检查什么 ✓
+
+二、★ 离线实证（★ 不连真机，用假文档）
+· 零件当 `model` ⇒ `{"ok": True, "kind": "part"}` ✓
+· ★ **零件当 `asm_model` ⇒ 抛 `wrong_doc_type`、`needs=['assembly']`** ✓
+· 装配体当 `asm_model` ⇒ ok ✓
+· 空对象 ⇒ 抛 `no_document` ✓
+· ★ `view` 类 ⇒ `{"unchecked": True, "why": "……还没建……"}` ✓
+
+三、测试
+★ `tests/test_applicability.py` **12 passed**（★ 7 → 12；新增 5 条，含两条负例：
+  ★ **错文档类型必须抛** · ★ **没建的检查必须说"没查"、不许假装**）✓
+★ 收尾链 **12.5 s**（唯一红点仍是那处**既有**的）✓
+
+四、下一批
+1. ★★ **把预检接进注册层的调用路径**（★ 那一步会让**所有 448 个工具**在调用前先过一遍预检 ⇒
+   ★ 是**运行时行为变更**，★ 要单独一次提交、可回退）✓
+2. ★ 建剩下 **4 类宿主**（`view` / `study` / `cost_manager` / `selection`）⇒ ★ 同时补上它们的预检 ⇒
+   ★ 覆盖剩下 **87** 个工具 ✓
+3. ★ 跑 **`nonempty`（135）** 与 **`null`（266）** ⇒ ★ 全量四类分布 ✓
+4. ★★ 把覆盖层接成**棘轮**（★ 每次普查的 `missed` **必须**进覆盖层 + 门禁）✓

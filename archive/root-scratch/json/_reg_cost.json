@@ -1,0 +1,621 @@
+{
+  "ICostAnalysis": {
+    "interface": "ICostAnalysis",
+    "raw_members": 23,
+    "internal_dispatch": 0,
+    "property_count": 16,
+    "method_count": 7,
+    "distinct_capabilities": 7,
+    "folded": false,
+    "properties": [
+      "CostingTemplateName",
+      "CostingType",
+      "CurrencyCode",
+      "CurrencyName",
+      "CurrencySeparator",
+      "LengthUnit",
+      "LotSize",
+      "MarkUpPercent",
+      "MarkUpType",
+      "MassUnit",
+      "TotalQuantity",
+      "UnitSystem"
+    ],
+    "members": [
+      {
+        "name": "GetFirstCostFeature",
+        "arity": 0
+      },
+      {
+        "name": "GetManufacturingCost",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCost",
+        "arity": 0
+      },
+      {
+        "name": "GetSetupCost",
+        "arity": 0
+      },
+      {
+        "name": "GetSpecificAnalysis",
+        "arity": 0
+      },
+      {
+        "name": "GetTotalCostToCharge",
+        "arity": 0
+      },
+      {
+        "name": "GetTotalCostToManufacture",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostAnalysis3dPrinting": {
+    "interface": "ICostAnalysis3dPrinting",
+    "raw_members": 23,
+    "internal_dispatch": 0,
+    "property_count": 18,
+    "method_count": 5,
+    "distinct_capabilities": 5,
+    "folded": false,
+    "properties": [
+      "CurrentMaterial",
+      "CurrentMaterialClass",
+      "FlipDirection",
+      "OrientationPlane",
+      "PercentInfill",
+      "ShopRate",
+      "ShopRateApplied",
+      "StructuralMaterialCost",
+      "WallThickness"
+    ],
+    "members": [
+      {
+        "name": "GetMaterialClasses",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClassesCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterials",
+        "arity": 1
+      },
+      {
+        "name": "ResetShopRate",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostAnalysisCasting": {
+    "interface": "ICostAnalysisCasting",
+    "raw_members": 19,
+    "internal_dispatch": 0,
+    "property_count": 14,
+    "method_count": 5,
+    "distinct_capabilities": 5,
+    "folded": false,
+    "properties": [
+      "CurrentMaterial",
+      "CurrentMaterialClass",
+      "CycleTime",
+      "MoldCost",
+      "PercentWasteMaterial",
+      "ShopRate",
+      "ShopRateApplied"
+    ],
+    "members": [
+      {
+        "name": "GetMaterialClasses",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClassesCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterials",
+        "arity": 1
+      },
+      {
+        "name": "ResetShopRate",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostAnalysisMachining": {
+    "interface": "ICostAnalysisMachining",
+    "raw_members": 46,
+    "internal_dispatch": 4,
+    "property_count": 32,
+    "method_count": 10,
+    "distinct_capabilities": 10,
+    "folded": false,
+    "properties": [
+      "BlankSize",
+      "CurrentMaterial",
+      "CurrentMaterialClass",
+      "CurrentPlateThickness",
+      "CurrentStockType",
+      "CustomStockBodyName",
+      "CustomStockCostInfoType",
+      "CustomStockCustomCost",
+      "CustomStockImportType",
+      "IBlankSize",
+      "IMargins",
+      "Margins",
+      "PreviewShown",
+      "ShopRate",
+      "ShopRateApplied",
+      "SpecificSizeEnabled"
+    ],
+    "members": [
+      {
+        "name": "GetBlankDimensionCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMarginDimensionCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClasses",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClassesCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterials",
+        "arity": 1
+      },
+      {
+        "name": "GetMinimumBlankSize",
+        "arity": 0
+      },
+      {
+        "name": "GetStockTypeCount",
+        "arity": 2
+      },
+      {
+        "name": "GetStockTypes",
+        "arity": 2
+      },
+      {
+        "name": "ResetShopRate",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostAnalysisPlastic": {
+    "interface": "ICostAnalysisPlastic",
+    "raw_members": 25,
+    "internal_dispatch": 0,
+    "property_count": 20,
+    "method_count": 5,
+    "distinct_capabilities": 5,
+    "folded": false,
+    "properties": [
+      "CalculationMethod",
+      "CurrentMaterial",
+      "CurrentMaterialClass",
+      "CycleTime",
+      "MaxWallThickness",
+      "MoldCost",
+      "PercentWasteMaterial",
+      "RunnerSystem",
+      "ShopRate",
+      "ShopRateApplied"
+    ],
+    "members": [
+      {
+        "name": "GetMaterialClasses",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClassesCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterials",
+        "arity": 1
+      },
+      {
+        "name": "ResetShopRate",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostAnalysisSheetMetal": {
+    "interface": "ICostAnalysisSheetMetal",
+    "raw_members": 32,
+    "internal_dispatch": 3,
+    "property_count": 22,
+    "method_count": 7,
+    "distinct_capabilities": 7,
+    "folded": false,
+    "properties": [
+      "BlankAreaFromModel",
+      "BlankOffset",
+      "BlankSizeType",
+      "CurrentMaterial",
+      "CurrentMaterialClass",
+      "CurrentThickness",
+      "CustomBlankArea",
+      "CustomBlankSize",
+      "FinalAreaFromModel",
+      "MaterialCost",
+      "MaterialCostFromTemplate",
+      "PreviewShown",
+      "Weight"
+    ],
+    "members": [
+      {
+        "name": "GetMaterialClasses",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClassesCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterials",
+        "arity": 1
+      },
+      {
+        "name": "GetModelThickness",
+        "arity": 0
+      },
+      {
+        "name": "GetThicknesses",
+        "arity": 2
+      },
+      {
+        "name": "GetThicknessesCount",
+        "arity": 2
+      }
+    ]
+  },
+  "ICostAnalysisStructural": {
+    "interface": "ICostAnalysisStructural",
+    "raw_members": 21,
+    "internal_dispatch": 0,
+    "property_count": 15,
+    "method_count": 6,
+    "distinct_capabilities": 6,
+    "folded": false,
+    "properties": [
+      "CurrentCostMethodType",
+      "CurrentMaterial",
+      "CurrentMaterialClass",
+      "CurrentProfileSize",
+      "CurrentProfileStandard",
+      "CurrentProfileType",
+      "CurrentStockUnitLength",
+      "ShopRate",
+      "ShopRateApplied"
+    ],
+    "members": [
+      {
+        "name": "GetMaterialClasses",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialClassesCount",
+        "arity": 0
+      },
+      {
+        "name": "GetMaterialCount",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterials",
+        "arity": 1
+      },
+      {
+        "name": "ResetShopRate",
+        "arity": 0
+      },
+      {
+        "name": "SetCurrentProfile",
+        "arity": 3
+      }
+    ]
+  },
+  "ICostBlankSize": {
+    "interface": "ICostBlankSize",
+    "raw_members": 4,
+    "internal_dispatch": 0,
+    "property_count": 4,
+    "method_count": 0,
+    "distinct_capabilities": 0,
+    "folded": false,
+    "properties": [
+      "Length",
+      "Width"
+    ],
+    "members": []
+  },
+  "ICostBody": {
+    "interface": "ICostBody",
+    "raw_members": 7,
+    "internal_dispatch": 0,
+    "property_count": 1,
+    "method_count": 6,
+    "distinct_capabilities": 6,
+    "folded": false,
+    "properties": [
+      "BodyStatus"
+    ],
+    "members": [
+      {
+        "name": "AssignCustomCost",
+        "arity": 1
+      },
+      {
+        "name": "CreateCostAnalysis",
+        "arity": 1
+      },
+      {
+        "name": "GetBodyType",
+        "arity": 0
+      },
+      {
+        "name": "GetCostAnalysis",
+        "arity": 0
+      },
+      {
+        "name": "GetName",
+        "arity": 0
+      },
+      {
+        "name": "GetSWBody",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostFeature": {
+    "interface": "ICostFeature",
+    "raw_members": 15,
+    "internal_dispatch": 0,
+    "property_count": 9,
+    "method_count": 6,
+    "distinct_capabilities": 6,
+    "folded": false,
+    "properties": [
+      "CombinedCost",
+      "CombinedTime",
+      "Description",
+      "IsOverridden",
+      "IsSetup",
+      "Name"
+    ],
+    "members": [
+      {
+        "name": "GetFirstSubFeature",
+        "arity": 0
+      },
+      {
+        "name": "GetNextFeature",
+        "arity": 0
+      },
+      {
+        "name": "GetNextSubFeature",
+        "arity": 0
+      },
+      {
+        "name": "GetType",
+        "arity": 0
+      },
+      {
+        "name": "RemoveOverrideCostTime",
+        "arity": 0
+      },
+      {
+        "name": "SelectFaces",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostManager": {
+    "interface": "ICostManager",
+    "raw_members": 7,
+    "internal_dispatch": 1,
+    "property_count": 2,
+    "method_count": 4,
+    "distinct_capabilities": 4,
+    "folded": false,
+    "properties": [
+      "CostingDefaults",
+      "CostingModel"
+    ],
+    "members": [
+      {
+        "name": "Close",
+        "arity": 0
+      },
+      {
+        "name": "GetTemplateCount",
+        "arity": 1
+      },
+      {
+        "name": "GetTemplatePathnames",
+        "arity": 1
+      },
+      {
+        "name": "WaitForUIUpdate",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostPart": {
+    "interface": "ICostPart",
+    "raw_members": 13,
+    "internal_dispatch": 2,
+    "property_count": 2,
+    "method_count": 9,
+    "distinct_capabilities": 9,
+    "folded": false,
+    "properties": [
+      "ActiveBody",
+      "TemplateOverrides"
+    ],
+    "members": [
+      {
+        "name": "ActivateBody",
+        "arity": 2
+      },
+      {
+        "name": "CreateCostAnalysis",
+        "arity": 1
+      },
+      {
+        "name": "GetBodies",
+        "arity": 0
+      },
+      {
+        "name": "GetBodyCount",
+        "arity": 0
+      },
+      {
+        "name": "GetCostAnalysis",
+        "arity": 0
+      },
+      {
+        "name": "GetCostingMethod",
+        "arity": 1
+      },
+      {
+        "name": "IncludeBody",
+        "arity": 2
+      },
+      {
+        "name": "SetCostingMethod",
+        "arity": 2
+      },
+      {
+        "name": "UpdateCostForAllBodies",
+        "arity": 0
+      }
+    ]
+  },
+  "ICostingDefaults": {
+    "interface": "ICostingDefaults",
+    "raw_members": 22,
+    "internal_dispatch": 0,
+    "property_count": 14,
+    "method_count": 8,
+    "distinct_capabilities": 8,
+    "folded": false,
+    "properties": [
+      "LotSizeForMultibody",
+      "LotSizeForSingleBody",
+      "MachiningStockBodyType",
+      "SheetmetalBlankSizeType",
+      "StructuralMemberStockType",
+      "TotalNumberOfPartsForMultibody",
+      "TotalNumberOfPartsForSingleBody"
+    ],
+    "members": [
+      {
+        "name": "GetManufacturingMethod",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterialClass",
+        "arity": 1
+      },
+      {
+        "name": "GetMaterialName",
+        "arity": 1
+      },
+      {
+        "name": "GetTemplateName",
+        "arity": 1
+      },
+      {
+        "name": "SetManufacturingMethod",
+        "arity": 2
+      },
+      {
+        "name": "SetMaterialClass",
+        "arity": 2
+      },
+      {
+        "name": "SetMaterialName",
+        "arity": 2
+      },
+      {
+        "name": "SetTemplateName",
+        "arity": 2
+      }
+    ]
+  },
+  "ITemplateOverrides": {
+    "interface": "ITemplateOverrides",
+    "raw_members": 39,
+    "internal_dispatch": 0,
+    "property_count": 36,
+    "method_count": 3,
+    "distinct_capabilities": 3,
+    "folded": false,
+    "properties": [
+      "CustomBendCost",
+      "CustomHemCost",
+      "CustomLibraryFeatureCost",
+      "DefaultFinishingOperation",
+      "DefaultMachiningOperationTool",
+      "FinishingCostPerVolume",
+      "FinishingOffset",
+      "RemovedMaterialProcessingType",
+      "RoughingCostPerVolume",
+      "SemiFinishingCostPerVolume",
+      "SemiFinishingOffset",
+      "ShowUndeterminedSlotsInNCAFolder",
+      "SlotFeatureRecognitionType",
+      "UseCustomBendCost",
+      "UseCustomHemCost",
+      "UseCustomLibraryFeatureCost",
+      "UseOffsetBasedFinishing",
+      "VolumeFeatureCalculationType"
+    ],
+    "members": [
+      {
+        "name": "ApplyOverrides",
+        "arity": 0
+      },
+      {
+        "name": "ResetAll",
+        "arity": 0
+      },
+      {
+        "name": "SaveCostingOverrideSettings",
+        "arity": 0
+      }
+    ]
+  }
+}

@@ -66,6 +66,7 @@ pythoncom, win32com, VARIANT = import_com_dependencies()
 __all__ = ["REGION_TYPES", "as_bool_variant", "create_intersect"]
 
 #: ★ 官方 `PreIntersect2` 的 `RegionType` **三值表**（★ 逐字抄自该页 `## Parameters`；★ **不许跨条复制**）
+#: enum-gate: member PreIntersect2
 REGION_TYPES = {
     "intersecting": 0,                 # Intersecting regions
     "internal": 1,                     # Internal regions

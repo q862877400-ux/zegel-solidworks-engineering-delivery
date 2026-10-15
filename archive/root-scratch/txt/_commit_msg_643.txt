@@ -1,0 +1,57 @@
+feat(门禁): ★★★ 把事实 502 的判据**接进仓内门禁**（判据 ④）+ 负例证明 + 修**两条把错误结论固化成"已验证"的测试** + 发现"基线本就不绿"
+
+■ 一 · ★★ 门禁本体：`scripts/check_param_binding.py` 加**判据 ④**
+  **`spec.inject`（非空时）必须 ∈ 目标函数的形参名**。
+  ★ 为什么 ③ 不够：③ 是**存在性**判据（问「这个注入名**是不是解析器的键**」），
+    ④ 问的是「**它等不等于目标函数的形参名**」—— ★ **两个名字之间的关系**。
+    ★★ `register()` 不传 `inject_as` ⇒ **注入键字面上等于 `inject` 的值** ⇒ ④ 不成立时真机必 `TypeError`。
+  ★ 豁免三条（★ 写明理由、不静默）：目标函数带 `**kwargs` ⇒ 不判；`extra_op` 非空 ⇒ 不判（那条路不调目标函数）；注入名为空 ⇒ 不判。
+  ★ 同步更新门禁自己的 docstring（判据 3 条 → **4 条**）与 PASS 文案。
+
+■ 二 · ★★★ **负例证明**（★ 事实 62 的纪律：**负例是门禁有效的唯一证明**）
+  新增 `tests/test_param_binding_inject_key.py`：取**真实的** spec（`solidworks_hole_standards`，函数首参是 `sw`），
+  用 `dataclasses.replace` **把 `inject` 改成 `"sw_app"`**（★ 那正是修前的真实形态），
+  打桩 `all_specs()` 后断言门禁**必须报**；**正对照**断言真实树**不许报**。
+  ⇒ **2 passed**（★ 正对照防"永远报错"的假绿门禁）。
+
+■ 三 · ★★★ 全量 pytest 抓出**两条"把错误结论固化成已验证"的测试**（★ 本轮最值钱的副产物）
+  ① `tests/test_tool_specs_batch10.py` 的 `EXPECTED` 表逐字是
+     `("sw_hole_features", "list_hole_standards", **"sw_app"**, **"sw"**)` ——
+     ★ **测试自己承认函数首参是 `sw`，却断言 `inject` 应当是 `sw_app`**，
+     依据是那句「`tool_registry` 的 `inject` **本来就支持 `sw_app`**」——★ **而那句话是错的**。
+     ★★ 更刺眼的是：这条测试**名字**叫 `…_injection_matches_the_real_first_parameter`
+     （声称"注入名与真实首参对得上"），★ **而它的断言要求二者**不同** ⇒ ★ **名不副实**。
+     ⇒ **已改**：期望注入名改成真实首参 `sw`，并加一条**真正的判据**
+       （`assert spec.inject == params[0]`），docstring 写明这次的更正与真机证据。
+  ② `tests/test_sw_sketch_contract.py::test_sketch_spline_docstring_states_the_measured_failure`
+     的意图逐字是「docstring 必须写明**实测建不出来**与为什么」—— ★ **而那个意图是错的**
+     （真因是数组包装形态，`VARIANT` 形态**建得出**，上轮真机复验 seg 0 → 1）。
+     ⇒ **已改**为 `…_states_the_corrected_cause`：断言 docstring 里**有** `VARIANT`／`sketch_relations`／`轮 141`，
+       ★ 并加**反面断言**「不许再写回『本函数建不出样条』」。
+  ★★ **教训（值得单记）**：★ **一条只做静态断言／只断言 docstring 里有哪些字样的测试，
+     会把一个错误信念连同它的措辞一起"洗"成"已验证"** —— ★ 它测的是「我们**当时是这么想的**」，
+     不是「**事实是什么**」；★ 它与真机之间**隔着一次没人跑的调用**。
+
+■ 四 · 另外两处（也是全量 pytest 抓出来的、属于我的）
+  · `tests/test_server_wiring.py::test_expected_batch_size`：**253 → 277**（★ 该测试的 docstring 自己写着
+    「数字变了就说明有人加了批次（本测试要跟着更新）」，照办）；
+  · `tools/prove_drawing_batch.py` 的 **`_count_of` 从没被调用**（`test_no_uncalled_helpers` 点名）
+    —— 它的活儿早由 `_out_count_of` / `_list_len_of` 分担 ⇒ ★ **删掉并留墓碑注释**
+    （★ 不静默消失，免得下一个人以为"本来就没有"）。
+  ★ 纪律（事实 61）：改文件用**按行号/按唯一断言行**的脚本 + `git diff --numstat` 佐证；
+    ★ 其中一次我的补丁脚本**自己**在墓碑里用了 ASCII 引号 ⇒ **解析期就失败、什么都没改**（★ 无半途状态）——
+    ★ 本会话第 8 次栽在这个坑上，改「」后才过。
+
+■ 五 · ★★★ 一个**重要且必须如实记下**的发现：**全量 pytest 的基线本来就不是绿的**
+  ★ 我用 `git stash push -u` 把本轮改动**全部移开**后在**干净树**上重跑那 4 个文件 ⇒
+    **8 failed / 10 passed**（★ 同一批失败）⇒ ★★ **它们全是既有失败，与本轮无关**：
+    · `test_judge_preflight_gate.py`（**5** 条）· `test_no_bare_byref_args.py`（**7 处** `InsertCutSurface`
+      第 5 位 byref —— ★ 在 `sw_surface_features.py` 与 6 个 `probe_*.py` 里，★ 都不是我碰过的地方）·
+      `test_gate_negative_cases.py::test_gate_details_exposed_for_every_gate` ·
+      `test_mcp_protocol_layer.py::test_protocol_tool_count_matches_the_two_paths_sum`。
+  ★ 修前 15 failed → 修后 **9 failed**（★ 我造成的那 6 条**全修完**；剩下的 9 条里 8 条已证既有，
+    第 9 条 `test_release_check` 是它们的连带）。
+  ★★ **而收尾链 `release_check` 本身是绿的**（**第 1 轮 OK** · 29 passed）⇒ ★ 两者不矛盾：
+    `release_check` 的 18 道门禁**不含**那几条既有失败所测的东西。
+  ★ **含义**：★ 本仓的"每轮只跑聚焦测试"其实**掩盖**了一个不绿的基线 —— ★ 建议下一轮**单独立项**
+    把这几条既有失败查清（★ 但**不在本轮**顺手改：★ 那不是我这一轮的范围，改了会混淆归因）。

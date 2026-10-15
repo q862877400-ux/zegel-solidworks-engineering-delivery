@@ -1,0 +1,70 @@
+| 183 | **规则 6 里写的 `GetWhatsWrong2` 在本机两套源里**不存在**** —— 真名是 `IModelDocExtension.GetWhatsWrongCount`；★ 而**判据本身要先自证**（2026-10-01，轮 249）。
+
+## 一、★ 规则文本的一处失真（有据）
+```
+⚠ `docs/union-conventions.md` **规则 6** 的措辞：「建特征之后查 `EditRebuild3` +
+  **`GetWhatsWrong2`**，不静默成功」。
+★ 而 `GetWhatsWrong2` 在 **`C:\\swapi\\types` 与反射 dump 里都查不到**（★ 两套官方源都没有）。
+⇒ ★ 真正存在的两个成员（`C:\\swapi\\types\\IModelDocExtension\\`）：
+    · **`GetWhatsWrongCount()`** ⇒ 签名 ``System.int GetWhatsWrongCount()``（★ **零参、直接回个数**）
+    · `GetWhatsWrong(out Features, out ErrorCodes, out Warnings)` ⇒ 三参 by-ref
+⇒ ★★ **正解用 `GetWhatsWrongCount()`** —— 它正是规则 6 想要的那个判据，而且最简单。
+★★ 而它**挂在 `IModelDocExtension` 上**（不是 `IModelDoc2`）⇒ ★ **必须从 `model.Extension` 取**。
+   ★ 本会话初版**直接对 `model` 调** ⇒ 取不到 ⇒ ★★ 而**判据按设计报「不算通过」**
+     （★ **没有静默成 0** —— 那就会变成"假通过"，与事实 47 记的同一个坑）。
+⇒ ★ **定则**：★ **规则/文档里写的成员名也要照铁律 4 核**（★ 不能因为"规则里就是这么写的"就用）。
+```
+
+## 二、★★★ 而本会话最值钱的一条：**判据要先自证**
+```
+★ 本批要挂 4 个建特征的工具，它们统一走一个新写的回读判据
+  （`scripts/sw_feature_readback.py`：特征在树里 + `EditRebuild3` 真 + 查错数 0）。
+⇒ ★★ 我先**单独验这个判据**（★ 而不是直接拿它去判别人）：
+     · 存在的特征（`'草图1'`）⇒ **ok=True** · `present=True` · `rebuild_ok=True` · `whats_wrong_count=0`
+     · 不存在的名字 / 容器名（`收藏` / `实体` / `方程式`）⇒ **全 False**
+   ⇒ ★★★ **两侧都对 ⇒ 判据有判别力** ⇒ ★ 才用它去判那 4 个工具。
+★★★★★ **而它当场抓到了两个**静默失败****：
+     `rib` 与 `insert_dome` **不抛异常、也不建出特征** ⇒ 判据报 `present=False` ✓
+   ⇒ ★ **若没有回读，这两个会「看起来成功」** —— ★ 这正是规则 6 存在的全部意义。
+```
+
+## 三、★ 三轮真机打磨（判据本身）
+```
+① 直接对 `model` 调 `GetWhatsWrong2` ⇒ 取不到（★ 成员名错 + 宿主错）
+② 改用 `model.Extension.GetWhatsWrongCount` ⇒ ✓ 取到（`'草图1'` ⇒ 0 条错）
+③ ★★ `feature_names` 的过滤从「**枚举中文容器名**」改成「**结构性判据**」
+   （只收 `GetTypeName2` 非空的节点）—— ★ 因为**枚举名字在英文界面下会全部失效**。
+   实测清单从 `['收藏','历史记录','选择集',…]` 收敛到
+   `['前视基准面','上视基准面','右视基准面','原点','Tables','草图1','凸台-拉伸1']`（★ 只剩余真特征）
+⇒ ★ **定则**：★ **过滤"哪些节点算实体"要靠结构（有没有类型名），不要靠名字** —— 名字是弱信号（事实 52 同族）。
+```
+
+## 四、★ 四个工具的真机结果（**0/4**，而失败原因**已被定位**）
+```
+| 工具 | 真机结果 | 定性 |
+|---|---|---|
+| `shell`                 | `AttributeError: <unknown>.InsertFeatureShell` | ★ **事实 36 的形态**（同名接口分属不同族 ⇒ 用错接口 = 对象对任何成员没反应）⇒ 或入口不是 `FeatureManager` |
+| `rib` / `insert_dome`   | ★★ **静默失败**（不抛异常、也不建出特征） | ★★ **被回读判据抓到** |
+| `insert_composite_curve`| 官方返回 False ⇒ 能力层**正确 raise** | ★ 不是假通过；推断**选择不合法**（官方 Remarks 要求 `mark=1` 且实体类型合法） |
+⇒ ★★★ **这不是"不知道"，而是"知道且如实记"** —— ★ 四条原因逐条落在证据文件里。
+```
+
+## 五、★ 而"不为了凑数量挂工具"也在这批被守住
+```
+★ 本批 4 个的形参**都不含裸坐标**（规则 3）。
+⚠ 而 `linear_pattern`（`d1_x/d1_y/d1_z`）与 `hole_wizard`（`x/y/z`）**有裸坐标**
+  ⇒ ★ **本批不挂它们** —— ★ **不为了把数字推上去而挂违反规则 3 的工具**。
+  ★ 它们的正路是**先做声明式包装**（★ 属"修地基"级别）。
+```
+
+## 六、★ 处置（硬约束③）
+```
+★ `feature_readback_criterion` ⇒ **`verified`**（★ 判据自验通过 + 抓到两个静默失败）
+★ `modeling_feature_readback_tools`（4 个）⇒ **`stitched`**（★ 0/4，原因已定位）
+⇒ ★ **工具留在柜台上、如实标注**（★ 这是本批的正确处置，不是"回退"）。
+```
+
+**依据**：`C:\swapi\types\IModelDocExtension\GetWhatsWrongCount.md` 与 `GetWhatsWrong.md`（★ 签名）·
+反射 dump 宽搜 `WhatsWrong`（★ `GetWhatsWrong2` 不存在）· `docs/union-conventions.md` 规则 6 ·
+`scripts/sw_feature_readback.py`（★ 三轮打磨的记录）· `output/modeling-readback-evidence.json`（★ 0/4 + 四条原因）·
+事实 36 / 47 / 52 / 53

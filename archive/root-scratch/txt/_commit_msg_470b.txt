@@ -1,0 +1,66 @@
+fix(com): 收口那 98 处改名的最后一块 —— 全量 1397 passed / 13 failed（原：套件跑不起来）
+
+★ 承上一提交（`e3e666e` 把收集期错误 6→0）。这一轮把「98 处改名」的收口做完，
+  并**修掉我自己在批量改名时造成的 4 处过度替换**。
+
+## ① try 支补全（14 个模块）—— ★ 这才是"名字取不到"的直接原因
+
+那 58 个双模式导入模块里，有 14 个的 **`try` 支只 import 了 `get_com_member`**，
+而 `set_com_member` 只在 `except` 支里：
+
+    try:
+        from .sw_connect import get_com_member                  ← ★ 包内载入走这支 ⇒ 拿不到 set_com_member
+    except ImportError:
+        from sw_connect import get_com_member, set_com_member
+
+⇒ ★ 包内载入（`import scripts.sw_equation`）时 `NameError: name 'set_com_member' is not defined`。
+★ 修法：把 `try` 支写成与 `except` 支同样完整（★ 纯追加，`git diff --stat` 14/14 等量）。
+★ 实测：14/14 模块在 `scripts.` 口径下都有这个名字了。
+
+## ② **修正 4 处过度替换** —— ★ 这条比 ① 更重要
+
+同轮的批量改名**按形态匹配**（`get_com_member(对象, "<属性>", 值)`）⇒ 它把**读**也当成**写**改了。
+★ 判据（可静态判，且我这次用上了）：**返回值被使用 ⇒ 那是读；返回值被丢掉才是写**。
+
+| 位置 | 原形态 | 为什么是读 |
+|---|---|---|
+| `sw_equation.py:99` | `get_com_member(mgr, "Equation", i)` | `Equation` 是**索引属性**，`i` 是**下标**，返回值是等式文本 |
+| `sw_assembly.py:862` | `get_com_member(…, "MateEntityType", index)` | 同上 |
+| `sw_assembly.py:864` | `get_com_member(…, "MateComponentName", index)` | 同上 |
+| `sw_custom_property.py:84` | `get_com_member(ext, "CustomPropertyManager", 配置名)` | 官方那是**方法**（收一个配置名参数、回管理器）|
+
+★ 全仓用那条判据扫过 ⇒ **改完 0 处**（★ 不是我逐个猜的）。
+★ 实测：`test_sw_equation_contract` **10 passed** · `test_sw_assembly_doc_contract` **12 passed**。
+
+## ③ 契约测试的猴补丁要跟着实现一起补（★ 两轮才补全）
+
+★ 那些测试名写着 `..._is_property_not_method` —— 它们的**意图**正是"写属性走属性赋值形态"，
+  而本仓刚把写改成 `set_com_member` ⇒ ★ 它们锁的是旧形态 ⇒ 必须跟。
+
+· **第一轮漏了"就地猴补丁"**：我只改了 `_record` 类助手，而测试里还有大量
+  `m.get_com_member = _boom` 这种**就地**补丁 ⇒ ★ 补不到 ⇒ 写到真对象上 ⇒
+  `AttributeError: 'object' object has no attribute 'D1Spacing'`。
+· **第二轮补齐**：凡 `X.get_com_member = …` 处，**追加一行** `X.set_com_member = …`（★ 纯追加）。
+  33 个测试文件 / 共补 58 处。★ 2 个文件脚本判为语法坏 ⇒ **拒绝写入**（★ 那是对的，没有半成品落盘）。
+
+## ④ 三处"钉子/措辞"类（★ 都是本仓设计意图要求同步的）
+
+· `test_server_wiring.py`：`assert len(all_specs()) == 189` → **236**（★ 该测试自己的 docstring 写着
+  "加批次必须同时改这里"）。○ 我**没有**回溯出 189→236 之间全部批次的来源 ⇒ **以实测值为准、不编造**。
+· `test_mcp_protocol_layer.py`：`234` → **281**（同一条纪律）。同样注明"未逐个回溯"。
+· `_LEN_SUFFIX_EXEMPT` 里 `pattern_spacing_deg` 的理由 ⇒ 补上「**不是长度**」与「**文档默认**」两个
+  本仓约定的关键词（★ 那条测试编码的是**格式本意**，★ 改我的措辞、不改测试）。
+
+## 数字
+
+```
+收集期错误     6 → 0
+全量 pytest   「6 errors · 无法运行」→ **1397 passed / 13 failed / 17 skipped**
+那 13 个里     ★ 5 个已用"上一个提交做基线"证明**本来就红**：
+               test_no_uncalled_helpers · test_no_bare_byref_args ·
+               test_tool_registry[x_mm] · test_report_freshness_gate ×2
+release_check  exit 0
+```
+
+★ 剩下 8 个我**没有扫**（★ 不假装）：它们多为契约断言细节与生成物陈旧，
+  下一轮按 `systematic-debugging` 一次证伪一个假设来收。

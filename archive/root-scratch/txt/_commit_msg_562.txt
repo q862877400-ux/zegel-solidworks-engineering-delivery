@@ -1,0 +1,45 @@
+test(correction): ⚠ **撤销事实 439 的实证** —— 那个入口是**废弃的第一代**（★ 事实 441）
+
+★ 本轮扫「剩下 20 条哪些废弃」时，看到一条**自己打自己脸**的：
+
+```
+`InsertDeleteHole.md` 逐字：「**Obsolete. Supserseded by
+  `IFeatureManager::InsertDeleteHoleForSurface`.**」
+```
+
+★★ **故轮 559/560 那「六种前置零效果」的真因是**入口错**（★ 我打的是废弃的第一代），
+  ★ **而不是"那个成员本身是 no-op"** ⚠ ⇒ ★ **事实 439 的实证不成立**。
+
+## 一、★ 而继任者的文档把前置说清楚了
+
+```
+Feature InsertDeleteHoleForSurface()   ← **0 参**、★ **回 `IFeature`**（★ 不是 void）
+Remarks: call SelectByID2 to select the **hole edges to remove** from the surface
+```
+
+★ 真机（`tools/prove_delete_hole_for_surface.py`，走 `sw_guard`、零弹窗）：
+```
+继任者 + 选"孔的边" ⇒ 回 `None` · 面 5→5 · ★ **而 `picked = 12`**（★ 那是**整个体的所有边**）⚠
+继任者 + 只选面     ⇒ 同上
+对照：废弃的第一代（建在 `IFeatureManager` 上）⇒ **`AttributeError: <unknown>.InsertDeleteHole`**
+```
+
+⇒ ★★ **故两条**：
+  ① ★★★ **事实 439 那条「第五种形态」的实证撤销**（★ 已在那两处加更正注）；
+     ★ **而那个**分类本身仍有用****（★ 它描述**判据盲区**）—— ★ 只是**暂时没有站得住的实例**；
+  ② ★ **"选孔边"这个前置我还没真搭对**（★ 选了整个体的 12 条边）⇒ **下一步**：只选**内环**那圈边。
+
+## 二、★★ 方法论
+
+★ **用一个「零效果」去立一条边界之前，必须先确认自己打的不是废弃的那个入口** ——
+  ★ 而**查废弃只需读 md 头顶一行** ⚠
+★ 而这是本会话**第四次**「失败在我这边」（事实 420 · 431 · 440 · 本条）。
+
+## 三、交付
+
+```
+docs/known-facts.md                  **事实 441**（+22 · 含更正全文）
+docs/toolbar-gaps-backend-limits.md  §五之二 抬头加**更正注** + 新增 **§5.2.3 撤销实证**
+tools/prove_delete_hole_for_surface.py（新）· output/delete-hole-for-surface-evidence.json
+★ 语法门禁 0 处（761 个文件）
+```

@@ -208,6 +208,11 @@ def add_constant_speed_rotary_motor(
     @param reverse 是否反向旋转。
     @return 创建出的马达 Feature。
     """
+    # ⚑ 本站点**不再是 `unmapped`**（spec 238）：`swFmAEMRotationalMotor` 的官方宿主是
+    #   **`IMotionStudy::CreateDefinition`**，该页 `## Parameters` **逐条点名**返回
+    #   `ISimulationMotorFeatureData` ⇒ 已由 `check_interface_member_ownership.host_pages()`
+    #   收进映射表（**官方断言**，不是人工确证）⇒ 本站点现在是 `checked`。
+    #   ★ 因此**不需要** `#: cd-site:` 声明（`checked` 是隐式默认，写了反而 `redundant-decl`）。
     motor_data = motion_member(motion_study, "CreateDefinition", SW_FM_AEM_ROTATIONAL_MOTOR)
     if motor_data is None:
         raise RuntimeError("创建旋转马达 FeatureData 失败")

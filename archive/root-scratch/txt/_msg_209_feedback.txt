@@ -1,0 +1,17 @@
+规格 209 · 反馈给高级模型的复核文档
+
+新增 docs/reports/spec209-feedback-for-review.md —— 一份自足的复核输入（不改代码），内容：
+· 请你先看的三件事：① 官方示例的 Preconditions 是「例子的环境」不是「API 的契约」（真机否证了我的推断）；
+  ② RecordLine 返回值不可用（未开录制也回 True）⇒ 只能 stitched；③ 两处偏离裁决书的拍板
+· 15 件交付清单（level + 真机一句话 + output/ 证据文件）
+· spec.md §五 第 7–12 条「官方 vs 真机」分歧（含两条属"读官方的方式"）
+· 我拍板的 4 处偏离（含我自己的"绝对总数断言"设计缺陷）
+· 我自己的错（§六 10 条里最要紧 4 条）
+· 全量 pytest 18 failed / 2105 passed 的逐条定性（修完的 4 类都是我造成的；剩余 18 条只定性了 6 类）
+· 明确没做到的 6 项（未接事件 · AutoInsertCenterMarks2 未验 · hem 只到负结论 · centerline 前置只复现一半 ·
+  model_annotations 属数据相关失败 · 18 条红只定性 6 类）
+· 请你回答的 6 个问题
+· 可复现路径 + 提交记录
+
+同轮的记忆库补齐：hindsight_ingest_document「规格 209 收口结果」——
+因为知识页 kp-5a9fd0ab 明确写着"这 10 件活的完成证据尚未记录"。

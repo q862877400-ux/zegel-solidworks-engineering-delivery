@@ -1,0 +1,61 @@
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（能力层）
+# 文件:   scripts/sw_simulation_loads.py —— 追加 6 个"简单载荷"的 report 封装
+# 定位:   ★ 2026-10-03（轮 402）24h 计划 v2 段 5（仿真载荷族）。
+#   ★★ **为什么是这 6 条**：`tools/triage_real_gaps.py` 在补了"动词对 + 读注册表对象"两条规则后，
+#     把 `sw_simulation_loads` 的 30 条缺口收敛到 **21 条真缺口**；★ 其中这一组是**同一种形态** ——
+#     `add_X(manager, entities[, 一个 int])` ⇒ ★ 可以像既有的 `apply_pressure_report` 那样
+#     **复用同一套机器**（`_selected_dispatch_array` 装实体 + `_report` 回读计数）。
+#   ★ 其余 15 条是**多面 / 多顶点 / 多组件**参数（bearing / bolt / cyclic / edge_weld / link /
+#     pin / rigid / spot_weld / spring / prescribed_displacement / remote_load / reference_geometry /
+#     distributed_mass / force / get_edge_weld_connector）—— ★ 各自的选择方式不同，★ **留作后批**。
+# 官方依据: `ICWLoadsAndRestraintsManager` 的 `AddConvection` / `AddElasticConnector` /
+#   `AddHeatFlux` / `AddHeatPower` / `AddTemperature` / `AddRadiation`
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def apply_convection_report(manager, model):
+    """**加对流**并回**回读报告**（★ 与 `apply_pressure_report` 同一套机器）。"""
+    from .sw_simulation import _selected_dispatch_array
+    entities = _selected_dispatch_array(model)
+    return _report(manager, lambda: add_convection(manager, entities), "convection", model)
+
+
+def apply_elastic_connector_report(manager, model):
+    """**加弹性连接**并回**回读报告**。"""
+    from .sw_simulation import _selected_dispatch_array
+    entities = _selected_dispatch_array(model)
+    return _report(manager, lambda: add_elastic_connector(manager, entities), "elastic_connector", model)
+
+
+def apply_heat_flux_report(manager, model):
+    """**加热流**并回**回读报告**。"""
+    from .sw_simulation import _selected_dispatch_array
+    entities = _selected_dispatch_array(model)
+    return _report(manager, lambda: add_heat_flux(manager, entities), "heat_flux", model)
+
+
+def apply_heat_power_report(manager, model):
+    """**加热功率**并回**回读报告**。"""
+    from .sw_simulation import _selected_dispatch_array
+    entities = _selected_dispatch_array(model)
+    return _report(manager, lambda: add_heat_power(manager, entities), "heat_power", model)
+
+
+def apply_temperature_report(manager, model):
+    """**加温度**并回**回读报告**。"""
+    from .sw_simulation import _selected_dispatch_array
+    entities = _selected_dispatch_array(model)
+    return _report(manager, lambda: add_temperature(manager, entities), "temperature", model)
+
+
+def apply_radiation_report(manager, model, radiation_type: int = 0):
+    """**加热辐射**并回**回读报告**（★ 唯一带一个 int 参数的那个）。"""
+    from .sw_simulation import _selected_dispatch_array
+    entities = _selected_dispatch_array(model)
+    return _report(manager, lambda: add_radiation(manager, entities, radiation_type),
+                   "radiation", model)

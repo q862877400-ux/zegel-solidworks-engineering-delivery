@@ -1,0 +1,71 @@
+| 294 | **弹窗处置框架 `sw_guard` **真机验证通过**：执行中弹的弹窗被主动发现（`phase=during`）· 自动点掉（`dismissed=true`）· 任务 35.42 s 正常返回（`timed_out=false`）**（2026-10-02，轮 377）。
+
+## 一、★★★★★ 用户的要求与验证结果
+```
+★ **用户原话**：★「现在我想让你再来一次，再触发一次刚刚那两级弹窗，看看你的新机制能不能自动处理」
+★ **做法**：★ **用 `sw_guard` 包着跑上次弹窗的那个脚本本身** ——
+   `python tools/sw_guard.py --timeout 600 -- python tools/capture_mesh_solve_evidence.py`
+★ **结果**（★ 原样）：
+   ```json
+   "ok": true, "returncode": 0, "timed_out": false, "seconds": 35.42,
+   "dialogs": [{
+       "at": "2026-10-02T23:42:27", "phase": "during",
+       "hwnd": 9309108, "pid": 15648, "title": "Simulation",
+       "controls": [{"class": "Button", "text": "确定"},
+                    {"class": "Static", "text": "零件37-DSH-142 : 失败"}],
+       "dismissed": true
+   }]
+   ```
+```
+
+## 二、★★★★★ 三条判据全中（★ 正好对应我先前三次失败）
+| 要验的事 | 结果 | 对应我先前的失败 |
+|---|---|---|
+| **执行中弹的弹窗能被主动发现** | ✅ `phase: "during"` · 时间戳 `23:42:27` | 第 1 版**只报"新窗口"**、旧弹窗无人管 |
+| **发现后自动处置、不等人** | ✅ **`dismissed: true`** | 第 2 版**报信但不处置** ⇒ 还得等人 |
+| **任务不会等到天荒地老** | ✅ **`timed_out: false` · 35.42 s 返回** | 无超时 ⇒ 弹窗挂住时任务永远不返回 |
+
+★ 附加收益：★ **弹窗内容随返回值上来**（`零件37-DSH-142 : 失败`）⇒ 我**每次**都拿得到根因线索，
+  ★ 不必再去"翻屏幕"（★ 那正是它最初卡住我的地方）。
+
+## 三、★ 复现这条弹窗的正确触发链（★ 走对了两处契约）
+```
+★ 我第一次写的触发器**没弹出弹窗**，原因有两个（都在真机上撞出来）：
+   ① ★ `create_static_study(sw_app, name)` 回的是 **`(study, entry_name, error_code)`** ——
+      ★ 我直接拿元组当 study 用 ⇒ `'tuple' object has no attribute 'CreateMesh'`。
+      ⇒ ★ 正解（★ 抄前人 `capture_mesh_solve_evidence.py:95-96`）：建完再
+        **`get_study_by_name(sw, name)` 按名字取回**。
+   ② ★ `create_mesh_report(study)` **不传尺寸** ⇒ `element_size=0.0` ⇒ 网格失败（`return_code=5`）·
+      `element_count=0` ⇒ `run_analysis` 回 **`23`（网格未找到）** ⇒ ★★ **求解器直接回错误码、不弹框**。
+      ⇒ ★ **"弹窗"只在走到"求解失败"那一步才弹** —— 前置不足时它**安静地回错误码**。
+★ **已验证的完整链**（前人脚本）：★ `mesh_size_by_name`（取尺寸）⇒
+   `create_mesh_by_name`（**把尺寸传进去**）⇒ `run_analysis_by_name` ⇒ ★ **求解失败 ⇒ 弹窗**。
+   ★ 而**一条不设夹具/载荷**是刻意的 —— ★ 那正是「未定义载荷或规定的位移」这条弹窗的来源。
+```
+
+## 四、★ 一条**门禁教我的正确形态**（`keybd_event`）
+```
+★ 我加了 `try/finally` 保证 `keyup`，而门禁**仍报 FAIL** ⇒ 看它的 AST 实现才明白：
+   ★ 判据是 **`pushes and not uses_safe and fin_ups < len(pushes)`**，而 `fin_ups` 只数
+     **在 `finalbody` 里**的 `keybd_event(..., flags, ...)`；★ 且 `_vk_kind` 认的 `flags` 必须是
+     **`ast.Name(id="KEYEVENTF_KEYUP")` 或 `ast.Attribute(attr="KEYEVENTF_KEYUP")`**。
+   ⇒ ★★ 我用了 **`_KEYEVENTF_KEYUP`（带下划线前缀）** ⇒ **它认不出** ⇒ 报 FAIL。
+   ⇒ ★ **两处都改对**（常量名去前缀 + 按下也进 `try`）⇒ `[PASS] 0 个 · 环境坑门禁通过` ✓
+★ **为什么这条判据重要**（★ 门禁注释里写着，用户 2026-10-01 实报）：
+   ★ 修饰键卡在按下态 ⇒ **Ctrl 卡住后按 A 就是全选**、**Enter 卡住就是忽然回车**，
+   ★★ 而且**不周期性**、持续到用户单独按一下那个键为止 ⇒ ★ 那种故障看起来与本模块毫无关系。
+```
+
+## 五、★ 产物
+```
+★ `tools/sw_guard.py`（★ 框架：Sentinel 进调用前扫 + 执行中扫 + 两段式处置 + 循环 + 硬超时 + 事件落盘）
+★ `tools/trigger_analysis_dialogs.py`（★ 复现用触发器 —— 修好了两处契约）
+★ `output/dialog-events/*.json`（★ 每次弹窗事件的取证；★ 供事后研判根因）
+★ 真机结果：★ **机制自动处理弹窗并正常返回**（★ 见上表三条判据全中）
+```
+
+**依据**：`job pwsh-1833` 的输出（★ `dialogs[0]: phase="during" · dismissed=true ·
+controls=[Button 确定, Static 零件37-DSH-142 : 失败]` · `timed_out=false · seconds=35.42`）·
+`tools/capture_mesh_solve_evidence.py:95-145`（★ 建研究→取回→取尺寸→建网格→跑求解）·
+`scripts/check_env_pitfalls.py` 的 `find_unguarded_keypress` / `_vk_kind`（★ AST 判据）·
+事实 291 / 293（★ 其措辞由本条与 293 更正）

@@ -1,0 +1,58 @@
+fix(阶段2): ★★★★★ **T1 第 3 条** —— ★ `ICustomPropertyManager::Get`（官方标 Obsolete）⇒ 换**现行的 `Get6`**；★ 并**更正同仓那条"by-ref 不通"的结论的一半**
+
+■ 一 · ★ 逐条流程 ①：查官方签名与 Remarks（★ **整族一起读**）
+  | ★ 成员 | ★ 废弃 | ★ 签名 |
+  |---|---|---|
+  | ★ `Get` | ★★ **是** | ★ `string Get(string FieldName)` ⇒ **1 参、回标量** ✓ |
+  | ★ `Get2` | ★★ **是** | ★ `void Get2(name, out Val, out ResolvedVal)` ✓ |
+  | ★ `Get3` / `Get4` | ★★ **是** | ★ `bool Get3/4(name, UseCached, out …, out …)` ✓ |
+  | ★ `Get5` | ★★ **是** | ★ `int Get5(name, UseCached, out …, out …, out WasResolved)` ✓ |
+  | ★★ **`Get6`** | ★★★ **否** | ★ `int Get6(name, UseCached, out Val, out ResolvedVal, out WasResolved, out IsLinked)` ✓ |
+  ⇒ ★★★★ **整族只有 `Get6` 是现行的** ✓
+
+■ 二 · ★★★★ 而**病灶是两层**（★ 本轮的关键）
+  ★ **第一层（旧的）**：★ `scripts/sw_custom_property.py` 用的是 **`Get`**（★ 废弃）✓
+    ★★ 而它的模块头**明写**「★★ **不用** `Get2..Get6` —— 它们带 **by-ref out**，
+      ★ **实测在 pywin32 下报 `类型不匹配`**（`com_error: -2147352571`）」✓
+    ★★★ 证据文件也在：★ `output/custom-property-evidence.json` ✓ ⇒ ★ **那是**真机实测**、★ 不是猜的** ✓
+  ★★ **第二层（本轮才看清的）**：★ **那句结论**只对了一半**** ——
+    ★ **仍成立**：★ **不包 `VARIANT(VT_BYREF | …)` 的出参确实报 `类型不匹配`** ✓
+    ★★★ **被推翻**：★ **`Get2+` 不是"不通"** —— ★ **包对了就能用** ✓
+    ★★★★ **而反例就在同一个仓**：★ `scripts/sw_document_data.py::read_custom_property`
+      （★ L410-414）**用 `VARIANT(VT_BYREF | VT_BSTR, "")` 包四个出参、★ 再调 `Get6`**
+      ⇒ ★★ **而它**工作**（★ 轮 78 真机验过：`raw` 逐条读回 `alpha` / `beta` / `gamma`）** ✓
+
+■ 三 · ★ 修法
+  ★ 新增 `_read_value_via_get6(mgr, name)` ⇒ ★ **用 `VARIANT(VT_BYREF | …)` 包四个出参、调 `Get6`** ✓
+  ★★ **两处调用点**（★ `custom_property` L125 · `custom_properties` L159）**都改走它** ✓
+  ★★★ **而模块头那段结论**：★ **原样保留 + 加 `🕓` 更正块**
+    （★ 写明「**哪一半仍成立、哪一半被推翻**」—— ★ 与「补正而不是删除」一致）✓
+  ★★★★ **并写明官方的另一半变化**：★ **`Get` 现在废弃了** ⇒ ★ **继续用 `Get` 就是用一个废弃成员** ✓
+
+■ 四 · ★ 复扫（★ 逐条流程第 ④ 步）
+  ★ `python tools/scan_obsolete_safe.py` ⇒ ★★ **真命中 36 → **34**** ✓
+  ★★ **⇒ 那两处调用都消掉了** ✓
+  ★★★ **而本轮顺手核清一件事**：★ 那族 `Get` 的 **4 处**里、★ **2 处是假阳性** ——
+    ★ `bounds.Get()`（★ `advanced_geometry_ocp.py` · `headless_occt_service.py`）——
+    ★★ **那是 **OCP/OCC** 的 `Bnd_Box.Get()`、★ 不是 SolidWorks 的** ✓
+    ⇒ ★★★ **⇒ 真命中只有 2 处**（★ 而扫描器**如实带 `crosslib` 字段**标出来了）✓
+
+■ 五 · ★★★★ 可复用判据（★ 本轮）
+  > ★★★ **「by-ref 出参不通」这个结论**要带包法才有意义**** ——
+  > ★ **不包 `VT_BYREF` 必然报错、★ 包了就能用** ✓
+  > ★★ 而**「废弃」是另一件事**（★ **不因包法改变**）——
+  > ★★★ **所以两件事要分开判**：★ **能不能调**（★ 包法）· ★ **该不该调**（★ 官方废弃）✓
+  ★ 与**事实 513**（★ 剥注释/读数要带版本）**同族**：★ **结论要带前提** ✓
+
+■ 六 · ★★ 新增测试（★ `tests/test_obsolete_customprop_get.py` · **4 条** · 全绿）
+  | ★ 测试 | ★ 内容 |
+  |---|---|
+  | ★★ **前提断言** | ★ **逐个读官方整族**确认「只有 `Get6` 未废弃」（★ 判据的锚点）✓ |
+  | ★★★ **核心断言** | ★ 代码里**不许**再调 `"Get"` ✓ |
+  | ★★★ **核心断言** | ★ 必须用 `Get6` **且出参用 `VT_BYREF` 包**（★ **两半是一件事**）✓ |
+  | ★★ **负例 · 同仓一致** | ★ 同仓那条范例**也**是 `Get6` + `VT_BYREF` ⇒ ★ 两条要一致 ✓ |
+
+■ 七 · ★ 收尾
+  ★ 收尾链：**`release_check 第 1 轮 OK` · 4 passed** ✓
+  ★★ **真命中：★ 39 → 38 → 36 → **34**** ⇒ ★★★ **剩余生产待办：★ 12 条** ✓
+  ★★★★ **下一轮**：★ `AddMate5` ×2（★ 后继 `IAssemblyDoc::CreateMate` —— ★ 注意那是**换接口**）✓

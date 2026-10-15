@@ -1,0 +1,48 @@
+| 253 | **绝对 mm 判据与相对判据的分工；而「逐轴」的精髓是**方位语义**（第三项是「大于」）** —— 2026-10-01（轮 326）。
+
+## 一、★ 读到的是**真源码**，不是报告转述
+```
+★ 调研 v2 发现① 说它那套是「绝对 mm + 逐轴判 + 随尺度缩放」。
+   ★★ 我去克隆里**逐行读了**（`Cai-aa/CAD-Agent-Hub`，**MIT**，
+     `MCP/Solidworks/src/solidworks_mcp/native_features.py`），★ **比转述多出关键一条**：
+   · `L642` ⇒ `tolerance = float(selector.get("tolerance_mm", **0.05**)) * MM`
+   · `L647` ⇒ `radius_tolerance = float(selector.get("radius_tolerance_mm", **0.1**)) * MM`
+   · **`L655` ⇒ `axial` 的判据是 `abs(dx) <= tol and abs(dy) <= tol and abs(dz) > tol`**
+   · **`L657` ⇒ `planar` 的判据是 `abs(dz) <= tol`**
+   · `L662` ⇒ 半径**逐值**判：`any(abs(v - radius) > radius_tolerance for v in radii)`
+   · `L665` ⇒ 两端点同层：`abs(start[2]-level) <= tol and abs(end[2]-level) <= tol`
+   · `L238` ⇒ 回读校验用 **1e-5**（★ 比上面两个严 3~4 个量级 —— ★ 那是给"读回来的值对不对"用的）
+⇒ ★★★ **`L655` 那一条是**方位语义**，★ 而不是"三个轴都比一遍"**：
+   ★ **`axial` 的第三项是 `|dz| > tol`（**大于**）** —— ★★ 即"这根轴**必须**沿 z 长出一截"，
+   ★ 否则它**不是轴，是一条横躺的边**。
+```
+
+## 二、★★★★★ 定则：绝对判**定位**、相对判**等价**，**两条互补**
+```
+★ 本仓库现在有**两套**判据（★ `tools/compare_geometry.py`）：
+   | 判据 | 量什么 | 对什么免疫 | 对什么瞎 |
+   | **相对**（拓扑全等 + \\|ΔV\\|≤1% + \\|ΔA\\|≤1%） | 两个几何**等不等** | ★ **刻度搞错**（分子分母同刻度） | ★ **整体平移/旋转**（相对量全不变） |
+   | **绝对 mm**（axial/planar · 半径 · 同层） | **位置/方位/尺寸对不对** | ★ 无（★ 它就是要绝对） | ★ 无 |
+   ⇒ ★★★ **只留一条会各瞎一半**：
+     · 只有相对 ⇒ ★ 零件整个**挪了 5 mm** 也判"等价"；
+     · 只有绝对 ⇒ ★ 定义域/尺度一变就要**重新调容差**。
+   ⇒ ★★ **可操作**：★ **判"复现"用相对、判"放对位置"用绝对** —— ★ 两者都进证据。
+★ **真机自证**（★ 一条能跑出绿的命令）：`python tools/compare_geometry.py` ⇒
+   ★ **`PASS（相对判据负例 5/5、边界 OK、绝对判据 10/10）` · exit 0** ✓
+   ★ 而绝对那 10 条里**有 6 条是负例**（★ 事实 62）：
+     `axial` 而 `dz=0`（横躺）⇒ 拒 · `axial` 而 `dx=0.06` ⇒ 拒 · `planar` 而 `dz=0.2` ⇒ 拒 ·
+     半径差 0.15 ⇒ 拒 · 不同层 ⇒ 拒 · **半径空列 ⇒ 拒**（★ "读不到就不算验过"）
+```
+
+## 三、★ 一条施工纪律（★ 本轮我自己踩的）
+```
+★★ **用 `edit` 改文件时，"只写函数签名当锚"会**删掉紧随的 docstring**** ——
+   ★ 本轮我连踩两次（★ `compare_geometry` 与 `main` 的 docstring 各被削掉一行，
+   `git diff --stat` 报 `1 deletion`）⇒ ★★ **两次都靠 `git diff --stat` 抓到并当场恢复**。
+   ⇒ ★★★ **定则：`edit` 的 `old_string` 要**包含紧随其后的那一行**（★ 或至少改成"插入式"，★ 用唯一天然锚）**；
+     ★ 并且**改完立刻 `git diff --stat`**（★ 事实 61：出现 `deletions` 就当成自己的 bug 查）。
+```
+
+**依据**：`tools/compare_geometry.py`（★ **自证 PASS · exit 0**：相对 5/5 + 边界 + 绝对 10/10）·
+`C:\swprojects\Cai-aa__CAD-Agent-Hub\MCP\Solidworks\src\solidworks_mcp\native_features.py`（★ L238/642/647/655/657/662/665）·
+`D:\AI\SW\docs\research-community-sw-mcp-2026-10-02.md` v2 发现① · 事实 61 / 62 / 250 / 253

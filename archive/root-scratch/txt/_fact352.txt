@@ -1,0 +1,74 @@
+| 352 | **修掉一处**假文档**（它会误导用户），并给分诊补一条**有原则的"不做"** —— ★ 该挂 29 → **27**（2026-10-03，轮 438）。
+
+## 一、★★★★★ 假文档：★ 「solidworks_* has no create-study tool yet」——**那是假的**
+```
+★ 起因：★ 查 `sw_simulation` 那 4 条该挂时，★ 我去核"仓里有没有建算例的工具" ⇒
+   ★★★ **有**：★ `solidworks_simulation_create_study`（★ function = `sw_simulation.create_study_report`）✓
+   ⇒ ★★ 而**我的工具文档里写着相反的话** ⚠⚠
+★ 原句（`mcp-server/tool_specs_batch26.py` 的 `_STUDY`）：
+   ```
+   "⚠ Leave empty to use the FIRST study in the document — create one first
+    (solidworks_* has no create-study tool yet; see the capability limitations)."
+   ```
+★★★ **而那句话**会误导用户** —— ★ 他会以为**得手动在界面上建算例**（★ 而其实一行工具调用就行）✓
+★ **修正**：★ 改成「★ **建算例请用 `solidworks_simulation_create_study`**（★ 它早就有了）」
+   ★ 并**注明这是本轮的更正**（★ 免得下一个读的人以为是笔误）✓
+★ **而"扫一遍这类假信息"这个动作本身值得记**：★ 全仓扫 `has no … tool yet` / `还没有` 之类
+   ⇒ ★ **只此一处**（★ 其余命中都是**正当的**，★ 如「rule 3 里 `has no named entity`」、
+     「`there is no edge-object parameter`」—— 那些是**真的**）✓
+```
+
+## 二、★★★★★ 分诊补了两条，★ 而第二条**有原则**
+```
+★ ① **别名**：★ `sw_simulation.create_static_study` ⇒ ★ **已有**
+   ★★ **依据已核**（★ 读源码）：★ `create_study_report` **调的正是** `create_static_study`，
+     ★ 而后者就是那个工具的 function ⇒ ★ 与 `export_bmp_report` **同一类**
+     （★ 既非同名加后缀、也非前缀 ⇒ ★ 启发式覆盖不到 ⇒ 写进显式表）✓
+★ ② ★★ **一条"不做"**：★ `sw_simulation.select_face_at(model, x, y, z)` ⇒ **不做**
+   ★ 而理由**是规则，不是"我们没工夫"**：
+     ```
+     ★★ 它的签名是**裸坐标** ⇒ **规则 3 禁止**把它做成工具
+       （★ 规则 3 = 本仓五统一之一：「声明式 selection，禁裸坐标」）；
+     ★ 而 `tool_registry` 的声明门禁**会直接拦住它**
+       （`_BARE_COORD_NAMES` + `_looks_like_coord_component` —— ★ 那正是轮 433/434 那两轮在修的东西）
+     ⇒ ★ 即：★ **挂上去也过不了门禁** ⇒ ★ 它**不是"该挂"、而是"不做"** ✓
+     ```
+   ★★ 而那**收进了一张新表** `CANNOT_BE_A_TOOL_WHY`（★ 照 `PLUMBING_WHY` / `ALIASED_BY_TOOL` 的先例：
+     **每条写清依据**）✓
+```
+
+## 三、★★★★★ 结果（★ 数字从生成物来）
+```
+               轮 436    轮 437    本轮
+    该挂         29   →    29   →  **27**
+    已有         28   →    28   →  **29**
+    内部件       21   →    21   →   21
+    不做         15   →    15   →  **16**
+   ★ 自检：四类之和 == total ⇒ True（★ 脚本自带）
+★ 契约测试：★ `test_real_gap_triage_contract.py` ⇒ **26 passed** ✓
+★ 而**两条新判据都当场验过**：
+   ```
+   create_static_study  => 已有（★ 别名，依据已核）
+   select_face_at       => 不做（★ 裸坐标 ⇒ 规则 3）
+   ```
+```
+
+## 四、★ 段 4 的累计（★ 从轮 432 起）
+```
+★ **该挂：36 → 27**（★ 降 9 条），★ 而**降的四种性质**都不同、★ 每种都留了依据：
+   ```
+   ① ★ **修虚报**（轮 432）：★ 分诊认不出"包装名"（前缀别名 + 跨模块使用 ⇒ 内部件）
+   ② ★ **显式别名**（轮 436）：★ 功能已由**另一个名字**的工具覆盖（3 条，各带核过的依据）
+   ③ ★ **修第二个盲区**（轮 437）：★ `server.py` 侧那 60 个 function 它看不见（★ 结构判据）
+   ④ ★ **有原则的"不做"**（本轮）：★ 裸坐标的函数**本来就做不成工具**（规则 3）
+   ```
+★★ 而★ 那**四种**合起来说明一件事：★ **"该挂"这个数**同时被四样东西污染**
+   （★ 判据看不见的包装 · 看不见的另一半声明 · 名字不同的覆盖 · 原则上也做不成的）
+   ⇒ ★★ **故"数字下降"本身不是目标** —— ★ **"每一条下降都有依据"才是**（★ 硬约束①的精神）✓
+```
+
+**依据**：`output/real-gap-triage.json`（★ 该挂 27 / 已有 29 / 内部件 21 / 不做 16）·
+`mcp-server/tool_specs_batch26.py` 的 `_STUDY`（★ 假文档已更正）·
+`tools/triage_real_gaps.py` 的 `ALIASED_BY_TOOL` / `CANNOT_BE_A_TOOL_WHY` / `classify()` ·
+`tests/test_real_gap_triage_contract.py`（★ **26 passed**）· `mcp-server/tool_registry.py` 的规则 3 门禁 ·
+事实 350 / 351 · 硬约束①

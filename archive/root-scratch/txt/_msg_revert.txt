@@ -1,0 +1,22 @@
+撤销：「不是要给高级模型反馈什么结果吗」之后的所有改动（4 条提交）
+
+★ 用户指示：那句「你编辑好给我」之后的所有改动全部撤销。★ 原因：那一段是 KS/SW 鸡同鸭讲的产物。
+
+撤销的 4 条（按 git revert --no-commit，**历史保留**，未改写）
+· ec07fd51  规格 209 · 反馈给高级模型的复核文档        ⇒ docs/reports/spec209-feedback-for-review.md 删除
+· ef1e9dcb  fix(test-isolation): 归还测试伪造的模块身份 ⇒ tests/test_sw_part_sketch_selection.py 还原
+· 6ab00b31  方法论：两条规则提炼成全仓通用（一事一家）  ⇒ AGENTS.md / docs/official-docs-first.md /
+                                                          docs/union-conventions.md / capabilities.yaml /
+                                                          specs/209-*/tasks.md 还原（含生成物）
+· 49286d2c  反馈文档：补 §八之三「仍待裁决」5 条      ⇒ 随该文档一并删除
+
+★ **没有撤**（在那句话**之前**，属于正常收口）
+· 6633aa3c / a63eb80 / 5a4ae7b / 9d043355 —— 规格 209 的 B4-1 与收口修复（R11 违规、陈旧总数断言、
+  无人值守基线、收集期导入失败、顺序污染定性）★ 这些是这条线**真实完成**的工作
+· 40cc4f34 —— **另一条线**的 spec 208 第 23 轮（★ 夹在这 4 条中间提交的，**不碰**）
+
+门禁
+· 9 files changed, 115 insertions(+), 447 deletions(-)
+· 复验：AGENTS.md 里两条常驻令已消失；union-conventions 的「证据阶梯」段已消失；
+  official-docs-first 的「定则 ②」已消失；spec209-feedback-for-review.md 已删；
+  那个泄漏测试的还原 fixture 已移除（5a4ae7b 的桩修复**保留**）

@@ -1,0 +1,41 @@
+规格 210 · B4 收口：预检接进注册层（★ 不适用回结构化 JSON · ★ 可回退）
+
+★★★ **B4 完成**（★ 评审给的四条判决全部落地、且**接进了运行时**）✓
+★ 这是本规格的**第一次运行时行为变更** ⇒ ★ 单独一次提交、★ 且**带开关**（`SW_PRECHECK=off`）✓
+
+一、★ 本轮交付：`precheck_payload(spec, inject_name, host)` 接进 `make_tool_function`
+★ 位置：★ 在 `kwargs[inject_as or inj] = resolver(params)` **之后**、★ 调目标函数**之前** ✓
+★★ 行为：★ 不适用 ⇒ **直接返回结构化 JSON**（★ **不调目标函数**、★ **也不抛异常**）✓
+★★ 三条保守判据（★ 都写进了代码注释）：
+  ① ★ **预检自己出错 ⇒ 放行** —— ★ 预检是**保护**，★ 不该变成新的**路障** ✓
+     ★（★ 这条与本会话**两次"过度纠正"**的教训**同族**：★ **保守 ≠ 一律拒绝**）✓
+  ② ★ **没建的检查（`unchecked`）⇒ 放行**（★ 它如实说"没查"，★ 不许因此挡住工具）✓
+  ③ ★ **开关关掉 ⇒ 一律放行** ✓
+
+二、★ 离线实证（★ 不连真机）
+· 零件当 `model` ⇒ **`None`（放行）** ✓
+· ★ **零件当 `asm_model` ⇒ 结构化 JSON**：
+  `{"ok": false, "not_applicable": true, "code": "wrong_doc_type", "needs": ["assembly"], …}` ✓
+  ★ **可 JSON 解析**（★ 这正是评审要的"**不抛字符串异常**"）✓
+· 空对象 ⇒ **`no_document`** ✓
+· ★ `view` / `study`（没建检查）⇒ **放行** ✓
+· 无 `inject` ⇒ 放行 ✓
+
+三、★ 回归检查（★ 运行时变更必须先查这个）
+★ `tests/test_tool_registry.py` + `test_server_wiring.py` + `test_tool_annotations_safety.py` +
+  `test_effect_declarations.py` ⇒ **51 passed，零回归** ✓
+★ `tests/test_applicability.py` **16 passed**（★ 12 → 16；新增 4 条，含一条**关键负例**：
+  ★ **没建的检查不许挡住工具** —— ★ 「保护不许变成路障」）✓
+★ 收尾链 **12.2 s**（唯一红点仍是那处**既有**的）✓
+
+四、★ 现在的进度
+★★★ **B1 · B2 · B4 · B5 已收口**；★ **B3 进行中**（★ 分组已做、硬红门禁已响并抓到 2 条真缺陷、
+  ★ 实证覆盖层已接）✓
+
+五、下一批
+1. ★★ **建剩下 4 类宿主 + 补它们的预检**（`view` / `study` / `cost_manager` / `selection`）⇒
+   ★ 覆盖剩下 **87** 个工具 ⇒ ★ 那些组从 `undecided` 变成**有判定** ✓
+2. ★ 跑 **`nonempty`（135）** 与 **`null`（266）** ⇒ ★ 全量四类分布 ✓
+3. ★★ 把覆盖层接成**棘轮**：★ 每次普查产生的 `missed` **必须**进覆盖层（★ 加门禁）⇒
+   ★ "静态漏报"**只会越来越少** ✓
+4. ★ 最后按规格收口：★ 跑一次**全量 pytest** + 更新 `tasks.md` 勾 / `goal-bar` / `docs/HANDOFF.md` ✓

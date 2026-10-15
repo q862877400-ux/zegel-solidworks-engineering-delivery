@@ -1,0 +1,42 @@
+规格 209 · B2-2：BOM 气泡（idx 34）—— 真机定案，推翻两家外部项目的论断与我自己的假设
+
+来源：docs/recon-207/adjudication.md §一（idx 34 balloon）。
+裁决书硬约束：★ 两家结论互相矛盾（Slacker-LLC 说静默无效、Eduardof0nt 用 bool(result)）
+⇒ 不许照抄任何一家，必须真机定案。
+
+改了什么
+· scripts/sw_drawing_create_missing.py::auto_insert_balloons —— **收紧判据**（能力层早已实现）
+· mcp-server/tool_specs_batch97.py（新）+ register_capabilities ⇒ 446 个工具
+· tests/test_tool_specs_batch97.py（6 条：判据契约 + 返回形状 + 2 条静态断言）
+· tools/probe_spec209_b2_balloon.py（真机探针）· tools/add_s209_b2b_capabilities.py
+· capabilities.yaml +1 条（drawing_bom_balloons，verified ⇒ 124 条）
+· specs/209 §五 第 12 条 + tasks.md
+
+★★ 定案（真机两格独立对照：自建装配 + 两张独立工程图）
+· 没有 BOM 表 ⇒ ok=True · GetNoteCount 0→1（Δ=1）· 返回数组长度 1
+· 先插 BOM 表（IView::InsertBomTable6）⇒ ok=True · Δ=1 · 返回 1
+⇒ Slacker-LLC 的「静默无效」在本机不成立；Eduardof0nt 的 bool(result) 也不能当判据
+⇒ ★★ 判据只能是 sum(IView::GetNoteCount) 的增量 > 0
+
+★★ 判据收紧（本批改的）
+原 ok = bool(AutoBalloon5 返回的数组) and (delta >= 0) —— 两处都不合规格：
+① 依赖返回值；② delta >= 0 太松（差 0 = 什么都没插，却会通过）
+⇒ 现在 ok = (delta is not None and delta > 0)；返回数组长度照旧回报、不当判据。
+★ 静态断言同时钉：旧判据不许留在**代码**里（注释里引用它是防它的证据，
+  用 check_env_pitfalls.strip_comments_and_strings 把"引用"与"断言"分开）。
+
+★★ 我自己的假设与探针设计各错一次（都已如实记）
+· 假设：按官方示例的 Preconditions「with a bill of materials (BOM) table」推断
+  「没有 BOM 表 ⇒ 静默无效」⇒ **被真机否证**。已记 spec.md §五 第 12 条：
+  **Preconditions 是「例子的环境」，不是「API 的契约」**。
+· 探针第一版把第二格跑在同一张图同一视图上（那时气泡已存在，IgnoreMultiple 只是没重复插）
+  ⇒ 那格的 Δ=0 不能当证据 ⇒ 改成两张独立图纸重做。
+
+★ 另：原函数自述「不建 ToolSpec」的理由已过期（那句说的是底层成员的 AutoBalloonOptions
+  COM 形参；而包装函数形参全是标量）⇒ 本批把它挂成工具。
+
+门禁
+· check_specs(all_specs()) = 446 个工具 · 0 问题；契约测试 6 passed
+· capabilities.yaml 124 条（38 行纯插入 / 0 删除）
+· 收尾链 14.0 s（★ 链尾自动关了本会话拉起的 SolidWorks）
+· ⚠ 仍有一处**既有**红（非本次改动）：tools/verify_union_349.py:112

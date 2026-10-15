@@ -1,0 +1,60 @@
+| 263 | **旧的失败结论会把**好的能力**钉在 `stitched` 上 —— 实例：`mold_analysis` 的"冒烟 3/5 fail"其实是**脚本 bug**（nested vs flat）**（2026-10-01，轮 343）。
+
+## 一、★ 挖法与第一层（★ 两条都先被证明"早就修了"）
+```
+★ objective③ 挑 `mold_analysis`（★ 它的 `limitations` 写着「真机冒烟 3/5 fail」⇒ 那里**已知有失败**）。
+★ 沿着它的两个"官方未查证"查下去：
+  ① ★ `MoldUndercutDetect`（官方 `Void`）· `MoldUndercutDetect2`（**5 个颜色参数**）
+     —— ★ **两份官方文档都**没有 Remarks****；★ 枚举目录里**只有** `swPartingSurfaceMoldParmType_e`
+     ⇒ ★ **"查不到"是真的**（铁律 5）。
+     ★★ 而 `MoldUndercutDetect2` 的 **5 个 `Col*` 参数**说明：★ **结果是**用颜色标在面上****
+     ⇒ ★ "怎么把颜色读回来"是**下一个可挖点**（★ 本轮未做）。
+  ② ★ `MoldDraftAnalysis` 在**哪个对象**上 —— ★ 前人（轮 177）已写好判据并真机核过：
+     `IFeatureManager.MoldDraftAnalysis` ⇒ **AttributeError** · `IModelDoc2.MoldDraftAnalysis` ⇒ **能取到**
+     ⇒ ★ **已修**（探针 `tools/verify_mold_draft_analysis_owner.py` **4/4 PASS**）。
+     ★★ **顺带纠了一处官方**：官方签名写 `Void MoldDraftAnalysis(Double, Int32, Object, Int32)`，
+     ★ **而真机回 `bool`** ⇒ ★★ **"官方写 Void"不等于"拿不到结果"**。
+```
+
+## 二、★★★★★ 真因：`WANTED` 是**平铺**的，而实现回的是**嵌套**的
+```
+★ 冒烟脚本（改前）：
+   `WANTED = ("parting_lines_count", "parting_surfaces_count", "cavity_surfaces_count",
+              "core_surfaces_count", "parting_type", "core_cavity_split")`
+   ★ 判据 `k in evd` —— ★ **在**顶层**找**
+★ 而 `sw_mold.mold_evidence()` 回的是：
+   `{"counts": {"parting_lines": …, "parting_surfaces": …, "cavity_surfaces": …, "core_surfaces": …},
+     "parting_type": …, "core_cavity_split": …}`
+   ⇒ ★★ **4 个计数在 `counts` **子字典**里** ⇒ ★ 顶层只有 **2** 个 ⇒
+     ★★ **本脚本**永远**报 3/5 fail**（★ 与功能无关）。
+⇒ ★★★ **修法：判据对**实现真实的形状**** ——
+   ★ 计数键名对 `counts` 子字典、属性键名对顶层；★ 而**不改实现**（★ 嵌套是**更好的**形状：
+     `counts` 是一组同类计数）。
+★★ **改后真机：**5/5 PASS**** —— ★ 「含官方只读入口的键 **6/6**」· 「新零件上这些读数**都是空/0** **6 个**」✓
+```
+
+## 三、★★★★ 定则（★ 本轮最值钱的一条）
+```
+★★★ **`capabilities.yaml` 的 `limitations` 里引用的失败结论会**随时间失效**** ——
+   ★ 本处的 `limitations` 写着「真机冒烟 = 3/5 fail」，★ 而**那个 3/5 至今仍是 3/5**，
+   ★★ **不是因为功能没修，而是因为脚本的形状假定**从来没跟上实现**。**
+   ⇒ ★ 后果：★ **一条本来正常的能力被钉在 `stitched` 上**（★ 而它**有** PASS 5/5 的证据）。
+   ⇒ ★★ **可操作**：★ 见到 `limitations` 里"某脚本 N/M fail"，★ **要跑一遍看**现在**几比几**，
+     ★ **并读脚本的判据**（★ 它假定的形状/键名/单位，★ 可能已经过时）——
+     ★★★ **不要引用旧数字**（★ 那是"数字只从生成物来"的**反向**用法：★ 生成物要**现跑**）。
+★ **而修脚本时不要顺手改实现**：★ 先问"**哪个形状是对的**"（★ 本处嵌套更清晰）
+   ⇒ ★ **改判据去适配更好的形状**，★ 而不是把实现改成迎合旧判据的形状。
+```
+
+## 四、★ 边界（★ 如实保留，别一起升）
+```
+★ `mold_parting_geometry`（★ 4 个工具）的 limitation **不是**同一条问题：
+   ★ 它是「**前置未准备**」—— `MoldPartingLine` 等需要**先选拔模方向参考**，
+     ★ 而在未准备的分型件上**会弹框** ⇒ ★ **它仍是 `stitched`**（★ 前置得由人配合）。
+   ⇒ ★ 只去掉它 evidence 里那句**已经过时**的"冒烟 3/5 fail"。
+```
+
+**依据**：`output/mold-evidence-smoke.json`（★ 改后 **5/5 PASS**）· `output/mold-draft-analysis-owner.json`
+（★ **4/4 PASS**）· `tools/verify_mold_evidence_smoke.py`（★ `WANTED_COUNTS` / `WANTED_PROPS`）·
+`tools/verify_mold_draft_analysis_owner.py` · `scripts/sw_mold.py`（★ `mold_evidence` 的嵌套形状）·
+`C:\swapi\types\IFeatureManager\MoldUndercutDetect{,2}.md`（★ 无 Remarks）· 事实 36 / 242 / 261 / 262

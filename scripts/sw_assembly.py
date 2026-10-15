@@ -394,8 +394,17 @@ def add_mate5_checked(
         ★★★ 换它要**按类型分流**（★ 不是一处替换）✓
       ★★★★ **⇒ 记档保留**：★ `AddMate5` **当前仍可调**（★ 废弃 ≠ 不可达，★ 事实 12 那族）·
         ★★ **而硬换成错的分流会直接坏掉装配功能** ✓
-      ★ **该怎么换**：★ 就用本函数的 `mate_type` 分流 —— ★ 同心 ⇒ `AddConcentricMateWithTolerance` ·
-        ★★ 距离 ⇒ `AddDistanceMate` · ★★★ 其余 ⇒ `I*MateFeatureData` + `CreateMate` ✓
+      ★ **该怎么换（★ 复核订正 · spec 291）**：★★ **分流按**配合种类**、★ 不是按 `mate_type` 数值** ——
+        ★ `swMateDISTANCE` 既可能**平面距离**（⇒ `CreateMate`）也可能**圆柱面距离**（⇒ `AddDistanceMate`）
+        ⇒ ★★ **一个 `mate_type` 定不下来**（★ 还要看**选中实体的几何**）✓
+        · ★ **偏心的同心配合** ⇒ `AddConcentricMateWithTolerance`
+          （★★ **不是 drop-in**：官方页逐字要求**父标准同心配合必须已存在**；
+           ★★ 而它自己又说「建**标准**同心配合的通常做法**就是** `AddMate5`」⇒ ★★★ **是循环引用**）✓
+        · ★★ **圆柱面距离配合** ⇒ `AddDistanceMate`
+          （★★ **不是 drop-in**：`FirstArcCondition`/`SecondArcCondition` **只对柱面距离有效**；
+           ★ 选择**必须是两圆柱面 / 一圆柱面 + 一轴**）✓
+        · ★★★ **标准 / 高级 / 机械** ⇒ `I*MateFeatureData` + `CreateMate` ✓
+      ★★ **⇒ 本轮只订正记档、★ 不动路由**（★ 换它**必须真机验** · ★ 铁律 2）✓
       ★★ **前置**：★ 每条分流都要**先真机验证**（★ 逐条流程第 ② 步）——
         ★ 而**装配域当前 `level` 是 `stitched`** ⇒ ★★★ **不满足"有真机证据"** ⇒ **本轮不换** ✓
 

@@ -1,0 +1,34 @@
+规格 211 · B8 收口（三·补）：提交 round_chain 重生成的 4 份文档
+
+一、★ 这 4 份是什么（★ 全是**生成物**，★ 不是手写）
+| 文件 | 生成器 | 本次变化 |
+|---|---|---|
+| ★ `docs/dead-ends.md` | ★ `tools/gen_dead_ends.py` | ★ +16 行 |
+| ★ `docs/harvest-digest.md` | ★ `gen_harvest_digest` | ★ +19 行 |
+| ★ `docs/union-coverage-matrix.md` | ★ `build_union_map` | ★ ±16 行 |
+| ★ `docs/union-level-audit.md` | ★ `gen_level_audit` | ★ **±208 行** |
+
+二、★★ **为什么它们变了**（★ 一句）
+★ 规格 211 这一批**新增/升级了多条能力**（★ `scale_feature` · `sweep_surface` · `untrim_surface` ·
+★ `weldment_trim` · `weldment_gusset` · `fillet_weld_bead` · `section_properties` ✓）
+⇒ ★★ 而**等级审计**（★ `union-level-audit.md` 的 ±208 行）与**死路总表**（★ `dead-ends.md`）
+**都是从 `capabilities.yaml` 生成的** ✓ ⇒ ★ **能力清单变了，它们就该变** ✓
+★★ **这正是"生成物不许手改"的理由**：★ 手改会与真源脱节 ✓
+  ★（★ 本规格反复吃过的同类错：★ 覆盖表过时两次、台账判错两次 ✓）
+
+三、★★ **`docs/recon/*` 那批 untracked 的说明**（★ 免得后人误认）
+· ★ `git status` 里另有 **15 项 `docs/recon/*` 的 untracked**（★ `member-to-example-index.md` ·
+  `official-internal-conflicts.md` · `interface-ledger.md` … ✓）
+· ★★ **它们不是本批产生的** ✗ —— ★ 那是**规格 206（`docs/recon-206/` 同族）**的既有产物 ✓，
+  ★ **本会话之前就在盘上、一直未入库** ✓
+· ★ 故**本提交不碰它们** ✓（★ 入库与否是**另一个决定**，★ 该由用户定 ✓）
+
+四、★ 本批交付
+· `docs/dead-ends.md` · `docs/harvest-digest.md` · `docs/union-coverage-matrix.md` ·
+  `docs/union-level-audit.md`（★ 4 份生成物 ✓）
+· ★ 上一条提交：`tests/test_matrix_tool_name_normalization.py`（★ 那个钉死数字的断言 ✓）
+
+五、★ 下一轮
+★ ① 更新 `specs/211-user-feature-gaps/tasks.md` / `goal-bar.md` / `docs/HANDOFF.md` ✓
+★ ② 推进那 **7 项"可做未做"** 与 **PDM** ✓
+★ ③ 清掉 `D:\AI\SW-baseline-210` 的磁盘残留（★ git 注册已移除，★ 只剩句柄占用 ✓）

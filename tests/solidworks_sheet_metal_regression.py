@@ -73,10 +73,20 @@ def run_regression(output_dir: Path, *, visible: bool = True, wait_seconds: int 
     model = new_document(sw, "part")
     with sketch(model, "Front Plane") as profile:
         # 60 mm 底板 + 两侧 25 mm 翻边，开放轮廓由 BaseFlange 生成两道真实折弯。
-        sketch_line(model, -mm(30), mm(25), -mm(30), 0.0)
-        sketch_line(model, -mm(30), 0.0, mm(30), 0.0)
-        sketch_line(model, mm(30), 0.0, mm(30), mm(25))
+        #: ★★★ 2026-10-10（规格 278）**单位订正**：`sw_part.sketch_line` 的单位是**毫米**
+        #:   （★ 逐字 `x1 * _MM_TO_M`）⇒ ★ **必须传裸毫米** `30`。
+        #:   ⚠ 原写 `mm(30)` ⇒ ★ `sketch_line` 把它当 **0.03 毫米** ⇒ ★ 草图只有 **0.06 mm × 0.05 mm**
+        #:   ⇒ ★ SW 报「**所选的草图对此操作无效**」⇒ ★ **262 观测到的「回归」其实是这里的单位错**（规格 277 真机定案）。
+        sketch_line(model, -30, 25, -30, 0.0)
+        sketch_line(model, -30, 0.0, 30, 0.0)
+        sketch_line(model, 30, 0.0, 30, 25)
 
+    #: ★★★ 长度一律按**米**（★ 与 SW API 通用约定一致）—— ★ 真机实录（规格 278）：
+    #:   `thickness=0.002`（=2 mm）· `bend_radius=0.0025`（=2.5 mm）· `depth=0.1`（=100 mm）⇒ **建成**；
+    #:   而 `thickness=2.0`（半径 0.5 或 1.0）⇒ ★ **全部失败**，报
+    #:   「**无法添加此圆角，因为指定的半径值将会删除其中一个实体**」
+    #:   ⇒ ★★ **这推翻了 `BaseFlangeSpec` docstring 里「按文档单位（毫米）解释」那条更正**（★ 见规格 278）。
+    #: ⚠★ 另：`bend_radius` **必须 < thickness**（★ 否则同样报「无法添加此圆角…将会删除其中一个实体」）。
     feature = create_base_flange(
         model,
         profile,

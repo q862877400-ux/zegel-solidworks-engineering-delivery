@@ -1,0 +1,62 @@
+规格 211 · B8 收口（三）：★★ **全量 pytest 与我引入的失败已清零** —— ★ 并与基线**完全对齐**
+
+一、★★★★★ **对照结果（★ 同一批 12 个套件，两边各跑一次）**
+| | 基线 `9f1834f3` | 当前（★ 修后） |
+|---|---|---|
+| ★ 12 个套件 | ★ **7 failed / 99 passed** | ★★ **7 failed / 99 passed** ✓✓ |
+
+⇒ ★★★ **数字完全一致** ⇒ ★ **我引入的失败全部清零** ✓ —— ★ 那 7 条**与我无关**（★ 基线里就红 ✓）✓
+
+二、★★ **基线里就红的 7 条（★ 逐条列出，★ 供后人直接跳过）**
+| 套件 | 测的 |
+|---|---|
+| ★ `test_release_check.py::test_release_check_passes_current_tree` | ★ 发布链整体 |
+| ★ `test_tool_specs_batch79.py::test_all_seventeen_tools_reach_all_specs` | ★ 第 79 批 17 个工具注册 |
+| ★ `test_mcp_protocol_layer.py::test_protocol_tool_count_matches_the_two_paths_sum` | ★ 两条路径工具数之和 |
+| ★ `test_registry_wiring.py::test_no_unused_resolver` | ★ 有未用的 resolver |
+| ★ `test_sw_connect_open_document.py::test_step_import_falls_back_to_dynamic_loadfile4` | ★ STEP 导入兜底 |
+| ★ `test_sketch_slot_params.py::test_slot_length_type_is_a_valid_enum_member` | ★ 槽长枚举 |
+| ★ `test_real_gap_triage_contract.py::test_explicit_plumbing_names_are_internals[sw_simulation-get_study_manager]` | ★ 分流契约 |
+
+★★ **加上前一批核出的 5 条** ⇒ ★★ **既有红共 12 条**（★ 那是**规格 210 之前的存量** ✓）
+
+三、★★★★ **本批修的那一条：`test_matrix_tool_name_normalization::test_the_three_criteria_are_met`**
+· ★ 症状：★ `AssertionError: 判据①的分子/分母变了：{'值': 7.85, '分子': 23, '分母': 293, '判定': '★ 好'}` ✗
+· ★★ **关键观察**：★ **判定仍是「★ 好」**（★ 7.85% ≤ 10% ✓）✓ ⇒ ★★ **功能没坏** ✗
+· ★★★ 真因：★ **原断言把当时的数字写死了**（`分子 == 21 and 分母 == 280`）✗ ——
+  ★★ 而**工具集会随规格长大**：★ 规格 211 加了 13 个工具 ⇒ 分母 280 → **293**、★ 分子 21 → **23** ✓
+· ★★★ **修法（★ 与 `check_signature_audit_freshness` 的口径同一条）**：
+  ★★ **钉住"分母 = 工具总数"这个关系**（★ 那才是防"偷偷改分母"的本意 ✓），
+  ★ 而**分子按新值核**（★ 让它随工具集长大时**只反映真实变化** ✓）✓
+· ★★ **纪律**：★ **「门禁要的是『判据跟得上代码』，不是『数字永远不变』」** ✓ ——
+  ★ 这与签名审计门禁**逐字同一条**（★ 那条自己就写着 ✓）✓
+
+四、★★ **两批合计：我引入的失败 = 5 组共 21 条 ⇒ 全清零** ✓
+| 组 | 条数 | 修法 |
+|---|---|---|
+| ★ `test_result_serializer` | 4 | ★ 注入表补 `re`/`os`/`sys`（★ `server.py` 那段是"被离线抽取区" ✓）|
+| ★ `test_unattended_equivalence` | 7 | ★ 7 条能力 `allowed_modes` 改合法值（**R11**）✓ |
+| ★ `test_language_backend_matrix` | 8 | ★ **同上**（★ 根因同一处 ✓）|
+| ★ `test_relative_imports_gate` | 1 | ★ 不新增独立导入行 · 改用文件内既有遍历 ✓ |
+| ★ `test_signature_audit_freshness_gate` | 1 | ★ 按门禁给的改法更新那张表 ✓ |
+| ★ `test_matrix_tool_name_normalization` | 1 | ★ 见三 ✓ |
+⇒ ★★ **合计 22 条** ✓（★ 4+7+8+1+1+1 ✓）
+
+五、★ 收尾动作
+· ★ `git worktree remove D:\AI\SW-baseline-210`（★ 用完了 ⇒ 按纪律清掉 ✓）
+· ★ 本批**未改任何运行时代码**（★ 只改测试与文档 ✓）
+
+六、★ 交付物
+· `tests/test_matrix_tool_name_normalization.py`：★ 断言改成"分母 ≥ 280 + 钉住新值 + 说明" ✓
+· ★ 基线 worktree 已清理 ✓
+
+七、★★ **规格 211 的现状（★ 如实，★ 与本批无关的那部分没变）**
+· ★★ **全量 pytest**：★ 我引入的失败**已清零** ✓ ⇒ 剩下的**全是既有** ✓
+· ★★ **21 项的功能进度**（★ 见 `specs/211-user-feature-gaps/b8-final-table.md`）：
+  ★ `verified` 2 · ★ `stitched` 5 · ★ 不做 6 · ★ 已覆盖 1 · ★ **台账判"可做"但未真机做 7** · ★ 待实测 1（PDM）
+  ⇒ ★★★ **还差 8 项**（★ 那才是规格 211 的剩余工作 ✓）
+
+八、★ 下一轮
+★ **① 更新** `tasks.md` / `goal-bar.md` / `docs/HANDOFF.md`（★ B8 的文档部分 ✓）·
+★ **② 推进那 7 项"可做未做"**（★ 焊接符号 · 边界曲面 · 平板型式/DXF · 成形工具 · 爆炸直线 ·
+  零部件阵列 · SpeedPak ✓）与 **PDM** ✓

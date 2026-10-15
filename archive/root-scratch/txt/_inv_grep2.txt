@@ -1,0 +1,170 @@
+
+==========================================================================================
+### LIST_SOLID_BODIES  hits=55
+  tool_specs_batch74.py:122: for body in list(get_com_member(model, "GetBodies2", 0, True) or []):
+  tool_specs_batch74.py:409: #:   ★ 做法：`body_index` 指体号 ⇒ `IPartDoc.GetBodies2(0, False)` 取体表；`part_doc` 用同一个 `model`。
+  tool_specs_batch74.py:419: "`IPartDoc.GetBodies2(0, False)` 取体表后按序号取（★ 参数里**不收对象**）。"),
+  tool_specs_batch76.py:115: Param("body_type", str, description="`surface`（默认，取 `GetBodies2(1, …)` 曲面体）"
+  tool_specs_batch76.py:116: "或 `solid`（取 `GetBodies2(0, …)`）。"),
+  sw_api_sldworks.py:2605: 'GetBodies2': 1,
+  sw_api_sldworks.py:7334: 'GetBodies2': 2,
+  sw_api_sldworks.py:19506: 'GetBodies2': 105,
+  sw_api_sldworks.py:24061: 'GetBodies2': 132,
+  sw_assembly.py:313: bodies = safe_get_com_member(part, "GetBodies2", SW_SOLID_BODY, False) or []
+  sw_com_traps.py:275: #     不是"同名替换"）· ③ **跳代常伴随签名变化**（★ 我们一直在用的 `GetBodies2` 就是例子）。
+  sw_curve_and_split.py:138: bodies = list(get_com_member(model, "GetBodies2", 0, True) or [])
+  sw_feature_entry_ops.py:60: for body in list(get_com_member(model, "GetBodies2", 0, bool(visible_only)) or []):
+  sw_feature_entry_ops.py:180: for body in list(get_com_member(model, "GetBodies2", btype, True) or []):
+  sw_feature_entry_ops.py:236: #: ★ `GetBodies2` 的 `Type` 参数：★ 0 = 实体体 · **1 = 曲面体**（★ 展平要的是**曲面体**）
+  sw_feature_entry_ops.py:252: ★ `body_type="surface"` ⇒ 取 **`GetBodies2(1, …)`**（曲面体）；`"solid"` ⇒ 取 `GetBodies2(0, …)`。
+  ... (+39)
+
+==========================================================================================
+### FEATURE_TREE_CLASSIFY  hits=62
+  tool_specs_batch62.py:22: #                               new_type_names = **["WeldMemberFeat", "WeldmentFeature"]** ✓
+  tool_specs_batch62.py:56: "★★ **判据是特征树**（★ 不是计数）：`new_type_names` 应含 `WeldmentFeature` 与 "
+  tool_specs_batch7.py:19: | `sw_assembly.iter_feature_tree` | 同上 |
+  tool_specs_batch77.py:206: "★★★★ **而其余读数全部自洽**（★ 建成了 `type_name=Sweep` · 树 9→10）："
+  tool_specs_batch77.py:246: "★ `ok=True · feature_name=**放样1** · **type_name='Blend'** · tree 7→8` ⇒"
+  server.py:2520: #         `tools/sw_guard.py`（★ `scan_family_windows` / `classify_dialog` / `dismiss`）
+  sw_assembly.py:606: def iter_feature_tree(model, include_subfeatures=True):
+  sw_assembly.py:636: for feature, depth in iter_feature_tree(model, include_subfeatures=True):
+  sw_assembly.py:638: type_name = safe_get_com_member(feature, "GetTypeName2")
+  sw_assembly.py:640: type_name == "MateGroup"
+  sw_assembly.py:641: or str(type_name).startswith("Mate")
+  sw_assembly.py:647: "type": type_name,
+  sw_assembly.py:892: def configure_mate_feature_data(mate_data, type_name: int | None = None):
+  sw_assembly.py:896: if type_name is not None:
+  sw_assembly.py:897: set_com_member(mate_data, "TypeName", int(type_name))
+  sw_assembly.py:900: "type_name": int(get_com_member(mate_data, "TypeName") or -1),
+  ... (+46)
+
+==========================================================================================
+### PLANE_VISIBILITY  hits=35
+  tool_specs_batch81.py:28: Param("preview_evidence", str, default="", description="Optional list of BMP preview evidence dicts (`exists`, `likely_blank`). ★ Keyword-only in the source. Us
+  sw_api_sldworks.py:5646: 'HideFeatureDimensions': 0,
+  sw_api_sldworks.py:5848: 'ShowFeatureDimensions': 0,
+  sw_api_sldworks.py:5909: 'UnblankSketch': 0,
+  sw_api_sldworks.py:6259: 'HideFeatureDimensions': 0,
+  sw_api_sldworks.py:6485: 'ShowFeatureDimensions': 0,
+  sw_api_sldworks.py:6547: 'UnblankSketch': 0,
+  sw_api_sldworks.py:6763: 'HideFeatureManager': 1,
+  sw_api_sldworks.py:12253: 'ShowFeatureDescription',
+  sw_api_sldworks.py:12254: 'ShowFeatureDescription',
+  sw_api_sldworks.py:12255: 'ShowFeatureDetails',
+  sw_api_sldworks.py:12256: 'ShowFeatureDetails',
+  sw_api_sldworks.py:12257: 'ShowFeatureName',
+  sw_api_sldworks.py:12258: 'ShowFeatureName',
+  sw_api_sldworks.py:13645: 'ShowFeatureErrorDialog',
+  sw_api_sldworks.py:13646: 'ShowFeatureErrorDialog',
+  ... (+19)
+
+==========================================================================================
+### PROJECTED_CURVE  hits=26
+  tool_specs_batch75.py:20: #   投影视图                            solidworks_drawing_create_projected_view       projected_view
+  tool_specs_batch75.py:54: name="solidworks_drawing_create_projected_view",
+  tool_specs_batch75.py:56: module=_EXPOSE, function="create_projected_view",
+  tool_specs_batch77.py:281: "`create_projected_view` ⇒ ★ **`ok: True`** ⇒ `add_drawing_note(x_mm=50, y_mm=50)` ⇒"
+  tool_specs_batch77.py:296: "★ **要插视图仍建议走 `create_projected_view`**（★ 它已真机建成）✓"
+  sw_api_sldworks.py:5705: 'InsertProjectedSketch': 0,
+  sw_api_sldworks.py:5706: 'InsertProjectedSketch2': 1,
+  sw_api_sldworks.py:6322: 'InsertProjectedSketch': 0,
+  sw_api_sldworks.py:6323: 'InsertProjectedSketch2': 1,
+  sw_api_sldworks.py:7030: 'ProjectCurveOnSurface': 3,
+  sw_api_sldworks.py:22442: 'InsertProjectedSketch': 65687,
+  sw_api_sldworks.py:22443: 'InsertProjectedSketch2': 66003,
+  sw_api_sldworks.py:23059: 'InsertProjectedSketch': 65687,
+  sw_api_sldworks.py:23060: 'InsertProjectedSketch2': 66003,
+  sw_api_sldworks.py:23767: 'ProjectCurveOnSurface': 110,
+  sw_curve_and_split.py:23: #     · **投影曲线**：`IModelDoc2.InsertProjectedSketch2` **标**：
+  ... (+10)
+
+==========================================================================================
+### MACRO_TEMPLATES  hits=6
+  tool_specs_batch79.py:202: name="solidworks_macro_select_template",
+  tool_specs_batch79.py:204: module="sw_macro_guard", function="select_template_key",
+  sw_connect.py:43: SW_ALWAYS_USE_DEFAULT_TEMPLATES = 111
+  sw_macro_guard.py:232: def select_template_key(user_request: str) -> Optional[str]:
+  sw_macro_guard.py:243: key = select_template_key(user_request)
+  capabilities.yaml:4496: "solidworks_macro_select_template",
+
+==========================================================================================
+### MACRO_SECURITY  hits=0
+
+==========================================================================================
+### TITLE_BLOCK_WRITE  hits=27
+  tool_specs_batch81.py:26: Param("structure", str, default="(required)", description="Structured drawing evidence dict, normally produced by the drawing inspection path. Optional keys rea
+  sw_api_sldworks.py:558: 'ITitleBlock',
+  sw_api_sldworks.py:559: 'ITitleBlockTableAnnotation',
+  sw_api_sldworks.py:560: 'ITitleBlockTableFeature',
+  sw_api_sldworks.py:6786: 'InsertTitleBlockTable': 3,
+  sw_api_sldworks.py:8066: 'InsertTitleBlock': 1,
+  sw_api_sldworks.py:9335: 'ITitleBlock': {
+  sw_api_sldworks.py:9342: 'ITitleBlockTableAnnotation': {
+  sw_api_sldworks.py:9344: 'ITitleBlockTableFeature': {
+  sw_api_sldworks.py:15336: 'TitleBlock',
+  sw_api_sldworks.py:16958: 'ITitleBlock': (
+  sw_api_sldworks.py:16960: 'ITitleBlockTableAnnotation': (
+  sw_api_sldworks.py:16961: 'TitleBlockTableFeature',
+  sw_api_sldworks.py:16963: 'ITitleBlockTableFeature': (
+  sw_api_sldworks.py:18201: 'TitleBlock',
+  sw_api_sldworks.py:18386: 'ITitleBlockTableAnnotation': (
+  ... (+11)
+
+==========================================================================================
+### PDM_MODULE  hits=6
+  tool_specs_batch20.py:7: `sw_pdm.get_custom_property_names_and_values` 要 **PDM 许可证**（`sw_pdm` 模块头自述
+  sw_custom_property.py:7: `sw_pdm` 那一族（`get_custom_property_names_and_values`）要 **PDM 许可证**，不是这条路。
+  sw_featureworks.py:10: sw_pdm.py       Enterprise PDM 文档/配置/BOM 表
+  sw_pdm.py:10: sw_pdm.py       （本文件）Enterprise PDM
+  sw_pdm.py:61: # 文件:   scripts/sw_pdm.py —— 本文件自身
+  capabilities.yaml:2037: "PDM 那一族（引用文档等）不在本能力内 —— sw_pdm 需 PDM 许可证"
+
+==========================================================================================
+### GRAYSCALE  hits=6
+  sw_api_sldworks.py:3701: 'ViewDisplayHiddengreyed': 0,
+  sw_api_sldworks.py:5921: 'ViewDisplayHiddengreyed': 0,
+  sw_api_sldworks.py:6559: 'ViewDisplayHiddengreyed': 0,
+  sw_api_sldworks.py:20578: 'ViewDisplayHiddengreyed': 78,
+  sw_api_sldworks.py:22663: 'ViewDisplayHiddengreyed': 65644,
+  sw_api_sldworks.py:23301: 'ViewDisplayHiddengreyed': 65644,
+
+==========================================================================================
+### RENAME_FEATURE  hits=13
+  tool_specs_batch77.py:246: "★ `ok=True · feature_name=**放样1** · **type_name='Blend'** · tree 7→8` ⇒"
+  sw_api_gtswutilities.py:151: 'SetFeatureNameFilter': 1,
+  sw_entity_reference.py:48: feature_name=str(feature_name) if feature_name else None,
+  sw_feature_readback.py:1248: ★ **`ok=True · feature_name = **放样1** · **type_name = 'Blend'** · tree 7→8`** ✓
+  sw_feature_readback.py:1271: #:   ★ 真机读数：★ `create_loft_report` ⇒ `ok=True · feature_name=**放样1** ·
+  sw_gear.py:286: feature_name = f"SpurGear_m{spec.module_mm:g}_z{spec.teeth}"
+  sw_hole_features.py:128: feature_name = _circle_cut(model, plane_name, center, diameter, depth, name)
+  sw_hole_features.py:136: feature_name = _circle_cut(model, plane_name, center, diameter, 0.0, name)
+  sw_hole_features.py:215: feature_name = _feature_name(extrude_cut(model, sketch_name, depth), name)
+  sw_surface_features.py:413: #   （★ 另两条 `delete_feature` / `rename_feature` 是**高风险写**，按硬约束⑦不碰）。
+  sw_weldment.py:346: feature_name = str(get_com_member(feature, "Name") or "")
+  sw_weldment.py:400: feature_name = str(get_com_member(feature, "Name") or "")
+  sw_weldment.py:427: feature_name = str(get_com_member(feature, "Name") or "")
+
+==========================================================================================
+### DOC_UNITS_SET  hits=13
+  tool_specs_batch52.py:29: #   `IModelDoc2/SetUnits.md`（5 参）· `C:\swapi\enums\swLengthUnit_e.md`（`swMM=0` 等 11 项）·
+  tool_specs_batch52.py:58: "⚠ **未真机验证**：`SetUnits`（★ 5 参，★ 本工具只读不写）· 非毫米文档下的读数"
+  sw_api_sldworks.py:3379: 'SetUnits': 5,
+  sw_api_sldworks.py:3380: 'SetUnits2': 6,
+  sw_api_sldworks.py:5838: 'SetUnits': 5,
+  sw_api_sldworks.py:6474: 'SetUnits': 5,
+  sw_api_sldworks.py:20262: 'SetUnits': 52,
+  sw_api_sldworks.py:20263: 'SetUnits2': 128,
+  sw_api_sldworks.py:22575: 'SetUnits': 65542,
+  sw_api_sldworks.py:23211: 'SetUnits': 65542,
+  sw_units.py:28: #   `IModelDoc2/SetUnits.md`（5 参）· `C:\swapi\enums\swLengthUnit_e.md`（`swMM=0` 等 11 项）·
+  sw_units.py:30: #   ★ 反射 `scripts/sw_api_sldworks.py`（`GetUnits: 0` · `SetUnits: 5`）
+  capabilities.yaml:495: "★★ **2026-10-01（轮 339）文档单位**：★ 主源 `IModelDoc2.GetUnits()`（**0 参**）⇒ 5 个 short；★ 对照源 `ISldWorks.GetUserPreferenceIntegerValue(swUnitsLinear = 47)`（**1 参**）。\n  
+
+==========================================================================================
+### WORKFLOW_EXEC  hits=0
+
+==========================================================================================
+### PERF_OPTS  hits=2
+  sw_featureworks.py:70: "set_performance_options",
+  sw_featureworks.py:139: def set_performance_options(featureworks, options: int) -> bool:

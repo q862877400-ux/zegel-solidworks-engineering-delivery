@@ -30,6 +30,7 @@ RUN_MACRO_OPTIONS = {
 
 #: `swRunMacroError_e` —— **全 28 个成员**，★ 两源**按成员逐一比对一致**
 #:   （实测：官方页 28 个 == 出厂反射 28 个，`{成员: 值}` 字典相等；**只有排列顺序不同**）✓
+#: enum-gate: enum swRunMacroError_e
 RUN_MACRO_ERRORS = {
     "InvalidArg": 1, "MacrosAreDisabled": 2, "NotInDesignMode": 3, "OnlyCodeModules": 4,
     "OutOfMemory": 5, "InvalidProcname": 6, "InvalidPropertyType": 7, "SuborfuncExpected": 8,

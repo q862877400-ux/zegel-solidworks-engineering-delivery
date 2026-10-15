@@ -1,0 +1,41 @@
+feat(B6-b): 放样曲面登记成工具 + 能力条目；旋转曲面**不登记**（★ 按 A4 与事实 53）
+
+★ 承上一轮。这一轮做**收口**，并把「旋转曲面为什么不做」钉死。
+
+## ① 只登记**真机建成**的那一条
+
+| 工具栏 | 官方成员 | 真机 | 登记 |
+|---|---|---|---|
+放样曲面 | `IModelDoc2.InsertLoftRefSurface2` | ✅ 树 7→8 `曲面-放样1` | ✅ `solidworks_insert_lofted_ref_surface` |
+旋转曲面 | `IFeatureManager.InsertRevolvedRefSurface` | ❌ 前置 4 种未成 | ★ **不登记** |
+
+★ `ToolSpec` **246 → 247** · `check_inject_binding` **PASS 0 条** · 五统一门禁通过 ·
+  `capabilities` **83 → 84**（新增 `surface_ref_ops`，`verified`）。
+
+★★ **为什么旋转不登记**（★ 本仓 A4：`verified` 必须有**我们自己的运行证据**）——
+  真机试过 **4 种前置**，都没建成；★ 而**最后一次量到了直接原因**：
+
+```
+轴选中数 = 5
+```
+⇒ `sw_part._select_revolve_axis` 把该草图里**所有段**都按 `mark=4` 选了（矩形 4 边 + 中心线）
+  ⇒ ★ **轴不唯一**。
+★ 而**实体版 `sw_part.revolve_boss` 用同一句却是成的** —— 它走 `FeatureRevolve2`，
+  ★ 与本条的 `InsertRevolvedRefSurface` 是**两条特征路** ⇒ 差别在哪**还没查清**。
+⇒ ★ 按**事实 53**（同一处连续 ≥3 次没稳就停下）**停下**，★ **不登记、不写 verified**。
+
+## ② 顺带修掉的两处我自己的坑（★ 都在 AGENTS.md 里有先例）
+
+1. **`tool_specs_batch69.py` 的头部 docstring 多写了一个 `"""`** ——
+   ★ 我的 docstring **第 1 行就闭合了**，★ 而我又在来源块之后补了一个
+   ⇒ 它开了个新字符串把后面全吞掉 ⇒ `unterminated triple-quoted string literal`。
+   ★ AGENTS.md §「新建 .py 的模板」记的是**忘了闭合**那一形态（"同一处栽了七次"），
+     ★ 而这次是它的**镜像**：**多写了一个闭合符**。⇒ 已把这条写进该文件的注释。
+2. `Param(description=...)` 里嵌了 ASCII 双引号（`"see Remarks"`）—— ★ 同一族（事实 48）。
+
+## ③ 三源互证里最值钱的一条（★ 解释了它们为什么一直"不能"）
+
+★ **台账给的两个名字都不对**：
+· `FeatureRevolveRefSurface` ⇒ ★ **swapi 里根本没有这个名字**（真名 `InsertRevolvedRefSurface`）；
+· `InsertProtrusionBlend2(Surface)` ⇒ 那是**实体凸台**族，曲面放样真名是 `InsertLoftRefSurface2`。
+★ 而同族 `FeatureExtruRefSurface{,2,3}` 命名又不同 ⇒ ★ **不能按前缀猜，只能全仓搜**。
