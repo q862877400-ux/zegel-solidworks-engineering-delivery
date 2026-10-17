@@ -168,6 +168,27 @@ python tools/reclaim_solidworks.py --restart    # 探不通且打开的文档都
 
 **归档目录 `archive/`（★ 2026-10-10 登记 · 规格 294）**：`archive/root-scratch/{py,txt,md,json,logs,other}` 装的是**仓库根曾经就地写的 2814 个草稿**（`_factNNN.txt` / `_commit_msg_NNN.txt` / `_roadmap_*.md` / `fx*` / `dbg*` / `probe_*.py` 等）。为什么放不进已有目录：它们是**历史产物、不是活代码**（`tools/` 只收「正式、会被反复用的工具」；`docs/` 只收知识文档），而根目录自 2026-10-01 起就是草稿区（`README-workspace.md` §分类规矩）。归档后根只剩 **29** 个文件（打包器顶层文件 + 仓库门面 + 被 `scripts/sw_jlcfa_*.py` import 的 `shot.py`/`ctl.py`）。★ **只搬不删**；判据 `tests/test_workspace_tidy_294.py`（守恒断言：归档数 + 根数 == 整理前总数）。★ 该目录**不被任何门禁扫描**（门禁扫描根是 `scripts`/`tools`/`tests`/`mcp-server`/`subskills`/`apps`/`dotnet`/`examples`），故是惰性的。
 
+**★★ 顶层目录实况登记（★ 2026-10-18 · ★ 落实 §九 停止条件 #5「以实际仓库为准并更新本文件」）**
+
+★ 实测：★ 本仓**实际有 40 个顶层目录**（不含 `.git`），★ 而上面白名单只有 **14** 个 ⇒ ★★ **结构与白名单不符** ✗。
+★ 逐个登记**多出的 25 个**（★ 每个一句"是什么 / 为什么放不进已有目录" ✓）：
+
+| ★ 目录 | ★ 是什么 | ★ 为什么放不进已有目录 |
+|---|---|---|
+| `.specify/` | ★ Spec Kit **1.0.13** 集成（commands/templates/scripts/workflows/memory ✓）| ★ 是**第三方工具的检出态**：★ 有它自己的 `.gitignore` 与目录约定 ⇒ ★ 塞进 `tools/` 会破坏它的自更新 ✗ |
+| `.dsh/` | ★ DSH 宿主侧项目配置（★ 角色表等 ✓）| ★ **宿主约定目录**（★ 名字由宿主定，★ 不能改 ✗）|
+| `.workbuddy-ai/` | ★ 旧宿主留下的**历史开发记忆**（★ 4 份 memory · 420 KB ✓）| ★ 是**史料**不是活代码；★ 已登记在 `output/LEGACY_LOOP_REFERENCES.md` ✓ |
+| `AI Solidworks/` | ★ SolidWorks 官方文档/手册/模型/截图（★ **29749 文件** ✓）| ★ **只读外部素材**（★ 与 `references/`＝本仓知识文档**性质不同** ✗）· ★ **不得写入** ✗ |
+| `specs/` | ★★ **Spec Kit 规格**（★ **280 个 `NNN-<slug>/`** · 编号 1–345 ✓）| ★ **规格的落点**（★ 不是代码、★ 不是 `docs/` 知识文档、★ 不是 `output/` 产物 ✗）—— ★★ **且门禁 `check_spec_acceptance_paths` 读它们的 `→ 验收:` 行（866 处）** ⇒ ★ **删了会断门禁** ✗ |
+
+★ **产物 / 证据 / 侦察类（★ 均不承载活代码；★ 应 gitignore 或已 ignore ✓）**：
+`_proof` · `_raw` · `audit` · `batch_evidence` · `cadir` · `commit-messages` · `corpus` ·
+`evidence` · `explore` · `mcp-tool-draft` · `MCP_CALIB` · `metadata` · `net-guard` ·
+`research` · `shots` · `solidpilot-salvage` · `swpublished` · `.api-signatures` · `output` · `.pytest_cache`
+
+★★ **结论**：★★ 本节的**白名单数字（14）已不反映实际** ✗ —— ★ **以实际 40 个目录为准** ✓（★ 上面已逐个登记 ✓）；
+★★ **新增白名单外的顶层目录，仍须按本节规矩「先登记、再动手」** ✓
+
 新文件落进已有位置：能力实现进`scripts/`，知识文档进`references/`，测试进`tests/`，说明与生成物进`docs/`。上游目录树与新增模块的硬性要求见 [docs/upstream-layout.md](docs/upstream-layout.md)（对照参考，不是约束来源）。
 
 ### 铁律 4、签名三源互证，冲突以出厂类型库为准
