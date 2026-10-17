@@ -43,7 +43,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 ROOT = Path(__file__).resolve().parents[1]
 #: `AGENTS.md` 在**工作区**（不在本仓库）⇒ 可用环境变量覆盖；拿不到就 SKIP。
-AGENTS = Path(os.environ.get("DSH_AGENTS_MD", r"D:\AI\SW\AGENTS.md"))
+AGENTS = Path(os.environ.get("DSH_AGENTS_MD", Path(__file__).resolve().parents[1] / "AGENTS.md"))
 
 CRIT_ROW = re.compile(r"^\|\s*\*{0,2}(A\d+)\*{0,2}\s*\|")
 #: 一张表至少要有这么多 `A\d+` 行，才算「逐条自评表」（排除"顺带提到 A5"）

@@ -63,7 +63,7 @@ REPO = Path(__file__).resolve().parent.parent
 SWAPI = Path(r"C:\swapi")
 TYPES = SWAPI / "types"
 CD_DOC = TYPES / "IFeatureManager" / "CreateDefinition.md"
-RAW = Path(r"D:\AI\SW\_raw")
+RAW = Path(Path(__file__).resolve().parents[1] / "_raw")
 
 #: ★★ **官方 `CreateDefinition` 宿主页清单**（spec 238）—— 官方**不止一个** `CreateDefinition`
 #: 方法：`IFeatureManager::CreateDefinition` 与 `IMotionStudy::CreateDefinition`，

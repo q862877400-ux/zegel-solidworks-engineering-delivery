@@ -66,7 +66,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 REPO = Path(__file__).resolve().parents[1]
 DOC = REPO / "docs" / "signature-audit.md"
-RAW = Path(r"D:\AI\SW\_raw")
+RAW = Path(Path(__file__).resolve().parents[1] / "_raw")
 
 #: 表行形态： ``| `sw_mold.py` | 17 | **17** | 0 | 0 |``
 TABLE_ROW = re.compile(

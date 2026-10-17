@@ -40,7 +40,7 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8")
 
 ROOT = Path(__file__).resolve().parent.parent
-WORKSPACE = Path(r"D:\AI\SW")
+WORKSPACE = Path(Path(__file__).resolve().parents[1])
 SERVER = ROOT / "mcp-server" / "server.py"
 
 #: 从 server.py 里抽顶层第三方包名（只取第一段）

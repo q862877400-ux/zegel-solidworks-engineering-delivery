@@ -70,8 +70,8 @@ ROOT = Path(os.environ.get("DSH_ENUM_GATE_ROOT") or Path(__file__).resolve().par
 #:     实测那些成员在 **`SolidWorks.Interop.cosworks.dll`** 里，
 #:     而 `_raw\reflect\enum_cosworks.txt` 已有对应转储（363 个枚举节）。
 DEFAULT_DUMPS = (
-    r"D:\AI\SW\_raw\enum_values_sldworks.txt",
-    r"D:\AI\SW\_raw\reflect\enum_cosworks.txt",
+    Path(__file__).resolve().parents[1] / "_raw" / "enum_values_sldworks.txt",
+    Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "enum_cosworks.txt",
 )
 #: 可用 `DSH_ENUM_DUMP` 覆盖（多个用 `;` 分隔）。
 DUMP_SPEC = os.environ.get("DSH_ENUM_DUMP", "")

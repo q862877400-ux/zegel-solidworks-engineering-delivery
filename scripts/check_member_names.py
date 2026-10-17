@@ -40,12 +40,12 @@ REPO = Path(__file__).resolve().parents[1]
 
 #: 官方 interop 程序集的纯元数据反射清单（AGENTS.md §四.1③）
 REFLECTIONS = [
-    Path(r"D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt"),
-    Path(r"D:\AI\SW\_raw\reflect\iface_cosworks.txt"),
-    Path(r"D:\AI\SW\_raw\reflect\iface_swdocumentmgr.txt"),
-    Path(r"D:\AI\SW\_raw\reflect\iface_SWRoutingLib.txt"),
-    Path(r"D:\AI\SW\_raw\reflect\iface_sldcostingapi.txt"),
-    Path(r"D:\AI\SW\_raw\reflect\iface_fworks.txt"),
+    Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt"),
+    Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_cosworks.txt"),
+    Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_swdocumentmgr.txt"),
+    Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_SWRoutingLib.txt"),
+    Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_sldcostingapi.txt"),
+    Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_fworks.txt"),
 ]
 
 #: 本项目自身的常量名（SW_DOC_TYPES 等）不是 API 成员，不必去反射里找

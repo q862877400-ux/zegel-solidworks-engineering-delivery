@@ -46,7 +46,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.stdout.reconfigure(encoding="utf-8")
-REFLECT = Path(r"D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt")
+REFLECT = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
 SCAN = [ROOT / "scripts", ROOT / "tools"]
 
 #: ★ **已知的"管理器"根**：变量名 → 接口名。
@@ -420,7 +420,7 @@ def main() -> int:
             print("    %s:%d  `%s` 不在 %s 上 ⇒ %s"
                   % (h["file"], h["line"], h["member"], h["owner_iface"],
                      h.get("actually_on", h.get("why"))))
-    out = Path(r"D:\AI\SW\output\member-owner-interface.json")
+    out = Path(Path(__file__).resolve().parents[1] / "output" / "member-owner-interface.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({"checked": checked, "hits": hits, "unchecked_indirect": indirect}, ensure_ascii=False, indent=2) + "\n",
                    encoding="utf-8")
