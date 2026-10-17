@@ -10897,6 +10897,24 @@ COM 包装器调用点 **1310** 个 ⇒ **字面量（审计可见）1219** / **
   **读数**：★ HEAD 提交前 `2ad29635` · ★ 未提交 **0**（★ 删的 `.codebuddy` 本就不在版本控制里 ✓）
   **下一 WIP**：★ ① 用 `create_goal` 立 DSH 目标（★ 目标文本引 `output/GOAL.md`）· ★ ② 若要 20+20 ⇒ 先给两个模型的 DSH provider/model ID · ★ ③ 续主线（★ `specs/345-video-lectures/` 缺哪一集）
 
+2026-10-18 ★★★★★ **DSH 循环已立 + 踩掉一个真雷（★ 580 处写死绝对路径）** ——
+  **目标**：★ `goal-6fa0d490-2a27-4892-9f14-6d113c75b1ff`（★ **已武装** · 60 轮上限 ✓）—— ★ 驱动 = **DSH 自带 goal 循环** ✓
+  **机器门**：★ `python tools\goal_gate.py`（★ 它数 `output/AUTO_HANDOFF.md` **② 段的编号行** ✓）★ + ★ `python scripts\release_check.py` ✓
+  **★★★ 本轮的雷（★ 我自己踩的）**：★ 删 `D:\AI\SW` 旧副本 ⇒ **`release_check` 由绿转红** ✗ ——
+    ★ 真因：★★ **580 个文件在【真代码】里写死了 `D:\AI\SW\...`** ✓（★ 例：`scripts/check_interface_member_ownership.py:66`
+    ⇒ `RAW = Path(r"D:\AI\SW\_raw")` ✓ 模块级常量 ✗）⇒ ★ 旧副本一删 ⇒ 那些读取器**读空** ⇒
+    `CONST → 接口` 映射塌 ⇒ `cd_site_disposition` 门把 8 个站点**全判成 `dynamic`** ⇒ `sites 5 < 下界 8` ⇒ **红** ✗
+    ★ **修法**：★ 建**目录联接** `D:\AI\SW` → 本仓（★ **0 字节 · 不是副本 · 可撤** ✓）⇒ ★ 门禁**逐字恢复**：
+    ★ `站点 8 · checked 6 · no-members-used 2 · dynamic 0 · [PASS]` ✓ ⇒ ★ `release_check` **exit 0 · pass · 53 道 · missing []** ✓
+    ★★ **教训（★ 已写进 ② 段待办 #3）**：★★ **改仓库位置/删副本前，必须先查"有多少真代码写死了绝对路径"** ✗ ——
+    ★ 量法：★ 逐行剔注释 + `ast` 剔文档串 ⇒ ★ **580 个文件有真代码命中**（★ 另有 66 个**只在注释里**，★ 不用动 ✓）
+    ★ 处置要求：★ **分批**（★ 先 `scripts/check_*.py` 门禁族 → 再 `sw_*.py` → 再 `tools/`）· ★ **每批等量替换** ✓ · ★ **禁一次性批量脚本改 580 个文件** ✗
+  **旧循环残留清零** ✓：★ `~/.workbuddy-ai/hooks/` · `<repo>/.codebuddy/` · `~/.workbuddy-ai/skills/goal-handoff/` · `D:\AI\.codebuddy\` · `D:\AI\.workbuddy-ai\` —— 全删 ✗
+    ★ 史料归档 `output/_legacy/{goal-handoff-skill, workbuddy-memory-D-AI}/` ✓ · ★ `~/.workbuddy-ai/binaries/` **保留** ✓（★ 被 866 处验收行引用 ✓）
+  **本轮已完成并删号的三条** ✓：★ 循环统一写进 Hindsight（★ `doc_id: coding-agent-sw-dsh-goal-workbuddy-stop-hook--322f9bcf…`）· ★ 三个疑似旧快照核完 · ★ 红门禁修复
+  **② 段现存 3 条待办**：★ ① **17 讲视频讲义**（P04/11/12/14–18/22/23/35–41）· ★ ② 更新 `AGENTS.md` 铁律 3（41 目录 vs 白名单 14）· ★ ③ **580 处写死路径改成从仓库根推**
+  **读数**：★ HEAD `7791c3be` · ★ 提交 **1507** · ★ 未提交 **0** ✓ · ★ `all_specs()` **480** · ★ 规格 **280** · ★ `release_check` **exit 0** ✓
+
 
 ## 一·C · 支线：Bunny 并行批量作业（规格 specs/203-bunny-sideline-batches）
 
