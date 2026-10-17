@@ -28,7 +28,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MODULE_PATH = REPO_ROOT / "scripts" / "sw_pdm.py"
-REFLECTION = Path(r"D:\AI\SW\_raw\reflect\iface_swdocumentmgr.txt")
+REFLECTION = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_swdocumentmgr.txt")
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（swdocumentmgr interop 纯元数据反射）

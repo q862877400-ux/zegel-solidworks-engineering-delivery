@@ -34,7 +34,7 @@ import pytest
 #: ★ 本仓库根（★ 2026-10-03 合并后自定位）
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 R = Path(r"" + _ROOT_S + r"")
-SCRIPT = Path(r"D:\AI\SW\compute_union_gap_v3.py")
+SCRIPT = Path(Path(__file__).resolve().parents[1] / "compute_union_gap_v3.py")
 
 #: ★ 已知答案：★ **6 条全部应判「已有」**（★ 名字取自并集，★ 不是记忆里的常见名）
 KNOWN_ALREADY_HAVE = (
@@ -93,7 +93,7 @@ def test_strong_candidates_are_reported_with_a_domain():
     """★ 强候选必须**带域**（★ 那才是"域约束"的产出，★ 便于按域分批）。"""
     mod = _load()
     import json                                                            # noqa: PLC0415
-    p = Path(r"D:\AI\SW\output\union-gap-v3.json")
+    p = Path(Path(__file__).resolve().parents[1] / "output" / "union-gap-v3.json")
     if not p.exists():
         pytest.skip("先跑一次 compute_union_gap_v3.py 生成 output/union-gap-v3.json")
     d = json.loads(p.read_text(encoding="utf-8"))

@@ -31,7 +31,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MODULE_PATH = REPO_ROOT / "scripts" / "sw_selection.py"
-REFLECTION = Path(r"D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt")
+REFLECTION = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（sldworks interop 纯元数据反射）

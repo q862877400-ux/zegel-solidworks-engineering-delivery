@@ -24,7 +24,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import audit_call_arity as ac          # noqa: E402
 
 DELIVERY = ROOT / "scripts" / "sw_delivery.py"
-RAW = Path(r"D:\AI\SW\_raw")
+RAW = Path(Path(__file__).resolve().parents[1] / "_raw")
 
 #: ★★ 两条登记项（★ 按**成员名** —— 那正是本规格要钉的形态）
 EXPECTED = {("sw_delivery.py", "IGetDocumentNames"), ("sw_delivery.py", "OpenDoc6")}

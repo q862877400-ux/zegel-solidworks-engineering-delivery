@@ -24,7 +24,7 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 import check_provenance as cp          # noqa: E402
 
-DOC = Path(r"D:\AI\SW\docs\provenance-format.md")
+DOC = Path(Path(__file__).resolve().parents[1] / "docs" / "provenance-format.md")
 
 
 def _blocks(src: str):

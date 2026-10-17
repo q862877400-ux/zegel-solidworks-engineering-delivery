@@ -29,7 +29,7 @@ SCRIPTS = REPO / "scripts"
 # ⚑ 从 _raw 根找 —— 反射清单**散在两个目录**：大部分在 _raw\reflect\\，
 #   最大的 sldworks 在它的兄弟目录 _raw\reflect_sldworks\。
 #   只扫其中一个都会漏（本轮实测漏掉 15,297 条）。
-REFLECT_DIR = Path(r"D:\AI\SW\_raw")
+REFLECT_DIR = Path(Path(__file__).resolve().parents[1] / "_raw")
 # ⚑ **递归**找 —— 最大的 sldworks 反射落在子目录里（_raw\\reflect_sldworks\\），
 #   只扫顶层会把 8,210 个方法整个漏掉（本轮实测：只扫到 7,610 条）。
 REFLECTIONS = sorted(REFLECT_DIR.rglob("iface_*.txt")) if REFLECT_DIR.is_dir() else []

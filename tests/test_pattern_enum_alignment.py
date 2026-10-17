@@ -40,7 +40,7 @@ MODULE_PATH = REPO_ROOT / "scripts" / "sw_pattern.py"
 SW_PART_PATH = REPO_ROOT / "scripts" / "sw_part.py"
 SWAPI_ENUMS = Path(r"C:\swapi\enums")
 SKETCH_ADD_CONSTRAINTS = Path(r"C:\swapi\types\IModelDoc2\SketchAddConstraints.md")
-REFLECTION = Path(r"D:\AI\SW\_raw\enum_values_sldworks.txt")
+REFLECTION = Path(Path(__file__).resolve().parents[1] / "_raw" / "enum_values_sldworks.txt")
 
 #: ── 官方枚举基线（逐字抄自 S2，见上方"官方依据"）────────────────────────
 #: 键 = 官方成员名，值 = 官方值。**不得**由被测模块推导。

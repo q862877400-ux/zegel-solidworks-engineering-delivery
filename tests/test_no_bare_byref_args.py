@@ -25,7 +25,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 AUDIT = REPO_ROOT / "scripts" / "audit_byref_args.py"
 
 #: 反射清单（`reflect-interop.ps1` 生成的纯元数据转储）
-RAW = Path(r"D:\AI\SW\_raw")
+RAW = Path(Path(__file__).resolve().parents[1] / "_raw")
 
 
 def _load_audit():

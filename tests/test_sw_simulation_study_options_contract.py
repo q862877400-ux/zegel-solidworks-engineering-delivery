@@ -32,7 +32,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MODULE_PATH = REPO_ROOT / "scripts" / "sw_simulation_study_options.py"
 #: 反射清单（生成器与本测试的共同上游）
-REFLECTION = Path(r"D:\AI\SW\_raw\reflect\iface_cosworks.txt")
+REFLECTION = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_cosworks.txt")
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（cosworks interop 纯元数据反射）

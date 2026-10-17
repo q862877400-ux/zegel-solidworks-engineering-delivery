@@ -150,7 +150,7 @@ def test_notice_does_not_carry_its_own_drift_number():
 # ══ 轮 196 补的一条：NOTICE 对**第三方**的方法名论断必须可核 ══════════════════
 
 #: 官方反射转储（本机）—— 「某成员名在官方 API 里存不存在」的**权威源**
-REFLECT = Path(r"D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt")
+REFLECT = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
 #: NOTICE 段里点名的成员名（反引号包着，可能带 arity 后缀）
 _BACKTICK = re.compile(r"`((?:I)?[A-Z][a-z]\w*)\s*(?:\([^`]*\))?`")
 #: 句子切分：**中文分号 / 句号**（★ NOTICE 那段用 `；` 分开「查不到」与「真名是」两半）

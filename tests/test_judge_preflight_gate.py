@@ -25,7 +25,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CHECKER = REPO_ROOT / "tools" / "check_judge_preflight.py"
 #: ★ 真实存在的一份 pass 证据与一份非 pass 证据（★ 从工作区取；不在则跳过该例）
-WORKSPACE = Path(os.environ.get("DSL_WORKSPACE", r"D:\AI\SW"))
+WORKSPACE = Path(os.environ.get("DSL_WORKSPACE", Path(__file__).resolve().parents[1]))
 PASS_EV = "output/loads-groupa3-evidence.json"
 NONPASS_EV = "output/first-load-rule-evidence.json"
 

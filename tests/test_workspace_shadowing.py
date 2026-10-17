@@ -21,7 +21,7 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CHECK = REPO_ROOT / "scripts" / "check_workspace_shadowing.py"
-WORKSPACE = Path(r"D:\AI\SW")
+WORKSPACE = Path(Path(__file__).resolve().parents[1])
 
 
 def _load():

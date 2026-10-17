@@ -23,7 +23,7 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 AUDIT = REPO_ROOT / "scripts" / "audit_call_arity.py"
 NEG = REPO_ROOT / "tools" / "arity_negative_case.py"
-RAW = Path(r"D:\AI\SW\_raw")
+RAW = Path(Path(__file__).resolve().parents[1] / "_raw")
 
 
 def _refs() -> list:
