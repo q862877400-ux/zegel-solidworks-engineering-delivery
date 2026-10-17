@@ -1,9 +1,9 @@
 {
-  "checked": 56,
+  "checked": 213,
   "hits": [
     {
       "file": "sw_mold.py",
-      "line": 311,
+      "line": 340,
       "owner_iface": "IFeatureManager",
       "member": "GetCavitySurfacesCount",
       "via": "_count('GetCavitySurfacesCount')",
@@ -13,7 +13,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 311,
+      "line": 340,
       "owner_iface": "IFeatureManager",
       "member": "GetCoreSurfacesCount",
       "via": "_count('GetCoreSurfacesCount')",
@@ -23,7 +23,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 311,
+      "line": 340,
       "owner_iface": "IFeatureManager",
       "member": "GetPartingLinesCount",
       "via": "_count('GetPartingLinesCount')",
@@ -35,7 +35,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 311,
+      "line": 340,
       "owner_iface": "IFeatureManager",
       "member": "GetPartingSurfacesCount",
       "via": "_count('GetPartingSurfacesCount')",
@@ -45,7 +45,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 317,
+      "line": 347,
       "owner_iface": "IModelDoc2",
       "member": "GetCavitySurfacesCount",
       "via": "_count('GetCavitySurfacesCount')",
@@ -55,7 +55,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 317,
+      "line": 347,
       "owner_iface": "IModelDoc2",
       "member": "GetCoreSurfacesCount",
       "via": "_count('GetCoreSurfacesCount')",
@@ -65,7 +65,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 317,
+      "line": 347,
       "owner_iface": "IModelDoc2",
       "member": "GetPartingLinesCount",
       "via": "_count('GetPartingLinesCount')",
@@ -77,7 +77,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 317,
+      "line": 347,
       "owner_iface": "IModelDoc2",
       "member": "GetPartingSurfacesCount",
       "via": "_count('GetPartingSurfacesCount')",
@@ -87,7 +87,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 311,
+      "line": 340,
       "owner_iface": "IFeatureManager",
       "member": "CoreCavitySplit",
       "via": "_prop('CoreCavitySplit')",
@@ -97,7 +97,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 311,
+      "line": 340,
       "owner_iface": "IFeatureManager",
       "member": "PartingType",
       "via": "_prop('PartingType')",
@@ -107,7 +107,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 317,
+      "line": 347,
       "owner_iface": "IModelDoc2",
       "member": "CoreCavitySplit",
       "via": "_prop('CoreCavitySplit')",
@@ -117,7 +117,7 @@
     },
     {
       "file": "sw_mold.py",
-      "line": 317,
+      "line": 347,
       "owner_iface": "IModelDoc2",
       "member": "PartingType",
       "via": "_prop('PartingType')",
@@ -136,242 +136,479 @@
         "IDrawingDoc",
         "IPartDoc"
       ]
+    },
+    {
+      "file": "probe_spec211_pdm.py",
+      "line": 62,
+      "owner_iface": "ISldWorks",
+      "member": "PDMDocManager",
+      "actually_on": []
+    },
+    {
+      "file": "probe_spec211_pdm.py",
+      "line": 64,
+      "owner_iface": "ISldWorks",
+      "member": "GetPDMDocManager",
+      "actually_on": []
+    },
+    {
+      "file": "probe_spec211_pdm.py",
+      "line": 66,
+      "owner_iface": "ISldWorks",
+      "member": "Application",
+      "actually_on": []
     }
   ],
   "unchecked_indirect": [
     {
       "file": "sw_api_cosworks.py",
-      "line": 3049,
+      "line": 3050,
       "owner": "obj",
       "arg": "member"
     },
     {
       "file": "sw_api_dsgnchk.py",
-      "line": 134,
+      "line": 135,
       "owner": "obj",
       "arg": "member"
     },
     {
       "file": "sw_api_fworks.py",
-      "line": 122,
+      "line": 123,
       "owner": "obj",
       "arg": "member"
     },
     {
       "file": "sw_api_gtswutilities.py",
-      "line": 303,
+      "line": 304,
       "owner": "obj",
       "arg": "member"
     },
     {
       "file": "sw_api_sldcostingapi.py",
-      "line": 466,
+      "line": 467,
       "owner": "obj",
       "arg": "member"
     },
     {
       "file": "sw_api_sldtoolboxconfigureaddin.py",
-      "line": 127,
+      "line": 128,
       "owner": "obj",
       "arg": "member"
     },
     {
       "file": "sw_api_sldworks.py",
-      "line": 17500,
+      "line": 17501,
       "owner": "obj",
       "arg": "member"
     },
     {
       "file": "sw_api_swdimxpert.py",
-      "line": 602,
+      "line": 603,
       "owner": "obj",
       "arg": "member"
     },
     {
       "file": "sw_api_swdocumentmgr.py",
-      "line": 4557,
+      "line": 4558,
       "owner": "obj",
       "arg": "member"
     },
     {
       "file": "sw_api_swmotionstudy.py",
-      "line": 314,
+      "line": 315,
       "owner": "obj",
       "arg": "member"
     },
     {
       "file": "sw_api_swpublished.py",
-      "line": 626,
+      "line": 627,
       "owner": "obj",
       "arg": "member"
     },
     {
       "file": "sw_api_SWRoutingLib.py",
-      "line": 310,
+      "line": 311,
       "owner": "obj",
       "arg": "member"
     },
     {
       "file": "sw_assembly_doc.py",
-      "line": 275,
+      "line": 307,
       "owner": "doc",
       "arg": "member"
     },
     {
+      "file": "sw_assembly_doc.py",
+      "line": 827,
+      "owner": "target",
+      "arg": "_acc"
+    },
+    {
       "file": "sw_connect.py",
-      "line": 197,
+      "line": 276,
       "owner": "obj",
       "arg": "attr_name"
     },
     {
       "file": "sw_connect.py",
-      "line": 461,
+      "line": 541,
       "owner": "obj",
       "arg": "attr_name"
     },
     {
       "file": "sw_costing.py",
-      "line": 119,
+      "line": 122,
       "owner": "target",
       "arg": "member"
     },
     {
       "file": "sw_costing.py",
-      "line": 330,
+      "line": 334,
       "owner": "target",
       "arg": "member"
     },
     {
       "file": "sw_delivery.py",
-      "line": 217,
+      "line": 254,
       "owner": "obj",
       "arg": "name"
     },
     {
+      "file": "sw_drawing_create_missing.py",
+      "line": 188,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_drawing_query.py",
+      "line": 331,
+      "owner": "view",
+      "arg": "_mem"
+    },
+    {
       "file": "sw_drawing_view.py",
-      "line": 375,
+      "line": 386,
       "owner": "view",
       "arg": "member"
     },
     {
+      "file": "sw_feature_entry_ops.py",
+      "line": 212,
+      "owner": "fm",
+      "arg": "kind"
+    },
+    {
+      "file": "sw_feature_entry_ops.py",
+      "line": 217,
+      "owner": "fm",
+      "arg": "kind"
+    },
+    {
+      "file": "sw_feature_entry_ops.py",
+      "line": 130,
+      "owner": "ret",
+      "arg": "m"
+    },
+    {
+      "file": "sw_feature_entry_ops.py",
+      "line": 227,
+      "owner": "ret",
+      "arg": "memo"
+    },
+    {
+      "file": "sw_feature_entry_ops.py",
+      "line": 301,
+      "owner": "edge",
+      "arg": "memo"
+    },
+    {
+      "file": "sw_feature_entry_ops.py",
+      "line": 329,
+      "owner": "ret",
+      "arg": "memo"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 426,
+      "owner": "fd",
+      "arg": "name"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 434,
+      "owner": "fd",
+      "arg": "name"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 525,
+      "owner": "fd",
+      "arg": "name"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 610,
+      "owner": "feat",
+      "arg": "name"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 617,
+      "owner": "feat",
+      "arg": "name"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 694,
+      "owner": "fd",
+      "arg": "name"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 700,
+      "owner": "fd",
+      "arg": "name"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 774,
+      "owner": "fd",
+      "arg": "name"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 861,
+      "owner": "fd",
+      "arg": "name"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 867,
+      "owner": "fd",
+      "arg": "name"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 945,
+      "owner": "fd",
+      "arg": "name"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 1502,
+      "owner": "fd",
+      "arg": "name"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 336,
+      "owner": "fd",
+      "arg": "name"
+    },
+    {
+      "file": "sw_feature_readback.py",
+      "line": 343,
+      "owner": "fd",
+      "arg": "name"
+    },
+    {
       "file": "sw_featureworks.py",
-      "line": 96,
+      "line": 99,
       "owner": "target",
       "arg": "member"
     },
     {
+      "file": "sw_fingerprint.py",
+      "line": 96,
+      "owner": "obj",
+      "arg": "member"
+    },
+    {
+      "file": "sw_loft.py",
+      "line": 200,
+      "owner": "fobj",
+      "arg": "_m"
+    },
+    {
       "file": "sw_mass_property.py",
-      "line": 137,
+      "line": 141,
       "owner": "ext",
       "arg": "_nm"
     },
     {
       "file": "sw_mass_property.py",
-      "line": 172,
+      "line": 360,
       "owner": "mp",
       "arg": "name"
     },
     {
       "file": "sw_mold.py",
-      "line": 311,
+      "line": 340,
       "owner": "fm",
       "arg": "name"
     },
     {
       "file": "sw_mold.py",
-      "line": 317,
+      "line": 347,
       "owner": "model",
       "arg": "name"
     },
     {
       "file": "sw_part.py",
-      "line": 173,
+      "line": 184,
       "owner": "obj",
       "arg": "attr_name"
     },
     {
+      "file": "sw_part.py",
+      "line": 1101,
+      "owner": "_sk",
+      "arg": "_member"
+    },
+    {
+      "file": "sw_part.py",
+      "line": 1263,
+      "owner": "feature",
+      "arg": "meth"
+    },
+    {
       "file": "sw_pattern.py",
-      "line": 145,
+      "line": 151,
       "owner": "target",
       "arg": "member"
     },
     {
       "file": "sw_pdm.py",
-      "line": 128,
-      "owner": "target",
-      "arg": "member"
-    },
-    {
-      "file": "sw_render_material.py",
-      "line": 176,
-      "owner": "material",
-      "arg": "str(key)"
-    },
-    {
-      "file": "sw_routing.py",
       "line": 134,
       "owner": "target",
       "arg": "member"
     },
     {
+      "file": "sw_preference_guard.py",
+      "line": 101,
+      "owner": "obj",
+      "arg": "name"
+    },
+    {
+      "file": "sw_routing.py",
+      "line": 137,
+      "owner": "target",
+      "arg": "member"
+    },
+    {
       "file": "sw_selection.py",
-      "line": 156,
+      "line": 159,
       "owner": "target",
       "arg": "member"
     },
     {
       "file": "sw_selection_spec.py",
-      "line": 159,
+      "line": 168,
       "owner": "bodies[body_index]",
       "arg": "member"
     },
     {
       "file": "sw_selection_spec.py",
-      "line": 317,
+      "line": 353,
       "owner": "mgr",
       "arg": "_nm"
     },
     {
+      "file": "sw_selection_spec.py",
+      "line": 573,
+      "owner": "ent",
+      "arg": "member"
+    },
+    {
+      "file": "sw_sensor.py",
+      "line": 93,
+      "owner": "feat",
+      "arg": "meth"
+    },
+    {
+      "file": "sw_sensor.py",
+      "line": 125,
+      "owner": "sensor",
+      "arg": "attr"
+    },
+    {
+      "file": "sw_sheet_metal_weld_entry.py",
+      "line": 224,
+      "owner": "model",
+      "arg": "member"
+    },
+    {
+      "file": "sw_sheet_metal_weld_entry.py",
+      "line": 317,
+      "owner": "definition",
+      "arg": "name"
+    },
+    {
+      "file": "sw_simulation.py",
+      "line": 1341,
+      "owner": "mesh",
+      "arg": "name"
+    },
+    {
+      "file": "sw_simulation.py",
+      "line": 1389,
+      "owner": "mesh",
+      "arg": "name"
+    },
+    {
+      "file": "sw_simulation.py",
+      "line": 1399,
+      "owner": "mesh",
+      "arg": "name"
+    },
+    {
       "file": "sw_simulation_loadprops.py",
-      "line": 114,
+      "line": 115,
       "owner": "target",
       "arg": "begin"
     },
     {
       "file": "sw_simulation_loadprops.py",
-      "line": 118,
+      "line": 120,
       "owner": "target",
       "arg": "end"
     },
     {
       "file": "sw_simulation_loads.py",
-      "line": 244,
+      "line": 282,
       "owner": "manager",
       "arg": "member"
     },
     {
       "file": "sw_simulation_results.py",
-      "line": 147,
+      "line": 152,
       "owner": "target",
       "arg": "member"
     },
     {
       "file": "sw_simulation_study.py",
-      "line": 197,
+      "line": 201,
       "owner": "target",
       "arg": "member"
     },
     {
       "file": "sw_simulation_study_options.py",
-      "line": 669,
+      "line": 708,
       "owner": "study",
       "arg": "accessor"
     },
     {
       "file": "sw_simulation_study_options.py",
-      "line": 617,
+      "line": 649,
       "owner": "options",
       "arg": "name"
+    },
+    {
+      "file": "sw_sketch.py",
+      "line": 816,
+      "owner": "model",
+      "arg": "'BlankSketch' if blank else 'UnblankSketch'"
     },
     {
       "file": "sw_sketch.py",
@@ -381,33 +618,297 @@
     },
     {
       "file": "sw_surface.py",
-      "line": 262,
+      "line": 263,
       "owner": "modeler",
       "arg": "method"
     },
     {
+      "file": "sw_sweep.py",
+      "line": 57,
+      "owner": "f",
+      "arg": "meth"
+    },
+    {
       "file": "sw_topology.py",
-      "line": 396,
+      "line": 448,
       "owner": "manager",
       "arg": "getter"
     },
     {
       "file": "sw_topology.py",
-      "line": 652,
+      "line": 748,
       "owner": "manager",
+      "arg": "getter"
+    },
+    {
+      "file": "sw_units.py",
+      "line": 114,
+      "owner": "model",
       "arg": "getter"
     },
     {
       "file": "sw_weldment.py",
-      "line": 277,
+      "line": 423,
       "owner": "feature",
       "arg": "next_member"
+    },
+    {
+      "file": "sw_weldment.py",
+      "line": 1137,
+      "owner": "ws_obj",
+      "arg": "m"
+    },
+    {
+      "file": "sw_wrap.py",
+      "line": 61,
+      "owner": "f",
+      "arg": "meth"
+    },
+    {
+      "file": "sw_wrap.py",
+      "line": 129,
+      "owner": "obj",
+      "arg": "meth"
     },
     {
       "file": "audit_runtime_reachability.py",
       "line": 78,
       "owner": "obj",
       "arg": "name"
+    },
+    {
+      "file": "diag_getbodies.py",
+      "line": 70,
+      "owner": "model",
+      "arg": "n"
+    },
+    {
+      "file": "diag_selection_lifetime.py",
+      "line": 33,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "diag_weldment_feature_kind.py",
+      "line": 36,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_activesketch_successor.py",
+      "line": 38,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_add_component_three_paths.py",
+      "line": 45,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_assembly_family_successors.py",
+      "line": 42,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_autodimension_successor.py",
+      "line": 56,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_component_transform_successor.py",
+      "line": 45,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_deps_bom_undercut.py",
+      "line": 50,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_drawing_datum_tag2.py",
+      "line": 51,
+      "owner": "view",
+      "arg": "attr"
+    },
+    {
+      "file": "probe_drawing_tools_e2e.py",
+      "line": 92,
+      "owner": "o",
+      "arg": "name"
+    },
+    {
+      "file": "probe_endcap_face_matrix.py",
+      "line": 33,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_endcap_feature2.py",
+      "line": 46,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_endcap_official_args.py",
+      "line": 37,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_equation_rotation.py",
+      "line": 54,
+      "owner": "s",
+      "arg": "m"
+    },
+    {
+      "file": "probe_equation_units.py",
+      "line": 60,
+      "owner": "sk",
+      "arg": "getter"
+    },
+    {
+      "file": "probe_explicit_reject_family.py",
+      "line": 37,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_feature_edit_e2e.py",
+      "line": 40,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_feature_names_blindspot.py",
+      "line": 160,
+      "owner": "ret",
+      "arg": "k"
+    },
+    {
+      "file": "probe_feature_suppress_e2e.py",
+      "line": 35,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_fillet_generations.py",
+      "line": 49,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_fillet_precall_e2e.py",
+      "line": 34,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_flatten_tool.py",
+      "line": 36,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_fr008_explode_macro.py",
+      "line": 54,
+      "owner": "obj",
+      "arg": "attr"
+    },
+    {
+      "file": "probe_fullydefinesketch2.py",
+      "line": 75,
+      "owner": "act",
+      "arg": "name"
+    },
+    {
+      "file": "probe_gear_coincident.py",
+      "line": 53,
+      "owner": "seg",
+      "arg": "which"
+    },
+    {
+      "file": "probe_gear_coincident.py",
+      "line": 93,
+      "owner": "sk",
+      "arg": "g"
+    },
+    {
+      "file": "probe_gear_coincident.py",
+      "line": 135,
+      "owner": "segs[s_i]",
+      "arg": "'GetStartPoint2' if e_i == 0 else 'GetEndPoint2'"
+    },
+    {
+      "file": "probe_gear_endpoints.py",
+      "line": 43,
+      "owner": "sk",
+      "arg": "g"
+    },
+    {
+      "file": "probe_gear_relation_closure.py",
+      "line": 56,
+      "owner": "seg",
+      "arg": "which"
+    },
+    {
+      "file": "probe_gear_relation_closure.py",
+      "line": 97,
+      "owner": "sk",
+      "arg": "g"
+    },
+    {
+      "file": "probe_gear_relation_closure.py",
+      "line": 123,
+      "owner": "segs[i]",
+      "arg": "'GetStartPoint2' if ai == 0 else 'GetEndPoint2'"
+    },
+    {
+      "file": "probe_gear_relation_closure.py",
+      "line": 124,
+      "owner": "segs[j]",
+      "arg": "'GetStartPoint2' if bi == 0 else 'GetEndPoint2'"
+    },
+    {
+      "file": "probe_gear_sketch_diagnosis.py",
+      "line": 55,
+      "owner": "s",
+      "arg": "m"
+    },
+    {
+      "file": "probe_gear_sketch_diagnosis.py",
+      "line": 74,
+      "owner": "sk",
+      "arg": "g"
+    },
+    {
+      "file": "probe_geterrorcode2.py",
+      "line": 42,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_getsystemvalue_on_existing.py",
+      "line": 52,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_getsystemvalue_successor.py",
+      "line": 44,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_graphicsredraw_successor.py",
+      "line": 47,
+      "owner": "o",
+      "arg": "n"
     },
     {
       "file": "probe_gtol_frame_order.py",
@@ -428,26 +929,74 @@
       "arg": "cand"
     },
     {
+      "file": "probe_hv_dimension_with_selection.py",
+      "line": 72,
+      "owner": "s",
+      "arg": "m"
+    },
+    {
+      "file": "probe_imathutility_family.py",
+      "line": 78,
+      "owner": "mv",
+      "arg": "name"
+    },
+    {
+      "file": "probe_judge_object_type.py",
+      "line": 60,
+      "owner": "obj",
+      "arg": "prop"
+    },
+    {
+      "file": "probe_knit_then_thicken.py",
+      "line": 103,
+      "owner": "ret",
+      "arg": "m"
+    },
+    {
+      "file": "probe_linearpattern4.py",
+      "line": 53,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_list_open_docs.py",
+      "line": 61,
+      "owner": "d",
+      "arg": "member"
+    },
+    {
       "file": "probe_load_state.py",
       "line": 99,
       "owner": "item",
       "arg": "attr"
     },
     {
+      "file": "probe_loads_count_studytype.py",
+      "line": 68,
+      "owner": "mgr",
+      "arg": "attr"
+    },
+    {
+      "file": "probe_loft_fixed_e2e.py",
+      "line": 33,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
       "file": "probe_mass_property_reads.py",
-      "line": 113,
+      "line": 121,
       "owner": "mp",
       "arg": "n"
     },
     {
       "file": "probe_mass_property_reads.py",
-      "line": 157,
+      "line": 165,
       "owner": "ext",
       "arg": "name"
     },
     {
       "file": "probe_mass_property_reads.py",
-      "line": 86,
+      "line": 94,
       "owner": "ext",
       "arg": "n"
     },
@@ -456,6 +1005,42 @@
       "line": 104,
       "owner": "ext",
       "arg": "nm"
+    },
+    {
+      "file": "probe_mate5_vs_createmate.py",
+      "line": 54,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_pattern_generations.py",
+      "line": 45,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_r3_tools.py",
+      "line": 40,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_render_material_family.py",
+      "line": 56,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_resolver_mark_matrix.py",
+      "line": 26,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_result_serializer.py",
+      "line": 19,
+      "owner": "o",
+      "arg": "n"
     },
     {
       "file": "probe_results_api_surface.py",
@@ -470,9 +1055,285 @@
       "arg": "w"
     },
     {
+      "file": "probe_revolve_oldstyle.py",
+      "line": 128,
+      "owner": "ret",
+      "arg": "m"
+    },
+    {
+      "file": "probe_select4_mark_e2e.py",
+      "line": 36,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_select_by_ray_count.py",
+      "line": 77,
+      "owner": "obj",
+      "arg": "m"
+    },
+    {
+      "file": "probe_selected_object_entry.py",
+      "line": 78,
+      "owner": "sm",
+      "arg": "member"
+    },
+    {
+      "file": "probe_selected_objects_face.py",
+      "line": 65,
+      "owner": "sm",
+      "arg": "member"
+    },
+    {
+      "file": "probe_selected_objects_face.py",
+      "line": 87,
+      "owner": "sm",
+      "arg": "member"
+    },
+    {
+      "file": "probe_selection_count_e2e.py",
+      "line": 35,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_selectionmgr_component_members.py",
+      "line": 56,
+      "owner": "sel",
+      "arg": "member"
+    },
+    {
+      "file": "probe_setsavetoname_successor.py",
+      "line": 44,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
       "file": "probe_simulation_study_shapes.py",
       "line": 94,
       "owner": "s",
+      "arg": "attr"
+    },
+    {
+      "file": "probe_sketch_edit_pending_evidence.py",
+      "line": 61,
+      "owner": "sk",
+      "arg": "name"
+    },
+    {
+      "file": "probe_spec209_hem_diag.py",
+      "line": 69,
+      "owner": "edge",
+      "arg": "member"
+    },
+    {
+      "file": "probe_spec209_hem_units.py",
+      "line": 64,
+      "owner": "e",
+      "arg": "member"
+    },
+    {
+      "file": "probe_spec211_external_members.py",
+      "line": 91,
+      "owner": "fm",
+      "arg": "name"
+    },
+    {
+      "file": "probe_spec211_external_members.py",
+      "line": 117,
+      "owner": "fm",
+      "arg": "name"
+    },
+    {
+      "file": "probe_spec211_pdm.py",
+      "line": 91,
+      "owner": "got",
+      "arg": "m"
+    },
+    {
+      "file": "probe_spec211_section_props_forms.py",
+      "line": 59,
+      "owner": "obj",
+      "arg": "name"
+    },
+    {
+      "file": "probe_spec211_speedpak.py",
+      "line": 142,
+      "owner": "comps[0]",
+      "arg": "_accessor"
+    },
+    {
+      "file": "probe_spec211_weldsymbol.py",
+      "line": 177,
+      "owner": "v",
+      "arg": "member"
+    },
+    {
+      "file": "probe_spec211_weldsymbol_real.py",
+      "line": 126,
+      "owner": "ws_obj",
+      "arg": "m"
+    },
+    {
+      "file": "probe_spline_fix.py",
+      "line": 33,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_split_line.py",
+      "line": 159,
+      "owner": "ret",
+      "arg": "m"
+    },
+    {
+      "file": "probe_split_line_returns.py",
+      "line": 84,
+      "owner": "ret",
+      "arg": "m"
+    },
+    {
+      "file": "probe_surface_fill_fallback.py",
+      "line": 32,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_surfcut_recursive.py",
+      "line": 141,
+      "owner": "ret",
+      "arg": "m"
+    },
+    {
+      "file": "probe_surfcut_recursive.py",
+      "line": 92,
+      "owner": "feat",
+      "arg": "m"
+    },
+    {
+      "file": "probe_sweep_fixed_e2e.py",
+      "line": 34,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_sweep_surface_dedicated.py",
+      "line": 117,
+      "owner": "fm",
+      "arg": "method"
+    },
+    {
+      "file": "probe_sweep_surface_dedicated.py",
+      "line": 122,
+      "owner": "ret",
+      "arg": "m"
+    },
+    {
+      "file": "probe_t302_four_families.py",
+      "line": 184,
+      "owner": "fm",
+      "arg": "m"
+    },
+    {
+      "file": "probe_thicken_tool.py",
+      "line": 35,
+      "owner": "o",
+      "arg": "n"
+    },
+    {
+      "file": "probe_trim_surface_by_object.py",
+      "line": 132,
+      "owner": "post",
+      "arg": "m"
+    },
+    {
+      "file": "probe_trim_surface_per_example.py",
+      "line": 129,
+      "owner": "post",
+      "arg": "m"
+    },
+    {
+      "file": "probe_weldment_cutlist_recheck.py",
+      "line": 116,
+      "owner": "ret",
+      "arg": "m"
+    },
+    {
+      "file": "prove_coverage_gap_batch1.py",
+      "line": 50,
+      "owner": "o",
+      "arg": "name"
+    },
+    {
+      "file": "prove_createspline3.py",
+      "line": 144,
+      "owner": "mv",
+      "arg": "nm"
+    },
+    {
+      "file": "prove_drawing_batch.py",
+      "line": 155,
+      "owner": "o",
+      "arg": "name"
+    },
+    {
+      "file": "prove_family_d_readback.py",
+      "line": 47,
+      "owner": "obj",
+      "arg": "prop"
+    },
+    {
+      "file": "prove_split_line_geometry_controls.py",
+      "line": 185,
+      "owner": "doc",
+      "arg": "member"
+    },
+    {
+      "file": "prove_split_line_geometry_per_example.py",
+      "line": 76,
+      "owner": "o",
+      "arg": "name"
+    },
+    {
+      "file": "prove_sweep_ab.py",
+      "line": 58,
+      "owner": "f",
+      "arg": "m"
+    },
+    {
+      "file": "prove_symmetric_angular_dimension.py",
+      "line": 66,
+      "owner": "sk",
+      "arg": "nm"
+    },
+    {
+      "file": "prove_symmetric_angular_dimension.py",
+      "line": 156,
+      "owner": "ret",
+      "arg": "nm"
+    },
+    {
+      "file": "prove_symmetric_angular_dimension.py",
+      "line": 163,
+      "owner": "ret",
+      "arg": "nm"
+    },
+    {
+      "file": "prove_symmetric_angular_dimension.py",
+      "line": 173,
+      "owner": "doc",
+      "arg": "nm"
+    },
+    {
+      "file": "prove_view_name_matrix.py",
+      "line": 54,
+      "owner": "o",
+      "arg": "name"
+    },
+    {
+      "file": "survive_sweep.py",
+      "line": 186,
+      "owner": "doc",
       "arg": "attr"
     }
   ]
