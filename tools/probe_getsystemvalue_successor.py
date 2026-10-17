@@ -29,7 +29,7 @@ import sys
 import time
 from pathlib import Path
 
-REPO = Path(r"D:\AI\SW")
+REPO = Path(Path(__file__).resolve().parents[1])
 for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)

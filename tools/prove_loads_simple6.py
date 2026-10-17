@@ -31,7 +31,7 @@ sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 sys.path.insert(0, str(REPO_ROOT / "mcp-server"))
 
-OUT = Path(r"D:\AI\SW\output\loads-simple6-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "loads-simple6-evidence.json")
 STUDY = "DSH-LOADS6"
 
 

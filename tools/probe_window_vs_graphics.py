@@ -50,9 +50,9 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\window-vs-graphics.json")
-BMP = Path(r"D:\AI\SW\output\probe-win.bmp")
-PNG = Path(r"D:\AI\SW\output\probe-win.png")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "window-vs-graphics.json")
+BMP = Path(Path(__file__).resolve().parents[1] / "output" / "probe-win.bmp")
+PNG = Path(Path(__file__).resolve().parents[1] / "output" / "probe-win.png")
 W, H, D = 100.0, 60.0, 20.0
 PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
 

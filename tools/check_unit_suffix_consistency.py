@@ -26,7 +26,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 for _p in (str(ROOT), str(ROOT / "mcp-server"), str(ROOT / "scripts"), str(ROOT / "tools")):
     if _p not in sys.path:
         sys.path.insert(0, _p)

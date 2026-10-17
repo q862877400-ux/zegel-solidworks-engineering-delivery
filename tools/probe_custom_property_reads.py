@@ -50,7 +50,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\custom-property-reads.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "custom-property-reads.json")
 
 #: `swCustomInfoType_e`（官方示例 `Get_Custom_Properties_Example_VB` 里逐字列出）
 SW_CUSTOM_INFO_TEXT = 30          #: VT_LPSTR

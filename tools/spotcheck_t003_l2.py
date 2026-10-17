@@ -27,7 +27,7 @@ import re
 import sys
 from pathlib import Path
 
-REPO = Path(r"D:\AI\SW")
+REPO = Path(Path(__file__).resolve().parents[1])
 SWAPI = Path(r"C:\swapi\types")
 L2 = REPO / "specs" / "202-user-coverage-gaps" / "recon" / "bunny-L2-official-member-calls.md"
 SRC = (REPO / "subskills" / "solidworks-engineering-drawing" / "scripts"

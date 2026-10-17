@@ -24,7 +24,7 @@ import time
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-REPO = Path(r"D:\AI\SW")
+REPO = Path(Path(__file__).resolve().parents[1])
 CAND = REPO / "specs" / "202-user-coverage-gaps" / "recon" / "precall-cand"
 OUT = REPO / "output" / "precall-patch-plan.json"
 

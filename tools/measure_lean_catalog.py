@@ -20,7 +20,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 SERVER = ROOT / "mcp-server" / "server.py"
 PYTHON = r"C:\Users\Zegel\AppData\Local\Python\pythoncore-3.14-64\python.exe"
 #: ★★ 与 lean 插件**逐字相同**的上限（★ 见 `index.mjs` 的 `firstLine` ✓）

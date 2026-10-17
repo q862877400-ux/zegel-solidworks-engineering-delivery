@@ -48,7 +48,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 from scripts.dfm_review import build_dfm_report  # noqa: E402
 from scripts.dfm_profiles import validate_profile  # noqa: E402
 
-OUT = Path(r"D:\AI\SW\output\dfm-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "dfm-evidence.json")
 
 FEATURES = [
     {"id": "base", "type": "box", "parameters": {"length": 120, "width": 70, "height": 8}},

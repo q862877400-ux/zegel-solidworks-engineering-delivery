@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 E = Path(r"C:\swapi\enums")
-OUT = Path(r"D:\AI\SW\output\official-enum-scale.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "official-enum-scale.json")
 
 #: ★★ 与「种类轴」直接相关的枚举（★ 它们枚举的是"东西的种类"，★ 不是状态/标志）
 KIND_PATTERNS = [

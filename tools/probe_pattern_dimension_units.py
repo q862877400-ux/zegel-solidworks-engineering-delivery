@@ -36,7 +36,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(r"D:\AI\SW\output\pattern-dimension-units-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "pattern-dimension-units-evidence.json")
 # ⚑ 2026-10-03（轮 470）：这里曾有一个 `_bbox_xmax(doc)` ——
 #   ★★ 而它本身**是坏的**：它最后一行写 `return bb, bb`（★ 两个返回值**都是
 #   同一个字典**，而上一行的注释说明本意是“分别取 x 的 min/max”）

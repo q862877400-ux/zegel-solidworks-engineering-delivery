@@ -14,7 +14,7 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:  # noqa: BLE001
         pass
 
-DATA = Path(r"D:\AI\SW\_raw\iview_members.json")
+DATA = Path(Path(__file__).resolve().parents[1] / "_raw" / "iview_members.json")
 #: ★ 本仓库根（★ 2026-10-03 合并后自定位）
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 
@@ -293,7 +293,7 @@ def main() -> int:
 
 def _props(data: dict) -> list[str]:
     """属性名从反射再取一次（生成器只落了方法）。"""
-    path = Path(r"D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt")
+    path = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
     current, out = None, []
     for raw in path.read_text(encoding="utf-8", errors="replace").splitlines():
         if raw.startswith("## "):

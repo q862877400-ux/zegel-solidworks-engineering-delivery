@@ -44,7 +44,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\mesh-solve-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mesh-solve-evidence.json")
 STUDY = "DSH-142"
 #: ★ 隔离超时：跑分析给足时间，但**不无限等**（★ 超时 = 杀子进程，不是挂死）
 T_MESH, T_RUN = 180.0, 300.0

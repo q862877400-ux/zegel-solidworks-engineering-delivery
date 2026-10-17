@@ -31,7 +31,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(r"D:\AI\SW\output\loads-groupa3-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "loads-groupa3-evidence.json")
 #: ★★★ ★ 2026-10-03（轮 414）**第一版用了固定名 `DSH-GA3`**
 #:   ⇒ 真机回 `count: [-1, -1]`（★ 而 `_loads_count` 对 `-1` 的约定是「**取不到**」）。
 #:   ★ 而同轮的**诊断探针**证明：★ `ICWLoadsAndRestraintsManager.Count`

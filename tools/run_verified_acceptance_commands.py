@@ -37,7 +37,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\verified-acceptance-run.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "verified-acceptance-run.json")
 #: ⚠⚠⚠ **2026-10-01（轮 180）：本仓库的验收脚本有**三种**输出格式**（实测）：
 #: ```
 #:   ① `── 8/8 · verdict: pass ──`              （多数冒烟）

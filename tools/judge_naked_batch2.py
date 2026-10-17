@@ -28,7 +28,7 @@ from pathlib import Path
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = Path(r"" + _ROOT_S + r"")
-OUT = Path(r"D:\AI\SW\output\naked-batch2-judgement.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "naked-batch2-judgement.json")
 
 #: ★ 每条：★ 缺口名 ⇒ **功能词**（★ 多给几个，★ 覆盖同义说法）
 CASES: dict[str, list[str]] = {

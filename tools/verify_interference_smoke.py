@@ -36,10 +36,10 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\interference-smoke.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "interference-smoke.json")
 #: ⚠ 每次跑换一个子目录 —— 上一轮的文件被 SolidWorks **占着**（WinError 32），
 #: 就地删会 `PermissionError`（**资源纪律**：别去删别人正拿着的文件）。
-DIR = Path(r"D:\AI\SW\output\interference-smoke") / time.strftime("%H%M%S")
+DIR = Path(Path(__file__).resolve().parents[1] / "output" / "interference-smoke") / time.strftime("%H%M%S")
 def main() -> int:
     ev: dict = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "checks": {}}
     checks: list = []

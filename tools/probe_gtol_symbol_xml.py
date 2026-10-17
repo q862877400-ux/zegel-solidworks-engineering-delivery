@@ -50,7 +50,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\gtol-symbol-xml.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "gtol-symbol-xml.json")
 
 
 def main() -> int:

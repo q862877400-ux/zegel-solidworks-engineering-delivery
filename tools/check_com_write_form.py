@@ -43,7 +43,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-R = Path(r"D:\AI\SW")
+R = Path(Path(__file__).resolve().parents[1])
 SWAPI = Path(r"C:\swapi")
 OUT = R / "output" / "com-write-form-scan.json"
 #: ★ 本门禁自己 + 旧扫描器不扫（★ 它们的字符串常量里会出现"调用字面量"）

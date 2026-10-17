@@ -40,7 +40,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\ellipse-smoke-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "ellipse-smoke-evidence.json")
 #: 椭圆：中心 (0,0)，长半轴 40（沿 +x），短半轴 20（沿 +y）—— 单位**待验证**
 CX, CY, MAJ, MIN = 0.0, 0.0, 40.0, 20.0
 #: 「圆 + 边界框」用来量单位：半径 25

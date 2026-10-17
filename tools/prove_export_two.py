@@ -31,7 +31,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(r"D:\AI\SW\output\export-two-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "export-two-evidence.json")
 
 
 def main() -> int:
@@ -67,7 +67,7 @@ def main() -> int:
                                   if isinstance(v, dict) else str(v)[:80]}
 
         #: 正例：图片导出
-        img = Path(r"D:\AI\SW\output") / ("export-image-%s.png" % stamp)
+        img = Path(Path(__file__).resolve().parents[1] / "output") / ("export-image-%s.png" % stamp)
         try:
             r = export_image_report(doc, str(img))
             ev["steps"]["export_image"] = {"ok": bool(r.get("ok")), "values":
@@ -83,7 +83,7 @@ def main() -> int:
                       why="写不出去就必须红（判据是文件）")
         #: 表征：非钣金件上导展开 DXF（★ 只记录）
         try:
-            dxf = Path(r"D:\AI\SW\output") / ("flat-pattern-%s.dxf" % stamp)
+            dxf = Path(Path(__file__).resolve().parents[1] / "output") / ("flat-pattern-%s.dxf" % stamp)
             rr = export_flat_pattern_dxf_report(doc, str(dxf))
             ev["steps"]["probe_flat_pattern_on_solid_part"] = {
                 "ok": True, "note": "★ 只**记录**（前置是钣金件）",

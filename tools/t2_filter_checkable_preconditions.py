@@ -7,7 +7,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 SRC = ROOT / "specs" / "204-bunny-moat-batches" / "recon" / "c3-merged.json"
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 

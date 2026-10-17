@@ -38,7 +38,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-REPO = Path(r"D:\AI\SW")
+REPO = Path(Path(__file__).resolve().parents[1])
 IDX = REPO / "specs" / "202-user-coverage-gaps" / "recon" / "official-obsolete-index.json"
 MEM = REPO / "specs" / "202-user-coverage-gaps" / "recon" / "official-members-index.json"
 OUT = REPO / "output" / "obsolete-dotcall-scan.json"

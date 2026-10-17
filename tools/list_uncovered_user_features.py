@@ -4,7 +4,7 @@ from __future__ import annotations
 import collections
 import pathlib
 
-DOC = pathlib.Path(r"D:\AI\SW\docs\user-feature-coverage.md")
+DOC = pathlib.Path(pathlib.Path(__file__).resolve().parents[1] / "docs" / "user-feature-coverage.md")
 NAMES = ("Solidworks-MCP-Server", "SolidworksMCP-python", "SolidworksMCP-TS", "solidworks-mcp")
 
 

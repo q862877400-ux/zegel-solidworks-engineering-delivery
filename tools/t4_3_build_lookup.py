@@ -6,7 +6,7 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 BUDGET = 65536                                  #: ★ 指令预算（本仓已知约束）
 

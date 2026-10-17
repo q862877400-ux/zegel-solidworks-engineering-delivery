@@ -27,7 +27,7 @@ import sys
 import time
 from pathlib import Path
 
-REPO = Path(r"D:\AI\SW")
+REPO = Path(Path(__file__).resolve().parents[1])
 for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
@@ -61,7 +61,7 @@ def main() -> int:
 
         #: ★ 先放一个零件进去（★ 否则 suppress / 变换都没对象）
         try:
-            part = Path(r"D:\AI\SW\output\probe_assy_part.SLDPRT")
+            part = Path(Path(__file__).resolve().parents[1] / "output" / "probe_assy_part.SLDPRT")
             pdoc = C.new_document(sw, "part")
             P.start_sketch(pdoc, plane_name="Front Plane")
             _g(_g(pdoc, "SketchManager"), "CreateCornerRectangle",

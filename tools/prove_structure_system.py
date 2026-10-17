@@ -40,7 +40,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(r"D:\AI\SW\output\structure-system-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "structure-system-evidence.json")
 
 #: ★ 候选尺寸名（★ `sldlfp` 里的**配置名** —— ★ 试几个，★ 而把错误带回来）
 SIZES = ["ROUND BAR 23", "Round Bar 23", "ROUND BAR 20", "23"]

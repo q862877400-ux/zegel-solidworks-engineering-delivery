@@ -23,7 +23,7 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 SWAPI = Path(r"C:\swapi\types")
-RECON = Path(r"D:\AI\SW\specs\202-user-coverage-gaps\recon")
+RECON = Path(Path(__file__).resolve().parents[1] / "specs" / "202-user-coverage-gaps" / "recon")
 
 OBS_LINE = re.compile(r"Obsolete|Superseded by", re.I)
 HEAD_SKIP = ("#", "---", "type:", "member:", "kind:", "assembly:", "namespace:", "category:")

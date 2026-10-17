@@ -47,7 +47,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\appearance-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "appearance-evidence.json")
 #: ★ 一个明确的测试色（★ 用 RGB 分量表示，★ 与 `set_document_appearance` 的口径一致）
 TEST_COLOR = (0.2, 0.6, 0.9)
 

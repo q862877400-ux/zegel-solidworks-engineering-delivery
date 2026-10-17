@@ -6,7 +6,7 @@ import json
 import sys
 from pathlib import Path
 
-P = Path(r"D:\AI\SW\docs\gate-wiring-exemptions.json")
+P = Path(Path(__file__).resolve().parents[1] / "docs" / "gate-wiring-exemptions.json")
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 s = io.open(P, encoding="utf-8").read()
 

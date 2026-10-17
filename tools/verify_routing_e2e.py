@@ -54,7 +54,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 from scripts import routing_review  # noqa: E402
 
-OUT = Path(r"D:\AI\SW\output\routing-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "routing-evidence.json")
 
 
 def _clean_doc() -> dict:

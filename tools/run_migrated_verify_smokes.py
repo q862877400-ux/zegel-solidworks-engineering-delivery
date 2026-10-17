@@ -30,7 +30,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\migrated-verify-smokes.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "migrated-verify-smokes.json")
 
 SCRIPTS = [
     "verify_batch10_smoke.py", "verify_bbox_smoke.py", "verify_bmp_smoke.py",

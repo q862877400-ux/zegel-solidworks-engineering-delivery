@@ -7,7 +7,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 d = json.loads((ROOT / "specs" / "204-bunny-moat-batches" / "recon"

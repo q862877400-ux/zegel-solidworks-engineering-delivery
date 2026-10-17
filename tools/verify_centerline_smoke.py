@@ -36,7 +36,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\centerline-smoke-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "centerline-smoke-evidence.json")
 #: 中心线：从 (-30, 0) 到 (30, 0) —— 单位**待验证**（毫米则跨度 60，米则 60000）
 X1, Y1, X2, Y2 = -30.0, 0.0, 30.0, 0.0
 #: 为了量单位，另外画一个圆并拉伸：半径 25 ⇒ 毫米则跨度 50

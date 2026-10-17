@@ -31,7 +31,7 @@ import sys
 import time
 from pathlib import Path
 
-R = Path(r"D:\AI\SW")
+R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R / "scripts")); sys.path.insert(0, str(R / "mcp-server"))
 OUT = R / "output" / "feature-toolbar-evidence.json"
 

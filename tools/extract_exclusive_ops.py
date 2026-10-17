@@ -18,7 +18,7 @@ import json
 import sys
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 #: ★ 域 → 该域的操作名（从 `docs/union-coverage-matrix.md` §五 的「缺口操作」行抄来，

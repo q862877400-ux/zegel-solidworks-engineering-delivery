@@ -33,7 +33,7 @@ import json
 import sys
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)

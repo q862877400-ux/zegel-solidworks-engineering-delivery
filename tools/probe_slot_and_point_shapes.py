@@ -37,7 +37,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\slot-point-shapes.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "slot-point-shapes.json")
 def modal_dialogs() -> tuple:
     """★ 已改为**委托共享实现**（2026-10-01 轮 149）。"""
     try:

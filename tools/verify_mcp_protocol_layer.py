@@ -38,7 +38,7 @@ sys.path.insert(0, str(ROOT / "mcp-server"))
 sys.stdout.reconfigure(encoding="utf-8")
 
 SERVER = ROOT / "mcp-server" / "server.py"
-OUT = Path(r"D:\AI\SW\output\mcp-protocol-layer-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mcp-protocol-layer-evidence.json")
 
 #: `047` 新接出去的 4 条
 BATCH10 = (

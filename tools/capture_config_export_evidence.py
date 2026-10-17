@@ -42,8 +42,8 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\config-export-evidence.json")
-EXPORT_DIR = Path(r"D:\AI\SW\output\_export_smoke")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "config-export-evidence.json")
+EXPORT_DIR = Path(Path(__file__).resolve().parents[1] / "output" / "_export_smoke")
 
 
 def main() -> int:

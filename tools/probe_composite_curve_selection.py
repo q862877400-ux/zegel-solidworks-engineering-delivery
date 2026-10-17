@@ -48,7 +48,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 from scripts import sketch_relations  # noqa: E402
 
-OUT = Path(r"D:\AI\SW\output\composite-curve-selection.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "composite-curve-selection.json")
 
 
 def main() -> int:

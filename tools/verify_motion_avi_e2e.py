@@ -48,7 +48,7 @@ from scripts import sw_assembly  # noqa: E402
 from scripts import sw_motion as M  # noqa: E402
 from scripts import sw_part  # noqa: E402
 
-OUT = Path(r"D:\AI\SW\output\motion-avi-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "motion-avi-evidence.json")
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────

@@ -31,7 +31,7 @@ import re
 import sys
 from pathlib import Path
 
-REPO = Path(r"D:\AI\SW")
+REPO = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 OUT = REPO / "output" / "hardcoded-ok-scan.json"
 #: ★ 取样类调用的名字（★ 有它才说明"前后比过"）

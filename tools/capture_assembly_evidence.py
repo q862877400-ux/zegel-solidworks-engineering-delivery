@@ -54,8 +54,8 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\assembly-evidence.json")
-FIXTURES = Path(r"D:\AI\SW\output\_fixtures")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "assembly-evidence.json")
+FIXTURES = Path(Path(__file__).resolve().parents[1] / "output" / "_fixtures")
 
 
 def main() -> int:

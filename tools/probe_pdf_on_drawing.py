@@ -43,9 +43,9 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\pdf-on-drawing.json")
-DIR = Path(r"D:\AI\SW\output\pdf-drawing")
-DRW = Path(r"D:\AI\SW\output\pdf-probe.slddrw")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "pdf-on-drawing.json")
+DIR = Path(Path(__file__).resolve().parents[1] / "output" / "pdf-drawing")
+DRW = Path(Path(__file__).resolve().parents[1] / "output" / "pdf-probe.slddrw")
 def pdf_pages(path: Path) -> int:
     """数 PDF 里的 `/Type /Page`（**不含 `/Pages`**）—— 只看关键字，不解压流。"""
     blob = path.read_bytes()

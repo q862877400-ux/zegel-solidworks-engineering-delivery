@@ -35,7 +35,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(r"D:\AI\SW\output\pin-asm-component-faces-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "pin-asm-component-faces-evidence.json")
 STUDY = "DSH-PINCF_%s" % time.strftime("%H%M%S")
 SAMPLES = Path(r"C:\Users\Public\Documents\SOLIDWORKS\SOLIDWORKS 2026\samples\tutorial\api")
 

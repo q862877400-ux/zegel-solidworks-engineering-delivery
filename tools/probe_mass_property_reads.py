@@ -59,7 +59,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\mass-property-reads.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mass-property-reads.json")
 
 #: ★ 已知体积：40 × 20 × 10 mm = **8000 mm³** = 8e-6 m³
 BOX = {"x1": -20.0, "y1": -10.0, "x2": 20.0, "y2": 10.0, "depth": 10.0}

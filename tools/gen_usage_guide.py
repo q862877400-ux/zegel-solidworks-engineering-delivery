@@ -32,7 +32,7 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:  # noqa: BLE001
         pass
 
-INDEX = Path(r"D:\AI\SW\_raw\example_domain_index.json")
+INDEX = Path(Path(__file__).resolve().parents[1] / "_raw" / "example_domain_index.json")
 OUT = Path(r"" + _ROOT_S + r"\docs\usage-guide.md")
 
 #: 域 → 本仓库对应实现。逐条人工核对过，不是自动匹配。

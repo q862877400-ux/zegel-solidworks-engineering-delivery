@@ -16,7 +16,7 @@ import json
 import sys
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 #: ★ 分类器的三档 → 本轮的任务类型。★ **只有 ① 档变成本轮的「验证」对象**（spec.md D-2）

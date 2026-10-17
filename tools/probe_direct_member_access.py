@@ -38,8 +38,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-RAW = Path(r"D:\AI\SW\_raw")
-OUT = Path(r"D:\AI\SW\output\direct-member-access.json")
+RAW = Path(Path(__file__).resolve().parents[1] / "_raw")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "direct-member-access.json")
 sys.stdout.reconfigure(encoding="utf-8")
 
 #: `<对象>.<PascalCase>(` —— Python 里方法名习惯 snake_case，

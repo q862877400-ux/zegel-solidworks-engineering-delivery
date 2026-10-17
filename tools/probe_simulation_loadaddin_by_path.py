@@ -53,7 +53,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\simulation-loadaddin-by-path.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "simulation-loadaddin-by-path.json")
 #: 实测自注册表（只读）：`SldWorks.Simulation` 的 InprocServer32
 DLL = Path(r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\Simulation\cosworks.dll")
 CLSID = "{C8F79410-CD71-4061-A2E4-B6BF17CCB27F}"

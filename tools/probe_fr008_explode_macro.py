@@ -34,7 +34,7 @@ from scripts import sw_connect                                        # noqa: E4
 from scripts import sw_assembly_doc as A                              # noqa: E402
 from scripts import sw_macro as M                                     # noqa: E402
 
-SRC_ASM = Path(r"D:\AI\SW\AI Solidworks\模型\换刀主轴装配_BT30_ATC_Assembly.SLDASM")
+SRC_ASM = Path(Path(__file__).resolve().parents[1] / "AI Solidworks" / "模型" / "换刀主轴装配_BT30_ATC_Assembly.SLDASM")
 COPY = ROOT / "output" / "fr008-assembly-copy.SLDASM"
 SWB = ROOT / "subskills" / "solidworks-fillet-chamfer-cnc" / "scripts" / "native" / \
       "NativeHoldLineMacro.swb"

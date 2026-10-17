@@ -33,7 +33,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(r"D:\AI\SW\output\mold-parting-line-marks-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mold-parting-line-marks-evidence.json")
 MARK_PULL = 1
 MARK_EDGES = 4
 

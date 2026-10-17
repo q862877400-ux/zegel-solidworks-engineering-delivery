@@ -46,7 +46,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 from scripts.dxf_preview_scene import dxf_to_preview_scene  # noqa: E402
 
-OUT = Path(r"D:\AI\SW\output\dxf-preview-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "dxf-preview-evidence.json")
 
 
 def _make_dxf(path: Path) -> None:

@@ -47,7 +47,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(r"D:\AI\SW\output\render-material-sequence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "render-material-sequence.json")
 
 #: ★ 官方示例用的显示状态选项（★ 反射：swThisDisplayState=1 · **swAllDisplayState=2** · swSpecifyDisplayState=3）
 ALL_DISPLAY_STATE = 2

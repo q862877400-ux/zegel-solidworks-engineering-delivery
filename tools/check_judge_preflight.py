@@ -47,7 +47,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 #:   ★ 测试要能拿一张“**故意坏的**”表去跑（事实 62：一个门禁“写了”不等于它“有效”，
 #:   **负例测试是唯一的证明**）。
 REGISTRY = Path(os.environ.get("DSL_JUDGE_REGISTRY") or (REPO_ROOT / "docs" / "judge-registry.json"))
-WORKSPACE = Path(os.environ.get("DSL_WORKSPACE", r"D:\AI\SW"))
+WORKSPACE = Path(os.environ.get("DSL_WORKSPACE", Path(__file__).resolve().parents[1]))
 
 #: ★ 每条登记项**必须**有的字段（★ 缺一个就是"没登记清楚"）
 #: ★ `judge` 要求有“已知成功场景”；★ `refuted`（**被否掉的假设**）**不**要求它

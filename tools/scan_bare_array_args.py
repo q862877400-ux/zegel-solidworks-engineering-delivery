@@ -40,9 +40,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.stdout.reconfigure(encoding="utf-8")
 SCAN = [ROOT / "scripts", ROOT / "mcp-server", ROOT / "tools"]
-OUT = Path(r"D:\AI\SW\output\bare-array-args.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "bare-array-args.json")
 CALLS = ("get_com_member", "call_com_member", "safe_get_com_member", "get_com_member_raw")
-REFLECT = Path(r"D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt")
+REFLECT = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
 
 
 def load_signatures() -> dict:

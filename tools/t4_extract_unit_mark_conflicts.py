@@ -5,7 +5,7 @@ import json
 import sys
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 SRC = ROOT / "specs" / "204-bunny-moat-batches" / "recon" / "c4-merged.json"
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 d = json.loads(SRC.read_text(encoding="utf-8"))

@@ -37,8 +37,8 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\mold-draft-analysis-owner.json")
-REFLECT = Path(r"D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mold-draft-analysis-owner.json")
+REFLECT = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
 
 
 def reflect_owners(member: str) -> list:

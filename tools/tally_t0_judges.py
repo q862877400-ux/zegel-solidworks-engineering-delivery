@@ -7,7 +7,7 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-D = Path(r"D:\AI\SW\output\t0-judge")
+D = Path(Path(__file__).resolve().parents[1] / "output" / "t0-judge")
 rows = []
 for f in sorted(D.glob("judge-out-*.json")):
     d = json.loads(f.read_text(encoding="utf-8"))

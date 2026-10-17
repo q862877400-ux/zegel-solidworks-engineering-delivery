@@ -48,7 +48,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\mass-property-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mass-property-evidence.json")
 
 EXPECT = {"volume": 8000.0, "surface_area": 2800.0, "center_of_mass": [0.0, 0.0, -5.0]}
 

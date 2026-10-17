@@ -42,7 +42,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\mold-evidence-readers.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mold-evidence-readers.json")
 
 #: (持有者, 成员名, 是不是"方法"（名字看着像动词/复数计数）)
 TARGETS = [

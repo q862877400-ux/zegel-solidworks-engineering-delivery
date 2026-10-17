@@ -15,7 +15,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 SRC = ROOT / "output" / "t2-preconditions-checkable.json"
 NOTES = [ROOT / "docs" / "known-facts.md", ROOT / "specs" / "206-c1c6-harvest" / "tasks.md"]
 TESTS = ROOT / "tests"

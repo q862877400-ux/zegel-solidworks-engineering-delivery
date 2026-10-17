@@ -42,7 +42,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\sketch-getter-shapes.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "sketch-getter-shapes.json")
 #: 每种实体：怎么画第 i 个（i 从 0 起），以及要量哪几个取法
 CASES = [
     ("line", ["get_lines"], lambda part, i: _line(part, i)),

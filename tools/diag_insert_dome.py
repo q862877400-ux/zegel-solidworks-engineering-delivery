@@ -37,7 +37,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\diag-insert-dome.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "diag-insert-dome.json")
 W, H, D = 100.0, 60.0, 20.0
 
 

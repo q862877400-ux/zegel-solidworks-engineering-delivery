@@ -52,7 +52,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\mass-units-controlled.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mass-units-controlled.json")
 #: ★ 对照材料（★ 选一个**密度有明确官方值**的；本机材料库的显示名见 `set_material` 的回读）
 CANDIDATES = ("AISI 1020", "Plain Carbon Steel", "Alloy Steel", "AISI 304")
 

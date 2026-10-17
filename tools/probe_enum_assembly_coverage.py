@@ -34,7 +34,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.stdout.reconfigure(encoding="utf-8")
 
-RAW = Path(r"D:\AI\SW\_raw")
+RAW = Path(Path(__file__).resolve().parents[1] / "_raw")
 REDIST = Path(r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist")
 
 MEMBER = re.compile(r"#\s*(?:[A-Za-z_]\w*\.)?(sw s?\w+)".replace(" ", ""))

@@ -41,7 +41,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\hole-standards-smoke-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "hole-standards-smoke-evidence.json")
 #: 官方 `swWzdGeneralHoleTypes_e` 里最常用的一档
 HOLE_TYPE_COUNTERBORE = 0
 #: 真机量到应当出现的几个标准名（ISO / DIN 是各国标准里最普遍的两家）

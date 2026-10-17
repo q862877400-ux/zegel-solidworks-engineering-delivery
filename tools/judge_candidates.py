@@ -31,9 +31,9 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-DOCS = Path(r"D:\AI\SW\AI Solidworks\官方文档")
-CAND = Path(r"D:\AI\SW\output\candidate-51.json")
-OUT = Path(r"D:\AI\SW\output\candidate-51-judged.json")
+DOCS = Path(Path(__file__).resolve().parents[1] / "AI Solidworks" / "官方文档")
+CAND = Path(Path(__file__).resolve().parents[1] / "output" / "candidate-51.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "candidate-51-judged.json")
 
 TAG = re.compile(r"<[^>]+>")
 

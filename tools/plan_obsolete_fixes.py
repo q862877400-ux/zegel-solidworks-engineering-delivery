@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-REPO = Path(r"D:\AI\SW")
+REPO = Path(Path(__file__).resolve().parents[1])
 SWAPI = Path(r"C:\swapi\types")
 SCAN = REPO / "output" / "obsolete-dotcall-scan.json"
 OUT = REPO / "output" / "obsolete-fix-plan.json"

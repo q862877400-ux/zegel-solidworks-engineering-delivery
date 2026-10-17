@@ -30,7 +30,7 @@ import sys
 import time
 from pathlib import Path
 
-R = Path(r"D:\AI\SW")
+R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R / "scripts"))
 OUT = R / "output" / "b5-sketch-dimensions-evidence.json"
 #: ★ 单跑开关：`--only <名字片段>` ⇒ 只跑匹配的那个操作（★ 隔离用，见 `run()` 的注释）

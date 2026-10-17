@@ -19,7 +19,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 SRC = ROOT / "output" / "spec210-survival-diff.json"
 #: ★ 可按声明分组指定源（★ 三组的读数**不许混在一张表里**）✓
 GROUPS = {

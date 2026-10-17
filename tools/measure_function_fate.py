@@ -35,7 +35,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 CODE = Path(r"" + _ROOT_S + r"")
 SCRIPTS = CODE / "scripts"
 MCP = CODE / "mcp-server"
-OUT = Path(r"D:\AI\SW\output\function-fate.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "function-fate.json")
 
 
 def main() -> int:

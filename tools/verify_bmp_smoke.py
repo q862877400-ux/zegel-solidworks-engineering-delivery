@@ -34,9 +34,9 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\bmp-smoke-evidence.json")
-BMP = Path(r"D:\AI\SW\output\smoke-view.bmp")
-BMP2 = Path(r"D:\AI\SW\output\smoke-view-window.bmp")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "bmp-smoke-evidence.json")
+BMP = Path(Path(__file__).resolve().parents[1] / "output" / "smoke-view.bmp")
+BMP2 = Path(Path(__file__).resolve().parents[1] / "output" / "smoke-view-window.bmp")
 W, H, D = 100.0, 60.0, 20.0          #: 板（毫米）
 BW, BH = 800, 600                     #: ★ 请求的像素尺寸
 

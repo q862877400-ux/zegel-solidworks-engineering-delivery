@@ -39,8 +39,8 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:  # noqa: BLE001
         pass
 
-REFLECT = Path(r"D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt")
-RAW = Path(r"D:\AI\SW\_raw")
+REFLECT = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
+RAW = Path(Path(__file__).resolve().parents[1] / "_raw")
 SIG = re.compile(r"^(\S+)\s+(\w+)\s*\((.*)\)$")
 INTERNAL = re.compile(r"^I[A-Z]")
 

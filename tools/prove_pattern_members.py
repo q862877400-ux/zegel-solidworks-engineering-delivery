@@ -34,7 +34,7 @@ sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(r"D:\AI\SW\output\pattern-members-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "pattern-members-evidence.json")
 
 #: ★ 要问的（★ 前 5 个是 `LinearPattern` 那族；★ 而后面几个是**对照**）
 NAMES = ["FeatureLinearPattern", "FeatureLinearPattern2", "FeatureLinearPattern3",

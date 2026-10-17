@@ -29,7 +29,7 @@ from collections import Counter
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-REPO = Path(r"D:\AI\SW")
+REPO = Path(Path(__file__).resolve().parents[1])
 SWAPI = Path(r"C:\swapi\types")
 OUT = REPO / "output" / "union-denominator.json"
 

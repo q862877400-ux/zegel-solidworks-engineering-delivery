@@ -34,7 +34,7 @@ sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(r"D:\AI\SW\output\member-availability-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "member-availability-evidence.json")
 
 
 def main() -> int:

@@ -30,7 +30,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 REPORT = REPO_ROOT.parent / "SW" / "docs" / "plan-200r-v3-convergence.md"
 #: ★ 工作区可在别处（★ `DSL_WORKSPACE` 覆盖）—— ★ 而报告与产物**都在工作区**
-W = Path(os.environ.get("DSL_WORKSPACE", r"D:\AI\SW"))
+W = Path(os.environ.get("DSL_WORKSPACE", Path(__file__).resolve().parents[1]))
 REPORT = W / "docs" / "plan-200r-v3-convergence.md"
 
 

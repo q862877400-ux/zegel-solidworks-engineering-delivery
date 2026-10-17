@@ -38,7 +38,7 @@ _ROOT_S = str(Path(__file__).resolve().parents[1])
 ROOT = Path(r"" + _ROOT_S + r"")
 
 #: ⚑ **全量孤立能力清单**的输出路径（轮 204 加；`.gitignore` 的产物目录，不入库）
-OUT_JSON = Path(r"D:\AI\SW\output\orphan-capabilities.json")
+OUT_JSON = Path(Path(__file__).resolve().parents[1] / "output" / "orphan-capabilities.json")
 sys.stdout.reconfigure(encoding="utf-8")
 
 DEF = re.compile(r"^def ([a-z_]\w*)\(", re.MULTILINE)

@@ -47,8 +47,8 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\in-context-reference-smoke.json")
-DIR = Path(r"D:\AI\SW\output\in-context-smoke") / time.strftime("%H%M%S")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "in-context-reference-smoke.json")
+DIR = Path(Path(__file__).resolve().parents[1] / "output" / "in-context-smoke") / time.strftime("%H%M%S")
 COLINEAR = 27          #: swConstraintType_e.swConstraintType_COLINEAR
 EXTERNAL = 3           #: swSketchRelationFilterType_e.swExternal
 

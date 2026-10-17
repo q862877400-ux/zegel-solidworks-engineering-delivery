@@ -43,7 +43,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\composite-curve-segments.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "composite-curve-segments.json")
 def count(doc, sw_connect, mark=-1):
     try:
         sel = sw_connect.safe_get_com_member(doc, "SelectionManager")

@@ -26,8 +26,8 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:  # noqa: BLE001
         pass
 
-SRC = Path(r"D:\AI\SW\_raw\reflect\iface_cosworks.txt")
-OUT = Path(r"D:\AI\SW\_raw\study_options_setters.json")
+SRC = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_cosworks.txt")
+OUT = Path(Path(__file__).resolve().parents[1] / "_raw" / "study_options_setters.json")
 
 FAMILIES = (
     "ICWStaticStudyOptions",

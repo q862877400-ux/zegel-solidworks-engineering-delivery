@@ -31,7 +31,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 BATCH_DIR = ROOT / "mcp-server"
 #: ★ 首句目标上限（★ lean 的硬上限是 120 字 ✓，★ 而我们要**远低于**它 ⇒ 取 44 ✓）
 TARGET_MAX = 44

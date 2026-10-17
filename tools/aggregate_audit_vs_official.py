@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-REPO = Path(r"D:\AI\SW")
+REPO = Path(Path(__file__).resolve().parents[1])
 D = REPO / "specs" / "202-user-coverage-gaps" / "recon" / "audit-vs-official"
 
 rows = []

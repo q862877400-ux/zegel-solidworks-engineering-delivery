@@ -42,7 +42,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.stdout.reconfigure(encoding="utf-8")
-OUT = Path(r"D:\AI\SW\output\silent-source-fallbacks.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "silent-source-fallbacks.json")
 SCAN = [ROOT / "scripts", ROOT / "tools", ROOT / "tests", ROOT / "mcp-server"]
 #: 缺源守卫的形态
 GUARD = re.compile(r"^\s*if\s+not\s+.{0,80}?(?:\.is_file\(\)|\.exists\(\)|\.is_dir\(\))\s*:")

@@ -46,7 +46,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\spline-forms.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "spline-forms.json")
 PTS3 = [(0.0, 0.0, 0.0), (0.005, 0.001, 0.0), (0.010, -0.001, 0.0), (0.015, 0.0, 0.0)]
 
 

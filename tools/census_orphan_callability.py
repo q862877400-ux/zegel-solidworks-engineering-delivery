@@ -48,7 +48,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\orphan-callability-census.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "orphan-callability-census.json")
 
 #: 只查这批（`012`/`013` 已确认它们是最便宜的暴露候选）
 CANDIDATES = [

@@ -93,8 +93,8 @@ def main() -> int:
         by_domain[domain].append(f"{stem} [{lang}]")
         langs[lang] += 1
 
-    out_txt = Path(r"D:\AI\SW\_raw\examples_by_domain.txt")
-    out_json = Path(r"D:\AI\SW\_raw\example_domain_index.json")
+    out_txt = Path(Path(__file__).resolve().parents[1] / "_raw" / "examples_by_domain.txt")
+    out_json = Path(Path(__file__).resolve().parents[1] / "_raw" / "example_domain_index.json")
 
     lines = [
         f"# 官方示例按域归类（共 {len(files)} 个）",

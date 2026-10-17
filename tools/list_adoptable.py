@@ -18,7 +18,7 @@ import json
 import sys
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 RECORDS = ROOT / "output" / "bunny-records-deep"
 WORKLOAD = ROOT / "output" / "union-workload-349.json"

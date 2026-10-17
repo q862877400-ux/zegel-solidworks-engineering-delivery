@@ -41,7 +41,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.stdout.reconfigure(encoding="utf-8")
-OUT = Path(r"D:\AI\SW\output\inout-array-params.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "inout-array-params.json")
 SWDIR = Path(r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS")
 #: ⚠⚠ **2026-10-01（轮 190）从「单个 tlb」泛化成「多个」** ——
 #:   理由：轮 189 只扫了 `sldworks.tlb`，而**仿真域**（`ICW*`）是我们**真正大量调用**的那一块，

@@ -59,7 +59,7 @@ for _stream in (sys.stdout, sys.stderr):
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 #: ★ 弹窗取证落盘目录（★ 供 LLM 事后读；★ 也供 `--report` 打印）
-OUT_DIR = Path(r"D:\AI\SW\output\dialog-events")
+OUT_DIR = Path(Path(__file__).resolve().parents[1] / "output" / "dialog-events")
 
 _u = ctypes.windll.user32
 _PROC = ctypes.WINFUNCTYPE(ctypes.c_bool, wt.HWND, wt.LPARAM)

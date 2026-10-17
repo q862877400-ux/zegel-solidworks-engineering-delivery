@@ -36,7 +36,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(r"D:\AI\SW\output\mold-family-rest-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mold-family-rest-evidence.json")
 PARM_TANGENT = 0            # swPartingSurfaceMoldParmTangent
 SMOOTH_SHARP = 1            # swPartingSurfaceSharp
 MM = 0.001                  # 该族长度参数单位是米 ⇒ 毫米 * MM

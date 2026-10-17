@@ -42,8 +42,8 @@ HOME = Path(os.path.expanduser("~"))
 LEAN_BUNDLE = HOME / ".dsh/profiles/web/node_modules/@local/dsh-lean-mode/cordis.patch.yml"
 LIVE_CFG = HOME / ".dsh/profiles/web/cordis.patch.yml"
 DSH_ROOT = Path(r"D:\AI\DSH\deepseek-harness")
-OUT_BLOCK = Path(r"D:\AI\SW\output\_dsh_sw_preset_block.yml")
-OUT_JSON = Path(r"D:\AI\SW\output\dsh-sw-preset-generate.json")
+OUT_BLOCK = Path(Path(__file__).resolve().parents[1] / "output" / "_dsh_sw_preset_block.yml")
+OUT_JSON = Path(Path(__file__).resolve().parents[1] / "output" / "dsh-sw-preset-generate.json")
 
 NEW_PRESET_ID = "sw-engineer"
 NEW_PRESET_NAME = "Lean 模式（SW工程师）"
@@ -252,6 +252,6 @@ if __name__ == "__main__":
         raise
     except BaseException:                                              # noqa: BLE001
         tb = traceback.format_exc()
-        Path(r"D:\AI\SW\output\dsh-sw-preset-generate-traceback.txt").write_text(tb, encoding="utf-8")
+        Path(Path(__file__).resolve().parents[1] / "output" / "dsh-sw-preset-generate-traceback.txt").write_text(tb, encoding="utf-8")
         print("★★ 异常已落盘：\n%s" % tb[-1500:])
         raise SystemExit(3)

@@ -18,7 +18,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 CAPS = ROOT / "capabilities.yaml"
 
 ENTRY = {

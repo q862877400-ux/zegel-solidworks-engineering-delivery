@@ -28,7 +28,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 
 #: ★ 允许的注入键（★ 与 `mcp-server/register_capabilities.py` 的 RESOLVERS 对齐）
 INJECT_KEYS = {"", "model", "sw_app", "study", "asm_model", "manager", "drawing_model", "sw",

@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 SWAPI = Path(r"C:\swapi\types")
-OUT = Path(r"D:\AI\SW\specs\202-user-coverage-gaps\recon\official-obsolete-index.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "specs" / "202-user-coverage-gaps" / "recon" / "official-obsolete-index.json")
 
 #: ★ 官方页里"废弃"的写法（★ 逐字见过这几种）
 OBS = re.compile(r"Obsolete|已废弃|Superseded by", re.I)

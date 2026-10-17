@@ -19,7 +19,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 WORKLOAD = ROOT / "output" / "union-workload-349.json"
 RECORDS = ROOT / "output" / "bunny-records-verify"

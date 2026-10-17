@@ -31,9 +31,9 @@ from pathlib import Path
 
 HOME = Path(os.path.expanduser("~"))
 LIVE_CFG = HOME / ".dsh/profiles/web/cordis.patch.yml"
-BLOCK = Path(r"D:\AI\SW\output\_dsh_sw_preset_block.yml")
+BLOCK = Path(Path(__file__).resolve().parents[1] / "output" / "_dsh_sw_preset_block.yml")
 DSH_ROOT = Path(r"D:\AI\DSH\deepseek-harness")
-OUT_JSON = Path(r"D:\AI\SW\output\dsh-sw-preset-apply.json")
+OUT_JSON = Path(Path(__file__).resolve().parents[1] / "output" / "dsh-sw-preset-apply.json")
 
 #: ★ 复核脚本 —— ★★ **写成文件再调**（★ 这样参数位**无歧义** ✓）：
 #:   ★ `node -e "<代码>" <arg>` ⇒ 参数在 **`argv[1]`** ✗
@@ -58,7 +58,7 @@ try {
   console.log(JSON.stringify({ ok: true, top: doc.length, ids, presets }));
 } catch (e) { console.log(JSON.stringify({ ok: false, err: String(e.message).slice(0, 300) })); process.exit(1); }
 """
-CHECKER = Path(r"D:\AI\SW\output\_dsh_yaml_checker.cjs")
+CHECKER = Path(Path(__file__).resolve().parents[1] / "output" / "_dsh_yaml_checker.cjs")
 
 
 def _check(path: Path) -> dict:
@@ -175,6 +175,6 @@ if __name__ == "__main__":
         raise
     except BaseException:                                              # noqa: BLE001
         tb = traceback.format_exc()
-        Path(r"D:\AI\SW\output\dsh-sw-preset-apply-traceback.txt").write_text(tb, encoding="utf-8")
+        Path(Path(__file__).resolve().parents[1] / "output" / "dsh-sw-preset-apply-traceback.txt").write_text(tb, encoding="utf-8")
         print("★★ 异常已落盘：\n%s" % tb[-1500:])
         raise SystemExit(3)

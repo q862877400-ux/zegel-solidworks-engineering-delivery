@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 
 scope = json.loads((ROOT / "output" / "metric-scope-report.json").read_text(encoding="utf-8"))
 

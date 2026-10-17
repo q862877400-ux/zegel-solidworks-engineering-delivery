@@ -44,7 +44,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\subprocess-com.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "subprocess-com.json")
 
 #: ★ 子进程要跑的一段：连 COM、读一个值、然后（可选）卡住
 CHILD_CODE = r"""
@@ -78,7 +78,7 @@ def _revision() -> tuple[bool, str]:
 
 def main() -> int:
     ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"), "steps": {}}
-    child_file = Path(r"D:\AI\SW\output\_child_com.py")
+    child_file = Path(Path(__file__).resolve().parents[1] / "output" / "_child_com.py")
     child_file.parent.mkdir(parents=True, exist_ok=True)
     child_file.write_text(CHILD_CODE, encoding="utf-8")
 

@@ -35,7 +35,7 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8")
 
 ROOT = Path(__file__).resolve().parents[1]
-WS = Path(r"D:\AI\SW")
+WS = Path(Path(__file__).resolve().parents[1])
 SWAPI = Path(r"C:\swapi")
 OUT = ROOT / "docs" / "metrics.md"
 

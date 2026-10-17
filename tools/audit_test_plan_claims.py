@@ -28,8 +28,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-PLAN = Path(r"D:\AI\SW-transfer\test-plan-final.md")
-OUT = Path(r"D:\AI\SW\output\test-plan-claim-audit.json")
+PLAN = Path(Path(__file__).resolve().parents[1] / "-transfer" / "test-plan-final.md")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "test-plan-claim-audit.json")
 sys.stdout.reconfigure(encoding="utf-8")
 
 #: 路径形态 —— ⚠ **不匹配 `x.py.func`**（那是点调用，不是路径）

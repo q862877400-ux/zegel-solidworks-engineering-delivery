@@ -38,7 +38,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\sketch-enumeration-lag.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "sketch-enumeration-lag.json")
 def snapshot(doc, sw_connect) -> dict:
     """同一时刻用**三种独立方式**看「草图在不在」。"""
     by_pos = []

@@ -63,11 +63,11 @@ SWAPI = Path(r"C:\swapi\types")
 #: C:\swapi 未收录的 4 个程序集的反射清单（域 13 / 14 用）
 #: 来源：AGENTS.md §四.1③ —— 对官方 interop 程序集的纯元数据反射
 REFLECT = {
-    "cosworks": Path(r"D:\AI\SW\_raw\reflect\iface_cosworks.txt"),
-    "SWRoutingLib": Path(r"D:\AI\SW\_raw\reflect\iface_SWRoutingLib.txt"),
-    "sldcostingapi": Path(r"D:\AI\SW\_raw\reflect\iface_sldcostingapi.txt"),
-    "swdocumentmgr": Path(r"D:\AI\SW\_raw\reflect\iface_swdocumentmgr.txt"),
-    "fworks": Path(r"D:\AI\SW\_raw\reflect\iface_fworks.txt"),
+    "cosworks": Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_cosworks.txt"),
+    "SWRoutingLib": Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_SWRoutingLib.txt"),
+    "sldcostingapi": Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_sldcostingapi.txt"),
+    "swdocumentmgr": Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_swdocumentmgr.txt"),
+    "fworks": Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_fworks.txt"),
 }
 OUT_MD = REPO / "docs" / "family-coverage.md"
 OUT_JSON = REPO / "docs" / "family-coverage.json"
@@ -317,8 +317,8 @@ def _domain_extension() -> dict[str, list[str]]:
     from pathlib import Path as _P
     out: dict[str, list[str]] = {}
     mapping = {
-        r"D:\AI\SW\_reg_cosworks.json": "仿真(需许可证)",
-        r"D:\AI\SW\_reg_pdm.json": "路由/Composer/PDM",
+        Path(__file__).resolve().parents[1] / "_reg_cosworks.json": "仿真(需许可证)",
+        Path(__file__).resolve().parents[1] / "_reg_pdm.json": "路由/Composer/PDM",
     }
     for path, domain in mapping.items():
         data = _P(path)
@@ -340,7 +340,7 @@ def _unmapped_sldworks() -> list[str]:
     import json
     import re as _re
     from pathlib import Path as _P
-    src = _P(r"D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt")
+    src = _P(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
     if not src.is_file():
         return []
     mapped: set[str] = set()

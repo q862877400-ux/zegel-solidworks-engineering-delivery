@@ -31,8 +31,8 @@ for _s in (sys.stdout, sys.stderr):
         pass
 
 EXAMPLES = Path(r"C:\swapi\examples")
-OUT_TXT = Path(r"D:\AI\SW\_raw\examples_by_domain.txt")
-OUT_JSON = Path(r"D:\AI\SW\_raw\example_domain_index.json")
+OUT_TXT = Path(Path(__file__).resolve().parents[1] / "_raw" / "examples_by_domain.txt")
+OUT_JSON = Path(Path(__file__).resolve().parents[1] / "_raw" / "example_domain_index.json")
 
 # ── 「类型 → 域」映射 ──────────────────────────────────────────────────
 # 来源：C:\swapi 的 14 域入口类型清单（sw_know.py domain <域>），
@@ -205,7 +205,7 @@ def build_member_index() -> dict[str, set[str]]:
     idx: dict[str, set[str]] = defaultdict(set)
     iface = None
     sig = re.compile(r"^\s+(\S+)\s+(\w+)\((.*)\)\s*$")
-    for raw in Path(r"D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt") \
+    for raw in Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt") \
             .read_text(encoding="utf-8", errors="replace").splitlines():
         h = re.match(r"^##\s+(\w+)\s*$", raw)
         if h:

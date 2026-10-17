@@ -53,7 +53,7 @@ import sys
 import time
 from pathlib import Path
 
-OUT_ROOT = Path(r"D:\AI\SW\output\dialogs")
+OUT_ROOT = Path(Path(__file__).resolve().parents[1] / "output" / "dialogs")
 DIALOG_CLASS = "#32770"          #: Win32 预定义对话框类（`WC_DIALOG`）—— ★ 与 sw_connect 同一判据
 
 user32 = ctypes.windll.user32

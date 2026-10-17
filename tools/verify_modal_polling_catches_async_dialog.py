@@ -38,7 +38,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\modal-polling-catches.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "modal-polling-catches.json")
 
 TRIGGER = '''import sys
 sys.path.insert(0, r"{root}")
@@ -66,14 +66,14 @@ except Exception:
 def main() -> int:
     import sw_connect
     ev: dict = {}
-    script = Path(r"D:\AI\SW\output\_trigger_poll.py")
+    script = Path(Path(__file__).resolve().parents[1] / "output" / "_trigger_poll.py")
     script.parent.mkdir(parents=True, exist_ok=True)
     script.write_text(TRIGGER.format(root=str(ROOT)), encoding="utf-8")
 
     sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
     sw_connect.dismiss_residual_dialogs(sw, settle_seconds=0.3)
 
-    log = Path(r"D:\AI\SW\output\_trigger_poll.log")
+    log = Path(Path(__file__).resolve().parents[1] / "output" / "_trigger_poll.log")
     proc = subprocess.Popen([sys.executable, "-u", str(script)],
                             stdout=log.open("w", encoding="utf-8"),
                             stderr=subprocess.STDOUT)

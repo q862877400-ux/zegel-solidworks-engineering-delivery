@@ -25,7 +25,7 @@ import re
 import sys
 from pathlib import Path
 
-REPO = Path(r"D:\AI\SW")
+REPO = Path(Path(__file__).resolve().parents[1])
 SWAPI = Path(r"C:\swapi\types")
 OUT_CSV = REPO / "output" / "get-member-triage.csv"
 OUT_JSON = REPO / "output" / "get-member-triage.json"

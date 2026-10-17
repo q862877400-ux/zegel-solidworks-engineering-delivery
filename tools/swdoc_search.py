@@ -35,10 +35,10 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 #: ★ CHM 正文树（★ 官方原文，★ 全的）—— ★ 可用 `DSL_SWHELP` 覆盖
-SWHELP = Path(os.environ.get("DSL_SWHELP", r"D:\AI\SW\AI Solidworks\官方文档\SWhelp"))
+SWHELP = Path(os.environ.get("DSL_SWHELP", Path(__file__).resolve().parents[1] / "AI Solidworks" / "官方文档" / "SWhelp"))
 #: ★ 我们解出来的文本（★ 不全 —— ★ 见事实 355）
 RAW = Path(os.environ.get(
-    "DSL_RAW", str(Path(os.environ.get("DSL_WORKSPACE", r"D:\AI\SW")) / "_raw")))
+    "DSL_RAW", str(Path(os.environ.get("DSL_WORKSPACE", Path(__file__).resolve().parents[1])) / "_raw")))
 
 #: ★ 只收这几类后缀 —— ★★ **`.htm` 必须在列**（★ 官方示例就在它里面）
 PAGE_SUFFIXES = (".html", ".htm")

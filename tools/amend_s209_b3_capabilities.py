@@ -13,7 +13,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-CAPS = Path(r"D:\AI\SW\capabilities.yaml")
+CAPS = Path(Path(__file__).resolve().parents[1] / "capabilities.yaml")
 
 EVID = (
     "★★★ 真机（2026-10-06 · 规格 209 的 **B3 批** · idx **115 `edges`** + idx **145 `faces`**，"

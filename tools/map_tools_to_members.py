@@ -22,7 +22,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-REPO = Path(r"D:\AI\SW")
+REPO = Path(Path(__file__).resolve().parents[1])
 SWAPI = Path(r"C:\swapi")
 OUT = REPO / "output" / "tool-to-member-map.json"
 

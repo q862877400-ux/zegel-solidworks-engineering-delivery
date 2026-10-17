@@ -47,7 +47,7 @@ from scripts.sw_connect import (  # noqa: E402
 from scripts import sw_part  # noqa: E402
 from scripts import sw_costing  # noqa: E402
 
-OUT = Path(r"D:\AI\SW\output\costing-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "costing-evidence.json")
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────

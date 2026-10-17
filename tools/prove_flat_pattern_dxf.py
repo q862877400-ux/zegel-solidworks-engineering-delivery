@@ -31,7 +31,7 @@ sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 sys.path.insert(0, str(REPO_ROOT / "mcp-server"))
 
-OUT = Path(r"D:\AI\SW\output\flat-pattern-dxf-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "flat-pattern-dxf-evidence.json")
 
 
 class _P:
@@ -100,7 +100,7 @@ def main() -> int:
                 "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:140])}
         #: ③ 导展开 DXF（★ 判据②：文件）
         try:
-            dxf = Path(r"D:\AI\SW\output") / ("flat-pattern-%s.dxf" % stamp)
+            dxf = Path(Path(__file__).resolve().parents[1] / "output") / ("flat-pattern-%s.dxf" % stamp)
             r = export_flat_pattern_dxf_report(doc, str(dxf))
             ev["steps"]["export_flat_pattern_dxf"] = {
                 "ok": bool(r.get("ok")),

@@ -17,7 +17,7 @@
 import sys
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 SECTION = ROOT / "output" / "_b2_next_section.md"
 TASKS_NEW = ROOT / "output" / "_b2_tasks.md"
 

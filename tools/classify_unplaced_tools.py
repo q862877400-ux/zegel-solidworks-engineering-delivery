@@ -30,7 +30,7 @@ import re
 import sys
 from pathlib import Path
 
-REPO = Path(r"D:\AI\SW")
+REPO = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8")
 sys.path.insert(0, str(REPO))
 

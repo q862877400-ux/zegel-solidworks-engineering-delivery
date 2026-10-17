@@ -7,7 +7,7 @@ from collections import Counter
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-D = Path(r"D:\AI\SW") / "specs" / "202-user-coverage-gaps" / "recon" / "audit-vs-official"
+D = Path(Path(__file__).resolve().parents[1]) / "specs" / "202-user-coverage-gaps" / "recon" / "audit-vs-official"
 
 #: ★ 分歧的**根因类**（★ 关键词按本仓既有事实命名，便于对上 known-facts）
 PATTERNS = [

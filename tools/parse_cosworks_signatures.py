@@ -20,8 +20,8 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:  # noqa: BLE001
         pass
 
-SRC = Path(r"D:\AI\SW\_raw\cosworks_pages")
-OUT = Path(r"D:\AI\SW\_raw\cosworks_signatures.md")
+SRC = Path(Path(__file__).resolve().parents[1] / "_raw" / "cosworks_pages")
+OUT = Path(Path(__file__).resolve().parents[1] / "_raw" / "cosworks_signatures.md")
 
 _MEMBER_PAGE = re.compile(r"ICWLoadsAndRestraintsManager~(\w+)")
 # ⚠ 官方 VB 声明是**多行 + `_` 续行**的：

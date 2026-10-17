@@ -21,7 +21,7 @@ import re
 from pathlib import Path
 
 SWAPI = Path(r"C:\swapi\types")
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 OUT = ROOT / ".api-signatures" / "member-kinds.json"
 
 #: ★ 签名行形如：`**Signature**: `System.double BendAngle {get; set;}`` —— ★ 认 `set;` = 可写 ✓

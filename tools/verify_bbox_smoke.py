@@ -45,7 +45,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\bbox-smoke-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "bbox-smoke-evidence.json")
 #: 设计尺寸（毫米）：矩形 80 × 60，拉伸 50
 W_MM, H_MM, D_MM = 80.0, 60.0, 50.0
 #: 容差（毫米）—— 官方说"近似"，所以给一个**明确写下**的容差

@@ -44,7 +44,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\composite-curve-edges.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "composite-curve-edges.json")
 W, H, D = 0.05, 0.05, 0.02          #: 米（50×50×20 mm）
 
 

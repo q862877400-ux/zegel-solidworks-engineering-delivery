@@ -32,9 +32,9 @@ _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8")
 
 SWAPI = Path(r"C:\swapi\types")
-PROBES = Path(r"D:\AI\SW")
+PROBES = Path(Path(__file__).resolve().parents[1])
 CAPTURES = Path(r"" + _ROOT_S + r"\tools")
-OUT = Path(r"D:\AI\SW\output\realmachine-members.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "realmachine-members.json")
 
 
 def official_members() -> dict:

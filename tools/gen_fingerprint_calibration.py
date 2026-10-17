@@ -20,7 +20,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 SRC = ROOT / "output" / "spec210-fingerprint-calib.json"
 OUT = ROOT / "docs" / "spec210-fingerprint-calibration.md"
 

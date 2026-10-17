@@ -38,9 +38,9 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\export-magic-matrix.json")
-DIR = Path(r"D:\AI\SW\output\magic-matrix")
-PART = Path(r"D:\AI\SW\output\magic-matrix-part.sldprt")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "export-magic-matrix.json")
+DIR = Path(Path(__file__).resolve().parents[1] / "output" / "magic-matrix")
+PART = Path(Path(__file__).resolve().parents[1] / "output" / "magic-matrix-part.sldprt")
 def classify(b: bytes) -> str:
     """按文件头判格式（**只看头，不解内容**）。"""
     if b[:8] == b"\x89PNG\r\n\x1a\n":

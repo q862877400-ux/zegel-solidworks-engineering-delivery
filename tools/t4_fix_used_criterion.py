@@ -7,7 +7,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 #: ★ 上一轮说有冲突的成员（★ 从 c4 里重取，不硬编码）

@@ -47,7 +47,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\document-units.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "document-units.json")
 STUDY = "DSH-UNITS2"
 
 #: ★★★ **线性单位的取值名 —— 来源是官方枚举，不是我编的**（★ 这条注释本身是一次教训）：

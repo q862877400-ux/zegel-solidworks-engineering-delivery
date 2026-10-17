@@ -38,7 +38,7 @@ try:
 except Exception:                                                         # noqa: BLE001
     pass
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 SERVER = ROOT / "mcp-server" / "server.py"
 #: ★ 与 DSH 配置里将要写的那个 `command` **必须是同一个**（★ 否则验证的不是同一件事 ✗）
 PYTHON = r"C:\Users\Zegel\AppData\Local\Python\pythoncore-3.14-64\python.exe"

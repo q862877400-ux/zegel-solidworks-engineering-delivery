@@ -32,7 +32,7 @@ from collections import Counter
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-R = Path(r"D:\AI\SW")
+R = Path(Path(__file__).resolve().parents[1])
 SWAPI = Path(r"C:\swapi")
 LEDGER = R / "docs" / "toolbar-ledger.json"
 OUT_MD = R / "docs" / "toolbar-ledger.md"

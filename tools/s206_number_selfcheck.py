@@ -6,7 +6,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 #: ★★ 单一真值源（★ 每个数字都在**原始 JSON 或已核验的实测**里有依据）

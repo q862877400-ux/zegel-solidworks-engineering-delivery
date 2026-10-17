@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 SEED = 20261004
 TARGET = 48                      #: ★ 48 个任务 ⇒ 48 条挑工具路（★ 与业主"60 路"同量级）
 

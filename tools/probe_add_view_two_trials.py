@@ -30,7 +30,7 @@ sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 sys.path.insert(0, str(REPO_ROOT / "subskills" / "solidworks-engineering-drawing" / "scripts"))
 
-OUT = Path(r"D:\AI\SW\output\add-view-two-trials-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "add-view-two-trials-evidence.json")
 PART = Path(r"C:\Users\Public\Documents\SOLIDWORKS\SOLIDWORKS 2026\samples"
             r"\tutorial\api\squarepad_blue.sldprt")
 A3_GB = Path(r"C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\lang\Chinese-Simplified"

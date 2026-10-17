@@ -37,7 +37,7 @@ _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = Path(r"" + _ROOT_S + r"")
 UPSTREAM_SERVER = ROOT / "mcp-server" / "server.py"
-OUT = Path(r"D:\AI\SW\output\real-gap-triage.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "real-gap-triage.json")
 
 #: ★ 规则②：内部管道的**显式名单**（★ 每条给理由 —— 不靠名字猜）
 PLUMBING_WHY: dict[str, str] = {

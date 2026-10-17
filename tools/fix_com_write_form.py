@@ -29,7 +29,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-R = Path(r"D:\AI\SW")
+R = Path(Path(__file__).resolve().parents[1])
 SCAN = R / "output" / "com-write-form-scan.json"
 
 

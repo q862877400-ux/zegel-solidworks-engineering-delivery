@@ -45,7 +45,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\mesh-sane-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mesh-sane-evidence.json")
 STUDY = "DSH-145"
 #: ★ 两个**真实观测到**的值（★ 不编）：既有脚本在用的、与本项目其它链报出的
 GOOD_SIZE = 4.933908705960544

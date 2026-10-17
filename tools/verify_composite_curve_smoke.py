@@ -35,7 +35,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\composite-curve-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "composite-curve-evidence.json")
 
 
 #: ★ 轮 184：建**样条**要用它（官方前提是「两条**样条**草图」）

@@ -30,9 +30,9 @@ import spec211_manual_verdicts as MV
 SWAPI = Path(r"C:\swapi")
 TYPES = SWAPI / "types"
 ENUMS = SWAPI / "enums"
-SWHELP = Path(os.environ.get("DSL_SWHELP", r"D:\AI\SW\AI Solidworks\官方文档\SWhelp"))
-OUT = Path(r"D:\AI\SW\docs\spec211-entry-ledger.md")
-OUT_JSON = Path(r"D:\AI\SW\output\spec211-ledger-candidates.json")
+SWHELP = Path(os.environ.get("DSL_SWHELP", Path(__file__).resolve().parents[1] / "AI Solidworks" / "官方文档" / "SWhelp"))
+OUT = Path(Path(__file__).resolve().parents[1] / "docs" / "spec211-entry-ledger.md")
+OUT_JSON = Path(Path(__file__).resolve().parents[1] / "output" / "spec211-ledger-candidates.json")
 
 ITEMS = [
     ("特征", "边界凸台", ("BoundaryBoss",)),

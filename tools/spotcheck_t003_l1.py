@@ -27,7 +27,7 @@ import re
 import sys
 from pathlib import Path
 
-REPO = Path(r"D:\AI\SW")
+REPO = Path(Path(__file__).resolve().parents[1])
 SWAPI = Path(r"C:\swapi\types")
 SRC = REPO / "subskills" / "solidworks-engineering-drawing" / "scripts" / "drawing_workflow.py"
 OUT = REPO / "output" / "t003-spotcheck-l1.json"

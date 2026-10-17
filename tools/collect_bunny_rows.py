@@ -33,10 +33,10 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dir", default=r"D:\AI\SW\output\bunny-rows")
+    ap.add_argument("--dir", default=Path(__file__).resolve().parents[1] / "output" / "bunny-rows")
     ap.add_argument("--extra", action="append", default=[],
                     help="额外的行文件（如第一坡救回的那份），可多次给")
-    ap.add_argument("--out", default=r"D:\AI\SW\output\bunny-rows-all.json")
+    ap.add_argument("--out", default=Path(__file__).resolve().parents[1] / "output" / "bunny-rows-all.json")
     a = ap.parse_args()
 
     rows, files = [], []

@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-CAPS = Path(r"D:\AI\SW\capabilities.yaml")
+CAPS = Path(Path(__file__).resolve().parents[1] / "capabilities.yaml")
 
 HEM_EVID = ("★★★ 真机（2026-10-06 · 规格 209 的 **B2 批**）："
             "`python tools/sw_guard.py --timeout 900 -- python tools/probe_spec209_hem_diag.py` 与 "

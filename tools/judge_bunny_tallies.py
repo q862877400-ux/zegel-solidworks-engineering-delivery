@@ -19,7 +19,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 SPILL = Path(r"C:\Users\Zegel\AppData\Local\Temp\dsh-spill-jWMrNL\session-bf32b25314ff"
              r"\0d5af33ae392-workflow.txt")

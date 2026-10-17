@@ -22,7 +22,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 STATIC = ROOT / "docs" / "effect-declarations.json"
 OUT = ROOT / "docs" / "effect-observed.json"
 

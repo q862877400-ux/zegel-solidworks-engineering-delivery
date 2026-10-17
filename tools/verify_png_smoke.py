@@ -38,10 +38,10 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\png-smoke-evidence.json")
-PNG = Path(r"D:\AI\SW\output\smoke-view.png")
-JPG = Path(r"D:\AI\SW\output\smoke-view.jpg")
-BMPW = Path(r"D:\AI\SW\output\smoke-view-window.bmp")   #: 轮 146 那个"窗口尺寸"的 BMP
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "png-smoke-evidence.json")
+PNG = Path(Path(__file__).resolve().parents[1] / "output" / "smoke-view.png")
+JPG = Path(Path(__file__).resolve().parents[1] / "output" / "smoke-view.jpg")
+BMPW = Path(Path(__file__).resolve().parents[1] / "output" / "smoke-view-window.bmp")   #: 轮 146 那个"窗口尺寸"的 BMP
 W, H, D = 100.0, 60.0, 20.0
 PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
 

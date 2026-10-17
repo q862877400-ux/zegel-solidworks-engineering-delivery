@@ -34,7 +34,7 @@ sys.path.insert(0, str(REPO_ROOT / "tools"))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 sys.path.insert(0, str(REPO_ROOT / "mcp-server"))
 
-OUT = Path(r"D:\AI\SW\output\tool-availability-evidence.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "tool-availability-evidence.json")
 
 #: ★ 要普查的（★ 名字, 怎么从文档上取到那个对象）
 TARGETS = [

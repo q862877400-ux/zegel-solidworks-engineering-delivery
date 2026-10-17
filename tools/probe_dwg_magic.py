@@ -42,9 +42,9 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\dwg-magic.json")
-DXF = Path(r"D:\AI\SW\output\magic-probe.dxf")
-DWG = Path(r"D:\AI\SW\output\magic-probe.dwg")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "dwg-magic.json")
+DXF = Path(Path(__file__).resolve().parents[1] / "output" / "magic-probe.dxf")
+DWG = Path(Path(__file__).resolve().parents[1] / "output" / "magic-probe.dwg")
 def magic(path: Path) -> dict:
     """读文件头，判它是 DXF 文本还是 DWG 二进制。"""
     if not path.is_file():
@@ -89,7 +89,7 @@ def main() -> int:
             sw_sheet_metal.BaseFlangeSpec(
                 thickness=0.001, bend_radius=0.001, depth=0.040))
         #: ★ 官方要求先保存（本探针存到 **output/**，scratch 用途，收尾会删）
-        SAVED = Path(r"D:\AI\SW\output\magic-probe-part.sldprt")
+        SAVED = Path(Path(__file__).resolve().parents[1] / "output" / "magic-probe-part.sldprt")
         if SAVED.exists():
             SAVED.unlink()
         sw_connect.save_document(doc, str(SAVED))

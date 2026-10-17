@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-ROOT = Path(r"D:\AI\SW")
+ROOT = Path(Path(__file__).resolve().parents[1])
 sample = json.loads((ROOT / "output" / "rag-sample.json").read_text(encoding="utf-8"))
 recs = sample["records"]
 #: ★ 稳定顺序：按 tool 名排序（★ 可复现），并带上它属于哪一档（分层要在测量时用）

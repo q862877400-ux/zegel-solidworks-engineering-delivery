@@ -11,7 +11,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-CAPS = Path(r"D:\AI\SW\capabilities.yaml")
+CAPS = Path(Path(__file__).resolve().parents[1] / "capabilities.yaml")
 
 ENTRY = {
     "id": "part_intersect",

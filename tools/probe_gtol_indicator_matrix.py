@@ -48,7 +48,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\gtol-indicator-matrix.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "gtol-indicator-matrix.json")
 TOL_TYPES = [20, 22, 21, 25, 13]      #: 官方 Remarks 允许的 5 个
 BORDERS = [0, 1, 2, 3]                #: swGtolIndicatorBorderType_e
 

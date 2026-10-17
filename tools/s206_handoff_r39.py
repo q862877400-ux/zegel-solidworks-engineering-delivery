@@ -5,7 +5,7 @@ import io
 import sys
 from pathlib import Path
 
-P = Path(r"D:\AI\SW\specs\206-c1c6-harvest\tasks.md")
+P = Path(Path(__file__).resolve().parents[1] / "specs" / "206-c1c6-harvest" / "tasks.md")
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 ADD = """

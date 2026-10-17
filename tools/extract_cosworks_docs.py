@@ -33,8 +33,8 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:  # noqa: BLE001
         pass
 
-DEFAULT_SRC = Path(r"D:\AI\SW\AI Solidworks\官方文档\SWhelp\cosworks")
-DEFAULT_OUT = Path(r"D:\AI\SW\_raw\cosworks_pages")
+DEFAULT_SRC = Path(Path(__file__).resolve().parents[1] / "AI Solidworks" / "官方文档" / "SWhelp" / "cosworks")
+DEFAULT_OUT = Path(Path(__file__).resolve().parents[1] / "_raw" / "cosworks_pages")
 
 #: JSON 转义还原表。这批页面实测只用 \u003c/\u003e/\u0026/\n 四类。
 _ESCAPES = (

@@ -42,7 +42,7 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(r"D:\AI\SW\output\mold-evidence-smoke.json")
+OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mold-evidence-smoke.json")
 #: ★★★★★ 2026-10-01（轮 343）**判据修正：4 个计数在 `counts` **子字典**里，不在顶层** ——
 #:   真因（挖 `mold_analysis` 这条 `stitched` 时发现）：
 #:   ★ 本脚本原先按**平铺**找键（`"parting_lines_count" in evd`），
