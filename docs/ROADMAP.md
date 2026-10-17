@@ -10885,6 +10885,18 @@ COM 包装器调用点 **1310** 个 ⇒ **字面量（审计可见）1219** / **
   **下一 WIP**：★ ① 按 294–345 实际结果**重写 `AUTO_HANDOFF.md` ② 段**（★ 现仍是 10-10 的 ✗）· ★ ② **裁定 `D:\AI\SW` 去留**（★ 疑似活写入者）· ★ ③ 处理 10-08 旧交付物 `output/DSH_*.md`（★ 已过期）· ★ ④ **续视频提取**（★ 看 `specs/345-video-lectures/` 缺哪一集）
   ★★ **纪律提醒**：★ **「每轮覆盖写」这条断了 6 天** ✗ ⇒ ★ 请把「收工时改本游标 + `AUTO_HANDOFF.md`」当成**每个切片的固定一步** ✓
 
+2026-10-17 ★★★★★ **循环统一轮（★ 业主令：全部改用 DSH 自带循环）** —— ★ 业主逐字：「把现在所有的历史开发文档都**统一到现在 DeepSeek Harness 自带的循环**中去；如果没有办法直接转换过去，就把它**列成一个参考文档**。其他循环用的那些 hook 之类的，现在已经**不用其他的循环了**，没用的就**直接删掉**，以后都会全部用**自带的循环**。」
+  ★★ **新章程**：★ **`output/DSH_LOOP.md`**（★ 唯一循环 = DSH 自带 goal 循环 `create_goal` → 自动续跑 → `update_goal` ✓）
+  ★★ **旧载体索引**：★ **`output/LEGACY_LOOP_REFERENCES.md`**（★ 迁不动的全登记在这 ✓ —— ★ 含 **9 个旧代理定义及其 `model:` 字段** ✓）
+  **已删（★ 旧循环的驱动件）**：★ `~/.workbuddy-ai/hooks/{goal-gate.sh,GOAL.md.template}` ✗ · ★ `<repo>/.codebuddy/`（hook + `settings.json.disabled` + `settings.json.bak-*` + **9 个 `agents/*.md`**）✗
+  **保留（★ 依赖与史料）**：★ `~/.workbuddy-ai/binaries/`（★ **`3.13.12/python.exe` 被 866 处 `→ 验收:` 行引用** ⇒ 删了会断 ✓）· ★ `~/.workbuddy-ai/{memory,logs,traces}` · ★ `<repo>/.workbuddy-ai/memory/`（420 KB 史料 ✓）
+  **改的三处**：★ `output/GOAL.md` **§五**（★ 步骤 5 变"两道门都要" · ★ 步骤 6 去掉 `memory/` 与 `AUTO_RUN_*`）· ★ **§六**（★ **闸门换主人**：★ WorkBuddy Stop hook → **DSH 自带循环** ✓）· ★ 本节 ✓
+  **目标真源不变**：★ 仍 `output/GOAL.md` §二 那条 `- [ ] cmd:` ⇒ `python tools\goal_gate.py`（★ 语义：★ `AUTO_HANDOFF.md` ② 段无编号待办 ✓）· ★ 第二道门 `release_check.py` ✓
+  ★★ **顺带拿到两个模型的真实历史写法**（★ 业主此前问过）：★ `Deepseek-V4.1-Flash` · ★ `Hy3` · ★ `Hy4 preview` —— ★★ **但那是 WorkBuddy 宿主的 `model:` 别名** ✗，★ **不是 DSH 的 provider-owned model ID** ⇒ ★ 要在 DSH 上真跑 20+20，★ **仍需业主给 DSH 侧的真实 provider + model ID** ✓
+  **未做**：★ 未跑 `release_check`（★ 本轮纯文档 + 删旧驱动，★ 未动 `scripts/` 与 `tests/` ✓）· ★ 未新增任何 hook ✓
+  **读数**：★ HEAD 提交前 `2ad29635` · ★ 未提交 **0**（★ 删的 `.codebuddy` 本就不在版本控制里 ✓）
+  **下一 WIP**：★ ① 用 `create_goal` 立 DSH 目标（★ 目标文本引 `output/GOAL.md`）· ★ ② 若要 20+20 ⇒ 先给两个模型的 DSH provider/model ID · ★ ③ 续主线（★ `specs/345-video-lectures/` 缺哪一集）
+
 
 ## 一·C · 支线：Bunny 并行批量作业（规格 specs/203-bunny-sideline-batches）
 
