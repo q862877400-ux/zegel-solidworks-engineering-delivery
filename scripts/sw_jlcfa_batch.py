@@ -55,8 +55,8 @@ import sw_jlcfa_steps as S
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 warnings.filterwarnings("ignore")
 
-REPORT = Path(r"D:\AI\SW\batch_report.json")
-EV = Path(r"D:\AI\SW\batch_evidence")
+REPORT = Path(Path(__file__).resolve().parents[1] / "batch_report.json")
+EV = Path(Path(__file__).resolve().parents[1] / "batch_evidence")
 EV.mkdir(parents=True, exist_ok=True)
 
 

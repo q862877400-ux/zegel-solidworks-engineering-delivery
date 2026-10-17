@@ -45,7 +45,7 @@ import sw_jlcfa_steps as S
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 warnings.filterwarnings("ignore")
 
-REPORT = Path(r"D:\AI\SW\audit_report.json")
+REPORT = Path(Path(__file__).resolve().parents[1] / "audit_report.json")
 
 
 def _conn():

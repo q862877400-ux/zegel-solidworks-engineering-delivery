@@ -283,7 +283,7 @@ def main() -> int:
 
     sig_paths = args.reflection
     if not sig_paths:
-        raw = Path(r"D:\AI\SW\_raw")
+        raw = Path(Path(__file__).resolve().parents[1] / "_raw")
         sig_paths = [str(p) for p in sorted(raw.rglob("iface_*.txt"))]
         if not sig_paths:
             print("⚠ 找不到反射清单（D:\\AI\\SW\\_raw\\**\\iface_*.txt）")

@@ -41,7 +41,7 @@ import time
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path.insert(0, r"D:\AI\SW")
+sys.path.insert(0, Path(__file__).resolve().parents[1])
 
 import win32api
 import win32con
@@ -50,11 +50,11 @@ import uiautomation as auto
 
 import shot
 
-SHOTS = Path(r"D:\AI\SW\shots")
+SHOTS = Path(Path(__file__).resolve().parents[1] / "shots")
 SHOTS.mkdir(exist_ok=True)
 BF = Path("D:\\Program Files\\SOLIDWORKS Corp\\JLCFA Parts Library Plugin "
           "Full Version v2.4.1-20260918-1\\ForFaceSelector\\BuildFile")
-STATE = Path(r"D:\AI\SW\bf_state.json")
+STATE = Path(Path(__file__).resolve().parents[1] / "bf_state.json")
 
 
 def log(msg: str) -> None:

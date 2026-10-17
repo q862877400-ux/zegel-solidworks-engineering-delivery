@@ -142,7 +142,7 @@ def scan(specs_root: Path, repo: Path) -> list:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="验收命令可跑性门禁（→ 验收: 行点到的脚本须在仓库里）")
-    #: ★★★ 2026-10-17 修正（★ 环境搬迁暴露的 bug）：★ 原默认值**写死** `r"D:\AI\SW\specs"` ✗ ——
+    #: ★★★ 2026-10-17 修正（★ 环境搬迁暴露的 bug）：★ 原默认值**写死** `Path(__file__).resolve().parents[1] / "specs"` ✗ ——
     #:   ★ 仓库搬到便携版工作区后，它**扫的是旧副本**、却拿**新仓库根**去判
     #:   ⇒ ★ 旧副本里的 `D:/AI/SW/...` 全被判「仓库外」⇒ **21 条假红** ✓
     #:   ★★ 更糟的是：★ 若旧副本被删，它会走 SKIP 分支（exit 0）⇒ **静默不检查任何东西** ✗

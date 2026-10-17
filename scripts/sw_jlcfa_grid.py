@@ -171,7 +171,7 @@ def locate_card(hwnd: int, win, name: str, log=S.log):
 def _capture(hwnd: int, win):
     """PrintWindow 抓窗口自身并裁到插件容器（不受遮挡）。"""
     import importlib.util
-    spec = importlib.util.spec_from_file_location("shot", r"D:\AI\SW\shot.py")
+    spec = importlib.util.spec_from_file_location("shot", Path(__file__).resolve().parents[1] / "shot.py")
     sh = importlib.util.module_from_spec(spec)
     sys.modules["shot"] = sh
     spec.loader.exec_module(sh)

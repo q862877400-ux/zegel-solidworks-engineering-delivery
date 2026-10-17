@@ -65,7 +65,7 @@ import win32con
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 warnings.filterwarnings("ignore")
 
-EVID = Path(r"D:\AI\SW\evidence")
+EVID = Path(Path(__file__).resolve().parents[1] / "evidence")
 EVID.mkdir(parents=True, exist_ok=True)
 T0 = time.time()
 STEP = [0]
@@ -197,7 +197,7 @@ def evidence(tag: str, h: int, w, st: dict, note: str = "") -> Path:
     p = EVID / ("%02d_%s.png" % (STEP[0], tag))
     try:
         import importlib.util
-        spec = importlib.util.spec_from_file_location("shot", r"D:\AI\SW\shot.py")
+        spec = importlib.util.spec_from_file_location("shot", Path(__file__).resolve().parents[1] / "shot.py")
         sh = importlib.util.module_from_spec(spec)
         sys.modules["shot"] = sh
         spec.loader.exec_module(sh)

@@ -47,7 +47,7 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-SHOTS = Path(r"D:\AI\SW\shots")
+SHOTS = Path(Path(__file__).resolve().parents[1] / "shots")
 
 
 def md5_png(img) -> str:
