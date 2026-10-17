@@ -50,8 +50,26 @@ def _repo(tmp_path: Path) -> Path:
 
 
 def test_current_tree_passes() -> None:
-    """当前工作区的 specs 应 0 问题（否则门禁该红）。"""
-    assert MOD.main(["--specs-root", r"D:\AI\SW\specs", "--repo", str(ROOT)]) == 0
+    """当前工作区的 specs 应 0 问题（否则门禁该红）。
+
+    ★★★ 2026-10-17 修正：★ 原写死 `r"D:\\AI\\SW\\specs"`（旧绝对路径）✗ ——
+    仓库搬到便携版工作区后，那句会**扫旧副本、拿新仓库根判** ⇒ 21 条假红 ✓
+    ⇒ ★ 改为**本仓库的 specs**（与门禁新默认值同一口径）✓
+    """
+    assert MOD.main(["--specs-root", str(ROOT / "specs"), "--repo", str(ROOT)]) == 0
+
+
+def test_default_specs_root_is_this_repo() -> None:
+    """★★ **回归守卫**：门禁的**默认** `--specs-root` 必须指向**本仓库**的 specs。
+
+    ⚠ 为什么单列一条：★ 2026-10-17 的 bug 正是「默认值写死旧绝对路径」——
+    ★ 它不报错、只是**默默扫错树**（或旧树不在时走 SKIP ⇒ 静默不检查）✗
+    ⇒ ★ 判据：`MOD.REPO / "specs"` 存在，且**默认调用**（不传 `--specs-root`）与显式传入等价 ✓
+    """
+    assert (MOD.REPO / "specs").is_dir(), MOD.REPO
+    assert MOD.main(["--repo", str(ROOT)]) == MOD.main(
+        ["--specs-root", str(ROOT / "specs"), "--repo", str(ROOT)]
+    )
 
 
 def test_missing_specs_root_skips(tmp_path: Path) -> None:

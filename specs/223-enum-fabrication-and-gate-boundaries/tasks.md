@@ -22,19 +22,19 @@ description: "Task list for feature implementation"
 
 ## Phase 1: Setup
 
-- [x] T001 建立官方枚举基线：从 S1/S2 抄出官方值写进 `tests/test_pattern_enum_alignment.py` 的 `OFFICIAL_PATTERN_ELEMENT_SELECTION` / `OFFICIAL_FEATURES_TO_PATTERN` → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B -c "import ast;ast.parse(open(r'D:/AI/SW/tests/test_pattern_enum_alignment.py',encoding='utf-8').read())"`
+- [x] T001 建立官方枚举基线：从 S1/S2 抄出官方值写进 `tests/test_pattern_enum_alignment.py` 的 `OFFICIAL_PATTERN_ELEMENT_SELECTION` / `OFFICIAL_FEATURES_TO_PATTERN` → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B -c "import ast;ast.parse(open(r'tests/test_pattern_enum_alignment.py',encoding='utf-8').read())"`
 - [x] T002 记录既有回归基线为绿 → 验收: `"C:/Users/Zegel/AppData/Local/Microsoft/WindowsApps/python.exe" -m pytest tests/test_sw_pattern_contract.py -q -p no:cacheprovider` ⇒ **11 passed**
 
 ---
 
 ## Phase 2: Foundational (Blocking Prerequisites) —— **先写判据，确认能红**
 
-- [x] T003 [P] [US1] 写判据：两张表 ⟺ 官方枚举（值/成员名/项数） → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/tests/test_pattern_enum_alignment.py"`
+- [x] T003 [P] [US1] 写判据：两张表 ⟺ 官方枚举（值/成员名/项数） → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_pattern_enum_alignment.py"`
       **改动前实测：5/8 passed ⇒ 3 FAIL**（元素表 7≠3 · 特性表 8≠2 · 来源块项数不符）
-- [x] T004 [P] [US2] 写判据：`check_undefined_names.py` 输出须列出被跳过文件与原因 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/tests/test_gate_boundary_transparency.py"`
+- [x] T004 [P] [US2] 写判据：`check_undefined_names.py` 输出须列出被跳过文件与原因 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_gate_boundary_transparency.py"`
       **改动前实测：2/6 passed ⇒ 4 FAIL**（无「跳过」段 · 无覆盖清单 · 无扩面 · 两张表未覆盖）
 - [x] T005 [P] [US2] 写判据：`check_enum_values_vs_reflection.py` 须打印覆盖清单（计数自洽） → 验收: 同上文件 `-k enum_gate_reports_coverage_inventory`
-- [x] T006 [P] [US3] 写判据：打包副本无「非官方 sg 名当合法值」且与源一致 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/tests/test_bundled_skill_enum_freshness.py"`
+- [x] T006 [P] [US3] 写判据：打包副本无「非官方 sg 名当合法值」且与源一致 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_bundled_skill_enum_freshness.py"`
       **改动前实测：0/2 passed**（副本含 `sgEQUAL` · 4 处漂移）
 
 **Checkpoint**: 三份新测试各至少一红（读数见 `acceptance.md`）✓
@@ -43,7 +43,7 @@ description: "Task list for feature implementation"
 
 ## Phase 3: US1 —— 伪造枚举表裁决与修正 (Priority: P1) 🎯 MVP
 
-- [x] T007 [US1] `SWS_PATTERN_ELEMENT_SELECTION` 按官方重写为 3 项 + `# swXxx` 注释 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/tests/test_pattern_enum_alignment.py" -k pattern_element_selection`
+- [x] T007 [US1] `SWS_PATTERN_ELEMENT_SELECTION` 按官方重写为 3 项 + `# swXxx` 注释 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_pattern_enum_alignment.py" -k pattern_element_selection`
 - [x] T008 [US1] `SWS_FEATURES_TO_PATTERN` 按官方重写为 2 项 + `# swXxx` 注释 → 验收: `... -k features_to_pattern`
 - [x] T009 [US1] 订正两表的来源块（如实写官方项数 + 引用官方页路径 + 写明「自造抽象冒官方名」的裁决） → 验收: `... -k source_block_states_official_page`
 - [x] T010 [US1] 登记 `_SG_RELATIONS` 为「官方 45 项的真子集（12 项）」判据（非伪造） → 验收: `... -k sg_relations_is_subset_of_official`
@@ -55,8 +55,8 @@ description: "Task list for feature implementation"
 
 ## Phase 4: US2 —— 两道门禁的边界透明化 (Priority: P1)
 
-- [x] T011 [US2] `check_undefined_names.py` 让「跳过」可见（文件 + 原因 + 计数），退出码不变 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/scripts/check_undefined_names.py"` ⇒ 打印 **7** 个跳过文件（含 `scripts/sw_part.py`）
-- [x] T012 [US2] `check_enum_values_vs_reflection.py` 扫描面扩到 `scripts/**/*.py` + **键字符集放宽到驼峰** + 打印覆盖清单 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/scripts/check_enum_values_vs_reflection.py"` ⇒ 覆盖行 **122 → 177**，0 处值不符
+- [x] T011 [US2] `check_undefined_names.py` 让「跳过」可见（文件 + 原因 + 计数），退出码不变 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "scripts/check_undefined_names.py"` ⇒ 打印 **7** 个跳过文件（含 `scripts/sw_part.py`）
+- [x] T012 [US2] `check_enum_values_vs_reflection.py` 扫描面扩到 `scripts/**/*.py` + **键字符集放宽到驼峰** + 打印覆盖清单 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "scripts/check_enum_values_vs_reflection.py"` ⇒ 覆盖行 **122 → 177**，0 处值不符
 - [x] T013 [US2] 保证门禁退出码不变（跳过/未覆盖**不判失败**） → 验收: 两条命令退出码均为 **0** ✓
 
 **Checkpoint**: US1 + US2 均独立可验 ✓
@@ -68,10 +68,10 @@ description: "Task list for feature implementation"
 > ★ 由**委派只读核对成员**的全仓扫描发现（报告 `output/223-verify/fabrication-candidates.md`），
 > ★ **本代理逐条复核**后才动手。
 
-- [x] T014 [US4] `REF_PLANE_CONSTRAINTS` 两个值按反射订正（1028→1024 · 2056→2048）+ 补注释 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/tests/test_pattern_enum_alignment.py" -k ref_plane`
+- [x] T014 [US4] `REF_PLANE_CONSTRAINTS` 两个值按反射订正（1028→1024 · 2056→2048）+ 补注释 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_pattern_enum_alignment.py" -k ref_plane`
 - [x] T015 [US4] `HEM_POSITIONS` 按铁律 4 取反射（1/2 → 0/1）+ 补注释 + 写明两源冲突 → 验收: `... -k hem_positions`
 - [x] T016 [US4] 同步耦合面：`tests/test_tool_specs_batch93.py` 与 `mcp-server/tool_specs_batch93.py` 的 `position` 描述 → 验收: `"C:/Users/Zegel/AppData/Local/Microsoft/WindowsApps/python.exe" -m pytest tests/test_tool_specs_batch93.py -q -p no:cacheprovider` ⇒ passed
-- [x] T017 [US4] `references/part-modeling.md` 的清单行只许列官方名（222 漏掉的文档） → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/tests/test_bundled_skill_enum_freshness.py" -k doc`
+- [x] T017 [US4] `references/part-modeling.md` 的清单行只许列官方名（222 漏掉的文档） → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_bundled_skill_enum_freshness.py" -k doc`
 - [x] T018 [US4] 补**永久负例**（1028/2056 与 md 的 1/2 必须不通过） → 验收: `... -k negative_case`
 
 **⚠ 诚实性说明**：T014–T018 的**值订正发生在判据之前**（先修后写）⇒ 未取得「改前红」的读数。

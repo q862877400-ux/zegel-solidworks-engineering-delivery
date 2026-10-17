@@ -24,17 +24,17 @@ description: "Task list for feature implementation"
 
 ## Phase 1: Setup
 
-- [x] T001 建立官方枚举基线：从三源抄出官方值写进 `tests/test_relation_enum_alignment.py` 的 `OFFICIAL_CONSTRAINT_TYPES` → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B -c "import ast;ast.parse(open(r'D:/AI/SW/tests/test_relation_enum_alignment.py',encoding='utf-8').read())"`
-- [x] T002 记录 221 的 12 例为绿，作为本切片回归基线 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/tests/test_sw_sketch_relations_safety.py" -q`
+- [x] T001 建立官方枚举基线：从三源抄出官方值写进 `tests/test_relation_enum_alignment.py` 的 `OFFICIAL_CONSTRAINT_TYPES` → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B -c "import ast;ast.parse(open(r'tests/test_relation_enum_alignment.py',encoding='utf-8').read())"`
+- [x] T002 记录 221 的 12 例为绿，作为本切片回归基线 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_sw_sketch_relations_safety.py" -q`
 
 ---
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-- [x] T003 [P] [US1] 写判据：`RELATION_TYPES` 每键数值等于 `OFFICIAL_CONSTRAINT_TYPES` → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/tests/test_relation_enum_alignment.py" -k relation_types_values_match_official_enum`
-- [x] T004 [P] [US2] 写判据：`sw_part._SG_RELATIONS` 每项在官方 `SketchAddConstraints` 清单内 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/tests/test_relation_enum_alignment.py" -k sw_part_whitelist`
-- [x] T005 [P] [US2] 写判据：公开工具参数描述不含非官方名 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/tests/test_relation_enum_alignment.py" -k tool_spec_description`
-- [x] T006 [P] [US3] 写判据：数值未对齐的键必须在未决登记中 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/tests/test_relation_enum_alignment.py" -k unaligned_name_is_registered`
+- [x] T003 [P] [US1] 写判据：`RELATION_TYPES` 每键数值等于 `OFFICIAL_CONSTRAINT_TYPES` → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_relation_enum_alignment.py" -k relation_types_values_match_official_enum`
+- [x] T004 [P] [US2] 写判据：`sw_part._SG_RELATIONS` 每项在官方 `SketchAddConstraints` 清单内 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_relation_enum_alignment.py" -k sw_part_whitelist`
+- [x] T005 [P] [US2] 写判据：公开工具参数描述不含非官方名 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_relation_enum_alignment.py" -k tool_spec_description`
+- [x] T006 [P] [US3] 写判据：数值未对齐的键必须在未决登记中 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_relation_enum_alignment.py" -k unaligned_name_is_registered`
 
 **Checkpoint**: 改动前实测 `Ran 8 tests` ⇒ **6 failures + 2 errors**（红基线成立）。
 
@@ -74,7 +74,7 @@ description: "Task list for feature implementation"
 
 ## Phase 6: Polish & Cross-Cutting
 
-- [x] T018 本切片判据 + 221 回归同时绿 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "D:/AI/SW/tests/test_relation_enum_alignment.py"` ⇒ **Ran 16 tests / OK**；`... -B "D:/AI/SW/tests/test_sw_sketch_relations_safety.py"` ⇒ **Ran 12 tests / OK**
+- [x] T018 本切片判据 + 221 回归同时绿 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_relation_enum_alignment.py"` ⇒ **Ran 16 tests / OK**；`... -B "tests/test_sw_sketch_relations_safety.py"` ⇒ **Ran 12 tests / OK**
 - [x] T019 AST 检查全部改动文件 → 验收: 对 `scripts/sw_sketch_relations.py`、`scripts/sw_part.py`、`scripts/sketch_relations.py`、`mcp-server/tool_specs_batch16.py` 逐个 `ast.parse`
 - [x] T020 核对无 COM 导入、无依赖安装、无提交 → 验收: `git status --short`
       **⚠ 判据订正**：初版写「仅预期的 4 个文件变化」是**错的** —— 工作树**本来就有** 5 项遗留已跟踪改动（`AGENTS.md`、`docs/metrics.md`、`docs/union-coverage-matrix.md`、`output/costing-evidence.json`、`output/orphan-callability-census.json`，mtime 早于本会话）。**正确判据**是「本次新增的改动 ⊆ 222 的 9 个目标文件，且无暂存、无删除/重命名」。
