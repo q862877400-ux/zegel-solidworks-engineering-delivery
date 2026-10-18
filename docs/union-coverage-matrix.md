@@ -13,7 +13,7 @@
 | `andrewbartels1/SolidworksMCP-python` | MIT | 128 | 121 | **未声明** | ✅ 可抄改商用 |
 | `vespo92/SolidworksMCP-TS` | MIT | 103 | 98 | **未声明** | ✅ 可抄改商用 |
 | `Slacker-LLC/solidworks-mcp` | Apache-2.0 | 92 | 89 | SW 2026 SP3.2 简体中文 | ✅ 可抄（**须带 NOTICE + 声明改动文件**） |
-| **本仓库（上游 + 本次）** | MIT | 499 | 499 | 见 capabilities.yaml | — |
+| **本仓库（上游 + 本次）** | MIT | 516 | 514 | 见 capabilities.yaml | — |
 
 > ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。
 > `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。
@@ -39,23 +39,23 @@
 |---|---|---|---|---|---|---|---|---|
 | ① 会话 / 文档 / 文件 | 14 | 22 | 10 | 7 | 20 | 70⚠ | 53 | **33** |
 | ② 参考几何 | 3 | 3 | · | 3 | 3 | 44⚠ | 5 | **2** |
-| ③ 草图 | 26 | 15 | 16 | 20 | 51 | 117⚠ | 84 | **33** |
+| ③ 草图 | 26 | 15 | 16 | 20 | 54 | 117⚠ | 87 | **33** |
 | ④ 尺寸 / 约束 / 参数 | 6 | 2 | 6 | 2 | 8 | 32⚠ | 18 | **10** |
-| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 38 | 110⚠ | 62 | **24** |
-| ⑥ 曲面 | 11 | · | 1 | · | 21 | 53⚠ | 29 | **8** |
+| ⑤ 零件特征 | 23 | 11 | 3 | 13 | 40 | 110⚠ | 64 | **24** |
+| ⑥ 曲面 | 11 | · | 1 | · | 28 | 53⚠ | 36 | **8** |
 | ⑦ 钣金 | 10 | · | 1 | · | 14 | 24⚠ | 25 | **11** |
 | ⑧ 焊件 | 5 | · | · | · | 18 | 22⚠ | 22 | **4** |
 | ⑨ 模具 | 3 | · | · | · | 7 | 8⚠ | 10 | **3** |
-| ⑩ 装配 | 13 | 7 | 4 | 3 | 28 | 67⚠ | 47 | **19** |
+| ⑩ 装配 | 13 | 7 | 4 | 3 | 29 | 67⚠ | 48 | **19** |
 | ⑪ 工程图 | 18 | 18 | 15 | 17 | 40 | 80⚠ | 89 | **49** |
 | ⑫ 检查 / 测量 / 反馈 | 11 | 3 | 7 | 6 | 16 | 32⚠ | 32 | **16** |
 | ⑬ 仿真 / Motion | 3 | · | 1 | · | 49 | 128⚠ | 53 | **4** |
-| ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 18 | 51⚠ | 28 | **10** |
+| ⑭ 外观 / 材质 / 配置 | 10 | 1 | 3 | 2 | 19 | 51⚠ | 29 | **10** |
 | ⑮ 宏 / 自动化 | 4 | 22 | 21 | · | 10 | 24⚠ | 52 | **42** |
 | ⑯ 高级 / 专项（含护城河候选） | · | · | · | · | 41 | 15 | 41 | ✓ |
-| ⑰ 未归类 | 18 | 17 | 10 | 16 | 117 | 574⚠ | 159 | **42** |
+| ⑰ 未归类 | 18 | 17 | 10 | 16 | 118 | 574⚠ | 160 | **42** |
 
-**合计**：并集 809 个操作；**MCP 暴露面**缺 **310** 个（**不是**能力缺口 —— 见上）。
+**合计**：并集 824 个操作；**MCP 暴露面**缺 **310** 个（**不是**能力缺口 —— 见上）。
 
 ### 缺口按域排序（大 → 小）
 
@@ -117,7 +117,7 @@
 
 ## 四 本仓库独家（别人都没有）
 
-共 460 个操作只有本仓库有：
+共 475 个操作只有本仓库有：
 
 - `activate_model_for_preview`（⑰ 未归类）
 - `active_view`（⑪ 工程图）
@@ -133,6 +133,7 @@
 - `assembly_dissolve`（⑩ 装配）
 - `assembly_edit_explode_parameters`（⑩ 装配）
 - `assembly_exit_edit_part_in_context`（⑩ 装配）
+- `assembly_explode_line_sketch`（⑩ 装配）
 - `assembly_exploded_view_configuration`（⑭ 外观 / 材质 / 配置）
 - `assembly_external_reference_count`（⑩ 装配）
 - `assembly_get_exploded_view_count`（⑩ 装配）
@@ -274,7 +275,10 @@
 - `feature_delete`（⑰ 未归类）
 - `feature_info`（⑰ 未归类）
 - `feature_list_names`（⑰ 未归类）
+- `feature_loft_cut`（⑤ 零件特征）
 - `feature_present`（⑰ 未归类）
+- `feature_readback`（⑰ 未归类）
+- `feature_revolve_cut`（⑤ 零件特征）
 - `feature_suppress`（⑰ 未归类）
 - `feature_unsuppress`（⑰ 未归类）
 - `feature_whats_wrong`（⑰ 未归类）
@@ -364,6 +368,7 @@
 - `read_sensors`（⑫ 检查 / 测量 / 反馈）
 - `ref_geometry_create_3d_bounding_box`（⑫ 检查 / 测量 / 反馈）
 - `refresh_scene_graph`（⑰ 未归类）
+- `render_material_list`（⑭ 外观 / 材质 / 配置）
 - `render_materials`（⑭ 外观 / 材质 / 配置）
 - `replace_face`（⑰ 未归类）
 - `repo_find_real_implementations`（⑰ 未归类）
@@ -494,6 +499,8 @@
 - `sketch_count_lines`（③ 草图）
 - `sketch_count_segments`（③ 草图）
 - `sketch_create_chamfer`（③ 草图）
+- `sketch_dimension_horizontal`（③ 草图）
+- `sketch_dimension_vertical`（③ 草图）
 - `sketch_end`（③ 草图）
 - `sketch_flip_entities`（③ 草图）
 - `sketch_fully_defined_status`（③ 草图）
@@ -501,6 +508,7 @@
 - `sketch_is_3d`（③ 草图）
 - `sketch_move_entities`（③ 草图）
 - `sketch_relation`（③ 草图）
+- `sketch_rotate`（③ 草图）
 - `sketch_rotate_entities`（③ 草图）
 - `sketch_scale_entities`（③ 草图）
 - `sketch_select_segment`（③ 草图）
@@ -516,9 +524,16 @@
 - `surface_evidence`（⑥ 曲面）
 - `surface_extend`（⑥ 曲面）
 - `surface_fill`（⑥ 曲面）
+- `surface_flatten`（⑥ 曲面）
 - `surface_knit`（⑥ 曲面）
 - `surface_midsurface_create`（⑥ 曲面）
+- `surface_offset`（⑥ 曲面）
+- `surface_planar`（⑥ 曲面）
+- `surface_replace_face`（⑥ 曲面）
+- `surface_revolved_ref`（⑥ 曲面）
 - `surface_runtime_available`（⑥ 曲面）
+- `surface_sweep`（⑥ 曲面）
+- `surface_untrim`（⑥ 曲面）
 - `sweep_params`（⑤ 零件特征）
 - `sweep_surface`（⑥ 曲面）
 - `thicken`（⑥ 曲面）

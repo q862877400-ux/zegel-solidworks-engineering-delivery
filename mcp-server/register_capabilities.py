@@ -1145,6 +1145,12 @@ BATCH_MODULES = (
     #:   ⇒ ★ 这一批把 `cadstudio_catalog_{domains,retrieve,contract,exposure}`
     #:     **真的接出去**（★ 四个都是**只读、纯 Python、不碰 COM**）。
     "tool_specs_batch115",
+    #: ★★ 2026-10-18（业主指令「只做对目标有利的事」）：把 **21 条 verified-零工具**
+    #:   的能力接出来（本批之前 140 条能力里 56 条零工具、其中 37 条 verified 却拿不出来用）。
+    #:   ★ 本批**不新增任何 verified 声称** —— 工具只是暴露，不改 capabilities.yaml 的 level。
+    #:   ★ 另有 1 条（sw_sketch.get_sketch_slots）**未接**：其首参叫 sketch，而 RESOLVERS
+    #:     没有该键，挂上去会在运行期 TypeError（详见 batch116 文件内注释）。
+    "tool_specs_batch116",
 )
 
 def all_specs() -> list:
