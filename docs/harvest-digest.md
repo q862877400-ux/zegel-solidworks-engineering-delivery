@@ -221,7 +221,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 |---|---|---|---|
 | `requirements_planning` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 pytest tests/test_engineering_orchestrator.py；该测试不 import sw_connect、无真机调用。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
 | `solidworks_addin_host` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_cad_reliability.py；该文件来源块自述「未在本机实测 SolidWorks」。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
-| `external_spur_gear_geometry` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_cad_reliability.py；该文件来源块自述「未在本机实测 SolidWorks」，且两个齿轮工具已按业主架构指令移除（sw_gear.py 已移入 archive/inherited-methods/）。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补 |
+| `external_spur_gear_geometry` | `stitched` | `upstream` | ★ 2026-10-18 修订：mcp_tools 由 2 个清空 —— 按业主架构指令（tool_specs_batch41.py L52–L61）齿轮属【方法】不属【工具】，两个工具已移除、scripts/sw_gear.py 已移入 archive/inherited-methods/。本条保留为「方法能力」记录，不再对外暴露工具。 |
 | `pack_and_go` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 为两个 pytest 文件；未给出真机运行记录（无 sw_guard / 轮次 / PASS 字样）。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
 | `assembly_and_mates` | `stitched` | `mixed` | ★★ **2026-10-01（轮 161）补了「在上下文编辑」与「外部参考计数」两个封装**（来源：`D:\AI\SW-transfer\in-context-reference-proposal.md`）：`sw_assembly_doc.edit_part_in_context` · `exit_edit_part_in_context` · `list_external_file_refe |
 | `motion_study` | `stitched` | `mixed` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_sw_motion_audit.py；该测试不 import sw_connect、无真机调用。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
@@ -229,17 +229,17 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 ★ 全仓搜 `InsertModelDimensions` ⇒ ★ **只在 `scripts/sw_api_sldworks.py` 里**（★ 那是**签名索引**，
 不是实现）；★ `sw_drawing_view.py` 的 12 个函数**全是读 + `set_view_scale`**， |
 | `drawings_and_bom` | `stitched` | `mixed` | ★ 2026-10-18 降级 verified→stitched：evidence 为两个 pytest 文件；未给出真机运行记录。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
-| `headless_open_format_writing` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 为两个 pytest 文件；未给出真机运行记录（写文件属本地行为，不等于 SolidWorks 已验）。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
+| `headless_open_format_writing` | `stitched` | `upstream` | ★ 2026-10-18 修订：本条依赖本机【不存在】的第三方库（OCP / cadquery / trimesh）⇒ 按 AGENTS.md 铁律 2 与停止条件 #6，不得视为可用；在库装好并真机跑通前，调用方应视为【不可用】，不得据此承诺功能。 |
 | `geometry_and_delivery_review` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_delivery_compare.py；该测试不 import sw_connect、无真机调用。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
 | `dfm_checks` | `stitched` | `mixed` | ★ 2026-10-18 降级 verified→stitched：evidence 引用的 tests/test_dfm_review.py 在仓库中不存在；另一条为本地 e2e 脚本。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
-| `autocad_basic_drafting` | `not_implemented` | `upstream` | AutoCAD 2024 ActiveX 当前真机回归被阻塞：Documents、Layers、SelectionSets 代理不稳定；不得宣称原生 DWG 绘图已完成 |
+| `autocad_basic_drafting` | `not_implemented` | `upstream` | ★ 2026-10-18 修订：本条属 AutoCAD 真机基线范围（README.md L9 列 AutoCAD 2024 为基线），**不删**；但本条目前无真机回归证据，且 mcp_tools 为 0 ⇒ 调用方不可依赖。 |
 | `configurations_and_design_tables` | `stitched` | `undetermined` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_cad_reliability.py；该文件来源块自述「未在本机实测 SolidWorks」。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
-| `surface_modeling` | `stitched` | `mixed` | headless-occt 已真实生成并重开受限封闭直纹/平滑 Loft、直线/单圆弧 Sweep、闭壳 Knit 和开放面 Thicken；操作均要求版本化 B-Rep 证据 |
-| `mold_tools` | `stitched` | `mixed` | ⚑ 2026-10-01 并入「生成」侧：新增 scripts/sw_mold.py（InsertMoldPartingLine / InsertMoldPartingSurface / InsertMoldShutOffSurface / InsertMoldCoreCavitySolids / MoldDraftAnalysis / MoldUndercutDetect + mold_evid |
+| `surface_modeling` | `stitched` | `mixed` | ★ 2026-10-18 修订：本条依赖本机【不存在】的第三方库（OCP / cadquery / trimesh）⇒ 按 AGENTS.md 铁律 2 与停止条件 #6，不得视为可用；在库装好并真机跑通前，调用方应视为【不可用】，不得据此承诺功能。 |
+| `mold_tools` | `stitched` | `mixed` | ★ 2026-10-18 修订：本条依赖本机【不存在】的第三方库（OCP / cadquery / trimesh）⇒ 按 AGENTS.md 铁律 2 与停止条件 #6，不得视为可用；在库装好并真机跑通前，调用方应视为【不可用】，不得据此承诺功能。 |
 | `autocad_headless_preview` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_headless_cad_writer.py；该测试不 import sw_connect、无真机调用。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
 | `dxf_preview_scene` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 未引用任何测试文件，只写了本地 e2e 脚本路径。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
-| `autocad_script_backend` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_acad_script_backend.py；未给出真机运行记录，且 mcp_tools 为 0。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
-| `autocad_dotnet_backend` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_acad_dotnet_preflight.py（预检、mock 29 处）；未给出真机运行记录，且 mcp_tools 为 0。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
+| `autocad_script_backend` | `stitched` | `upstream` | ★ 2026-10-18 修订：本条属 AutoCAD 真机基线范围（README.md L9 列 AutoCAD 2024 为基线），**不删**；但本条目前无真机回归证据，且 mcp_tools 为 0 ⇒ 调用方不可依赖。 |
+| `autocad_dotnet_backend` | `stitched` | `upstream` | ★ 2026-10-18 修订：本条属 AutoCAD 真机基线范围（README.md L9 列 AutoCAD 2024 为基线），**不删**；但本条目前无真机回归证据，且 mcp_tools 为 0 ⇒ 调用方不可依赖。 |
 | `routing` | `stitched` | `mixed` | ★★★ 2026-10-01（轮 279）**由 verified 降为 stitched**，依据是**可执行的探测**：cadstudio_routing_preflight 回 **blocked** / readyForNativeWrite=false / error_code=routing_addin_or_license_unavailable，blocker=「未检测到 SOLI |
 | `animation_export` | `stitched` | `original` | ★★★★★ 2026-10-01（轮 289）**理由第六次也是最后一次收窄 —— 而这次到了"通用错误码"这一层，按事实 53 停止深挖**：
   ★ **本轮查清了那个错误码的含义**：`save_document` 的内部是 `model.Extension.SaveAs(path, 0, 1, …, errors, warnings)`，★ 而两个输入参数都**对**（`swSaveAsV |
