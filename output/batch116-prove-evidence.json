@@ -1,0 +1,72 @@
+{
+ "sw": {
+  "revision": "34.4.1",
+  "year": 2026,
+  "major": 34
+ },
+ "total": 5,
+ "passed": 5,
+ "verdict": "pass",
+ "results": [
+  {
+   "tool": "solidworks_render_material_list",
+   "ok": true,
+   "verified_by": "回 list 类型",
+   "detail": {
+    "type": "list",
+    "len": 0
+   }
+  },
+  {
+   "tool": "solidworks_surface_flatten",
+   "ok": true,
+   "verified_by": "返回值明确表态（ok / preconditions_held）—— 不静默",
+   "detail": {
+    "features_before": 18,
+    "features_after": 18,
+    "raised": false,
+    "returned_dict": true,
+    "ok": false,
+    "preconditions_held": false,
+    "error": "★ 前置未成立：`GetBodies2(1, True)` 回空 ⇒ ★ 该文档**没有曲面体**"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_dimension_horizontal",
+   "ok": true,
+   "verified_by": "尺寸调用成功 或 特征树增量",
+   "detail": {
+    "ok_call": true,
+    "features_before": 19,
+    "features_after": 19,
+    "err": ""
+   }
+  },
+  {
+   "tool": "solidworks_curve_through_points",
+   "ok": true,
+   "verified_by": "回 dict 非空 或 明确抛错",
+   "detail": {
+    "result_type": "dict",
+    "err": ""
+   }
+  },
+  {
+   "tool": "solidworks_feature_readback",
+   "ok": true,
+   "verified_by": "回 dict 类型",
+   "detail": {
+    "type": "dict",
+    "keys": [
+     "feature_name",
+     "present",
+     "rebuild_ok",
+     "whats_wrong_count",
+     "whats_wrong_entries",
+     "reason"
+    ],
+    "err": ""
+   }
+  }
+ ]
+}

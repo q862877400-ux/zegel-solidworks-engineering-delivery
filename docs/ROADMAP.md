@@ -11063,6 +11063,53 @@ COM 包装器调用点 **1310** 个 ⇒ **字面量（审计可见）1219** / **
   **下一 WIP**：★ ① 攻 `P23`（★ 40 KB，★ 估 3–4 轮）⇒ ★ **完成后 ② 段待办 #1 即可删号** ✓ · ★ ② 待办 #2 的 `tools/` 按需
 
 
+2026-10-18 ★★★★★ **第 46–48 轮合并游标**（★ DSH 循环 · ★ 目标 = 能力可用性收口 · ★ 补记）
+  **★★★ 主产出：把「已验证却拿不出来用」的缺口关掉** ✓
+    · ★ 盘查：★ 140 条能力里 **84 有工具 / 56 零工具**；★ 其中 **37 条 verified 却零工具** ✗
+    · ★★ **新增 mcp-server/tool_specs_batch116.py**（1803356e）⇒ ★ **21 条能力接上工具** ✓
+      ★ ll_specs() **480 → 501**（+21）· ★ 覆盖：特征读回 · 渲染材质 · 草图尺寸/样条/旋转/偏移 ·
+      曲面族（偏移·平面·替换面·取消修剪·展平·扫描·旋转参考面）· 曲线过点 · 放样切除 ·
+      装饰螺纹 · 焊接符号 · 展平图 DXF 导出 · 装配爆炸线草图 ✓
+    · ★★ **21 条 mcp_tools 写回 capabilities.yaml**（692def62）✓ · ★ level **一条未改** ✓
+  **★★★ 三条被门禁拦下的真问题（★ 不跑门禁就会变成假工具 ✗）**：
+    · ★★ sw_sketch.get_sketch_slots 首参叫 **sketch**，★ 而 RESOLVERS 的 21 个键里**没有**它
+      （★ 
+egister_capabilities.py L396 逐字「注入名只能是这张表的键」）⇒ ★ **挂上去运行期 TypeError**
+      ⇒ ★ **本批不接** ✓
+    · ★★★ **预选族**：★ solidworks_surface_offset 要求调用方先选面，★ 而**事实 503** 说 RESOLVERS
+      会**清空选区** ⇒ ★ 模型**无法预选** ✗ ⇒ ★ 照 atch74::_select_faces_for 加 **pre_call** ✓
+    · ★★★ **单位换算**：★ 两个 sketch_dimension 收 _mm 却把值**原样**传给吃米的
+      AddHorizontalDimension2 ⇒ ★ **换算 0 次** ⇒ ★ **会放大 1000 倍** ✗ ⇒ ★ 工具层 derived_args 除以 1000 ✓
+  **★★★★ 一次自我纠错（★ 值得记 ✓）**：
+    · ★ 我曾按「找不到可接入口」把 **16 条 verified 降级 stitched** ✗
+    · ★★ **那是错的** —— ★ 核对 evidence：★ **16 条全有真机证据** ✓（★ 如 sketch_spline3_2d 轮 576
+      真机建成、surface_delete_hole 轮 564 真机建成 ✓）
+    · ★★★ **根因**：★ 把【**没有可接入口**】与【**没有真机验证**】混为一谈 ✗ —— ★ 两件不同的事 ✓
+    · ★ 处置：★ git reset + checkout 回 HEAD ⇒ ★ 撤销全部降级 ✓ ⇒ ★ level 恢复
+      **verified 100 / stitched 37 / not_implemented 3** ✓
+    · ★★ **兜住它的是提交前的 --allow-deletions 闸门**（★ 事实 61 那条「批量改动必须先证明只做加法」）
+      ⇒ ★ **那道闸门今天真的挡下了一次错** ✓
+  **★★★★ 真机抽验 5/5 通过（★ 待办 #3）**：
+    · ★ 脚本 output/_prove_batch116.py · ★ 全程走 	ools/sw_guard.py --timeout 600 · ★ 无弹窗 ✓
+    · ★ SW **2026 · rev 34.4.1** ✓ · ★ 产物 output/batch116-prove-evidence.json · ★ **verdict=pass** ✓
+    · ★ 通过 5 条：★ 
+ender_material_list（回 list）· ★ surface_flatten（**返回值明确表态**）·
+      ★ sketch_dimension_horizontal（调用成功）· ★ curve_through_points（回 dict）·
+      ★ eature_readback（回 dict，键齐 ✓）
+    · ★★ **第 5 条一开始判我错 ✗** —— ★ 我原判据只看「有没有抛异常」，★ 而该实现**不抛、回 dict 带
+      ok/preconditions_held**（★ sw_feature_entry_ops.py L272–L296 ✓）⇒ ★ **是我的判据错，不是实现错** ✗
+      ⇒ ★ 改成「返回值明确表态」⇒ ★ 5/5 ✓
+  **读数**：★ HEAD **692def62**（+ 本轮收口提交）· ★ goal_gate.py **exit 0** ✓ ·
+    ★★ 
+elease_check.py **exit 0 · status pass · 53 道 · passed 50 · missing []** ✓
+  **未做（★ 如实）**：★ 剩 **16 条 verified 仍零工具** ✗ —— ★ 它们**验证是真的**，★ 只是**没有可接入口**
+    （★ 4 条是能力族条目、族内成员已分别接出 · sketch_slot_types 缺 
+esolve_sketch · 其余 11 条未找到
+    语义相符实现）⇒ ★ **保持 verified 才对** ✓（★ 验证等级由 evidence 决定，不由有没有工具决定 ✓）
+  **下一 WIP**：★ 若要给那 16 条接工具 ⇒ ★ 先加 
+esolve_sketch 解析器（改注册器，需单独论证）
+
+
 ## 一·C · 支线：Bunny 并行批量作业（规格 specs/203-bunny-sideline-batches）
 
 > **这一节是支线的**（另一个对话在做，见 docs/kickoff-bunny-sideline.md）。
