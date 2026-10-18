@@ -1,7 +1,7 @@
 # 等级审计（union-level-audit）
 
 > ⚠ **本文件是生成物** —— 由 `python scripts/gen_level_audit.py` 产出；**不要手改**（改了会被下次生成覆盖）。
-> 生成日期：2026-10-15 ｜ 数据源：`capabilities.yaml`（`schema_version` = `2.0`）
+> 生成日期：2026-10-18 ｜ 数据源：`capabilities.yaml`（`schema_version` = `2.0`）
 > ⚑ 本文件是 `scripts/check_union_conventions.py` docstring 里 **R8** 承诺的那一份 —— 在 2026-10-01（轮 60）之前，**它只有承诺、没有生成器**（详见本脚本 docstring）。
 
 ## 一、总表（逐条可核）
@@ -14,12 +14,12 @@
 | 4 | `assembly_exploded_views` | `verified` | `original` | ✓ | — |
 | 5 | `assembly_read` | `verified` | `original` | ✓ | — |
 | 6 | `autocad_basic_drafting` | `not_implemented` | `upstream` | — | — |
-| 7 | `autocad_dotnet_backend` | `verified` | `upstream` | ✓ | — |
-| 8 | `autocad_headless_preview` | `verified` | `upstream` | ✓ | — |
-| 9 | `autocad_script_backend` | `verified` | `upstream` | ✓ | — |
+| 7 | `autocad_dotnet_backend` | `stitched` | `upstream` | ✓ | — |
+| 8 | `autocad_headless_preview` | `stitched` | `upstream` | ✓ | — |
+| 9 | `autocad_script_backend` | `stitched` | `upstream` | ✓ | — |
 | 10 | `chamfer_fillet_on_selection` | `verified` | `original` | ✓ | — |
 | 11 | `config_and_export` | `verified` | `original` | ✓ | — |
-| 12 | `configurations_and_design_tables` | `verified` | `undetermined` | ✓ | — |
+| 12 | `configurations_and_design_tables` | `stitched` | `undetermined` | ✓ | — |
 | 13 | `costing` | `verified` | `original` | ✓ | — |
 | 14 | `costing_readback` | `verified` | `original` | ✓ | — |
 | 15 | `costing_templates_and_defaults` | `verified` | `original` | ✓ | — |
@@ -29,7 +29,7 @@
 | 19 | `curve_through_xyz` | `verified` | `original` | ✓ | — |
 | 20 | `custom_properties_and_bom` | `verified` | `upstream` | ✓ | — |
 | 21 | `declarative_hole_creation` | `verified` | `original` | ✓ | — |
-| 22 | `dfm_checks` | `verified` | `mixed` | ✓ | — |
+| 22 | `dfm_checks` | `stitched` | `mixed` | ✓ | — |
 | 23 | `display_states` | `verified` | `original` | ✓ | — |
 | 24 | `document_dependencies` | `verified` | `original` | ✓ | — |
 | 25 | `drawing_bom_balloons` | `verified` | `original` | ✓ | — |
@@ -39,12 +39,12 @@
 | 29 | `drawing_model_annotations` | `stitched` | `original` | ✓ | — |
 | 30 | `drawing_view_operations` | `verified` | `original` | ✓ | — |
 | 31 | `drawing_views_and_summary` | `verified` | `original` | ✓ | — |
-| 32 | `drawings_and_bom` | `verified` | `mixed` | ✓ | — |
-| 33 | `dxf_preview_scene` | `verified` | `upstream` | ✓ | — |
+| 32 | `drawings_and_bom` | `stitched` | `mixed` | ✓ | — |
+| 33 | `dxf_preview_scene` | `stitched` | `upstream` | ✓ | — |
 | 34 | `equations` | `verified` | `original` | ✓ | — |
 | 35 | `explode_line_sketch` | `verified` | `original` | ✓ | — |
 | 36 | `export_delivery` | `verified` | `upstream` | ✓ | — |
-| 37 | `external_spur_gear_geometry` | `verified` | `upstream` | ✓ | — |
+| 37 | `external_spur_gear_geometry` | `stitched` | `upstream` | ✓ | — |
 | 38 | `feature_build_extrude` | `verified` | `original` | ✓ | — |
 | 39 | `feature_cosmetic_thread` | `verified` | `original` | ✓ | — |
 | 40 | `feature_hole_wizard5` | `verified` | `original` | ✓ | — |
@@ -56,10 +56,10 @@
 | 46 | `flat_pattern_dxf` | `verified` | `original` | ✓ | — |
 | 47 | `forming_tool` | `verified` | `original` | ✓ | — |
 | 48 | `geometric_tolerance` | `stitched` | `original` | ✓ | — |
-| 49 | `geometry_and_delivery_review` | `verified` | `upstream` | ✓ | — |
+| 49 | `geometry_and_delivery_review` | `stitched` | `upstream` | ✓ | — |
 | 50 | `geometry_measurement` | `verified` | `original` | ✓ | — |
 | 51 | `gtol_insert` | `verified` | `original` | ✓ | — |
-| 52 | `headless_open_format_writing` | `verified` | `upstream` | ✓ | — |
+| 52 | `headless_open_format_writing` | `stitched` | `upstream` | ✓ | — |
 | 53 | `helix_and_spiral` | `verified` | `original` | ✓ | — |
 | 54 | `holes_and_finishing` | `verified` | `upstream` | ✓ | — |
 | 55 | `loft_and_sweep` | `verified` | `mixed` | ✓ | — |
@@ -68,14 +68,14 @@
 | 58 | `mass_property_read` | `verified` | `original` | ✓ | — |
 | 59 | `mesh_create_readback` | `verified` | `original` | ✓ | — |
 | 60 | `mesh_size_sanity_gate` | `verified` | `original` | ✓ | — |
-| 61 | `modeling_feature_readback_tools` | `verified` | `original` | ✓ | — |
+| 61 | `modeling_feature_readback_tools` | `stitched` | `original` | ✓ | — |
 | 62 | `mold_analysis` | `verified` | `original` | ✓ | — |
 | 63 | `mold_parting_geometry` | `stitched` | `original` | ✓ | — |
 | 64 | `mold_tools` | `stitched` | `mixed` | — | ✓ |
-| 65 | `motion_study` | `verified` | `mixed` | ✓ | — |
+| 65 | `motion_study` | `stitched` | `mixed` | ✓ | — |
 | 66 | `motion_validation_and_preconditions` | `verified` | `original` | ✓ | — |
 | 67 | `move_copy_body` | `verified` | `original` | ✓ | — |
-| 68 | `pack_and_go` | `verified` | `upstream` | ✓ | — |
+| 68 | `pack_and_go` | `stitched` | `upstream` | ✓ | — |
 | 69 | `parameter_updates` | `verified` | `upstream` | ✓ | — |
 | 70 | `part_and_features` | `verified` | `upstream` | ✓ | — |
 | 71 | `part_intersect` | `verified` | `original` | ✓ | — |
@@ -87,7 +87,7 @@
 | 77 | `render_material_library` | `verified` | `original` | ✓ | — |
 | 78 | `render_materials_and_appearance` | `verified` | `original` | ✓ | — |
 | 79 | `replace_face` | `verified` | `original` | ✓ | — |
-| 80 | `requirements_planning` | `verified` | `upstream` | ✓ | — |
+| 80 | `requirements_planning` | `stitched` | `upstream` | ✓ | — |
 | 81 | `routing` | `stitched` | `mixed` | ✓ | — |
 | 82 | `scale_feature` | `verified` | `original` | ✓ | — |
 | 83 | `section_properties` | `stitched` | `original` | ✓ | — |
@@ -110,19 +110,19 @@
 | 100 | `sketch_dimension_horizontal` | `verified` | `original` | ✓ | — |
 | 101 | `sketch_dimension_vertical` | `verified` | `original` | ✓ | — |
 | 102 | `sketch_edit_ops` | `verified` | `original` | ✓ | — |
-| 103 | `sketch_edit_ops_b3` | `verified` | `original` | ✓ | — |
+| 103 | `sketch_edit_ops_b3` | `stitched` | `original` | ✓ | — |
 | 104 | `sketch_equation_curve` | `verified` | `original` | ✓ | — |
 | 105 | `sketch_line2` | `verified` | `original` | ✓ | — |
 | 106 | `sketch_modify_ops` | `verified` | `original` | ✓ | — |
 | 107 | `sketch_offset_on_surface` | `verified` | `original` | ✓ | — |
-| 108 | `sketch_primitives_b1` | `verified` | `original` | ✓ | — |
+| 108 | `sketch_primitives_b1` | `stitched` | `original` | ✓ | — |
 | 109 | `sketch_query` | `verified` | `original` | ✓ | — |
 | 110 | `sketch_rotate_or_copy_3d` | `verified` | `original` | ✓ | — |
 | 111 | `sketch_slot_types` | `verified` | `original` | ✓ | — |
 | 112 | `sketch_spline` | `verified` | `original` | ✓ | — |
 | 113 | `sketch_spline3_2d` | `verified` | `original` | ✓ | — |
 | 114 | `sketch_visibility` | `verified` | `original` | ✓ | — |
-| 115 | `solidworks_addin_host` | `verified` | `upstream` | ✓ | — |
+| 115 | `solidworks_addin_host` | `stitched` | `upstream` | ✓ | — |
 | 116 | `speedpak` | `verified` | `original` | ✓ | — |
 | 117 | `standard_parts_toolbox` | `verified` | `original` | ✓ | — |
 | 118 | `surface_delete_hole` | `verified` | `original` | ✓ | — |
@@ -158,8 +158,8 @@
 | `indexed` | 0 |
 | `not_implemented` | 3 |
 | `source_verified` | 0 |
-| `stitched` | 20 |
-| `verified` | 117 |
+| `stitched` | 37 |
+| `verified` | 100 |
 
 ## 三、`source` 分布
 
@@ -178,8 +178,8 @@
 | `indexed` | 0 | 0 | 0 | 0 | 0 |
 | `not_implemented` | 0 | 1 | 1 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
-| `stitched` | 0 | 4 | 16 | 0 | 0 |
-| `verified` | 0 | 6 | 93 | 1 | 17 |
+| `stitched` | 0 | 7 | 19 | 1 | 10 |
+| `verified` | 0 | 3 | 90 | 0 | 7 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，
 > `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。
