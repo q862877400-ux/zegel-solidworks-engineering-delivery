@@ -2605,6 +2605,7 @@
     "solidworks"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_feature_readback（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ 2026-10-01（轮 290）**本条不挂工具 —— 理由写明**：★ 它是**规则 6 的通用助手**\n（建特征后回读判据），★ 即**内部判据库**而非用户操作 ⇒ ★★ 它被**别的工具内部调用**，\n★ 而**不暴露为工具**。★ 证据 `tools/capture_modeling_readback_evidence.py`（真机，\n`criterion_selfcheck.ok = true`）⇒ ★ 它是**verified**（★ 有真机证据）。\n★ **典型用处**：`sw_hole_features` / `sw_gear` 等的包装都用它判\"特征树变了吗\"。",
     "★ 真机**自验通过**（有判别力）：`'草图1'` ⇒ `ok=True · present=True · rebuild_ok=True · whats_wrong_count=0`；不存在的名字 / 容器名（`收藏` / `实体` / `方程式`）⇒ **全 False**",
@@ -2625,7 +2626,10 @@
     "★ 静态：`scripts/check_union_conventions.py` PASS · `check_param_binding.py` PASS"
    ],
    "source": "original",
-   "source_evidence": "scripts/sw_feature_readback.py（照 IModelDoc2.FirstFeature / GetNextFeature / EditRebuild3 + IModelDocExtension.GetWhatsWrongCount）"
+   "source_evidence": "scripts/sw_feature_readback.py（照 IModelDoc2.FirstFeature / GetNextFeature / EditRebuild3 + IModelDocExtension.GetWhatsWrongCount）",
+   "mcp_tools": [
+    "solidworks_feature_readback"
+   ]
   },
   {
    "id": "modeling_feature_readback_tools",
@@ -3086,6 +3090,7 @@
     "solidworks"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_render_material_list（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ **2026-10-02（轮 373）已真机 PASS 5/5**（`file_name` 绑定真实 `.p2m` 之后）。",
     "⚠ **`file_name` 是必需项** —— 空值会被 `RenderMaterialSpec.validate()` 拒掉（★ 而不是静默建一个不会被收录的外观）。SW 自带材质在 `<install>\\data\\graphics\\Materials\\**\\*.p2m`。",
@@ -3102,7 +3107,9 @@
     "python 真机（轮 367）★ **顺带修掉第 12 处「设属性写成取或调」**：`create_render_material` 的 `spec.extra` 循环原为 `get_com_member(material, key, float(value))`（事实 227）⇒ `TypeError`；已改 `set_com_member`（★ 前人轮 319 修了 11 处，这一处漏了）。",
     "python 真机（轮 371/372）★ **观察点**：`IRenderMaterial.GetLinkedDisplayStates()` 直接回答「外观挂到了哪些显示状态」，★ 不经过「清单」那条可疑中介 ⇒ 用它证明 `Add…` 的**链接**确实生效（而清单仍空）。"
    ],
-   "mcp_tools": [],
+   "mcp_tools": [
+    "solidworks_render_material_list"
+   ],
    "source": "original",
    "source_evidence": "scripts/sw_render_material.py 的 create_render_material / add_render_material / delete_render_material / RenderMaterialSpec"
   },
@@ -3863,9 +3870,13 @@
     "★ **走的是「旧式方法」那侧**（`IModelDoc2.InsertOffsetSurface` · **2 参 · void**）—— ★★ 而不是新架构（`CreateDefinition` + `CreateFeature`）。★ 依据：**事实 395** 指出「旧式方法那侧是成的」（填充 `InsertFillSurface2` / 延伸 `InsertExtendSurface` / 缝合 `InsertSewRefSurface` / 曲面-拉伸 `FeatureExtruRefSurface3`）。"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_surface_offset（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★ 前置：**先选中一张曲面**（官方 `Remarks` 逐字：「Make the selections using `SelectByID2` **before** calling this method」）。★ 本包装按**对象**选（★ 事实 32：实体没有名字）。",
     "⚠ **未查**：① 反向`Reverse=True` ；② 多体下只选部分面；③ 对**实体面**做等距。"
+   ],
+   "mcp_tools": [
+    "solidworks_surface_offset"
    ]
   },
   {
@@ -3889,10 +3900,14 @@
     "★★★ **而「boundary entities」到底是什么，是真机定的**：★ 轮 516 先试**曲面体的边**（12 条 · mark=1）⇒ **0 增量**、返回值 `False`；★ 轮 517 改试**草图**（闭合轮廓 · mark=1）⇒ **返回 `True` · 建成** ✓ ⇒ ★★ **故它指的是草图**（★ 而官方那句 `Remarks` **两种读法都通**）。"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_surface_planar（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/planar-replace-variants-evidence.json` 顶层逐字 `verdict=None` · `passed=2/3`（采集于 2026-10-03T14:41:20）⇒ ★ **只过了 2 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
     "★ 前置：**先按 mark=1 选一个闭合草图**（★ 特征按**名字**选可行 —— 事实 32 的「没有名字」只对**实体**成立）。★ 本包装的 `sketch_name` 留空 ⇒ 用**最后一个**草图。",
     "⚠ **未查**：① 多个草图同时选；② 非矩形轮廓（圆 / 任意闭合）；③ 对**实体边**而非草图。"
+   ],
+   "mcp_tools": [
+    "solidworks_surface_planar"
    ]
   },
   {
@@ -3916,10 +3931,14 @@
     "★★★ **两个 mark 的分工是真机定的**（★ 官方那句 `Remarks` **被截断了**）：★ 轮 516 按「实体面=1 · 曲面面=2」⇒ **0 增量**；★ 轮 517 调过来（实体面=2 · 曲面面=1）⇒ **建成 `替换面1`** ✓ ⇒ ★★ **曲面面 = mark 1（要替换掉的）· 实体面 = mark 2（替换成它）**，★ 而它与官方「要替换的面 mark 1」**一致**。"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_surface_replace_face（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/planar-replace-variants-evidence.json` 顶层逐字 `verdict=None` · `passed=2/3`（采集于 2026-10-03T14:41:20）⇒ ★ **只过了 2 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
     "★ 前置：**两张面**（曲面面 mark=1 · 实体面 mark=2）。",
     "⚠ **未查**：① 选具体哪一张面（★ 本包装取各体**第一张**）；② 多对面；③ 两个曲面之间替换。"
+   ],
+   "mcp_tools": [
+    "solidworks_surface_replace_face"
    ]
   },
   {
@@ -3943,9 +3962,13 @@
     "★★★ **而根因是一组对照定下的：「无中心线」那组**不成**（树 0 增量）** —— ★ 而官方原话逐字是「by revolving a profile around a **centerline**」。\n       ⇒ ★★ **故：本仓此前对它的「不成」（轮 501，5 组全试过）真因是**前置缺中心线**，而**不是**架构问题** ✓\n       ★ 而它**修正了一个归因**：「新架构那侧不成」在**旋转曲面上不成立**。"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_surface_revolved_ref（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ **前置：蓝图里必须有一条中心线**（官方原话的 centerline）—— ★ 本包装的 docstring 已明写这一点。★ 另官方给的 mark **没写** ⇒ ★ 本模块**不假定 mark**（真机用 mark=0 成）。",
     "⚠ **未查**：★ 非 360° 角；★ `rev_type=1/2`（MidPlane / 双向）；★ 官方另注「does not support **3D sketches**」。"
+   ],
+   "mcp_tools": [
+    "solidworks_surface_revolved_ref"
    ]
   },
   {
@@ -3970,11 +3993,15 @@
     "★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_sketch_dimension_horizontal（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/hv-dimension-with-selection-evidence.json` 顶层逐字 `verdict='hv_dimension_works'` · `passed=2/3`（采集于 2026-10-03T15:30:25）⇒ ★ **只过了 2 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
     "★★ **前置：必须先选中实体**（★ 一条线段**或**两个端点都行）—— ★ 而**不选时**它会弹「修改」框等人填数（★ 而那会**看起来像挂死**）。",
     "⚠ **返回值不可信**：`AddHorizontalDimension2` 回对象，★ 而 `AddVerticalDimension2` **回 `None` 而尺寸照样加上** ⚠ ⇒ ★ **判据请用尺寸计数**（★ 本包装用 `IFeature.GetFirstDisplayDimension` + `IAnnotation.GetNext2`）。",
     "⚠ **未查**：★ 尺寸的**初值**；★ 放置点（三个参数）的有效范围；★ 选两条平行线时的行为。"
+   ],
+   "mcp_tools": [
+    "solidworks_sketch_dimension_horizontal"
    ]
   },
   {
@@ -3999,11 +4026,15 @@
     "★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_sketch_dimension_vertical（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/hv-dimension-with-selection-evidence.json` 顶层逐字 `verdict='hv_dimension_works'` · `passed=2/3`（采集于 2026-10-03T15:30:25）⇒ ★ **只过了 2 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
     "★★ **前置：必须先选中实体**（★ 一条线段**或**两个端点都行）—— ★ 而**不选时**它会弹「修改」框等人填数（★ 而那会**看起来像挂死**）。",
     "⚠ **返回值不可信**：`AddHorizontalDimension2` 回对象，★ 而 `AddVerticalDimension2` **回 `None` 而尺寸照样加上** ⚠ ⇒ ★ **判据请用尺寸计数**（★ 本包装用 `IFeature.GetFirstDisplayDimension` + `IAnnotation.GetNext2`）。",
     "⚠ **未查**：★ 尺寸的**初值**；★ 放置点（三个参数）的有效范围；★ 选两条平行线时的行为。"
+   ],
+   "mcp_tools": [
+    "solidworks_sketch_dimension_vertical"
    ]
   },
   {
@@ -4027,10 +4058,14 @@
     "★★ **而对照组同时跑**：`IsCut=False` ⇒ 树新增 `旋转1`、★ **体积 1.1745 倍**（**变大）** —— ★ 故**那一个布尔就是“切除”与“加料”的分界** ✓"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_feature_revolve_cut（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ **前置（官方 `## Remarks` 逐字）**：剖面草图 **mark = 0**、旋转轴 **mark = 4 或 16**；★ 而**轴必须先于轮廓进选择集**（★ 本仓轮 360 已定）。",
     "⚠ **未查**：★ `mark = 32`（**上至面 / 上至顶点 / 等距面**）—— ★ 本仓**从未用过**；★ 非 360°；★ `RevType` 的两向与中面。",
     "⚠ **本包装未接进 MCP 工具层**（★ 现为 `scripts/` 层可调用）。"
+   ],
+   "mcp_tools": [
+    "solidworks_feature_revolve_cut"
    ]
   },
   {
@@ -4081,11 +4116,15 @@
     "★★★ **而根因是一组**四格对照**定下的**：\n       ① 面(1) + **锚点(16)**        ⇒ **成** ✓\n       ② 面(1) + 引导边(2)（**无锚点**）⇒ **不成** ✗\n       ③ 面(1) + 锚点(16) + 引导边(2) ⇒ **成** ✓\n       ④ **只给面(1)**                ⇒ **不成** ✗\n       ⇒ ★★ **故：`mark = 16`（锚点）是**必需的****—— ★ 四格里**只有带锚点的两格成** ✓"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_surface_flatten（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/flatten-with-anchor-evidence.json` 顶层逐字 `verdict='flatten_with_marks_works'` · `passed=2/4`（采集于 2026-10-03T16:13:26）⇒ ★ **只过了 2 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
     "★★ **前置（官方 Remarks）**：必须选中 **面（mark = 1）** 与 **锚点（mark = 16）**；★ 另可选 2=引导边 · 4=映射边 · 8=撕裂边。",
     "★ **`AccuracyFactor` 范围：10 ≥ 精度 ≥ 1**（1 = 最高）；★ 真机用 **4** 成。",
     "⚠ **本包装未接进 MCP 工具层**（★ 现为探针可调用）；⚠ 未查：`ShouldUseTears = True`、以及非可展开曲面的行为。"
+   ],
+   "mcp_tools": [
+    "solidworks_surface_flatten"
    ]
   },
   {
@@ -4109,10 +4148,14 @@
     "★★★ **而根因是一组**六格矩阵**定下的—— ★ 六组里**只有一组成**：\n       ① 面 · Face=0(AllEdges)           ⇒ 不成\n       ② 面 · Face=1(InternalEdges)      ⇒ 不成\n       ③ 面 · Face=2(ExternalEdges)      ⇒ 不成\n       ④ **边 · Edge=1(ConnectEndPoints)** ⇒ 不成\n       ⑤ **边 · Edge=2(ExtendEdges)**     ⇒ **成** ✓\n       ⑥ 面 · BTrimOppositeSide=True  ⇒ 不成\n       ⇒ ★★ **故：必须选**边**，且 `EdgeUntrimType = 2`** ✓"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_surface_untrim（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ **前置两层**：① 得先有一张**真被剪裁过**的曲面（★ `PreTrimSurface` + `PostTrimSurface` 可造，面数 8→7）；② 选的是**边**。",
     "⚠ **官方 Remarks 说 “face **or edges**”** —— ★ 而本机上**面那条路五个组合全败**（Face=0/1/2 与 BTrimOppositeSide=True）⚠ —— ★ 不碰它。",
     "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：`Distance` 的有效范围。"
+   ],
+   "mcp_tools": [
+    "solidworks_surface_untrim"
    ]
   },
   {
@@ -4137,10 +4180,14 @@
     "★★★ **而本轮又是一次“失败在判据”**：我第一版照**凸台**抄成 `type_name == \"Blend\"` ⇒ ★ **对已建成的 `切除-放样1` 判了 `ok=False`** ⚠ （★ 与事实 420 / 431 同族）。\n       ★ 而与**事实 429**（旋转切除用 `IsCut=True`）**同一族**：★ **“切”会换类型名** 。"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_feature_loft_cut（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ **前置（官方 Remarks 逐字，与 `InsertProtrusionBlend2` 同一套）**：剖面要**按期望的顺序**选、**mark = 1**；引导线 mark = 2 · 中心线 mark = 4。",
     "★ **`TessToleranceFactor` 官方默认 1.0**；匹配类型 **0 = none · 1 = 法向相切 · 2 = 相切于选定向量**。",
     "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：`Closed=True`（封闭）· 薄壁（`IsThinBody`）· 引导线。"
+   ],
+   "mcp_tools": [
+    "solidworks_feature_loft_cut"
    ]
   },
   {
@@ -4226,11 +4273,15 @@
     "★★★ **而本轮又一次证明“失败在我这边”**：第一版我用 `str(Surface.Identity)` 里含 `\"Cylinder\"` 来**猜**哪个面是圆柱面 ⇒ ★ **三组全 `cyl=False`**（★ 根本没找到面）⚠；\n       ★ 而官方有现成的 **`ISurface.IsCylinder()`** ⇒ ★ 换成它之后**一次就成** ✓"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_feature_cosmetic_thread（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/cosmetic-thread-evidence.json` 顶层逐字 `verdict='cosmetic_thread_works'` · `passed=1/3`（采集于 2026-10-03T16:39:58）⇒ ★ **只过了 1 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
     "★★ **前置**：选**圆柱面的边**（★ 而**不是面**）。",
     "★ **7 参**：`Standard`（**1 = ANSI Metric**）· `StandardType` · `Size` · `Diameter` · `EndType`（**2 = Through**）· `Depth`（仅 Blind 类有效）· `Note`。",
     "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：Blind（`EndType=0`）与 `Depth` 的配合。"
+   ],
+   "mcp_tools": [
+    "solidworks_feature_cosmetic_thread"
    ]
   },
   {
@@ -4255,11 +4306,15 @@
     "★★ **而本轮还证明了一件事**：★ `call_com_member` **就是 `get_com_member` 的别名**（实现只有一行；★ 只是**名字即意图**）⇒ ★ **换名字不会改行为** ⚠"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_sketch_spline（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/spline-with-variant-evidence.json` 顶层逐字 `verdict='spline_variant_works'` · `passed=1/4`（采集于 2026-10-03T16:50:26）⇒ ★ **只过了 1 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
     "★★ **三个条件**：成员名 `CreateSpline2`、数组形态 `VARIANT(VT_ARRAY|VT_R8, 扁平 list)`、第二参 `False`。",
     "★ **必须先有活动草图**；★ **2D 草图里 Z 被忽略**（官方）；★ 官方说它**不配合 `AddToDB`**。",
     "⚠ 本包装未接进 MCP 工具层；⚠ 未查：`SimulateNaturalEnds = True` 的行为。"
+   ],
+   "mcp_tools": [
+    "solidworks_sketch_spline"
    ]
   },
   {
@@ -4311,11 +4366,15 @@
     "★★★ **而本轮又纠了一个自己的错**：我第一版传了 **8 个参数**（★ **漏了 `AngleAboutZDir`**）⇒ `DISP_E_PARAMNOTOPTIONAL`（`0x8002000F`）；\n       ★ 而**那个错看不出是哪个参数漏了** ⚠ —— ★ 故又靠**反射的 arity**把它钉出来（铁律 4）。"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_sketch_rotate（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/rotate-or-copy-3d-evidence.json` 顶层逐字 `verdict='rotate_or_copy_works'` · `passed=1/2`（采集于 2026-10-03T17:03:30）⇒ ★ **只过了 1 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",
     "★★ **前置**：一个 **3D 草图**（`Insert3DSketch`）+ 里面有要复制的图元。",
     "★ **9 参**：`Copy` · `NumCopies` · `KeepRelations` · `BaseX/Y/Z` · `AngleAboutXDir/YDir/ZDir`。",
     "⚠ **本包装未接进 MCP 工具层**；⚠ 未查：**2D 草图**的复制（★ 那一条可能走 `EditCopy`/`EditPaste`）。"
+   ],
+   "mcp_tools": [
+    "solidworks_sketch_rotate"
    ]
   },
   {
@@ -4367,10 +4426,14 @@
     "★★ **而判据是按事实 436 取的**：`InsertCurveFileBegin` 官方回 **`void`** ⇒ ★ **不能看返回值**，改看 **`feature_names()` 的增量**。"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_curve_through_points（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ **三步式的顺序是必须的**（官方 Remarks 逐字）：`Begin` **must precede** 所有 `Point`；★ 而 **`End` must enclose** 所有 `Point` —— 即两者**夹住**中间那一段。",
     "★ **坐标是米**（★ 本探针在边界除了 1000）",
     "⚠ 本包装未接进 MCP 工具层；⚠ 未查：**文件的字体格式要求**（★ 官方只说点可以有 X/Y/Z）。"
+   ],
+   "mcp_tools": [
+    "solidworks_curve_through_points"
    ]
   },
   {
@@ -4456,12 +4519,16 @@
     "★★ **而本轮修了两个真因**（★ 全靠真机逼出来）：\n       ① ★ **`SelectByID2(\"\", \"EDGE\", x,y,z, …)` 一条边都选不中**（★ 角点与中点两种坐标都 `selected = 0`）⚠\n         ★ 而**事实 32 早写着**：选实体要用 **`IEntity.Select4`（按对象）**；★ 本仓封装：`sw_selection_spec.entities_on_body` + `select_object`\n       ② ★ **`Select4` 没有 mark 参数** ⇒ 用 **`ISelectionMgr.SetSelectedObjectMark(i, mark, -1)`** 补设 ✓"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_sketch_offset（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ **三步缺一不可**：① **按对象选边**（★ `Select4`，**不是** `SelectByID2`）；② 补设 **`Mark`**；③ 收尾 **`ISketchManager.InsertSketch(True)`**。",
     "★ **它回 `False` 是正常的**（★ 它只“创建了 3D 草图”）—— ★ **故不能拿那个 `False` 当失败判据**（★ 而 2026-10-01 那次正是这么误判的，事实 460）。",
     "★ `UseFront` 必须 `True`（★ 官方：\"Although not currently used, must be set to true\"）。",
     "⚠ **本包装未接进 MCP 工具层**；⚠ **未查**：`GetActiveSketch2` 回的 `is_3d=False` / `segments=0`（★ 可能拿错了草图对象）。",
     "⚠ **未查**：`GeodesicSketchOffset`（★ 官方提的**测地线**那个）。"
+   ],
+   "mcp_tools": [
+    "solidworks_sketch_offset"
    ]
   },
   {
@@ -5201,6 +5268,7 @@
     "★ 契约/负例：python -m pytest tests/test_spec211_sweep.py -q ⇒ 7 passed"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_surface_sweep（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★★★★ 本条印证了事实 237（逐字）：「不做曲面族」那条结论只覆盖了半条路 —— 官方有两条建曲面的入口，而第二条从来没试过 ⇒ ★★ 本批试了第二条路，通了 ✓",
     "★★★ 必须与「路 A」分开：路 A = CreateDefinition(swFmSweepSurface) + CreateFeature ⇒ 已按事实 392 试死（静默回 None）；★ 本能力只走路 B ⇒ 路 A 的结论不适用于本条 ✓",
@@ -5223,7 +5291,10 @@
     "solidworks": [
      "2026"
     ]
-   }
+   },
+   "mcp_tools": [
+    "solidworks_surface_sweep"
+   ]
   },
   {
    "id": "weldment_trim",
@@ -5435,6 +5506,7 @@
     "★ 证据文件 output/spec211-b6-explodeline.json（output/ 为 gitignore 产物目录）"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_assembly_explode_line_sketch（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ 主判据落在草图侧：ISketchManager::ActiveSketch 由 False 变 True；顶层特征树不反映它（新增 []）—— 后续调用方勿用特征树判本能力",
     "★★★ 前置是整条链：零件文件落盘 + 装配体 + 爆炸状态，缺一不可；本次落到仓库内 output/ 而非用户目录（要落盘不等于要写到用户目录）",
@@ -5454,7 +5526,10 @@
     "solidworks": [
      "2026"
     ]
-   }
+   },
+   "mcp_tools": [
+    "solidworks_assembly_explode_line_sketch"
+   ]
   },
   {
    "id": "speedpak",
@@ -5517,6 +5592,7 @@
     "★ 证据文件 output/spec211-b3-weldsymbol-real.json（output/ 为 gitignore 产物目录）"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_weld_symbol（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★★ 前置是硬性的（官方示例 Preconditions 逐字）：调之前必须在零件上选一个面、边或草图段 ⇒ 不选则拿不到有意义的符号",
     "★★ 两步式：InsertWeldSymbol3() 只负责插入并回 IWeldSymbol 对象，属性与文字要靠 IWeldSymbol 的那一族 Set*（SetText / SetFieldWeld / SetPeripheral / SetSymmetric / SetStagger / SetProcess）",
@@ -5536,7 +5612,10 @@
     "solidworks": [
      "2026"
     ]
-   }
+   },
+   "mcp_tools": [
+    "solidworks_weld_symbol"
+   ]
   },
   {
    "id": "pdm",
@@ -5591,6 +5670,7 @@
     "★ 契约/负例：python -m pytest tests/test_spec211_flat_pattern_save.py -q ⇒ 4 passed（离线、不连 COM）"
    ],
    "limitations": [
+    "★ 2026-10-18 写回工具：solidworks_export_flat_pattern_dxf（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★★ 默认行为完全不变：allow_temporary_save 默认 False ⇒ 未保存的零件仍被显式拒绝，错误信息里点名那个开关，好让人发现这条受控例外",
     "★★ 临时另存的落点有两条硬判据：① 必须在仓库内（两侧补分隔符后比前缀）；② 不许覆盖已有文件（用时间戳名）",
@@ -5611,7 +5691,10 @@
     "solidworks": [
      "2026"
     ]
-   }
+   },
+   "mcp_tools": [
+    "solidworks_export_flat_pattern_dxf"
+   ]
   }
  ]
 }
