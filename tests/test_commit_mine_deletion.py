@@ -108,17 +108,25 @@ class CommitMineDeletionTest(unittest.TestCase):
     def test_existing_file_still_works(self) -> None:
         """★ 正常路径不受影响（★ 防「修删除把正常提交搞坏」）。
 
-        ⚠ 注意：这里必须**同时给 `--allow-deletions`** —— 因为 `commit_mine.py`
-          自身的工作树改动里有删除行（修复时替换了旧代码），第 0 步护栏会拦。
-          那是**正确行为**（事实 61），不是本次修复的回归。
-          ⇒ 本测试要证的是「**活文件仍能被 add 进索引**」，不是「护栏失效」。
+        ⚠ 这条测试**不能依赖工作树里恰好有改动** —— 我第一次写时就踩了：
+          提交之后 `commit_mine.py` 变干净，`--dry-run` 索引里 0 个文件 ⇒ 假红。
+          ⇒ 改为**自己造一个改动**（临时文件），跑完删掉。
+        ★ 另：必须同时给 `--allow-deletions`，因为若 `commit_mine.py` 本身
+          有删除行，第 0 步护栏会拦 —— 那是**正确行为**（事实 61），不是回归。
         """
-        proc = _run("--allow-deletions", "--dry-run", "tools/commit_mine.py")
-        self.assertEqual(proc.returncode, 0,
-                         "★ 正常文件提交被误伤（exit=%d）：%s"
-                         % (proc.returncode, (proc.stdout or "")[-300:]))
-        self.assertIn("tools/commit_mine.py", proc.stdout or "",
-                      "★ 活文件没进索引")
+        probe = ROOT / "tools" / "_commit_mine_probe_tmp.py"
+        probe.write_text('"""★ 临时探针：供 test_existing_file_still_works 用。"""\n',
+                         encoding="utf-8")
+        try:
+            proc = _run("--allow-deletions", "--dry-run", "tools/_commit_mine_probe_tmp.py")
+            self.assertEqual(proc.returncode, 0,
+                             "★ 正常文件提交被误伤（exit=%d）：%s"
+                             % (proc.returncode, (proc.stdout or "")[-300:]))
+            self.assertIn("_commit_mine_probe_tmp.py", proc.stdout or "",
+                          "★ 活文件没进索引")
+        finally:
+            probe.unlink(missing_ok=True)
+            subprocess.run(["git", "reset", "-q"], cwd=ROOT, capture_output=True)
 
 
 if __name__ == "__main__":
