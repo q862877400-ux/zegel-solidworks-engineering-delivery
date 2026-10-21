@@ -673,6 +673,53 @@ def _run_known_facts_triage_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_fact_provenance_gate() -> dict[str, object]:
+    """@brief 跑「量化断言须有出处」门禁（scripts/check_fact_provenance.py）。
+
+    ★ 来源：`docs/text-to-cad-lessons-verdict.md` §2.3 —— 经验①「事实/尺寸来源分级」
+      的**改造后采纳**形态。
+    ★ 判据：`docs/*.md` 的**增量行**里，形如「N 条 / N 个 / N% / N 秒 / N MB」的
+      量化断言，同一行或同段落内必须能找到可追溯出处。
+    ★ 存量不查（依据 §1.3 的既有范式，同 `scripts/check_provenance.py`）。
+    ★ 本门禁**自带负例自证**（selftest()）。
+    """
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_fact_provenance.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "量化断言出处门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+def _run_assumption_ledger_gate() -> dict[str, object]:
+    """@brief 跑「假设台账自洽」门禁（scripts/check_assumption_ledger.py）。
+
+    ★ 来源：`docs/text-to-cad-lessons-verdict.md` §6.3 —— 经验⑤「不追问但记录」
+      的**改造后采纳**形态。
+    ★ 判据三条：状态/档位封闭词表；confirmed/refuted 必须带证据；
+      `open` 的假设不得出现在 `capabilities.yaml` 里 `verified` 条目的 `evidence` 中。
+    ★ 本门禁**自带负例自证**（selftest()）。
+    """
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_assumption_ledger.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "假设台账门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_sketch_definition_gate() -> dict[str, object]:
     """@brief 跑草图完全定义门禁（scripts/check_sketch_definition.py）。
 
@@ -2238,6 +2285,24 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "known-facts 逐条处置门禁未通过（有事实没被判定）：\n"
             + str(kf.get("output", "")))
+    # ⚑ **量化断言出处门禁**（硬门禁）：★ 来源 `docs/text-to-cad-lessons-verdict.md` §2.3
+    #   —— 经验①「事实/尺寸来源分级」的改造后采纳形态。
+    #   ★ 判据：`docs/*.md` 增量行里的量化断言必须能追溯到出处。
+    #   ★ 存量不查（同 `scripts/check_provenance.py` 的增量范式）。
+    fp = _run_fact_provenance_gate()
+    if fp.get("status") == "fail":
+        raise AssertionError(
+            "量化断言出处门禁未通过（有断言没有可追溯出处）：\n"
+            + str(fp.get("output", "")))
+    # ⚑ **假设台账门禁**（硬门禁）：★ 来源 `docs/text-to-cad-lessons-verdict.md` §6.3
+    #   —— 经验⑤「不追问但记录」的改造后采纳形态。
+    #   ★ 核心判据：`open` 的假设不得充当 `verified` 能力的证据
+    #     （把「假设」与「证据」在机器层面隔开）。
+    al = _run_assumption_ledger_gate()
+    if al.get("status") == "fail":
+        raise AssertionError(
+            "假设台账门禁未通过（状态不自洽或未验证假设被当证据）：\n"
+            + str(al.get("output", "")))
     sk_def = _run_sketch_definition_gate()
     if sk_def.get("status") == "fail":
         raise AssertionError(
@@ -2441,11 +2506,14 @@ def run_release_check() -> dict[str, object]:
         #:   理由同 `py_syntax` 那条：★ 不进返回体，外面就**看不见它是跑了还是跳了**
         #:   （★ 静默跳过与没跑等价；★ 这条元门禁当场抓到过两次）。
         "official_md_claims": official_md,
-        "interface_ownership": ownership,
-        #: ★ 2026-10-01（轮 356）：**`.py` 语法门禁**必须汇总进返回体 ——
+        "interface_ownership": ownership,        #: ★ 2026-10-01（轮 356）：**`.py` 语法门禁**必须汇总进返回体 ——
         #:   元门禁当场报了「`py_syntax` 的结果**没有进返回体** ⇒ 『它跳过了/它没跑』在外面**看不见**
         #:   （★ 静默跳过与没跑等价）」。★ **这条正是元门禁存在的意义**（轮 191 的定则）。
         "py_syntax": py_syntax,
+        #: ★ 2026-10-19（text-to-cad 经验内化）：★ 两处必须同时加（元门禁在守）✓
+        #:   经验① 量化断言出处 / 经验⑤ 假设台账 —— 见 docs/text-to-cad-lessons-verdict.md
+        "fact_provenance": fp,
+        "assumption_ledger": al,
         #: ★ 2026-10-12（业主「那 60 条语料的标签给我打开」）：**评审稿编号门禁**
         #:   也必须进返回体 —— ★ 元门禁当场报了同一条
         #:   （「`rev_ids` 的结果**没有进返回体** ⇒ 静默跳过与没跑等价」）。
@@ -2540,6 +2608,10 @@ def run_release_check() -> dict[str, object]:
         "user_preference_writes": pref_writes,
         "verified_evidence": verified_ev,
         "interface_ownership": ownership,
+        #: ★ 2026-10-19（text-to-cad 经验内化）：★ 两处必须同时加（元门禁在守）✓
+        #:   经验① 量化断言出处 / 经验⑤ 假设台账 —— 见 docs/text-to-cad-lessons-verdict.md
+        "fact_provenance": fp,
+        "assumption_ledger": al,
         "missing": [],
     }
 

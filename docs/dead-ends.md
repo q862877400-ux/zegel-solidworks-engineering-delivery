@@ -74,7 +74,7 @@
 - ⚠ **不含**「加公差指示符」那一步 —— 它在**本机到不了**（见 `geometric_tolerance` 条目）
 - 轮 277 填实（空壳）：sw_gtol.insert_gtol(model) **零参**。真机 tools/verify_gtol_smoke.py **3/5**（insert_gtol 那半通过、加指示符那半到不了 => 见 geometric_tolerance 条目）
 
-### `headless_open_format_writing`（verified）
+### `headless_open_format_writing`（stitched）
 
 - ⚠ **2026-10-01 实测（轮 77）：本机没有 `OCP` / `cadquery` / `trimesh`**（`importlib.util.find_spec` 全为 `None`，磁盘上也没有 OCP 目录）。⇒ 本条 limitations 里涉及 **headless-occt** 的声明**在当前这台机器上无法复现**；`tests/` 里对 OCP 后端的用例**都 monkeypatch 掉了后端**（验的是 MCP 层传参，不是 OCP 真跑），`tests/test_headless_cad_writer.py` 更是**显式把 OCP 伪装成不可用**来测降级路径。⇒ 这些声明**不是假的**（代码里确有该路径、且降级行为有测试），但**其运行证据不在本机** ——按铁律 5 如实标注，等装了 `cadquery-ocp` 的机器上重跑才能升级为当机证据。
 
@@ -101,7 +101,7 @@
 
 - ★★★★ **修地基 D3（轮 263）修掉一个真 bug**：本模块原来用 **`CreateMassProperty`**（官方 **Obsolete**）⇒ ★★ **`Density` 恒为 1000.0，赋 AISI 1020（≈7900 kg/m³）也不变**（★ **看起来对、实际错**）；且 `Recalculate` 不可达（真机报 `<unknown>.Recalculate` —— **事实 36 的形态**）。★ 已改为 **`CreateMassProperty2` 优先 + 老入口兜底**，并把「用了哪个入口」记在对象上（`mp._dsh_entry_used`）⇒ ★ 修后赋材料 ⇒ **7900.0** ✓
 
-### `modeling_feature_readback_tools`（verified）
+### `modeling_feature_readback_tools`（stitched）
 
 - ★★★ **2026-10-07（接手轮 · 规格 216 T-216-06c）—— 改判：这一条**不修**，如实记为能力缺口**：★ 它原本以「**待修工作项**」的身份记在预选族基线里；★ 而**读台账之后结论变了** —— ★ 不是「没找到修法」，★ 而是**这条路在本后端上被证明走不通** ✗ ⇒ ★ **依据（本条目上文逐字）**：「累计 **6 种选法全部失败** … `IEntity.Select4` **没有 mark 参数**、而 `SelectByID2` 需要**名字**、**边与草图段都没有名字** ⇒ 「选中 2 个实体 + mark=1」这个官方前提，**在这条后端上我没能同时满足**」（★ 已按事实 53 强停）；★ 另：★ 官方入口 `IModelDoc2.InsertCompositeCurve()`（**零参**、回 `Boolean`、Remarks 要求 **mark=1** 选实体）★ 真机返回 **False** ✓ ⇒ ★★ **故它的修法不是「补选区」**（★ 补了也过不去 —— 同一堵墙）✗ ⇒ ★ 处置：★ 保留工具（★ 便于诊断）+ ★ 把边界写进本条 + ★ 预选族基线里那条**改判为「已定性·后端墙（不修）」**（★ 不再算待修，★ 但仍留在名单里 —— ★ 因为判据上它**仍然命中**，★ 只是**已裁定不修**）✓ ★ 与 `animation_export` 的 AVI **同型**：★ 边界已定位 ⇒ ★ 记 limitations、★ 不当「待办」挂着 ✓
 
@@ -113,7 +113,7 @@
 
 - ⚠ **2026-10-01 实测（轮 77）：本机没有 `OCP` / `cadquery` / `trimesh`**（`importlib.util.find_spec` 全为 `None`，磁盘上也没有 OCP 目录）。⇒ 本条 limitations 里涉及 **headless-occt** 的声明**在当前这台机器上无法复现**；`tests/` 里对 OCP 后端的用例**都 monkeypatch 掉了后端**（验的是 MCP 层传参，不是 OCP 真跑），`tests/test_headless_cad_writer.py` 更是**显式把 OCP 伪装成不可用**来测降级路径。⇒ 这些声明**不是假的**（代码里确有该路径、且降级行为有测试），但**其运行证据不在本机** ——按铁律 5 如实标注，等装了 `cadquery-ocp` 的机器上重跑才能升级为当机证据。
 
-### `motion_study`（verified）
+### `motion_study`（stitched）
 
 - 🔴 **同时修掉一个真 bug**：本模块 `import` 区**没有 `from pathlib import Path`**，而 `_motion_typelib_candidates()` 里用了 `Path(executable)` ⇒ **`NameError`** ⇒ **整条 Motion 路径在真机上根本走不通**。该 bug 能存活至今，是因为 `tests/test_sw_motion_audit.py` 把 `get_motion_study_manager` / `ensure_motion_type_library` **两个入口整个 monkeypatch 掉了** ⇒ **入口零覆盖**。⇒ 契约测试已补「入口可调用且不抛 NameError」的断言（不连真机）。
 

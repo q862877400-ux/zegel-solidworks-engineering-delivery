@@ -504,6 +504,24 @@
    "environment": "offline-static",
    "owner": "executing-agent",
    "runs_in": "release_check"
+  },
+  {
+   "gate": "check_fact_provenance.py",
+   "runner": "_run_fact_provenance_gate",
+   "kind": "release_static",
+   "reason": "**硬门禁**（2026-10-19 · text-to-cad 经验内化）：判「`docs/*.md` 增量行里的**量化断言**是否可追溯」。★★ 来源：`docs/text-to-cad-lessons-verdict.md` §2.3 —— 上游 `models/falcon_heavy/PROVENANCE.md:12-13` 的五栏来源表（`Sources | Type | Confidence | Geometry status`）的**改造后采纳**形态。★ 改造点：上游是建模任务级的组件表；本仓是能力仓库，照搬会与 `capabilities.yaml` 的 `level`/`evidence` 语义重叠 ⇒ **空转门禁**（事实 62）⇒ 收窄到「`docs/` 里的量化断言」。★ 存量不查：只对 `git diff origin/main` 的**新增行**收税（同 `scripts/check_provenance.py:11-13` 的既有范式），老文档天然在基线内。★ 本门禁**自带负例自证**：无出处的断言必报、带出处的不误报。⚠ **实测**：它上线后**当场抓到我自己裁决书里的 2 处**（`3,060 个` / `2,369 个` 无出处）⇒ 先报后补，不是摆设。⚠ 负例测试另抓到一处真缺陷：「见第 62 条事实」被误报（`事实\\s*\\d+` 只认一个方向）⇒ 已补 `第\\s*\\d+\\s*条事实`。",
+   "environment": "offline-static",
+   "owner": "executing-agent",
+   "runs_in": "release_check"
+  },
+  {
+   "gate": "check_assumption_ledger.py",
+   "runner": "_run_assumption_ledger_gate",
+   "kind": "release_static",
+   "reason": "**硬门禁**（2026-10-19 · text-to-cad 经验内化）：判「假设台账是否自洽，且**未验证假设不得充当证据**」。★★ 来源：`docs/text-to-cad-lessons-verdict.md` §6.3 —— 上游 `skills/sdf/references/llm-guardrails.md:26-35` 的五档来源枚举 + `:36`「Do not hide guessed values in raw XML」的**改造后采纳**形态。★ 改造点：上游的 ledger 是**建模任务内**的注释块；本仓需要**跨任务**的台账 ⇒ 新增 `docs/assumption-ledger.md`，与 `known-facts.md`（已验证事实）/`dead-ends.md`（已验证失败）互补，判据是「是否已验证」这个二值。★★ **核心判据（本条的真正价值）**：`open` 状态的假设**不得**出现在 `capabilities.yaml` 里 `verified` 条目的 `evidence` 字段中 —— ★ 把「假设」与「证据」在**机器层面**隔开（对应 `AGENTS.md` 验收 A4「verified 必须有我们自己的运行证据」）。★ 另两条判据：状态/档位封闭词表；`confirmed`/`refuted` 必须带证据（`-`/`待补`/`TBD` 都算没有）。★ 本门禁**自带负例自证**：三条判据各造一条违规、另造一条合规行必须不报。",
+   "environment": "offline-static",
+   "owner": "executing-agent",
+   "runs_in": "release_check"
   }
  ]
 }

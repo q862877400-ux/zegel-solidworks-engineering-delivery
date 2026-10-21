@@ -340,12 +340,13 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 五 门禁栈（**方法论沉淀**：把判定交给机器，而不是靠人记得）
 
-`scripts/check_*.py` 共 **50** 道；其中接进 `release_check.py`（发布前硬失败）的：
+`scripts/check_*.py` 共 **52** 道；其中接进 `release_check.py`（发布前硬失败）的：
 
 | 门禁 | 接进 `release_check`？ |
 |---|---|
 | `scripts/check_arity_tables_vs_reflection.py` | ✅ |
 | `scripts/check_assembly_doc_call_shape.py` | ✅ |
+| `scripts/check_assumption_ledger.py` | ✅ |
 | `scripts/check_backend_limited_completeness.py` | ✅ |
 | `scripts/check_backend_limited_evidence.py` | ✅ |
 | `scripts/check_cd_host_scope.py` | ✅ |
@@ -361,6 +362,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `scripts/check_dispatch_upstream_guard.py` | ✅ |
 | `scripts/check_enum_values_vs_reflection.py` | ✅ |
 | `scripts/check_env_pitfalls.py` | ✅ |
+| `scripts/check_fact_provenance.py` | ✅ |
 | `scripts/check_fact_single_home.py` | ✅ |
 | `scripts/check_gate_wiring.py` | ✅ |
 | `scripts/check_interface_member_ownership.py` | ✅ |
