@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 708 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 640 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -13,7 +13,7 @@
 
 | 我想… | 分类 | 条数 | 目录内文件前缀 |
 |---|---|---|---|
-| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 277 | `probe_*` |
+| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 251 | `probe_*` |
 | 把探针结论落成可复现的证据 | **取证** | 110 | `prove_*` |
 | 验证某能力端到端仍然可用 | **冒烟/回归** | 33 | `verify_*` |
 | 静态检查，违反即红（部分在 scripts/ 下） | **门禁** | 17 | `check_*` |
@@ -40,7 +40,7 @@
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
 | （未归入上面任何一类） | 其他 | 68 | — |
 
-## 探针（277 个）
+## 探针（251 个）
 
 > 用途：真机验证某个 API 到底能不能用 / 怎么调
 
@@ -60,7 +60,6 @@
 | `probe_assembly_family_successors.py` | ★ 真机验证装配族的**五条后继**（★ 一次跑完，★ 逐条记"能不能调"） |
 | `probe_autodimension_successor.py` | ★ 真机验证 `ISketch.AutoDimension2` → `ISketchManager.FullyDefineSketch` |
 | `probe_base_flange_params_recheck.py` | ★ 真机验 `base_flange_params` 并**测出钣金族的单位口径**（★ 阶段 3 · 第 8 个能力） |
-| `probe_batch81_tools.py` | ★ 批 81 工具的**真机抽查**（★ 按 `ToolSpec` 的契约调，不手调内部实现 —— AGENTS.md 的纪律） |
 | `probe_batch88_return_types.py` | ★ 真机验证批 88 里那 4 个"返回可能是 COM 对象"的工具 —— ★ 判据是**能不能过 JSON 边界** |
 | `probe_brep_evidence_contract.py` | @brief 探针：按 `_load_brep_evidence` 的**真形态**造 B-Rep 证据，验证「篡改必被拒」 |
 | `probe_capability_coverage.py` | @brief 探针：**哪些 `scripts/sw_*.py` 模块没有任何能力条目提到它** |
@@ -98,8 +97,6 @@
 | `probe_endcap_official_args.py` | ★ 按**官方例子的实参**重测 `InsertEndCapFeature3`（★ 铁律：例子给的是调用序与配方） |
 | `probe_enum_assembly_coverage.py` | @brief 探针：我们代码里写的官方枚举成员，分别落在**哪个 interop 程序集**里 |
 | `probe_equation_expression_power.py` | ★ 真机：★ `CreateEquationSpline2` 的**表达式能力**（★ 决定根过渡曲线能不能用真 trochoid） |
-| `probe_equation_rotation.py` | ★ 真机：★ `CreateEquationSpline2` 的 `RotationAngle` 与 `XOffset/YOffset` 可不可用 |
-| `probe_equation_unit_factor.py` | ★ 真机：★ **方程式曲线参数式的单位** —— 读回端点，与解析值比 |
 | `probe_equation_units.py` | ★ 真机：★ 方程式曲线的**单位**（★ 决定渐开线会不会又犯 1000× 的错） |
 | `probe_explicit_reject_family.py` | ★ 真机取证：`solidworks_part_sweep` 等「显式拒」四条，**经工具层必然失败**（区无路可给） |
 | `probe_export_magic_matrix.py` | @brief 探针：**导出格式矩阵** —— 逐个格式**读魔数**，判「名实相符」与否 |
@@ -127,15 +124,8 @@
 | `probe_gear_closed_profile.py` | ★ 真机：★ **完整齿轮轮廓** —— 每条边都是**真曲线**（★ 无一处折线逼近） |
 | `probe_gear_coincident.py` | ★ 真机：★ **用 `AddRelation(COINCIDENT)` 强制闭合** —— 比 `MergePoints` 更规范 |
 | `probe_gear_curve_by_curve.py` | ★ 真机：★ 逐条曲线**后**数段数 —— 找出那 6 条里哪一条没进去 |
-| `probe_gear_endpoints.py` | ★ 真机：★ **读回草图点的真实坐标** —— 判 6 条曲线是否**首尾重合** |
-| `probe_gear_lock_flags.py` | ★ 真机：★ **闭合齿廓的过定义根因** —— `LockStart`/`LockEnd` 是嫌疑 |
-| `probe_gear_merge_points.py` | ★ 真机：★ **用 `ISketch::MergePoints` 合并亚微米缝** ⇒ 让真曲线齿廓闭合可拉伸 |
-| `probe_gear_nolock.py` | ★ 真机：★ 闭合齿廓**不用** LockStart/LockEnd 能不能建（★ 只测这一格） |
-| `probe_gear_relation_closure.py` | ★ 真机：★ **用 `AddRelation(COINCIDENT=9)` 闭合真曲线齿廓**（★ 官方推荐路） |
-| `probe_gear_sketch_diagnosis.py` | ★ 真机：★ 诊断「真曲线齿轮草图为什么拉不出来」（★ 轮廓闭合性） |
 | `probe_gear_tooth_pattern.py` | ★ 真机：★ **规范做法建齿轮** —— 一个齿（真曲线闭合）⇒ 拉伸 ⇒ 圆周阵列 ×z ⇒ 加轮缘 |
 | `probe_gear_tooth_pattern2.py` | ★ 真机：★ **一个齿（真曲线）⇒ 拉伸 ⇒ 圆周阵列 ×z**（★ 规范做法） |
-| `probe_gear_true_curves.py` | ★ 真机：★ **用真渐开线 + 真摆线齿根建直齿轮**（★ 替掉 12 段折线那个野路子） |
 | `probe_gear_true_curves_full.py` | ★ 真机：★ **用真曲线建完整齿轮并回读**（★ 体积/包围盒/特征树 · ★ 判据 3 件一起） |
 | `probe_geterrorcode2.py` | ★ 真机试 `IFeature.GetErrorCode2(out bool IsWarning)` —— ★ 它到底调不调得动 |
 | `probe_getlines_count.py` | @brief 探针：`get_lines` 对**1 条直线**到底读回几条？（轮 140 冒烟里 12 对 1 的疑问） ## 疑问的来源 `tools/verify_centerline_smoke.py`：草图里**只画了 1 条中心 |
@@ -155,7 +145,6 @@
 | `probe_judge_alternatives.py` | ★ 真机：**换判据前先验判据** —— 在已知成功的场景上同时读「旧判据」与「新判据」 |
 | `probe_judge_object_type.py` | ★ 真机：**验一个新判据** —— 它落在**载荷对象**上（读 `Type`），而不是落在管理器的 `Count` 上 |
 | `probe_knit_then_thicken.py` | ★ 真机：**先缝合、再加厚**（★ 官方原话里的 "knitted surface" 直指这条路） |
-| `probe_lens_retriever_replica.py` | ★ 复刻 `dsh-mcp-lens` 的检索器，并在**我们的目录**上跑 —— ★ 用来核「1000 个工具都能精准找回」 |
 | `probe_linear_pattern_access_recheck.py` | ★ 真机：**重跑** `ILinearPatternFeatureData.AccessSelections`（★ 目标点名第一族的决定性实验） |
 | `probe_linear_pattern_baseline.py` | ★ 按**官方示例的调用序**把「线性阵列」建成（★ 阶段 2 · T1 · 补基线） |
 | `probe_linear_pattern_production_recheck.py` | ★ 真机复验：★ 换代后**生产函数 `linear_pattern`** 还能不能建成（★ 阶段 2 · T1 · 改完必验） |
@@ -173,7 +162,6 @@
 | `probe_mass_units_controlled.py` | @brief **D3 对照实验**：`IMassProperty2.Mass` 的物理单位 —— 用**已知密度材料**定死它 |
 | `probe_mate5_vs_createmate.py` | ★ 决定性对照：`AddMate5` 与后继 `CreateMate(MateData)` **谁真能建成 mate** |
 | `probe_mcp_stdio_handshake.py` | ★ 探针：对我们自己的 MCP 服务器做一次**真 JSON-RPC 握手**（★ 不连 SolidWorks） |
-| `probe_mesh_profile_matrix.py` | ★ 有界的**网格档位对照**：同一零件、四种设置各建一次网格，看谁成、谁卡、吃多少内存 |
 | `probe_mesh_settings_readonly.py` | ★ 只读：造零件+算例，然后**只读**网格设置那组数（★ 不写一个字节）—— 用来定单位口径 |
 | `probe_mesh_units.py` | @brief 探针：`default_element_size_and_tolerance` 的 **`units` 口径** —— 父进程 vs 子进程 |
 | `probe_mold_evidence_readers.py` | @brief 探针：`mold_evidence` 在真机上**全 None** —— 是"空件没有"还是"**读法不对**"？ ## 为什么（轮 172） `sw_mold.mold_evidence()` 在**新零件**上返回**全  |
@@ -201,8 +189,6 @@
 | `probe_revolve_oldstyle.py` | ★ 真机：**旋转曲面**走 `IModelDoc2`（**旧式** 4 参）—— 本仓此前只试过 `IFeatureManager` 那个 |
 | `probe_revolve_params_recheck.py` | ★ 真机：★ 建**旋转**特征（★ 已知角度 30°）⇒ 用 `revolve_params` 读回 ⇒ 判度/弧度 |
 | `probe_revolve_wall_units_recheck.py` | ★ 真机：★ 建**薄壁旋转** ⇒ 用 `revolve_params` 读回 ⇒ 量 `GetWallThickness` 的口径 |
-| `probe_rib_dome_params_recheck.py` | ★ 真机：★ 建**筋**与**圆顶**，★ 再用 `rib_params` / `dome_params` 读回 ⇒ ★ 量三个量 |
-| `probe_rib_polyline_recheck.py` | ★ 真机：★ 用**折线**轮廓建筋（★ 照官方示例的 `CreateLine ×3`）⇒ 读回 ⇒ 量口径 |
 | `probe_rib_preconditions.py` | @brief 探针：`InsertRib` 的**前置形态** —— 三个变体一次试掉（`rib` 真机失败的收敛） |
 | `probe_ruled_surface_on_feature.py` | ★ 真机：直纹曲面（T608）—— 官方原话里的「**on this feature**」该怎么落实 |
 | `probe_ruled_whats_wrong.py` | ★ 真机：直纹曲面失败后读 **What's Wrong**（★ 上轮留的"换观测手段"） |
@@ -229,7 +215,6 @@
 | `probe_sketch_enumeration_lag.py` | @brief 探针：核「刚建的草图」到底建了几个 —— ★★ **三种数法对照，暴露位置枚举滞后一格** |
 | `probe_sketch_getter_shapes.py` | @brief 探针：**所有**按类型取法的返回形状 —— 是「对象列表」还是「数值数组」？ ## 起因（2026-10-01 轮 140） `get_lines` 的 docstring 写「直线」，实测却是**数值数组**（每条直线 * |
 | `probe_sketch_object_routes.py` | @brief 探针：**从 model 取「草图对象」的三条路**，以及关掉草图后哪条还活着 |
-| `probe_sketch_units_after_fix.py` | ★ 验证：草图族修好没有（★ 真机 + 包围盒判据） |
 | `probe_skip_semantics.py` | @brief 探针：把「文档在、但逐模块表读不出来」当输入，看 `check_signature_audit_freshness` 怎么走 |
 | `probe_slot_and_point_shapes.py` | @brief 探针：`get_sketch_slots` / `get_sketch_points` 的形状（轮 142） |
 | `probe_spec209_b2.py` | ★ 真机：规格 209 · B4-2（idx 173 hem）+ B2-1（idx 336 unfold）—— 判据全是回读 |
@@ -242,17 +227,14 @@
 | `probe_spec209_b4_model_annotations.py` | ★ 真机：规格 209 · B4-5（idx 205 model_annotations）—— 判据 = 视图标注数的前后回读 |
 | `probe_spec209_hem_diag.py` | ★ 真机：hem 为什么回 None —— **假设驱动的诊断**（一次跑完，不是换着参数瞎试） |
 | `probe_spec209_hem_units.py` | ★ 真机：钣金厚度的**单位**到底是不是米？—— 用"厚度棱的长度"直接量 |
-| `probe_spec209_unfold_contract.py` | ★ 真机：unfold 的**选择契约**（固定面 mark 1 + 折弯 mark 4）—— 判据是**逐条回读 mark** |
 | `probe_spec209_unfold_fold.py` | ★ 真机：unfold（idx 336）+ fold（idx 155）—— ★ 判据全是回读（树增量 / 平展型式 / 逐条 mark） |
 | `probe_spec211_curvedriven.py` | ★ 探针：`FeatureLocalCurveDrivenPattern` —— ★ 一次试两项（曲线驱动阵列 / 零部件阵列） |
 | `probe_spec211_curvedriven_pre.py` | ★ 探针：`FeatureLocalCurveDrivenPattern` **第二步** —— ★ 追第二处成因「档位」 |
 | `probe_spec211_explodeline.py` | ★ 探针：`ISketchManager::InsertExplodeLineSketch` —— ★ 爆炸直线（★ 零参） |
-| `probe_spec211_external_members.py` | ★ 探针：那三个"从没查过"的参数式成员**到底存不存在** —— ★ 真机反射直调 |
 | `probe_spec211_flatsave.py` | ★ 探针：D 项（临时另存 → 展开 DXF）—— ★ 一个正例 + 两个负例 |
 | `probe_spec211_formtool.py` | ★ 探针：`InsertFormToolFeature` —— ★ 成形工具（★ 前置链**全在本机**） |
 | `probe_spec211_pdm.py` | ★ 探针：PDM 的真机可达性 —— ★ 判据是**抛不抛 + 拿不拿得到**（★ 铁律 5 的现场） |
 | `probe_spec211_scale.py` | ★ 探针：`InsertScale` 的建成 / 体积 `x³` 判据 / 官方必然失败负例 / 我方工程选择 |
-| `probe_spec211_section_area_units.py` | ★ 探针：`GetSectionProperties2` 的**面积单位**（★ 用 `Face.GetArea()` 做基准回读） |
 | `probe_spec211_section_properties.py` | ★ 探针：`IModelDocExtension::GetSectionProperties2` 的建状态 / 正例 / 官方必然失败负例 / 副作用 |
 | `probe_spec211_section_props_forms.py` | ★ 探针：`GetSectionProperties2` 的形态判定（★ 与事实 386 那类"后端造不出包装"是不是同一形态） |
 | `probe_spec211_section_units_cube.py` | ★ 探针：用**正方体**坐实 `GetSectionProperties2` 的面积单位（★ 六面同面积 ⇒ 消除面序干扰） |
@@ -263,7 +245,6 @@
 | `probe_spec211_untrim.py` | ★ 探针：`InsertUntrimSurface2`（取消剪裁）—— ★ 三条**必然失败**的负例 + 官方前置的实证 |
 | `probe_spec211_weld_misc.py` | ★ 探针：B3 余下两项的**参数式入口** —— ★ 角撑板（`InsertGussetFeature3`）· 圆角焊缝（`…Feature3`） |
 | `probe_spec211_weldsymbol.py` | ★ 探针：`IDrawingDoc::InsertWeldSymbol` —— ★ 焊接符号（★ 前置链全在本机） |
-| `probe_spec211_weldsymbol_forms.py` | ★ 探针：焊接符号的**第二个成因**（★ `Symbol` 形态 × 开关位）—— ★ 每组都回读 |
 | `probe_spec211_weldsymbol_real.py` | ★ 探针：焊接符号的**真 API** —— ★ `IModelDoc2::InsertWeldSymbol3`（零参）+ `IWeldSymbol` |
 | `probe_spec211_weldtrim.py` | ★ 探针：`InsertWeldmentTrimFeature2` —— ★ 先"查行为" + ★★ 两个数组形参的**形态判定** |
 | `probe_spec211_weldtrim_opt.py` | ★ 探针：`InsertWeldmentTrimFeature2` **第三步** —— ★ 用**正确档位** `swEndConditionTrim(4)` |
@@ -271,10 +252,7 @@
 | `probe_spec213_b2_modules.py` | ★ 探针：验 `scripts/` 里**新缝的两个模块函数**（B2 的产出）—— ★ 不是重复验探针内部实现 |
 | `probe_spec213_b2b_modules.py` | ★ 探针：验 `scripts/` 里**新缝的三个装配/阵列模块函数**（B2b 的产出）—— ★ 不是重跑探针实现 |
 | `probe_spec220_append_arms.py` | ★ 探针：只读判别"两选面"的 Append 语义（SelectByID2 臂 与 Select4 臂） |
-| `probe_spec220_bead.py` | ★ 探针：圆角焊缝（`InsertFilletBeadFeature2`）的真机建成与回读 |
 | `probe_spec220_boundary.py` | ★ 探针：边界特征（官方 `IFeatureManager::InsertNetBlend`）两个 Type 的建成与回读 |
-| `probe_spec220_cosmetic_bead.py` | ★ 探针：装饰焊缝（`InsertCosmeticWeldBead`）的真机建成与回读 |
-| `probe_spec220_member_shape.py` | ★ 探针：只读问清 `GetBodies2` / `GetFaces` / `GetBox` / `GetFeatureCount` 的形态 |
 | `probe_spec_glob_gate.py` | @brief 负例：`check_spec_acceptance_paths` 对 glob 的处理必须**两边都对** |
 | `probe_spline_creation.py` | @brief 探针：`sw_part.sketch_spline` 到底建没建成？（轮 141 里 `segments=0` 的追问） ## 疑问 `tools/probe_sketch_getter_shapes.py`：画 1/2 条样 |
 | `probe_spline_fix.py` | ★ 真机验证：修好后的 `sw_part.sketch_spline` + 新工具 `solidworks_sketch_spline` 能否建成 |
@@ -290,7 +268,6 @@
 | `probe_surfcut_recursive.py` | ★ 真机：**递归遍历**（含子特征）找 `SurfCut` —— 上一轮留的下一步 |
 | `probe_sweep_fixed_e2e.py` | ★ 真机验证 `part_sweep` 的修复：★ 带 `profile_sketch`/`path_sketch` 走**契约** ⇒ 建不建得成 |
 | `probe_sweep_oldstyle.py` | ★ 真机：`IModelDoc2.InsertSweepRefSurface2`（**旧式扫描曲面**）—— 能否推翻「到不了」 |
-| `probe_sweep_params_recheck.py` | ★ 真机：★ 建一个**扫描**特征 ⇒ 用 `sweep_params` 读回 ⇒ 量两个长度量的口径 |
 | `probe_sweep_set_profile_path.py` | ★ 决定性验证：曲面扫描**设上 `Profile` / `Path` 属性**后再 `CreateFeature` |
 | `probe_sweep_surface_dedicated.py` | ★ 真机：**扫描曲面**走它的**专用方法** `IFeatureManager.InsertSweepSurface2/3` |
 | `probe_sweep_surface_skip_access.py` | ★ 真机：扫描曲面**跳过 `AccessSelections`** 直接 `CreateFeature`（★ 新假设） |
@@ -307,7 +284,6 @@
 | `probe_thicken_matrix.py` | ★ 真机：`FeatureBossThicken` 的**参数矩阵**（★ 上一轮单组参数回了 `None`） |
 | `probe_thicken_obsolete_entry.py` | ★ 真机：试**废弃入口** `IModelDoc2.FeatureBossThicken`（3 参）—— 上轮留下的假设 |
 | `probe_thicken_tool.py` | ★ 真机验证：新工具 `solidworks_thicken` 能否**按工具层契约**建成加厚 |
-| `probe_tool_official_term_alignment.py` | ★ 检验一个假设（业主 2026-10-04）：「我们的英文词与官方文档没对应，对应上准确率就好了」 |
 | `probe_tool_rag_cn_vs_en.py` | ★ 中/英检索对照实验（离线，不碰 SolidWorks、不改任何文件） |
 | `probe_tool_rag_feasibility.py` | ★ 可行性实验：**在本仓 433 个工具上内建一个检索（BM25）**，用真实任务查询量命中率 |
 | `probe_tool_surface_language_overlap.py` | ★ 量化「中文查询 vs 英文工具面」的词元重叠 —— ★ 这是检索失败的结构性成因（不是算法问题） |
@@ -317,9 +293,7 @@
 | `probe_uncalled_helpers.py` | @brief 探针：找「**定义了却从没被调用**」的函数 —— 死守卫的**另一种形态** |
 | `probe_unexposed_functions.py` | @brief 反向全景：`scripts/sw_*.py` 的公开函数里，有多少**没被暴露成 MCP 工具** |
 | `probe_union_adopt_b1.py` | ★ 真机：规格 209 · B1 批的 4 件活逐个试（★ 判据按能力分：回读状态 / 回读属性 / 回读清单） |
-| `probe_unit_decisive.py` | ★ 决定性实验：同文档、同会话、单变量 —— 把 COM 侧单位钉死 |
 | `probe_unit_declarations.py` | @brief 探针：`scripts/sw_*.py` 里**哪些模块带长度参数、却没声明单位** |
-| `probe_unit_suspects.py` | ★ 单位实测：用「包围盒/体积」回读判据，验证 4 个可疑函数到底是毫米还是米 |
 | `probe_weldment_cutlist_dispid.py` | ★ 回筛：结构系统的 `InsertWeldmentCutList{,2}` 到底能不能调（`dispid` 路径） |
 | `probe_weldment_cutlist_recheck.py` | ★ 真机：核「结构系统（焊件）」那一族 —— `InsertWeldmentCutList2` 的**真实形态**是什么 |
 | `probe_window_vs_graphics.py` | @brief 探针：`SaveBMP(0,0)` 与 `SaveAs3` 的宽度差，是不是「窗口 vs 绘图区」？ ## 待解的疑问（轮 146/147 留下的「未查明」） ``` 同一份文档、同一个时刻： SaveBMP(0,0) ⇒ ( |
@@ -812,55 +786,13 @@
 | `sw_dialog_watchdog.py` | @brief SolidWorks 系窗口**看门狗** —— ⚠⚠⚠ 【已被否决 —— 不是正解】（见 known-facts 176） ## ⚠⚠⚠ **用户 2026-10-01 明确否决了这个方案，它不是正解** ``` 用户原话： |
 | `sw_guard.py` | ★ **带弹窗哨兵的调用护栏**：真机调用从它走 ⇒ **弹窗被主动发现、主动点掉、内容随返回值上来** |
 
-## 按轮次临时（43 个）
+## 按轮次临时（1 个）
 
 > 用途：按轮次/批次命名的临时活（t1_/t4_/w6_/s206_ 等），不是一种长期用途
 
 | 脚本 | 用途（第一句，≤120 字） |
 |---|---|
-| `s206_handoff_r39.py` | 第 39 轮：给 tasks.md 追加交接增补（只追加，不改已有内容 |
-| `s206_handoff_update.py` | ★ 第 17 轮增补：把 tasks.md 的交接节更新到最新状态（★ 只追加，不重写） |
-| `s206_number_selfcheck.py` | ★ 自查：我这一线的产出物之间，**共享数字**是否一致（★ SC-5 的落点：口径不许漂） |
-| `t1_apply_aliases_to_doc.py` | ★ T1-4：把采纳的别名按 D-2 **只追加**一行进那 10 个工具的 `doc`（不动 schema 契约、可回退） |
-| `t1_build_alias_table.py` | ★ T1-3：生成别名表 `docs/tool-aliases.md` + 裁判输入（★ 带诚实口径） |
-| `t1_close_out.py` | ★ T1 收口：修正 `docs/tool-aliases.md`（采纳 10 → 5）+ 写事实 520 的正文 |
-| `t1_filter_alias_candidates.py` | ★ T1-1：从 C5 手核数据里**机械筛**出可信的「别名 → 工具」候选对 |
-| `t1_joint_gain.py` | ★ T1-5b：量**联合**（十个别名同时装）下的逐工具增益 —— ★ 平均值不足以决定去留 |
-| `t1_measure_alias_gain.py` | ★ T1-2：别名候选的**增益测量** —— 别名必须「挣到它的字节」 |
-| `t1_remeasure_sc1.py` | ★ T1-5：带口径的复测（SC-1）—— ★ 两面都测，避免只报有利的那一面 |
-| `t1_revert_nonearning_aliases.py` | ★ T1-6：按 D-2 判据收口 —— 留下**真提升**的 5 个别名，回退其余 5 个 |
-| `t1_tally_alias_gate.py` | ★ T1-4：把裁判判定并进别名表 —— ★ 只采纳 `same`，其余标待复核/弃用 |
-| `t2_filter_checkable_preconditions.py` | ★ T2-1/T2-2：从 534 条前置里**机械分出可机检的那些**（★ 会话/文档/选择/保存态） |
 | `t2_intersect_past_errors.py` | ★ T2-4 的交集法：把「102 条可机检前置」与「本仓自己的过去错误笔记」交叉，挑出下一批该写断言的 |
-| `t2_sample_vs_checkable.py` | ★ T2-4 缺口量化：我写的 3 个样板，在不在这 102 条「可机检前置」清单里？ |
-| `t2_write_precondition_gaps.py` | ★ T2-5：产出「哪些能力的前置未覆盖」清单给主线（★ D-5：只出清单，不改 level） |
-| `t3_2_spelling_pairs.py` | ★ T3-2：把已核验的错拼名逐个配对到本机真名（编辑距离），出「错拼 → 正确名」表 |
-| `t4_2_more_specific.py` | ★ T4-2 机械复核：3709 条 example_more_specific 分类 + 与我们真调用交叉 |
-| `t4_2_more_specific_b.py` | ★ T4-2 机械复核（单遍版）：3709 条 example_more_specific 分类 + 与我们真调用交叉 |
-| `t4_2_sample20.py` | ★ T4-2 抽样表：258 个「与我们有关」的成员里，取条目最多的 20 个，抽齐判读材料 |
-| `t4_3_build_lookup.py` | ★ T4-3：建「写码前必查表」+ 量 AGENTS.md 的指令预算余量（★ 超预算会静默截断） |
-| `t4_extract_unit_mark_conflicts.py` | ★ T4-1：从 C4 的 2.6 MB 产出里抽出 `unit_diff`(15) + `mark_diff`(10) 共 25 条，出逐条表 |
-| `t4_fix_used_criterion.py` | ★ T4-1 修正：用 `ast` 精确区分「真调用」与「注释/文档里的提及」—— 修正上一轮的高估 |
-| `t4_judge_materials.py` | ★ T4-1 第三步（机械抽取）：把那 8 个「我们用到」的成员的判读材料抽到一处 |
-| `t4_mark_audit.py` | ★ T4-1 机械判读：mark_diff 冲突下，我们的调用点是否用了「能带 mark 的选择 API」 |
-| `t4_member_crosscheck.py` | ★ T4-1 逐条核（机械部分）：25 条冲突涉及的成员，我们的代码用没用到、用在哪 |
-| `t4_unit_audit.py` | ★ T4-1 机械判读（unit_diff）：我们的调用点附近有没有单位换算，换算方向是什么 |
-| `t5_3_register_recon.py` | ★ T5-3：登记两个 recon 目录的原始 JSON 为**只读数据集**（★ 建议稿，不替主线做决定） |
-| `w2_candidates.py` | W2 候选筛选：工程图族里**已实现、首参可注入、且没挂**的函数 |
-| `w2_gap_check.py` | W2：把 ⑪工程图 的 49 个缺口名逐个核「我们是否已有实现」 |
-| `w3_deep.py` | ★ **无文件头说明**（该脚本没写 docstring / 首行注释） |
-| `w3_gap.py` | ★ **无文件头说明**（该脚本没写 docstring / 首行注释） |
-| `w3_have.py` | ★ **无文件头说明**（该脚本没写 docstring / 首行注释） |
-| `w3_props.py` | ★ **无文件头说明**（该脚本没写 docstring / 首行注释） |
-| `w4_cand.py` | : ★ 本仓库根（★ 2026-10-03 合并后自定位） |
-| `w4_semantics.py` | : ★ 本仓库根（★ 2026-10-03 合并后自定位） |
-| `w4_sketch.py` | ★ **无文件头说明**（该脚本没写 docstring / 首行注释） |
-| `w5_feature.py` | : ★ 本仓库根（★ 2026-10-03 合并后自定位） |
-| `w6_cand.py` | : ★ 本仓库根（★ 2026-10-03 合并后自定位） |
-| `w6_cand2.py` | : ★ 本仓库根（★ 2026-10-03 合并后自定位） |
-| `w6_gap.py` | : ★ 本仓库根（★ 2026-10-03 合并后自定位） |
-| `w6_shapes.py` | : ★ 本仓库根（★ 2026-10-03 合并后自定位） |
-| `w7_sim.py` | W7 前置：① 先查四家有没有**仿真载荷**的判据（用户纪律 §5.0） |
 
 ## 其他（68 个）
 
@@ -939,17 +871,12 @@
 
 ---
 
-## 索引自身的债：无文件头说明的脚本（6 个）
+## 索引自身的债：无文件头说明的脚本（1 个）
 
 这些脚本没有 docstring 也没有首行注释 ⇒ **索引只能列出名字，说不出用途**。
 补一行注释就能让它们可检索：
 
 - `add_s209_b4f_capabilities.py`
-- `w3_deep.py`
-- `w3_gap.py`
-- `w3_have.py`
-- `w3_props.py`
-- `w4_sketch.py`
 
 ---
 

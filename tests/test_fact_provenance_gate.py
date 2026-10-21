@@ -84,6 +84,24 @@ class FactProvenanceGateTest(unittest.TestCase):
                 self.assertEqual(self.gate.scan_text(line), [],
                                  "★ 结构性行被误扫：%r" % line)
 
+    def test_quotation_marker_is_not_a_backdoor(self) -> None:
+        """★★ 引文标记（「原文引述」）只免掉**引文里的**数字，不免掉自己写的断言。
+
+        ★ 为什么专门测这条：给门禁加豁免词是**最容易开后门**的改动 ——
+          一旦「原文引述」被当成万能通行证，任何断言加四个字就能绕过门禁。
+        ★ 判据两侧都要成立：
+          ① 带标记的引文 ⇒ 放过（数字的责任方是被引的那份原文）；
+          ② 不带标记的同类断言 ⇒ **必须报**（否则标记就成了后门）。
+        """
+        #: ① 引文：放过
+        quoted = "某脚本说「共 534 条」（原文引述，文件已删）"
+        self.assertEqual(self.gate.scan_text(quoted), [],
+                         "★ 引文标记未被接受：%r" % (self.gate.scan_text(quoted),))
+        #: ② 同一句话去掉标记 ⇒ 必须报（证明标记是**必要条件**，不是装饰）
+        bare = "某脚本说「共 534 条」"
+        self.assertTrue(self.gate.scan_text(bare),
+                        "★ 后门：去掉引文标记后仍被放过 ⇒ 标记成了万能通行证")
+
     def test_version_strings_not_quantities(self) -> None:
         """★ 版本号不是量化断言（★ `0.7.22` / `2.0` 不该报）。"""
         for text in ("版本 `0.7.22`", "schema_version 是 `2.0`", "见第 62 条事实"):

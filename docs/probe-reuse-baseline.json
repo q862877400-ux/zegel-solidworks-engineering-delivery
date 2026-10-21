@@ -98,14 +98,6 @@
    "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_revolve_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
   },
   {
-   "probe": "tools/probe_rib_dome_params_recheck.py",
-   "tool": "solidworks_dome_params",
-   "module": "sw_feature_readback",
-   "function": "dome_params",
-   "cited_in_capabilities": false,
-   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_dome_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
-  },
-  {
    "probe": "tools/probe_shell_params_recheck.py",
    "tool": "solidworks_shell_params",
    "module": "sw_feature_readback",
@@ -120,14 +112,6 @@
    "function": "insert_fill_surface_report",
    "cited_in_capabilities": false,
    "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_surface_fill 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
-  },
-  {
-   "probe": "tools/probe_sweep_params_recheck.py",
-   "tool": "solidworks_sweep_params",
-   "module": "sw_feature_readback",
-   "function": "sweep_params",
-   "cited_in_capabilities": false,
-   "reason": "★ 遗留存量（2026-10-07 本门禁上线时的基线）：该探针写于 solidworks_sweep_params 暴露**之前**，验的是**工具层之下那一层**（实现函数），且它记录了当时的失败/成功形态（删掉会丢掉证据链） ⇒ ★ 保留为历史证据；★ **新探针不许照此办理** —— 已有工具就走工具层 ✓"
   },
   {
    "probe": "tools/prove_chamfer_geometry.py",
