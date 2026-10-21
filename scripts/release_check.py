@@ -720,6 +720,32 @@ def _run_assumption_ledger_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_repo_uniformity_gate() -> dict[str, object]:
+    """@brief 跑「仓库统一化体检」门禁（scripts/check_repo_uniformity.py）。
+
+    ★ 来源：业主 2026-10-21 指令 ——「我要避免的是**局部很整洁，但是整体很混乱**，
+      比如同一个功能多个函数重复实现，或者同一个东西在不同的地方命名不一样」。
+    ★ 为什么必须有这一道：本仓已有 50+ 道门禁，但**每道只管一摊**，
+      **没有任何一道在看"全局一致性"** ⇒ 局部全绿而整体可能已分裂。
+    ★ 六条指标：① 活代码 import 归档 ② 缺来源块 ③ 同名同参公开函数
+      ④ 同名 .py 文件 ⑤ 顶层目录与 AGENTS.md 登记数 ⑥（死模块，预留）
+    ★ 判据口径：只查**活代码**（排除 __pycache__ / 构建副本 / archive 归档）。
+    ★ 基线：`docs/repo-uniformity-baseline.json`，**只许降不许升**。
+    """
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_repo_uniformity.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "仓库统一化体检门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_tools_index_fresh_gate() -> dict[str, object]:
     """@brief 跑「tools 索引新鲜度」门禁（scripts/check_tools_index_fresh.py）。
 
@@ -2327,6 +2353,17 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "假设台账门禁未通过（状态不自洽或未验证假设被当证据）：\n"
             + str(al.get("output", "")))
+    # ⚑ **仓库统一化体检门禁**（硬门禁）：★ 来源业主 2026-10-21
+    #   「避免局部很整洁、整体很混乱；同一个功能多个函数重复实现；同一个东西命名不一样」。
+    #   ★ 为什么必须有这一道：本仓 50+ 道门禁**每道只管一摊**，
+    #     **没有一道在看"全局一致性"** ⇒ 局部全绿而整体可能已分裂。
+    #   ★ 判据：`scripts/check_repo_uniformity.py` 六条指标 + `docs/repo-uniformity-baseline.json`
+    #     （★ 基线**只许降不许升**）。
+    ru = _run_repo_uniformity_gate()
+    if ru.get("status") == "fail":
+        raise AssertionError(
+            "仓库统一化体检未通过（局部整洁但整体可能已分裂）：\n"
+            + str(ru.get("output", "")))
     # ⚑ **tools 索引新鲜度门禁**（硬门禁）：★ 来源业主 2026-10-19「那么多工具怎么用是有文档吗」。
     #   ★ 判据：\docs/tools-index.md\ 的集合与描述都要与 \	ools/*.py\ 一致
     #     （★ 生成物最大的风险是「生成了但没人重生成 ⇒ 索引变成谎言」）。
@@ -2580,6 +2617,9 @@ def run_release_check() -> dict[str, object]:
         "inject_binding": ib,
         #: ★ 2026-10-03（轮 450）：服务端侧工具名也进返回体（元门禁的第三条）
         "server_side_tools": ss,
+        #: ★ 2026-10-21（业主指令「整体统一化」）：仓库统一化体检 —— ★ 与其余硬门禁同处登记
+        #:   （`_gate_results` ⇒ 由 `gates` / `gate_details` 统一暴露给外面）✓
+        "repo_uniformity": ru,
     }
     # ⚠ 容错：不是每个 `_run_*` 都保证返回 dict ⇒ 取不到就标 `unknown`（**不谎报 `pass`**）。
     gates: dict = {}

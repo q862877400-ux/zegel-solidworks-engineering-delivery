@@ -531,6 +531,15 @@
    "environment": "offline-static",
    "owner": "executing-agent",
    "runs_in": "release_check"
+  },
+  {
+   "gate": "check_repo_uniformity.py",
+   "runner": "_run_repo_uniformity_gate",
+   "kind": "release_static",
+   "reason": "**硬门禁**（2026-10-21 业主指令）：判「**整体是否统一化**」—— 业主原话「避免局部很整洁但整体很混乱；同一个功能多个函数重复实现；同一个东西在不同的地方命名不一样」。★★ 为什么必须有这一道：本仓 50+ 道门禁**每道只管一摊**，**没有一道在看全局一致性** ⇒ 局部全绿而整体可能已分裂。★★ 判据**全部来自权威，不自定义**：① 命名/导入 = **Google Python Style Guide**（snake_case/PascalCase/导入分组/循环依赖 code smell），用 **ruff --select E,F,I,N,UP** 机械执行；② 重复代码（同一功能多实现）= **pyscn Type 1-4 克隆检测**；③ 来源块 = AGENTS.md §十八；④ 同名 .py = AGENTS.md 铁律 3 引申。★ 基线在 docs/repo-uniformity-baseline.json，**只许降不许升**。⚠ 工具未安装时**FAIL 而非跳过**（静默跳过与没跑等价 —— 事实 62）。",
+   "environment": "offline-static",
+   "owner": "executing-agent",
+   "runs_in": "release_check"
   }
  ]
 }

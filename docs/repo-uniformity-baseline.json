@@ -1,0 +1,34 @@
+{
+ "_★说明": "仓库统一化体检基线。★ 基线只许降不许升 —— 每次降低后同步改这里。",
+ "_★判据出处": {
+  "ruff": "Google Python Style Guide（https://google.github.io/styleguide/pyguide.html） —— snake_case/PascalCase/导入分组/循环依赖 code smell；用 ruff --select E,F,I,N,UP 执行",
+  "pyscn": "pyscn Type 1-4 克隆检测（https://github.com/ludo-technologies/pyscn） —— 同一功能多实现；用 pyscn analyze --select clones 执行",
+  "source_block": "AGENTS.md §十八「新建 .py 的模板：docstring 一行 + 来源块紧随其后」",
+  "dup_filename": "AGENTS.md 铁律 3（结构按顶层白名单）引申：跨目录同名 .py 视为重复实现嫌疑"
+ },
+ "measured_at": "2026-10-21",
+ "ruff_total_ceiling": 26373,
+ "clone_groups_ceiling": 2501,
+ "no_source_block_ceiling": 75,
+ "dup_filename_allow": [],
+ "_★待裁决": {
+  "audit_call_arity.py": "scripts/(337行·有来源块) vs tools/(149行·无来源块) —— 疑 tools/ 为旧版，待删",
+  "drawing_spec.py": "scripts/ 是 25 行 importlib 转发壳、真源在 subskills/ —— 属【兼容入口】，应登记豁免"
+ },
+ "_★下调记录": [
+  {
+   "at": "2026-10-21",
+   "from": [
+    26378,
+    2515,
+    76
+   ],
+   "to": [
+    26373,
+    2501,
+    75
+   ],
+   "why": "batch116 后 + 删除 tools/audit_call_arity.py 旧版 + 重生成派生文档；★ 基线只许降 ✓"
+  }
+ ]
+}
