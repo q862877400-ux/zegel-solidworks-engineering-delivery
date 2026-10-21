@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 640 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 625 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -30,7 +30,6 @@
 | 对某类数据做分析 | **分析** | 2 | `analyze_*` |
 | 对候选做判定 | **裁判** | 6 | `judge_*` |
 | 查某现象为什么发生（不改任何东西） | **诊断** | 10 | `diag_*` |
-| 往台账/清单里批量加条目（★ 一次性居多） | **批量追加** | 11 | `add_*` |
 | 按已知根因批量改文件 | **修复** | 3 | `fix_*` |
 | 从官方源或日志里抽出结构 | **提取** | 3 | `extract_*` |
 | 抽几条核对 | **抽检** | 3 | `spotcheck_*` |
@@ -38,7 +37,7 @@
 | 统计判定结果 | **计票** | 2 | `tally_*` |
 | 弹窗处置相关（配 sw_guard 用） | **弹窗** | 2 | `modal_*` |
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
-| （未归入上面任何一类） | 其他 | 68 | — |
+| （未归入上面任何一类） | 其他 | 64 | — |
 
 ## 探针（251 个）
 
@@ -701,24 +700,6 @@
 | `diag_selection_lifetime.py` | ★ 单变量隔离：选区在 `_pick_faces` 之后、工具读取之前，**到底被哪一步清掉** |
 | `diag_weldment_feature_kind.py` | ★ 确认那个体是不是**焊件特征** —— 用 `IModelDoc2.FirstFeature`（属性）+ `GetTypeName2` |
 
-## 批量追加（11 个）
-
-> 用途：往台账/清单里批量加条目（★ 一次性居多）
-
-| 脚本 | 用途（第一句，≤120 字） |
-|---|---|
-| `add_polarity_legend.py` | ★ 给 F/G/H/I/J 那 15 份对账稿各加**一行口径图例**（★ 处置 `JUDGE-F_G_H_I_J` 🔴 #1） |
-| `add_provenance_blocks.py` | @brief 给本次迁移改过的文件插入 `# ── 来源 ──` 块（check_provenance.py 要求） |
-| `add_s209_b1_capabilities.py` | ★ 规格 209 · B1 批：把 4 条能力**追加**进 capabilities.yaml（★ 只做加法，先看 diff --stat） |
-| `add_s209_b2_capabilities.py` | ★ 规格 209 · B2-1/B4-2/B4-4：把 unfold / fold / hem 三条能力写进 capabilities.yaml |
-| `add_s209_b2b_capabilities.py` | ★ 规格 209 · B2-2（idx 34）：把 `drawing_bom_balloons` 能力写进 capabilities.yaml |
-| `add_s209_b2c_capabilities.py` | ★ 规格 209 · B2-3（idx 52）：把 `drawing_center_lines` 能力写进 capabilities.yaml |
-| `add_s209_b4a_capabilities.py` | ★ 规格 209 · B2-4（idx 175 blank_sketch）：把 `sketch_visibility` 能力写进 capabilities.yaml |
-| `add_s209_b4c_capabilities.py` | ★ 规格 209 · B4-3（idx 181 intersect）：把 `part_intersect` 能力写进 capabilities.yaml |
-| `add_s209_b4e_capabilities.py` | ★ 规格 209 · B4-5（idx 205）：把 `drawing_model_annotations` 能力写进 capabilities.yaml |
-| `add_s209_b4f_capabilities.py` | ★ **无文件头说明**（该脚本没写 docstring / 首行注释） |
-| `add_s211_b1_capabilities.py` | ★ 规格 211 · B1-1：把「截面属性」登记进 `capabilities.yaml`（★ 照仓里既有 adder 的做法） |
-
 ## 修复（3 个）
 
 > 用途：按已知根因批量改文件
@@ -794,18 +775,15 @@
 |---|---|
 | `t2_intersect_past_errors.py` | ★ T2-4 的交集法：把「102 条可机检前置」与「本仓自己的过去错误笔记」交叉，挑出下一批该写断言的 |
 
-## 其他（68 个）
+## 其他（64 个）
 
 > 用途：未按前缀归类的脚本
 
 | 脚本 | 用途（第一句，≤120 字） |
 |---|---|
 | `aggregate_audit_vs_official.py` | ★ 批量抽 bunny 那 30 路对比稿的**结构与计数**，找规律（★ 业主指令：等对比稿到齐后批量总结） |
-| `amend_s209_b1_capabilities.py` | ★ 规格 209 · B1 批：补齐/更正 capabilities.yaml（① idx 235+236 的判据修好 ② 追加 idx 209） |
-| `amend_s209_b3_capabilities.py` | ★ 规格 209 · B3-1：把 idx 115+145（edges/faces 合并）的证据补进既有 `selection_helpers` 条目 |
 | `annotate_obsolete_form.py` | ★ 给废弃命中补一维标注「方法 ↔ 属性」（★ 任务书阶段 2 要的那一类 · 轮 135 · 第二版） |
 | `apply_dsh_sw_preset.py` | ★ 把生成好的 preset 块**安全地**追加进 DSH 活配置（★ 校验不过就自动回滚） |
-| `apply_enum_dispositions.py` | ★ 给「自称官方却无 `# swXxx` 覆盖」的模块级整数表**逐张补表级出处声明**（spec 224） |
 | `arity_negative_case.py` | @brief **故意写错**的 arity 负例 —— 给 `scripts/audit_call_arity.py` 当"应该抓住"的输入 |
 | `bunny_toolspec_pipeline.py` | ★ Bunny 扇出 → ToolSpec 批次 的**五步管线驱动**（collect → backfill → gate → remaining → build） |
 | `capability_gap.py` | @brief 按**能力**对照各域缺口（补上广度地图只数 MCP 工具名的口径缺陷） |
@@ -844,7 +822,6 @@
 | `make_fixture_library.py` | ★ 建/校验夹具库：真实件一次性复制进来、冻结哈希清单 |
 | `make_union_workload_349.py` | ★ 编全 349 条的工作量清单（tier-aware）：①档只验证，②③档深调 |
 | `map_tools_to_members.py` | ★ **筛选器**：把 277 个工具映射到「它真正调的 COM 成员」⇒ 再投影到官方结构上 |
-| `merge_chunks.py` | ★ 把分块跑出的若干个 JSON 合并成一份（★ 分块是为了绕开一次未复现的卡顿） |
 | `metric_scope.py` | ★ 指标的「口径」注册表 —— 口径必须落成可复现代码，不能只写在散文里 |
 | `migrate_pilot_to_five_levels.py` | @brief `pilot` → 五级迁移（`docs/capabilities-schema-proposal.md` §1.2，裁断走选项 A） |
 | `parse_cosworks_signatures.py` | 从提取出的 cosworks 官方文档页里解析出全部方法签名与参数说明 |
@@ -871,12 +848,9 @@
 
 ---
 
-## 索引自身的债：无文件头说明的脚本（1 个）
+## 索引自身的债：无文件头说明的脚本（0 个）
 
-这些脚本没有 docstring 也没有首行注释 ⇒ **索引只能列出名字，说不出用途**。
-补一行注释就能让它们可检索：
-
-- `add_s209_b4f_capabilities.py`
+★ 无 —— 每个脚本都有说明。
 
 ---
 

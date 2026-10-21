@@ -22,7 +22,7 @@
   `probe_revolve_wall_units_recheck` / `probe_gear_closed_profile` /
   `probe_overlap_closure` / `probe_gear_coincident`
 
-**共删 68 个 / 352 KB**（实测：`sum(文件字节)`，见下表「字节」列求和）。
+**共删 83 个**（分两批：68 + 15）（实测：`sum(文件字节)`，见下表「字节」列求和）。
 
 > ⚠ **下表「当时是干什么的」列是各文件的**原始首句逐字**，其中出现的数字
 > （如「534 条」「3709 条」）是**那些脚本自己当时的读数**，不是本次清理的统计。
@@ -98,3 +98,18 @@
 | w6_gap.py | 2562 | import inspect（原文引述，文件已删） |
 | w6_shapes.py | 734 | import inspect（原文引述，文件已删） |
 | w7_sim.py | 3733 | W7 前置：① 先查四家有没有**仿真载荷**的判据（用户纪律 §5.0）；② 核能力层现状。（原文引述，文件已删） |
+| add_s209_b1_capabilities.py | 4200 | ★ 规格 209 · B1 批：把 capabilities.yaml 补/改（已应用：`session_rebuild` `sketch_construction_geometry` 已在清单里）（原文引述，文件已删） |
+| add_s209_b2_capabilities.py | 0 | ★ 规格 209 · B2 批（已应用：`sheet_metal_unfold` `sheet_metal_fold`）（原文引述，文件已删） |
+| add_s209_b2b_capabilities.py | 0 | ★ 规格 209 · B2b 批（已应用：`drawing_bom_balloons`）（原文引述，文件已删） |
+| add_s209_b2c_capabilities.py | 0 | ★ 规格 209 · B2c 批（已应用：`drawing_center_lines`）（原文引述，文件已删） |
+| add_s209_b4a_capabilities.py | 0 | ★ 规格 209 · B4a 批（已应用：`sketch_visibility`）（原文引述，文件已删） |
+| add_s209_b4c_capabilities.py | 0 | ★ 规格 209 · B4c 批（已应用：`part_intersect`）（原文引述，文件已删） |
+| add_s209_b4e_capabilities.py | 0 | ★ 规格 209 · B4e 批（已应用：`drawing_model_annotations`）（原文引述，文件已删） |
+| add_s209_b4f_capabilities.py | 0 | ★ 规格 209 · B4f 批（输入 `_s209_b4f_caps.json` 已不存在 ⇒ 早已跑完）（原文引述，文件已删） |
+| add_s211_b1_capabilities.py | 0 | ★ 规格 211 · B1 批（已应用：`section_properties`）（原文引述，文件已删） |
+| add_polarity_legend.py | 0 | ★ 给 F/G/H/I/J 那 15 份对账稿各加一行口径图例（处置 JUDGE-F_G_H_I_J 🔴 #1）（原文引述，文件已删） |
+| add_provenance_blocks.py | 0 | ★ 给迁移改过的文件插入 `# ── 来源 ──` 块（check_provenance.py 要求）（原文引述，文件已删） |
+| amend_s209_b1_capabilities.py | 0 | ★ 规格 209 · B1 批：补齐/更正 capabilities.yaml 的判据与 id（原文引述，文件已删） |
+| amend_s209_b3_capabilities.py | 0 | ★ 规格 209 · B3-1：把 idx 115+145（edges/faces 合并）的证据补进 selection_helper（原文引述，文件已删） |
+| apply_enum_dispositions.py | 0 | ★ 给「自称官方却无 `# swXxx` 覆盖」的模块级整数表逐张补表级出处声明（spec 224）（原文引述，文件已删） |
+| merge_chunks.py | 0 | ★ 把分块跑出的若干 JSON 合并成一份（分块是为绕开一次未复现的卡顿）（原文引述，文件已删） |

@@ -36,6 +36,17 @@ def _git(*args: str) -> subprocess.CompletedProcess:
                           text=True, encoding="utf-8", errors="replace")
 
 
+def _tracked_files() -> list[str]:
+    """★ 当前 HEAD 里被跟踪的全部文件路径（★ 用于区分「记录删除」与「路径拼错」）。
+
+    ⚠ 用 `ls-tree` 而不是 `ls-files`：后者会列出**已删但未提交**的路径
+      （它读的是索引），那样「拼错的路径」也可能被误判成「已删」。
+      `ls-tree -r HEAD` 只看**上次提交**里的文件 ⇒ 语义正是「这个路径曾经存在过」。
+    """
+    out = _git("ls-tree", "-r", "--name-only", "HEAD")
+    return [ln for ln in (out.stdout or "").splitlines() if ln.strip()]
+
+
 def staged() -> list[tuple[str, int, int]]:
     """★ 列出索引里的文件及 `(新增行, 删除行)`（★ 二进制给 `-` ⇒ 记 0）。"""
     out = _git("diff", "--cached", "--numstat")
@@ -84,10 +95,30 @@ def main(argv: list[str] | None = None) -> int:
         return 3
 
     # ★★ 第 2 步：只加**点名的**文件（★ 加不存在的路径会被 git 报错 ⇒ 不静默）
-    bad = [p for p in a.paths if not (ROOT / p).exists()]
+    # ⚠⚠ **2026-10-19 修（实测踩到）**：原来这里一律拒绝「路径不存在」，
+    #   与第 0 步的注释**自相矛盾** —— 注释明写「不能拿'路径不存在'去拦删除，
+    #   否则唯一的删除拦路石会排在存在性后面而永不生效」，而代码正是那么拦的。
+    #   ⇒ 后果：`--allow-deletions` **形同虚设**，`commit_mine.py` 永远提交不了删除
+    #     （本仓 2026-10-19 清理 68 个工具时只能绕道 `git add` + `git commit -F`）。
+    #   ★ 正确判据：**已跟踪但工作树已删**的路径是合法的「记录删除」；
+    #     只有**既不存在、又不在索引里**的路径才是真错（拼错了/根本没这文件）。
+    tracked = set(_tracked_files())
+    bad, deletable = [], []
+    for p in a.paths:
+        if (ROOT / p).exists():
+            continue
+        if p in tracked:
+            deletable.append(p)      #: ★ 合法：已跟踪 + 已删 ⇒ 记录删除
+        else:
+            bad.append(p)            #: ★ 真错：不存在且未跟踪
     if bad:
-        print("★ 这些路径不存在，拒绝提交：%s" % bad)
+        print("★ 这些路径**不存在且未被 git 跟踪**，拒绝提交（拼错了？）：%s" % bad)
         return 4
+    if deletable and not a.allow_deletions:
+        print("★★ 这些路径**已被删除**（%d 个）⇒ 要记录删除必须加 `--allow-deletions`：" % len(deletable))
+        for p in deletable[:20]:
+            print("   %s" % p)
+        return 6
     add = _git("add", "--", *a.paths)
     if add.returncode != 0:
         print("★ git add 失败：%s" % (add.stderr or "").strip())
