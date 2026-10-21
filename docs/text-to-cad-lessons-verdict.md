@@ -1,7 +1,7 @@
 # text-to-cad 经验内化：五条经验的裁决
 
 **状态**：裁决完成，采纳项已实现门禁与负例测试。
-**来源**：`D:\Agent-Studio\Deepseek-Harness\DSH-Oss-Research-and-Deployments\text-to-cad\text-to-cad-reverse-engineering.md` §七（该报告的路径见其附 B）。
+**⚠ 原件已删**：`text-to-cad` 克隆与逆向报告已于 2026-10-19 全部删除（内化完成）。本文中的「上游 `文件:行号`」**已无法回读核对**，保留它们只为说明「当时依据的是哪一段」。删除清单与重核方法见 [`docs/text-to-cad-borrowed.md`](text-to-cad-borrowed.md)。
 **方法**：每条经验先给**上游原文证据**（文件路径 + 行号 + 逐字引用），再给**本仓库现状核实**（同样带行号），最后给**裁决**。裁决只有三种：`采纳` / `改造` / `不采纳`。
 **纪律**：本文件不含未核实的断言。凡我推断的，标「推断」并给依据行。
 
