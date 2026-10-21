@@ -170,7 +170,10 @@ python tools/reclaim_solidworks.py --restart    # 探不通且打开的文档都
 
 **★★ 顶层目录实况登记（★ 2026-10-18 · ★ 落实 §九 停止条件 #5「以实际仓库为准并更新本文件」）**
 
-★ 实测：★ 本仓**实际有 40 个顶层目录**（不含 `.git`），★ 而上面白名单只有 **14** 个 ⇒ ★★ **结构与白名单不符** ✗。
+★ 实测：★ 本仓**实际有 39 个顶层目录**（不含 `.git`、**不含 3 个工具缓存**），★ 而上面白名单只有 **14** 个 ⇒ ★★ **结构与白名单不符** ✗。
+★★ **2026-10-21 复核更正**：★ 原先记作 **40**，是把 `.pytest_cache`（**工具缓存、gitignore、不入库**）也当成仓库目录算进去了 ✗。
+★ 正确口径：★ **磁盘顶层 = 39 个仓库目录 + 3 个工具缓存**（`.pytest_cache` / `.codebase-memory` / `.ruff_cache`，★ 三者均已 gitignore ✓）。
+★ 复核命令：`python -c "import pathlib;[print(d.name) for d in pathlib.Path('.').iterdir() if d.is_dir() and d.name!='.git']"` ✓
 ★ 逐个登记**多出的 25 个**（★ 每个一句"是什么 / 为什么放不进已有目录" ✓）：
 
 | ★ 目录 | ★ 是什么 | ★ 为什么放不进已有目录 |
@@ -186,7 +189,7 @@ python tools/reclaim_solidworks.py --restart    # 探不通且打开的文档都
 `evidence` · `explore` · `mcp-tool-draft` · `MCP_CALIB` · `metadata` · `net-guard` ·
 `research` · `shots` · `solidpilot-salvage` · `swpublished` · `.api-signatures` · `output` · `.pytest_cache`
 
-★★ **结论**：★★ 本节的**白名单数字（14）已不反映实际** ✗ —— ★ **以实际 40 个目录为准** ✓（★ 上面已逐个登记 ✓）；
+★★ **结论**：★★ 本节的**白名单数字（14）已不反映实际** ✗ —— ★ **以实际 39 个仓库目录为准** ✓（★ 上面已逐个登记 ✓；★ 工具缓存另计 ✓）；
 ★★ **新增白名单外的顶层目录，仍须按本节规矩「先登记、再动手」** ✓
 
 新文件落进已有位置：能力实现进`scripts/`，知识文档进`references/`，测试进`tests/`，说明与生成物进`docs/`。上游目录树与新增模块的硬性要求见 [docs/upstream-layout.md](docs/upstream-layout.md)（对照参考，不是约束来源）。
