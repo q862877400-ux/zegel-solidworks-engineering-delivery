@@ -522,6 +522,15 @@
    "environment": "offline-static",
    "owner": "executing-agent",
    "runs_in": "release_check"
+  },
+  {
+   "gate": "check_tools_index_fresh.py",
+   "runner": "_run_tools_index_fresh_gate",
+   "kind": "release_static",
+   "reason": "**硬门禁**（2026-10-19 · 工具可发现性）：判「\\docs/tools-index.md\\ 是否与 \\\tools/\\ 实际内容一致」。★★ 来源：业主原话「那么多工具怎么用是有文档还是怎么说，不然越积累越多，最后可能遇到问题每次都重写，而不是从多如牛毛的历史工具里找了」。★ 现状实测：\\\tools/*.py\\ 709 个 / 5.6 MB，此前 \\\tools/README.md\\ 与 \\docs/tools-index.md\\ 都不存在 ⇒ 零索引。★★ 与既有 \\scripts/check_probe_reuse.py\\ 的分工：那个拦「明明有工具你还重写」，本道拦「索引腐化后你又找不到」—— 前者是重复造轮子，后者是可发现性，两个不同问题。★ 判据两条：① 集合（每个 \\\tools/*.py\\ 非 \\_\\ 开头必须在索引里，且索引里不能有幽灵行）；② 描述（索引里每个脚本的描述必须等于该文件现在的首句）。⚠ 只查集合会漏掉「文件头改了但没重生成」⇒ 描述那条是必需的。★ 本门禁**自带负例自证**，且**先跑真判据、后自证** —— 顺序反了会把「索引缺哪几行」报成「自证前置失败」，把人引向错处（已实测）。⚠ 设计约束来自本仓自己的 lean 实测（\\docs/recon/lean-tool-surface.md\\、\\specs/215-tool-surface-decisions/spec.md\\）：lean 投影只保留**第一句、截断 120 字**⇒ 索引每行必须把用途放在第一句内，否则模型看不见。",
+   "environment": "offline-static",
+   "owner": "executing-agent",
+   "runs_in": "release_check"
   }
  ]
 }

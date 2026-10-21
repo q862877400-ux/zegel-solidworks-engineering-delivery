@@ -179,7 +179,7 @@ def _line_sketch(doc):
 
 
 def _profile() -> str:
-    """★ 找**焊件轮廓**（`.sldlfp`）—— ★ 必须落在 `weldment profiles` 目录下。
+    r"""★ 找**焊件轮廓**（`.sldlfp`）—— ★ 必须落在 `weldment profiles` 目录下。
 
     ★★ 2026-10-03 修：上一版直接 `rglob("*.sldlfp")` 取第一个 ⇒ ★ 挑到的是
       `...\design library\features\inch\fluid power ports\...sldlfp`

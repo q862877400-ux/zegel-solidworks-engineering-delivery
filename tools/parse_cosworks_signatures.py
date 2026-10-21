@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""从提取出的 cosworks 官方文档页里解析出全部方法签名与参数说明。
+r"""从提取出的 cosworks 官方文档页里解析出全部方法签名与参数说明。
 
 产出 ``_raw\cosworks_signatures.md``，作为写代码时的签名依据
 （替代此前「27 个 Add* 方法签名不可得」的判断 —— 那个判断是错的，

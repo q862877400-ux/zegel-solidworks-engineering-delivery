@@ -720,6 +720,30 @@ def _run_assumption_ledger_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_tools_index_fresh_gate() -> dict[str, object]:
+    """@brief 跑「tools 索引新鲜度」门禁（scripts/check_tools_index_fresh.py）。
+
+    ★ 来源：业主 2026-10-19 ——「那么多工具怎么用是有文档还是怎么说，不然越积累越多，
+      最后可能遇到问题每次都重写，而不是从多如牛毛的历史工具里找了」。
+    ★ 判据：`docs/tools-index.md` 的**集合**（有哪些脚本）与**描述**（每个的首句）
+      都必须与 `tools/*.py` 实际一致。
+    ★ 本门禁**自带负例自证**（selftest()），且**先跑真判据、后自证** ——
+      顺序反了会把「索引缺哪几行」报成「自证前置失败」，把人引向错处。
+    """
+    try:
+        proc = subprocess.run(
+            [os.environ.get("PYTHON", "python"),
+             str(ROOT / "scripts" / "check_tools_index_fresh.py")],
+            check=False, capture_output=True, text=True, encoding="utf-8",
+            errors="replace", timeout=300, cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "tools 索引新鲜度门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_sketch_definition_gate() -> dict[str, object]:
     """@brief 跑草图完全定义门禁（scripts/check_sketch_definition.py）。
 
@@ -2303,6 +2327,14 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "假设台账门禁未通过（状态不自洽或未验证假设被当证据）：\n"
             + str(al.get("output", "")))
+    # ⚑ **tools 索引新鲜度门禁**（硬门禁）：★ 来源业主 2026-10-19「那么多工具怎么用是有文档吗」。
+    #   ★ 判据：\docs/tools-index.md\ 的集合与描述都要与 \	ools/*.py\ 一致
+    #     （★ 生成物最大的风险是「生成了但没人重生成 ⇒ 索引变成谎言」）。
+    tix = _run_tools_index_fresh_gate()
+    if tix.get("status") == "fail":
+        raise AssertionError(
+            "tools 索引新鲜度门禁未通过（索引与 tools/ 实际内容不一致）：\n"
+            + str(tix.get("output", "")))
     sk_def = _run_sketch_definition_gate()
     if sk_def.get("status") == "fail":
         raise AssertionError(
@@ -2514,6 +2546,7 @@ def run_release_check() -> dict[str, object]:
         #:   经验① 量化断言出处 / 经验⑤ 假设台账 —— 见 docs/text-to-cad-lessons-verdict.md
         "fact_provenance": fp,
         "assumption_ledger": al,
+        "tools_index_fresh": tix,
         #: ★ 2026-10-12（业主「那 60 条语料的标签给我打开」）：**评审稿编号门禁**
         #:   也必须进返回体 —— ★ 元门禁当场报了同一条
         #:   （「`rev_ids` 的结果**没有进返回体** ⇒ 静默跳过与没跑等价」）。
@@ -2612,6 +2645,7 @@ def run_release_check() -> dict[str, object]:
         #:   经验① 量化断言出处 / 经验⑤ 假设台账 —— 见 docs/text-to-cad-lessons-verdict.md
         "fact_provenance": fp,
         "assumption_ledger": al,
+        "tools_index_fresh": tix,
         "missing": [],
     }
 
