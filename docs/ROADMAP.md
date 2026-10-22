@@ -11110,6 +11110,44 @@ esolve_sketch · 其余 11 条未找到
 esolve_sketch 解析器（改注册器，需单独论证）
 
 
+2026-10-21 ★★★★★ **第 49 轮**（★ DSH 循环 · ★ 目标 = 仓库整体统一化 · ★ 业主指令）
+  **★★★ 业主原话**：「避免**局部很整洁，但是整体很混乱或者很精神分裂** —— 同一个功能多个函数重复实现、
+    同一个东西在不同地方命名不一样。整个项目要统一化、规范化……从局部到整体全部干净整洁、优雅、结构化」
+    ★ 并明确：「**参考编程规范，不要自己随便想几个标准**」✓
+  **★★ 落地判据（★ 全部来自权威，不自定义）**：
+    · **Google Python Style Guide**（https://google.github.io/styleguide/pyguide.html）
+      —— snake_case / PascalCase / 导入分组 / 循环依赖是 code smell ⇒ 用 **ruff 0.17.1** 执行 --select E,F,I,N,UP
+    · **pyscn 1.32.5**（https://github.com/ludo-technologies/pyscn）—— Type 1–4 克隆检测（同一功能多实现）
+    · AGENTS.md §十八（来源块）· §铁律 3（顶层白名单）
+  **★★ 新建 scripts/check_repo_uniformity.py**（185 行）· 四项指标 · 工具未装时 **FAIL 而非跳过**（事实 62）·
+    接进 
+elease_check.py（_run_repo_uniformity_gate + _gate_results 两处）· 登记 docs/gate-classification.json
+  **★★ 新建 docs/repo-uniformity-baseline.json** —— ★ **基线只许降不许升**，含判据出处与下调记录 ✓
+  **★★★ 首跑读数（真实，未美化）**：
+    · ruff（E,F,I,N,UP）= **26,373**（Top：E501×17315 · UP031×6648 · N812×801 · I001×636 · F401×223）
+    · pyscn 克隆组 = **2,501**（Type-1 665 · Type-2 2008 · Type-4 2475）· 分析 247 文件 / 125,548 行
+    · 缺来源块 = **75** · 同名 .py = **0**
+  **★★ 修掉的真重复**：udit_call_arity.py 两份 —— scripts/(337 行·有来源块·9 符号·活版) vs
+    	ools/(149 行·**无来源块**·6 符号·停在最早入库) ⇒ ★ 逐条查过：9 处真 import **全部**解析到 scripts/
+    （sys.path 优先）、	ools/ 那份**零真引用** ⇒ **删除** ✓ · 删后 import 仍成功、9 个相关测试全过 ✓
+  **★★ 一处纠正了自己的误判**：drawing_spec.py 两份**不是重复** —— scripts/ 是 25 行 **importlib 转发壳**、
+    真源在 subskills/ ⇒ ★ **判错的代价是运行期 ImportError** ✗ ⇒ 已留豁免机制、本轮无需启用 ✓
+  **★★ 事实核查**：顶层目录原记「40」**多算了一个** —— 把 .pytest_cache（工具缓存）当仓库目录了 ✗
+    ⇒ ★ **实际 39 个仓库目录 + 3 个工具缓存** ✓ ⇒ 已按 §九 停止条件 #5 更新 AGENTS.md ✓
+  **★★ 过程中踩的坑（★ 都是我自己的 bug，已修）**：
+    · 第一次编辑 
+elease_check.py 时**吞掉了 def _run_tools_index_fresh_gate() 那一行** ✗
+      ⇒ 运行期 NameError ✗ ⇒ 立刻补回 ✓ · ★ 教训：dit 的 old_string 不能包含"下一个函数定义行"
+    · 删文件后未重生成 	ools-index.md ⇒ 门禁报「多 1 个」⇒ 跑 gen_tools_index.py ✓
+    · 提交时**漏列被删文件** ⇒ 描述说删了、索引里没删 ✗ ⇒ 补一个提交 83df20e1 才真正入库 ✓
+    · 基线阈值忘了随实测下调 ⇒ 已改成当前值（26373/2501/75）✓
+  **读数**：★ check_repo_uniformity.py **exit 0**（四项全 PASS）· ★ check_gate_wiring.py **exit 0**（54 道全接线）·
+    ★ 
+elease_check.py **exit 0 · status pass · 57 道 · passed 54 · missing []** ✓ · ★ 未提交 0 ✓
+  **未做（★ 如实）**：★ 2,501 组克隆、26,373 条 ruff、75 缺来源块 **都还在** ✗ —— 本轮只**建了尺子并修掉 1 处**，
+    ★ 剩下的是后续 de todos（② 缺来源块 · ③ 克隆裁决）✓
+
+
 ## 一·C · 支线：Bunny 并行批量作业（规格 specs/203-bunny-sideline-batches）
 
 > **这一节是支线的**（另一个对话在做，见 docs/kickoff-bunny-sideline.md）。
