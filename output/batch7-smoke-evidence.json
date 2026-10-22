@@ -1,25 +1,17 @@
 {
-  "started": "2026-10-01 14:28:01",
+  "started": "2026-10-22 12:11:50",
   "checks": {
     "连接 + 活动文档": {
-      "ok": true,
-      "detail": "mcp_avi_asm.SLDASM"
+      "ok": false,
+      "detail": "无文档"
     },
-    "activate_model_for_preview": {
-      "ok": true,
-      "detail": "ok · bool · 0.01s"
-    },
-    "clear_selection_for_preview": {
-      "ok": true,
-      "detail": "ok · NoneType · 0.01s"
-    },
-    "refresh_scene_graph": {
-      "ok": true,
-      "detail": "ok · NoneType · 0.01s"
+    "三个工具": {
+      "ok": false,
+      "detail": "没有活动文档 ⇒ 本轮判不了"
     }
   },
-  "passed": 4,
-  "total": 4,
-  "verdict": "pass",
-  "finished": "2026-10-01 14:28:02"
+  "passed": 0,
+  "total": 2,
+  "verdict": "fail",
+  "finished": "2026-10-22 12:11:51"
 }
