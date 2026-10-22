@@ -11177,6 +11177,36 @@ elease_check.py **exit 0 · status pass · 57 道 · passed 54 · missing []** �
     ★ 本轮清的是「**结构性**缺失（来源块）」，不是「**风格**存量」；★ 风格存量归后续轮次 ✓
 
 
+2026-10-22 ★★★★★ **第 51 轮**（★ DSH 循环 · ★ 目标 = 仓库整体统一化 · ★ 待办 1）
+  **★★★ 主产出：新增门禁指标⑤「跨文件同函数体」+ 收敛 5 组生产代码真重复** ✓
+  **★★ 为什么加⑤**：业主头号关切「同一个功能多个函数重复实现」。已有指标②（pyscn）按**行块**判，
+    2,501 组里绝大多数是样板（probe 样例 / ToolSpec 声明 / 来源块）⇒ 信号被淹 ✗
+    ⑤ 按**函数体**判：去 docstring、Name 与形参名换占位符后取哈希 ⇒ 跨文件同哈希即多份实现
+    （同文件同名不算 = 重载）。口径 = Type-2 克隆定义（pyscn）。首跑 **122 组 → 现 113 组** ✓
+  **★★ 收敛 5 组（新建单一实现 `scripts/sw_feature_tree.py`）**：
+    · `_tree_names` ×**4**（sw_curve_and_split / sw_ref_geometry / sw_surface_edit_ops / sw_surface_ref_ops）
+    · `_feature_count` ×**3**（sw_cosmetic_weld_bead / sw_net_blend / sw_weld_bead）
+    · `_feature_type_name` ×**2**（sw_sweep / sw_wrap）
+    ★ 保留价值：四份里最详细那份 docstring（轮 473 教训「自己拼 GetFeatureCount(True) +
+      FeatureByPositionReverse(i) ⇒ 真机回 None ⇒ 5 条能力全被记成『不能』，而那是**判据坏了**」）
+      已搬进单一实现 ✓
+    ★ 删前查循环依赖（sw_part 不 import sw_assembly）· ★ 删后实测 9 个模块 import 成功、私有名仍可见 ✓
+  **★★ 连带更新两处「只增不减」下界（合法下降，原因 + 替代断言写进代码注释）**：
+    · check_dispatch_entry_guard：VISIBLE 1174→1173 · INVISIBLE 85→84
+    · check_dispatch_arg_guard：SITES 46→45 · ENUM 42→41
+    · ★ 替代断言 = 指标⑤ 基线只许降 ⇒ 这类重复再出现会被拦 ✓
+  **★★★★ 本轮最大坑：ruff 的 E501 按【显示宽度】算，CJK 算 2 列** ✗
+    · 按字符数折行 ⇒ 仍违规 ⇒ ruff 反涨（26373 → 26416）✗
+    · 改用 `unicodedata.east_asian_width` 宽度感知切分 ⇒ **25,876** ✓
+    · ★ 教训：**给 CJK 项目做行长门禁，不能按字符数切，要按显示宽度** ✓
+  **★★ 新增 `docs/repo-uniformity-report.md`**（151 行）：五条指标权威出处 · 本轮读数 · 做过的事 ·
+    踩的坑 · 事实 61 四道自查 · **还剩什么（如实）** ✓
+  **读数**：★ 体检门 **exit 0**（5 项全 PASS · 基线全收紧）· ★ `check_gate_wiring` **exit 0** ·
+    ★ `release_check` **exit 0 · 57 道 · passed 54 · missing []** ✓ · ★ 未提交 0 ✓
+  **未做（★ 如实）**：★ ⑤ 还剩 **113 组**（其中 **38 组涉及 scripts/ 生产代码**）· ★ ruff **E501 16,817** ·
+    ★ **UP031 6,649** · ★ pyscn **2,498 组** ⇒ ★ **离业主说的『完全干净』还有距离** ✓
+
+
 ## 一·C · 支线：Bunny 并行批量作业（规格 specs/203-bunny-sideline-batches）
 
 > **这一节是支线的**（另一个对话在做，见 docs/kickoff-bunny-sideline.md）。
