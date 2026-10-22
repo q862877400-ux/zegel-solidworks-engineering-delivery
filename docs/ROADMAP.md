@@ -45,6 +45,21 @@
 
 ## 一 · 游标（**唯一必须维护的字段**）
 
+2026-10-22 ★★★ **仓库统一化（业主指令：整个项目统一化/规范化/同一口径）—— 第 26 轮收工**
+  ★ 量具：新增 `scripts/check_repo_uniformity.py`（6 条指标）· 基线 `docs/repo-uniformity-baseline.json`（**只许降不许升**）·
+  报告 `docs/repo-uniformity-report.md`（340 行，逐条记「为什么这么判」）。
+  **读数**（开工 → 现在）：
+  · ① ruff（E,F,I,N,UP）= **26,378 → 439**（降 98.3%）· F821 未定义名 **187 → 0** · F822 假导出 **8 → 0**
+  · ② pyscn 克隆 **2,515 → 2,319**（★ 已降为**信息项**：实测它对布局/散文/改名三个化妆轴都敏感，不能当棘轮）
+  · ③ 缺来源块 **189 → 0** · ④ 同名 .py **2 → 0** · ⑤ 跨文件同函数体 **125 → 99**（含 2 组否定裁决豁免）
+  · 顶层目录 **41 → 39 仓库目录 + 3 工具缓存**（AGENTS.md §铁律 3 已订正）
+  **本轮（25–26）**：收敛 `_select_by_id`（`sw_part`/`sw_assembly` 各 19 行逐字相同）+ `_empty_callout` → `sw_connect` 单一实现；
+  ★ 改前先量六道 dispatch 门禁（byref 323 调用点、entry 37、arg 45/41/131、forward 8/4/12、upstream 3/10/5、blindspot 371）—— **改后一格没少** ✓；
+  连带修 3 处：相对导入兜底（36→35=基线）· 签名审计表（`sw_connect` 29→30，实跑得出）· 我自己的两行超宽。
+  **下一 WIP**：⑤ 剩 **99 组**（其中 **25 组涉及 `scripts/` 生产代码**，优先；78 组在一次性探针里）；
+  ① 剩 439（E501 302 多为中文散文/文档串，已按两档判据处理）。
+
+
 2026-10-08 接续施工：221（`specs/221-sketch-relation-dispatch-safety/`）的限定离线切片已通过12例假宿主回归，**视为不可变历史**；未验收COM/生产。
 2026-10-08 ★★ **222（`specs/222-relation-enum-and-public-contract/`）离线切片已完成**：关系枚举与公开契约收敛。判据 `tests/test_relation_enum_alignment.py` **12/12 绿**（改动前红基线 8 例中 6 失败 + 2 错误）；221 回归 12/12 仍绿。改动：`RELATION_TYPES` 整表按官方重写（9 键数值 + 2 键改名）、`SKETCH_CONSTRAINT_TYPES` 19 项校正 + 未决登记、`sw_part._SG_RELATIONS` 去非官方名 + `add_sketch_relation` 新增前置状态门、公开工具描述正名。**过程中发现并修复一处既有致命缺陷**：`scripts/sw_part.py` 缺 `from typing import Any` ⇒ 模块导入即崩 ⇒ 公开工具 `solidworks_add_sketch_relation` 此前是死的（长期未暴露因为测试把整个 `sw_part` 桩掉了）。
 **未过门**：关系几何/实体对应/自由度/持久性未验；真实 SAFEARRAY/COM 未运行；`block`/`snappoint` 只做「拒绝派发 + 登记」未裁决；`sw_pattern.py:95/105` 同类候选已登记未修；发行收口与全量门禁未运行；未提交未部署。

@@ -292,3 +292,49 @@ python scripts/release_check.py           ⇒ exit 0 · status pass · 57 道 ·
 ★ 这是**判据修正**、不是为了让门禁变绿 —— 本轮 ① 已经降到 1,196，没有任何一项需要靠 ② 来放行。
 ★ 若业主要求 ② 也守，就得先给它一个「对化妆不敏感」的口径；★ 而那个口径一出来**它就退化成 ⑤ 了**
 （本轮实测到这一步：把标识符归一时，pyscn 输出的 `clones_by_type` 直接变成 `null`）。
+
+## 十四、第 25–26 轮：收敛 `_select_by_id`（19 行逐字相同）+ 交接单按章程瘦身
+
+### 14.1 `_select_by_id` / `_empty_callout`：两个核心模块各一份逐字相同的实现
+
+`sw_part.py` 与 `sw_assembly.py` 的 `_select_by_id` **连 docstring 都一字不差**（各 19 行），
+同族还有 `_empty_callout`（3 个模块）与 `create_empty_dispatch_variant`（1 个）。
+
+★ **发现本仓已有既定模式**：`sw_surface_features._empty_callout` **早就在委托**
+`sw_connect.create_empty_dispatch_variant` ⇒ 照它办：
+- `sw_connect.py`（COM 接线的单一家）新增唯一实现 **`select_by_id(...)`**，
+  docstring 写明官方依据（`IModelDocExtension/SelectByID2.md`）· **事实 33**（第 9 个 `Callout`
+  必须传空 Dispatch，否则报「类型不匹配」）· **事实 8**（返回值不可信、要回读计数）
+- 两个模块改为**导入别名**（旧名保留、调用点零改动）
+
+★★ **按第 9/11 轮的教训先量 dispatch 门禁**（那些门禁靠"本地 def"识别分发口）：
+
+| 门禁 | 改前 | 改后 |
+|---|---|---|
+| byref 已核调用点 | **323** | **323** ✓ |
+| byref arity 不符 | 13 | **1**（还变好了）✓ |
+| entry 分发口 / 已表态 | 37 / 37 | 37 / 37 ✓ |
+| arg local / 可枚举 / 候选 | 45 / 41 / 131 | 45 / 41 / 131 ✓ |
+| forward 非字面量 / 可枚举 / 候选 | 8 / 4 / 12 | 8 / 4 / 12 ✓ |
+| upstream 声明 / 上游点 / 候选 | 3 / 10 / 5 | 3 / 10 / 5 ✓ |
+| blindspot 已覆盖 | 371 | 371 ✓ |
+
+⇒ **核验面一格没少** ✓ · ⑤ **101 → 99**（两组同时消失）
+
+### 14.2 三个连带问题（都修掉了，留档）
+
+1. ★ `check_relative_imports` 报 36 > 基线 35：我那个 `try/except` 里**并列写了两条相对导入**，
+   门禁只认出第 1 条 ⇒ **拆成两个 try/except**（每条各有绝对兜底）⇒ 回到 **35 = 基线** ✓
+2. ★ `check_signature_audit_freshness` 报 `sw_connect.py` 文档 29 / 实际 30 ——
+   **因为我新增了 `select_by_id`（多一个 COM 调用）** ⇒ 表改成 **30** 并写明原因 ✓
+   ★ 这个数是 `actual_calls()` **实跑**出来的，不是手写估算 ✓
+3. ★ `ruff` 我新增的两行超宽（代码行 91 / 注释 89）⇒ 已折 ✓
+
+### 14.3 交接单按章程「做完就删号 / 做不了就写已废弃+理由」删掉 4 条
+
+原文 6 条 → 现在 **2 条**（⑤ 裁决 · 收口）：
+- **已完成（有磁盘证据）**：「先把源文本敏感 gate 改 AST-robust」→ `cd_calls` 改 AST 版（`823aa1ef`）；
+  「批量格式化」→ 1,005 文件（`3902212f`）
+- **已废弃（有实测依据）**：UP031 转 f-string（与 E501 互相打架，转 292 条净只降 13）；
+  pyscn 克隆裁决（三个化妆轴都会移动它 ⇒ 降为信息项）
+★ 废弃理由与提交号都写进 `AUTO_HANDOFF.md`，不是悄悄删掉。
