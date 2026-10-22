@@ -183,3 +183,41 @@ python scripts/release_check.py           ⇒ exit 0 · status pass · 57 道 ·
 
 ★★ **教训（新增）**：**折行不是纯格式操作** —— 本仓的 `#:` 注释里有**门禁读取的指令**；
 批量折行前必须先 grep `#:` / `dispatch-` / `noqa` 这类机器可读标记，把它们排除在折行之外。
+
+## 十一、第 17 轮：`ruff format` 实测 —— 净收益大，但**暂时不能上**（留档）
+
+### 11.1 两笔测量（都是真跑，不是估）
+
+| 动作 | 结果 |
+|---|---|
+| `ruff format scripts/engineering` | ruff 635 → **543（Δ −92）** |
+| `ruff format scripts`（208 文件重排 / 48 未变） | ruff 6,431 → **4,724（Δ −1,707）** |
+
+⇒ ★ 从**数字**上看 `ruff format` 是现成的、标准化的、净收益极大的一步。
+
+### 11.2 但它踩了两个真问题，所以**本轮回滚了**
+
+1. ★★ **它弄小了一道门禁的取点** —— `check_create_definition_site_disposition`
+   从 **站点 8 → 6**、`no-members-used 2 → 1`，门禁自己报
+   「`[baseline-shrunk] sites 6 < 下界 8（只增不减：先查取点/读取器）`」。
+   ⇒ ★ 重排把 `CreateDefinition` 的调用形状拆成多行，而那道 gate 的**取点太窄** ⇒
+   **它少看了 2 个站点**，也就**少了 2 个站点的核验**。
+2. ★ **它会改 docstring 的空白** —— 用 `ast.dump` 比对 254 个改动文件，有 **3 个 AST 不等价**，
+   差异全部落在 docstring 里（空行归一、续行缩进）：
+   `sw_sketch.py` / `sw_custom_property.py` / `check_repo_uniformity.py`。
+   ★ 本仓 docstring 里装着**来源块与判据正文**，`ruff format` 会重排它们的空白。
+
+### 11.3 结论与下一步（★ 明确的前置条件）
+
+★★ **验证能力 > cosmetic 违规** ⇒ 回滚，`scripts/` 保持原样。
+★★ **要跑 `ruff format` 的前置条件**：先把**源文本/形状敏感的 gate** 改成 AST-robust ——
+   已知至少 `check_create_definition_site_disposition` 与同族的
+   `check_arity_tables_vs_reflection` / `check_assembly_doc_call_shape` / `check_dispatch_forward_arg_guard`
+   是「按行/按形状」找证据的。
+★ 满足前置条件后再一次性格式化，收益是 **−1,707（scripts/）+ 另两个目录**。
+
+### 11.4 同时记录：UP031 单改会**反涨**
+
+`ruff check scripts/engineering --select UP031 --fix --unsafe-fixes`：UP031 −292，
+但同目录 **总违规 651 → 701（+50）** —— 因为 f-string 比 `%` 更宽，**E501 反涨**。
+⇒ ★ **UP031 与 E501 是耦合的**：必须与折行/格式化**同批**做，单做一项会让总数变差。
