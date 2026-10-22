@@ -928,14 +928,14 @@ def uniform_safety_fields(specs: list) -> dict:
     ★ 判据刻意**只报"非未知的单值"**：★ 全体都是未声明是**诚实的合法状态**，不报 ✓
     """
     out: dict = {}
-    for field in ("read_only", "idempotent", "destructive"):
-        values = [getattr(s, field, None) for s in specs]
+    for field_name in ("read_only", "idempotent", "destructive"):
+        values = [getattr(s, field_name, None) for s in specs]
         if not values:
             continue
         distinct = set(values)
         only = next(iter(distinct))
         if len(distinct) == 1 and only is not None:
-            out[field] = {"value": only, "count": len(values)}
+            out[field_name] = {"value": only, "count": len(values)}
     return out
 
 

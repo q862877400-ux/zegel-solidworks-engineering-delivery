@@ -275,9 +275,9 @@ def audit(target, signature_paths):
 
 def _stem(path) -> str:
     """取文件名（用于 `COMTYPES_CALL_SITES` 的键）。"""
-    from pathlib import Path as _P
+    from pathlib import Path as _p
 
-    return _P(str(path)).name
+    return _p(str(path)).name
 
 
 def main() -> int:

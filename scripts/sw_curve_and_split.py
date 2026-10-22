@@ -401,7 +401,6 @@ def insert_curve_through_points(
         "tree_before": before,
         "tree_after": after,
         "new_features": added,
-        "verified_by": "return_values + tree_delta",
     }
 
 

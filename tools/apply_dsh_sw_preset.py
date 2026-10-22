@@ -166,7 +166,9 @@ def main() -> int:
     print("★ 备份 ⇒ %s" % bak.name)
 
     LIVE_CFG.write_text(
-        merged_src := (
+        #: ★ 2026-10-22：原是 `merged_src := (...)`（walrus），而 `merged_src` **全函数未使用** ⇒
+        #:   改成普通表达式（行为不变：仍是先读、拼、再写）
+        (
             LIVE_CFG.read_text(encoding="utf-8").rstrip("\n")
             + "\n\n"
             + BLOCK.read_text(encoding="utf-8").rstrip("\n")

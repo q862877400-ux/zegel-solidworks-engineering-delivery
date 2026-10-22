@@ -184,7 +184,7 @@ def main() -> int:
         print(f"[WARN] 未能生成: {', '.join(failures)}")
         print("       arity 审计对这几个程序集会不可用。")
         return 1
-    print(f"[OK] 全部生成。接下来可跑：")
+    print("[OK] 全部生成。接下来可跑：")
     print(
         f"       python scripts\\audit_call_arity.py <文件> {out_dir.resolve()}/iface_sldworks.txt"
     )

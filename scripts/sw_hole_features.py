@@ -774,8 +774,16 @@ def get_fastener_table_types(standards_data, table_name, size, table_types_out):
     )
 
 
-def get_fastener_table(standards_data, table_name, size, kind, table_data_out):
-    """``Boolean GetFastenerTable(String, Int32, Int32, Object& TableData)``"""
+def get_fastener_table_raw(standards_data, table_name, size, kind, table_data_out):
+    """``Boolean GetFastenerTable(String, Int32, Int32, Object& TableData)``—— **裸包装**。
+
+    ★★ 2026-10-22（仓库统一化）改名自 `get_fastener_table`：原来**两份同名函数**共存，
+      而**后一份静默覆盖了前一份** ✗ ⇒ 那份 52 行的高层实现（已真机跑通、
+      带 `out_dispatch()` 出参包装）**永远不可达**。两份的**语义根本不同**：
+        · `get_fastener_table`（保留）：从 `sw` 出发取孔标准数据 + 用官方 `IDispatch&` 出参 ⇒ 高层
+        · 本函数（改名 → `_raw`）：直接对已有的 `standards_data` 发起调用 ⇒ 裸包装
+      ⇒ ★ 同名不同语义 = 不得共存；按章程「同签名不同语义 ⇒ 改名」处置。
+    """
     if standards_data is None:
         raise ValueError("standards_data 为 None")
     return get_com_member(

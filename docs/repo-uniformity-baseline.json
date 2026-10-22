@@ -7,7 +7,7 @@
   "dup_filename": "AGENTS.md 铁律 3（结构按顶层白名单）引申：跨目录同名 .py 视为重复实现嫌疑"
  },
  "measured_at": "2026-10-21",
- "ruff_total_ceiling": 439,
+ "ruff_total_ceiling": 415,
  "clone_groups_ceiling": 2283,
  "no_source_block_ceiling": 0,
  "dup_filename_allow": [],
@@ -297,6 +297,16 @@
     76
    ],
    "why": "收敛两组逐字重复：sw_jlcfa_steps.click → sw_jlcfa_click.click_point（别名）· sw_jlcfa_locate.capture_front → sw_gui_modal.screen_png（薄适配，★ 本模块对 sw_gui_modal 是延迟导入）"
+  },
+  {
+   "at": "2026-10-22x",
+   "from": [
+    439
+   ],
+   "to": [
+    415
+   ],
+   "why": "★ 修掉 6 个真 bug：F601 字典重复键 ×4（静默覆盖，丢掉更详细的判据串）· F811 函数重复定义 ×2（52 行已真机验证的高层实现被 12 行裸包装覆盖 ⇒ 死代码，已改名为 _raw 使两份都可达）· F509 %-format 全角括号（运行期 ValueError，实测复现）；另修 F541/UP034/UP032/E731/N814/N805/N802/F402/F841/N999（带理由的 noqa）"
   }
  ],
  "dup_function_groups_ceiling": 76,

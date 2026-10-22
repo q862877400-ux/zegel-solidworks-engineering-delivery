@@ -155,11 +155,6 @@ def create_mesh_by_name(
 
 def run_analysis_by_name(study_name: str) -> dict[str, Any]:
     """按**研究名**跑求解并回**回读报告**（★ 入参可 JSON 化 ⇒ 可隔离执行）。"""
-    return run_analysis_report(_study(study_name))
-
-
-def run_analysis_by_name(study_name: str) -> dict[str, Any]:
-    """按**研究名**跑求解并回**回读报告**（★ 入参可 JSON 化 ⇒ 可隔离执行）。"""
     busy = _busy_guard()
     if busy is not None:
         return busy

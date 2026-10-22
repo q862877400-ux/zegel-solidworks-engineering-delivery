@@ -110,13 +110,13 @@ def edit_transaction(target, begin_end: tuple[str, str], what: str):
     begin, end = begin_end
 
     class _Tx:
-        def __enter__(self_inner):
+        def __enter__(self):
             _require(target, what)
             #: dispatch-arg: dynamic `begin` 由 `begin_end` 形参解包而来（BeginEdit 成员名由调用方给）
             get_com_member(target, begin)
             return target
 
-        def __exit__(self_inner, exc_type, exc, tb):
+        def __exit__(self, exc_type, exc, tb):
             #: dispatch-arg: dynamic `end` 由 `begin_end` 形参解包而来（EndEdit 成员名由调用方给）
             get_com_member(target, end)
             return False  # 不吞异常

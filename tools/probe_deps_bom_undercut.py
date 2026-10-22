@@ -89,7 +89,7 @@ def main() -> int:
         )
         r["新_GetDependencies(5 参)"] = _try(
             _g,
-            P_extension(pdoc) if False else _g(pdoc, "Extension"),
+            p_extension(pdoc) if False else _g(pdoc, "Extension"),
             "GetDependencies",
             True,
             True,
@@ -158,7 +158,7 @@ def main() -> int:
     return 0
 
 
-def P_extension(m):
+def p_extension(m):
     return _g(m, "Extension")
 
 

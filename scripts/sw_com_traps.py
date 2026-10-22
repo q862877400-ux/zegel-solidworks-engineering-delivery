@@ -451,9 +451,9 @@ def iter_real_sources(root: Path | str | None = None, pattern: str = "sw_*.py"):
     ★★ **为什么要有它**：见本函数上方来源块 —— 本会话**三次**在"扫仓库"时忘了排除转储，
       而每次的后果都是**把数放大 24 倍**或**把"有"判成"无"**。
     """
-    from pathlib import Path as _P
+    from pathlib import Path as _p
 
-    base = _P(root) if root else _P(__file__).resolve().parent
+    base = _p(root) if root else _p(__file__).resolve().parent
     for p in sorted(base.glob(pattern)):
         if p.name.startswith("sw_api_"):  # ★ 反射转储，不是实现
             continue

@@ -422,7 +422,9 @@ def test_hole_standards_wrappers_match_official_arity():
     m.get_hole_standards(std, "A", "B")
     m.get_fastener_types(std, "T", "A", "B")
     m.get_fastener_table_types(std, "T", 1, "C")
-    m.get_fastener_table(std, "T", 1, 2, "D")
+    #: ★ 2026-10-22：本调用用的是**裸包装**那一份（直接对 standards_data 发起调用），
+    #:   它已改名为 `get_fastener_table_raw`；`get_fastener_table` 现在是从 `sw` 出发的高层实现。
+    m.get_fastener_table_raw(std, "T", 1, 2, "D")
     got = [(n, len(a)) for n, a in calls]
     assert got == [
         ("GetHoleStandards", OFFICIAL_ARITY["GetHoleStandards"]),

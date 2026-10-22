@@ -1,3 +1,4 @@
+# ruff: noqa: N999  -- ★ 模块名里的 `SWRoutingLib` 是官方 DLL 真名，不可改（详见下方说明）
 r"""SolidWorks SWRoutingLib 官方接口全量索引。
 
 能力域
@@ -38,6 +39,9 @@ r"""SolidWorks SWRoutingLib 官方接口全量索引。
 
 ⚠ 本模块为机械抄录，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+#: ★★ 2026-10-22：本模块名里的大写 **不可改** —— `SWRoutingLib` 是 **SolidWorks 官方 DLL 的真名**，
+#:   本文件是「按官方库名逐条机械抄录」的产物；改成全小写会**对不上官方库名** ✗
+#:   ⇒ 模块名就此保留；对应的 N999 在此声明豁免。
 
 from __future__ import annotations
 

@@ -508,7 +508,6 @@ def insert_sheet_metal_miter_flange(
         "preconditions_held": None,
         "precondition_note": "★★ **官方页无 `## Remarks` 段 ⇒ 前置查不到** ⇒ 本模块**不编前置**"
         "（铁律 5）；★ 只回读选区计数，★ `preconditions_held` 如实报 None",
-        "verified_by": "feature tree delta + IFeature non-None + solid face-count delta",
     }
 
 
@@ -735,7 +734,6 @@ def insert_weldment_end_cap(
         "★ ★ 官方**没给 mark**，★ 官方例子用的是 mark=**0**",
         "unit_assumption": "★ 官方未给单位；按米收、对外收毫米、边界换算一次"
         "（★ 官方例子读回时自己 `* 1000#` 才成 mm ⇒ 官方回的确实是米）",
-        "verified_by": "feature tree delta + IFeature non-None + GetDefinition() 属性回读",
     }
 
 
@@ -895,8 +893,6 @@ def insert_weldment_gusset(
         "VT_I4 ⇒ 本模块按 int 透传并**声明这一点**（不假装类型已对上）",
         "unit_assumption": "★ 距离按米收、对外毫米（官方例子 0.005/0.025/0.0125 即 5/25/12.5 mm）；"
         "★ 角度官方吃**弧度**（例子 0.78539816339745 = π/4 = 45°）⇒ 对外收度、边界换算一次",
-        "verified_by": "feature tree delta + IFeature non-None + solid face-count delta"
-        " + mark-1 选区计数",
     }
 
 

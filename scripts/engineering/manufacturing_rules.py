@@ -233,7 +233,7 @@ def rules_report() -> dict:
         "source": str(RULES_FILE.relative_to(ROOT)),
         "thread_sizes": thread_sizes(),
         "clearance_sizes": sorted(
-            ((load_rules().get("cnc_defaults") or {}).get("hole_clearance") or {})
+            (load_rules().get("cnc_defaults") or {}).get("hole_clearance") or {}
         ),
         "feature_order_len": len(feature_order()),
         "fillet_before_holes": fillet_before_holes(),

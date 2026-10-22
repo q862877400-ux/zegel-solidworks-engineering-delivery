@@ -515,11 +515,13 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
                 results.append(entry)
                 continue
             via = "ISketchRelationManager::AddRelation"
-            dispatch = lambda: add_relation(payload, RELATION_TYPES[kind])
+            def dispatch():
+                return add_relation(payload, RELATION_TYPES[kind])
         else:
             # Fallback is chosen BEFORE dispatch, never after an ambiguous call.
             via = "SketchAddConstraints"
-            dispatch = lambda: model.SketchAddConstraints("sg" + kind)
+            def dispatch():
+                return model.SketchAddConstraints("sg" + kind)
 
         dispatch_error = None
         try:

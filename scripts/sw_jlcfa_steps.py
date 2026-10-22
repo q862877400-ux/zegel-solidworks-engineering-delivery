@@ -184,7 +184,8 @@ def page_kind(st: dict[str, Any]) -> str:
     ⇒ 判据用**互斥的独占特征**，并要求**可见**。
     """
     vis = st.get("visible") or set()
-    has = lambda n: n in vis
+    def has(n):
+        return n in vis
     # 生成完成是 SELECT 的子状态，先判它
     if has("建模完成！"):
         return "GENERATED"

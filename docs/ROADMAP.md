@@ -45,6 +45,21 @@
 
 ## 一 · 游标（**唯一必须维护的字段**）
 
+2026-10-22 ★★★ **仓库统一化 · 第 32 轮（收口）：从「风格违规」里挖出 6 个真 bug**
+  ★★ **最重的一个**：`sw_hole_features.get_fastener_table` **定义了两遍** —— 第一份 52 行高层实现
+  （真机验证过的 `out_dispatch()` 出参）**被第二份 12 行裸包装静默覆盖** ⇒ 52 行从来没被调用（死代码）。
+  ★ 两份**语义根本不同** ⇒ 按章程「同签名不同语义 ⇒ 改名」：保留 `get_fastener_table`（高层、
+  现在真可达）+ 移包装改名 `get_fastener_table_raw` + 同步改测试 ⇒ **34 个相关测试全过** ✓
+  ★ F601 字典重复键 ×4（**静默丢掉更详细的判据串**）· F811 函数重复定义 ×2（删旧简化版，留带 `_busy_guard` 的新版）·
+  F509 `%`-format 里的**全角右括号**（实测 `ValueError: unsupported format character`，修后实跑通过）
+  ★ 另修 14 处小项（F541/UP034/UP032/E731/N814/N805/N802/F402/F841/N999）；其中 F402 是循环变量 `field`
+  **遮蔽了 `dataclasses.field`**（潜在坑，已改 `field_name`）；N999 是 `SWRoutingLib` 为官方 DLL 真名、不可改（`# ruff: noqa` + 理由）。
+  ★★ **我自己制造并修掉一个回归**：改 N814 时只替换了 `Path as _P` 与 `_P.`、漏了**裸 `_P`** ⇒ ruff 报 F821 ×5
+  ⇒ 用 `\b_P\b` 全替 + **实跑三个文件的 import** 才敢说修好。★ 又一次印证事实 61 族：机械替换前先查「所有使用处都覆盖到了吗」。
+  ★★ **收口读数**：① ruff 439 → **415**（基线上界 415 = 实测 415，**无余量**）· ②(信息项) 2,315 ·
+  ③ 缺来源块 **0** · ④ 同名 .py **0** · ⑤ 跨文件同函数体 **76**（纯生产仅剩 4 组、全部登记豁免且各有 130–325 字理由）。
+  ★ 三道门全绿：`goal_gate` exit 0 · `check_repo_uniformity` exit 0（五项全 PASS）· `release_check` exit 0（status pass· 57 道· passed 54· missing []）。
+
 2026-10-22 ★★★ **仓库统一化 · 第 31 轮：纯生产代码的「重复实现」清零**
   收敛两组同形不同名：`sw_jlcfa_steps.click` → `sw_jlcfa_click.click_point`（别名）·
   `sw_jlcfa_locate.capture_front` → `sw_gui_modal.screen_png`（薄适配）。★ 唯一实现留在**名字更准**的一份。

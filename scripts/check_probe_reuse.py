@@ -273,7 +273,8 @@ def main(argv: list) -> int:
     args = ap.parse_args(argv[1:])
 
     hits = scan()
-    key = lambda h: (h["probe"], h["tool"])
+    def key(h):
+        return (h["probe"], h["tool"])
     uniq = sorted({key(h): h for h in hits}.values(), key=key)
 
     if args.report:

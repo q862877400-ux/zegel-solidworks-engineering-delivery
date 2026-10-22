@@ -479,7 +479,7 @@ def _domain_extension() -> dict[str, list[str]]:
       空着就会**低估覆盖面**。既然现在有源，就把族补进去。
     """
     import json
-    from pathlib import Path as _P
+    from pathlib import Path as _p
 
     out: dict[str, list[str]] = {}
     mapping = {
@@ -487,7 +487,7 @@ def _domain_extension() -> dict[str, list[str]]:
         Path(__file__).resolve().parents[1] / "_reg_pdm.json": "路由/Composer/PDM",
     }
     for path, domain in mapping.items():
-        data = _P(path)
+        data = _p(path)
         if not data.is_file():
             continue
         fams = sorted(json.loads(data.read_text(encoding="utf-8")).keys())
@@ -504,9 +504,9 @@ def _unmapped_sldworks() -> list[str]:
       而不是让读者以为 374 就是全部。
     """
     import re as _re
-    from pathlib import Path as _P
+    from pathlib import Path as _p
 
-    src = _P(
+    src = _p(
         Path(__file__).resolve().parents[1]
         / "_raw"
         / "reflect_sldworks"
@@ -825,14 +825,8 @@ def main() -> int:
         "> **合并这两个数字就是误导。** 早先版本只报一个触及率，",
         "> 于是「族触及率 100%」是靠**把名字列进登记表**达成的 ——",
         "> 那证明的是「这份 API 清单做完了」，**不是「这些 API 都能用了」**。",
-        "> 当前实测：{:,} 个成员里，**编入目录 {:,}（{:.0f}%）**、".format(
-            _tot_members,
-            _tot_hit,
-            100.0 * _tot_hit / _tot_members if _tot_members else 0.0,
-        ),
-        "> **真调用 {:,}（{:.0f}%）**。".format(
-            _tot_used, 100.0 * _tot_used / _tot_members if _tot_members else 0.0
-        ),
+        f"> 当前实测：{_tot_members:,} 个成员里，**编入目录 {_tot_hit:,}（{100.0 * _tot_hit / _tot_members if _tot_members else 0.0:.0f}%）**、",
+        f"> **真调用 {_tot_used:,}（{100.0 * _tot_used / _tot_members if _tot_members else 0.0:.0f}%）**。",
         ">",
         "> FeatureData 的属性赋值不计入真调用。",
         "",

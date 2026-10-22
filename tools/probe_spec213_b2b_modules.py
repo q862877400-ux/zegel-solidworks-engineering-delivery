@@ -231,7 +231,7 @@ def main() -> int:
     elif ok1 and ok2:
         out["verdict"] = (
             "★★★ 两项 `verified` 成立（爆炸直线 ✓ · SpeedPak ✓）；"
-            "★★ 而曲线驱动阵列**这次建了**（%）⇒ ★ **那与登记的 `stitched` 不一致** ✗ "
+            "★★ 而曲线驱动阵列**这次建了**（%r）⇒ ★ **那与登记的 `stitched` 不一致** ✗ "
             "⇒ ★ **要回头改登记**（★ 不许放着不管）✓" % ok3
         )
     else:
