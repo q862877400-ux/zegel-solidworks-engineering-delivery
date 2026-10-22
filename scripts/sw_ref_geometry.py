@@ -139,17 +139,19 @@ except ImportError:
     from sw_feature_tree import tree_names as _tree_names
 
 
-def _delta(before, after):
-    """★ 新增的特征名（★ `None` 表示量不到 ⇒ 判据降级，★ 不猜）。"""
-    if before is None or after is None:
-        return None
-    return [x for x in after if x not in before]
+#: ★ 2026-10-22 统一化：本函数原与另 3 个模块各有一份（另一处叫 _new_features），
+#:   现收敛到 scripts/sw_feature_tree.new_features；本文件调用点已直接改名
+try:
+    from .sw_feature_tree import new_features
+except ImportError:
+    from sw_feature_tree import new_features
+
 
 
 def _judge(model, r, op):
     """★ 统一判据：**回对象非 None** **且** **特征树有新特征**（★ 两判据都要）。"""
     after = _tree_names(model)
-    added = _delta(r.pop("_before", None), after)
+    added = new_features(r.pop("_before", None), after)
     r.update({"op": op, "tree_after": after, "new_features": added,
               "ok": bool(r.get("returned_is_none") is False and added),
               "verified_by": "returned_object + tree_delta"})

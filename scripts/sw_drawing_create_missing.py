@@ -300,8 +300,13 @@ def _selection_count(model) -> int | None:
         return None
 
 
-def _delta(before, after) -> int | None:
-    """★ before/after 计数之差；★ 任一读不到就回 `None`（★ 判据降级、★ 不猜）。"""
+def _numeric_delta(before, after) -> int | None:
+    """★ **计数**之差（`int(after) - int(before)`）；★ 任一读不到就回 `None`（★ 判据降级、不猜）。
+
+    ★★ 2026-10-22 名字修正：本函数原叫 `_delta` —— 而同一个仓里**另有四份** `_delta`
+      返回的是**特征名列表差**（已收敛为 `sw_feature_tree.new_features`）⇒
+      ★ 同一个名字指两件事，容易把人带错 ✗ ⇒ 改名为 `_numeric_delta`。
+    """
     if before is None or after is None:
         return None
     return int(after) - int(before)
@@ -393,7 +398,7 @@ def insert_break_lines(model, view_name: str,
     #: ★ 回读官方示例读的那两个属性（`swBreakLine.Style` / `swBreakLine.ShapeIntensity`）
     ret_style = _read(brk, "Style")
     ret_intensity = _read(brk, "ShapeIntensity")
-    delta = _delta(before["break_count"], after["break_count"])
+    delta = _numeric_delta(before["break_count"], after["break_count"])
     return {
         "ok": bool(delta and delta > 0) and after["break_count"] > 0,
         "op": "insert_break_lines",
@@ -496,7 +501,7 @@ def create_auxiliary_view(model, x_mm: float, y_mm: float, *,
     new_names = ([] if before_names is None or after_views is None
                  else [_view_name(v) for v in after_views if _view_name(v) not in before_names])
     new_type = _view_type(aux) if aux is not None else None
-    delta = _delta(before_count, after_count)
+    delta = _numeric_delta(before_count, after_count)
     return {
         "ok": bool(delta and delta > 0) and new_type == SW_DRAWING_AUXILIARY_VIEW,
         "op": "create_auxiliary_view",
@@ -604,7 +609,7 @@ def insert_surface_finish_symbol(model, *,
     )
 
     after = _sum_over_views(model, "GetSFSymbolCount")
-    delta = _delta(before, after)
+    delta = _numeric_delta(before, after)
     return {
         "ok": bool(delta and delta > 0),
         "op": "insert_surface_finish_symbol",
@@ -659,7 +664,7 @@ def insert_datum_tag(model) -> dict:
     before = _sum_over_views(model, "GetDatumTagCount")
     tag = get_com_member(model, "InsertDatumTag2")
     after = _sum_over_views(model, "GetDatumTagCount")
-    delta = _delta(before, after)
+    delta = _numeric_delta(before, after)
     return {
         "ok": bool(delta and delta > 0),
         "op": "insert_datum_tag",
@@ -780,7 +785,7 @@ def auto_insert_balloons(model, *,
     balloon_notes = _as_list(notes)
 
     after = _sum_over_views(model, "GetNoteCount")
-    delta = _delta(before, after)
+    delta = _numeric_delta(before, after)
     return {
         #: ★★★ 2026-10-06（规格 209 · B2-2 · idx 34）：**判据收紧成纯回读** ——
         #:   原先 `ok` 是 `bool(balloon_notes) and (delta is None or delta >= 0)`，两处都不合规格：
@@ -890,7 +895,8 @@ def auto_insert_balloons(model, *,
 # ─────────────────────────────────────────────────────────────────────────────
 # ★★ **判据**（规则 6）：★ 它回**标注对象数组**（COM 对象 ⇒ **过不了 JSON 边界**）⇒
 #   ★★ 本函数用 **`IView::GetAnnotationCount()` 的前后回读**（本模块既有 `_sum_over_views`）+
-#   `_delta()` 当判据 ✓ —— ★ **不拿返回的数组长度当唯一判据**（★ 同 `PostIntersect` 那类教训）
+#   `_numeric_delta()` 当判据 ✓ —— ★ **不拿返回的数组长度当唯一判据**
+#   （★ 同 `PostIntersect` 那类教训）
 
 #: ★ 官方 `swImportModelItemsSource_e`（★ 逐值抄自 `C:\swapi\enums\`）
 #: enum-gate: enum swImportModelItemsSource_e
@@ -980,7 +986,7 @@ def insert_model_annotations(model, view_name: str = "", *, source: str = "entir
 
     ★★ **判据（规则 6）**：★ 它回**标注对象数组**（COM 对象 ⇒ 过不了 JSON 边界）⇒
       ★ 判据是 **`IView::GetAnnotationCount()` 的前后回读**（★ 本模块既有 `_sum_over_views`）+
-      `_delta()` —— ★ **不拿返回数组长度当唯一判据** ✓
+      `_numeric_delta()` —— ★ **不拿返回数组长度当唯一判据** ✓
     ★★ **调用序照官方示例**：**先选中视图**（`SelectByID2`，类型 `DRAWINGVIEW`）⇒
       **再 `ActivateView`**（★ 这一步签名里看不出来）⇒ `ClearSelection2` ⇒ 调它 ✓
     """
@@ -1066,7 +1072,7 @@ def insert_model_annotations(model, view_name: str = "", *, source: str = "entir
     out["returned_count"] = len(list(returned)) if returned is not None else 0
     try:
         out["annotation_count_after"] = _sum_over_views(model, "GetAnnotationCount")
-        out["annotation_delta"] = _delta(out["annotation_count_before"],
+        out["annotation_delta"] = _numeric_delta(out["annotation_count_before"],
                                          out["annotation_count_after"])
     except Exception as exc:                                            # noqa: BLE001
         out["error"] = "后置回读失败：%s" % str(exc)[:150]
@@ -1222,7 +1228,7 @@ def insert_center_lines(model, view_name: str = "", *, entity_type: str = "edge"
         return out
     try:
         out["centerline_count_after"] = _sum_over_views(model, "GetCenterLineCount")
-        out["centerline_delta"] = _delta(out["centerline_count_before"],
+        out["centerline_delta"] = _numeric_delta(out["centerline_count_before"],
                                         out["centerline_count_after"])
     except Exception as exc:                                            # noqa: BLE001
         out["error"] = "后置回读失败：%s" % str(exc)[:150]

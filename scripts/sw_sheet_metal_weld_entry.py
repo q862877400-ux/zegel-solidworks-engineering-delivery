@@ -190,11 +190,13 @@ def _tree(model) -> list[str] | None:
         return None
 
 
-def _new_features(before, after) -> list[str] | None:
-    """★ 新增的特征名；★ 任一侧读不到就回 `None`（★ 判据降级，不猜）。"""
-    if before is None or after is None:
-        return None
-    return [x for x in after if x not in before]
+#: ★ 2026-10-22 统一化：本函数与另 4 个模块的 _delta（列表版）逻辑相同，
+#:   现收敛到 scripts/sw_feature_tree.new_features（★ 这个名字才说对了语义）
+try:
+    from .sw_feature_tree import new_features
+except ImportError:
+    from sw_feature_tree import new_features
+
 
 
 def _body_face_count(model) -> int | None:
@@ -254,8 +256,13 @@ def _volume_mm3(model) -> float | None:
         return None
 
 
-def _delta(before, after) -> int | float | None:
-    """★ before/after 之差；★ 任一侧读不到回 `None`（★ 判据降级，不猜）。"""
+def _numeric_delta(before, after) -> int | float | None:
+    """★ **数值**差（`after - before`）；★ 任一侧读不到回 `None`（★ 判据降级，不猜）。
+
+    ★★ 2026-10-22 名字修正：本函数原叫 `_delta`，而同一个仓里**另有四份** `_delta`
+      它们返回的是**特征名列表差**（已收敛为 `sw_feature_tree.new_features`）
+      ⇒ ★ 同一个名字指两件事，容易把人带错 ✗ ⇒ 改名为 `_numeric_delta` 以表达真实语义。
+    """
     if before is None or after is None:
         return None
     return after - before
@@ -409,7 +416,7 @@ def insert_sheet_metal_miter_flange(model, *,
     )
     after = _tree(model)
     after_faces = _body_face_count(model)
-    added = _new_features(before, after)
+    added = new_features(before, after)
     #: ★★★★ 2026-10-04（接手轮）**把 doc 承诺的第三个判据纳入 `ok`** ——
     #:   处置 `JUDGE-C_D_E.md` 的 🔴 #1 · **E5-4**（★ 裁判逐字：「★ 仓内 doc：
     #:   `判据 = 特征树增量 + 返回对象非 None + 实体面数增量（**三个都要**）` ★ 而目标：
@@ -418,7 +425,7 @@ def insert_sheet_metal_miter_flange(model, *,
     #:     ★★ **只是没把它放进 `ok`** ⇒ ★★★ **doc 说"三个都要"、★ 实现只用了两个** ✓
     #:   ⇒ 修法：★ 把**已经算好的** `face_count_delta` 加进 `ok` —— ★ **不新算任何东西** ✓
     #:   ★★ 连接词：★ **跨种类 ⇒ `and`**（★ 树增量 / 返回对象 / 几何量，★ 三类都要）✓
-    face_delta_here = _delta(before_faces, after_faces)
+    face_delta_here = _numeric_delta(before_faces, after_faces)
     return {
         "ok": bool(added) and feature is not None and bool(face_delta_here),
         "verified_by": "★ 特征树增量 **and** 返回对象非 None **and** 实体面数增量"
@@ -431,7 +438,7 @@ def insert_sheet_metal_miter_flange(model, *,
         "returned_name": _feature_name(feature),
         "tree_before": before, "tree_after": after, "new_features": added,
         "face_count_before": before_faces, "face_count_after": after_faces,
-        "face_count_delta": _delta(before_faces, after_faces),
+        "face_count_delta": _numeric_delta(before_faces, after_faces),
         "pcba_passed": "★ 空 Dispatch（= 官方 PCBA 那一列的 NULL 分支）⇒ 用父折弯的折弯补偿",
         "unit_assumption": "★ 官方未给单位；按 SolidWorks 惯例当**米**、对外收毫米、边界换算一次",
         "selection_marks": _selection_marks(model),
@@ -471,9 +478,9 @@ def insert_sheet_metal_closed_corner(model) -> dict:
     after = _tree(model)
     after_faces = _body_face_count(model)
     after_vol = _volume_mm3(model)
-    added = _new_features(before, after)
-    face_delta = _delta(before_faces, after_faces)
-    vol_delta = _delta(before_vol, after_vol)
+    added = new_features(before, after)
+    face_delta = _numeric_delta(before_faces, after_faces)
+    vol_delta = _numeric_delta(before_vol, after_vol)
     #: ★★★★ 2026-10-04（接手轮）**修掉一个"把缺一不可写成有一个就行"的判据** ——
     #:   ★ 处置 `JUDGE-C_D_E.md` 的 🔴 #1（★ 裁判逐字：「★ doc 承诺的判据**没进 `ok`** ⇒
     #:     **特征没建成也报成功**，★ 直接违反仓库规则 6（不静默成功）。★ 其中 **batch74 闭合角
@@ -585,7 +592,7 @@ def insert_weldment_end_cap(model, depth_mm: float, *,
         int(is_end_cap_inward),
     )
     after = _tree(model)
-    added = _new_features(before, after)
+    added = new_features(before, after)
     #: ★ 回读的成员名与单位换算**逐条照官方例子**（`swEndCap.X * 1000# & " mm"` ⇒ 官方回米）
     definition, unreadable = ({}, [])
     if feature is not None:
@@ -605,7 +612,7 @@ def insert_weldment_end_cap(model, depth_mm: float, *,
     #: ★★★★ 2026-10-04（接手轮）**把 doc 承诺的第三个判据纳入 `ok`**（★ E5-4 · 与另两处同源同错）——
     #:   ★ doc 逐字：`判据 = 特征树增量 + 返回对象非 None + **实体面数增量**（三个都要）` ✓
     #:   ★★ 本处**早已算了** `face_count_delta`（★ 就在返回值里）、★ **只是没进 `ok`** ✓
-    face_delta_here = _delta(before_faces, after_faces)
+    face_delta_here = _numeric_delta(before_faces, after_faces)
     return {
         "ok": bool(added) and feature is not None and bool(face_delta_here),
         "verified_by": "★ 特征树增量 **and** 返回对象非 None **and** 实体面数增量"
@@ -728,7 +735,7 @@ def insert_weldment_gusset(model, depth_mm: float, *,
     )
     after = _tree(model)
     after_faces = _body_face_count(model)
-    added = _new_features(before, after)
+    added = new_features(before, after)
     mark1 = (marks or {}).get("1", -1)
     #: ★★★★ 2026-10-04（接手轮）**把 doc 承诺的两个判据纳入 `ok`**（★ E5-4 · 第三处）——
     #:   ★ 本处的 doc 逐字多了两条：`… + **GetDefinition() 属性回读**（官方例子读法）` ／
@@ -737,7 +744,7 @@ def insert_weldment_gusset(model, depth_mm: float, *,
     #:   ⇒ 修法：★ **两个已算好的量都纳入 `ok`**（★ 不新算）✓
     #:   ★★★ 连接词：★ **跨种类 ⇒ `and`** —— ★ 树增量 / 返回对象 / 面数增量 / mark-1 计数，
     #:     ★★ 四个**都必须成立**（★ doc 写的是"三个都要"+ 两条附加 ⇒ ★ **一路 `and`**）✓
-    face_delta_here = _delta(before_faces, after_faces)
+    face_delta_here = _numeric_delta(before_faces, after_faces)
     return {
         "ok": (bool(added) and feature is not None and bool(face_delta_here)
                and int(mark1) > 0),
@@ -755,7 +762,7 @@ def insert_weldment_gusset(model, depth_mm: float, *,
         "returned_name": _feature_name(feature),
         "tree_before": before, "tree_after": after, "new_features": added,
         "face_count_before": before_faces, "face_count_after": after_faces,
-        "face_count_delta": _delta(before_faces, after_faces),
+        "face_count_delta": _numeric_delta(before_faces, after_faces),
         "selection_marks": marks,
         "selection_mark_1_count": mark1,
         "preconditions_held": bool(mark1 >= 2),
@@ -825,8 +832,8 @@ def insert_mid_surface(model, body, part_doc, *,
     )
     after = _tree(model)
     after_sb = _surface_body_count(model)
-    added = _new_features(before, after)
-    sb_delta = _delta(before_sb, after_sb)
+    added = new_features(before, after)
+    sb_delta = _numeric_delta(before_sb, after_sb)
     return {
         "ok": bool(sb_delta and sb_delta > 0) and result is not None,
         "op": "insert_mid_surface",

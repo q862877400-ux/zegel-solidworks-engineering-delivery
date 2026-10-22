@@ -87,11 +87,13 @@ except ImportError:
     from sw_feature_tree import tree_names as _tree_names
 
 
-def _delta(before, after):
-    """★ 新增的特征名（★ `None` 表示量不到 ⇒ 判据降级，★ 不猜）。"""
-    if before is None or after is None:
-        return None
-    return [x for x in after if x not in before]
+#: ★ 2026-10-22 统一化：本函数原与另 3 个模块各有一份（另一处叫 _new_features），
+#:   现收敛到 scripts/sw_feature_tree.new_features；本文件调用点已直接改名
+try:
+    from .sw_feature_tree import new_features
+except ImportError:
+    from sw_feature_tree import new_features
+
 
 
 def insert_revolved_ref_surface(model, angle_deg: float, rev_type: int = 0,
@@ -126,7 +128,7 @@ def insert_revolved_ref_surface(model, angle_deg: float, rev_type: int = 0,
                           math.radians(float(angle_deg)), bool(reverse_dir),
                           math.radians(float(angle2_deg)), int(rev_type))
     after = _tree_names(model)
-    added = _delta(before, after)
+    added = new_features(before, after)
     return {"ok": feat is not None and bool(added), "op": "revolved_ref_surface",
             "returned_is_none": feat is None,
             "rev_type": int(rev_type), "rev_type_meaning": REVOLVE_TYPE_MEANINGS[int(rev_type)],
@@ -166,7 +168,7 @@ def insert_lofted_ref_surface(model, closed: bool = False, keep_tangency: bool =
                    bool(closed), bool(keep_tangency), bool(force_non_rational),
                    float(tess_tolerance_factor), int(start_matching_type), int(end_matching_type))
     after = _tree_names(model)
-    added = _delta(before, after)
+    added = new_features(before, after)
     return {"ok": bool(added), "op": "lofted_ref_surface",
             "closed": bool(closed), "keep_tangency": bool(keep_tangency),
             "selection_mark": "profile selections **should be 1**（官方 Remarks 逐字）",

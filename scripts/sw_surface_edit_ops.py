@@ -91,11 +91,13 @@ except ImportError:
     from sw_feature_tree import tree_names as _tree_names
 
 
-def _delta(before, after):
-    """★ 新增的特征名（★ `None` 表示量不到 ⇒ 判据降级，★ 不猜）。"""
-    if before is None or after is None:
-        return None
-    return [x for x in after if x not in before]
+#: ★ 2026-10-22 统一化：本函数原与另 3 个模块各有一份（另一处叫 _new_features），
+#:   现收敛到 scripts/sw_feature_tree.new_features；本文件调用点已直接改名
+try:
+    from .sw_feature_tree import new_features
+except ImportError:
+    from sw_feature_tree import new_features
+
 
 
 def insert_planar_surface(model) -> dict:
@@ -109,7 +111,7 @@ def insert_planar_surface(model) -> dict:
     before = _tree_names(model)
     r = get_com_member(model, "InsertPlanarRefSurface")
     after = _tree_names(model)
-    added = _delta(before, after)
+    added = new_features(before, after)
     return {"ok": bool(r) and bool(added), "op": "planar_surface",
             "returned": r, "tree_before": before, "tree_after": after, "new_features": added,
             "verified_by": "return_value + tree_delta"}
@@ -131,7 +133,7 @@ def insert_offset_surface(model, thickness_mm: float, reverse: bool = False) -> 
     before = _tree_names(model)
     get_com_member(model, "InsertOffsetSurface", float(thickness_mm) / 1000.0, bool(reverse))
     after = _tree_names(model)
-    added = _delta(before, after)
+    added = new_features(before, after)
     return {"ok": bool(added), "op": "offset_surface",
             "tree_before": before, "tree_after": after, "new_features": added,
             "asked_mm": thickness_mm, "reverse": bool(reverse),
@@ -172,7 +174,7 @@ def insert_ruled_surface(model, ruled_type: int, length_mm: float = 0.0,
                           float(x_mm) / 1000.0, float(y_mm) / 1000.0, float(z_mm) / 1000.0,
                           bool(b_connect_surface))
     after = _tree_names(model)
-    added = _delta(before, after)
+    added = new_features(before, after)
     return {"ok": feat is not None and bool(added), "op": "ruled_surface",
             "returned_is_none": feat is None,
             "type": int(ruled_type), "type_meaning": RULED_TYPE_MEANINGS[int(ruled_type)],
@@ -212,7 +214,7 @@ def insert_delete_face(model, option: int = 0) -> dict:
     before = _tree_names(model)
     r = get_com_member(ext, "InsertDeleteFace", int(option))
     after = _tree_names(model)
-    added = _delta(before, after)
+    added = new_features(before, after)
     return {"ok": bool(r) and bool(added), "op": "delete_face",
             "returned": r, "option": int(option),
             "option_meaning": {0: "swFaceDelete_Default", 1: "swFaceDelete_Patch",
@@ -236,7 +238,7 @@ def insert_replace_face(model) -> dict:
     before = _tree_names(model)
     get_com_member(model, "InsertFeatureReplaceFace")
     after = _tree_names(model)
-    added = _delta(before, after)
+    added = new_features(before, after)
     return {"ok": bool(added), "op": "replace_face",
             "tree_before": before, "tree_after": after, "new_features": added,
             "requires_selection": "要被替换的面 mark=1 · 替换面 mark=2（官方 Remarks）",

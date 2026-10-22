@@ -91,11 +91,13 @@ except ImportError:
     from sw_feature_tree import tree_names as _tree_names
 
 
-def _delta(before, after):
-    """★ 新增的特征名（★ `None` 表示量不到 ⇒ 判据降级，★ 不猜）。"""
-    if before is None or after is None:
-        return None
-    return [x for x in after if x not in before]
+#: ★ 2026-10-22 统一化：本函数原与另 3 个模块各有一份（另一处叫 _new_features），
+#:   现收敛到 scripts/sw_feature_tree.new_features；本文件调用点已直接改名
+try:
+    from .sw_feature_tree import new_features
+except ImportError:
+    from sw_feature_tree import new_features
+
 
 
 def _selection_mark_counts(model):
@@ -182,7 +184,7 @@ def insert_split_line_project(model, is_directional: bool = False,
     get_com_member(model, "InsertSplitLineProject", bool(is_directional), bool(flip_dir))
     after_tree = _tree_names(model)
     after_faces = _face_loop_stats(model)
-    added = _delta(before_tree, after_tree)
+    added = new_features(before_tree, after_tree)
     face_delta = None
     if before_faces is not None and after_faces is not None:
         face_delta = after_faces["face_count"] - before_faces["face_count"]
@@ -260,7 +262,7 @@ def insert_split_line_silhouette(model) -> dict:
     get_com_member(model, "InsertSplitLineSil")
     after_tree = _tree_names(model)
     after_faces = _face_loop_stats(model)
-    added = _delta(before_tree, after_tree)
+    added = new_features(before_tree, after_tree)
     face_delta = None
     if before_faces is not None and after_faces is not None:
         face_delta = after_faces["face_count"] - before_faces["face_count"]
@@ -320,7 +322,7 @@ def insert_curve_through_points(model, points_mm, ) -> dict:
                                               float(p[2]) / 1000.0)))
     end_ret = bool(get_com_member(model, "InsertCurveFileEnd"))
     after = _tree_names(model)
-    added = _delta(before, after)
+    added = new_features(before, after)
     #: ★★★★ 2026-10-04（接手轮）**把 doc 承诺的 `Point` 返回值也纳入 `ok`** ——
     #:   处置 `JUDGE-C_D_E.md` 的 🔴 #1 · **E5-6**（★ 裁判逐字：「★ 仓内 doc：
     #:   `★ 判据 = Point/End 的返回值 **且** 特征树增量。` ★ 而目标：
@@ -407,7 +409,7 @@ def insert_mate_reference(model, name: str, primary_entity=None,
                           _empty, 0, 0, False,
                           _empty, 0, 0)
     after = _tree_names(model)
-    added = _delta(before, after)
+    added = new_features(before, after)
     return {"ok": feat is not None and bool(added), "op": "mate_reference",
             "returned_is_none": feat is None, "name": str(name),
             "primary_type": int(primary_type), "primary_alignment": int(primary_alignment),

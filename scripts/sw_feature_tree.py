@@ -42,6 +42,23 @@ def tree_names(model):
         return None
 
 
+def new_features(before, after) -> list[str] | None:
+    """★ 新增的特征名（★ 任一侧为 `None` ⇒ 量不到 ⇒ 回 `None`，★ **判据降级、不猜**）。
+
+    ★★ 2026-10-22（仓库统一化）：这段逻辑原先有 **5 份、2 个名字** ——
+      `sw_curve_and_split` / `sw_ref_geometry` / `sw_surface_edit_ops` /
+      `sw_surface_ref_ops` 里叫 `_delta`（★ 名字说的是「差」，实际返回的是**列表差**，
+      不是在算数），而 `sw_sheet_metal_weld_entry` 里叫 `_new_features`
+      （★ 这个名字才是对的）。
+    ★ 更危险的是：`sw_sheet_metal_weld_entry` 里还有**另一个** `_delta`，
+      ★ 那个才是**数值差**（`after - before`）⇒ ★ **同一个名字在同一个仓里指两件事** ✗
+      ⇒ 本轮把列表版统一成本函数、把数值版**改名**为 `_numeric_delta` ✓
+    """
+    if before is None or after is None:
+        return None
+    return [x for x in after if x not in before]
+
+
 def feature_count(model) -> int:
     """★ 特征树计数 —— ★ 本 COM 绑定里 `GetFeatureCount` 是**属性**
     （★ 调 `()` 会报 `TypeError: 'int' object is not callable`）⇒ ★ 两种形态都吃 ✓

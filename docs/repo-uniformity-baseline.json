@@ -8,7 +8,7 @@
  },
  "measured_at": "2026-10-21",
  "ruff_total_ceiling": 25857,
- "clone_groups_ceiling": 2494,
+ "clone_groups_ceiling": 2492,
  "no_source_block_ceiling": 0,
  "dup_filename_allow": [],
  "_★待裁决": {
@@ -125,9 +125,21 @@
     106
    ],
    "why": "收敛 declaration_above ×4（两个变体都参数化到 scripts/gate_decl.py，正则由调用方传入）"
+  },
+  {
+   "at": "2026-10-22h",
+   "from": [
+    2494,
+    106
+   ],
+   "to": [
+    2492,
+    105
+   ],
+   "why": "收敛 new_features（5 份 2 名）+ ★ 修同名不同语义：把数值版 _delta 改名为 _numeric_delta（横跨 2 文件 19 处）"
   }
  ],
- "dup_function_groups_ceiling": 106,
+ "dup_function_groups_ceiling": 105,
  "dup_function_allow": [
   {
    "functions": "_optional_com_member/_safe_com_member",
