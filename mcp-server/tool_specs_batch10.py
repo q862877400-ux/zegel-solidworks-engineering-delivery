@@ -48,7 +48,10 @@ SPECS_BATCH10 = [
         function="get_bounding_box",
         read_only=True,  # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
         inject="model",
-        doc="Get the bounding box of the first solid body. ⚠⚠ SOLIDWORKS documents the returned values as APPROXIMATE and says they 'should not be used for comparison or calculation purposes'; the box may also vary after a rebuild. Use this for a rough overview only. ⚠ Units are MILLIMETRES (measured on SW 2026 SP4.1: an 80x60x50 mm box returns 80/60/50, not 0.08/0.06/0.05).",
+        doc="Get the bounding box of the first solid body. ⚠⚠ SOLIDWORKS documents the returned values as APPROXIMATE "
+             "and says they 'should not be used for comparison or calculation purposes'; the box may also vary after a "
+             "rebuild. Use this for a rough overview only. ⚠ Units are MILLIMETRES (measured on SW 2026 SP4.1: an "
+             "80x60x50 mm box returns 80/60/50, not 0.08/0.06/0.05).",
         param_alias={},
         params=[
             Param(

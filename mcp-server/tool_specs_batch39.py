@@ -139,6 +139,7 @@ SPECS_BATCH39 = [
         function="insert_gtol",
         inject="model",
         params=[],
-        doc="Insert a GTol annotation (★ zero-argument: IModelDoc2.InsertGtol()). ★ The criterion is that it returns an object and the feature tree changes. ⚠ Does NOT save the document.",
+        doc="Insert a GTol annotation (★ zero-argument: IModelDoc2.InsertGtol()). ★ The criterion is that it returns "
+             "an object and the feature tree changes. ⚠ Does NOT save the document.",
     ),
 ]

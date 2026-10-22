@@ -23,6 +23,11 @@ SPECS_BATCH108 = [
         inject="model",
         params=[],
         read_only=True,
-        doc="★ **读一份文档的 PDM 相邻证据**（★ 读侧）—— ★ 把文档的**自定义属性 / 配置 / 外部引用**汇总成一份可核对的结构化报告 ✓ ★★ 与既有 `solidworks_document_dependencies` 的关系：那个只列**引用清单**；★ 这个给的是**整份 PDM 相邻证据**（属性 + 配置 + 引用）⇒ ★ 更宽 ✓ ⚠★ **如实标注（不许冒充）**：★ 本工具是 **PDM 相邻**，★ **不是** SolidWorks PDM Professional（★ 那需要 **PDM 许可证**，★ 本仓的 `pdm` 台账条目仍是 `not_implemented`）✓ ★ 判据：★ 回的是结构化证据（★ 读不到就如实报，★ 不假装有内容）✓",
+        doc="★ **读一份文档的 PDM 相邻证据**（★ 读侧）—— ★ 把文档的**自定义属性 / 配置 / "
+             "外部引用**汇总成一份可核对的结构化报告 ✓ ★★ 与既有 `solidworks_document_dependencies` 的关系："
+             "那个只列**引用清单**；★ 这个给的是**整份 PDM 相邻证据**（属性 + 配置 + 引用）⇒ ★ 更宽 ✓ ⚠★ "
+             "**如实标注（不许冒充）**：★ 本工具是 **PDM 相邻**，★ **不是** SolidWorks PDM Professional（★ 那需要 **PDM "
+             "许可证**，★ 本仓的 `pdm` 台账条目仍是 `not_implemented`）✓ ★ 判据：★ 回的是结构化证据（★ 读不到就如实报，"
+             "★ 不假装有内容）✓",
     ),
 ]

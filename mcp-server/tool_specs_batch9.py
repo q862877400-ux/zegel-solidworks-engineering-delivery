@@ -122,7 +122,12 @@ SPECS_BATCH9 = [
         module="sw_mold",
         function="mold_undercut_detect",
         inject="model",
-        doc="Detect mold undercuts along a direction. ⚠ The underlying IFeatureManager.MoldUndercutDetect is marked Obsolete by SOLIDWORKS (successor: MoldUndercutDetect2); kept deliberately until the successor shape is verified. See docs/obsolete-member-candidates.md. ★★ Parameter names now follow the official md (ColUndercut/ColBase/BCoordInput/Dx/Dy/Dz); the earlier names (direction/option/include_hidden/a/b/c) did not, so the third argument BCoordInput received False — which drops back to 'use the model's own draft direction' and pops the modal 「此拔模方向尚未定义。」 on a part without one, stalling the session.",
+        doc="Detect mold undercuts along a direction. ⚠ The underlying IFeatureManager.MoldUndercutDetect is marked "
+             "Obsolete by SOLIDWORKS (successor: MoldUndercutDetect2); kept deliberately until the successor shape is "
+             "verified. See docs/obsolete-member-candidates.md. ★★ Parameter names now follow the official md "
+             "(ColUndercut/ColBase/BCoordInput/Dx/Dy/Dz); the earlier names (direction/option/include_hidden/a/b/c) did "
+             "not, so the third argument BCoordInput received False — which drops back to 'use the model's own draft "
+             "direction' and pops the modal 「此拔模方向尚未定义。」 on a part without one, stalling the session.",
         param_alias={},
         params=[
             Param(

@@ -102,7 +102,8 @@ SPECS_BATCH5 = [
         function="collect_appearance_evidence",
         inject="model",
         read_only=True,
-        doc="Collect appearance evidence for the active document (read-only, for verification). ★ 别名: appearance, background, scene",
+        doc="Collect appearance evidence for the active document (read-only, for verification). ★ 别名: appearance, "
+             "background, scene",
         param_alias={},
         params=[],
     ),

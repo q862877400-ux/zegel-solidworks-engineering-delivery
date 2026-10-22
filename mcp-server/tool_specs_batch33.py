@@ -252,14 +252,16 @@ SPECS_BATCH33 = [
                 "pixel_width",
                 int,
                 default=0,
-                description="Image width in PIXELS (★ PIXELS, not a length ⇒ named pixel_width (rule 2: no _mm for a non-length)). "
+                description="Image width in PIXELS (★ PIXELS, not a length ⇒ named pixel_width (rule 2: no _mm for a "
+                             "non-length)). "
                 "⚠ 0 = use the document default.",
             ),
             Param(
                 "pixel_height",
                 int,
                 default=0,
-                description="Image height in PIXELS. ★ Named pixel_height because it is NOT a length (rule 2). ⚠ 0 = use the document default.",
+                description="Image height in PIXELS. ★ Named pixel_height because it is NOT a length (rule 2). ⚠ 0 = "
+                             "use the document default.",
             ),
         ],
         doc="Export a BMP image of the active document and return a READ-BACK report "

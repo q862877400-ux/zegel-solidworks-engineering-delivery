@@ -129,7 +129,10 @@ _BATCH70: list[ToolSpec] = [
                 default=False,
             ),
         ],
-        doc="★ 边界框：`IFeatureManager.InsertGlobalBoundingBox2(…)`（5 参，回 `IFeature`）。★★ **台账 T701 给的 `Create3DBoundingBox` 是焊件切割清单专用的另一个** ——官方的才是这条。★ 第 5 个形参 `Status` 是 **out**（`swGlobalBoundingBoxResult_e`，**Success=0**）⇒ 实现层用 `sw_connect.out_i4()` 包（★ 裸传 int 会 `类型不匹配`，位置 5）。★ 真机建成：**`Status=0 (Success)`** + 特征树增量。",
+        doc="★ 边界框：`IFeatureManager.InsertGlobalBoundingBox2(…)`（5 参，回 `IFeature`）。★★ **台账 T701 给的 "
+             "`Create3DBoundingBox` 是焊件切割清单专用的另一个** ——官方的才是这条。★ 第 5 个形参 `Status` 是 "
+             "**out**（`swGlobalBoundingBoxResult_e`，**Success=0**）⇒ 实现层用 `sw_connect.out_i4()` 包（★ 裸传 int 会 "
+             "`类型不匹配`，位置 5）。★ 真机建成：**`Status=0 (Success)`** + 特征树增量。",
     ),
     ToolSpec(
         name="solidworks_insert_coordinate_system",

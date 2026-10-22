@@ -847,7 +847,7 @@
 | `watch_dialogs.py` | ★ **常驻弹窗监视器**：发现弹窗就**主动把内容打印出来**（★ 那就是对 LLM 的"报信"），**不点** |
 | `watch_solver_memory.py` | ★ 内存看门狗：仿真求解进程（`cwbcbfmesh.exe`）吃过头就把它斩掉，★ 只报 + 只斩自己那份 |
 | `wrap_long_comments.py` | 把超宽**注释行**按显示宽度折行（用 tokenize 精确定位，不碰代码与字符串） |
-| `wrap_long_prose.py` | 把超过显示宽度上限的 **docstring / 长字符串行**按标点折行（中文不插空格） |
+| `wrap_long_strings.py` | 把超宽**单行字符串字面量**按隐式拼接折行（★ 字符串内容一个字节都不变） |
 
 ---
 

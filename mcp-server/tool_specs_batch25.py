@@ -105,6 +105,10 @@ SPECS_BATCH25 = [
         function="get_interference_detection",
         inject="asm_model",
         params=[],
-        doc="Run interference detection on the ACTIVE assembly and return an auditable report: `status` (pass when nothing interferes / warn when something does / blocked when the check itself failed), `interference_count`, and per-interference `volume` + `component_count`. ⚠ `blocked` means the CHECK failed — do not read it as 'no interference'. ★ Reading only (it runs the detector, it does not change the model).",
+        doc="Run interference detection on the ACTIVE assembly and return an auditable report: `status` (pass when "
+             "nothing interferes / warn when something does / blocked when the check itself failed), "
+             "`interference_count`, and per-interference `volume` + `component_count`. ⚠ `blocked` means the CHECK "
+             "failed — do not read it as 'no interference'. ★ Reading only (it runs the detector, it does not change "
+             "the model).",
     ),
 ]
