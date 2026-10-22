@@ -86,7 +86,7 @@ REGION_TYPES = {
 }
 
 
-def as_bool_variant(values) -> "object":
+def as_bool_variant(values) -> object:
     """★ 把布尔序列包成 **`VARIANT(VT_ARRAY | VT_BOOL)`**（★ 裸 list 会**静默回 None**）。
 
     ★★ 依据：本仓 `scripts/sketch_relations.py` 的真机教训（轮 183）——

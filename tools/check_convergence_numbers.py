@@ -74,7 +74,7 @@ def main(argv: list) -> int:
             )
         )["classification"]
     )
-    judges = json.loads(
+    json.loads(
         (REPO_ROOT / "docs" / "judge-registry.json").read_text(encoding="utf-8")
     )["judges"]
 

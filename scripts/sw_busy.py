@@ -36,7 +36,6 @@ from ctypes import wintypes
 from typing import Any
 
 __all__ = [
-    "list_family_windows",
     "solidworks_busy",
     "solidworks_stuck",
     "solver_processes",

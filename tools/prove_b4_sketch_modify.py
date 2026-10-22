@@ -9,7 +9,7 @@
 #     那是本仓已被真机验证过的骨架：
 #       · `sw, _ = connect_solidworks(wait_seconds=30)`（★ 它回**元组**）
 #       · `new_document(sw, "part")` ⇒ **每个用例一个新文档**（★ 互不污染）
-#       · `P.start_sketch(doc, plane_name="Front Plane")` / `P.end_sketch(doc)`
+#       · `p_.start_sketch(doc, plane_name="Front Plane")` / `p_.end_sketch(doc)`
 #         （★ 用本仓 `sw_part` 的包装，**不裸调** `SketchManager.InsertSketch`）
 #       · **判据 = 几何读数**（B1 用段数增量；本探针用**草图点的 bbox**）
 #
@@ -44,9 +44,9 @@ sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_sketch_primitives as sp  # noqa: E402
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
-from scripts import sw_sketch as SK  # noqa: E402
-from scripts import sw_sketch_modify_ops as M  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
+from scripts import sw_sketch as sk_  # noqa: E402
+from scripts import sw_sketch_modify_ops as m_  # noqa: E402
 
 
 def _transform(doc):
@@ -109,7 +109,7 @@ def _bbox(doc):
         sk = c.get_com_member(c.get_com_member(doc, "SketchManager"), "ActiveSketch")
         if sk is None:
             return None
-        flats = SK.get_lines(sk) or []
+        flats = sk_.get_lines(sk) or []
         xs, ys = [], []
         for i in range(0, len(flats) - 11, 12):
             seg = flats[i : i + 12]
@@ -143,13 +143,13 @@ def _one(sw, zh, fn):
     doc = None
     try:
         doc = c.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         #: ★ 一个矩形 ⇒ 有实体可操作（★ 用本仓现成的图元函数）
         sp.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
         #: ★★★ 2026-10-03（轮 471）**量 bbox 必须在草图**打开**时** ——
         #:   官方对这几个成员的说明是 "Translates / Rotates … the coordinate system of the
         #:   **active or selected sketch**" ⇒ ★ 它们**要活动草图**。
-        #:   ⚠ 我第一版把 `P.end_sketch(doc)` 放在量之前 ⇒ `ActiveSketch` 回 `None`
+        #:   ⚠ 我第一版把 `p_.end_sketch(doc)` 放在量之前 ⇒ `ActiveSketch` 回 `None`
         #:     ⇒ 5 条全记成 `before=None / after=None`（★ 表现成"全都不能"，
         #:       而真因是**量错了时机** —— 不是能力不行）。
         #: ★★★ 两种判据**各管一半**（★ 这是轮 472 学到的）：
@@ -159,7 +159,7 @@ def _one(sw, zh, fn):
         bbox_before, tf_before = _bbox(doc), _transform(doc)
         r = fn(doc)
         bbox_after, tf_after = _bbox(doc), _transform(doc)
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         ch_bbox = _changed(bbox_before, bbox_after)
         ch_tf = _changed(tf_before, tf_after)
         row.update(
@@ -208,22 +208,22 @@ def _one(sw, zh, fn):
 def main() -> int:
     sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
-        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "at": time.strftime("%Y-%m-%dT%H:%m_:%S"),
         "_": "B4 批：草图编辑·移动族 5 条逐个真机跑（specs/201-toolbar-gaps）",
         "judge": "草图点包围盒的前后变化（★ 因为 4/5 的官方返回是 void）",
         "items": [],
     }
     ev["items"].append(
-        _one(sw, "移动实体", lambda d: M.sketch_move(d, 0.0, 0.0, 5.0, 5.0))
+        _one(sw, "移动实体", lambda d: m_.sketch_move(d, 0.0, 0.0, 5.0, 5.0))
     )
     ev["items"].append(
-        _one(sw, "旋转实体", lambda d: M.sketch_rotate(d, 0.0, 0.0, 30.0))
+        _one(sw, "旋转实体", lambda d: m_.sketch_rotate(d, 0.0, 0.0, 30.0))
     )
-    ev["items"].append(_one(sw, "缩放实体比例", lambda d: M.sketch_scale(d, 1.5)))
+    ev["items"].append(_one(sw, "缩放实体比例", lambda d: m_.sketch_scale(d, 1.5)))
     ev["items"].append(
-        _one(sw, "伸展实体", lambda d: M.sketch_stretch(d, 0.0, 0.0, 3.0, 3.0, True))
+        _one(sw, "伸展实体", lambda d: m_.sketch_stretch(d, 0.0, 0.0, 3.0, 3.0, True))
     )
-    ev["items"].append(_one(sw, "镜像（同族附带）", lambda d: M.sketch_flip(d, 1)))
+    ev["items"].append(_one(sw, "镜像（同族附带）", lambda d: m_.sketch_flip(d, 1)))
     ev["passed"] = sum(1 for i in ev["items"] if i.get("ok"))
     ev["total"] = len(ev["items"])
     p = R / "output" / "b4-sketch-modify-evidence.json"

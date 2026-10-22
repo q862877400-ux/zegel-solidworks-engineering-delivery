@@ -44,8 +44,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts.sw_connect import create_empty_dispatch_variant as _av  # noqa: E402
 
 SW_FM_LPATTERN = 6
@@ -53,9 +53,9 @@ SW_FM_LPATTERN = 6
 
 def _mk_solid_with_hole(doc):
     """★ 实体 + 一个可阵列的**小凸台**（★ 阵列要有特征可选）。"""
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -64,16 +64,16 @@ def _mk_solid_with_hole(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     ok = False
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             ok = True
             break
         except Exception:  # noqa: BLE001
@@ -83,24 +83,24 @@ def _mk_solid_with_hole(doc):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCircleByRadius",
         -0.02,
         0.0,
         0.0,
         3.0 / 1000.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names2 = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names2[-1] if names2 else "\u8349\u56fe2", "\u8349\u56fe2"):
         try:
-            P.extrude_boss(doc, cand, 0.005)
+            p_.extrude_boss(doc, cand, 0.005)
             break
         except Exception:  # noqa: BLE001
             continue
@@ -111,12 +111,12 @@ def _one(sw, tag, mode):
     row = {"tag": tag, "mode": mode}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row["solid"] = _mk_solid_with_hole(doc)
-        fm = C.get_com_member(doc, "FeatureManager")
+        fm = c_.get_com_member(doc, "FeatureManager")
         data = None
         try:
-            data = C.get_com_member(fm, "CreateDefinition", SW_FM_LPATTERN)
+            data = c_.get_com_member(fm, "CreateDefinition", SW_FM_LPATTERN)
             row["createdef"] = type(data).__name__ if data is not None else "None"
             if data is not None:
                 try:
@@ -134,11 +134,11 @@ def _one(sw, tag, mode):
         #: u5bf9\u9f50\uff09
         try:
             if mode == "model_none":
-                r = C.get_com_member(data, "AccessSelections", doc, None)
+                r = c_.get_com_member(data, "AccessSelections", doc, None)
             elif mode == "model_emptydisp":
-                r = C.get_com_member(data, "AccessSelections", doc, _av())
+                r = c_.get_com_member(data, "AccessSelections", doc, _av())
             else:
-                r = C.get_com_member(data, "AccessSelections", None, None)
+                r = c_.get_com_member(data, "AccessSelections", None, None)
             row["access"] = "ok"
             row["access_returns"] = str(r)
         except Exception as exc:  # noqa: BLE001
@@ -150,7 +150,7 @@ def _one(sw, tag, mode):
                     row["error_code"] = tok
                     break
         try:
-            C.get_com_member(data, "ReleaseSelectionAccess")
+            c_.get_com_member(data, "ReleaseSelectionAccess")
             row["release"] = "ok"
         except Exception as exc:  # noqa: BLE001
             row["release_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:80])
@@ -159,16 +159,16 @@ def _one(sw, tag, mode):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u91cd\u8dd1 `ILinearPatternFeatureData.AccessSelections`\uff08\u2605 \u89e3\u00a7\u4e8c vs \u4e8b\u5b9e 425/426 \u7684\u51b2\u7a81\uff09",

@@ -313,7 +313,7 @@ def main() -> int:
         if d.is_dir():
             official |= {p.stem for p in d.glob("*.md")}
 
-    rows, cache = [], {}
+    rows, _cache = [], {}
     #: ★★★ 2026-10-03（第 3 版）：**按 `模块.函数` 键 + import 精确解析**（★ 见 `_global
     #: _pool` 的说明）
     pool = _global_pool()
@@ -325,7 +325,7 @@ def main() -> int:
         body = pool.get("%s.%s" % (mod, fn), "")
         if mod not in imap_cache:
             imap_cache[mod] = _import_map(REPO / "scripts" / ("%s.py" % mod))
-        imap = imap_cache[mod]
+        imap_cache[mod]
         #: ★★ 跟**多层**调用图（★ 事实 507：只看 spec 文档会漏，★ 要落到函数体；
         #: ★★ 而"落脚"往往在**第二、三层** —— ★ 第一版只跟一层 ⇒ ★ `fillet` / `chamfer`
         #: /
@@ -408,7 +408,7 @@ def main() -> int:
 
     tot_m = sum(len(r["com_members"]) for r in rows)
     with_m = [r for r in rows if r["com_members"]]
-    R = {
+    r_ = {
         "at": time.strftime("%Y-%m-%d %H:%M:%S"),
         "工具数": len(rows),
         "★_有成员的工具": len(with_m),
@@ -419,7 +419,7 @@ def main() -> int:
         "官方成员总数": len(official),
         "行": rows,
     }
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(json.dumps(r_, ensure_ascii=False, indent=1), encoding="utf-8")
 
     print(
         "★ 工具 **%d** 条 ⇒ ★★ **有 COM 成员引用的 %d 条（%.1f%%）** · 无的 %d 条"
@@ -432,7 +432,7 @@ def main() -> int:
     )
     print(
         "★ 成员引用合计 **%d** 处 · ★ 其中**是官方成员名**的 **%d** 处 · 其余 %d 处（★ 自封装/参数名）"
-        % (tot_m, R["★_官方成员命中"], R["★_非官方/自封装名"])
+        % (tot_m, r_["★_官方成员命中"], r_["★_非官方/自封装名"])
     )
     print()
     print("★ 样例（前 12 条，★ 看意图 → 实现是否接上了）：")

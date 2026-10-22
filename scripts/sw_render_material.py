@@ -387,7 +387,8 @@ def delete_render_material(model, index: int, cascade: bool = False) -> bool:
         | ★ 入口 | ★ `ok` | ★ 读数 |
         |---|---|---|
         | ★ 旧 `DeleteRenderMaterial` | ★★ **true** | ★ `ret: True` |
-        | ★★ 新 `DeleteDisplayStateSpecificRenderMaterial` | ★★★ **false** | ★ **`TypeError: …不可调用（`getattr` 回了 `bool`）`** |
+        | ★★ 新 `DeleteDisplayStateSpecificRenderMaterial` | ★★★ **false** | ★ **`TypeError:
+        …不可调用（`getattr` 回了 `bool`）`** |
         ⇒ ★★★★ **⇒ 要换的那个**恰好调不了**** ✓
       ★★★★ **而那份证据里的 `verdict` 逐字是**「★ 新旧都能调 ⇒ **可以换**」**** ——
         ★ **那句**过于乐观****（★ 它把 `3/4` 读成了"都能调"）⇒ ★★ **本函数按**分项读数**判、★ 不按 verdict 判** ✓

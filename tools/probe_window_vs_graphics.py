@@ -197,7 +197,7 @@ def main() -> int:
             0x0004 | 0x0010,
         )
         time.sleep(1.0)
-        c = measure("复原后")
+        measure("复原后")
 
         #: ── 判定（**只看关系，不猜**）──
         print()

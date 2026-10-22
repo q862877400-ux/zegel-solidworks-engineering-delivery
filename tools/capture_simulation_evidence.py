@@ -54,7 +54,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from scripts import sw_part  # noqa: E402
-from scripts import sw_simulation as sim
+from scripts import sw_simulation as sim  # noqa: E402
 from scripts.sw_connect import connect_solidworks, get_com_member, new_document  # noqa: E402
 
 #: 证据文件默认落点（`output/` 已 gitignore，属产物目录）

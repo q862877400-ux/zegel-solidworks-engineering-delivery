@@ -24,8 +24,9 @@ from __future__ import annotations
 import glob
 import os
 import re
+from collections.abc import Callable, Iterable, Mapping
 from pathlib import Path
-from typing import Any, Callable, Iterable, Mapping
+from typing import Any
 
 PUBLIC_DESKTOP = Path(os.environ.get("PUBLIC", r"C:\Users\Public")) / "Desktop"
 SHORTCUTS = {

@@ -340,10 +340,10 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
         6: "swInvalidSolution",
         7: "swAutosolveOff",
     }
-    ADDABLE_STATUS = 2  #: ★★ **唯一允许加关系的状态** ✓
+    addable_status_ = 2  #: ★★ **唯一允许加关系的状态** ✓
     # State validation is mandatory even when optional post-verification is disabled.
     st0 = _status(model)
-    if st0 != ADDABLE_STATUS:
+    if st0 != addable_status_:
         why = {
             3: "★ 已**完全定义** ⇒ 再加必过定义 ✗",
             4: "★ 已**过定义**（`swOverConstrained`）⇒ **不能再加**，★ 必须先撤销多余关系 ✗",
@@ -354,7 +354,7 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
             "ok": False,
             "refused": _status_name.get(st0, "status=%r" % (st0,)),
             "status_before": st0,
-            "addable_status": ADDABLE_STATUS,
+            "addable_status": addable_status_,
             "error": "草图状态为 **%s（%r）**：%s —— ★ **只有 `status == 2`（欠定义）才允许加关系** ✓"
             % (_status_name.get(st0, "未知"), st0, why),
             "applied": 0,

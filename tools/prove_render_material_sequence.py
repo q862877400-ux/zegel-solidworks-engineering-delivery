@@ -65,7 +65,7 @@ def main() -> int:
     args = ap.parse_args()
 
     import sw_connect
-    import sw_render_material as M
+    import sw_render_material as m_
     from sw_connect import get_com_member, out_i4
     from sw_part import (
         _select_com_object,
@@ -77,7 +77,7 @@ def main() -> int:
     )
 
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
-    ev: dict = {"steps": {}, "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+    ev: dict = {"steps": {}, "captured_at": time.strftime("%Y-%m-%dT%H:%m_:%S")}
     doc = None
     try:
         doc = sw_connect.new_document(sw, "part")
@@ -86,7 +86,7 @@ def main() -> int:
         sk = current_sketch_name(doc)
         end_sketch(doc)
         extrude_boss(doc, sk, 10.0)
-        ext = M.get_extension(doc)
+        ext = m_.get_extension(doc)
 
         #: ① 取活动配置
         conf = get_com_member(
@@ -112,7 +112,7 @@ def main() -> int:
         )
         ev["steps"]["select_face"] = {"ok": sel_ok}
         #: ⑤ 建外观 + **AddEntity**（★ 我们此前漏掉的那一步）
-        mat = M.create_render_material(doc, "MCP_SeqMat", M.RenderMaterialSpec())
+        mat = m_.create_render_material(doc, "MCP_SeqMat", m_.RenderMaterialSpec())
         try:
             ev["steps"]["add_entity"] = {
                 "ok": bool(get_com_member(mat, "AddEntity", face))

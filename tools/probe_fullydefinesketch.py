@@ -163,13 +163,13 @@ def main() -> int:
     case("★ 新的 + 空 Dispatch", form="new_empty_dispatch")
     case("★ 新的 + 预选基准线", form="new_selected_baseline")
 
-    R = {
+    r_ = {
         "★_判据": "★ 建成 ⇒ 草图 `GetDimensionCount` 增加（★ 且返回 0）",
         "★_问题": "★ 官方把 `AutoDimension2` 换成了 `FullyDefineSketch`（★ 5 参 → 10 参）⇒ 验它能不能替代",
         "rows": rows,
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     for r in rows:
         print(

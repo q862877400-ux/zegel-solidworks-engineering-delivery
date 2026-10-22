@@ -1342,7 +1342,6 @@ def pack_and_go(
         include_suppressed=include_suppressed,
     )
     fallback_errors = []
-    native_error: str | None = None
     result: dict[str, Any]
     try:
         extension = _model_doc_extension(model)
@@ -1372,7 +1371,7 @@ def pack_and_go(
             )
         except Exception as comtypes_exc:
             fallback_errors.append(f"comtypes: {comtypes_exc}")
-            native_error = str(comtypes_exc)
+            str(comtypes_exc)
             result = {
                 "backend": "native_unavailable",
                 "document_count": 0,

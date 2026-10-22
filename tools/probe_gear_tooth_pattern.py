@@ -282,7 +282,7 @@ def _main() -> int:
         if feat is not None:
             try:
                 #: ★ 需要一条**轴线** —— 用临时轴（★ 前视基准面的法向）
-                ax = c.get_com_member(doc, "GetActiveSketch2")
+                c.get_com_member(doc, "GetActiveSketch2")
                 #: ★★ 直接用**基准轴**：★ 尝试几种常见命名
                 pat = None
                 errs = []

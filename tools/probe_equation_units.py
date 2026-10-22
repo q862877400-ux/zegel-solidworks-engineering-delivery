@@ -15,7 +15,7 @@
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_equation_units.py
 # 定位:   ★ 业主 2026-10-10「方法要规范」—— ★ 渐开线建模前的**单位判据**。
-# 官方依据: `C:\swapi\types\ISketchManager\CreateEquationSpline2.md`
+# 官方依据: `c_:\swapi\types\ISketchManager\CreateEquationSpline2.md`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -32,8 +32,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 RB_MM = 9.396926208  #: ★ 基圆半径（★ 毫米）
 #: ★★ 解析真值：★ 渐开线 t=0.5 处的点（★ 毫米）
@@ -53,12 +53,12 @@ def _seg_endpoints(doc):
     """
     out = []
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
+        sk = c_.get_com_member(doc, "GetActiveSketch2")
         if sk is None:
             return out
         for getter in ("GetSketchPoints2", "GetSketchPoints"):
             try:
-                pts = list(C.get_com_member(sk, getter) or [])
+                pts = list(c_.get_com_member(sk, getter) or [])
             except Exception:  # noqa: BLE001
                 continue
             for pt in pts:
@@ -68,8 +68,8 @@ def _seg_endpoints(doc):
                         out.append([float(arr[0]), float(arr[1])])
                 except Exception:  # noqa: BLE001
                     try:
-                        x = float(C.get_com_member(pt, "X"))
-                        y = float(C.get_com_member(pt, "Y"))
+                        x = float(c_.get_com_member(pt, "X"))
+                        y = float(c_.get_com_member(pt, "Y"))
                         out.append([x, y])
                     except Exception:  # noqa: BLE001
                         pass
@@ -89,17 +89,17 @@ def _equation_readback(doc):
     """
     res = {}
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
-        segs = list(C.get_com_member(sk, "GetSketchSegments") or [])
+        sk = c_.get_com_member(doc, "GetActiveSketch2")
+        segs = list(c_.get_com_member(sk, "GetSketchSegments") or [])
         cand = list(segs)
         try:
-            cand += list(C.get_com_member(sk, "GetSketchSplines") or [])
+            cand += list(c_.get_com_member(sk, "GetSketchSplines") or [])
         except Exception:  # noqa: BLE001
             pass
         for obj in cand:
             for args in ((), (0,)):
                 try:
-                    got = C.get_com_member(obj, "GetEquationParameters2", *args)
+                    got = c_.get_com_member(obj, "GetEquationParameters2", *args)
                     res["raw"] = str(got)[:400]
                     if isinstance(got, (list, tuple)):
                         res["params"] = [str(x)[:80] for x in got]
@@ -125,12 +125,12 @@ def _one(sw, tag, expr_scale, t0, t1):
     row = {"tag": tag, "expr_rb": RB_MM / expr_scale, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
-        sm = C.get_com_member(doc, "SketchManager")
+        doc = c_.new_document(sw, "part")
+        p_.start_sketch(doc, plane_name="Front Plane")
+        sm = c_.get_com_member(doc, "SketchManager")
         rb_e = RB_MM / expr_scale
         try:
-            C.get_com_member(
+            c_.get_com_member(
                 sm,
                 "CreateEquationSpline2",
                 "%.12f*(cos(t)+t*sin(t))" % rb_e,
@@ -159,7 +159,7 @@ def _one(sw, tag, expr_scale, t0, t1):
             row["readback"] = best
             row["readback_radius"] = math.hypot(best[0], best[1])
         try:
-            P.end_sketch(doc)
+            p_.end_sketch(doc)
         except Exception:  # noqa: BLE001
             pass
     except Exception as exc:  # noqa: BLE001
@@ -167,16 +167,16 @@ def _one(sw, tag, expr_scale, t0, t1):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "★ 方程式曲线的**单位**：★ 表达式里的 rb 该用米还是毫米",

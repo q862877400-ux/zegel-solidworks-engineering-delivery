@@ -392,7 +392,7 @@ DEPRECATED_ENTRIES: dict[tuple[str, str], str] = {
 
 
 def ambiguous_deprecated_members(
-    table: "dict[tuple[str, str], str] | None" = None,
+    table: dict[tuple[str, str], str] | None = None,
 ) -> dict[str, list[str]]:
     """★★ 回本表里的**按名歧义**：`{成员名: [不同后继, …]}`（★ 空 = 没有歧义）。
 
@@ -443,7 +443,7 @@ def deprecated_successor(member: str, interface: str = "") -> str | None:
 # 覆盖:   后续同级定义
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ────────────────────────────────────────────────────────────────────
-def iter_real_sources(root: "Path | str | None" = None, pattern: str = "sw_*.py"):
+def iter_real_sources(root: Path | str | None = None, pattern: str = "sw_*.py"):
     """★ 逐个 yield **真实现**的源文件（★ **排除 `sw_api_*.py` 反射转储**）。
 
     :param root: 目录；★ 缺省 = 本文件所在的 `scripts/`。
@@ -461,7 +461,7 @@ def iter_real_sources(root: "Path | str | None" = None, pattern: str = "sw_*.py"
 
 
 def find_real_implementations(
-    needle: str, root: "Path | str | None" = None
+    needle: str, root: Path | str | None = None
 ) -> list[str]:
     """★ 在**真实现**里找 `needle`，回 `["文件:行号", …]`（★ 转储表已排除）。"""
     import re as _re

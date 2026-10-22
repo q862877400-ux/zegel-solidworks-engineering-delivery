@@ -182,7 +182,7 @@ def _one_run(sw, sw_connect, axis_x_mm: float) -> dict:
         #: ⑥ 直接调 `FeatureRevolve2`（★ 绕开我们包装器里"选草图线段"那条路）
         try:
             feat = get_com_member(doc, "FeatureManager")
-            fm = get_com_member(
+            get_com_member(
                 feat,
                 "FeatureRevolve2",
                 True,

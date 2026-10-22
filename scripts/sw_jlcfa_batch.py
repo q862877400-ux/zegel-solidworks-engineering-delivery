@@ -46,11 +46,11 @@ sys.stdout.reconfigure(encoding="utf-8")
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
-import sw_jlcfa_fill as fill
-import sw_jlcfa_grid as g
-import sw_jlcfa_locate as l
-import sw_jlcfa_search as sr
-import sw_jlcfa_steps as S
+import sw_jlcfa_fill as fill  # noqa: E402
+import sw_jlcfa_grid as g  # noqa: E402
+import sw_jlcfa_locate as l  # noqa: E402
+import sw_jlcfa_search as sr  # noqa: E402
+import sw_jlcfa_steps as s_  # noqa: E402
 
 warnings.filterwarnings("ignore")
 
@@ -64,7 +64,7 @@ def _conn():
     if l._modal().modal_report(h)["count"]:
         l._modal().close_modals(h, rounds=2)
         h, w = l.connect()
-    S.cache_drop()
+    s_.cache_drop()
     return h, w
 
 
@@ -82,10 +82,10 @@ def _wait_generated(h: int, w, secs: int = 26):
     t0 = time.time()
     while time.time() - t0 < secs:
         time.sleep(1.5)
-        S.cache_drop()
+        s_.cache_drop()
         try:
             h, w = l.connect()
-            st = S.read_state(w)
+            st = s_.read_state(w)
         except Exception:
             continue
         if "建模完成！" in st["visible"]:
@@ -119,7 +119,7 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     pt = None
     for _ in range(14):
         time.sleep(1.0)
-        S.cache_drop()
+        s_.cache_drop()
         try:
             h, w = l.connect()
         except Exception:
@@ -135,11 +135,11 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     rec["stage"] = "result"
 
     # ② 点首个结果卡
-    S.ensure_front(h)
-    S.click(pt[0], pt[1], 2.5)
-    S.cache_drop()
+    s_.ensure_front(h)
+    s_.click(pt[0], pt[1], 2.5)
+    s_.cache_drop()
     h, w = _conn()
-    st = S.read_state(w)
+    st = s_.read_state(w)
 
     # ⚑⚑ 必须校验**型号行含目标型号**（2026-09-30 抓到的假阳性）：
     #   实测「搜 BMHA-0.4 后型号行仍是 BSGY-C7-25-…」——
@@ -149,27 +149,27 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
         return fill.code_present(ww, code)
 
     for _attempt in range(4):
-        if S.page_kind(st) in ("SELECT", "GENERATED") and _code_ok(w):
+        if s_.page_kind(st) in ("SELECT", "GENERATED") and _code_ok(w):
             break
-        S.log(
+        s_.log(
             "      型号行未对上「%s」（现 %r），重试导航"
             % (code, fill.model_line(w)[:38])
         )
-        S.cache_drop()
+        s_.cache_drop()
         h, w = _conn()
         pt2 = sr.first_result_point(w)
         if pt2:
-            S.ensure_front(h)
-            S.click(pt2[0], pt2[1], 2.5)
+            s_.ensure_front(h)
+            s_.click(pt2[0], pt2[1], 2.5)
         for _ in range(6):
             time.sleep(1.0)
-            S.cache_drop()
+            s_.cache_drop()
             h, w = _conn()
-            st = S.read_state(w)
-            if S.page_kind(st) in ("SELECT", "GENERATED") and _code_ok(w):
+            st = s_.read_state(w)
+            if s_.page_kind(st) in ("SELECT", "GENERATED") and _code_ok(w):
                 break
-    if S.page_kind(st) not in ("SELECT", "GENERATED"):
-        rec["stage"] = "未进选型页(%s)" % S.page_kind(st)
+    if s_.page_kind(st) not in ("SELECT", "GENERATED"):
+        rec["stage"] = "未进选型页(%s)" % s_.page_kind(st)
         _shot(h, w, "FAIL_noselect_%s" % code)
         rec["secs"] = time.time() - t0
         return rec
@@ -185,7 +185,7 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     #   不是进度百分比、也不是「输入框里有没有字」——
     #   实测 ValuePattern 能让框里有字而插件不登记。
     h, w, left = fill.fill_all(h, w)
-    rec["pct"] = S.read_state(w)["pct"]
+    rec["pct"] = s_.read_state(w)["pct"]
     rec["unfilled"] = left
     # ⚑⚑ **不再回退到 ``SEL.fill_to_100``**（2026-09-30）
     #   实测那条旧路径里写着 ``str(int(rg[0]))``，
@@ -201,7 +201,7 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     # ④ 生成预览
     # ⚑ 刚填完参数时按钮可能**尚未渲染**（实测第 2 件就因此报「无生成按钮」，
     #   而几秒后同一控件 vis=True 在容器内）⇒ 必须**轮询等它出现**。
-    S.cache_drop()
+    s_.cache_drop()
     h, w = _conn()
     btn = None
     for _ in range(10):
@@ -209,14 +209,14 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
         if btn is not None:
             break
         time.sleep(1.0)
-        S.cache_drop()
+        s_.cache_drop()
         h, w = _conn()
     if btn is None:
         # ⚑ 放宽查找：``l.locate`` 要求 ``is_visible()``，而该按钮
         #   **经常报不可见**（实测 BHJF 参数已全齐 `BHJF-D6-L55-M3-N3`，
         #   仍读不到按钮 ⇒ 走到截图兜底 ⇒ 点偏 ⇒ 「未出现建模完成」）。
         #   按钮只要**在插件容器内 + 名字对 + 类型对**就点它。
-        for c in S.controls_cached(w):
+        for c in s_.controls_cached(w):
             try:
                 if (c.window_text() or "").strip() != "生成预览":
                     continue
@@ -226,7 +226,7 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
                 cr = l.container_rect(w)
                 if cr and l._overlaps(r, cr):
                     btn = c
-                    S.log(
+                    s_.log(
                         "      放宽查找命中生成按钮 %s"
                         % ((r.left, r.top, r.right, r.bottom),)
                     )
@@ -236,7 +236,7 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     if btn is None:
         # ⚑ 再放宽：**连容器判定也不要**（容器 rect 在重绘瞬间可能不准），
         #   只要求「名字 + 类型」对，且坐标落在屏幕可见范围内。
-        for c in S.controls_cached(w):
+        for c in s_.controls_cached(w):
             try:
                 if (c.window_text() or "").strip() != "生成预览":
                     continue
@@ -245,7 +245,7 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
                 r = c.rectangle()
                 if r.width() > 0 and r.height() > 0 and r.top > 0:
                     btn = c
-                    S.log(
+                    s_.log(
                         "      极宽查找命中生成按钮 %s"
                         % ((r.left, r.top, r.right, r.bottom),)
                     )
@@ -266,9 +266,9 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     #    没有就换下一个（按钮在 UIA 里时有时无，位置也只能靠截图估）。
     done = False
     for i, pt in enumerate(cands[:4], 1):
-        S.log("      试生成按钮候选 #%d %s" % (i, pt))
-        S.ensure_front(h)
-        S.click(pt[0], pt[1], 1.0)
+        s_.log("      试生成按钮候选 #%d %s" % (i, pt))
+        s_.ensure_front(h)
+        s_.click(pt[0], pt[1], 1.0)
         h, w, done = _wait_generated(h, w, 22)
         if done:
             break
@@ -287,8 +287,8 @@ def main(plan: list[tuple[str, str, str]]):
     results = []
     t_all = time.time()
     for i, (cat, sub, code) in enumerate(plan, 1):
-        S.STEP[0] = 0
-        S.log("═══ %d/%d  %s / %s / %s" % (i, len(plan), cat, sub, code))
+        s_.STEP[0] = 0
+        s_.log("═══ %d/%d  %s / %s / %s" % (i, len(plan), cat, sub, code))
         try:
             rec = run_one(cat, sub, code)
         except Exception:
@@ -301,7 +301,7 @@ def main(plan: list[tuple[str, str, str]]):
                 "secs": 0.0,
             }
         results.append(rec)
-        S.log(
+        s_.log(
             "  => %s  %-22s %.0fs  %s"
             % (
                 "✓" if rec["ok"] else "✗",
@@ -313,9 +313,9 @@ def main(plan: list[tuple[str, str, str]]):
         REPORT.write_text(
             json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8"
         )
-    S.log("════ 汇总（总 %.0fs）════" % (time.time() - t_all))
+    s_.log("════ 汇总（总 %.0fs）════" % (time.time() - t_all))
     for r in results:
-        S.log(
+        s_.log(
             "  %s %-10s %-14s %-14s %.0fs  %s"
             % (
                 "✓" if r["ok"] else "✗",
@@ -327,5 +327,5 @@ def main(plan: list[tuple[str, str, str]]):
             )
         )
     ok = sum(1 for r in results if r["ok"])
-    S.log("成功 %d/%d" % (ok, len(results)))
+    s_.log("成功 %d/%d" % (ok, len(results)))
     return results

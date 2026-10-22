@@ -60,7 +60,6 @@ __all__ = [
     "delete_plot",
     "get_displacement_at_points",
     "get_buckling_load_factors",
-    "get_mesh_quality_report",
     "get_mesh_node_location",
     "get_mesh_element_location",
     "get_worst_jacobian_ratio",

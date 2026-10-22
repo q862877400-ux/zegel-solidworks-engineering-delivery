@@ -42,9 +42,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_sketch as SK  # noqa: E402                                   # noqa: E402
+import scripts.sw_sketch as sk_  # noqa: E402                                   # noqa: E402
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_weldment as w  # noqa: E402
 
 
@@ -88,7 +88,7 @@ def main() -> int:
         #: 5bf9\u8c61**\uff08\u2605 `sw_weldment.py` L182-195\uff1a
         #: \u6bcf\u7ec4\u4e00\u4e2a `CreateStructuralMemberGroup`\uff09\u21d2 \u2605 \u6
         #: 545\u8fd9\u91cc**\u5728\u8349\u56fe\u5f00\u7740\u65f6**\u53d6\u6bb5\u3002
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         c.get_com_member(
             c.get_com_member(doc, "SketchManager"),
             "CreateLine",
@@ -108,7 +108,7 @@ def main() -> int:
             sk = c.get_com_member(
                 c.get_com_member(doc, "SketchManager"), "ActiveSketch"
             )
-            segments = list(SK.get_sketch_segments(sk) or [])
+            segments = list(sk_.get_sketch_segments(sk) or [])
         except Exception as exc:  # noqa: BLE001
             ev["steps"].append(
                 {
@@ -116,7 +116,7 @@ def main() -> int:
                     "err": "%s: %s" % (type(exc).__name__, str(exc)[:110]),
                 }
             )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         profile = (
             r"c:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles"
             r"\GB\square-rods.sldlfp"
@@ -136,7 +136,7 @@ def main() -> int:
                     }
                 )
         ev["steps"].append({"step": "structural_member_ok", "ok": sm is not None})
-        ev["tree_before"] = list(P.feature_names(doc) or [])
+        ev["tree_before"] = list(p_.feature_names(doc) or [])
         ev["cutlist_before"] = _cut_list_folders(doc)
 
         #: \u2605 \u2461 \u771f\u673a\u8c03\u5b83
@@ -155,7 +155,7 @@ def main() -> int:
                 "ok": False,
                 "err": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
             }
-        ev["tree_after"] = list(P.feature_names(doc) or [])
+        ev["tree_after"] = list(p_.feature_names(doc) or [])
         ev["cutlist_after"] = _cut_list_folders(doc)
         ev["verdict"] = "pass" if ev["cutlist_after"] else "fail"
     except Exception as exc:  # noqa: BLE001

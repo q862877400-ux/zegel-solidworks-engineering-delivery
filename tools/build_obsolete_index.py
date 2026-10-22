@@ -45,7 +45,7 @@ SUCC = re.compile(
 
 
 def main() -> int:
-    started = time.time()
+    time.time()
     rows = []
     pages = 0
     for iface_dir in sorted(p for p in SWAPI.iterdir() if p.is_dir()):

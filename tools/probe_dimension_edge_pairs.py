@@ -77,8 +77,8 @@ def main() -> int:
                     break
                 sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
                 try:
-                    a = select_entity_by_index(doc, "EDGE", i)
-                    b = select_entity_by_index(doc, "EDGE", j, append=True)
+                    select_entity_by_index(doc, "EDGE", i)
+                    select_entity_by_index(doc, "EDGE", j, append=True)
                 except Exception as exc:  # noqa: BLE001
                     ev["pairs"].append(
                         {

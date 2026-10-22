@@ -50,7 +50,7 @@ MM = 0.001  # 该族长度参数单位是米 ⇒ 毫米 * MM
 
 def main() -> int:
     import sw_connect
-    import sw_mold as M
+    import sw_mold as m_
     import sw_surface_features as sf
     from sw_connect import get_com_member
     from sw_part import (
@@ -61,7 +61,7 @@ def main() -> int:
         start_sketch,
     )
 
-    ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+    ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%m_:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
     doc = None
     try:
@@ -107,7 +107,7 @@ def main() -> int:
         try:
             ev["steps"]["prereq_parting_line"] = {
                 "ok": True,
-                "feature": str(M.insert_parting_line(doc))[:40],
+                "feature": str(m_.insert_parting_line(doc))[:40],
             }
         except Exception as exc:  # noqa: BLE001
             ev["steps"]["prereq_parting_line"] = {
@@ -137,7 +137,7 @@ def main() -> int:
         #: ★★ 按**我们自己的签名**调（★ 实测发现它与官方参数名**不一致** —— 事实 307）
         step(
             "parting_surface",
-            lambda: M.insert_parting_surface(
+            lambda: m_.insert_parting_surface(
                 doc,
                 surface_type=PARM_TANGENT,
                 flip=False,
@@ -150,11 +150,11 @@ def main() -> int:
             ),
         )
         # ③ 关断面（★ 零参）
-        step("shut_off_surface", lambda: M.insert_shut_off_surface(doc))
+        step("shut_off_surface", lambda: m_.insert_shut_off_surface(doc))
         # ④ 型芯型腔（★ 4 参）
         step(
             "core_cavity_solids",
-            lambda: M.insert_core_cavity_solids(
+            lambda: m_.insert_core_cavity_solids(
                 doc, scale=30.0 * MM, thickness=30.0 * MM, flip=False, offset=0.0
             ),
         )
@@ -162,7 +162,7 @@ def main() -> int:
         try:
             ev["steps"]["evidence_readback"] = {
                 "ok": True,
-                "evidence": M.mold_evidence(doc),
+                "evidence": m_.mold_evidence(doc),
             }
         except Exception as exc:  # noqa: BLE001
             ev["steps"]["evidence_readback"] = {"ok": False, "err": str(exc)[:90]}

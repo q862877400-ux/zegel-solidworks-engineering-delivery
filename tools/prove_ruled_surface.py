@@ -8,7 +8,7 @@
 #   ★ 对应 `specs/201-toolbar-gaps` 的 **T608**（★ 而 T605-T609 这几条一直空着）。
 #
 # ★★ **本轮逮到一处两源冲突**（★ 正是**铁律 4** 的活教材）⚠：
-#   · 官方 `C:\swapi\types\IFeatureManager\InsertRuledSurfaceFromEdge2.md` 的**参数表**：
+#   · 官方 `c_:\swapi\types\IFeatureManager\InsertRuledSurfaceFromEdge2.md` 的**参数表**：
 #     `Type` ⇒ **0 = Tangent to Surface · 1 = Normal · 2 = Tapered to Vector ·
 #     3 = Perpendicular to Vector · 4 = Sweep**（★ 看着是 **0-based**）
 #   · 而**反射转储** `_raw/enum_values_sldworks.txt` 的 `swRuledSurfaceType_e`：
@@ -39,17 +39,17 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _build_solid(sw):
     """★ 建一个**实体盒**（★ 直纹曲面要"从一个边"长出来）。"""
-    doc = C.new_document(sw, "part")
-    P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    doc = c_.new_document(sw, "part")
+    p_.start_sketch(doc, plane_name="Front Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.02,
         -0.02,
@@ -58,10 +58,10 @@ def _build_solid(sw):
         0.02,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     for cand in ("\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             break
         except Exception:  # noqa: BLE001
             continue
@@ -75,13 +75,13 @@ def _pick_edge(doc, idx=0, mark=0):
     except Exception:  # noqa: BLE001
         pass
     n = 0
-    for b in list(C.get_com_member(doc, "GetBodies2", 0, True) or []):
+    for b in list(c_.get_com_member(doc, "GetBodies2", 0, True) or []):
         try:
-            edges = list(C.get_com_member(b, "GetEdges") or [])
+            edges = list(c_.get_com_member(b, "GetEdges") or [])
         except Exception:  # noqa: BLE001
             continue
         if idx < len(edges):
-            if P._select_com_object(edges[idx], append=True, mark=mark):
+            if p_._select_com_object(edges[idx], append=True, mark=mark):
                 n += 1
         break
     return n
@@ -104,16 +104,16 @@ def _one(sw, tag, *, surface_type, need_edge=True, length_mm=10.0):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u76f4\u7eb9\u66f2\u9762\uff08InsertRuledSurfaceFromEdge2\uff09\u2014\u2014 B6/T608",
@@ -121,7 +121,9 @@ def main() -> int:
         "two_source_conflict": {
             "swapi_md_param_table": "Type: 0=Tangent to Surface \u00b7 1=Normal \u00b7 2=Tapered to Vector \u00b7 3=Perpendicular to Vector \u00b7 4=Sweep",
             "reflection_enum": "swRuledSurfaceType_e: TangentToSurface=1 \u00b7 NormalToSurface=2 \u00b7 TaperedToVector=3 \u00b7 PerpendicularToVector=4 \u00b7 Sweep=5",
-            "rule": "\u94c1\u5f8b 4\uff1a\u51b2\u7a81\u4ee5\u51fa\u5382\u7c7b\u578b\u5e93\u4e3a\u51c6 \u21d2 \u672c\u63a2\u9488\u4e24\u7ec4\u90fd\u8bd5\uff0c\u7528\u771f\u673a\u5b9a",
+            "rule":
+            "\u94c1\u5f8b 4\uff1a\u51b2\u7a81\u4ee5\u51fa\u5382\u7c7b\u578b\u5e93\u4e3a\u51c6 \u21d2 \u672c\u63a2\u9488\
+            u4e24\u7ec4\u90fd\u8bd5\uff0c\u7528\u771f\u673a\u5b9a",
         },
         "cases": [],
     }

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """从 cosworks 反射清单里机械生成各 StudyOptions 族的 setter 登记表。
 
 为什么要登记表而不是 110 个包装函数

@@ -86,7 +86,7 @@ def main() -> int:
     except Exception:  # noqa: BLE001
         pass
 
-    R = {
+    r_ = {
         "★_目的": "★ 验 `fillet_params` + ★ **测出那一族的单位口径**（★ 官方 `## Returns` 没写）",
         "★_前置选择": sel,
         "★_建圆角": fr,
@@ -96,11 +96,11 @@ def main() -> int:
         "★_单位判定": verdict,
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("★ 前置:", json.dumps(sel, ensure_ascii=False)[:120])
     print("★ 建圆角:", json.dumps(fr, ensure_ascii=False)[:160])
-    print("★ 读取:", json.dumps(R["读取"], ensure_ascii=False)[:400])
+    print("★ 读取:", json.dumps(r_["读取"], ensure_ascii=False)[:400])
     for k, v in checks.items():
         print("   %-36s %s" % (k, "✓" if v else "**✗**"))
     print("★ 全过 =", all(checks.values()))

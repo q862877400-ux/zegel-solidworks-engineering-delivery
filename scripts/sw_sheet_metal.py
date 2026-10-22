@@ -1152,7 +1152,7 @@ UNFOLD_MARKS = {"fixed_face": 1, "bends": 4}
 SELECTION_MARK_ACTION = {"set": 0, "append": 1, "remove": 2, "clear": 3}
 
 
-def _flat_pattern_count(model) -> "int | None":
+def _flat_pattern_count(model) -> int | None:
     """★ 读**平展型式个数**（`IFeatureManager::GetFlatPatternFolder` → `IFlatPatternFolder::GetFlatPatternCount`）。
 
     ★ 它是 **unfold / fold 的可回读判据**（裁决书点名）—— ★ 读不到就回 `None`（★ 「读不到」≠「0 个」）✓

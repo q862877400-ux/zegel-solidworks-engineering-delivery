@@ -41,7 +41,6 @@ r"""SolidWorks SWRoutingLib 官方接口全量索引。
 
 from __future__ import annotations
 
-
 try:
     from .sw_connect import get_com_member
 except ImportError:

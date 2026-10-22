@@ -72,8 +72,8 @@ def main() -> int:
             return 1
 
     f = _centres(model)
-    a, B = f[0], f[1]
-    print("★ 面心：a(0)=%r · B(1)=%r" % (a["c"], B["c"]))
+    a, b_ = f[0], f[1]
+    print("★ 面心：a(0)=%r · b_(1)=%r" % (a["c"], b_["c"]))
     ext = model.Extension
     sm = model.SelectionManager
     res = {}
@@ -88,7 +88,7 @@ def main() -> int:
     )
     res["A1_select_A_AppendFalse"] = cnt()
     ext.SelectByID2(
-        "", "FACE", B["c"][0], B["c"][1], B["c"][2], True, 0, _sp._empty_callout(), 0
+        "", "FACE", b_["c"][0], b_["c"][1], b_["c"][2], True, 0, _sp._empty_callout(), 0
     )
     res["A2_then_B_AppendTrue"] = cnt()
 
@@ -99,16 +99,16 @@ def main() -> int:
     )
     res["A3_A_AppendTrue"] = cnt()
     ext.SelectByID2(
-        "", "FACE", B["c"][0], B["c"][1], B["c"][2], True, 0, _sp._empty_callout(), 0
+        "", "FACE", b_["c"][0], b_["c"][1], b_["c"][2], True, 0, _sp._empty_callout(), 0
     )
     res["A4_B_AppendTrue"] = cnt()
 
-    #: ── B 臂：走实体对象 IEntity.Select4(Append, Callout) ────────────────
+    #: ── b_ 臂：走实体对象 IEntity.Select4(Append, Callout) ────────────────
     try:
         model.ClearSelection2(True)
         r1 = a["face"].Select4(False, _sp._empty_callout())
         res["B1_Select4_A_AppendFalse"] = [bool(r1), cnt()]
-        r2 = B["face"].Select4(True, _sp._empty_callout())
+        r2 = b_["face"].Select4(True, _sp._empty_callout())
         res["B2_Select4_B_AppendTrue"] = [bool(r2), cnt()]
     except Exception as exc:  # noqa: BLE001
         res["B_arm_error"] = str(exc)[:160]
@@ -116,7 +116,7 @@ def main() -> int:
     for k, v in res.items():
         print("★ %-32s %r" % (k, v))
     out["steps"] = res
-    out["centres"] = [a["c"], B["c"]]
+    out["centres"] = [a["c"], b_["c"]]
     p = ROOT / "output" / "spec220-append-arms.json"
     p.write_text(
         json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",

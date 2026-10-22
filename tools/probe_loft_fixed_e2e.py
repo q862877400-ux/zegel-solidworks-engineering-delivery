@@ -25,7 +25,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
         sys.path.insert(0, _p)
 
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 OUT = REPO / "output" / "loft-fixed-e2e-evidence.json"
 
@@ -62,13 +62,13 @@ def main() -> int:
         doc = c.new_document(sw, "part")
         #: ★ 两个轮廓：★ 前视面一个圆、上视面一个圆 —— ★ **不同平面**（真机验过这种能建
         #: 成）
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         _g(_g(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.015)
-        P.end_sketch(doc)
-        P.start_sketch(doc, plane_name="Top Plane")
+        p_.end_sketch(doc)
+        p_.start_sketch(doc, plane_name="Top Plane")
         _g(_g(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.008)
-        P.end_sketch(doc)
-        names = list(P.feature_names(doc) or [])
+        p_.end_sketch(doc)
+        names = list(p_.feature_names(doc) or [])
         r["features_before"] = names
         sketches = [n for n in names if n.startswith(("草图", "Sketch"))]
         r["sketches_found"] = sketches
@@ -122,7 +122,7 @@ def main() -> int:
         if isinstance(ret, dict):
             r["ret_raw"] = {k: str(v)[:120] for k, v in ret.items()}
             r["ret_ok"] = bool(ret.get("ok"))
-        r["features_after"] = list(P.feature_names(doc) or [])
+        r["features_after"] = list(p_.feature_names(doc) or [])
         r["new_features"] = [n for n in r["features_after"] if n not in names]
     except Exception as exc:  # noqa: BLE001
         r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:250])

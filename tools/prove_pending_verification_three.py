@@ -38,15 +38,15 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_sketch_edit_ops as seo  # noqa: E402
 
 
 def _solid(doc, h=0.02):
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -55,15 +55,15 @@ def _solid(doc, h=0.02):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, h)
+            p_.extrude_boss(doc, cand, h)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -75,12 +75,12 @@ def _new_sketch(doc, plane, draw):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name=plane)
-    draw(C.get_com_member(doc, "SketchManager"))
-    P.end_sketch(doc)
+    p_.start_sketch(doc, plane_name=plane)
+    draw(c_.get_com_member(doc, "SketchManager"))
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     return names[-1] if names else None
@@ -88,8 +88,8 @@ def _new_sketch(doc, plane, draw):
 
 def _segs(doc):
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
-        return len(list(C.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
+        sk = c_.get_com_member(doc, "GetActiveSketch2")
+        return len(list(c_.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
     except Exception:  # noqa: BLE001
         return -1
 
@@ -98,7 +98,7 @@ def _case(sw, tag, fn):
     row = {"tag": tag, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row["built"] = fn(doc, row)
         row["ok"] = bool(row.get("ok_flag"))
     except Exception as exc:  # noqa: BLE001
@@ -106,9 +106,9 @@ def _case(sw, tag, fn):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
@@ -121,13 +121,13 @@ def _do_rib(doc, row):
     sk = _new_sketch(
         doc,
         "Top Plane",
-        lambda sm: C.get_com_member(
+        lambda sm: c_.get_com_member(
             sm, "CreateLine", -0.025, 0.0, 0.0, 0.025, 0.0, 0.0
         ),
     )
     row["sketch"] = sk
     before = list(fr.feature_names(doc) or [])
-    r = P.rib_report(doc, sk, 0.003, "\u7b4b1", True)
+    r = p_.rib_report(doc, sk, 0.003, "\u7b4b1", True)
     row["report"] = dict(r or {})
     after = list(fr.feature_names(doc) or [])
     row["new"] = [n for n in after if n not in before]
@@ -143,36 +143,36 @@ def _do_composite(doc, row):
         doc,
         "Front Plane",
         lambda sm: (
-            C.get_com_member(sm, "CreateLine", -0.02, -0.01, 0.0, 0.0, 0.0, 0.0),
-            C.get_com_member(sm, "CreateLine", 0.0, 0.0, 0.0, 0.02, 0.01, 0.0),
+            c_.get_com_member(sm, "CreateLine", -0.02, -0.01, 0.0, 0.0, 0.0, 0.0),
+            c_.get_com_member(sm, "CreateLine", 0.0, 0.0, 0.0, 0.02, 0.01, 0.0),
         ),
     )
     row["sketch"] = sk
     #: \u2605 \u5b98\u65b9 Remarks\uff1a**\u5148\u7528 mark = 1 \u9009\u597d\u5b9e\u4f53
     #: **
-    ext = C.get_com_member(doc, "Extension")
+    ext = c_.get_com_member(doc, "Extension")
     picked = 0
     from sw_connect import get_com_member as _g
 
     for b in list(_g(doc, "GetBodies2", 0, True) or []):
         for e in list(_g(b, "GetEdges") or [])[:2]:
             try:
-                if P._select_com_object(e, append=(picked > 0), mark=1):
+                if p_._select_com_object(e, append=(picked > 0), mark=1):
                     picked += 1
             except Exception:  # noqa: BLE001
                 pass
         break
     if picked < 2 and sk:
-        for cand in P._get_sketch_name_candidates(sk):
+        for cand in p_._get_sketch_name_candidates(sk):
             try:
-                if P._select_by_id(ext, cand, "SKETCH", append=bool(picked), mark=1):
+                if p_._select_by_id(ext, cand, "SKETCH", append=bool(picked), mark=1):
                     picked += 1
                     break
             except Exception:  # noqa: BLE001
                 continue
     row["picked_mark1"] = picked
     before = list(fr.feature_names(doc) or [])
-    r = P.insert_composite_curve_report(doc, "")
+    r = p_.insert_composite_curve_report(doc, "")
     row["report"] = dict(r or {})
     after = list(fr.feature_names(doc) or [])
     row["new"] = [n for n in after if n not in before]
@@ -197,14 +197,14 @@ def _do_intersect(doc, row):
         for f in list(_g(b, "GetFaces") or []):
             try:
                 if bool(_g(_g(f, "GetSurface"), "IsCylinder")):
-                    if P._select_com_object(f, append=False, mark=0):
+                    if p_._select_com_object(f, append=False, mark=0):
                         picked += 1
                     break
             except Exception:  # noqa: BLE001
                 continue
         break
     row["picked_cyl"] = picked
-    P.start_sketch(doc, plane_name="Right Plane")
+    p_.start_sketch(doc, plane_name="Right Plane")
     before = _segs(doc)
     row["seg_before"] = before
     ret = None
@@ -217,7 +217,7 @@ def _do_intersect(doc, row):
     row["seg_after"] = after
     row["new_segments"] = (after - before) if (after >= 0 and before >= 0) else None
     try:
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
     except Exception:  # noqa: BLE001
         pass
     row["ok_flag"] = bool(row["new_segments"] and row["new_segments"] > 0)
@@ -225,11 +225,14 @@ def _do_intersect(doc, row):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-        "_": "\u590d\u9a8c\u300c\u5f85\u9a8c\u8bc1\u300d\u6876\uff1a**\u7b4b** \u00b7 **\u590d\u5408\u66f2\u7ebf** \u00b7 **\u4ea4\u53c9\u66f2\u7ebf**",
-        "why": "\u7b2c 100 \u8f6e\u76d8\u70b9\u67e5\u660e\u8fd9\u4e00\u6876\u7684 entry **\u5168\u5728 scripts/ \u91cc**"
+        "_":
+        "\u590d\u9a8c\u300c\u5f85\u9a8c\u8bc1\u300d\u6876\uff1a**\u7b4b** \u00b7 **\u590d\u5408\u66f2\u7ebf** \u00b7 **\
+        u4ea4\u53c9\u66f2\u7ebf**",
+        "why":
+        "\u7b2c 100 \u8f6e\u76d8\u70b9\u67e5\u660e\u8fd9\u4e00\u6876\u7684 entry **\u5168\u5728 scripts/ \u91cc**"
         "\uff08\u2605 \u4ee3\u7801\u5df2\u6709\uff09\u21d2 \u2605 \u8be5\u505a\u7684\u662f**\u771f\u673a\u590d\u9a8c**",
         "cases": [],
     }

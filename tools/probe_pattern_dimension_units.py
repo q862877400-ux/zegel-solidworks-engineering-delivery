@@ -82,7 +82,7 @@ def main() -> int:
         sk2 = current_sketch_name(doc, "")
         end_sketch(doc)
         extrude_boss(doc, sk2, 20.0)
-        feats = (
+        (
             [
                 str(get_com_member(f, "Name") or "")
                 for f in (

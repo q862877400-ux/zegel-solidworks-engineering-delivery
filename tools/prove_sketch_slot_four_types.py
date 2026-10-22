@@ -46,8 +46,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 #: \u2605 \u53cd\u5c04\u91cc\u7684\u503c\uff08\u2605 \u88c1\u51b3\u8005\uff09
 SLOT_TYPE = {
@@ -60,10 +60,10 @@ SLOT_TYPE = {
 
 def _seg_count(doc):
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
+        sk = c_.get_com_member(doc, "GetActiveSketch2")
         if sk is None:
             return -1
-        return len(list(C.get_com_member(sk, "GetSketchSegments") or []))
+        return len(list(c_.get_com_member(sk, "GetSketchSegments") or []))
     except Exception:  # noqa: BLE001
         return -1
 
@@ -76,18 +76,18 @@ def _one(sw, name, creation_type):
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        doc = c_.new_document(sw, "part")
+        p_.start_sketch(doc, plane_name="Front Plane")
         before = _seg_count(doc)
         row["seg_before"] = before
         ret = None
         try:
-            sm = C.get_com_member(doc, "SketchManager")
+            sm = c_.get_com_member(doc, "SketchManager")
             #: \u2605 \u53c2\u6570\uff1aSlotCreationType \u00b7 SlotLengthType(=0 Center
             #: Center) \u00b7 Width \u00b7
             #: P1 \u00b7 P2 \u00b7 P3 \u00b7 CenterArcDirection(=1 CCW) \u00b7 AddDimens
             #: ion(=True)
-            ret = C.get_com_member(
+            ret = c_.get_com_member(
                 sm,
                 "CreateSketchSlot",
                 int(creation_type),
@@ -113,7 +113,7 @@ def _one(sw, name, creation_type):
         row["new_segments"] = (after - before) if (after >= 0 and before >= 0) else None
         row["ok"] = bool(row["new_segments"] and row["new_segments"] > 0)
         try:
-            P.end_sketch(doc)
+            p_.end_sketch(doc)
         except Exception:  # noqa: BLE001
             pass
     except Exception as exc:  # noqa: BLE001
@@ -121,16 +121,16 @@ def _one(sw, name, creation_type):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u69fd\u53e3\u56db\u79cd\uff1a`ISketchManager.CreateSketchSlot` + `swSketchSlotCreationType_e`",

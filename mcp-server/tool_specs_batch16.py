@@ -10,7 +10,8 @@
 | 分类 | 个数 | 成员 |
 |---|---|---|
 | ★ **干净**（无坐标/长度/角度）| 3 | `add_sketch_relation` · **`insert_composite_curve`** · `mirror_feature` |
-| ⚠ 碰**规则 3**（裸坐标）| 6 | `add_dimension` · `hole_wizard` · `linear_pattern` · `sketch_arc` · `sketch_centerline` · `sketch_polygon` |
+| ⚠ 碰**规则 3**（裸坐标）
+| 6 | `add_dimension` · `hole_wizard` · `linear_pattern` · `sketch_arc` · `sketch_centerline` · `sketch_polygon` |
 | ⚠ 碰**规则 2**（长度未带 `_mm`）| 5 | `circular_pattern` · `insert_dome` · `rib` · `shell` · `sketch_polygon` |
 | ⚠ 碰**规则 2**（角度 `angle_rad`）| 2 | `circular_pattern` · `revolve_boss` |
 
@@ -23,7 +24,8 @@
 ## 本批取的 2 个（签名照实取）
 | 工具 | 函数 | 参数 | 备注 |
 |---|---|---|---|
-| ✅ | `sw_part.add_sketch_relation` | `(model, relation_type)` | ★ `relation_type` 的合法值已按官方 Remarks 清单校正（2026-10-08 spec 222） |
+| ✅ | `sw_part.add_sketch_relation` | `(model, relation_type)
+` | ★ `relation_type` 的合法值已按官方 Remarks 清单校正（2026-10-08 spec 222） |
 | ✅ | `sw_part.mirror_feature` | `(model, feature_name, mirror_plane_name)` | 三个参数都是字符串 |
 
 **`relation_type` 的合法值**（★ 引自 `IModelDoc2::SketchAddConstraints` 的官方 Remarks 清单，

@@ -51,8 +51,8 @@ sys.path.insert(0, str(R / "scripts"))
 import pythoncom  # noqa: E402
 import win32com.client  # noqa: E402
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 #: \u2605 **2D**\uff1a\u81f3\u5c11 6 \u4e2a\u5750\u6807
 PTS_2D = [-0.02, -0.01, 0.0, 0.0, 0.02, 0.0, 0.02, -0.01, 0.0]
@@ -69,8 +69,8 @@ def _byref():
 
 def _seg_count(doc):
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
-        return len(list(C.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
+        sk = c_.get_com_member(doc, "GetActiveSketch2")
+        return len(list(c_.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
     except Exception:  # noqa: BLE001
         return -1
 
@@ -81,9 +81,9 @@ def _mk_surface(doc):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.05,
         -0.05,
@@ -92,22 +92,22 @@ def _mk_surface(doc):
         0.05,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     sk = names[-1] if names else None
-    ext = C.get_com_member(doc, "Extension")
-    for cand in P._get_sketch_name_candidates(sk) if sk else []:
+    ext = c_.get_com_member(doc, "Extension")
+    for cand in p_._get_sketch_name_candidates(sk) if sk else []:
         try:
-            if P._select_by_id(ext, cand, "SKETCH", append=False, mark=1):
+            if p_._select_by_id(ext, cand, "SKETCH", append=False, mark=1):
                 break
         except Exception:  # noqa: BLE001
             continue
     try:
-        C.get_com_member(doc, "InsertPlanarRefSurface")
+        c_.get_com_member(doc, "InsertPlanarRefSurface")
     except Exception:  # noqa: BLE001
         return None
     from sw_connect import get_com_member as _g
@@ -125,14 +125,14 @@ def _one(sw, tag, mode):
     row = {"tag": tag, "mode": mode, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        sm = C.get_com_member(doc, "SketchManager")
+        doc = c_.new_document(sw, "part")
+        sm = c_.get_com_member(doc, "SketchManager")
         if mode == "on_surface":
             surf = _mk_surface(doc)
             row["surface"] = surf is not None
         else:
             surf = None
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         before = _seg_count(doc)
         row["seg_before"] = before
         ret = None
@@ -154,7 +154,7 @@ def _one(sw, tag, mode):
                 steps = {}
                 mv = None
                 try:
-                    mv = C.get_com_member(sw, "GetMathUtility")
+                    mv = c_.get_com_member(sw, "GetMathUtility")
                     steps["GetMathUtility"] = "ok" if mv is not None else "None"
                 except Exception as exc:  # noqa: BLE001
                     steps["GetMathUtility"] = "%s: %s" % (
@@ -172,7 +172,7 @@ def _one(sw, tag, mode):
                     #: ff09
                     for nm in ("CreateVector", "ICreateVector"):
                         try:
-                            v = C.call_com_member(mv, nm, _arr([0.0, 0.0, -1.0]))
+                            v = c_.call_com_member(mv, nm, _arr([0.0, 0.0, -1.0]))
                             steps["CreateVector(%s)" % nm] = (
                                 type(v).__name__ if v is not None else "None"
                             )
@@ -185,7 +185,7 @@ def _one(sw, tag, mode):
                             )
                 row["steps"] = steps
                 if v is not None:
-                    ret = C.get_com_member(
+                    ret = c_.get_com_member(
                         sm,
                         "CreateSpline3",
                         _arr([0.0, 0.0, 0.02, 0.02, 0.0, 0.02]),
@@ -197,13 +197,13 @@ def _one(sw, tag, mode):
             elif mode == "2d":
                 #: \u2605 **2D**\uff1a\u81f3\u5c11 6 \u4e2a\u5750\u6807\uff1b\u2605 \u51
                 #: 76\u4f59\u53c2\u6570 **null**
-                ret = C.get_com_member(
+                ret = c_.get_com_member(
                     sm, "CreateSpline3", _arr(PTS_2D), None, None, False, _byref()
                 )
             else:
                 #: \u2605 \u5bf9\u7167\uff1a\u2605 \u53c2\u6570\u7ed9**\u9519**\uff08\u2
                 #: 605 \u628a 2D \u7684\u5750\u6807\u7ed9\u6210\u4e00\u4e2a\u70b9\uff09
-                ret = C.get_com_member(
+                ret = c_.get_com_member(
                     sm,
                     "CreateSpline3",
                     _arr([0.0, 0.0, 0.0]),
@@ -220,7 +220,7 @@ def _one(sw, tag, mode):
         row["new_segments"] = (after - before) if (after >= 0 and before >= 0) else None
         row["ok"] = bool(row["new_segments"] and row["new_segments"] > 0)
         try:
-            P.end_sketch(doc)
+            p_.end_sketch(doc)
         except Exception:  # noqa: BLE001
             pass
     except Exception as exc:  # noqa: BLE001
@@ -228,19 +228,20 @@ def _one(sw, tag, mode):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-        "_": "`CreateSpline3`\uff08\u2605 `CreateSpline2` \u7684**\u7ee7\u4efb\u8005**\uff0c\u2605 \u800c\u5b83\u624d\u662f"
+        "_":
+        "`CreateSpline3`\uff08\u2605 `CreateSpline2` \u7684**\u7ee7\u4efb\u8005**\uff0c\u2605 \u800c\u5b83\u624d\u662f"
         "\u201c\u66f2\u9762\u4e0a\u7684\u6837\u6761\u201d\u7684\u6b63\u4e3b\uff09",
         "official": "CreateSpline2.md \u9010\u5b57\uff1aObsolete. Superseded by CreateSpline3\uff1b"
         "CreateSpline3 \u7684 Remarks\uff1a2D\uff08\u81f3\u5c11 6 \u5750\u6807\u3001\u5176\u4f59 null\uff09"

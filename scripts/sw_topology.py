@@ -304,17 +304,15 @@ def create_topology_study(
     #:     ★★ 而**研究类型传 `13`** ⇒ ★ 与本仓 `topology_static` 一致 ✓
     #:   ★★★ **修法**：★ 建之前先 `delete_study(manager, name)` ——
     #:     而**同名不存在时它可能报错** ⇒ ★★ **必须容错**（★ 删不到就当"本来没有"）✓
-    delete_note = None
     if not delete_existing:
-        delete_note = "★ 未先删（delete_existing=False）"
+        pass
     else:
         try:
             delete_study(manager, str(name))
-            delete_note = "★ 已按官方示例先删同名研究（★ DeleteStudy）"
         except Exception as exc:  # noqa: BLE001
             #: ★★ 同名不存在 ⇒ 官方那个 `DeleteStudy` 会报错 —— ★ 那是**正常**的（★ 首次
             #: 建）
-            delete_note = (
+            (
                 "★ 先删同名未成（★ %s）⇒ ★ 当作「本来没有同名」继续 ✓"
                 % type(exc).__name__
             )

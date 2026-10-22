@@ -232,13 +232,13 @@ def main() -> int:
     case("★ 旧的 10 参 `FeatureLinearPattern3`", form="linear3_10")
     case("★ 新的 22 参 `FeatureLinearPattern5`", form="linear5_22")
 
-    R = {
+    r_ = {
         "★_判据": "★ 建成 ⇒ 特征树多出新特征（★ 含 `LPattern` 一类）",
         "★_调用序来源": "★ 官方示例 `Change_Linear_Pattern_Example_VB.md`（★ 含两个 mark：方向 1 / 实体 256）",
         "rows": rows,
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     for r in rows:
         print(

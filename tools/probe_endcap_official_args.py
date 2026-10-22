@@ -106,11 +106,11 @@ VARIANTS = [
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
+    r_: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
     sw, _ = c.connect_solidworks(wait_seconds=30)
     prof = _profile()
-    R["profile"] = prof
-    R["profile_is_hollow_guess"] = any(k in prof.lower() for k in ("tube", "pipe"))
+    r_["profile"] = prof
+    r_["profile_is_hollow_guess"] = any(k in prof.lower() for k in ("tube", "pipe"))
     for label, a in VARIANTS:
         doc = None
         row: dict = {"variant": label, "args": list(a)}
@@ -152,11 +152,11 @@ def main() -> int:
                     _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
             except Exception:  # noqa: BLE001
                 pass
-        R["cases"].append(row)
-    R["passed"] = sum(1 for r in R["cases"] if r.get("ok"))
-    R["seconds"] = round(time.time() - started, 2)
+        r_["cases"].append(row)
+    r_["passed"] = sum(1 for r in r_["cases"] if r.get("ok"))
+    r_["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

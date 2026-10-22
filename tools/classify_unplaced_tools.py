@@ -95,7 +95,7 @@ def main() -> int:
         }
         (pure if k == 0 else real).append(rec)
 
-    R = {
+    r_ = {
         "★_判据": "★ 目标函数体里的 COM 调用数 == 0 ⇒ ★ 纯数据（应然）；★ 否则 ⇒ 真缺口",
         "无处可放总数": len(unplaced),
         "判据①_含纯数据": round(100.0 * len(unplaced) / 277, 2),
@@ -107,22 +107,22 @@ def main() -> int:
         "真缺口明细": sorted(real, key=lambda x: -x["com_calls"])[:40],
         "取不到源码的": unknown[:20],
     }
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(json.dumps(r_, ensure_ascii=False, indent=1), encoding="utf-8")
     print("★ 无处可放 %d 个" % len(unplaced))
-    print("★ 判据①（含纯数据）      = %.2f%%" % R["判据①_含纯数据"])
+    print("★ 判据①（含纯数据）      = %.2f%%" % r_["判据①_含纯数据"])
     print("★★ 纯数据（应然）        = %d" % len(pure))
     print("★★ 真缺口                = %d" % len(real))
     print("★ 取不到源码             = %d" % len(unknown))
-    print("★★ 判据①（只算真缺口）   = %.2f%%" % R["★★_判据①_只算真缺口"])
+    print("★★ 判据①（只算真缺口）   = %.2f%%" % r_["★★_判据①_只算真缺口"])
     print()
     print("★ 真缺口明细（前 12）：")
-    for x in R["真缺口明细"][:12]:
+    for x in r_["真缺口明细"][:12]:
         print(
             "   %-34s %-20s COM %d" % (x["tool"][:33], x["module"][:19], x["com_calls"])
         )
     print()
     print("★ 纯数据明细（前 12）：")
-    for x in R["纯数据明细"][:12]:
+    for x in r_["纯数据明细"][:12]:
         print("   %-34s %-20s %d 行" % (x["tool"][:33], x["module"][:19], x["lines"]))
     print()
     print("wrote", OUT)

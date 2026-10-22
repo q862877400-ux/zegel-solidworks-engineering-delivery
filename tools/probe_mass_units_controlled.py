@@ -64,7 +64,7 @@ CANDIDATES = ("AISI 1020", "Plain Carbon Steel", "Alloy Steel", "AISI 304")
 
 def main() -> int:
     ev: dict = {
-        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%s_"),
         "question": "IMassProperty2.Mass / Density 的物理单位（用已知密度材料对照）",
         "geometry": "40×20×10 mm 板（体积应 8000 mm³）",
         "steps": {},
@@ -74,8 +74,8 @@ def main() -> int:
     try:
         import sw_connect
 
-        from scripts import sw_part as P
-        from scripts import sw_simulation as S
+        from scripts import sw_part as p_
+        from scripts import sw_simulation as s_
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
@@ -84,11 +84,11 @@ def main() -> int:
             pass
 
         doc = sw_connect.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
-        P.sketch_corner_rectangle(doc, -20.0, -10.0, 20.0, 10.0)
-        sk = P.current_sketch_name(doc)
-        P.end_sketch(doc)
-        P.extrude_boss(doc, sk, 10.0)
+        p_.start_sketch(doc, plane_name="Front Plane")
+        p_.sketch_corner_rectangle(doc, -20.0, -10.0, 20.0, 10.0)
+        sk = p_.current_sketch_name(doc)
+        p_.end_sketch(doc)
+        p_.extrude_boss(doc, sk, 10.0)
 
         def _read():
             """★ 读三个量 + 官方关系式（★ 不假设单位，只记数）。
@@ -155,7 +155,7 @@ def main() -> int:
         got = None
         for name in CANDIDATES:
             try:
-                r = S.set_material(doc, material_name=name)
+                r = s_.set_material(doc, material_name=name)
                 got = (name, r)
                 print("  [1] set_material(%r) ⇒ %s" % (name, str(r)[:110]))
                 break

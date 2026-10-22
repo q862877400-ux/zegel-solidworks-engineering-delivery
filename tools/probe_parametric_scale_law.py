@@ -13,7 +13,7 @@
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_parametric_scale_law.py
 # 定位:   ★ 业主 2026-10-10「方法要规范」—— ★ 参数式曲线的**单位因子**（★ 扫描法）。
-# 官方依据: `C:\swapi\types\ISketchManager\CreateEquationSpline2.md`
+# 官方依据: `c_:\swapi\types\ISketchManager\CreateEquationSpline2.md`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ---------------------------------------------------------------------
@@ -30,8 +30,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _main() -> int:
@@ -40,12 +40,12 @@ def _main() -> int:
         "_": "★ 全参数式正方形的尺度律（★ 反解单位因子）",
         "cases": [],
     }
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
 
     def square(a):
         def draw(doc):
-            sm = C.get_com_member(doc, "SketchManager")
-            C.get_com_member(
+            sm = c_.get_com_member(doc, "SketchManager")
+            c_.get_com_member(
                 sm,
                 "CreateEquationSpline2",
                 "%.12f*t" % a,
@@ -60,7 +60,7 @@ def _main() -> int:
                 True,
                 True,
             )
-            C.get_com_member(
+            c_.get_com_member(
                 sm,
                 "CreateEquationSpline2",
                 "%.12f" % a,
@@ -75,7 +75,7 @@ def _main() -> int:
                 True,
                 True,
             )
-            C.get_com_member(
+            c_.get_com_member(
                 sm,
                 "CreateEquationSpline2",
                 "%.12f-%.12f*t" % (a, a),
@@ -90,7 +90,7 @@ def _main() -> int:
                 True,
                 True,
             )
-            C.get_com_member(
+            c_.get_com_member(
                 sm,
                 "CreateEquationSpline2",
                 "0.0",
@@ -112,28 +112,28 @@ def _main() -> int:
         doc = None
         row = {"a": a}
         try:
-            doc = C.new_document(sw, "part")
-            P.start_sketch(doc, plane_name="Front Plane")
+            doc = c_.new_document(sw, "part")
+            p_.start_sketch(doc, plane_name="Front Plane")
             square(a)(doc)
             try:
-                sk = C.get_com_member(doc, "GetActiveSketch2")
+                sk = c_.get_com_member(doc, "GetActiveSketch2")
                 row["segments"] = len(
-                    list(C.get_com_member(sk, "GetSketchSegments") or [])
+                    list(c_.get_com_member(sk, "GetSketchSegments") or [])
                 )
                 row["points"] = len(
-                    list(C.get_com_member(sk, "GetSketchPoints2") or [])
+                    list(c_.get_com_member(sk, "GetSketchPoints2") or [])
                 )
             except Exception:  # noqa: BLE001
                 pass
-            P.end_sketch(doc)
-            f = P.extrude_boss(doc, "草图1", 0.010)
+            p_.end_sketch(doc)
+            f = p_.extrude_boss(doc, "草图1", 0.010)
             row["extrude_ok"] = f is not None
             if f is not None:
                 try:
-                    mp = C.get_com_member(
-                        C.get_com_member(doc, "Extension"), "CreateMassProperty"
+                    mp = c_.get_com_member(
+                        c_.get_com_member(doc, "Extension"), "CreateMassProperty"
                     )
-                    v = float(C.get_com_member(mp, "Volume")) * 1e9
+                    v = float(c_.get_com_member(mp, "Volume")) * 1e9
                     row["volume_mm3"] = round(v, 9)
                     #: ★★ 反解边长（★ 假设深度 10 mm 对）
                     if v > 0:
@@ -146,9 +146,9 @@ def _main() -> int:
         finally:
             if doc is not None:
                 try:
-                    t = str(C.get_com_member(doc, "GetTitle") or "")
+                    t = str(c_.get_com_member(doc, "GetTitle") or "")
                     if t:
-                        C.get_com_member(sw, "CloseDoc", t)
+                        c_.get_com_member(sw, "CloseDoc", t)
                 except Exception:  # noqa: BLE001
                     pass
         rep["cases"].append(row)

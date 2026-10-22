@@ -30,7 +30,7 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 D = Path(Path(__file__).resolve().parents[1] / "output" / "pick-test")
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-import metric_scope as ms  # ★ 口径注册表（事实 517：口径必须落成代码）
+import metric_scope as ms  # ★ 口径注册表（事实 517：口径必须落成代码）   # noqa: E402
 
 idx = json.loads((D / "_judge_index.json").read_text(encoding="utf-8"))
 by_i = {p["index"]: p for p in idx}

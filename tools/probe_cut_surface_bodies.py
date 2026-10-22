@@ -55,14 +55,14 @@ sys.path.insert(0, str(R / "scripts"))
 import pythoncom  # noqa: E402
 from win32com.client import VARIANT as _V  # noqa: E402
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _mk_solid(doc):
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -71,15 +71,15 @@ def _mk_solid(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -125,7 +125,7 @@ def _one(sw, tag, factory):
     row = {"tag": tag, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         _mk_solid(doc)
         #: \u2605 \u9009\u4e00\u4e2a\u57fa\u51c6\u9762\u4f5c\u5207\u9762\uff08\u2605 \u5
         #: b98\u65b9\uff1apreselected surface or plane\uff09
@@ -133,10 +133,10 @@ def _one(sw, tag, factory):
             doc.ClearSelection2(True)
         except Exception:  # noqa: BLE001
             pass
-        ext = C.get_com_member(doc, "Extension")
+        ext = c_.get_com_member(doc, "Extension")
         for plane in ("\u524d\u89c6\u57fa\u51c6\u9762", "Front Plane"):
             try:
-                if C.get_com_member(
+                if c_.get_com_member(
                     ext,
                     "SelectByID2",
                     plane,
@@ -158,21 +158,21 @@ def _one(sw, tag, factory):
         from sw_connect import out_dispatch as _od
         from sw_connect import out_i4 as _oi4
 
-        fm = C.get_com_member(doc, "FeatureManager")
-        before = list(P.feature_names(doc) or [])
+        fm = c_.get_com_member(doc, "FeatureManager")
+        before = list(p_.feature_names(doc) or [])
         try:
             bodies = factory()
             if isinstance(bodies, tuple) and bodies and bodies[0] == "ERR":
                 row["err"] = "\u6784\u9020\u5931\u8d25\uff1a%s" % bodies[1]
                 return row
-            ret = C.get_com_member(
+            ret = c_.get_com_member(
                 fm, "InsertCutSurface", False, 0, False, True, bodies, _oi4(), _od()
             )
             row["returned"] = type(ret).__name__ if ret is not None else "None"
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
             row["code"] = getattr(exc, "args", (None,))[0]
-        after = list(P.feature_names(doc) or [])
+        after = list(p_.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new"])
     except Exception as exc:  # noqa: BLE001
@@ -180,16 +180,16 @@ def _one(sw, tag, factory):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "InsertCutSurface \u7684 **Bodies \u5f62\u6001\u77e9\u9635**\uff08\u2605 \u4e0a\u8f6e\u9519\u7801\u94fe\u7684\u63a8\u8bba\uff09",

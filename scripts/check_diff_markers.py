@@ -121,7 +121,6 @@ def scan(path: Path) -> list[tuple[int, str]]:
 
     depth = 0
     in_doc = False  # 是否在 """ 或 ''' 里面（docstring 里的示例不是代码）
-    prev_code = ""
     for index, line in enumerate(lines):
         stripped = line.strip()
         # —— 三引号字符串内的示例行不算（否则本门禁会抓自己的文档）
@@ -146,7 +145,6 @@ def scan(path: Path) -> list[tuple[int, str]]:
         depth -= line.count(")") + line.count("]") + line.count("}")
         if depth < 0:
             depth = 0
-        prev_code = stripped
     return hits
 
 

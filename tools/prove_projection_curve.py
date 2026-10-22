@@ -47,8 +47,8 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 #: \u2605 \u53cd\u5c04\u91cc\u7684\u503c\uff08\u2605 \u94c1\u5f8b 4\uff1a\u6570\u503c\u5
 #: 3bb\u53cd\u5c04\uff09
@@ -57,9 +57,9 @@ SW_FM_REF_CURVE = 14
 
 def _mk_target(doc):
     """★ 一个**实体**（★ 供 mark=1 的目标面用）+ ★ 一个**要投影的草图**（mark=2）。"""
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -68,16 +68,16 @@ def _mk_target(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     solid = False
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             solid = True
             break
         except Exception:  # noqa: BLE001
@@ -88,19 +88,19 @@ def _mk_target(doc):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Front Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCircleByRadius",
         0.0,
         0.0,
         0.0,
         0.012,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     nm2 = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     return solid, (nm2[-1] if nm2 else None)
@@ -115,7 +115,7 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         solid, sk = _mk_target(doc)
         row["solid"] = solid
         row["sketch_to_project"] = sk
@@ -137,9 +137,9 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
                     break
                 break
         #: \u2605 **mark = 2** \u2014\u2014 \u8981\u6295\u5f71\u7684\u8349\u56fe
-        for cand in P._get_sketch_name_candidates(sk) if sk else []:
+        for cand in p_._get_sketch_name_candidates(sk) if sk else []:
             try:
-                if P._select_by_id(ext, cand, "SKETCH", append=bool(marks), mark=2):
+                if p_._select_by_id(ext, cand, "SKETCH", append=bool(marks), mark=2):
                     marks["2"] = 1
                     break
             except Exception:  # noqa: BLE001
@@ -159,7 +159,7 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
                 setp = {}
                 for k, v in (("Bidirectional", False), ("Reverse", False)):
                     try:
-                        C.set_com_member(data, k, bool(v))
+                        c_.set_com_member(data, k, bool(v))
                         setp[k] = "ok"
                     except Exception as exc:  # noqa: BLE001
                         setp[k] = "%s" % type(exc).__name__
@@ -168,7 +168,7 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
                 if with_sketch_prop and sk:
                     try:
                         fobj = None
-                        for cand in P._get_sketch_name_candidates(sk):
+                        for cand in p_._get_sketch_name_candidates(sk):
                             try:
                                 fobj = _g(doc, "FeatureByName", cand)
                                 if fobj is not None:
@@ -177,7 +177,7 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
                                 continue
                         if fobj is not None:
                             sk_obj = _g(fobj, "GetSpecificFeature2")
-                            C.set_com_member(data, "Sketch", sk_obj)
+                            c_.set_com_member(data, "Sketch", sk_obj)
                             setp["Sketch"] = "ok"
                         else:
                             setp["Sketch"] = (
@@ -195,8 +195,8 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
                 #: **6/6 \u901a**\uff1b\u2605 \u800c `Component` \u8981\u4f20**\u7a7a Di
                 #: spatch \u53d8\u4f53**\uff09\u3002
                 try:
-                    acc = C.get_com_member(
-                        data, "AccessSelections", doc, C.create_empty_dispatch_variant()
+                    acc = c_.get_com_member(
+                        data, "AccessSelections", doc, c_.create_empty_dispatch_variant()
                     )
                     row["access_selections"] = str(acc)
                 except Exception as exc:  # noqa: BLE001
@@ -206,7 +206,7 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
                     )
                 feat = _g(fm, "CreateFeature", data)
                 try:
-                    C.get_com_member(data, "ReleaseSelectionAccess")
+                    c_.get_com_member(data, "ReleaseSelectionAccess")
                     row["released"] = True
                 except Exception as exc:  # noqa: BLE001
                     row["released"] = "%s" % type(exc).__name__
@@ -227,16 +227,16 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u6295\u5f71\u66f2\u7ebf\uff1a**\u7b2c\u4e09\u4ee3** `CreateDefinition(swFmRefCurve=14)` + `IProjectionCurveFeatureData`",

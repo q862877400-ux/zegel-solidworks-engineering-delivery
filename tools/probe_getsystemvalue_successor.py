@@ -53,7 +53,7 @@ def _try(fn, *a):
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
+    r_: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
     sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
@@ -91,13 +91,13 @@ def main() -> int:
                 0.03,
                 0.0,
             )
-            R["AutoDimension2"] = _try(_g, _g(doc, "SketchManager"), "AutoDimension2")
-            R["FullyDefineSketch"] = _try(
+            r_["AutoDimension2"] = _try(_g, _g(doc, "SketchManager"), "AutoDimension2")
+            r_["FullyDefineSketch"] = _try(
                 _g, _g(doc, "SketchManager"), "FullyDefineSketch", 1, 0, 0, True, 0, 0
             )
             p.end_sketch(doc)
         except Exception as exc:  # noqa: BLE001
-            R["造前置出错"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
+            r_["造前置出错"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
 
         #: ★★★ 2026-10-03 修：★ 改用**本仓自己已验证的取法**
         #: —— `scripts/sw_document_data.py` L246 逐字 `dimension = model.Parameter(dimen
@@ -112,8 +112,8 @@ def main() -> int:
             if got.get("ok") and got.get("ret") not in ("None",):
                 dim, dim_name = _g(doc, "Parameter", cand), cand
                 break
-        R["尺寸对象"] = repr(dim)[:90]
-        R["尺寸名"] = dim_name or "（没找到）"
+        r_["尺寸对象"] = repr(dim)[:90]
+        r_["尺寸名"] = dim_name or "（没找到）"
 
         #: ★ 若仍没有 ⇒ **显式加一个尺寸**（★ 本仓 `sw_part` 有现成的，但需先选中实体）
         if dim is None:
@@ -121,33 +121,33 @@ def main() -> int:
                 from sw_part import add_dimension as _add_dim
 
                 r = _try(_add_dim, doc, 0.0, 0.0)
-                R["加尺寸尝试"] = r
+                r_["加尺寸尝试"] = r
                 for cand in ("D1@草图1", "D1@Sketch1", "D1@草图2"):
                     got = _try(_g, doc, "Parameter", cand)
                     if got.get("ok") and got.get("ret") not in ("None",):
                         dim, dim_name = _g(doc, "Parameter", cand), cand
                         break
-                R["加尺寸后的对象"] = repr(dim)[:90]
-                R["加尺寸后的名字"] = dim_name or "（仍没有）"
+                r_["加尺寸后的对象"] = repr(dim)[:90]
+                r_["加尺寸后的名字"] = dim_name or "（仍没有）"
             except Exception as exc:  # noqa: BLE001
-                R["加尺寸出错"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
+                r_["加尺寸出错"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
 
         if dim is not None:
-            R["旧_GetSystemValue2(默认)"] = _try(_g, dim, "GetSystemValue2", "默认")
-            R["旧_SystemValue"] = _try(_g, dim, "SystemValue")
-            R["新_GetSystemValue3(1_本配置_None)"] = _try(
+            r_["旧_GetSystemValue2(默认)"] = _try(_g, dim, "GetSystemValue2", "默认")
+            r_["旧_SystemValue"] = _try(_g, dim, "SystemValue")
+            r_["新_GetSystemValue3(1_本配置_None)"] = _try(
                 _g, dim, "GetSystemValue3", 1, None
             )
-            R["新_GetSystemValue3(2_全配置_None)"] = _try(
+            r_["新_GetSystemValue3(2_全配置_None)"] = _try(
                 _g, dim, "GetSystemValue3", 2, None
             )
-            R["新_GetSystemValue3(3_指定_列表)"] = _try(
+            r_["新_GetSystemValue3(3_指定_列表)"] = _try(
                 _g, dim, "GetSystemValue3", 3, ["默认"]
             )
         else:
-            R["skip"] = "★ 挖不到 IDimension"
+            r_["skip"] = "★ 挖不到 IDimension"
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+        r_["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
@@ -156,18 +156,18 @@ def main() -> int:
             pass
     new_ok = sum(
         1
-        for k, v in R.items()
+        for k, v in r_.items()
         if k.startswith("新_") and isinstance(v, dict) and v.get("ok")
     )
-    R["★_新入口能调数"] = "%d/3" % new_ok
-    R["verdict"] = (
+    r_["★_新入口能调数"] = "%d/3" % new_ok
+    r_["verdict"] = (
         "★ PASS —— 新入口有能调的 ⇒ 可按对应关系换"
         if new_ok >= 1
         else "★★ 三条都不通 ⇒ 如实记「保留现状」（不硬换）"
     )
-    R["seconds"] = round(time.time() - started, 2)
+    r_["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

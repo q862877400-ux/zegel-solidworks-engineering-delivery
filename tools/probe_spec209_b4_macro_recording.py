@@ -32,11 +32,11 @@ OUT = R / "output" / "spec209-macro-recording.json"
 
 def main() -> int:
     import sw_connect
-    import sw_macro as M
+    import sw_macro as m_
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
     ev = {
-        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "at": time.strftime("%Y-%m-%dT%H:%m_:%S"),
         "_": "规格 209 · B4-1 native_macro_recording（★ 不点 StopMacro(31) —— 它会弹 Save As）",
         "judge": "三个 bool 回报（开录制 / 逐行 / 停录制）+ 明确写出限度（宏文件落盘证不了）",
         "steps": {},
@@ -45,7 +45,7 @@ def main() -> int:
 
     #: ① 单独试：**没开录制**时写一行（★ 官方 Remarks 说：只有录制开着才写得进去）
     try:
-        before = M.record_line(sw, "Rem 'probe209 before recording on'")
+        before = m_.record_line(sw, "Rem 'probe209 before recording on'")
         ev["steps"]["line_before_recording"] = {
             k: before.get(k) for k in ("ok", "returned", "text_len", "error")
         }
@@ -63,7 +63,7 @@ def main() -> int:
         "' ★ 这两行只用来证明 RecordLine 的调用形态可达",
     ]
     try:
-        cyc = M.record_macro_lines(sw, lines)
+        cyc = m_.record_macro_lines(sw, lines)
         ev["steps"]["cycle"] = {
             k: cyc.get(k)
             for k in (
@@ -93,7 +93,7 @@ def main() -> int:
 
     #: ③ 负例：空文本必须被入口拒（★ 不碰 COM）
     try:
-        bad = M.record_line(sw, "   ")
+        bad = m_.record_line(sw, "   ")
         ev["steps"]["empty_text"] = {"ok": bad.get("ok"), "error": bad.get("error")}
         print("  负例 empty_text ok=%s" % bad.get("ok"))
     except Exception as exc:  # noqa: BLE001

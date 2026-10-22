@@ -8,7 +8,7 @@
 #   ★ 结构照抄**本仓已被真机验证过的**骨架（`tools/prove_b6a_surface_edit.py`）：
 #     · `sw, _ = connect_solidworks(wait_seconds=30)`（★ 它回元组）
 #     · **每个用例一个新文档** ⇒ 失败不拖累后续
-# · `P.start_sketch` / `sp.sketch_3point_corner_rectangle` / `P.end_sketch`（★ 本仓包装
+# · `p_.start_sketch` / `sp.sketch_3point_corner_rectangle` / `p_.end_sketch`（★ 本仓包装
 # ）
 #     · **判据 = 特征树叶子名增量**（`sw_part.feature_names`）
 #
@@ -40,8 +40,8 @@ sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_sketch_primitives as sp  # noqa: E402
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_ref_ops as M  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
+from scripts import sw_surface_ref_ops as m_  # noqa: E402
 
 
 def _mk_sketch(doc, plane, pts):
@@ -59,14 +59,14 @@ def _mk_sketch(doc, plane, pts):
       ★ 而 `SketchSelectionRef` 里存的是**对象引用**（`sketch` / `feature` / `contours`）
         ⇒ ★ **退草图后仍可用** ✓
     """
-    P.start_sketch(doc, plane_name=plane)
+    p_.start_sketch(doc, plane_name=plane)
     sp.sketch_3point_corner_rectangle(doc, *pts)
     ref = None
     try:
-        ref = P._capture_sketch_ref(doc, source="b6b-probe")
+        ref = p_._capture_sketch_ref(doc, source="b6b-probe")
     except Exception:  # noqa: BLE001
         ref = None
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     return ref
 
 
@@ -85,16 +85,16 @@ def _select_sketch_contour(doc, name, mark):
       ★ 而它底下走 `_select_any_object(objects, append, **mark**)` —— ★ mark 能传进去 ✓
 
     ⚠ 2026-10-03（轮 493）试过给它加 `append` 形参、透传给
-      `P._select_sketch_ref` —— ★★ 而**那个函数根本没有 `append` 形参**
+      `p_._select_sketch_ref` —— ★★ 而**那个函数根本没有 `append` 形参**
       （真机签名 `(model, sketch_ref, mark=0)`）⇒ 已**回退**。
       ★ 故本 helper 只管**选第一个**；★★ 第二个由调用方**按引用追加**
       （★ 那一条已真机验证）。
     """
     try:
-        ref = P._capture_sketch_ref(doc, fallback=name)
+        ref = p_._capture_sketch_ref(doc, fallback=name)
         if ref is None:
             return False
-        return bool(P._select_sketch_ref(doc, ref, mark=int(mark)))
+        return bool(p_._select_sketch_ref(doc, ref, mark=int(mark)))
     except Exception:  # noqa: BLE001
         return False
 
@@ -123,7 +123,7 @@ def _one(sw, zh, fn):
 
 def _case_revolve(doc):
     """★ 旋转曲面：**捕获 `CreateCenterLine` 的返回值当轴**，只选那一条（mark=4）⇒ 再选轮廓。"""
-    P.start_sketch(doc, plane_name="Front Plane")
+    p_.start_sketch(doc, plane_name="Front Plane")
     #: ★ 轮廓：矩形（避开中心线所在轴）
     sp.sketch_3point_corner_rectangle(doc, 5, -10, 25, -10, 25, 10)
     #: ★★★★★ 2026-10-03（轮 477）**轴 = `CreateCenterLine` 的返回值** ——
@@ -149,16 +149,16 @@ def _case_revolve(doc):
     #:   `_capture_sketch_ref` 只从"活动草图"取，★ 退草图后再拿就是 `None`）
     prof_ref = None
     try:
-        prof_ref = P._capture_sketch_ref(doc, source="b6b-revolve")
+        prof_ref = p_._capture_sketch_ref(doc, source="b6b-revolve")
     except Exception:  # noqa: BLE001
         prof_ref = None
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
 
     #: ★ **① 先轴**：只选捕获到的那**一条**中心线（mark=4）
     axis_ok = False
     try:
         if axis_seg is not None:
-            axis_ok = bool(P._select_any_object((axis_seg,), append=False, mark=4))
+            axis_ok = bool(p_._select_any_object((axis_seg,), append=False, mark=4))
     except Exception:  # noqa: BLE001
         axis_ok = False
 
@@ -172,11 +172,11 @@ def _case_revolve(doc):
             (prof_ref.sketch, "sketch"),
             (prof_ref.feature, "feature"),
         ):
-            if objs and P._select_any_object(objs, append=True, mark=1):
+            if objs and p_._select_any_object(objs, append=True, mark=1):
                 prof_route, prof_ok = tag, True
                 break
     if not prof_ok:
-        P._ensure_sketch_selected(doc, "草图1")
+        p_._ensure_sketch_selected(doc, "草图1")
         prof_route, prof_ok = "ensure_sketch_selected(草图特征)", True
 
     try:
@@ -188,7 +188,7 @@ def _case_revolve(doc):
         )
     except Exception:  # noqa: BLE001
         sel_n = -1
-    r = M.insert_revolved_ref_surface(doc, 360.0, 0, False, 0.0)
+    r = m_.insert_revolved_ref_surface(doc, 360.0, 0, False, 0.0)
     r["axis_captured"] = axis_seg is not None
     r["axis_selected_ok"] = axis_ok
     r["profile_route"] = prof_route
@@ -225,7 +225,7 @@ def _case_loft(doc):
     #:     ⇒ ★ 而本仓门禁 `tests/test_no_uncalled_helpers.py` **尽职抓到了**它 ✓
     #:   ⇒ ★ 正解：**统一到那个 helper**（★ 既接上了、★ 又去掉重复）✓
     #:   ⚠★ 2026-10-03（轮 493）**第一版接错了**：我给 helper 加了 `append` 形参、
-    #:     并把它透传给 `P._select_sketch_ref` —— ★★ 而**那个函数根本没有 `append` 形参**
+    #:     并把它透传给 `p_._select_sketch_ref` —— ★★ 而**那个函数根本没有 `append` 形参**
     #:     （真机签名是 `_select_sketch_ref(model, sketch_ref, mark=0)`）⚠
     #:     ★★★ 而**门禁 `test_no_uncalled_helpers` 仍然过了** ——
     #:        ★ 因为它只查"有没有被调用"、**不查实参对不对** ⇒ ★ 那正是**事实 62** 的形态
@@ -247,7 +247,7 @@ def _case_loft(doc):
                 ref.regions,
                 ref.segments,
             ):
-                if P._select_any_object(objs, append=False, mark=1):
+                if p_._select_any_object(objs, append=False, mark=1):
                     picked += 1
                     break
             continue
@@ -260,16 +260,16 @@ def _case_loft(doc):
                 ref.regions,
                 ref.segments,
             ):
-                if P._select_any_object(objs, append=True, mark=1):
+                if p_._select_any_object(objs, append=True, mark=1):
                     picked += 1
                     break
-    return M.insert_lofted_ref_surface(doc, False, True, False, 0.0, 0, 0)
+    return m_.insert_lofted_ref_surface(doc, False, True, False, 0.0, 0, 0)
 
 
 def main() -> int:
     sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
-        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "at": time.strftime("%Y-%m-%dT%H:%m_:%S"),
         "_": "B6-b 曲面特征第二组 2 条逐个真机跑（specs/201-toolbar-gaps）",
         "judge": "特征树叶子名增量（sw_part.feature_names）",
         "items": [],

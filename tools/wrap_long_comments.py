@@ -24,6 +24,7 @@ import pathlib
 import re
 import sys
 import tokenize
+
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
 from display_width import display_width as width  # noqa: E402
 

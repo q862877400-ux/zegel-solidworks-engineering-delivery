@@ -47,7 +47,6 @@
 
 from __future__ import annotations
 
-
 try:
     from .sw_connect import call_com_member, get_com_member
     from .sw_part import _empty_callout  # noqa: F401 —— 供同模块其它函数用

@@ -18,7 +18,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from . import registry as R
+from . import registry as r_
 
 #: ★ 展开深度上限（★ J2：防循环）
 MAX_DEPTH = 4
@@ -76,7 +76,7 @@ def rename_datum(steps, old: str, new: str) -> tuple:
         #: ★ `PlanStep` 是 frozen dataclass ⇒ 用 `replace` 语义重建
         kw = dict(step=st.step, params=dict(st.params), derive=st.derive, tool=st.tool)
         try:
-            out.append(R.PlanStep(datums=ds, **kw))
+            out.append(r_.PlanStep(datums=ds, **kw))
         except TypeError:
             #: ★ 若 `PlanStep` 还没加 `datums` 字段 ⇒ 退回原样（★ 不静默丢）
             out.append(st)
@@ -118,7 +118,7 @@ def expand_plan(
 
     ★★ 递归（★ J1）：展开产物里**不得再有方法 id** —— 本函数循环到不动点为止。
     """
-    reg = reg if reg is not None else R.build_registry()
+    reg = reg if reg is not None else r_.build_registry()
     methods = _methods()
     trace: list[dict] = []
 
@@ -150,9 +150,9 @@ def expand_plan(
                 for s in sub:
                     kw = dict(step=s, params=dict(inherited), derive=st.derive, tool="")
                     try:
-                        kids.append(R.PlanStep(datums=st.datums, **kw))
+                        kids.append(r_.PlanStep(datums=st.datums, **kw))
                     except TypeError:
-                        kids.append(R.PlanStep(**kw))
+                        kids.append(r_.PlanStep(**kw))
                 out.extend(expand_one(kids, depth + 1))
             else:
                 out.append(st)
@@ -170,9 +170,9 @@ def expand_plan(
     #: ★ 顺手解析工具名（★ 解析不到 ⇒ 抛 —— ★ 不静默）
     resolved = []
     for s in steps:
-        cn = R.resolve_step_name(s.step, reg)
+        cn = r_.resolve_step_name(s.step, reg)
         resolved.append(
-            R.PlanStep(step=s.step, params=dict(s.params), derive=s.derive, tool=cn)
+            r_.PlanStep(step=s.step, params=dict(s.params), derive=s.derive, tool=cn)
         )
 
     return ExpandedPlan(

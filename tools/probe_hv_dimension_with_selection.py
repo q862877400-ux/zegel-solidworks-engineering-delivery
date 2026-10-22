@@ -45,15 +45,15 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _mk_sketch_with_line(doc):
     """★ 画一条**水平线段**并**保持草图打开**（★ 尺寸要在草图里建）。"""
-    P.start_sketch(doc, plane_name="Front Plane")
-    sm = C.get_com_member(doc, "SketchManager")
-    C.get_com_member(sm, "CreateLine", -0.02, 0.0, 0.0, 0.02, 0.0, 0.0)
+    p_.start_sketch(doc, plane_name="Front Plane")
+    sm = c_.get_com_member(doc, "SketchManager")
+    c_.get_com_member(sm, "CreateLine", -0.02, 0.0, 0.0, 0.02, 0.0, 0.0)
     return sm
 
 
@@ -61,17 +61,17 @@ def _segments_and_points(doc):
     """★ 取当前草图的**段**与**端点**（★ 供按对象选 —— 事实 32）。"""
     segs, pts = [], []
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
+        sk = c_.get_com_member(doc, "GetActiveSketch2")
     except Exception:  # noqa: BLE001
         sk = None
     if sk is None:
         return segs, pts
     try:
-        for s in list(C.get_com_member(sk, "GetSketchSegments") or []):
+        for s in list(c_.get_com_member(sk, "GetSketchSegments") or []):
             segs.append(s)
             for m in ("GetStartPoint2", "GetEndPoint2"):
                 try:
-                    v = C.get_com_member(s, m)
+                    v = c_.get_com_member(s, m)
                     if v is not None:
                         pts.append(v)
                 except Exception:  # noqa: BLE001
@@ -99,21 +99,21 @@ def _dim_count(doc):
         if not names:
             return -1
         feat = None
-        for cand in P._get_sketch_name_candidates(names[-1]):
+        for cand in p_._get_sketch_name_candidates(names[-1]):
             try:
-                feat = C.get_com_member(doc, "FeatureByName", cand)
+                feat = c_.get_com_member(doc, "FeatureByName", cand)
                 if feat is not None:
                     break
             except Exception:  # noqa: BLE001
                 continue
         if feat is None:
             return -1
-        dd = C.get_com_member(feat, "GetFirstDisplayDimension")
+        dd = c_.get_com_member(feat, "GetFirstDisplayDimension")
         n = 0
         while dd is not None and n < 200:
             n += 1
             try:
-                dd = C.get_com_member(dd, "GetNext2")
+                dd = c_.get_com_member(dd, "GetNext2")
             except Exception:  # noqa: BLE001
                 break
         return n
@@ -125,7 +125,7 @@ def _one(sw, tag, kind):
     row = {"tag": tag, "kind": kind, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         _mk_sketch_with_line(doc)
         segs, pts = _segments_and_points(doc)
         row["n_segs"] = len(segs)
@@ -149,14 +149,14 @@ def _one(sw, tag, kind):
         row["dim_before"] = before
         ret = None
         try:
-            ret = C.get_com_member(doc, "AddHorizontalDimension2", 0.0, 0.0, 0.0)
+            ret = c_.get_com_member(doc, "AddHorizontalDimension2", 0.0, 0.0, 0.0)
             row["h_returned"] = type(ret).__name__ if ret is not None else "None"
         except Exception as exc:  # noqa: BLE001
             row["h_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
         after_h = _dim_count(doc)
         row["dim_after_h"] = after_h
         try:
-            ret2 = C.get_com_member(doc, "AddVerticalDimension2", 0.0, 0.0, 0.0)
+            ret2 = c_.get_com_member(doc, "AddVerticalDimension2", 0.0, 0.0, 0.0)
             row["v_returned"] = type(ret2).__name__ if ret2 is not None else "None"
         except Exception as exc:  # noqa: BLE001
             row["v_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
@@ -167,16 +167,16 @@ def _one(sw, tag, kind):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u6c34\u5e73/\u7ad6\u76f4\u5c3a\u5bf8\uff1a**\u9009\u4e2d\u5b9e\u4f53\u540e**\u518d\u8bd5\uff08\u2605 \u4e8b\u5b9e 421 \u7684\u4e0b\u4e00\u6b65\uff09",

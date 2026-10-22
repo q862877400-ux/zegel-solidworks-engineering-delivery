@@ -44,7 +44,7 @@ OUT = Path(
 
 def main() -> int:
     import sw_connect
-    import sw_selection_spec as S
+    import sw_selection_spec as s_
     from sw_part import (
         current_sketch_name,
         end_sketch,
@@ -53,7 +53,7 @@ def main() -> int:
         start_sketch,
     )
 
-    ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+    ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%s_")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
     doc = None
     try:
@@ -107,11 +107,11 @@ def main() -> int:
 
         #: ① 清空后计数 = 0
         doc.ClearSelection2(True)
-        _c0 = S.get_selection_count(doc)
+        _c0 = s_.get_selection_count(doc)
         #: ★ 清空后计数 **= 0 是正确的**（★ 先前我把它当成失败了：`bool(0)` 为假）
         ev["steps"]["count_after_clear"] = {"ok": _c0 == 0, "value": _c0}
         #: ② 按序号选一条边
-        step("select_edge_index0", lambda: S.select_entity_by_index(doc, "EDGE", 0))
+        step("select_edge_index0", lambda: s_.select_entity_by_index(doc, "EDGE", 0))
         #: ④ 读点 —— ★★ **必须先选中一个「点」**（VERTEX）：
         #:   ★ 先前我在选了**边**之后读点 ⇒ `GetSelectionPoint2` 回 **None**
         #: ★★ 而那**是正确的**（官方说 "selected **point**"）—— ★ 是**我的期望错了**，不
@@ -122,32 +122,32 @@ def main() -> int:
         #:   · 选 **FACE**   ⇒ `(1, -1)` ⇒ **`[-20.0, 0.0, -5.0]`** ✓
         #:   ★ 即："selection point" 是**选择时鼠标落在「面」上的那个位置**；
         #:   ★ 而顶点选中时**没有面可投影** ⇒ None。
-        step("select_face_index0", lambda: S.select_entity_by_index(doc, "FACE", 0))
-        step("selection_point", lambda: S.selection_point(doc))
+        step("select_face_index0", lambda: s_.select_entity_by_index(doc, "FACE", 0))
+        step("selection_point", lambda: s_.selection_point(doc))
         #: ③ 解析选择器并选中（★ 用 index:1）
         step(
             "resolve_selection_index1",
-            lambda: S.resolve_selection(doc, "index:1", "EDGE"),
+            lambda: s_.resolve_selection(doc, "index:1", "EDGE"),
         )
         #: ⑤ 用选择器选中
         step(
             "select_by_selector_index2",
-            lambda: S.select_by_selector_report(doc, "index:2", "EDGE"),
+            lambda: s_.select_by_selector_report(doc, "index:2", "EDGE"),
         )
         #: ⑥ 解析实体
         step(
             "resolve_entity_index0",
-            lambda: S.resolve_entity_report(doc, "index:0", "EDGE"),
+            lambda: s_.resolve_entity_report(doc, "index:0", "EDGE"),
         )
         #: ── 负例 ──
         expect_fail(
-            "neg_index_out_of_range", lambda: S.select_entity_by_index(doc, "EDGE", 999)
+            "neg_index_out_of_range", lambda: s_.select_entity_by_index(doc, "EDGE", 999)
         )
         doc.ClearSelection2(True)
-        expect_ok_false("neg_empty_selection_point", lambda: S.selection_point(doc))
+        expect_ok_false("neg_empty_selection_point", lambda: s_.selection_point(doc))
         expect_ok_false(
             "neg_bad_selector",
-            lambda: S.resolve_entity_report(doc, "index:not_an_int", "EDGE"),
+            lambda: s_.resolve_entity_report(doc, "index:not_an_int", "EDGE"),
         )
 
         exec_ok = all(v.get("ok") for v in ev["steps"].values() if isinstance(v, dict))

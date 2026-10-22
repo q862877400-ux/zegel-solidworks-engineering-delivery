@@ -43,8 +43,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
@@ -52,7 +52,7 @@ def _one(sw, tag, fn):
     row = {"tag": tag, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         r = fn(doc)
         row["result"] = {k: v for k, v in (r or {}).items() if k != "\u2605"}
         row["ok"] = bool((r or {}).get("ok"))
@@ -61,9 +61,9 @@ def _one(sw, tag, fn):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
@@ -72,9 +72,9 @@ def _one(sw, tag, fn):
 def _case_fill(doc):
     """★ 对照：**填充曲面**（★ 本仓记着它 PASS 过）——
     ★ 前置：先建一张曲面 + 选出它那一圈边（★ 官方 Remarks：边界边用 **mark=1**）。"""
-    P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Front Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.02,
         -0.02,
@@ -83,7 +83,7 @@ def _case_fill(doc):
         0.02,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     for cand in ("\u8349\u56fe1", "Sketch1"):
         try:
             if sf.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get("ok"):
@@ -96,9 +96,9 @@ def _case_fill(doc):
 def _case_extend(doc):
     """★ 第二个对照：**延伸曲面**（★ 本仓也记着 PASS 过）——
     ★ 前置：先建一张曲面。"""
-    P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Front Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.02,
         -0.02,
@@ -107,7 +107,7 @@ def _case_extend(doc):
         0.02,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     for cand in ("\u8349\u56fe1", "Sketch1"):
         try:
             if sf.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get("ok"):
@@ -118,7 +118,7 @@ def _case_extend(doc):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u5bf9\u7167\uff1a\u672c\u4ed3**\u6210\u529f\u8fc7**\u7684\u66f2\u9762\u7279\u5f81\u8fd8\u5efa\u5f97\u6210\u5417",

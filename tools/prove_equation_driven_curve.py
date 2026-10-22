@@ -7,7 +7,7 @@
 #           的曲线」。
 #
 #   ★★ **来源是官方的两页**：
-#     · `C:\swapi\types\ISketchManager\CreateEquationSpline.md` \u9010\u5b57\uff1a
+#     · `c_:\swapi\types\ISketchManager\CreateEquationSpline.md` \u9010\u5b57\uff1a
 #       **"Obsolete. Superseded by `ISketchManager::CreateEquationSpline2`."** \u26a0
 #       \uff08\u2605 \u540c\u7406 `CreateSplinesByEqnParams` \u21d2 `...2`\uff09
 #     · `CreateEquationSpline2.md` \u7684**\u5b8c\u6574\u7b7e\u540d\u4e0e Remarks**\uff1a
@@ -48,14 +48,14 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _seg_count(doc):
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
-        return len(list(C.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
+        sk = c_.get_com_member(doc, "GetActiveSketch2")
+        return len(list(c_.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
     except Exception:  # noqa: BLE001
         return -1
 
@@ -64,16 +64,16 @@ def _one(sw, tag, args):
     row = {"tag": tag, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
-        sm = C.get_com_member(doc, "SketchManager")
+        doc = c_.new_document(sw, "part")
+        p_.start_sketch(doc, plane_name="Front Plane")
+        sm = c_.get_com_member(doc, "SketchManager")
         before = _seg_count(doc)
         row["seg_before"] = before
         ret = None
         try:
             #: \u2605 **11 \u53c2**\uff08\u2605 \u987a\u5e8f\u7167\u5b98\u65b9\u7b7e\u54
             #: 0d\uff09
-            ret = C.get_com_member(sm, "CreateEquationSpline2", *args)
+            ret = c_.get_com_member(sm, "CreateEquationSpline2", *args)
             row["returned"] = type(ret).__name__ if ret is not None else "None"
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
@@ -82,7 +82,7 @@ def _one(sw, tag, args):
         row["new_segments"] = (after - before) if (after >= 0 and before >= 0) else None
         row["ok"] = bool(row["new_segments"] and row["new_segments"] > 0)
         try:
-            P.end_sketch(doc)
+            p_.end_sketch(doc)
         except Exception:  # noqa: BLE001
             pass
     except Exception as exc:  # noqa: BLE001
@@ -90,16 +90,16 @@ def _one(sw, tag, args):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u65b9\u7a0b\u5f0f\u9a71\u52a8\u7684\u66f2\u7ebf\uff1a`ISketchManager.CreateEquationSpline2`\uff08**11 \u53c2**\uff09",

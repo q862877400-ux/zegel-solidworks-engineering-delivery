@@ -44,12 +44,12 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import pythoncom
-import win32com.client
+import pythoncom  # noqa: E402
+import win32com.client  # noqa: E402
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _sketch_with_spline(doc, plane, pts):
@@ -66,14 +66,14 @@ def _sketch_with_spline(doc, plane, pts):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name=plane)
-    sm = C.get_com_member(doc, "SketchManager")
+    p_.start_sketch(doc, plane_name=plane)
+    sm = c_.get_com_member(doc, "SketchManager")
     data = win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, list(pts))
-    C.get_com_member(sm, "CreateSpline2", data, False)
-    P.end_sketch(doc)
+    c_.get_com_member(sm, "CreateSpline2", data, False)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     return names[-1] if names else None
@@ -84,9 +84,9 @@ def _sketch_with_line(doc, plane):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name=plane)
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name=plane)
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateLine",
         -0.02,
         0.0,
@@ -95,10 +95,10 @@ def _sketch_with_line(doc, plane):
         0.0,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     return names[-1] if names else None
@@ -108,7 +108,7 @@ def _one(sw, tag, use_spline):
     row = {"tag": tag, "use_spline": use_spline, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         if use_spline:
             s1 = _sketch_with_spline(
                 doc,
@@ -124,12 +124,12 @@ def _one(sw, tag, use_spline):
         row["sketches"] = [s1, s2]
         #: \u2605 \u7167\u4f8b\u5b50\uff1a**`SelectByID2` \u00d72**\uff08\u2605 \u6309\u
         #: 540d\u5b57\u9009\u8349\u56fe\uff09
-        ext = C.get_com_member(doc, "Extension")
+        ext = c_.get_com_member(doc, "Extension")
         picked = []
         for sk in (s1, s2):
-            for cand in P._get_sketch_name_candidates(sk) if sk else []:
+            for cand in p_._get_sketch_name_candidates(sk) if sk else []:
                 try:
-                    if P._select_by_id(
+                    if p_._select_by_id(
                         ext, cand, "SKETCH", append=bool(picked), mark=1
                     ):
                         picked.append(cand)
@@ -139,8 +139,8 @@ def _one(sw, tag, use_spline):
         row["picked"] = picked
         try:
             row["sel"] = int(
-                C.get_com_member(
-                    C.get_com_member(doc, "SelectionManager"),
+                c_.get_com_member(
+                    c_.get_com_member(doc, "SelectionManager"),
                     "GetSelectedObjectCount2",
                     -1,
                 )
@@ -149,7 +149,7 @@ def _one(sw, tag, use_spline):
         except Exception:  # noqa: BLE001
             row["sel"] = -1
         before = list(fr.feature_names(doc) or [])
-        r = P.insert_composite_curve_report(doc, "")
+        r = p_.insert_composite_curve_report(doc, "")
         row["report"] = dict(r or {})
         after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
@@ -178,16 +178,16 @@ def _one(sw, tag, use_spline):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u590d\u5408\u66f2\u7ebf\uff1a\u7167**\u5b98\u65b9\u4f8b\u5b50**\u7684\u5f62\u6001"

@@ -189,7 +189,7 @@ def _sketch_transform_translation(model):
         return None
 
 
-def _moved(before, after) -> "bool | None":
+def _moved(before, after) -> bool | None:
     """★ 三态：★ **变了 `True`** · ★ **没变 `False`** · ★★ **取不到 `None`**（★ 不许当成"变了"）。
 
     ★★★ 为什么必须三态（★ 本条的关键）：★ 若把"取不到"当成"变了"，

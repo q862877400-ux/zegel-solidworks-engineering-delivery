@@ -74,28 +74,28 @@ def build(manifest: dict, gate) -> str:
     bad_schema = gate.check_capabilities_schema()
     bad_levels = gate.check_capabilities_levels()
 
-    L: list[str] = []
-    L.append("# 等级审计（union-level-audit）")
-    L.append("")
-    L.append(
+    idx: list[str] = []
+    idx.append("# 等级审计（union-level-audit）")
+    idx.append("")
+    idx.append(
         "> ⚠ **本文件是生成物** —— 由 `python scripts/gen_level_audit.py` 产出；"
         "**不要手改**（改了会被下次生成覆盖）。"
     )
-    L.append(
+    idx.append(
         "> 生成日期：%s ｜ 数据源：`capabilities.yaml`（`schema_version` = `%s`）"
         % (date.today().isoformat(), manifest.get("schema_version"))
     )
-    L.append(
+    idx.append(
         "> ⚑ 本文件是 `scripts/check_union_conventions.py` docstring 里 **R8** 承诺的那一份 —— "
         "在 2026-10-01（轮 60）之前，**它只有承诺、没有生成器**（详见本脚本 docstring）。"
     )
-    L.append("")
-    L.append("## 一、总表（逐条可核）")
-    L.append("")
-    L.append("| # | 能力 id | level | source | 有 evidence | 有 provenance |")
-    L.append("|---|---|---|---|---|---|")
+    idx.append("")
+    idx.append("## 一、总表（逐条可核）")
+    idx.append("")
+    idx.append("| # | 能力 id | level | source | 有 evidence | 有 provenance |")
+    idx.append("|---|---|---|---|---|---|")
     for i, c in enumerate(sorted(caps, key=lambda x: x["id"]), 1):
-        L.append(
+        idx.append(
             "| %d | `%s` | `%s` | `%s` | %s | %s |"
             % (
                 i,
@@ -106,68 +106,68 @@ def build(manifest: dict, gate) -> str:
                 "✓" if c.get("provenance") else "—",
             )
         )
-    L.append("")
-    L.append("**合计 %d 条**。" % len(caps))
-    L.append("")
-    L.append("## 二、`level` 分布")
-    L.append("")
-    L.append("| level | 条数 |")
-    L.append("|---|---|")
+    idx.append("")
+    idx.append("**合计 %d 条**。" % len(caps))
+    idx.append("")
+    idx.append("## 二、`level` 分布")
+    idx.append("")
+    idx.append("| level | 条数 |")
+    idx.append("|---|---|")
     for k in sorted(gate.LEVELS):
-        L.append("| `%s` | %d |" % (k, lv.get(k, 0)))
-    L.append("")
-    L.append("## 三、`source` 分布")
-    L.append("")
-    L.append("| source | 条数 |")
-    L.append("|---|---|")
+        idx.append("| `%s` | %d |" % (k, lv.get(k, 0)))
+    idx.append("")
+    idx.append("## 三、`source` 分布")
+    idx.append("")
+    idx.append("| source | 条数 |")
+    idx.append("|---|---|")
     for k in sorted(gate.SOURCES):
-        L.append("| `%s` | %d |" % (k, sc.get(k, 0)))
-    L.append("")
-    L.append("## 四、交叉表 `level × source`（**两条线独立**，见 `AGENTS.md §一 A2`）")
-    L.append("")
-    L.append("| level \\ source | " + " | ".join(sorted(gate.SOURCES)) + " |")
-    L.append("|---|" + "---|" * len(gate.SOURCES))
+        idx.append("| `%s` | %d |" % (k, sc.get(k, 0)))
+    idx.append("")
+    idx.append("## 四、交叉表 `level × source`（**两条线独立**，见 `AGENTS.md §一 A2`）")
+    idx.append("")
+    idx.append("| level \\ source | " + " | ".join(sorted(gate.SOURCES)) + " |")
+    idx.append("|---|" + "---|" * len(gate.SOURCES))
     for item in sorted(gate.LEVELS):
         row = [str(cross.get((s, item), 0)) for s in sorted(gate.SOURCES)]
-        L.append("| `%s` | " % item + " | ".join(row) + " |")
-    L.append("")
-    L.append("> ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，")
-    L.append("> `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。")
-    L.append("")
-    L.append("## 五、护城河三域（`AGENTS.md §〇`）")
-    L.append("")
-    L.append("| 域 | level | source |")
-    L.append("|---|---|---|")
+        idx.append("| `%s` | " % item + " | ".join(row) + " |")
+    idx.append("")
+    idx.append("> ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，")
+    idx.append("> `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。")
+    idx.append("")
+    idx.append("## 五、护城河三域（`AGENTS.md §〇`）")
+    idx.append("")
+    idx.append("| 域 | level | source |")
+    idx.append("|---|---|---|")
     for mid in ("topology_optimization", "costing", "animation_export"):
         c = next((x for x in caps if x["id"] == mid), None)
-        L.append(
+        idx.append(
             "| `%s` | `%s` | `%s` |" % (mid, c["level"], c["source"])
             if c
             else "| `%s` | **缺** | — |" % mid
         )
-    L.append("")
-    L.append("## 六、不一致自检（**报告自己带「门禁怎么看」**）")
-    L.append("")
-    L.append("| 检查 | 问题数 |")
-    L.append("|---|---|")
-    L.append(
+    idx.append("")
+    idx.append("## 六、不一致自检（**报告自己带「门禁怎么看」**）")
+    idx.append("")
+    idx.append("| 检查 | 问题数 |")
+    idx.append("|---|---|")
+    idx.append(
         "| `check_capabilities_schema()`（R1-R3/R6/R9/R10/**R12**/**R13**） | **%d** |"
         % len(bad_schema)
     )
-    L.append(
+    idx.append(
         "| `check_capabilities_levels()`（规则 4 + R5/R7/R11） | **%d** |"
         % len(bad_levels)
     )
-    L.append("")
+    idx.append("")
     if bad_schema or bad_levels:
-        L.append("⚠ **有问题**（逐条）：")
-        L.append("")
+        idx.append("⚠ **有问题**（逐条）：")
+        idx.append("")
         for b in bad_schema + bad_levels:
-            L.append("* %s" % b)
+            idx.append("* %s" % b)
     else:
-        L.append("✅ **两项检查都为 0 问题** —— 本报告与门禁的判读一致。")
-    L.append("")
-    return "\n".join(L)
+        idx.append("✅ **两项检查都为 0 问题** —— 本报告与门禁的判读一致。")
+    idx.append("")
+    return "\n".join(idx)
 
 
 def main() -> int:

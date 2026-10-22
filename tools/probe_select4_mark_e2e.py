@@ -9,9 +9,9 @@
 #   —— ★★ 而仓内 `_select_com_object` 原先给 `Select4` 传的是**空 VARIANT**
 #   ⇒ **`Select4` 分支的 `Mark` 永远是 0**（靠 `Select2` 排前面才没暴露）。
 #   ★ 本探针验：★ 走**新路径**（`model=` 传进去）时，`mark` 是否真的落到选区上。
-# 官方依据: `C:\\swapi\\types\\IEntity\\Select4.md`（签名）· `IEntity/Select2.md`（Obsol
+# 官方依据: `c_:\\swapi\\types\\IEntity\\Select4.md`（签名）· `IEntity/Select2.md`（Obsol
 # ete 那句）·
-#     `C:\\swapi\\examples\\Exclude_Faces_Before_Flattening_Example_CSharp.md`
+#     `c_:\\swapi\\examples\\Exclude_Faces_Before_Flattening_Example_CSharp.md`
 #     （`data.Mark = 1; entity.Select4(true, data);`）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
@@ -29,23 +29,23 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
 from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "select4-mark-e2e-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c_.get_com_member(o, n, *a)
 
 
 def main() -> int:
     started = time.time()
     r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         p.start_sketch(doc, plane_name="Front Plane")
         _g(
             _g(doc, "SketchManager"),

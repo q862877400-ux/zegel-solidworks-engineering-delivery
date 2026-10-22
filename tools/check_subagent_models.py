@@ -33,7 +33,6 @@ from __future__ import annotations
 
 import argparse
 import collections
-import io
 import os
 import re
 import sys
@@ -53,7 +52,7 @@ def scan(base: str, markers: list[str], *, exclude_self: str = "") -> dict:
     for name in os.listdir(base):
         p = os.path.join(base, name)
         try:
-            t = io.open(p, encoding="utf-8", errors="replace").read()
+            t = open(p, encoding="utf-8", errors="replace").read()
         except OSError:
             continue
         out["files"] += 1
@@ -89,7 +88,7 @@ def _selftest() -> int:
             ("a.json", WANT_MODEL, WANT_PROVIDER),
             ("b.json", "deepseek-flash", "deepseek-official"),
         ):
-            io.open(os.path.join(d, name), "w", encoding="utf-8").write(
+            open(os.path.join(d, name), "w", encoding="utf-8").write(
                 _json.dumps(
                     {
                         "lastUser": "MARKER_XYZ 你是子代理",

@@ -12,7 +12,7 @@
 #     **它是回 `None`、报错、还是接口不在类型库里？**
 #
 #   ★ 静态已查（本轮）：
-# · ★ **两源都有它**：`C:\\swapi\\types\\IFeatureManager\\InsertWeldmentCutList2.md` + C
+# · ★ **两源都有它**：`c_:\\swapi\\types\\IFeatureManager\\InsertWeldmentCutList2.md` + c_
 # HM ✓
 #       ⇒ ★ **故"取不到"不是"官方没有它"**；
 #     · ★ 类型库：`InsertWeldmentCutList2` **arity=2（1 in `Bodies` + out）**；
@@ -46,15 +46,15 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _mk_multi_body(doc):
     """★ 一个**多体**实体件（★ 焊件/切割清单要有体）。"""
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -63,16 +63,16 @@ def _mk_multi_body(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     ok = False
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             ok = True
             break
         except Exception:  # noqa: BLE001
@@ -83,9 +83,9 @@ def _mk_multi_body(doc):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         0.05,
         0.05,
@@ -94,19 +94,19 @@ def _mk_multi_body(doc):
         0.07,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names2 = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names2[-1] if names2 else "\u8349\u56fe2", "\u8349\u56fe2"):
         try:
-            P.extrude_boss(doc, cand, 0.02, merge=False)
+            p_.extrude_boss(doc, cand, 0.02, merge=False)
             break
         except Exception:  # noqa: BLE001
             try:
-                P.extrude_boss(doc, cand, 0.02)
+                p_.extrude_boss(doc, cand, 0.02)
                 break
             except Exception:  # noqa: BLE001
                 pass
@@ -114,31 +114,31 @@ def _mk_multi_body(doc):
 
 
 def _bodies(doc):
-    return list(C.get_com_member(doc, "GetBodies2", 0, True) or [])
+    return list(c_.get_com_member(doc, "GetBodies2", 0, True) or [])
 
 
 def _one(sw, tag, kind):
     row = {"tag": tag, "kind": kind}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row["solid"] = _mk_multi_body(doc)
         row["n_bodies"] = len(_bodies(doc))
         before = list(fr.feature_names(doc) or [])
-        fm = C.get_com_member(doc, "FeatureManager")
+        fm = c_.get_com_member(doc, "FeatureManager")
         ret = None
         try:
             if kind == "cutlist2":
-                ret = C.get_com_member(fm, "InsertWeldmentCutList2", [])
+                ret = c_.get_com_member(fm, "InsertWeldmentCutList2", [])
             elif kind == "cutlist_old":
-                ret = C.get_com_member(fm, "InsertWeldmentCutList")
+                ret = c_.get_com_member(fm, "InsertWeldmentCutList")
             else:
-                ret = C.get_com_member(fm, "InsertWeldmentFeature")
+                ret = c_.get_com_member(fm, "InsertWeldmentFeature")
             row["returned"] = type(ret).__name__ if ret is not None else "None"
             if ret is not None:
                 for k, m in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
                     try:
-                        row[k] = str(C.get_com_member(ret, m))
+                        row[k] = str(c_.get_com_member(ret, m))
                     except Exception:  # noqa: BLE001
                         pass
         except Exception as exc:  # noqa: BLE001
@@ -163,16 +163,16 @@ def _one(sw, tag, kind):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u7ed3\u6784\u7cfb\u7edf\uff08\u710a\u4ef6\uff09\u90a3\u4e00\u65cf\uff1a`InsertWeldmentCutList2` \u7684**\u771f\u5b9e\u5f62\u6001**",

@@ -104,7 +104,7 @@ def main() -> int:
         "%s ⇒ %s" % (k, v) for k, v in detail.items()
     )
 
-    R = {
+    r_ = {
         "★_目的": "★ 验 `hole_params` + ★ **测出那一族的单位口径**（★ 官方 `## Returns` 没写）",
         "★_前置": hw,
         "读取": {k: str(v)[:50] for k, v in f.items()},
@@ -113,10 +113,10 @@ def main() -> int:
         "★_逐量判定": detail,
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("★ 前置 hole_wizard:", json.dumps(hw, ensure_ascii=False)[:150])
-    print("★ 读取:", json.dumps(R["读取"], ensure_ascii=False)[:400])
+    print("★ 读取:", json.dumps(r_["读取"], ensure_ascii=False)[:400])
     print("★ 单位判定:", verdict)
     print("★ wrote", OUT)
     return 0

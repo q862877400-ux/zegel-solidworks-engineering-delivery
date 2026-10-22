@@ -43,14 +43,14 @@ def main() -> int:
     import sw_document_data as dd
     import sw_part as p
     import sw_render_material as rm
-    import sw_session as S
-    import sw_sketch as SK
+    import sw_session as s_
+    import sw_sketch as sk_
     import sw_sketch_edit_ops as e
     from sw_connect import get_com_member, get_com_member_raw, safe_get_com_member  # noqa: F401
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
     ev = {
-        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "at": time.strftime("%Y-%m-%dT%H:%M:%s_"),
         "_": "规格 209 · B1 批（idx 235+236 / 79 / 97 / 244）真机",
         "judge": "回读状态 / 回读属性 / 回读清单（★ 按能力分）",
         "T1_rebuild": [],
@@ -86,7 +86,7 @@ def main() -> int:
     try:
         doc = _make_box()
         for mode in ("edit", "force", "all"):
-            r = S.rebuild_report(doc, mode)
+            r = s_.rebuild_report(doc, mode)
             ev["T1_rebuild"].append(
                 {
                     "mode": mode,
@@ -118,7 +118,7 @@ def main() -> int:
                 )
             )
         #: ★ 负例：非法 mode 必须在**入口**被拒（不碰 COM）
-        bad = S.rebuild_report(doc, "nonsense")
+        bad = s_.rebuild_report(doc, "nonsense")
         ev["T1_rebuild"].append(
             {
                 "mode": "nonsense",
@@ -156,7 +156,7 @@ def main() -> int:
     def _flags(d):
         sk = get_com_member(get_com_member(d, "SketchManager"), "ActiveSketch")
         out = []
-        for s in SK.get_sketch_segments(sk) or []:
+        for s in sk_.get_sketch_segments(sk) or []:
             try:
                 out.append(bool(get_com_member(s, "ConstructionGeometry")))
             except Exception:  # noqa: BLE001

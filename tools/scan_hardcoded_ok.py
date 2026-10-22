@@ -121,7 +121,7 @@ def main() -> int:
     #: ★ 分开两类：★ **无取样**（最可疑）· ★ **有取样**（可能已验过）
     risky = [r for r in rows if not r["sampled"]]
     maybe = [r for r in rows if r["sampled"]]
-    R = {
+    r_ = {
         "★_判据": '★ 找 `"ok"` 是字面量 / 或没用到判据变量的函数；'
         "★★ 再按『函数里有没有 before/after 取样』分成两档",
         "★_合计": len(rows),
@@ -130,7 +130,7 @@ def main() -> int:
         "最可疑明细": risky[:80],
         "有取样明细": maybe[:40],
     }
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(json.dumps(r_, ensure_ascii=False, indent=1), encoding="utf-8")
     print("★ 扫到 %d 个『ok 可能是写死的』函数" % len(rows))
     print("★★ 最可疑（★ 函数里**没有任何 before/after 取样**）: %d" % len(risky))
     print("★ 有取样（★ 可能已验过）: %d" % len(maybe))

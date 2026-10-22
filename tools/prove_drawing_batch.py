@@ -1,7 +1,7 @@
 """★ 真机：工程图 13 项（视图族 5 + 标注族 8）—— 每格先回读前置，再调用。"""
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（真机探针）· 规格 `specs/202-user-coverage-gaps`（T-D · C 类工程图
+# 仓库:   本项目自身（真机探针）· 规格 `specs/202-user-coverage-gaps`（T-D · c_ 类工程图
 # 13 项）
 # 文件:   tools/prove_drawing_batch.py
 # 定位:   ★ 2026-10-03 ★ 为 `docs/user-feature-coverage.md` §八 的**工程图 13 项缺口**
@@ -97,7 +97,7 @@
 # s`）
 #       ⇒ ★ 本探针用「选 / 不选」两格**如实测**，★ 不假装知道前置。
 #
-#   官方依据（三源之① —— `C:\swapi\`；★ 逐页核过）:
+#   官方依据（三源之① —— `c_:\swapi\`；★ 逐页核过）:
 # · types: `IDrawingDoc\{CreateDrawViewFromModelView3,CreateSectionViewAt5,CreateDetailV
 # iewAt4,
 #       CreateAuxiliaryViewAt2,SetupSheet6,SetupSheet5,AutoBalloon5,CreateAutoBalloonOptions,
@@ -154,8 +154,8 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_drawing_query as dq  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 #: ★ 官方 `SelectByID2` 按点选时用的 z —— ★ 逐字抄自官方例子
 #:   `Insert_Hole_Table_Example_VB` 的 `SelectByID2("", "VERTEX", …, **-500.0075**, …)`
@@ -180,7 +180,7 @@ SHEET_POS_UNIT_ASSUMPTION = (
 SECTION_DEPTH_M = 0.05
 
 #: ★ 枚举页根（★ 取值在**运行期**从这些官方页读，不写死 —— 见 `_enum`）。
-SWAPI_ENUMS = Path(r"C:\swapi\enums")
+SWAPI_ENUMS = Path(r"c_:\swapi\enums")
 
 OUT_JSON = R / "output" / "drawing-batch-evidence.json"
 PART_PATH = R / "output" / "_probe_drawing_part.SLDPRT"
@@ -191,7 +191,7 @@ _ENUM_CACHE: dict[tuple[str, str], tuple[int | None, str | None]] = {}
 # ── 小助手 ───────────────────────────────────────────────────────────
 def _get(o, name, *a):
     """★ 本仓统一的 COM 取/调（`sw_connect.get_com_member`）。"""
-    return C.get_com_member(o, name, *a)
+    return c_.get_com_member(o, name, *a)
 
 
 def _close(sw, doc):
@@ -470,7 +470,7 @@ def _pick(doc, kind, x, y, mark=0, append=False):
             float(PICK_Z_M),
             bool(append),
             int(mark),
-            C.create_empty_dispatch_variant(),
+            c_.create_empty_dispatch_variant(),
             0,
         )
     except Exception as exc:  # noqa: BLE001
@@ -518,7 +518,7 @@ def _select_view(doc, name, mark=0):
             0.0,
             False,
             int(mark),
-            C.create_empty_dispatch_variant(),
+            c_.create_empty_dispatch_variant(),
             0,
         )
     except Exception as exc:  # noqa: BLE001
@@ -546,10 +546,10 @@ def _find_files(patterns, roots):
 #: （`InsertRevisionTable2` 的 Remarks）· 图纸格式是 `.slddrt`（SetupSheet6 的 Remarks +
 #:  官方例子）。
 TEMPLATE_ROOTS = (
-    r"C:\ProgramData\SOLIDWORKS",
+    r"c_:\ProgramData\SOLIDWORKS",
     r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\lang",
-    r"C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\lang",
-    r"C:\ProgramData\SolidWorks",
+    r"c_:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\lang",
+    r"c_:\ProgramData\SolidWorks",
 )
 
 
@@ -574,17 +574,17 @@ def _sheet_format_template():
 def _new_drawing(sw, row: dict):
     """★ 新建工程图文档（★ 模板找不到就把**原因**写进 row，不硬失败）。"""
     try:
-        return C.new_document(sw, "drawing")
+        return c_.new_document(sw, "drawing")
     except Exception as exc:  # noqa: BLE001
         row["drawing_template_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         cand = _find_files(
-            ("*.drwdot",), (r"C:\ProgramData\SOLIDWORKS", r"C:\ProgramData\SolidWorks")
+            ("*.drwdot",), (r"c_:\ProgramData\SOLIDWORKS", r"c_:\ProgramData\SolidWorks")
         )
         if not cand:
             return None
         row["drawing_template_fallback"] = cand[0]
         try:
-            return C.new_document(sw, "drawing", template_path=cand[0])
+            return c_.new_document(sw, "drawing", template_path=cand[0])
         except Exception as exc2:  # noqa: BLE001
             row["drawing_template_err2"] = "%s: %s" % (
                 type(exc2).__name__,
@@ -600,9 +600,9 @@ def _build_part(sw, row: dict):
       `ModelName` 是**完整路径**且**含 `.sldprt`/`.sldasm` 扩展名**。
     ★ 板上打一个孔：★ 好让"孔表 / 中心符号线 / 辅助视图"有**圆边**可用。
     """
-    doc = C.new_document(sw, "part")
+    doc = c_.new_document(sw, "part")
     try:
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         _get(
             _get(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -613,16 +613,16 @@ def _build_part(sw, row: dict):
             0.03,
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         names = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p_.feature_names(doc) or [])
             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
         ]
         if not names:
             row["extrude_err"] = "找不到草图特征名（feature_names 没回草图）"
             return None
-        P.extrude_boss(doc, names[-1], 0.01)
+        p_.extrude_boss(doc, names[-1], 0.01)
         row["extrude_sketch"] = names[-1]
     except Exception as exc:  # noqa: BLE001
         row["extrude_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
@@ -636,7 +636,7 @@ def _build_part(sw, row: dict):
         #: ★ 孔不成**不阻断**：★ 只是"孔表/中心符号线"那两格的前置会更弱 ⇒ 如实记下来
         row["hole_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     try:
-        row["saved"] = bool(C.save_document(doc, str(PART_PATH)))
+        row["saved"] = bool(c_.save_document(doc, str(PART_PATH)))
     except Exception as exc:  # noqa: BLE001
         row["save_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         row["saved"] = False
@@ -654,7 +654,7 @@ def _resolve_model_view_name(part_doc, info: dict | None = None):
     """
     try:
         names = [
-            str(x) for x in (C.get_com_member(part_doc, "GetModelViewNames") or [])
+            str(x) for x in (c_.get_com_member(part_doc, "GetModelViewNames") or [])
         ]
     except Exception as exc:  # noqa: BLE001
         names = []
@@ -885,7 +885,7 @@ def case_v2_section_view(sw, excluded="empty_dispatch"):
             row["err"] = perr
         row["preconditions_held"] = bool(sum(v for v in counts.values() if v > 0) > 0)
         excluded_arg = (
-            [] if excluded == "empty_array" else C.create_empty_dispatch_variant()
+            [] if excluded == "empty_array" else c_.create_empty_dispatch_variant()
         )
         row["excluded_components_form"] = excluded
         before = _view_count(doc)
@@ -1047,7 +1047,8 @@ def case_v3_detail_view(sw):
 
 
 def case_v4_break_view(sw):
-    """★ V4 断裂视图：**`IView.InsertBreak3(Orientation, Position1, Position2, Style, ShapeIntensity, BreakSketchBlocks)`**。
+    """★ V4 断裂视图：**`IView.InsertBreak3(Orientation, Position1, Position2, Style, ShapeIntensity, BreakSketchBlocks)
+    `**。
 
     ★★★ 为什么不是 `InsertBreak`：官方页头顶逐字 `Obsolete. Superseded by [[IView::InsertBreak2]]`；
       而 `InsertBreak2` 也废弃（`Superseded by [[IView::InsertBreak3]]`）⇒ ★ 用 **3**（★ 铁律 4）。
@@ -1180,7 +1181,7 @@ def _out_count_of(obj, member):
     ★ 零参调它会 `类型不匹配`，`except` 一吃就成 `None` ⇒ **静默降级**（这是 2026-10-03 踩到的坑）。
     """
     try:
-        return int(_get(obj, member, C.out_i4(0)) or 0)
+        return int(_get(obj, member, c_.out_i4(0)) or 0)
     except Exception:  # noqa: BLE001
         return None
 
@@ -1697,7 +1698,7 @@ def case_a5_auto_balloon(sw):
                     if want is None:
                         continue
                 try:
-                    C.set_com_member(opts, prop, want)
+                    c_.set_com_member(opts, prop, want)
                     set_ok.append(prop)
                 except Exception as exc:  # noqa: BLE001
                     set_err.append(
@@ -1826,7 +1827,7 @@ def case_a6_hole_table(sw):
                 str(template),
                 1,
                 1,
-                C.create_empty_dispatch_variant(),
+                c_.create_empty_dispatch_variant(),
             )
             row["ret_is_none"] = tbl is None
         except Exception as exc:  # noqa: BLE001
@@ -1857,7 +1858,8 @@ def case_a6_hole_table(sw):
 
 
 def case_a7_revision_table(sw, second=False):
-    """★ A7 修订表：`ISheet.InsertRevisionTable2(UseAnchorPoint, X, Y, AnchorType, TableTemplate, Shape, AutoUpdateZoomCells)`（★ **7 参**）。
+    """★ A7 修订表：`ISheet.InsertRevisionTable2(UseAnchorPoint, X, Y, AnchorType, TableTemplate, Shape,
+    AutoUpdateZoomCells)`（★ **7 参**）。
 
     ★ 官方 Remarks 逐字：模板默认在 `install_dir\\lang\\<language>`、扩展名 **`.sldrevtbt`**，
       且**模板与表必须同型**（例：`…\\lang\\English\\standard revision block.sldrevtbt`）。
@@ -2124,7 +2126,7 @@ def _selected(filters, label):
 def main() -> int:
     """★ 跑全部（或筛选后的）格子 ⇒ 写 `output/drawing-batch-evidence.json` 并打印判读。"""
     filters = [a for a in sys.argv[1:] if not a.startswith("-")]
-    sw, _meta = C.connect_solidworks(wait_seconds=30)
+    sw, _meta = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "工程图 13 项（视图族 5 + 标注族 8）—— ★ 每格先回读前置再调用；"

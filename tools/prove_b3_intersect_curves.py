@@ -35,7 +35,7 @@ def main() -> int:
     import sw_connect
     import sw_part as p
     import sw_sketch as sk
-    import sw_sketch_edit_ops as E
+    import sw_sketch_edit_ops as e_
     from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -78,7 +78,7 @@ def main() -> int:
         c2 = ss.select_entity_by_index(doc, "FACE", 1, append=True)
         ev["sel"] = [c1, c2]
         #: \u2464 \u8c03\u4ea4\u53c9\u66f2\u7ebf
-        E.sketch_intersect_curves(doc)
+        e_.sketch_intersect_curves(doc)
         sk3d2 = get_com_member(get_com_member(doc, "SketchManager"), "ActiveSketch")
         n1 = int(sk.count_segments(sk3d2) or 0) if sk3d2 is not None else -1
         ev["seg"] = [n0, n1]

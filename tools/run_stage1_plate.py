@@ -39,9 +39,9 @@ sys.path[:0] = [
 
 import tool_caller  # noqa: E402
 
-from scripts.engineering import authorization as AUTH  # noqa: E402
-from scripts.engineering import executor as X  # noqa: E402
-from scripts.engineering import registry as R
+from scripts.engineering import authorization as auth_  # noqa: E402
+from scripts.engineering import executor as x_  # noqa: E402
+from scripts.engineering import registry as r_  # noqa: E402
 
 OUT = ROOT / "output" / "stage1"
 
@@ -69,29 +69,29 @@ def expected_volume(c: dict) -> float:
     return c["w"] * c["h"] * c["d"] - 0.5 * c["c"] ** 2 * c["d"]
 
 
-def build_plan(case: dict) -> R.ExecutablePlan:
+def build_plan(case: dict) -> r_.ExecutablePlan:
     """★ 把方法 `plate` 展开成**带参数**的可执行计划（★ C2 + C4）。"""
     c = case
-    return R.ExecutablePlan(
+    return r_.ExecutablePlan(
         method_id="plate",
         steps=(
-            R.PlanStep(
+            r_.PlanStep(
                 step="sketch_start",
                 params={"plane_name": "Front Plane"},
                 derive="★ 前视基准面（★ 板的主平面）",
             ),
-            R.PlanStep(
+            r_.PlanStep(
                 step="sketch_add_rectangle",
                 params={"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": c["w"], "y2_mm": c["h"]},
                 derive="★ 左下 (0,0) → 右上 (W,H) ⇒ 板 %g×%g mm" % (c["w"], c["h"]),
             ),
-            R.PlanStep(step="sketch_end", params={}, derive="★ 退出草图"),
-            R.PlanStep(
+            r_.PlanStep(step="sketch_end", params={}, derive="★ 退出草图"),
+            r_.PlanStep(
                 step="extrude_boss",
                 params={"sketch_name": "草图1", "depth_mm": c["d"]},
                 derive="★ 拉伸 %g mm（★ 工具层做 mm→m 换算，恰好一次）" % c["d"],
             ),
-            R.PlanStep(
+            r_.PlanStep(
                 step="chamfer",
                 params={
                     "selection": "index:0",
@@ -114,24 +114,24 @@ def run_case(reg, n: int, sw) -> dict:
 
     #: ══ ① 建文档（★ 登记为「本任务所有」）══════════════════════════
     doc = sw_connect.new_document(sw, "part")
-    owned = AUTH.OwnedDocuments()
+    owned = auth_.OwnedDocuments()
     owned.register(doc)
     rec["doc"] = owned.title_of(doc)
 
     #: ══ ② 编译计划（★ 名字解析 + 参数绑定 —— ★ 任一步失败即整计划拒绝）══
     plan = build_plan(c)
     try:
-        plan = R.resolve_plan(plan, reg)
+        plan = r_.resolve_plan(plan, reg)
         rec["compiled"] = True
         rec["tools"] = [st.tool for st in plan.steps]
-    except R.RegistryError as e:
+    except r_.RegistryError as e:
         rec["compiled"] = False
         rec["compile_error"] = "%s: %s" % (e.code, e.detail)
         sw.CloseDoc(rec["doc"])
         return rec
 
     #: ══ ③ 授权（★ 不过 ⇒ 一次 COM 都不碰）══════════════════════════
-    v = AUTH.authorize_plan(plan, reg, owned=owned, doc=doc)
+    v = auth_.authorize_plan(plan, reg, owned=owned, doc=doc)
     rec["authorized"] = v.ok
     if not v.ok:
         rec["auth_code"] = v.code
@@ -139,12 +139,12 @@ def run_case(reg, n: int, sw) -> dict:
         return rec
 
     #: ══ ④ 执行（★ 走 `solidworks_*` 全名 —— ★ FR-012）══════════════
-    X.COUNTER.reset()
+    x_.COUNTER.reset()
     host = {"model": doc, "sw_app": sw}
-    out = X.execute_plan(plan, reg, host=host, owned=owned, doc=doc, log_dir=OUT)
+    out = x_.execute_plan(plan, reg, host=host, owned=owned, doc=doc, log_dir=OUT)
     rec["execute_ok"] = out["ok"]
     rec["com_writes"] = out["com_write_total"]
-    rec["records"] = X.records_to_dicts(out["records"])
+    rec["records"] = x_.records_to_dicts(out["records"])
 
     #: ══ ⑤ 回读判据（★ 事实 71：`GetPartBox` 回**毫米**）══════════════
     try:
@@ -226,7 +226,7 @@ def run_negatives(reg, sw) -> dict:
 
     out: dict = {"negatives": [], "started": time.strftime("%H:%M:%S")}
     c = CASES[1]
-    plan = R.resolve_plan(build_plan(c), reg)
+    plan = r_.resolve_plan(build_plan(c), reg)
 
     #: ★ 一个未准入的工具
     bad_tool = next(d.canonical_name for d in reg.values() if not d.admitted)
@@ -238,19 +238,19 @@ def run_negatives(reg, sw) -> dict:
     cases = [
         (
             "① 工具未准入",
-            R.ExecutablePlan(
-                method_id="n", steps=(R.PlanStep(step="x", params={}, tool=bad_tool),)
+            r_.ExecutablePlan(
+                method_id="n", steps=(r_.PlanStep(step="x", params={}, tool=bad_tool),)
             ),
             {},
         ),
         ("② 路径越权", plan, {"write_paths": (r"C:\Windows\evil.json",)}),
-        ("③ 文档越权", plan, {"owned": AUTH.OwnedDocuments(), "doc": _Foreign()}),
+        ("③ 文档越权", plan, {"owned": auth_.OwnedDocuments(), "doc": _Foreign()}),
         (
             "④ 计划未编译",
-            R.ExecutablePlan(
+            r_.ExecutablePlan(
                 method_id="n",
                 steps=(
-                    R.PlanStep(
+                    r_.PlanStep(
                         step="extrude_boss",
                         params={"sketch_name": "s", "depth_mm": 1.0},
                     ),
@@ -260,15 +260,15 @@ def run_negatives(reg, sw) -> dict:
         ),
     ]
     for name, p, kw in cases:
-        X.COUNTER.reset()
-        got = X.execute_plan(p, reg, **kw)
+        x_.COUNTER.reset()
+        got = x_.execute_plan(p, reg, **kw)
         out["negatives"].append(
             {
                 "name": name,
                 "ok": got["ok"],
                 "code": got.get("code", ""),
-                "com_writes": X.COUNTER.count(),
-                "pass": (got["ok"] is False) and X.COUNTER.count() == 0,
+                "com_writes": x_.COUNTER.count(),
+                "pass": (got["ok"] is False) and x_.COUNTER.count() == 0,
             }
         )
     out["finished"] = time.strftime("%H:%M:%S")
@@ -293,7 +293,7 @@ def main() -> int:
     args = ap.parse_args()
 
     OUT.mkdir(parents=True, exist_ok=True)
-    reg = R.build_registry()
+    reg = r_.build_registry()
     print(
         "★ 目录：%d 个工具（准入 %d）"
         % (len(reg), sum(1 for d in reg.values() if d.admitted))
@@ -303,10 +303,10 @@ def main() -> int:
         ok = 0
         for n in (1, 2, 3):
             try:
-                p = R.resolve_plan(build_plan(CASES[n]), reg)
+                p = r_.resolve_plan(build_plan(CASES[n]), reg)
                 print("   ✓ 用例 %d 编译通过：%s" % (n, [s.tool for s in p.steps][:3]))
                 ok += 1
-            except R.RegistryError as e:
+            except r_.RegistryError as e:
                 print("   ✗ 用例 %d：%s" % (n, e))
         return 0 if ok == 3 else 1
 
@@ -318,7 +318,6 @@ def main() -> int:
     except Exception:  # noqa: BLE001
         pass
 
-    docs: list = []
     try:
         if args.negatives:
             ev = run_negatives(reg, sw)

@@ -7,7 +7,7 @@
 #     「★ 下一步：读它的 `## Remarks` 看**选区与面的要求**」—— ★ 本轮做了。
 #
 #   ★★★ **官方依据**（★ 三样齐）：
-#     ① `C:\swapi\types\IModelDocExtension\SketchOffsetOnSurface.md`：
+#     ① `c_:\swapi\types\IModelDocExtension\SketchOffsetOnSurface.md`：
 # · 签名 `(Offset, Reverse, UseFront, MakeConstruct)` · ★ `UseFront` **"must be set to t
 # rue"**
 #        · **`## Remarks` 三条**：
@@ -16,8 +16,8 @@
 #                **Append to true** and **Mark …**」；
 # ★ c) 「After…call **`ISketchManager::InsertSketch`** to rebuild the model with the 3D
 # sketch」
-#     ② **`## Examples` 给了三个**（C# / VB.NET / VBA）—— ★ **本机都有**：
-#        `C:\swapi\examples\Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md`
+#     ② **`## Examples` 给了三个**（c_# / VB.NET / VBA）—— ★ **本机都有**：
+#        `c_:\swapi\examples\Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md`
 #     ③ ★ **而那个例子的调用序是关键**（★ 而签名与 Remarks 都给不出"两遍选边"）：
 #        ```
 #        'Select the edges
@@ -56,8 +56,8 @@ import pythoncom  # noqa: E402
 import win32com.client  # noqa: E402
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _empty_callout():
@@ -65,9 +65,9 @@ def _empty_callout():
 
 
 def _box(doc, size=0.03):
-    P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Front Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -size,
         -size,
@@ -76,15 +76,15 @@ def _box(doc, size=0.03):
         size,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in ((names[-1] if names else "\u8349\u56fe1"), "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, size * 2.0)
+            p_.extrude_boss(doc, cand, size * 2.0)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -104,7 +104,7 @@ def _select_edges_by_object(doc, indices, mark=1):
     """
     ss = __import__("sw_selection_spec")
     objs = ss.entities_on_body(doc, "EDGE")
-    ext = C.get_com_member(doc, "Extension")
+    c_.get_com_member(doc, "Extension")
     try:
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
@@ -116,13 +116,13 @@ def _select_edges_by_object(doc, indices, mark=1):
             continue
         counts.append(ss.select_object(doc, objs[i], append=(k > 0)))
     #: ★ 补设 mark（★ 官方 Remarks："set Append to true and Mark …"）
-    mgr = C.get_com_member(doc, "SelectionManager")
-    n = int(C.get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
+    mgr = c_.get_com_member(doc, "SelectionManager")
+    n = int(c_.get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
     marked = []
     for i in range(1, n + 1):
         try:
             marked.append(
-                bool(C.get_com_member(mgr, "SetSelectedObjectMark", i, int(mark), -1))
+                bool(c_.get_com_member(mgr, "SetSelectedObjectMark", i, int(mark), -1))
             )
         except Exception as exc:  # noqa: BLE001
             marked.append(str(exc)[:40])
@@ -146,9 +146,9 @@ def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch)
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row["box"] = _box(doc)
-        ext = C.get_com_member(doc, "Extension")
+        ext = c_.get_com_member(doc, "Extension")
         #: \u2605 \u4e00\u4e2a\u65b9\u4f53\u7684\u56db\u6761\u9876\u8fb9\uff08\u2605 \u6
         #: 309\u5b98\u65b9\u4f8b\u5b50\u90a3\u6837\u7528\u5750\u6807\u5b9a\u4f4d\uff09
         #: ★★★ 2026-10-03（轮 612）**修了一个真因**（★ 事实 482）：
@@ -160,7 +160,7 @@ def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch)
         before = list(fr.feature_names(doc) or [])
         row["before"] = len(before)
         try:
-            ok = C.get_com_member(
+            ok = c_.get_com_member(
                 ext,
                 "SketchOffsetOnSurface",
                 float(offset),
@@ -176,8 +176,8 @@ def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch)
         #: 5b50\u91cc\u6709\u3001\u800c\u6211\u4e0a\u4e00\u7248\u6ca1\u505a\uff09
         if do_insert_sketch:
             try:
-                sk = C.get_com_member(doc, "SketchManager")
-                C.get_com_member(sk, "InsertSketch", True)
+                sk = c_.get_com_member(doc, "SketchManager")
+                c_.get_com_member(sk, "InsertSketch", True)
                 row["insert_sketch"] = True
             except Exception as exc:  # noqa: BLE001
                 row["insert_sketch_err"] = "%s: %s" % (
@@ -196,24 +196,23 @@ def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch)
             info = {"name": nm}
             try:
                 info["is_3d"] = (
-                    bool(C.get_com_member(doc, "SketchIs3D")) if False else None
+                    bool(c_.get_com_member(doc, "SketchIs3D")) if False else None
                 )
             except Exception:  # noqa: BLE001
                 pass
             try:
-                sk = C.get_com_member(doc, "GetActiveSketch2")
+                sk = c_.get_com_member(doc, "GetActiveSketch2")
                 if sk is None:
-                    feat = None
                     for f in (
-                        C.get_com_member(doc, "FeatureManager").GetFeatureTreeRootItem2(
+                        c_.get_com_member(doc, "FeatureManager").GetFeatureTreeRootItem2(
                             0
                         ),
                     ):
                         pass
                 else:
                     info["active"] = True
-                    info["is_3d"] = bool(C.get_com_member(sk, "Is3D"))
-                    segs = C.get_com_member(sk, "GetSketchSegments")
+                    info["is_3d"] = bool(c_.get_com_member(sk, "Is3D"))
+                    segs = c_.get_com_member(sk, "GetSketchSegments")
                     info["segments"] = len(segs) if segs is not None else 0
             except Exception as exc:  # noqa: BLE001
                 info["read_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
@@ -224,21 +223,23 @@ def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch)
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-        "_": "\u66f2\u9762\u4e0a\u504f\u79fb\u2014\u2014 \u2605 \u4e25\u683c\u6309\u5b98\u65b9 VB \u4f8b\u5b50\u7684**\u8c03\u7528\u5e8f**\u91cd\u8bd5",
+        "_":
+        "\u66f2\u9762\u4e0a\u504f\u79fb\u2014\u2014 \u2605 \u4e25\u683c\u6309\u5b98\u65b9 VB \u4f8b\u5b50\u7684**\u8c03\
+        u7528\u5e8f**\u91cd\u8bd5",
         "official": "`IModelDocExtension\\SketchOffsetOnSurface.md`\uff08**`## Remarks` \u4e09\u6761** + "
-        "**`## Examples` \u4e09\u4e2a**\uff09\u00d7 `C:\\swapi\\examples\\"
+        "**`## Examples` \u4e09\u4e2a**\uff09\u00d7 `c_:\\swapi\\examples\\"
         "Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md`",
         "cases": [],
     }

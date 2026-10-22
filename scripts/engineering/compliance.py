@@ -134,7 +134,7 @@ KS_VERIFIED_CLAUSES: tuple = (
 )
 
 
-def load_ks_clause(spec: dict) -> "ClauseRef":
+def load_ks_clause(spec: dict) -> ClauseRef:
     """★★★ **从 KS 登记项建一个 `ClauseRef`**（★ 便于判据/调用方直接用）。"""
     return ClauseRef(
         standard_no=spec["standard_no"],

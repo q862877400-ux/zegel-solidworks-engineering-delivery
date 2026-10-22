@@ -99,9 +99,9 @@ def main() -> int:
     model = new_document(app, "part")
     rows = []
 
-    import sw_part as P
+    import sw_part as p_
 
-    P.sketch(model, "Front Plane")
+    p_.sketch(model, "Front Plane")
     sk = get_com_member(model, "SketchManager")
     for a, b in (
         ((-0.05, -0.03), (0.05, -0.03)),
@@ -171,16 +171,16 @@ def main() -> int:
 
     case("★ 官方调用序（选原点 + mark 6）", with_origin=True, rel_value=rel)
     case("★ 不选原点（对照）", with_origin=False, rel_value=rel)
-    P.end_sketch(model)
+    p_.end_sketch(model)
 
-    R = {
+    r_ = {
         "★_判据": "★ 建成 ⇒ 草图尺寸数增加（★ 且无异常）",
         "★_来源": "★ 官方示例 `Fully_Define_Underdefined_Sketch_Example_VB.md` 的**调用序**",
         "★_关系值": rel,
         "rows": rows,
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     for r in rows:
         print(

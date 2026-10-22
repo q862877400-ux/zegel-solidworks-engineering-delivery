@@ -40,7 +40,7 @@ for _p in (str(_REPO), str(_REPO / "scripts")):
         sys.path.insert(0, _p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-from scripts import (
+from scripts import (  # noqa: E402
     sw_costing,  # noqa: E402
     sw_part,  # noqa: E402
 )

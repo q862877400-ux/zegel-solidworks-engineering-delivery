@@ -50,18 +50,19 @@ import sys
 import time
 import traceback
 import warnings
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 sys.stdout.reconfigure(encoding="utf-8")
 #: ★ 本仓库根（★ 2026-10-03 合并后自定位）
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
-import sw_jlcfa_cards as C
-import sw_jlcfa_locate as l
-import win32api
-import win32con
+import sw_jlcfa_cards as c_  # noqa: E402
+import sw_jlcfa_locate as l  # noqa: E402
+import win32api  # noqa: E402
+import win32con  # noqa: E402
 
 warnings.filterwarnings("ignore")
 
@@ -152,10 +153,10 @@ def read_state(w) -> dict[str, Any]:
             if vis and l._overlaps(r, cr) and r.width() > 4 and r.height() > 4:
                 st["visible"].add(t)
         names.append(t)
-        if t.startswith(C.CODE_PREFIX):
-            st["codes"].append(t[len(C.CODE_PREFIX) :].strip())
+        if t.startswith(c_.CODE_PREFIX):
+            st["codes"].append(t[len(c_.CODE_PREFIX) :].strip())
         elif (
-            80 <= r.width() <= 220 and 80 <= r.height() <= 220 and t not in C.SKIP_NAMES
+            80 <= r.width() <= 220 and 80 <= r.height() <= 220 and t not in c_.SKIP_NAMES
         ):
             # ⚑ 只收**近似正方形的卡片**（实测分类卡 100x100）。
             #   早前的宽过滤（w>=40,h>=20）把整页文字都算成「分类卡」，

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """生成 docs/usage-guide.md —— 「某个功能该看哪个官方示例、对应本仓库哪个函数」。
 
 与 capability-matrix.md 的分工

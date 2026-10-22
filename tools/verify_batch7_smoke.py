@@ -22,7 +22,7 @@ _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"")
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 sys.stdout.reconfigure(encoding="utf-8")
-import sw_connect
+import sw_connect  # noqa: E402
 
 OUT = Path(
     Path(__file__).resolve().parents[1] / "output" / "batch7-smoke-evidence.json"

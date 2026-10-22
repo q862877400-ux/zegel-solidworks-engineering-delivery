@@ -7,9 +7,14 @@
 | 类 | 形状 | 例子 | 缺什么才能暴露 |
 |---|---|---|---|
 | **A 能直接暴露** | 只收标量/字符串/bool，宿主对象靠注入 | `weldment_evidence(model)` | 无 —— **本批收的就是这些** |
-| **B 要「声明式选择解析」** | 收**坐标向量** | `create_planar_surface(sw_app, point, normal)` | 规则 3 要求声明式选择 ⇒ 需要一层「选择器 → 坐标」（已有雏形：`sw_simulation.select_face_by_selector`，但那只覆盖**面**，不覆盖**点/方向**） |
-| **C 要「spec 展平层」** | 收 **typed spec 对象** | `create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` | 要把 `BaseFlangeSpec` 的字段展平成 MCP 入参（**字段多且带默认值** ⇒ 需要**读 dataclass 定义**逐个抄，不能猜） |
-| **D 不该暴露** | 纯 getter / 拿中间对象 | `get_sketch_segments(sketch)`、`merge_points(sketch, tol)` | 它们是**内部读**或**需要「取 sketch」的解析** —— 用户不会直呼；暴露它们只会把工具的**选择集状态**变成 API（违规则 3 的精神） |
+| **B 要「声明式选择解析」** | 收**坐标向量** | `create_planar_surface(sw_app, point, normal)
+` | 规则 3 要求声明式选择 ⇒ 需要一层「选择器 → 坐标」（已有雏形：`sw_simulation.select_face_by_selector`，
+但那只覆盖**面**，不覆盖**点/方向**） |
+| **C 要「spec 展平层」** | 收 **typed spec 对象** | `create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)
+` | 要把 `BaseFlangeSpec` 的字段展平成 MCP 入参（**字段多且带默认值** ⇒ 需要**读 dataclass 定义**逐个抄，不能猜） |
+| **D 不该暴露** | 纯 getter / 拿中间对象 | `get_sketch_segments(sketch)`、`merge_points(sketch, tol)
+` | 它们是**内部读**或**需要「取 sketch」的解析** —— 用户不会直呼；
+暴露它们只会把工具的**选择集状态**变成 API（违规则 3 的精神） |
 
 **⇒ 修正后的估计**：能**直接**暴露的（A 类）远少于 120；
 B/C 两类**各自需要一层基础设施**，那是**独立的工作项**，不是「多写几条声明」。

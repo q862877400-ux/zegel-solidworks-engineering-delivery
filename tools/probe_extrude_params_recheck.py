@@ -67,7 +67,7 @@ def main() -> int:
         is True,
         "★ BothDirections = False（★ 单向）": r.get("BothDirections") is False,
     }
-    R = {
+    r_ = {
         "★_判据": "★ 逐个成员对官方 `## Returns`（★ 见 `output/_read_extrude_members.py` 的逐条读数）",
         "★_单位口径": r.get("★_单位口径"),
         "读取": {k: str(v)[:60] for k, v in r.items()},
@@ -75,7 +75,7 @@ def main() -> int:
         "★_全过": all(checks.values()),
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print(
         "★ 读取:",

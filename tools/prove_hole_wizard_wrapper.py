@@ -31,16 +31,16 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
 from scripts import sw_hole_features as hf  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_selection_spec as ss  # noqa: E402
 
 
 def _plate(doc, t=0.02):
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.04,
         -0.03,
@@ -49,15 +49,15 @@ def _plate(doc, t=0.02):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in ((names[-1] if names else "\u8349\u56fe1"), "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, t)
+            p_.extrude_boss(doc, cand, t)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -66,15 +66,15 @@ def _plate(doc, t=0.02):
 
 def _pick_top_face(doc):
     """★ **选一个点**（★ 用射线选到顶面 ⇒ 选区里就有了一个点）。"""
-    ext = C.get_com_member(doc, "Extension")
-    ok = C.get_com_member(
+    ext = c_.get_com_member(doc, "Extension")
+    ok = c_.get_com_member(
         ext, "SelectByRay", 0.0, 0.0, 0.05, 0.0, 0.0, -1.0, 1e-4, 2, False, 0, 0
     )
     return bool(ok)
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u9a8c\u5305\u88c5 `create_hole_wizard_at_selection_report`\uff08\u2605 A4 \u8981\u7684\u8fd0\u884c\u8bc1\u636e\uff09",
@@ -87,7 +87,7 @@ def main() -> int:
         row = {"tag": tag, "size": size, "ok": False}
         doc = None
         try:
-            doc = C.new_document(sw, "part")
+            doc = c_.new_document(sw, "part")
             row["plate"] = _plate(doc)
             row["picked"] = _pick_top_face(doc)
             row["point"] = ss.selection_point(doc)
@@ -106,9 +106,9 @@ def main() -> int:
         finally:
             if doc is not None:
                 try:
-                    t = str(C.get_com_member(doc, "GetTitle") or "")
+                    t = str(c_.get_com_member(doc, "GetTitle") or "")
                     if t:
-                        C.get_com_member(sw, "CloseDoc", t)
+                        c_.get_com_member(sw, "CloseDoc", t)
                 except Exception:  # noqa: BLE001
                     pass
         ev["cases"].append(row)

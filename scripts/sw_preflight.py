@@ -22,8 +22,8 @@ import os
 import platform
 import subprocess
 import sys
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
-from typing import Callable, Iterable, List, Optional, Sequence
 
 try:
     from .cad_installation import discover_installation
@@ -58,7 +58,7 @@ class SolidWorksNotInstalledError(RuntimeError):
 class PreflightResult:
     """运行前自检结果。"""
 
-    missing_packages: List[str]
+    missing_packages: list[str]
     dependencies_ready: bool
     solidworks_ready: bool | None
 
@@ -75,14 +75,14 @@ def _module_available(module_name: str) -> bool:
         raise
 
 
-def missing_com_dependencies() -> List[str]:
+def missing_com_dependencies() -> list[str]:
     """返回缺失的 COM 依赖包名称。"""
     checks = (
         ("comtypes", "comtypes>=1.2.0"),
         ("pythoncom", "pywin32>=305"),
         ("win32com.client", "pywin32>=305"),
     )
-    missing: List[str] = []
+    missing: list[str] = []
     for module_name, requirement in checks:
         if not _module_available(module_name) and requirement not in missing:
             missing.append(requirement)
@@ -92,7 +92,7 @@ def missing_com_dependencies() -> List[str]:
 def pip_install_command(
     python_executable: str | None = None,
     requirements: Sequence[str] = PIP_REQUIREMENTS,
-) -> List[str]:
+) -> list[str]:
     """生成补齐依赖的 pip 命令。"""
     return [python_executable or sys.executable, "-m", "pip", "install", *requirements]
 
@@ -136,7 +136,7 @@ def ensure_com_dependencies(
     allow_install: bool | None = None,
     input_func: Callable[[str], str] = input,
     output_func: Callable[[str], None] = print,
-) -> List[str]:
+) -> list[str]:
     """
     确保 comtypes / pywin32 可用。
 

@@ -204,7 +204,7 @@ def execute_plan(
         #:   ⇒ ★★ **改判据**：以**工具层的效应声明**为准（★ `reg[tool].effect`），
         #:     **而不是**靠成员名的动词去猜。★ 那才是「这个工具会不会写」的权威答案。
         #:   ★ 保留成员级钩子作**辅助证据**（`member_writes`）。
-        before = COUNTER.count()
+        COUNTER.count()
         COUNTER.arm()
         member_before = COUNTER.count()
         try:

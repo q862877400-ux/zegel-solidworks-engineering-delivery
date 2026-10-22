@@ -20,7 +20,6 @@ r"""SolidWorks 自动化的通用可复用知识：错误码、弹窗、选区�
 
 from __future__ import annotations
 
-
 try:
     from .sw_connect import get_com_member, set_com_member
 except ImportError:
@@ -28,7 +27,6 @@ except ImportError:
 
 __all__ = [
     "HRESULTS",
-    "ERROR_NOTIFICATION",
     "DIALOG_SUPPRESSORS",
     "DIALOG_AND_NOTIFY",
     "explain_hresult",

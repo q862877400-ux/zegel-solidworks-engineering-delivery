@@ -62,9 +62,9 @@ from __future__ import annotations
 
 _MM_TO_M = 1.0 / 1000.0  #: ★ 毫米 → 米（事实 2 的换算口径）
 
-import math
-import sys
-from pathlib import Path
+import math  # noqa: E402
+import sys  # noqa: E402
+from pathlib import Path  # noqa: E402
 
 _HERE = Path(__file__).resolve()
 for _p in (_HERE.parent, _HERE.parent.parent):
@@ -73,7 +73,7 @@ for _p in (_HERE.parent, _HERE.parent.parent):
 
 import sw_sketch as _sk  # noqa: E402
 from sw_connect import get_com_member  # noqa: E402
-from sw_connect import set_com_member as _set_com_member
+from sw_connect import set_com_member as _set_com_member  # noqa: E402
 from sw_part import _empty_callout  # noqa: E402
 
 #: ★ 长度换算助手：`_mm(v)` = **毫米→米**（恰好一次）。

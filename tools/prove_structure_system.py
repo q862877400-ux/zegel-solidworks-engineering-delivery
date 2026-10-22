@@ -190,9 +190,9 @@ def main() -> int:
             ev["set_path_segments"] = set_ok
             #: ⑤⑥ 建
             try:
-                arr = sw_connect.create_empty_dispatch_variant()  # ⚠ 先占位，下面替换
+                sw_connect.create_empty_dispatch_variant()  # ⚠ 先占位，下面替换
             except Exception:  # noqa: BLE001
-                arr = None
+                pass
             try:
                 #: ★ 诊断：它到底在不在（★ `'NoneType' object is not callable` 指向"geta
                 #: ttr 回了 None"）

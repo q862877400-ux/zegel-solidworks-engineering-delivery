@@ -421,7 +421,7 @@ def regenerate(pr: Protocol) -> dict:
     ★★ 判据：**三样都从协议现算**（★ 不是手写维护的第二份）——
       ★ 这样「改一处」才**真的只改一处**。
     """
-    d = pr.to_dict()
+    pr.to_dict()
     doc = (
         [
             "# %s v%d" % (pr.protocol_id, pr.version),

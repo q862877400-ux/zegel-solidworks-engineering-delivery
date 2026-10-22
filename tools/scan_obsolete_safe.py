@@ -283,7 +283,7 @@ def main() -> int:
             continue
         #: ★ E1 —— 只剥**注释**（★ 保留字符串字面量，★ 否则成员名一起没了）
         code = strip_comments_only(raw)
-        lines = raw.splitlines()
+        raw.splitlines()
         code_lines = code.splitlines()
 
         #: ★ E2 依据：本文件里出现过的官方**后继**名字集合
@@ -407,7 +407,7 @@ def main() -> int:
     ]
     agg = Counter(r["member"] for r in real)
 
-    R = {
+    r_ = {
         "at": time.strftime("%Y-%m-%d %H:%M:%S"),
         "★_判据": "成员名 ∈「所有接口都废弃」的安全桶；覆盖 get_com_member/dot_call/dot_assign；"
         "排除 E1 注释 · E2 兜底分支 · E3 登记表",
@@ -431,7 +431,7 @@ def main() -> int:
         "行": real,
         "全部行": rows,
     }
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(json.dumps(r_, ensure_ascii=False, indent=1), encoding="utf-8")
 
     print(
         "★ 官方废弃成员 **%d** ⇒ ★★ **安全桶 %d**（★ 所有接口都废弃）· 歧义桶 %d"
@@ -463,8 +463,8 @@ def main() -> int:
         "        ★ 其中探针/证据（tools/）**%d**  ← ★ **只报不动**"
         % len([r for r in real if str(r.get("scope", "")).startswith("★ 探针")])
     )
-    print("   ★ 兜底分支（不算缺陷）  **%d**" % R["命中"]["兜底分支"])
-    print("   ★ 疑似登记表（要人看）  **%d**" % R["命中"]["疑似登记表"])
+    print("   ★ 兜底分支（不算缺陷）  **%d**" % r_["命中"]["兜底分支"])
+    print("   ★ 疑似登记表（要人看）  **%d**" % r_["命中"]["疑似登记表"])
     print()
     print("★ 真命中的成员分布（前 16）：")
     for m, n in agg.most_common(16):

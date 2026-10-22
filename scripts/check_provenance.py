@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """来源可追溯性静态门禁（AGENTS.md 铁律 1 / 验收 A2）。
 
 为什么需要这个工具
@@ -330,7 +329,7 @@ def check_file(path: str, whole_file: bool = False) -> tuple[list[dict], list[di
         if "/tests/" in f"/{path}":
             internal |= _def_ranges(text, lambda s: s.startswith(("def _", "class _")))
 
-    incomplete = [
+    [
         {
             "path": path,
             "start": s,

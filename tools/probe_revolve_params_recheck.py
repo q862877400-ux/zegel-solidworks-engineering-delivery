@@ -64,8 +64,8 @@ def step(name: str, **kw) -> None:
 
 
 def main() -> int:
-    import sw_feature_readback as R
-    import sw_part as P
+    import sw_feature_readback as r_
+    import sw_part as p_
     from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
@@ -75,8 +75,8 @@ def main() -> int:
     #: ★ 轮廓：★ 一个**矩形**（★ 它绕一条中心线转 30° ⇒ 得到一段"扇形环"体）✓
     #: ★★ 用 `sketch_corner_rectangle` —— ★ 它在本仓**已改成 `get_com_member` 形态**（★
     #: 轮 126）✓
-    with P.sketch(model, "Front Plane") as sk:
-        P.sketch_corner_rectangle(model, 10.0, 0.0, 20.0, 10.0)
+    with p_.sketch(model, "Front Plane") as sk:
+        p_.sketch_corner_rectangle(model, 10.0, 0.0, 20.0, 10.0)
         #: ★ 中心线（★ 旋转轴）—— ★ 沿 Y 轴、★ 在 x=0 ✓
         get_com_member(
             get_com_member(model, "SketchManager"),
@@ -104,7 +104,7 @@ def main() -> int:
     built = {"error": None, "★_注意": "★ 能力层的契约是**弧度**（★ 形参名 angle_rad）"}
     try:
         built["returned"] = str(
-            P.revolve_boss(model, str(sk), math.radians(ANGLE_DEG))
+            p_.revolve_boss(model, str(sk), math.radians(ANGLE_DEG))
         )[:80]
     except Exception as exc:  # noqa: BLE001
         built["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
@@ -181,7 +181,7 @@ def main() -> int:
         ][-6:],
     )
 
-    got = R.revolve_params(model)
+    got = r_.revolve_params(model)
     step(
         "revolve_params",
         feature=got.get("feature"),

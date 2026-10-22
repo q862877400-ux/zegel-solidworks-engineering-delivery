@@ -62,7 +62,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import check_dispatch_entry_guard as G  # noqa: E402
+import check_dispatch_entry_guard as g_  # noqa: E402
 
 #: ★ 扫描根可被覆盖 ⇒ 负例能在**合成树**上端到端跑。
 ROOT = Path(
@@ -179,9 +179,9 @@ def blindspot_sites(entries, files):
 
 
 def main() -> int:
-    entries, _visible, _nonliteral, _buckets, _df, _cf, files = G.scan(root=ROOT)
-    imap = G._import_map(files)
-    covered = sum(len(G._entry_sites(e, files, imap)) for e in entries)
+    entries, _visible, _nonliteral, _buckets, _df, _cf, files = g_.scan(root=ROOT)
+    imap = g_._import_map(files)
+    covered = sum(len(g_._entry_sites(e, files, imap)) for e in entries)
     counts, samples = blindspot_sites(entries, files)
     total_blind = sum(counts.values())
     min_covered = baseline_covered()

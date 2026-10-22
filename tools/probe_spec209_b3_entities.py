@@ -64,7 +64,7 @@ def main() -> int:
     try:
         doc = sw_connect.new_document(sw, "part")
         opened.append(doc)
-        with p.sketch(doc, "Front Plane") as sk:
+        with p.sketch(doc, "Front Plane"):
             p.sketch_corner_rectangle(doc, -10.0, -10.0, 10.0, 10.0)
         p.end_sketch(doc)
         p.extrude_boss(doc, "草图1", 10.0)

@@ -45,16 +45,16 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _seg_count(doc):
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
+        sk = c_.get_com_member(doc, "GetActiveSketch2")
         if sk is None:
             return -1
-        return len(list(C.get_com_member(sk, "GetSketchSegments") or []))
+        return len(list(c_.get_com_member(sk, "GetSketchSegments") or []))
     except Exception:  # noqa: BLE001
         return -1
 
@@ -63,10 +63,10 @@ def _case(sw, tag, fn, active_sketch=True):
     row = {"tag": tag, "active_sketch": active_sketch, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         before = -1
         if active_sketch:
-            P.start_sketch(doc, plane_name="Front Plane")
+            p_.start_sketch(doc, plane_name="Front Plane")
             before = _seg_count(doc)
         row["seg_before"] = before
         ret = None
@@ -80,7 +80,7 @@ def _case(sw, tag, fn, active_sketch=True):
         row["new_segments"] = (after - before) if (after >= 0 and before >= 0) else None
         row["ok"] = bool(row["new_segments"] and row["new_segments"] > 0)
         try:
-            P.end_sketch(doc)
+            p_.end_sketch(doc)
         except Exception:  # noqa: BLE001
             pass
     except Exception as exc:  # noqa: BLE001
@@ -88,9 +88,9 @@ def _case(sw, tag, fn, active_sketch=True):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
@@ -98,22 +98,23 @@ def _case(sw, tag, fn, active_sketch=True):
 
 def _line2(doc):
     #: \u2605 **6 \u53c2**\uff1aP1(3) + P2(3)
-    return C.get_com_member(doc, "CreateLine2", -0.02, -0.01, 0.0, 0.02, 0.01, 0.0)
+    return c_.get_com_member(doc, "CreateLine2", -0.02, -0.01, 0.0, 0.02, 0.01, 0.0)
 
 
 def _spline(doc):
     #: \u2605 **1 \u53c2**\uff1a\u70b9\u6570\u7ec4\uff08\u2605 \u81f3\u5c11\u4e24\u4e2a
     #: X,Y,Z\uff09
     pts = [-0.02, 0.0, 0.0, 0.0, 0.015, 0.0, 0.02, 0.0, 0.0]
-    sm = C.get_com_member(doc, "SketchManager")
-    return C.get_com_member(sm, "CreateSpline", pts)
+    sm = c_.get_com_member(doc, "SketchManager")
+    return c_.get_com_member(sm, "CreateSpline", pts)
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-        "_": "\u4e24\u6761\u8349\u56fe\u56fe\u5143\u7684**\u7ee7\u4efb\u8005**\uff1a`CreateLine2` \u00b7 `CreateSpline`",
+        "_":
+        "\u4e24\u6761\u8349\u56fe\u56fe\u5143\u7684**\u7ee7\u4efb\u8005**\uff1a`CreateLine2` \u00b7 `CreateSpline`",
         "official": "CreateLine \u4e0e CreateSpline \u7684 md **\u90fd\u5199\u7740 Obsolete**\uff1b"
         "\u7ee7\u4efb\u8005 = IModelDoc2.CreateLine2\uff086 \u53c2\uff09\u00b7 ISketchManager.CreateSpline\uff081 \u53c2\uff09",
         "cases": [],

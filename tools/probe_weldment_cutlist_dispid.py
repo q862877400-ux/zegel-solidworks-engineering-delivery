@@ -50,7 +50,7 @@ import pythoncom  # noqa: E402
 from win32com.client import VARIANT  # noqa: E402
 
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def main() -> int:
@@ -65,7 +65,7 @@ def main() -> int:
         doc = c.new_document(sw, "part")
         #: ★ \u5efa\u4e00\u4e2a\u5b9e\u4f53\uff08\u2605 \u4e0d\u662f\u710a\u4ef6 \u2014\
         #: u2014 \u672c\u63a2\u9488\u53ea\u95ee\u8def\u5f84\u901a\u4e0d\u901a\uff09
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         c.get_com_member(
             c.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -76,21 +76,21 @@ def main() -> int:
             0.02,
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         for cand in ("\u8349\u56fe1", "Sketch1"):
             try:
-                P.extrude_boss(doc, cand, 0.02)
+                p_.extrude_boss(doc, cand, 0.02)
                 break
             except Exception:  # noqa: BLE001
                 continue
         fm = c.get_com_member(doc, "FeatureManager")
         ole = fm._oleobj_
-        before = list(P.feature_names(doc) or [])
+        before = list(p_.feature_names(doc) or [])
 
         #: \u2605 \u2460 0 \u53c2\u90a3\u6761\uff08dispid 77\uff09
         try:
             r = ole.Invoke(77, 0, pythoncom.DISPATCH_METHOD, True)
-            after = list(P.feature_names(doc) or [])
+            after = list(p_.feature_names(doc) or [])
             ev["steps"].append(
                 {
                     "tag": "CutList()",
@@ -125,7 +125,7 @@ def main() -> int:
         ):
             try:
                 r = ole.Invoke(174, 0, pythoncom.DISPATCH_METHOD, True, mk())
-                after = list(P.feature_names(doc) or [])
+                after = list(p_.feature_names(doc) or [])
                 ev["steps"].append(
                     {
                         "tag": tag,

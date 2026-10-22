@@ -27,13 +27,13 @@ sys.path[:0] = [
 ]
 
 from scripts.engineering import boundaries as b  # noqa: E402
-from scripts.engineering import questions as Q  # noqa: E402
-from scripts.engineering import scope as S  # noqa: E402
+from scripts.engineering import questions as q_  # noqa: E402
+from scripts.engineering import scope as s_  # noqa: E402
 
 OUT = ROOT / "output" / "s326"
 
 
-def _q(**kw) -> Q.Question:
+def _q(**kw) -> q_.Question:
     base = dict(
         run_id="accept-run",
         requirement_revision="rev-1",
@@ -43,7 +43,7 @@ def _q(**kw) -> Q.Question:
         reason="缺载荷上界",
     )
     base.update(kw)
-    return Q.make_question(**base)
+    return q_.make_question(**base)
 
 
 def run_s() -> dict:
@@ -56,12 +56,12 @@ def run_s() -> dict:
         {
             "s": "S1",
             "what": "问题对象 11 字段",
-            "ok": len(Q.QUESTION_FIELDS) == 11 and not q.missing(),
-            "got": "%d 字段 · 缺 %s" % (len(Q.QUESTION_FIELDS), q.missing() or "无"),
+            "ok": len(q_.QUESTION_FIELDS) == 11 and not q.missing(),
+            "got": "%d 字段 · 缺 %s" % (len(q_.QUESTION_FIELDS), q.missing() or "无"),
         }
     )
-    p = Q.save_questions("accept-run", "rev-1", [_q()])
-    back = Q.load_questions("accept-run", "rev-1")
+    p = q_.save_questions("accept-run", "rev-1", [_q()])
+    back = q_.load_questions("accept-run", "rev-1")
     rows.append(
         {
             "s": "S2",
@@ -73,28 +73,28 @@ def run_s() -> dict:
 
     q3 = _q(field_name="travel_upper")
     try:
-        Q.answer(q3, 1, source=Q.SRC_HUMAN)
+        q_.answer(q3, 1, source=q_.SRC_HUMAN)
         ok3, got3 = False, "★ 自报 human 被接受"
-    except Q.QuestionError as e:
+    except q_.QuestionError as e:
         ok3, got3 = e.code == "untrusted-human", e.code
     rows.append({"s": "S3", "what": "LLM 自报 human 不算", "ok": ok3, "got": got3})
 
     q4 = _q(field_name="jaw_force")
     try:
-        Q.apply_answer(
+        q_.apply_answer(
             q4,
             1,
-            source=Q.SRC_HUMAN,
+            source=q_.SRC_HUMAN,
             carried_revision="rev-0",
             current_revision="rev-1",
             channel_proof="local_confirm_ui",
         )
         ok4, got4 = False, "★ 旧版本被接受"
-    except Q.QuestionError as e:
+    except q_.QuestionError as e:
         ok4, got4 = e.code == "stale-revision", e.code
     rows.append({"s": "S4", "what": "旧 revision 补答被拒", "ok": ok4, "got": got4})
 
-    w = Q.WaitingState()
+    w = q_.WaitingState()
     w.enter_waiting()
     rows.append(
         {
@@ -106,7 +106,7 @@ def run_s() -> dict:
     )
 
     #: ── Q9
-    sc = S.load_scope()
+    sc = s_.load_scope()
     ok6 = (
         sc["limits"]["max_self_made_parts"] == 10
         and sc["limits"]["max_driven_dof"] == 1
@@ -116,7 +116,7 @@ def run_s() -> dict:
         {
             "s": "S6",
             "what": "v1 上界五条",
-            "ok": ok6 and S.check_scope(self_made_parts=11)["ok"] is False,
+            "ok": ok6 and s_.check_scope(self_made_parts=11)["ok"] is False,
             "got": "上界 %s" % sc["limits"],
         }
     )
@@ -126,23 +126,23 @@ def run_s() -> dict:
             "s": "S7",
             "what": "不承诺清单",
             "ok": len(sc["not_promised"]) >= 5
-            and S.check_not_promised("freeform_surface")["ok"] is False,
+            and s_.check_not_promised("freeform_surface")["ok"] is False,
             "got": "%d 类" % len(sc["not_promised"]),
         }
     )
 
-    d_no = S.delivery_state(auto_done=True)
-    d_yes = S.delivery_state(auto_done=True, approved_by="owner_typed")
+    d_no = s_.delivery_state(auto_done=True)
+    d_yes = s_.delivery_state(auto_done=True, approved_by="owner_typed")
     rows.append(
         {
             "s": "S8",
             "what": "DELIVERED 需人工批准",
-            "ok": d_no["state"] == S.READY_FOR_REVIEW and d_yes["state"] == S.DELIVERED,
+            "ok": d_no["state"] == s_.READY_FOR_REVIEW and d_yes["state"] == s_.DELIVERED,
             "got": "无批准=%s · 有批准=%s" % (d_no["state"], d_yes["state"]),
         }
     )
 
-    tl = S.TakeoverLedger(autonomous=5)
+    tl = s_.TakeoverLedger(autonomous=5)
     tl.record("t1", hand_built=True)
     rows.append(
         {
@@ -154,18 +154,18 @@ def run_s() -> dict:
     )
 
     #: ── Q11
-    g2 = S.stage2_gate(passes=2)
-    g4 = S.stage4_gate(attributed_rounds=2, meets_threshold=False)
+    g2 = s_.stage2_gate(passes=2)
+    g4 = s_.stage4_gate(attributed_rounds=2, meets_threshold=False)
     rows.append(
         {
             "s": "S10",
             "what": "两个止损关口",
-            "ok": g2["stop"] and g4["stop"] and len(S.STOP_GATES) == 2,
+            "ok": g2["stop"] and g4["stop"] and len(s_.STOP_GATES) == 2,
             "got": "阶段2=%s · 阶段4=%s" % (g2["action"], g4["action"]),
         }
     )
 
-    ht = S.HypothesisTracker()
+    ht = s_.HypothesisTracker()
     for _ in range(3):
         r11 = ht.record("h1", succeeded=False)
     rows.append(
@@ -177,7 +177,7 @@ def run_s() -> dict:
         }
     )
 
-    pb = S.PlanB()
+    pb = s_.PlanB()
     rows.append(
         {
             "s": "S12",
@@ -189,7 +189,7 @@ def run_s() -> dict:
         }
     )
 
-    bs = S.BlindSet(blind=["b1"])
+    bs = s_.BlindSet(blind=["b1"])
     bs.see_failure("b1")
     rows.append(
         {
@@ -204,8 +204,8 @@ def run_s() -> dict:
         {
             "s": "S14",
             "what": "叶子方法可增长",
-            "ok": S.method_growth_policy()["allowed"]
-            and S.admit_leaf_method(
+            "ok": s_.method_growth_policy()["allowed"]
+            and s_.admit_leaf_method(
                 has_contract=True, composable=True, verifiable=True
             )["admitted"],
             "got": "allowed=True · 三门槛",
@@ -272,28 +272,28 @@ def run_y() -> dict:
     rows = []
 
     try:
-        Q.answer(_q(field_name="y1"), 1, source=Q.SRC_HUMAN)
+        q_.answer(_q(field_name="y1"), 1, source=q_.SRC_HUMAN)
         y1 = (False, "★ 没拒")
-    except Q.QuestionError as e:
+    except q_.QuestionError as e:
         y1 = (e.code == "untrusted-human", e.code)
     rows.append({"y": "Y1", "what": "LLM 自报 human", "ok": y1[0], "got": y1[1]})
 
     try:
-        Q.apply_answer(
+        q_.apply_answer(
             _q(field_name="y2"),
             1,
-            source=Q.SRC_HUMAN,
+            source=q_.SRC_HUMAN,
             carried_revision="old",
             current_revision="new",
             channel_proof="local_confirm_ui",
         )
         y2 = (False, "★ 没拒")
-    except Q.QuestionError as e:
+    except q_.QuestionError as e:
         y2 = (e.code == "stale-revision", e.code)
     rows.append({"y": "Y2", "what": "旧 revision 补答", "ok": y2[0], "got": y2[1]})
 
     over = {
-        k: S.check_scope(**{k: v})["ok"]
+        k: s_.check_scope(**{k: v})["ok"]
         for k, v in (
             ("self_made_parts", 11),
             ("assembly_instances", 31),
@@ -314,12 +314,12 @@ def run_y() -> dict:
         {
             "y": "Y4",
             "what": "无批准就标 DELIVERED",
-            "ok": S.delivery_state(auto_done=True)["delivered"] is False,
-            "got": S.delivery_state(auto_done=True)["state"],
+            "ok": s_.delivery_state(auto_done=True)["delivered"] is False,
+            "got": s_.delivery_state(auto_done=True)["state"],
         }
     )
 
-    tl = S.TakeoverLedger(autonomous=3)
+    tl = s_.TakeoverLedger(autonomous=3)
     tl.record("t1", hand_built=True)
     rows.append(
         {
@@ -330,7 +330,7 @@ def run_y() -> dict:
         }
     )
 
-    ht = S.HypothesisTracker()
+    ht = s_.HypothesisTracker()
     for _ in range(3):
         ht.record("h1", succeeded=False)
     r6 = ht.record("h1", succeeded=False)
@@ -343,7 +343,7 @@ def run_y() -> dict:
         }
     )
 
-    bs = S.BlindSet(blind=["b1"])
+    bs = s_.BlindSet(blind=["b1"])
     bs.see_failure("b1")
     rows.append(
         {
@@ -419,12 +419,12 @@ def main() -> int:
     )
     print("   ★ 缺：%s" % m["missing"])
 
-    ev = {"s": s, "y": y, "mode": m, "finished": time.strftime("%H:%M:%S")}
+    ev = {"s": s, "y": y, "mode": m, "finished": time.strftime("%H:%M:%s_")}
     p = OUT / "boundaries.json"
     p.write_text(json.dumps(ev, ensure_ascii=False, indent=1), encoding="utf-8")
     print()
     print(
-        "★ S：%s · Y：%s" % ("过" if s["ok"] else "不过", "过" if y["ok"] else "不过")
+        "★ s_：%s · Y：%s" % ("过" if s["ok"] else "不过", "过" if y["ok"] else "不过")
     )
     print("★ 证据 → %s" % p)
     return 0 if (s["ok"] and y["ok"]) else 1

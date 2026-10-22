@@ -48,7 +48,7 @@ sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "mcp-server"))
 
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_weldment as w  # noqa: E402
 
 
@@ -82,7 +82,7 @@ def main() -> int:
         doc = c.new_document(sw, "part")
         #: \u2605 \u2460 \u753b\u4e00\u6761\u8def\u5f84\u8349\u56fe\uff08\u2605 \u5de5\u
         #: 5177\u5c42\u53ea\u8981\u8349\u56fe\u540d\uff09
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         c.get_com_member(
             c.get_com_member(doc, "SketchManager"),
             "CreateLine",
@@ -93,7 +93,7 @@ def main() -> int:
             0.0,
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         profile = (
             r"c:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles"
             r"\GB\square-rods.sldlfp"

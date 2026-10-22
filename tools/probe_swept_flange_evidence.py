@@ -124,11 +124,11 @@ def main() -> int:
         #:   ⇒ ★ 所以：★ **`profile_ref` 要草图**对象**、★ `path_ref` 要**边对象**** ✓
         #: ★ 路径：一条直线（★ 造完草图后把它扫成一条**边**的载体 —— 用基体法兰的边更稳
         #: ）
-        with p.sketch(model, "Front Plane") as skp:
+        with p.sketch(model, "Front Plane"):
             sm_ = get_com_member(model, "SketchManager")
             get_com_member(sm_, "CreateLine", 0.0, -0.05, 0.0, 0.0, 0.05, 0.0)
         #:   ★ 轮廓：一个小矩形（★ 与路径**不共面** ⇒ 用 Right Plane）
-        with p.sketch(model, "Right Plane") as skc:
+        with p.sketch(model, "Right Plane"):
             sm_ = get_com_member(model, "SketchManager")
             get_com_member(sm_, "CreateLine", 0.001, -0.05, 0.0, 0.003, -0.05, 0.0)
             get_com_member(sm_, "CreateLine", 0.003, -0.05, 0.0, 0.003, -0.045, 0.0)

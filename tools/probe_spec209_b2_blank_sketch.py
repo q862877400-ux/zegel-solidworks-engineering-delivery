@@ -39,7 +39,7 @@ OUT = R / "output" / "spec209-blank-sketch.json"
 def main() -> int:
     import sw_connect
     import sw_part as p
-    import sw_sketch as SK
+    import sw_sketch as sk_
     from sw_connect import safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -68,11 +68,11 @@ def main() -> int:
             ("A", (-20.0, -10.0, 20.0, 10.0)),
             ("B", (-5.0, -5.0, 5.0, 5.0)),
         ):
-            with p.sketch(doc, "Front Plane") as sk:
+            with p.sketch(doc, "Front Plane"):
                 p.sketch_corner_rectangle(doc, x0, y0, x1, y1)
         names = [
             str(safe_get_com_member(f, "Name") or "")
-            for f in SK._selected_feature_objects(doc)
+            for f in sk_._selected_feature_objects(doc)
         ]
         ev["tree_names"] = [
             str(safe_get_com_member(f, "Name") or "") for f in _iter(doc)
@@ -85,7 +85,7 @@ def main() -> int:
         print("  特征树里的草图：%r" % (sketches,))
 
         #: ① 隐藏
-        r1 = SK.set_sketch_blanked(doc, first, blank=True)
+        r1 = sk_.set_sketch_blanked(doc, first, blank=True)
         ev["steps"]["blank"] = {
             k: r1.get(k)
             for k in (
@@ -108,7 +108,7 @@ def main() -> int:
         )
 
         #: ② 显示（★ 反方向）
-        r2 = SK.set_sketch_blanked(doc, first, blank=False)
+        r2 = sk_.set_sketch_blanked(doc, first, blank=False)
         ev["steps"]["unblank"] = {
             k: r2.get(k)
             for k in (
@@ -131,7 +131,7 @@ def main() -> int:
         )
 
         #: ③ 负例：名字不存在 ⇒ 选区计数 0 ⇒ 大声报
-        r3 = SK.set_sketch_blanked(doc, "不存在的草图名", blank=True)
+        r3 = sk_.set_sketch_blanked(doc, "不存在的草图名", blank=True)
         ev["negative"]["missing_name"] = {
             "ok": r3.get("ok"),
             "selection_count": r3.get("selection_count"),

@@ -43,14 +43,14 @@ sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
 import scripts.sw_weldment as w  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _mk_solid(doc):
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -59,15 +59,15 @@ def _mk_solid(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -79,9 +79,9 @@ def _mk_sketch2(doc):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Front Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.01,
         -0.005,
@@ -90,7 +90,7 @@ def _mk_sketch2(doc):
         0.015,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
 
 
 def _probe_ret(ret):
@@ -105,7 +105,7 @@ def _probe_ret(ret):
         ("GetID", "GetID"),
     ):
         try:
-            out[k] = str(C.get_com_member(ret, m))
+            out[k] = str(c_.get_com_member(ret, m))
         except Exception as exc:  # noqa: BLE001
             out[k] = "ERR %s" % str(exc)[:50]
     return out
@@ -116,7 +116,7 @@ def _all_types(doc):
     try:
         for f in w.iter_features_recursive(doc):
             try:
-                types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
+                types.append(str(c_.get_com_member(f, "GetTypeName2") or ""))
             except Exception:  # noqa: BLE001
                 pass
     except Exception:  # noqa: BLE001
@@ -128,7 +128,7 @@ def _one(sw, tag, kind):
     row = {"tag": tag, "kind": kind, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         _mk_solid(doc)
         if kind in ("project", "sil"):
             _mk_sketch2(doc)
@@ -148,7 +148,7 @@ def _one(sw, tag, kind):
                 if _sel_id(ext, nm, "PLANE", append=False, mark=0):
                     picked["plane"] = nm
                     break
-            ret = C.get_com_member(doc, "InsertSplitLineSil")
+            ret = c_.get_com_member(doc, "InsertSplitLineSil")
         elif kind == "project":
             names = list(fr.feature_names(doc) or [])
             sk = [
@@ -174,7 +174,7 @@ def _one(sw, tag, kind):
             except Exception:  # noqa: BLE001
                 pass
             before = list(fr.feature_names(doc) or [])
-            ret = C.get_com_member(doc, "InsertSplitLineProject", True, True)
+            ret = c_.get_com_member(doc, "InsertSplitLineProject", True, True)
         else:
             n = 0
             for bt in (0, 1):
@@ -183,8 +183,8 @@ def _one(sw, tag, kind):
                         if _sel(f, append=(n > 0), mark=0):
                             n += 1
             picked["faces"] = n
-            fm = C.get_com_member(doc, "FeatureManager")
-            ret = C.get_com_member(fm, "InsertSplitLineIntersect", 0)
+            fm = c_.get_com_member(doc, "FeatureManager")
+            ret = c_.get_com_member(fm, "InsertSplitLineIntersect", 0)
         row["picked"] = picked
         row["returned"] = _probe_ret(ret)
         if kind == "project":
@@ -202,16 +202,16 @@ def _one(sw, tag, kind):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u5206\u5272\u7ebf\u4e09\u6761\u5165\u53e3\u7684**\u8fd4\u56de\u503c\u5230\u5e95\u662f\u4ec0\u4e48**\uff08\u2605 \u8865\u8bb0\u7f3a\u53e3\uff09",

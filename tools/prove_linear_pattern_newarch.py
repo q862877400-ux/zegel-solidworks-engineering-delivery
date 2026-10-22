@@ -51,7 +51,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_sketch_primitives as spk  # noqa: E402
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_pattern as sp  # noqa: E402
 
 #: ★ 真名（★ 来自 `_raw/enum_values_sldworks.txt`，**不是**注释里那个 `swFmLinearPattern
@@ -84,7 +84,7 @@ def _pick_seed(model):
                 continue
             nm = str(c.get_com_member(f, "Name") or "")
             if "\u51f8\u53f0" in nm or "\u62c9\u4f38" in nm:
-                if P._select_com_object(f, append=False, mark=0):
+                if p_._select_com_object(f, append=False, mark=0):
                     return nm
         return None
     except Exception:  # noqa: BLE001
@@ -95,8 +95,11 @@ def main() -> int:
     sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-        "_": "\u7ebf\u6027\u9635\u5217\u65b0\u67b6\u6784\uff08CreateDefinition + ILinearPatternFeatureData\uff09\u771f\u673a\u8bd5",
-        "judge": "\u4e09\u5224\u636e\u5e76\u5217\uff1a\u7279\u5f81\u6811\u540d\u589e\u91cf / \u4f53\u6570 / \u5305\u56f4\u76d2",
+        "_":
+        "\u7ebf\u6027\u9635\u5217\u65b0\u67b6\u6784\uff08CreateDefinition + ILinearPatternFeatureData\uff09\u771f\u673a\
+        u8bd5",
+        "judge":
+        "\u4e09\u5224\u636e\u5e76\u5217\uff1a\u7279\u5f81\u6811\u540d\u589e\u91cf / \u4f53\u6570 / \u5305\u56f4\u76d2",
         "swFmLPattern": SW_FM_LPATTERN,
         "steps": [],
     }
@@ -104,17 +107,17 @@ def main() -> int:
     doc = c.new_document(sw, "part")
     try:
         #: ① 建实体（★ 判据是树里出现"凸台/拉伸"，★ 别信 bool —— 轮 480 的教训）
-        before = P.feature_names(doc) or []
-        P.start_sketch(doc, plane_name="Front Plane")
+        before = p_.feature_names(doc) or []
+        p_.start_sketch(doc, plane_name="Front Plane")
         spk.sketch_3point_corner_rectangle(doc, -8, -8, 8, -8, 8, 8)
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         for cand in ("\u8349\u56fe1", "Sketch1"):
             try:
-                P.extrude_boss(doc, cand, 0.02)
+                p_.extrude_boss(doc, cand, 0.02)
                 break
             except Exception:  # noqa: BLE001
                 continue
-        after = P.feature_names(doc) or []
+        after = p_.feature_names(doc) or []
         ev["steps"].append(
             {"step": "solid", "added": [n for n in after if n not in before]}
         )
@@ -165,7 +168,7 @@ def main() -> int:
                     "err": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
                 }
 
-        after2 = P.feature_names(doc) or []
+        after2 = p_.feature_names(doc) or []
         ev["after"] = {
             "tree": len(after2),
             "geom": _geom(doc),

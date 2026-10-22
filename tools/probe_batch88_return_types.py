@@ -30,7 +30,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 import register_capabilities as rc  # noqa: E402
 
-from scripts import (
+from scripts import (  # noqa: E402
     sw_connect,  # noqa: E402
     sw_part,  # noqa: E402
 )

@@ -22,7 +22,7 @@
 # f08\u6241\u5e73 list\uff09\u2014\u2014 \u5df2\u77e5\u4e0d\u6210\u7684\u90a3\u4e2a** \u
 # 26a0
 #
-#   ★ 官方依据（`C:\swapi\types\ISketchManager\CreateSpline.md` 的 Remarks）：
+#   ★ 官方依据（`c_:\swapi\types\ISketchManager\CreateSpline.md` 的 Remarks）：
 #     · `PointData` = **扁平的 X,Y,Z 序列**（★ 至少两个）
 #     · **2D 草图里 Z 被忽略**
 #     · ★ 它**不配合** `AddToDB` / `DisplayWhenAdded`
@@ -48,8 +48,8 @@ sys.path.insert(0, str(R / "scripts"))
 import pythoncom  # noqa: E402
 import win32com.client  # noqa: E402
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 #: \u2605 \u6241\u5e73\u7684 X,Y,Z \u5e8f\u5217\uff08\u2605 \u5b98\u65b9\u8bf4\u81f3\u5c
 #: 11\u4e24\u4e2a\uff09
@@ -58,8 +58,8 @@ PTS = [-0.02, -0.01, 0.0, 0.0, 0.02, 0.0, 0.02, -0.01, 0.0]
 
 def _seg_count(doc):
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
-        return len(list(C.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
+        sk = c_.get_com_member(doc, "GetActiveSketch2")
+        return len(list(c_.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
     except Exception:  # noqa: BLE001
         return -1
 
@@ -68,11 +68,11 @@ def _one(sw, tag, form):
     row = {"tag": tag, "form": form, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        doc = c_.new_document(sw, "part")
+        p_.start_sketch(doc, plane_name="Front Plane")
         before = _seg_count(doc)
         row["seg_before"] = before
-        sm = C.get_com_member(doc, "SketchManager")
+        sm = c_.get_com_member(doc, "SketchManager")
         ret = None
         try:
             if form == "variant_r8":
@@ -81,21 +81,21 @@ def _one(sw, tag, form):
                 data = win32com.client.VARIANT(
                     pythoncom.VT_ARRAY | pythoncom.VT_R8, list(PTS)
                 )
-                ret = C.call_com_member(sm, "CreateSpline", data)
+                ret = c_.call_com_member(sm, "CreateSpline", data)
             elif form == "spline2":
                 #: ★★ **前人探针原样**：`CreateSpline2(data, False)`
                 #:   （`tools/probe_spline_forms.py` L99 逐字）
                 data = win32com.client.VARIANT(
                     pythoncom.VT_ARRAY | pythoncom.VT_R8, list(PTS)
                 )
-                ret = C.get_com_member(sm, "CreateSpline2", data, False)
+                ret = c_.get_com_member(sm, "CreateSpline2", data, False)
             elif form == "flat_list":
-                ret = C.call_com_member(sm, "CreateSpline", list(PTS))
+                ret = c_.call_com_member(sm, "CreateSpline", list(PTS))
             else:
                 tuples = [
                     (PTS[i], PTS[i + 1], PTS[i + 2]) for i in range(0, len(PTS), 3)
                 ]
-                ret = C.call_com_member(sm, "CreateSpline", tuples)
+                ret = c_.call_com_member(sm, "CreateSpline", tuples)
             row["returned"] = type(ret).__name__ if ret is not None else "None"
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
@@ -104,7 +104,7 @@ def _one(sw, tag, form):
         row["new_segments"] = (after - before) if (after >= 0 and before >= 0) else None
         row["ok"] = bool(row["new_segments"] and row["new_segments"] > 0)
         try:
-            P.end_sketch(doc)
+            p_.end_sketch(doc)
         except Exception:  # noqa: BLE001
             pass
     except Exception as exc:  # noqa: BLE001
@@ -112,16 +112,16 @@ def _one(sw, tag, form):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u6837\u6761\u66f2\u7ebf\uff1a\u7528**\u524d\u4eba\u5df2\u8bc1\u7684\u7b2c\u4e09\u79cd\u5f62\u6001**"

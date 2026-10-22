@@ -30,7 +30,8 @@
 
 | 它的写法 | 官方反射/枚举 | 判定 |
 |---|---|---|
-| `swStudy.AddRestraint(type, SelectionManager)` | 该成员**不在 ICWStudy 上**；`AddRestraint` 只在 `ICWLoadsAndRestraintsManager`，**4 参** | ❌ 成员不存在 |
+| `swStudy.AddRestraint(type, SelectionManager)` | 该成员**不在 ICWStudy 上**；
+`AddRestraint` 只在 `ICWLoadsAndRestraintsManager`，**4 参** | ❌ 成员不存在 |
 | `swStudy.AddLoad(type, selMgr)` | `AddLoad` 在**整个 cosworks 程序集里都不存在** | ❌ 成员不存在 |
 | `swStudy.GetMaterial(name)` | 同上，不存在 | ❌ 成员不存在 |
 | `swStudy.ApplyMaterial(mat)` | 同上，不存在 | ❌ 成员不存在 |

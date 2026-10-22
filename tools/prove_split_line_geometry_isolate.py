@@ -5,11 +5,11 @@
 # 文件:   tools/prove_split_line_geometry_isolate.py
 # 定位:   ★ 承接 `prove_split_line_geometry_controls.py`（★ 它推翻了我自己的假设）。
 #
-#   ★★ **上一轮 A/B/C/D 的结果（逐字读数，★ 含"不利于我"的）**：
+#   ★★ **上一轮 A/B/c_/D 的结果（逐字读数，★ 含"不利于我"的）**：
 #     ```
 #     A 正例（落点在环内 + 近面）      ⇒ 成 · 新特征「分割线1」· 面数 6→7 · 有面 1→2 环
 #     B 只把落点移到环外（同一张面）   ⇒ **也成** ⚠ ⇒ ★ 我原以为"落点必须在环内"是**错的**
-#     C 只把面换成远面                 ⇒ **也成** ⚠ ⇒ ★ 面选哪一张**几乎不影响**
+#     c_ 只把面换成远面                 ⇒ **也成** ⚠ ⇒ ★ 面选哪一张**几乎不影响**
 #     D 复现上一会话的几何             ⇒ 不成（★ 而读数显示是**两个**变量同时变了：
 #                                        几何 + 面改用了裸 `Select4` ⇒ **mark 1 计数 = 0**）
 #     ```
@@ -44,11 +44,11 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "tools"))
 
-import prove_split_line_geometry_controls as K  # noqa: E402
+import prove_split_line_geometry_controls as k_  # noqa: E402
 import prove_split_line_geometry_per_example as g  # noqa: E402
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts.sw_simulation import select_face_at  # noqa: E402
 
 
@@ -57,7 +57,7 @@ def _legacy_geometry(doc):
 
     ★ 投影草图留在 **Front Plane（z = 0）** ⇒ ★ **草图被实体夹在中间**（★ 这正是它与例子的差别）。
     """
-    P.start_sketch(doc, plane_name="Top Plane")
+    p_.start_sketch(doc, plane_name="Top Plane")
     g._get(
         g._get(doc, "SketchManager"),
         "CreateCornerRectangle",
@@ -68,13 +68,13 @@ def _legacy_geometry(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     box = None
     for d in (True, False):
         made = None
         for cand in (g._sketch_names(doc) or ["\u8349\u56fe1"])[::-1]:
             try:
-                P.extrude_boss(doc, cand, 0.02, direction=d)
+                p_.extrude_boss(doc, cand, 0.02, direction=d)
                 made = cand
                 break
             except Exception:  # noqa: BLE001
@@ -84,9 +84,9 @@ def _legacy_geometry(doc):
         box = g._bbox(doc)
         if box is not None:
             break
-    P.start_sketch(doc, plane_name="Front Plane")
+    p_.start_sketch(doc, plane_name="Front Plane")
     g._get(g._get(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.008)
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     return box
 
 
@@ -95,7 +95,7 @@ def _select_common(doc, picked):
     ext = g._get(doc, "Extension")
     for nm in ("\u51f8\u53f0-\u62c9\u4f381", "Boss-Extrude1"):
         try:
-            if P._select_by_id(ext, nm, "BODYFEATURE", append=False, mark=0):
+            if p_._select_by_id(ext, nm, "BODYFEATURE", append=False, mark=0):
                 picked["feature"] = nm
                 break
         except Exception:  # noqa: BLE001
@@ -103,7 +103,7 @@ def _select_common(doc, picked):
     sk = g._sketch_names(doc)
     if sk:
         try:
-            if P._select_by_id(ext, sk[-1], "SKETCH", append=bool(picked), mark=4):
+            if p_._select_by_id(ext, sk[-1], "SKETCH", append=bool(picked), mark=4):
                 picked["sketch"] = sk[-1]
         except Exception:  # noqa: BLE001
             pass
@@ -126,7 +126,7 @@ def _case(sw, tag, mode):
     row = {"tag": tag, "mode": mode, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         picked = {}
         if mode in ("legacy_point_plus", "legacy_point_minus"):
             box = _legacy_geometry(doc)
@@ -145,7 +145,7 @@ def _case(sw, tag, mode):
             except Exception as exc:  # noqa: BLE001
                 row["err_face"] = str(exc)[:120]
             row["picked"], row["sel_by_mark"] = picked, _mark_counts(doc)
-            return K._call_and_read(doc, row, True, directed)
+            return k_._call_and_read(doc, row, True, directed)
         #: ★ E2：**正确几何**，而选面改用"**第一张面**"（★ 只这一处不同）
         ok, info = g._build(doc)
         row["geometry"] = "correct:\u8349\u56fe\u5728\u5b9e\u4f53\u4e4b\u5916"
@@ -158,14 +158,14 @@ def _case(sw, tag, mode):
         try:
             body = list(g._get(doc, "GetBodies2", 0, True))[0]
             faces = list(g._get(body, "GetFaces") or [])
-            if faces and P._select_com_object(faces[0], append=bool(picked), mark=1):
+            if faces and p_._select_com_object(faces[0], append=bool(picked), mark=1):
                 picked["face"] = (
                     "GetFaces()[0]\uff08\u2605 \u800c mark \u6b63\u5f53\u8bbe\u4e3a 1\uff09"
                 )
         except Exception as exc:  # noqa: BLE001
             row["err_face"] = str(exc)[:120]
         row["picked"], row["sel_by_mark"] = picked, _mark_counts(doc)
-        return K._call_and_read(doc, row, True, True)
+        return k_._call_and_read(doc, row, True, True)
     except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         return row
@@ -180,7 +180,7 @@ def _case(sw, tag, mode):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u6295\u5f71\u578b\u5206\u5272\u7ebf\uff1a**\u56e0\u679c\u9694\u79bb**"

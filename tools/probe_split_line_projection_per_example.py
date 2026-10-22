@@ -46,15 +46,15 @@ sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
 import scripts.sw_weldment as w  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _build(doc):
     """★ 实体 + ★ 一个在它上面的**草图**（★ 用作分割轮廓）。"""
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -63,16 +63,16 @@ def _build(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     ok_solid = False
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             ok_solid = True
             break
         except Exception:  # noqa: BLE001
@@ -83,9 +83,9 @@ def _build(doc):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Front Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.01,
         -0.005,
@@ -94,7 +94,7 @@ def _build(doc):
         0.015,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     return ok_solid
 
 
@@ -162,14 +162,14 @@ def _one(sw, tag, is_directional, flip_dir):
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row["built"] = _build(doc)
         picked, per = _pick(doc)
         row["picked"] = picked
         row["sel_by_mark"] = per
         before = list(fr.feature_names(doc) or [])
         try:
-            C.get_com_member(
+            c_.get_com_member(
                 doc, "InsertSplitLineProject", bool(is_directional), bool(flip_dir)
             )
         except Exception as exc:  # noqa: BLE001
@@ -180,7 +180,7 @@ def _one(sw, tag, is_directional, flip_dir):
         try:
             for f in w.iter_features_recursive(doc):
                 try:
-                    types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
+                    types.append(str(c_.get_com_member(f, "GetTypeName2") or ""))
                 except Exception:  # noqa: BLE001
                     pass
         except Exception:  # noqa: BLE001
@@ -192,16 +192,16 @@ def _one(sw, tag, is_directional, flip_dir):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u6295\u5f71\u578b\u5206\u5272\u7ebf\uff1a**\u7167\u5b98\u65b9\u4f8b\u5b50**\uff08\u8349\u56fe mark=4 \u00b7 \u9762 mark=1\uff09",

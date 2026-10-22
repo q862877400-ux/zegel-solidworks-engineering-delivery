@@ -178,14 +178,14 @@ def main() -> int:
     case("★ 旧的 7 参 FeatureFillet（基线）", form="old_7")
     case("★ 新的 14 参 FeatureFillet3", form="new3_14")
 
-    R = {
+    r_ = {
         "★_判据": "★ 建成 ⇒ 特征数增加（★ 与 FeatureCutThicken 那次同法）",
         "★_问题": "★ 官方 `FeatureFillet`/`2` 都废弃、`3` 不废弃 ⇒ 验 `3` 能不能替",
         "★_环形链真因": "★ `IModelDoc2` 与 `IFeatureManager` 上**两族同名**、★ 跨族跳转成环",
         "rows": rows,
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     for r in rows:
         print(

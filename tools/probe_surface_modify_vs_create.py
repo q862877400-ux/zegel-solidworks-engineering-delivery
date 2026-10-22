@@ -43,8 +43,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
@@ -53,12 +53,12 @@ def _mk_two_surfaces(doc):
     made = 0
     for i, plane in enumerate(("Front Plane", "Top Plane")):
         try:
-            C.get_com_member(doc, "ClearSelection2", True)
+            c_.get_com_member(doc, "ClearSelection2", True)
         except Exception:  # noqa: BLE001
             pass
-        P.start_sketch(doc, plane_name=plane)
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        p_.start_sketch(doc, plane_name=plane)
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
             -0.02,
             -0.02,
@@ -67,7 +67,7 @@ def _mk_two_surfaces(doc):
             0.02,
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         for cand in ("\u8349\u56fe%d" % (i + 1), "Sketch%d" % (i + 1)):
             try:
                 if sf.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get(
@@ -89,7 +89,7 @@ def _case_knit(doc):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u9a8c\u8bc1\uff1a\u300c\u6539\u52a8\u5df2\u6709\u4f53\u300d\u6210 \u00b7 \u300c\u65b0\u5efa\u4f53\u300d\u4e0d\u6210\uff1f\uff08\u8dd1\u7f1d\u5408\u66f2\u9762\uff09",
@@ -102,7 +102,7 @@ def main() -> int:
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         r = _case_knit(doc)
         row["result"] = {k: v for k, v in (r or {}).items() if k != "\u2605"}
         row["ok"] = bool((r or {}).get("ok"))
@@ -111,9 +111,9 @@ def main() -> int:
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     ev["cases"].append(row)

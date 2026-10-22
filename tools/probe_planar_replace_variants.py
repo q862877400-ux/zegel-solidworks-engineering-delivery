@@ -39,15 +39,15 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_surface(doc, plane="Front Plane", depth=20.0):
-    P.start_sketch(doc, plane_name=plane)
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name=plane)
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.02,
         -0.02,
@@ -56,10 +56,10 @@ def _mk_surface(doc, plane="Front Plane", depth=20.0):
         0.02,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
@@ -74,9 +74,9 @@ def _mk_surface(doc, plane="Front Plane", depth=20.0):
 
 
 def _mk_solid(doc):
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -85,15 +85,15 @@ def _mk_solid(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -102,10 +102,10 @@ def _mk_solid(doc):
 
 def _sel_sketch_by_name(doc, name, mark=1, append=False):
     """★ 按**名字**选草图（★ 特征按名字选是可行的 —— 事实 32 只对**实体**说不可行）。"""
-    ext = C.get_com_member(doc, "Extension")
-    for cand in P._get_sketch_name_candidates(name):
+    ext = c_.get_com_member(doc, "Extension")
+    for cand in p_._get_sketch_name_candidates(name):
         try:
-            if P._select_by_id(ext, cand, "SKETCH", append=append, mark=mark):
+            if p_._select_by_id(ext, cand, "SKETCH", append=append, mark=mark):
                 return True
         except Exception:  # noqa: BLE001
             continue
@@ -144,9 +144,9 @@ def _case_planar_sketch(doc):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.01,
         -0.01,
@@ -155,30 +155,30 @@ def _case_planar_sketch(doc):
         0.01,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     picked = _sel_sketch_by_name(doc, names[-1] if names else "\u8349\u56fe2", mark=1)
     try:
         sel = int(
-            C.get_com_member(
-                C.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1
+            c_.get_com_member(
+                c_.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1
             )
             or 0
         )
     except Exception:  # noqa: BLE001
         sel = -1
-    before = list(P.feature_names(doc) or [])
+    before = list(p_.feature_names(doc) or [])
     ret = None
     err = None
     try:
-        ret = C.get_com_member(doc, "InsertPlanarRefSurface")
+        ret = c_.get_com_member(doc, "InsertPlanarRefSurface")
     except Exception as exc:  # noqa: BLE001
         err = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-    after = list(P.feature_names(doc) or [])
+    after = list(p_.feature_names(doc) or [])
     new = [n for n in after if n not in before]
     return {
         "ok": bool(new),
@@ -199,13 +199,13 @@ def _case_replace(doc, solid_mark, surface_mark):
         pass
     _mk_surface(doc, plane="Right Plane")
     n = _two_face_marks(doc, solid_mark, surface_mark)
-    before = list(P.feature_names(doc) or [])
+    before = list(p_.feature_names(doc) or [])
     err = None
     try:
-        C.get_com_member(doc, "InsertFeatureReplaceFace")
+        c_.get_com_member(doc, "InsertFeatureReplaceFace")
     except Exception as exc:  # noqa: BLE001
         err = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-    after = list(P.feature_names(doc) or [])
+    after = list(p_.feature_names(doc) or [])
     new = [n for n in after if n not in before]
     return {
         "ok": bool(new),
@@ -221,7 +221,7 @@ def _run(sw, tag, fn):
     row = {"tag": tag, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         r = fn(doc)
         row["result"] = r
         row["ok"] = bool(r.get("ok"))
@@ -230,16 +230,16 @@ def _run(sw, tag, fn):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "T605 / T609 \u7684**\u9009\u6cd5\u53d8\u4f53**\uff08\u2605 \u4e0a\u4e00\u8f6e\u5404\u53ea\u8bd5\u4e86\u4e00\u79cd\uff09",

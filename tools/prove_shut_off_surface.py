@@ -41,7 +41,7 @@ OUT = Path(
 def main() -> int:
     import sw_connect
     import sw_hole_features as hf
-    import sw_mold as M
+    import sw_mold as m_
     import sw_surface_features as sf
     from sw_connect import get_com_member
     from sw_part import (
@@ -52,7 +52,7 @@ def main() -> int:
         start_sketch,
     )
 
-    ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+    ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%m_:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
     doc = None
     try:
@@ -123,7 +123,7 @@ def main() -> int:
         try:
             ev["steps"]["pre_parting_line"] = {
                 "ok": True,
-                "feature": str(M.insert_parting_line(doc))[:40],
+                "feature": str(m_.insert_parting_line(doc))[:40],
             }
         except Exception as exc:  # noqa: BLE001
             ev["steps"]["pre_parting_line"] = {
@@ -133,7 +133,7 @@ def main() -> int:
         try:
             ev["steps"]["pre_parting_surface"] = {
                 "ok": True,
-                "feature": str(M.insert_parting_surface(doc))[:40],
+                "feature": str(m_.insert_parting_surface(doc))[:40],
             }
         except Exception as exc:  # noqa: BLE001
             ev["steps"]["pre_parting_surface"] = {
@@ -144,7 +144,7 @@ def main() -> int:
         #: ② 关断面（★ 零参）
         before = sf.feature_names(doc)
         try:
-            r = M.insert_shut_off_surface(doc)
+            r = m_.insert_shut_off_surface(doc)
             after = sf.feature_names(doc)
             new = [n for n in after if n not in before]
             ev["steps"]["shut_off_surface"] = {

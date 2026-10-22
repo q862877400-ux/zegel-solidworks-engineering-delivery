@@ -56,29 +56,29 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _mk_profile_path(doc):
     """★ 轮廓（上视面圆）+ 路径（前视面直线，★ 起点在 Z=0 上 —— ★ 方向 1 的硬约束）。"""
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCircleByRadius",
         0.0,
         0.0,
         0.0,
         5.0 / 1000.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     try:
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Front Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateLine",
         0.0,
         0.0,
@@ -87,17 +87,17 @@ def _mk_profile_path(doc):
         0.0,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
 
 
 def _pick(doc, marks=(1, 4)):
     """★ 轮廓 mark=1 · 路径 mark=4（★ 事实 384：`SelectByID2` 带 mark 是正解）。"""
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
-    ext = C.get_com_member(doc, "Extension")
+    ext = c_.get_com_member(doc, "Extension")
     picked = {}
     try:
         doc.ClearSelection2(True)
@@ -106,9 +106,9 @@ def _pick(doc, marks=(1, 4)):
     for i, (label, mark) in enumerate((("profile", marks[0]), ("path", marks[1]))):
         if i >= len(names):
             continue
-        for cand in P._get_sketch_name_candidates(names[i]):
+        for cand in p_._get_sketch_name_candidates(names[i]):
             try:
-                if P._select_by_id(ext, cand, "SKETCH", append=bool(picked), mark=mark):
+                if p_._select_by_id(ext, cand, "SKETCH", append=bool(picked), mark=mark):
                     picked[label] = (cand, mark)
                     break
             except Exception:  # noqa: BLE001
@@ -117,8 +117,8 @@ def _pick(doc, marks=(1, 4)):
     for m in marks:
         try:
             per[str(m)] = int(
-                C.get_com_member(
-                    C.get_com_member(doc, "SelectionManager"),
+                c_.get_com_member(
+                    c_.get_com_member(doc, "SelectionManager"),
                     "GetSelectedObjectCount2",
                     m,
                 )
@@ -133,19 +133,19 @@ def _one(sw, tag, call):
     row = {"tag": tag, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         _mk_profile_path(doc)
         picked, per = _pick(doc)
         row["picked"] = picked
         row["sel_by_mark"] = per
-        before = list(P.feature_names(doc) or [])
+        before = list(p_.feature_names(doc) or [])
         try:
             ret = call(doc)
             row["returned"] = type(ret).__name__ if ret is not None else "None"
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
             row["code"] = getattr(exc, "args", (None,))[0]
-        after = list(P.feature_names(doc) or [])
+        after = list(p_.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new"])
     except Exception as exc:  # noqa: BLE001
@@ -153,16 +153,16 @@ def _one(sw, tag, call):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u65e7\u5f0f\u626b\u63cf\u66f2\u9762\uff1a`IModelDoc2.InsertSweepRefSurface2`",
@@ -176,7 +176,7 @@ def main() -> int:
         _one(
             sw,
             "InsertSweepRefSurface2 \u9ed8\u8ba4\u53c2",
-            lambda d: C.get_com_member(
+            lambda d: c_.get_com_member(
                 d, "InsertSweepRefSurface2", True, 0, True, False, 0, 0
             ),
         )
@@ -187,7 +187,7 @@ def main() -> int:
         _one(
             sw,
             "InsertSweepRefSurface\uff084 \u53c2\uff09",
-            lambda d: C.get_com_member(
+            lambda d: c_.get_com_member(
                 d, "InsertSweepRefSurface", True, 0, True, False
             ),
         )
@@ -195,9 +195,9 @@ def main() -> int:
 
     #: \u2605 \u2462 \u65b0\u67b6\u6784\u5bf9\u7167\uff0862\uff09
     def _newarch(d):
-        fm = C.get_com_member(d, "FeatureManager")
-        data = C.get_com_member(fm, "CreateDefinition", 62)
-        return C.get_com_member(fm, "CreateFeature", data) if data is not None else None
+        fm = c_.get_com_member(d, "FeatureManager")
+        data = c_.get_com_member(fm, "CreateDefinition", 62)
+        return c_.get_com_member(fm, "CreateFeature", data) if data is not None else None
 
     ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a\u65b0\u67b6\u6784 62", _newarch))
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))

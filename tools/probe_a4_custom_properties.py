@@ -76,7 +76,7 @@ def main() -> int:
     )
     independent_ok = all(independent[k]["raw"] == v for k, v in WANT.items())
 
-    R = {
+    r_ = {
         "★_判据": "★ 两层独立：★ ① 服务的 `verified` 全 True（★ 它自己的回读）· "
         "★ ② **本探针独立再读一次**、★ 逐条等于所写（★ 不借服务的回读）",
         "GetUnits": units,
@@ -90,7 +90,7 @@ def main() -> int:
         "★ **不是能力层的错** ✓",
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("★ service_ok:", service_ok, "· independent_ok:", independent_ok)
     for k, v in per_service.items():

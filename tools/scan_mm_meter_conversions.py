@@ -95,7 +95,7 @@ def main() -> int:
     byfile: dict = {}
     for r in rows:
         byfile.setdefault(r["file"], []).append(r)
-    R = {
+    r_ = {
         "★_判据": "★ 找 `*1000` / `/1000` / `*0.001`；★ 标记「同行没写单位依据」的为**待判**",
         "★_合计": len(rows),
         "★★_同行无单位声明": len(undeclared),
@@ -104,14 +104,14 @@ def main() -> int:
         },
         "待判明细": undeclared[:60],
     }
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(json.dumps(r_, ensure_ascii=False, indent=1), encoding="utf-8")
     print(
         "★ 命中 %d 处换算 · ★★ 其中**同行没写单位依据**的 %d 处"
         % (len(rows), len(undeclared))
     )
     print()
     print("★ 按文件（前 12）:")
-    for k, v in list(R["按文件"].items())[:12]:
+    for k, v in list(r_["按文件"].items())[:12]:
         print("   %-46s %d" % (k, v))
     print()
     print("★★ 待判前 22 条（★ 逐个问「凭什么假定是米」）:")

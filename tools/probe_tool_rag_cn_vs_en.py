@@ -35,7 +35,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-import metric_scope as ms  # ★ 口径注册表（★ 事实 517：口径必须落成代码）
+import metric_scope as ms  # ★ 口径注册表（★ 事实 517：口径必须落成代码）   # noqa: E402
 import register_capabilities as rc  # noqa: E402
 
 CJK = re.compile(r"[\u4e00-\u9fff]")
@@ -69,12 +69,12 @@ def build():
 
 
 def bm25(docs, k1=1.5, b=0.75):
-    N = len(docs)
-    avg = sum(len(d) for d in docs) / max(1, N)
+    n_ = len(docs)
+    avg = sum(len(d) for d in docs) / max(1, n_)
     df = Counter()
     for d in docs:
         df.update(set(d))
-    idf = {t: math.log(1 + (N - n + 0.5) / (n + 0.5)) for t, n in df.items()}
+    idf = {t: math.log(1 + (n_ - n + 0.5) / (n + 0.5)) for t, n in df.items()}
     tfs = [Counter(d) for d in docs]
 
     def score(q: str):

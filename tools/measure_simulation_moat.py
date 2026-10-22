@@ -54,7 +54,7 @@ for owner in ("andrewbartels1", "Eduardof0nt", "Slacker-LLC", "SolidworksMCP-TS"
 
 print()
 print("  ══ ② 四家的工具名里有没有仿真（名字级）══")
-import json
+import json  # noqa: E402
 
 u = json.loads((REPO / "tools" / "union-sources.json").read_text(encoding="utf-8"))
 for s in u["sources"]:

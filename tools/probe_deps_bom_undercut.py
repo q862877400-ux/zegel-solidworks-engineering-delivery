@@ -102,7 +102,7 @@ def main() -> int:
         #: ★★ ② `ExcludeFromBOM`（★ 需要**组件**）
         doc = c.new_document(sw, "assembly")
         add_component(doc, str(PART), 0.0, 0.0, 0.0, "", sw)
-        comps = get_components(doc)
+        get_components(doc)
         comp = None
         try:
             m = _g(doc, "GetComponents", False)

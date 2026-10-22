@@ -87,7 +87,7 @@ def _select_one_edge(doc) -> int:
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
+    r_: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
     sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
@@ -106,26 +106,26 @@ def main() -> int:
         p.end_sketch(doc)
         nm = [n for n in (p.feature_names(doc) or []) if n.startswith("草图")]
         p.extrude_boss(doc, (nm[-1] if nm else "草图1"), 20.0)
-        R["★_基线特征数"] = len(_feat_names(doc))
+        r_["★_基线特征数"] = len(_feat_names(doc))
         fm = _g(doc, "FeatureManager")
 
         #: ★★ 旧入口：★ 与我们生产代码**逐字相同的 7 参**
         _g(doc, "ClearSelection2", True)
-        R["选中边数"] = _select_one_edge(doc)
+        r_["选中边数"] = _select_one_edge(doc)
         n0 = len(_feat_names(doc))
-        R["旧_FeatureFillet(195, r, 0, 0, None, None, None)"] = _try(
+        r_["旧_FeatureFillet(195, r, 0, 0, None, None, None)"] = _try(
             _g, fm, "FeatureFillet", 195, 0.005, 0, 0, None, None, None
         )
         n1 = len(_feat_names(doc))
-        R["★_旧后特征数"] = n1
-        R["★_旧建成"] = "★ 是（+%d）" % (n1 - n0) if n1 > n0 else "★★ 否（没变）"
+        r_["★_旧后特征数"] = n1
+        r_["★_旧建成"] = "★ 是（+%d）" % (n1 - n0) if n1 > n0 else "★★ 否（没变）"
 
         #: ★★ 新入口：★ 15 参（★ 组 A）。★ 后 8 个官方没给默认 ⇒ **本项目工程选择**（★
         #: 照旧值填）
         _g(doc, "ClearSelection2", True)
-        R["选中边数2"] = _select_one_edge(doc)
+        r_["选中边数2"] = _select_one_edge(doc)
         n2 = len(_feat_names(doc))
-        R["新_FeatureFillet3(15 参)"] = _try(
+        r_["新_FeatureFillet3(15 参)"] = _try(
             _g,
             fm,
             "FeatureFillet3",
@@ -146,24 +146,24 @@ def main() -> int:
             None,
         )  # 8 个 Object（★ 新参 ⇒ None）
         n3 = len(_feat_names(doc))
-        R["★_新后特征数"] = n3
-        R["★_新建成"] = "★ 是（+%d）" % (n3 - n2) if n3 > n2 else "★★ 否（没变）"
+        r_["★_新后特征数"] = n3
+        r_["★_新建成"] = "★ 是（+%d）" % (n3 - n2) if n3 > n2 else "★★ 否（没变）"
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+        r_["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
         except Exception:  # noqa: BLE001
             pass
-    R["★★_结论"] = (
+    r_["★★_结论"] = (
         "★ 旧的能建成 ⇒ 按上轮判据**没有换的必要**"
-        if str(R.get("★_旧建成", "")).startswith("★ 是")
+        if str(r_.get("★_旧建成", "")).startswith("★ 是")
         else "★★ 旧的建不成 ⇒ 值得试新入口"
     )
-    R["seconds"] = round(time.time() - started, 2)
+    r_["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

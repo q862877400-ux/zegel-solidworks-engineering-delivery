@@ -61,12 +61,12 @@ def surface():
 
 
 def bm25(docs, k1=1.5, b=0.75):
-    N = len(docs)
-    avg = sum(len(d) for d in docs) / max(1, N)
+    n_ = len(docs)
+    avg = sum(len(d) for d in docs) / max(1, n_)
     df = Counter()
     for d in docs:
         df.update(set(d))
-    idf = {t: math.log(1 + (N - n + 0.5) / (n + 0.5)) for t, n in df.items()}
+    idf = {t: math.log(1 + (n_ - n + 0.5) / (n + 0.5)) for t, n in df.items()}
     tfs = [Counter(d) for d in docs]
 
     def score(q: str):
@@ -110,7 +110,6 @@ def main() -> int:
         return 0
     names, docs = surface()
     score = bm25(docs)
-    ks = (1, 3, 5, 10)
     #: ★ 逐条算三族排名
     per = []
     for tool, row in queries.items():

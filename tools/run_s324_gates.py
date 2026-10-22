@@ -24,7 +24,7 @@ sys.path[:0] = [
     str(ROOT / "tools"),
 ]
 
-from scripts.engineering import gate_inventory as G  # noqa: E402
+from scripts.engineering import gate_inventory as g_  # noqa: E402
 
 OUT = ROOT / "output" / "s324"
 
@@ -32,11 +32,11 @@ OUT = ROOT / "output" / "s324"
 def run_p() -> dict:
     """★ **P1~P9 逐条**。"""
     rows = []
-    entries = G.load_classification().get("classification") or []
-    inv = G.build_inventory()
+    entries = g_.load_classification().get("classification") or []
+    inv = g_.build_inventory()
 
     #: P1 四类枚举
-    bad = [e.get("gate") for e in entries if e.get("kind") not in G.KINDS]
+    bad = [e.get("gate") for e in entries if e.get("kind") not in g_.KINDS]
     rows.append(
         {
             "p": "P1",
@@ -49,8 +49,8 @@ def run_p() -> dict:
     #: P2 类别+理由+环境+责任人
     miss = []
     for e in entries:
-        ent = G.GateEntry(
-            **{k: v for k, v in e.items() if k in G.GateEntry.__dataclass_fields__}
+        ent = g_.GateEntry(
+            **{k: v for k, v in e.items() if k in g_.GateEntry.__dataclass_fields__}
         )
         if ent.missing():
             miss.append((ent.gate, ent.missing()))
@@ -64,7 +64,7 @@ def run_p() -> dict:
     )
 
     #: P3 必需门禁接进 release
-    static = [e for e in entries if e.get("kind") == G.RELEASE_STATIC]
+    static = [e for e in entries if e.get("kind") == g_.RELEASE_STATIC]
     notwired = [e["gate"] for e in static if e.get("runs_in") != "release_check"]
     rows.append(
         {
@@ -86,7 +86,7 @@ def run_p() -> dict:
     )
 
     #: P5 诊断不是门禁
-    diag = [e for e in entries if e.get("kind") == G.DIAGNOSTIC]
+    diag = [e for e in entries if e.get("kind") == g_.DIAGNOSTIC]
     alive = all(
         (ROOT / "scripts" / e["gate"]).is_file() or (ROOT / e["gate"]).is_file()
         for e in diag
@@ -101,7 +101,7 @@ def run_p() -> dict:
     )
 
     #: P6 retired 带 replaced_by
-    ret = [e for e in entries if e.get("kind") == G.RETIRED]
+    ret = [e for e in entries if e.get("kind") == g_.RETIRED]
     ok6 = all(e.get("replaced_by") for e in ret)
     rows.append(
         {
@@ -159,22 +159,22 @@ def run_w() -> dict:
     for fld in ("owner", "environment"):
         kw = {
             "gate": "check_x.py",
-            "kind": G.RELEASE_STATIC,
+            "kind": g_.RELEASE_STATIC,
             "reason": "r",
             "environment": "e",
             "owner": "o",
         }
         kw[fld] = ""
         try:
-            G.GateEntry(**kw).validate()
+            g_.GateEntry(**kw).validate()
             ok, got = False, "★ 没拒"
-        except G.GateInventoryError as e:
+        except g_.GateInventoryError as e:
             ok, got = e.code == "missing-field", e.code
         rows.append({"w": "W1", "what": "删掉 %s ⇒ 拒" % fld, "ok": ok, "got": got})
 
     #: W2 第五种 kind
     try:
-        G.GateEntry(
+        g_.GateEntry(
             gate="check_x.py",
             kind="release_software",
             reason="r",
@@ -184,7 +184,7 @@ def run_w() -> dict:
         rows.append(
             {"w": "W2", "what": "第五种 kind ⇒ 拒", "ok": False, "got": "★ 没拒"}
         )
-    except G.GateInventoryError as e:
+    except g_.GateInventoryError as e:
         rows.append(
             {
                 "w": "W2",
@@ -195,7 +195,7 @@ def run_w() -> dict:
         )
 
     #: W3 真机标成静态
-    e3 = G.migrate_entry(
+    e3 = g_.migrate_entry(
         {
             "gate": "run_stage7_final_dod.py",
             "kind": "hard",
@@ -207,13 +207,13 @@ def run_w() -> dict:
         {
             "w": "W3",
             "what": "真机标静态 ⇒ 检出",
-            "ok": e3.kind == G.RELEASE_HARDWARE and e3.not_run,
+            "ok": e3.kind == g_.RELEASE_HARDWARE and e3.not_run,
             "got": "%s · not_run=%s" % (e3.kind, e3.not_run),
         }
     )
 
     #: W4 只扫 scripts
-    inv = G.build_inventory()
+    inv = g_.build_inventory()
     rows.append(
         {
             "w": "W4",
@@ -226,8 +226,8 @@ def run_w() -> dict:
     #: W5 NOT_RUN 说成 pass
     hw = [
         e["gate"]
-        for e in G.load_classification()["classification"]
-        if e.get("kind") == G.RELEASE_HARDWARE
+        for e in g_.load_classification()["classification"]
+        if e.get("kind") == g_.RELEASE_HARDWARE
     ]
     ok5 = all(g not in inv["actually_run_in_release"] for g in hw)
     rows.append(
@@ -241,13 +241,13 @@ def run_w() -> dict:
 
     #: W6 retired 没 replaced_by
     try:
-        G.GateEntry(
-            gate="check_old.py", kind=G.RETIRED, reason="r", environment="e", owner="o"
+        g_.GateEntry(
+            gate="check_old.py", kind=g_.RETIRED, reason="r", environment="e", owner="o"
         ).validate()
         rows.append(
             {"w": "W6", "what": "retired 无替代 ⇒ 检出", "ok": False, "got": "★ 没拒"}
         )
-    except G.GateInventoryError as e:
+    except g_.GateInventoryError as e:
         rows.append(
             {
                 "w": "W6",
@@ -264,7 +264,7 @@ def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     p = run_p()
     w = run_w()
-    inv = G.build_inventory()
+    inv = g_.build_inventory()
 
     print("★ P1~P9：")
     for r in p["rows"]:

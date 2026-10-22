@@ -98,7 +98,6 @@ def main() -> int:
         #:   · ★★★ 而直接选特征可用 `IFeature::Select2` ✓
         #:   ⇒ ★★★★ **⇒ 我第一版**漏了这一步**（★ 只读了签名、★ 没读 Remarks）⇒
         #:     ★ 而**基线也立不起来**就是它** ⇒ ★ 补上 `mark=4` 选那个凸台特征 ✓
-        picked = None
         try:
             f = get_com_member(model, "FirstFeature")
             target = None
@@ -109,9 +108,9 @@ def main() -> int:
                 f = get_com_member(f, "GetNextFeature")
             if target is not None:
                 #: ★ `IFeature::Select2(Append, Mark)` —— ★ 官方 Remarks 指的正是它 ✓
-                picked = bool(get_com_member(target, "Select2", False, 4))
+                bool(get_com_member(target, "Select2", False, 4))
         except Exception as exc:  # noqa: BLE001
-            picked = "err: %s" % str(exc)[:70]
+            "err: %s" % str(exc)[:70]
         got = err = None
         try:
             if form == "linear3_10":
@@ -215,13 +214,13 @@ def main() -> int:
     case("★ 圆周 · 旧的 7 参 `4`（基线）", form="circular4_7")
     case("★ 圆周 · 新的 14 参 `5`", form="circular5_14")
 
-    R = {
+    r_ = {
         "★_判据": "★ 建成 ⇒ **特征树多出新特征**（★ 本仓原有判据：★ 没抛错而树没变 ⇒ 没建成）",
         "★_反射裁决": "★ `FeatureLinearPattern` 最高 22 参（5 代）· `FeatureCircularPattern` 最高 14 参（5 代）",
         "rows": rows,
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     for r in rows:
         print(

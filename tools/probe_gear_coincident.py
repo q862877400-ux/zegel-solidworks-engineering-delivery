@@ -36,9 +36,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import gear_geometry as G  # noqa: E402
+from scripts import gear_geometry as g_  # noqa: E402
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from tools.probe_gear_tooth_pattern2 import tooth_curves  # noqa: E402
 
 
@@ -60,14 +60,14 @@ def _pt_of(seg, which):
 
 
 def _main() -> int:
-    spec = G.GearSpec(
+    spec = g_.GearSpec(
         module_mm=1.0,
         teeth=20,
         face_width_mm=10.0,
         pressure_angle_deg=20.0,
         bore_diameter_mm=8.0,
     )
-    geo = G.calculate_gear_geometry(spec)
+    geo = g_.calculate_gear_geometry(spec)
     curves, meta = tooth_curves(spec, geo)
     rep = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
@@ -79,7 +79,7 @@ def _main() -> int:
     doc = None
     try:
         doc = c.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         sm = c.get_com_member(doc, "SketchManager")
         ok = 0
         for name, x, y, t0, t1 in curves:
@@ -158,7 +158,7 @@ def _main() -> int:
         #: ★★ 用**选中端点 + AddRelation** 逐对加（★ 官方：★ 先选实体再 AddRelation）
         for jt in joints:
             try:
-                ext = c.get_com_member(doc, "Extension")
+                c.get_com_member(doc, "Extension")
                 doc.ClearSelection2(True)
                 #: ★ `ISketchPoint::Select4(Append, Callout)`（★ 事实 32：★ 点也没有名字
                 #: ）
@@ -172,7 +172,7 @@ def _main() -> int:
                             segs[s_i], "GetStartPoint2" if e_i == 0 else "GetEndPoint2"
                         )
                         #: ★ 选**草图点对象**（★ 不是曲线）
-                        obj = c.get_com_member(pt, "GetSketchPoint") if False else None
+                        c.get_com_member(pt, "GetSketchPoint") if False else None
                         ok_a = bool(c.get_com_member(pt, "Select4", not ok_a, None))
                     except Exception:  # noqa: BLE001
                         pass
@@ -204,8 +204,8 @@ def _main() -> int:
             )
         except Exception:  # noqa: BLE001
             pass
-        P.end_sketch(doc)
-        f = P.extrude_boss(doc, "草图1", 0.010)
+        p_.end_sketch(doc)
+        f = p_.extrude_boss(doc, "草图1", 0.010)
         rep["extrude_ok"] = f is not None
         if f is not None:
             try:

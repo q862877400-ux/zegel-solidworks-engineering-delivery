@@ -80,7 +80,7 @@ def main() -> int:
         "★ GetEditStatus 是 int": isinstance(r.get("GetEditStatus"), int),
         "★ 无 error": not r.get("error"),
     }
-    R = {
+    r_ = {
         "★_判据": "★ 逐个对官方 `## Returns`（★ 见 `output/_read_feature_members.py` 与 `_recheck_feature_family.py`）",
         "★_说明": "★ **本函数不读 `GetBox`** —— ★ 官方 `## Remarks` 逐字「values are approximate…"
         "should not be used for comparison or calculation purposes」✓",
@@ -89,9 +89,9 @@ def main() -> int:
         "★_全过": all(checks.values()),
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
-    print("★ 读取:", json.dumps(R["读取"], ensure_ascii=False)[:440])
+    print("★ 读取:", json.dumps(r_["读取"], ensure_ascii=False)[:440])
     for k, v in checks.items():
         print("   %-40s %s" % (k, "✓" if v else "**✗**"))
     print("★ 全过 =", all(checks.values()))

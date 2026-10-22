@@ -38,8 +38,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
-import sw_jlcfa_locate as l
-import sw_jlcfa_steps as S
+import sw_jlcfa_locate as l  # noqa: E402
+import sw_jlcfa_steps as s_  # noqa: E402
 
 warnings.filterwarnings("ignore")
 
@@ -93,7 +93,7 @@ def search_button(win):
     return btn, btn.rectangle()
 
 
-def search(hwnd: int, win, code: str, log=S.log):
+def search(hwnd: int, win, code: str, log=s_.log):
     """在搜索框填入 ``code`` 并点「搜索」。**纯 UIA，不截图**。返回 True/False。"""
     eb, er = search_box(win)
     if eb is None:
@@ -115,10 +115,10 @@ def search(hwnd: int, win, code: str, log=S.log):
             continue
     if not ok:
         # 退一步：点进去用键盘（需要焦点）
-        if not S.ensure_front(hwnd):
+        if not s_.ensure_front(hwnd):
             log("      ValuePattern 与键盘都不可用")
             return False
-        S.click((er.left + er.right) // 2, (er.top + er.bottom) // 2, 0.5)
+        s_.click((er.left + er.right) // 2, (er.top + er.bottom) // 2, 0.5)
         # ⚠ 2026-10-01 轮 62：原来逐字符裸 `keybd_event`（按下 → sleep → 抬起，无 `final
         # ly`）
         #   ⇒ 中途异常会把**那个字符键卡在按下态**。⇒ 改走 `sw_gui_input._press`。
@@ -131,8 +131,8 @@ def search(hwnd: int, win, code: str, log=S.log):
             _gi._press(vk, pause=0.03)
     time.sleep(0.4)
     log("      搜索框 = %r" % code)
-    S.ensure_front(hwnd)
-    S.click((sr.left + sr.right) // 2, (sr.top + sr.bottom) // 2, 1.0)
+    s_.ensure_front(hwnd)
+    s_.click((sr.left + sr.right) // 2, (sr.top + sr.bottom) // 2, 1.0)
     return True
 
 
@@ -201,7 +201,7 @@ def result_cards(win) -> list[tuple[str, object]]:
     return out
 
 
-def first_result_point(win, log=S.log):
+def first_result_point(win, log=s_.log):
     """首个结果卡的点击点（**卡片矩形中心**）。结构判据，无坐标阈值。
 
     ⚑ 认**两种**标签：搜索结果页写 ``型号：``，分类结果页写 ``代码：``。
@@ -221,7 +221,7 @@ def first_result_point(win, log=S.log):
 
 if __name__ == "__main__":
     h, w = l.connect()
-    S.cache_drop()
+    s_.cache_drop()
     eb, er = search_box(w)
     print("搜索框:", (er.left, er.top, er.right, er.bottom) if er else None)
     sb, sr = search_button(w)

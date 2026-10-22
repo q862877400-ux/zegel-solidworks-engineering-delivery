@@ -45,7 +45,7 @@ STUDY = "DSH-144"
 
 def main() -> int:
     ev: dict = {
-        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%s_"),
         "capability": "topology_readback_and_parameters",
         "★": "★ 只读数 / 设参数，**不跑求解** ⇒ 无模态框风险",
         "steps": {},
@@ -58,7 +58,7 @@ def main() -> int:
         import tool_specs_batch30 as b30
 
         from scripts import sw_part
-        from scripts import sw_topology as T
+        from scripts import sw_topology as t_
 
         #: ① 静态：6 个工具声明解析得到
         bindings = {}
@@ -91,9 +91,9 @@ def main() -> int:
         sw_part.extrude_boss(doc, sk, 20.0)
         sim_material = None
         try:
-            from scripts import sw_simulation as S
+            from scripts import sw_simulation as s_
 
-            S.set_material(doc, "AISI 1020")
+            s_.set_material(doc, "AISI 1020")
             sim_material = str(
                 sw_connect.safe_get_com_member(doc, "MaterialIdName") or ""
             )
@@ -101,7 +101,7 @@ def main() -> int:
             sim_material = "赋材料失败: %s" % str(exc)[:80]
         ev["steps"]["material"] = sim_material
 
-        created = T.create_topology_study(sw, STUDY)
+        created = t_.create_topology_study(sw, STUDY)
         ev["steps"]["create_study"] = {
             "ok": created is not None,
             "type": type(created).__name__ if created else None,
@@ -117,7 +117,7 @@ def main() -> int:
             raise RuntimeError("按名字取不到刚建的拓扑研究（%r）" % STUDY)
 
         #: ③ ★ 四个读数（★ 全是回读报告，不回 COM 对象）
-        nums = T.collect_topology_numbers(study)
+        nums = t_.collect_topology_numbers(study)
         ev["steps"]["collect_numbers"] = {
             #: ⚠ 判据**不是** `material_mass_plot` 非空 —— ★ 那张图**只有跑完求解才有**
             #: ，
@@ -135,33 +135,33 @@ def main() -> int:
             "max_available_steps": nums.get("max_available_steps"),
             "★": "★ material_mass_plot 需**跑过求解**才非空 —— 本批不跑求解，故不拿它当判据",
         }
-        cons = T.topology_constraints_report(study)
+        cons = t_.topology_constraints_report(study)
         ev["steps"]["constraints"] = {
             "ok": isinstance(cons, dict) and "taken_count" in cons,
             "taken_count": cons.get("taken_count"),
             "total": cons.get("total"),
             "kinds": cons.get("kinds"),
         }
-        mrep = T.topology_manager_report(study)
+        mrep = t_.topology_manager_report(study)
         ev["steps"]["manager_report"] = {
             "ok": bool(mrep.get("ok")),
             "object_type": mrep.get("object_type"),
         }
-        orep = T.topology_options_report(study)
+        orep = t_.topology_options_report(study)
         ev["steps"]["options_report"] = {
             "ok": bool(orep.get("ok")),
             "object_type": orep.get("object_type"),
         }
 
         #: ④ ★ 两个"设置"（★ 判据 = 无异常 且 取到的 kind 数不减少）
-        g = T.set_topology_goal_report(study, goal_type=0, mass_reduce_percent=50.0)
+        g = t_.set_topology_goal_report(study, goal_type=0, mass_reduce_percent=50.0)
         ev["steps"]["set_goal"] = {
             "ok": bool(g.get("ok")),
             "error": g.get("error"),
             "before_taken": (g.get("before") or {}).get("taken_count"),
             "after_taken": (g.get("after") or {}).get("taken_count"),
         }
-        io = T.set_topology_iteration_options_report(study)
+        io = t_.set_topology_iteration_options_report(study)
         ev["steps"]["set_iteration_options"] = {
             "ok": bool(io.get("ok")),
             "error": io.get("error"),

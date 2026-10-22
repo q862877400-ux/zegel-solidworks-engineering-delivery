@@ -39,9 +39,9 @@ sys.stdout.reconfigure(encoding="utf-8")
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
-import sw_jlcfa_cards as C
-import sw_jlcfa_locate as l
-import sw_jlcfa_steps as S
+import sw_jlcfa_cards as c_  # noqa: E402
+import sw_jlcfa_locate as l  # noqa: E402
+import sw_jlcfa_steps as s_  # noqa: E402
 
 warnings.filterwarnings("ignore")
 
@@ -113,8 +113,8 @@ def named_cards_in_order(win) -> list[str]:
 
     ⚑ 不含「代码：」前缀的结果卡 —— 那是另一类（结果页）。
     """
-    allc = S.controls_cached(win)
-    cr = S._container_from(allc)
+    allc = s_.controls_cached(win)
+    cr = s_._container_from(allc)
     if cr is None:
         return []
     rows = []
@@ -122,9 +122,9 @@ def named_cards_in_order(win) -> list[str]:
         try:
             t = (c.window_text() or "").strip()
             r = c.rectangle()
-            if not t or t in C.SKIP_NAMES:
+            if not t or t in c_.SKIP_NAMES:
                 continue
-            if t.startswith(C.CODE_PREFIX):
+            if t.startswith(c_.CODE_PREFIX):
                 continue
             # 卡片本体是近似正方形；文字标签是细长条也在卡内
             if not (60 <= r.width() <= 260 and 60 <= r.height() <= 260):
@@ -140,7 +140,7 @@ def named_cards_in_order(win) -> list[str]:
     return names
 
 
-def locate_card(hwnd: int, win, name: str, log=S.log):
+def locate_card(hwnd: int, win, name: str, log=s_.log):
     """★ 按名字定位一张卡片的**屏幕坐标中心**。找不到返回 None。"""
     pane, cr = _capture(hwnd, win)
     if pane is None:
@@ -190,7 +190,7 @@ def _capture(hwnd: int, win):
 
 if __name__ == "__main__":
     h, w = l.connect()
-    S.cache_drop()
+    s_.cache_drop()
     pane, cr = _capture(h, w)
     print("容器 %s  截图 %s" % (cr, pane.size))
     cells = card_rows(pane)

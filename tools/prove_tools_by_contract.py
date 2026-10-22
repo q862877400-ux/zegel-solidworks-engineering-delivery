@@ -42,11 +42,11 @@ sys.path.insert(0, str(R / "mcp-server"))
 
 import importlib  # noqa: E402
 
-import register_capabilities as RC  # noqa: E402
+import register_capabilities as rc_  # noqa: E402
 
 import scripts.sw_sketch_primitives as sp  # noqa: E402
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 #: ★ 按**声明的类型**取样（★ 探针自己的表，不是产品逻辑）
 _VALUE_BY_KIND = {float: 1.0, int: 1, bool: True, str: ""}
@@ -82,7 +82,7 @@ def main(argv) -> int:
     #:   我第一版写死了 `s.module == "sw_sketch_modify_ops"`，
     #:   ★ 于是拿别的前缀跑就得 `0 / 0`（★ 看着像失败，实则是**过滤器没命中**）。
     #:   ★ 现改成：**按前缀取到哪些声明**，再只保留“实现层真能 import”的那些。
-    _all = [s for s in RC.all_specs() if s.name.startswith(prefix)]
+    _all = [s for s in rc_.all_specs() if s.name.startswith(prefix)]
     todo = []
     for _s in _all:
         try:
@@ -104,7 +104,7 @@ def main(argv) -> int:
             mod = importlib.import_module("scripts." + spec.module)
             fn = getattr(mod, spec.function)
             doc = c.new_document(sw, "part")
-            P.start_sketch(doc, plane_name="Front Plane")
+            p_.start_sketch(doc, plane_name="Front Plane")
             sp.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
 
             #: ★★ **按声明装配实参** —— 这正是 MCP 层会做的事
@@ -123,7 +123,7 @@ def main(argv) -> int:
                 (out or {}).get("verified_by") if isinstance(out, dict) else None
             )
             row["verdict"] = "能" if row["ok"] else "不能"
-            P.end_sketch(doc)
+            p_.end_sketch(doc)
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
         finally:

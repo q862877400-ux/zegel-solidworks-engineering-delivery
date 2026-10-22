@@ -42,7 +42,7 @@ sys.path.insert(0, str(R / "scripts"))
 import pythoncom  # noqa: E402
 import win32com.client  # noqa: E402
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
 
 SW_FM_FILL_PATTERN = 105  #: ★ 反射 dump：`swFmFillPattern = 105`
 SW_FM_TABLE_PATTERN = 106  #: ★ 反射 dump：`swFmTablePattern = 106`
@@ -68,7 +68,7 @@ def _forms():
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "`AccessSelections` \u7684**\u7b2c 2 \u53c2**\u5230\u5e95\u8981\u4ec0\u4e48"
@@ -82,12 +82,12 @@ def main() -> int:
     ):
         doc = None
         try:
-            doc = C.new_document(sw, "part")
-            fm = C.get_com_member(doc, "FeatureManager")
+            doc = c_.new_document(sw, "part")
+            fm = c_.get_com_member(doc, "FeatureManager")
             data = None
             row = {"const": cname, "value": const, "forms": []}
             try:
-                data = C.get_com_member(fm, "CreateDefinition", int(const))
+                data = c_.get_com_member(fm, "CreateDefinition", int(const))
                 row["data"] = type(data).__name__ if data is not None else "None"
             except Exception as exc:  # noqa: BLE001
                 row["create_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
@@ -95,7 +95,7 @@ def main() -> int:
                 for tag, arg2 in _forms():
                     r = {"form": tag}
                     try:
-                        ok = C.get_com_member(data, "AccessSelections", doc, arg2)
+                        ok = c_.get_com_member(data, "AccessSelections", doc, arg2)
                         r["returned"] = str(ok)
                         r["ok"] = bool(ok)
                     except Exception as exc:  # noqa: BLE001
@@ -105,7 +105,7 @@ def main() -> int:
                     #: \u2605 \u4e0d\u8ba9\u4e8b\u52a1\u60ac\u7740\uff09
                     if r.get("ok"):
                         try:
-                            C.get_com_member(data, "ReleaseSelectionAccess")
+                            c_.get_com_member(data, "ReleaseSelectionAccess")
                             r["released"] = True
                         except Exception as exc:  # noqa: BLE001
                             r["released"] = "%s" % str(exc)[:60]
@@ -118,9 +118,9 @@ def main() -> int:
         finally:
             if doc is not None:
                 try:
-                    t = str(C.get_com_member(doc, "GetTitle") or "")
+                    t = str(c_.get_com_member(doc, "GetTitle") or "")
                     if t:
-                        C.get_com_member(sw, "CloseDoc", t)
+                        c_.get_com_member(sw, "CloseDoc", t)
                 except Exception:  # noqa: BLE001
                     pass
     #: \u2605 \u5224\u8bfe\uff1a\u770b `None` \u90a3\u4e00\u683c

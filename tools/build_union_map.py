@@ -226,26 +226,26 @@ def main() -> int:
         grid[dom]["本仓库"] = {op for op, d in ours.items() if d == dom}
 
     lines: list[str] = []
-    A = lines.append
-    A("# 并集广度地图")
-    A("")
-    A("> **本文件是生成物** —— 由 `tools/build_union_map.py` 从")
-    A("> `tools/union-sources.json` + `capabilities.yaml` 生成，不要手改。")
-    A(">")
-    A(
+    a_ = lines.append
+    a_("# 并集广度地图")
+    a_("")
+    a_("> **本文件是生成物** —— 由 `tools/build_union_map.py` 从")
+    a_("> `tools/union-sources.json` + `capabilities.yaml` 生成，不要手改。")
+    a_(">")
+    a_(
         "> 配套规范：`docs/union-conventions.md`（命名 / 单位 / 选择 / 验证等级 / 出处 / 失败要响）"
     )
-    A("")
-    A("## 一 来源与许可（读**真实 LICENSE 文件**判定，不采信 README 徽章）")
-    A("")
-    A("| 来源 | 许可 | 工具数 | 操作数 | 它自己声明跑过的环境 | 能抄吗 |")
-    A("|---|---|---|---|---|---|")
+    a_("")
+    a_("## 一 来源与许可（读**真实 LICENSE 文件**判定，不采信 README 徽章）")
+    a_("")
+    a_("| 来源 | 许可 | 工具数 | 操作数 | 它自己声明跑过的环境 | 能抄吗 |")
+    a_("|---|---|---|---|---|---|")
     for s in sources:
         lic = s["license"]
         can = "✅ 可抄改商用" if lic in COPYABLE else "👁 只读思想"
         if lic == "Apache-2.0":
             can = "✅ 可抄（**须带 NOTICE + 声明改动文件**）"
-        A(
+        a_(
             "| `%s` | %s | %d | %d | %s | %s |"
             % (
                 s["repo"],
@@ -256,47 +256,47 @@ def main() -> int:
                 can,
             )
         )
-    A(
+    a_(
         "| **本仓库（上游 + 本次）** | MIT | %d | %d | 见 capabilities.yaml | — |"
         % (len(_our_tools()), len(ours))
     )
-    A("")
-    A("> ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。")
-    A("> `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。")
-    A("> 详见每家的 `note` 字段（`tools/union-sources.json`）。")
-    A("")
-    A("## 二 域 × 来源 矩阵")
-    A("")
-    A("> ⚠ **两列口径不同，不可互相替代**（2026-10-01 加）：")
-    A("> - **本仓库（MCP）** = `mcp-server/server.py` 里静态抽出的**工具名**。")
-    A(">   「缺口」列是它相对四家并集算出来的 —— 量的是**MCP 暴露面**之差。")
-    A("> - **本仓库能力面** = `scripts/sw_*.py` 的**公开函数数**。")
-    A(">   本仓库的能力多数**没被暴露成 MCP 工具**（`AGENTS.md` 已知事实 25：")
-    A(">   `server.py` 只引用 25 个模块，我们后补的 58+ 个一个都没进）。")
-    A(">")
-    A("> **⇒ 只看「缺口」列会把已有的域记成「零」**（例：焊件列显示 `·`，")
-    A(
+    a_("")
+    a_("> ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。")
+    a_("> `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。")
+    a_("> 详见每家的 `note` 字段（`tools/union-sources.json`）。")
+    a_("")
+    a_("## 二 域 × 来源 矩阵")
+    a_("")
+    a_("> ⚠ **两列口径不同，不可互相替代**（2026-10-01 加）：")
+    a_("> - **本仓库（MCP）** = `mcp-server/server.py` 里静态抽出的**工具名**。")
+    a_(">   「缺口」列是它相对四家并集算出来的 —— 量的是**MCP 暴露面**之差。")
+    a_("> - **本仓库能力面** = `scripts/sw_*.py` 的**公开函数数**。")
+    a_(">   本仓库的能力多数**没被暴露成 MCP 工具**（`AGENTS.md` 已知事实 25：")
+    a_(">   `server.py` 只引用 25 个模块，我们后补的 58+ 个一个都没进）。")
+    a_(">")
+    a_("> **⇒ 只看「缺口」列会把已有的域记成「零」**（例：焊件列显示 `·`，")
+    a_(
         "> 而 `scripts/sw_weldment.py` 有 666 行 / 20 个函数且 `capabilities.yaml` 里是 `verified`）。"
     )
-    A("> **判断「该实现哪个域」请看能力面列；判断「该暴露哪个工具」才看 MCP 列。**")
-    A(">")
+    a_("> **判断「该实现哪个域」请看能力面列；判断「该暴露哪个工具」才看 MCP 列。**")
+    a_(">")
     # ⚠ 这个标记的**含义原先只写在下面 `cell_cap += "⚠"` 的代码注释里** ⇒
     #   读者拿到的矩阵里查不到它是什么意思。**⇒ 图例里必须自解释**（一个事实一个家）。
     #   （2026-10-01 轮 49 跑 `specs/002-merge-template` 的 converge 步时发现。）
-    A(
+    a_(
         "> - 能力面列里的 **`⚠`** = 该域**缺口(MCP) > 0 而我们已有 ≥5 个函数** ⇒ "
         "**它多半不是能力缺口，只是没暴露成 MCP 工具**。"
     )
-    A(">   ⚠ 这是**启发式标记**（阈值 5），不是判定；**要下结论仍须逐域人工核**。")
-    A("")
+    a_(">   ⚠ 这是**启发式标记**（阈值 5），不是判定；**要下结论仍须逐域人工核**。")
+    a_("")
     caps = _our_capabilities()
     header = (
         ["域"]
         + [s["repo"].split("/")[0][:14] for s in sources]
         + ["本仓库(MCP)", "本仓库能力面", "并集", "缺口(MCP)"]
     )
-    A("| " + " | ".join(header) + " |")
-    A("|" + "---|" * len(header))
+    a_("| " + " | ".join(header) + " |")
+    a_("|" + "---|" * len(header))
     total_union = 0
     total_gap = 0
     gap_rows: list[tuple[str, int]] = []
@@ -324,21 +324,21 @@ def main() -> int:
         row.append(cell_cap)
         row.append("%d" % len(u))
         row.append("**%d**" % len(gap) if gap else "✓")
-        A("| " + " | ".join(row) + " |")
-    A("")
-    A(
+        a_("| " + " | ".join(row) + " |")
+    a_("")
+    a_(
         "**合计**：并集 %d 个操作；**MCP 暴露面**缺 **%d** 个（**不是**能力缺口 —— 见上）。"
         % (total_union, total_gap)
     )
-    A("")
+    a_("")
     if gap_rows:
-        A("### 缺口按域排序（大 → 小）")
-        A("")
-        A("| 域 | 缺 |")
-        A("|---|---|")
+        a_("### 缺口按域排序（大 → 小）")
+        a_("")
+        a_("| 域 | 缺 |")
+        a_("|---|---|")
         for label, n in sorted(gap_rows, key=lambda x: -x[1]):
-            A("| %s | %d |" % (label, n))
-        A("")
+            a_("| %s | %d |" % (label, n))
+        a_("")
 
     # ⚑ **§二之后：「不做 + 原因」**（2026-10-01 轮 67 加）——
     # `AGENTS.md §一 A1` 的原文是「域覆盖矩阵里本仓库每一格**都有来源，或写明「不做 + 原
@@ -350,41 +350,41 @@ def main() -> int:
     # ⇒ 数据源 `docs/union-not-doing.json`；形状由 `check_union_conventions` 的 **R14**
     # 守
     #     （`subject` / `reason` / `evidence` 三者非空）。
-    A("### 不做 + 原因（A1 的另一半）")
-    A("")
-    A("> `AGENTS.md §一 A1`：「…每一格**都有来源，或写明「不做 + 原因」**」。")
-    A(
+    a_("### 不做 + 原因（A1 的另一半）")
+    a_("")
+    a_("> `AGENTS.md §一 A1`：「…每一格**都有来源，或写明「不做 + 原因」**」。")
+    a_(
         "> **有来源**那一半由 `capabilities.yaml` 的 `source`/`source_evidence` 承担（R12/R13 守着）；"
     )
-    A(
+    a_(
         "> **本表**承担「不做 + 原因」那一半。数据源 `docs/union-not-doing.json`，形状由 R14 守。"
     )
-    A(">")
-    A(
+    a_(">")
+    a_(
         "> ⚠ **本表是显式清单，不是默认放行** —— 没登记在这里、又没在 `capabilities.yaml` 里的，"
     )
-    A("> 就仍是**缺口**（见上表的「缺 N」），不是「不做」。")
-    A("")
+    a_("> 就仍是**缺口**（见上表的「缺 N」），不是「不做」。")
+    a_("")
     if not_doing:
-        A("| 不做 | 原因 | 依据（可核） |")
-        A("|---|---|---|")
+        a_("| 不做 | 原因 | 依据（可核） |")
+        a_("|---|---|---|")
         for item in not_doing:
             ev = "<br>".join("· %s" % e for e in item.get("evidence") or [])
-            A(
+            a_(
                 "| %s | %s | %s |"
                 % (item.get("subject", ""), item.get("reason", ""), ev)
             )
-        A("")
+        a_("")
     else:
-        A(
+        a_(
             "> ⚠ **本清单为空** —— 一个「不做」都没登记（那通常意味着**还没逐域确证**，而不是「全都做」）。"
         )
-        A("")
+        a_("")
 
-    A("## 三 每个域的**独家来源**（只有一家有 ⇒ 只能抄它，且必须自己测）")
-    A("")
-    A("| 域 | 独家操作 | 唯一来源 |")
-    A("|---|---|---|")
+    a_("## 三 每个域的**独家来源**（只有一家有 ⇒ 只能抄它，且必须自己测）")
+    a_("")
+    a_("| 域 | 独家操作 | 唯一来源 |")
+    a_("|---|---|---|")
     for dom, label in DOMAIN_LABELS.items():
         cells = grid[dom]
         u: set = set()
@@ -396,7 +396,7 @@ def main() -> int:
             if len(owners) == 1 and owners[0] != "本仓库":
                 exclusive.append((op, owners[0]))
         if exclusive:
-            A(
+            a_(
                 "| %s | %d 个：%s | %s |"
                 % (
                     label,
@@ -406,31 +406,31 @@ def main() -> int:
                     exclusive[0][1],
                 )
             )
-    A("")
-    A("## 四 本仓库独家（别人都没有）")
-    A("")
+    a_("")
+    a_("## 四 本仓库独家（别人都没有）")
+    a_("")
     ext_union: set = set()
     for s in sources:
         ext_union |= set(s["operations"])
     our_only = sorted(set(ours) - ext_union)
-    A("共 %d 个操作只有本仓库有：" % len(our_only))
-    A("")
+    a_("共 %d 个操作只有本仓库有：" % len(our_only))
+    a_("")
     for op in our_only:
-        A("- `%s`（%s）" % (op, DOMAIN_LABELS.get(ours[op], ours[op])))
-    A("")
+        a_("- `%s`（%s）" % (op, DOMAIN_LABELS.get(ours[op], ours[op])))
+    a_("")
 
     # ── 五 可执行的并入清单 ───────────────────────────────────────
     # 地图只说「缺什么」；本节说「从哪抄、抄之前先知道什么」。
     # ⚠ 关键一列是「来源验证过吗」：Eduardof0nt 工具最多但测试文件为 0，
     #   抄它的东西**必须自己实测**，不能因为来源大就默认可信。
-    A("## 五 可执行的并入清单（按域）")
-    A("")
-    A(
+    a_("## 五 可执行的并入清单（按域）")
+    a_("")
+    a_(
         "> **怎么读**：`来源` 列给出该域最有货的家；`来源验证` 列是**该来源自己声明的"
         "跑过的环境** —— 空 = **它没声明跑过**，抄进来只能先标 `stitched`，"
         "必须我们实测过才能升 `verified`（规则 4）。"
     )
-    A("")
+    a_("")
     for dom, label in DOMAIN_LABELS.items():
         cells = grid[dom]
         u: set = set()
@@ -450,17 +450,17 @@ def main() -> int:
         )
         if not ranked:
             continue
-        A("### %s（缺 %d）" % (label, len(gap)))
-        A("")
-        A("| 来源 | 该域有 | 许可 | 来源验证 |")
-        A("|---|---|---|---|")
+        a_("### %s（缺 %d）" % (label, len(gap)))
+        a_("")
+        a_("| 来源 | 该域有 | 许可 | 来源验证 |")
+        a_("|---|---|---|---|")
         for repo, n, ver, lic in ranked:
-            A("| `%s` | %d | %s | %s |" % (repo, n, lic, ver or "**未声明**"))
-        A("")
-        A("缺口操作：%s" % "、".join("`%s`" % g for g in gap[:24]))
+            a_("| `%s` | %d | %s | %s |" % (repo, n, lic, ver or "**未声明**"))
+        a_("")
+        a_("缺口操作：%s" % "、".join("`%s`" % g for g in gap[:24]))
         if len(gap) > 24:
-            A("（还有 %d 个，见 `tools/union-sources.json`）" % (len(gap) - 24))
-        A("")
+            a_("（还有 %d 个，见 `tools/union-sources.json`）" % (len(gap) - 24))
+        a_("")
 
     OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("  并集 %d 操作 / 本仓库缺 %d" % (total_union, total_gap))

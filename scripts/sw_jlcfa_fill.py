@@ -35,9 +35,9 @@ sys.stdout.reconfigure(encoding="utf-8")
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
-import sw_jlcfa_locate as l
-import sw_jlcfa_select as sel
-import sw_jlcfa_steps as S
+import sw_jlcfa_locate as l  # noqa: E402
+import sw_jlcfa_select as sel  # noqa: E402
+import sw_jlcfa_steps as s_  # noqa: E402
 
 warnings.filterwarnings("ignore")
 
@@ -46,8 +46,8 @@ PLACEHOLDER = "【去填写】"
 
 def _container_texts(win) -> list[str]:
     """插件容器内所有控件的文字（去空）。"""
-    allc = S.controls_cached(win)
-    cr = S._container_from(allc)
+    allc = s_.controls_cached(win)
+    cr = s_._container_from(allc)
     if cr is None:
         return []
     out = []
@@ -91,8 +91,8 @@ def model_row(win):
       **完全不看坐标** —— 我此前写 ``abs(r.top - lr.top) <= 8``（同一行 8px 内），
       侧边栏拉宽或 DPI 一变就可能配错行或配不到。
     """
-    allc = S.controls_cached(win)
-    cr = S._container_from(allc)
+    allc = s_.controls_cached(win)
+    cr = s_._container_from(allc)
     if cr is None:
         return None, None
     label = None
@@ -260,7 +260,7 @@ def _tap(vk: int, pause: float = 0.07) -> None:
     _gi._press(vk, pause=pause)
 
 
-def type_into(hwnd: int, ctl, rect, value: str, log=S.log) -> bool:
+def type_into(hwnd: int, ctl, rect, value: str, log=s_.log) -> bool:
     """把 ``value`` 打进 ``ctl`` 并提交。**实现委托给 ``sw_gui_input``**。
 
     ⚑⚑⚑ 为什么要委托（2026-09-30）
@@ -288,7 +288,7 @@ def type_into(hwnd: int, ctl, rect, value: str, log=S.log) -> bool:
         log("      ✗ 拿不到键盘焦点，放弃键盘输入（不假装成功）")
         return False
     # ③ 点中目标（唯一用坐标的地方 —— 界面层职责）
-    S.click((rect.left + rect.right) // 2, (rect.top + rect.bottom) // 2, 0.8)
+    s_.click((rect.left + rect.right) // 2, (rect.top + rect.bottom) // 2, 0.8)
     # ④ 交给输入层
     if log:
         log("      目标 %s" % gi.label(ctl))
@@ -370,7 +370,7 @@ def _probe_candidates(ctl) -> list[str]:
     return cands
 
 
-def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=S.log):
+def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=s_.log):
     """把参数填到**型号行没有 ``【去填写】```。返回 (h, w, 剩余未填数)。
 
     ⚑ 判据是**型号行**，不是进度百分比也不是输入框内容。
@@ -379,7 +379,7 @@ def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=S.log):
     """
     fails: dict[str, int] = {}
     for rnd in range(1, max_rounds + 1):
-        S.cache_drop()
+        s_.cache_drop()
         try:
             hwnd, win = l.connect()
         except Exception:
@@ -445,7 +445,7 @@ def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=S.log):
             log("      「%s」无范围提示，探测候选 %s" % (key, cands))
             for cv in cands:
                 type_into(hwnd, ctl, r, cv, log=log)
-                S.cache_drop()
+                s_.cache_drop()
                 try:
                     hwnd, win = l.connect()
                     if unfilled(win) < before_left:
@@ -460,7 +460,7 @@ def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=S.log):
             if not type_into(hwnd, ctl, r, val, log=log):
                 break
         # 记录是否推进
-        S.cache_drop()
+        s_.cache_drop()
         try:
             hwnd, win = l.connect()
             now_left = unfilled(win)
@@ -471,7 +471,7 @@ def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=S.log):
             log("      「%s」未推进（%d/%d），值=%s" % (key, fails[key], 3, val))
         else:
             fails[key] = 0
-    S.cache_drop()
+    s_.cache_drop()
     try:
         hwnd, win = l.connect()
     except Exception:
@@ -527,7 +527,7 @@ def param_rows(win):
     """
 
     out = []
-    for c in list(S.controls_cached(win)):
+    for c in list(s_.controls_cached(win)):
         try:
             if c.element_info.control_type != "Edit":
                 continue
@@ -569,8 +569,8 @@ def row_for_label(win, label: str):
 def _all_edits(win):
     """参数区**所有** Edit（含已有文字的），供「重打一遍」用。"""
     out = []
-    allc = S.controls_cached(win)
-    cr = S._container_from(allc)
+    allc = s_.controls_cached(win)
+    cr = s_._container_from(allc)
     if cr is None:
         return []
     hints = []

@@ -165,7 +165,7 @@ def main() -> int:
         if SRC.is_file()
         else []
     )
-    R = {
+    r_ = {
         "★_目的": "T003 抽查 · recon/bunny-L1-signature-transcribe.md",
         "★_源文件": str(SRC),
         "★_源文件行数": len(src_lines),
@@ -200,7 +200,7 @@ def main() -> int:
                 if c["args"] is not None
                 else None
             )
-        R["members"].append(row)
+        r_["members"].append(row)
         flag = "✓" if o["found"] else "✗"
         extra = ""
         if o["found"] and c["args"] is not None:
@@ -217,7 +217,7 @@ def main() -> int:
             else None
         )
         ok = (got == d["text"].strip()) if got is not None else None
-        R["defs"].append(
+        r_["defs"].append(
             {
                 "fn": d["fn"],
                 "line": d["line"],
@@ -257,28 +257,28 @@ def main() -> int:
                     k += 1
                 body = chunk[j + 1 : k].strip()
                 n = 0 if not body else comm + 1
-        for row in R["members"]:
+        for row in r_["members"]:
             if row["member"] == c["member"]:
                 row["源文件数出的实参"] = n
                 row["源文件与声称相符"] = (n == c["args"]) if n is not None else None
         print("  %-24s 声称=%-4s 源文件数出=%s" % (c["member"], c["args"], n))
 
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
-    m_found = sum(1 for r in R["members"] if r["官方找到"])
-    m_arity = [r for r in R["members"] if r.get("形参数相符") is not None]
-    d_ok = sum(1 for r in R["defs"] if r["相符"])
+    m_found = sum(1 for r in r_["members"] if r["官方找到"])
+    m_arity = [r for r in r_["members"] if r.get("形参数相符") is not None]
+    d_ok = sum(1 for r in r_["defs"] if r["相符"])
     print("=" * 78)
     print(
         "★ 汇总：★ 成员 %d/%d 在官方源找到 · ★ 形参数相符 %d/%d · ★ 定义行号相符 %d/%d"
         % (
             m_found,
-            len(R["members"]),
+            len(r_["members"]),
             sum(1 for r in m_arity if r["形参数相符"]),
             len(m_arity),
             d_ok,
-            len(R["defs"]),
+            len(r_["defs"]),
         )
     )
     print("★ wrote", OUT)

@@ -47,12 +47,12 @@ sys.path.insert(0, str(R / "scripts"))
 import scripts.sw_feature_readback as fr  # noqa: E402
 import scripts.sw_hole_features as hf  # noqa: E402
 import scripts.sw_surface_ref_ops as sro  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _get(o, name, *a):
-    return C.get_com_member(o, name, *a)
+    return c_.get_com_member(o, name, *a)
 
 
 def _tree(doc):
@@ -88,12 +88,12 @@ def case_revolved(sw):
     row = {"tag": "★ B1 旋转曲面（InsertRevolvedRefSurface）", "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        doc = c_.new_document(sw, "part")
+        p_.start_sketch(doc, plane_name="Front Plane")
         sm = _get(doc, "SketchManager")
         _get(sm, "CreateCenterLine", 0.0, -0.03, 0.0, 0.0, 0.03, 0.0)  #: 轴线
         _get(sm, "CreateCornerRectangle", 0.01, -0.02, 0.0, 0.03, 0.02, 0.0)
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         sk = [
             n
             for n in _tree(doc)
@@ -104,7 +104,7 @@ def case_revolved(sw):
         doc.ClearSelection2(True)
         selected = []
         for cand in (row["sketch"],):
-            if cand and P._select_by_id(ext, cand, "SKETCH", append=False, mark=0):
+            if cand and p_._select_by_id(ext, cand, "SKETCH", append=False, mark=0):
                 selected.append(cand)
         row["selected"] = selected
         row["sel_count"] = int(
@@ -134,8 +134,8 @@ def case_hole_wizard(sw):
     row = {"tag": "★ B2 孔向导（HoleWizard5）", "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        doc = c_.new_document(sw, "part")
+        p_.start_sketch(doc, plane_name="Front Plane")
         _get(
             _get(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -146,12 +146,12 @@ def case_hole_wizard(sw):
             0.03,
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         for cand in (
             [n for n in _tree(doc) if n.startswith("\u8349\u56fe")] or ["\u8349\u56fe1"]
         )[::-1]:
             try:
-                P.extrude_boss(doc, cand, 0.02)
+                p_.extrude_boss(doc, cand, 0.02)
                 break
             except Exception:  # noqa: BLE001
                 continue
@@ -180,8 +180,8 @@ def case_fully_defined(sw):
     row = {"tag": "★ B3 完全定义检查（GetConstrainedStatus）", "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        doc = c_.new_document(sw, "part")
+        p_.start_sketch(doc, plane_name="Front Plane")
         _get(
             _get(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -208,20 +208,20 @@ def case_fully_defined(sw):
             n_sel = 0
             for s in segs:
                 try:
-                    if P._select_com_object(s, append=True, mark=0):
+                    if p_._select_com_object(s, append=True, mark=0):
                         n_sel += 1
                 except Exception:  # noqa: BLE001
                     pass
             row["segments_selected"] = n_sel
             if n_sel:
-                P.add_sketch_relation(doc, "sgFIXED")
+                p_.add_sketch_relation(doc, "sgFIXED")
             row["status_after_fixed"] = int(_get(sk, "GetConstrainedStatus"))
             row["status_changed"] = (
                 row["status_after_fixed"] != row["status_under_defined"]
             )
         except Exception as exc:  # noqa: BLE001
             row["extra_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         row["ok"] = isinstance(row.get("status_under_defined"), int)
     except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
@@ -232,7 +232,7 @@ def case_fully_defined(sw):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u8986\u76d6\u9762\u7f3a\u53e3\u6279 1\uff1a\u65cb\u8f6c\u66f2\u9762 / \u5b54\u5411\u5bfc"

@@ -90,7 +90,6 @@ __all__ = [
     "set_view_frame",
     "get_display_mode",
     "set_display_mode",
-    "get_view_zoom",
     "zoom_view",
     "translate_view",
     "rotate_about_center",

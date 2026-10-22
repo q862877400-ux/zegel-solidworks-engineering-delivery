@@ -36,7 +36,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 from scripts import sw_assembly_doc as a  # noqa: E402
 from scripts import sw_connect  # noqa: E402
-from scripts import sw_macro as M  # noqa: E402
+from scripts import sw_macro as m_  # noqa: E402
 
 SRC_ASM = Path(
     Path(__file__).resolve().parents[1]
@@ -75,7 +75,7 @@ def _active_config(doc) -> str:
 
 def main() -> int:
     ev: dict = {
-        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "captured_at": time.strftime("%Y-%m-%dT%H:%m_:%S"),
         "_": "规格 204 / SC-005 —— FR-008 两半的真机证据",
         "steps": {},
     }
@@ -236,7 +236,7 @@ def main() -> int:
             _flush()
 
         #: ── ⑤ 宏：反例（不存在的路径）────────────────────────────────
-        neg = M.run_macro(sw, str(ROOT / "output" / "_no_such_macro_.swp"), "M", "main")
+        neg = m_.run_macro(sw, str(ROOT / "output" / "_no_such_macro_.swp"), "m_", "main")
         ev["steps"]["macro_negative"] = neg
         print(
             "  [5] 宏反例: ok=%s return=%s error=%s(%s) file_exists=%s"
@@ -251,14 +251,14 @@ def main() -> int:
         _flush()
 
         #: ── ⑥ 宏：正例（我们自己的 .swb，明文 VB.NET、含 `Sub main`）──
-        pos = M.run_macro(sw, str(SWB), "", "main")
+        pos = m_.run_macro(sw, str(SWB), "", "main")
         ev["steps"]["macro_positive_swb"] = pos
         print(
             "  [6] 宏正例(.swb): ok=%s return=%s error=%s(%s)"
             % (pos["ok"], pos["return_value"], pos["error_code"], pos["error_name"])
         )
         #: ★ 同一文件换个过程名 ⇒ 应当报 InvalidProcname(6)
-        bad_proc = M.run_macro(sw, str(SWB), "", "_definitely_not_a_proc_")
+        bad_proc = m_.run_macro(sw, str(SWB), "", "_definitely_not_a_proc_")
         ev["steps"]["macro_bad_procedure"] = bad_proc
         print(
             "  [6b] 宏换错过程名: ok=%s error=%s(%s)"

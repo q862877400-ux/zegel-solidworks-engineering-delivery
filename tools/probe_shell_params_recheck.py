@@ -53,7 +53,7 @@ def main() -> int:
     #: )` ✓
     #: ★★★★ **⇒ 又验证那条判据**：★★★ **"在仓里搜"要搜够 —— 搜一行 grep 的成本 < 猜错的
     #: 成本** ✓
-    import sw_feature_readback as R
+    import sw_feature_readback as r_
     from sw_connect import connect_solidworks, get_com_member, new_document
     from sw_part import extrude_boss, shell_report, sketch
 
@@ -96,7 +96,7 @@ def main() -> int:
         created=rep.get("created_object"),
     )
 
-    got = R.shell_params(model)
+    got = r_.shell_params(model)
     step(
         "shell_params",
         **{

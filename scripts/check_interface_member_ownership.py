@@ -249,9 +249,7 @@ def build_map() -> tuple:
     ambiguous: dict = {}
     unmapped: list = []
     #: 靠**名字回退**定下来的常量（**弱信号**）—— 单独标出来
-    name_based: set = set()
     #: 靠**人工确证表**（`MANUAL_MAP`）补上的常量 —— **不是推断**，单独统计
-    manual_used: set = set()
     if not CD_DOC.is_file() or not TYPES.is_dir():
         return mapped, ambiguous, unmapped
     consts = {

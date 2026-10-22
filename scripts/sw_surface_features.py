@@ -1937,7 +1937,6 @@ def cut_surface_report(
     #: ★ 而那是**事实 390 定则**（见 `DISP_E_PARAMNOTOPTIONAL` ⇒ **先数参数个数**）的正
     #: 当执行。
     err_out = None
-    ret_out = None
     try:
         from sw_connect import out_i4 as _oi4
 

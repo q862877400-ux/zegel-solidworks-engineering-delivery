@@ -104,7 +104,6 @@ def main() -> int:
         print()
         print("  ── 对照：**不设 mark**（用 `IEntity.Select4`）选 1 条草图的线 ──")
         doc.ClearSelection2(True)
-        n4 = 0
         try:
             skm = sw_connect.safe_get_com_member(doc, "SketchManager")
             sk = sw_connect.safe_get_com_member(skm, "ActiveSketch")

@@ -37,19 +37,19 @@ def _g(o, n, *a):
 
 def _segs(doc):
     """★ 段数用**仓内既有助手**读（★ 我第一版写 `SketchManager.GetSketchSegments` —— 那个成员不存在）。"""
-    from scripts import sw_sketch as S
+    from scripts import sw_sketch as s_
 
     sk = _g(doc, "GetActiveSketch2") or _g(doc, "SketchManager")
     try:
-        return len(S.get_sketch_segments(sk) or [])
+        return len(s_.get_sketch_segments(sk) or [])
     except Exception:  # noqa: BLE001
-        return len(S.get_sketch_segments(doc) or [])
+        return len(s_.get_sketch_segments(doc) or [])
 
 
 def main() -> int:
     started = time.time()
     row: dict = {
-        "at": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "at": time.strftime("%Y-%m-%d %H:%M:%s_"),
         "form": "VARIANT(VT_ARRAY|VT_R8) —— 本轮修进 sw_part.sketch_spline",
     }
     sw, _ = c.connect_solidworks(wait_seconds=30)

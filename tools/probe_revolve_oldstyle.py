@@ -51,29 +51,29 @@ sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
 import scripts.sw_weldment as w  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _mk_profile_with_centerline(doc, with_centerline=True):
     """★ 前视面上画**轮廓** + **中心线**（★ 官方原话要 centerline）。"""
-    P.start_sketch(doc, plane_name="Front Plane")
-    sm = C.get_com_member(doc, "SketchManager")
+    p_.start_sketch(doc, plane_name="Front Plane")
+    sm = c_.get_com_member(doc, "SketchManager")
     #: \u2605 \u4e2d\u5fc3\u7ebf\uff08\u2605 \u6cbf Y \u8f74\uff09
     if with_centerline:
-        C.get_com_member(sm, "CreateCenterLine", 0.0, -0.03, 0.0, 0.0, 0.03, 0.0)
+        c_.get_com_member(sm, "CreateCenterLine", 0.0, -0.03, 0.0, 0.0, 0.03, 0.0)
     #: \u2605 \u8f6e\u5ed3\uff08\u77e9\u5f62\uff0c\u2605 \u4e0d\u8de8\u4e2d\u5fc3\u7ebf\
     #: uff09
-    C.get_com_member(sm, "CreateCornerRectangle", 0.005, -0.02, 0.0, 0.02, 0.02, 0.0)
-    P.end_sketch(doc)
+    c_.get_com_member(sm, "CreateCornerRectangle", 0.005, -0.02, 0.0, 0.02, 0.02, 0.0)
+    p_.end_sketch(doc)
 
 
 def _pick_sketch(doc, name, mark, append=False):
-    ext = C.get_com_member(doc, "Extension")
+    ext = c_.get_com_member(doc, "Extension")
     picked = None
-    for cand in P._get_sketch_name_candidates(name):
+    for cand in p_._get_sketch_name_candidates(name):
         try:
-            if P._select_by_id(ext, cand, "SKETCH", append=append, mark=mark):
+            if p_._select_by_id(ext, cand, "SKETCH", append=append, mark=mark):
                 picked = cand
                 break
         except Exception:  # noqa: BLE001
@@ -88,7 +88,7 @@ def _tree(model):
     try:
         for f in w.iter_features_recursive(model):
             try:
-                types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
+                types.append(str(c_.get_com_member(f, "GetTypeName2") or ""))
             except Exception:  # noqa: BLE001
                 pass
     except Exception:  # noqa: BLE001
@@ -100,7 +100,7 @@ def _one(sw, tag, entry, with_centerline):
     row = {"tag": tag, "entry": entry, "with_centerline": with_centerline, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         _mk_profile_with_centerline(doc, with_centerline)
         names = [
             n
@@ -115,8 +115,8 @@ def _one(sw, tag, entry, with_centerline):
         row["picked"] = _pick_sketch(doc, sk, 0)
         try:
             row["sel"] = int(
-                C.get_com_member(
-                    C.get_com_member(doc, "SelectionManager"),
+                c_.get_com_member(
+                    c_.get_com_member(doc, "SelectionManager"),
                     "GetSelectedObjectCount2",
                     -1,
                 )
@@ -127,19 +127,19 @@ def _one(sw, tag, entry, with_centerline):
         before = _tree(doc)
         try:
             if entry == "modeldoc":
-                ret = C.get_com_member(
+                ret = c_.get_com_member(
                     doc, "InsertRevolvedRefSurface", math.radians(360.0), False, 0.0, 0
                 )
             else:
-                fm = C.get_com_member(doc, "FeatureManager")
-                ret = C.get_com_member(
+                fm = c_.get_com_member(doc, "FeatureManager")
+                ret = c_.get_com_member(
                     fm, "InsertRevolvedRefSurface", math.radians(360.0), False, 0.0, 0
                 )
             row["returned"] = type(ret).__name__ if ret is not None else "None"
             if ret is not None:
                 for k, m in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
                     try:
-                        row[k] = str(C.get_com_member(ret, m))
+                        row[k] = str(c_.get_com_member(ret, m))
                     except Exception:  # noqa: BLE001
                         pass
         except Exception as exc:  # noqa: BLE001
@@ -163,16 +163,16 @@ def _one(sw, tag, entry, with_centerline):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u65cb\u8f6c\u66f2\u9762\uff1a`IModelDoc2`\uff08**\u65e7\u5f0f**\uff09vs `IFeatureManager`\uff08\u65b0\u67b6\u6784\uff09",

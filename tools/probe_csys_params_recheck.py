@@ -76,7 +76,7 @@ def main() -> int:
         "★ Transform.ArrayData 是 16 个数": r.get("Transform.ArrayData_len") == 16,
         "★ 无 error": not r.get("error"),
     }
-    R = {
+    r_ = {
         "★_判据": "★ 逐个对官方 `## Returns`（★ 见 `output/_read_csys_members.py` 的逐条读数）",
         "★_建坐标系": cs,
         "读取": {k: str(v)[:60] for k, v in r.items()},
@@ -84,10 +84,10 @@ def main() -> int:
         "★_全过": all(checks.values()),
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("★ 建坐标系:", json.dumps(cs, ensure_ascii=False)[:140])
-    print("★ 读取:", json.dumps(R["读取"], ensure_ascii=False)[:420])
+    print("★ 读取:", json.dumps(r_["读取"], ensure_ascii=False)[:420])
     for k, v in checks.items():
         print("   %-38s %s" % (k, "✓" if v else "**✗**"))
     print("★ 全过 =", all(checks.values()))

@@ -86,7 +86,7 @@ def main() -> int:
         "★ GetSkippedItemCount = 0": _v("GetSkippedItemCount") == 0,
         "★ GetPatternBodyCount = 1（★ 实体阵列）": _v("GetPatternBodyCount") == 1,
     }
-    R = {
+    r_ = {
         "★_判据": "★ 逐个成员对官方 `## Returns`（★ 见 `output/_read_pattern_members.py`）",
         "★_前置": {"方向 mark=1": d1, "实体 mark=256": d2},
         "★_单位口径": r.get("★_单位口径"),
@@ -95,7 +95,7 @@ def main() -> int:
         "★_全过": all(checks.values()),
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("★ 前置:", d1, d2)
     print(

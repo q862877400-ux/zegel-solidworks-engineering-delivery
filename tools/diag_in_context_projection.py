@@ -152,7 +152,7 @@ def main() -> int:
         step("⑥A 按对象选边（Select4）", returned=ret_a, selection=sel_count())
 
         #: ══ ⑦ 变体 A：投影 ═══════════════════════════════════
-        before = seg_count(tgt_doc)
+        seg_count(tgt_doc)
         try:
             r = sw_sketch_edit.convert_entities(tgt_doc)
             step(
@@ -207,7 +207,7 @@ def main() -> int:
             )
 
         if sel_count() > 0:
-            before = seg_count(tgt_doc)
+            seg_count(tgt_doc)
             try:
                 r = sw_sketch_edit.convert_entities(tgt_doc)
                 step(

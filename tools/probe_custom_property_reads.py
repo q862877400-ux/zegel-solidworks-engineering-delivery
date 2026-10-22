@@ -32,7 +32,8 @@ r"""@brief 探针：**读文件自定义属性**的三条路 —— 以及 pywin
 # 定位:   给砌墙 W3 定包装层；产出 `output/custom-property-reads.json`。
 # 官方依据: `IModelDocExtension.CustomPropertyManager` · `ICustomPropertyManager.Get/Get
 #           2/Get6/GetNames/Count/Add3`；
-#          官方示例 `C:\swapi\examples\Add_and_Get_Custom_Properties_Example_VB.md`（在那里 `Get(vName)` 被当**单返回值**用）
+#          官方示例 `C:\swapi\examples\Add_and_Get_Custom_Properties_Example_VB.md`（在那里 `Get(vName)
+` 被当**单返回值**用）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。
 # 覆盖:   全文件

@@ -33,8 +33,8 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
@@ -44,16 +44,16 @@ def _mk_surface_with_hole(doc):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name="Front Plane")
-    sm = C.get_com_member(doc, "SketchManager")
+    p_.start_sketch(doc, plane_name="Front Plane")
+    sm = c_.get_com_member(doc, "SketchManager")
     #: \u2605 \u5916\u6846
-    C.get_com_member(sm, "CreateCornerRectangle", -0.03, -0.03, 0.0, 0.03, 0.03, 0.0)
+    c_.get_com_member(sm, "CreateCornerRectangle", -0.03, -0.03, 0.0, 0.03, 0.03, 0.0)
     #: \u2605 \u5185\u5708\uff08\u2605 \u90a3\u5c31\u662f\u201c\u5b54\u201d\uff09
-    C.get_com_member(sm, "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.012)
-    P.end_sketch(doc)
+    c_.get_com_member(sm, "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.012)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
@@ -94,7 +94,7 @@ def _one(sw, tag, pick):
     row = {"tag": tag, "pick": pick, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         rep = _mk_surface_with_hole(doc)
         row["made"] = bool((rep or {}).get("ok"))
         row["before"] = _geom(doc)
@@ -148,16 +148,16 @@ def _one(sw, tag, pick):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u5220\u9664\u5b54\uff1a\u5728**\u5e26\u5185\u73af\uff08\u7f3a\u53e3\uff09\u7684\u66f2\u9762\u4f53**\u4e0a\u8bd5\uff08\u2605 \u800c\u4e0d\u662f\u5728\u5b9e\u4f53\u4e0a\uff09",

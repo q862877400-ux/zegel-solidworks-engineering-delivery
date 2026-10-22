@@ -44,7 +44,7 @@ OUT = Path(
 
 def main() -> int:
     ev: dict = {
-        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%s_"),
         "capability": "modeling_readback",
         "steps": {},
     }
@@ -55,9 +55,9 @@ def main() -> int:
         import tool_specs_batch32 as b32
 
         from scripts import sw_feature_readback as fr
-        from scripts import sw_part as P
+        from scripts import sw_part as p_
         from scripts import (
-            sw_simulation as S,
+            sw_simulation as s_,
         )  #: ★ select_face_at 在这里（不在 sw_part）
 
         #: ① 静态：4 个工具声明解析得到
@@ -83,11 +83,11 @@ def main() -> int:
 
         #: ② 先造板（★ 100×60×20）+ 一块要抽壳的实体
         doc = sw_connect.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
-        P.sketch_corner_rectangle(doc, -50.0, -30.0, 50.0, 30.0)
-        sk1 = P.current_sketch_name(doc)
-        P.end_sketch(doc)
-        P.extrude_boss(doc, sk1, 20.0)
+        p_.start_sketch(doc, plane_name="Front Plane")
+        p_.sketch_corner_rectangle(doc, -50.0, -30.0, 50.0, 30.0)
+        sk1 = p_.current_sketch_name(doc)
+        p_.end_sketch(doc)
+        p_.extrude_boss(doc, sk1, 20.0)
         ev["steps"]["base"] = {"sketch": sk1, "features": fr.feature_names(doc)}
 
         #: ③ ★★ 先自验判据（★ 不自证就不能判别人）
@@ -143,8 +143,8 @@ def main() -> int:
             "shell",
             lambda: (
                 sw_connect.safe_get_com_member(doc, "ClearSelection2", True),
-                S.select_face_at(doc, 0.0, 0.0, 0.0),
-                P.shell_report(doc, 2.0),
+                s_.select_face_at(doc, 0.0, 0.0, 0.0),
+                p_.shell_report(doc, 2.0),
             )[-1],
         )
         #: 圆顶（★ 官方 Remarks 要求先选面）
@@ -152,19 +152,19 @@ def main() -> int:
             "insert_dome",
             lambda: (
                 sw_connect.safe_get_com_member(doc, "ClearSelection2", True),
-                S.select_face_at(doc, 0.0, 0.0, 0.0, mark=1),
-                P.insert_dome_report(doc, 5.0),
+                s_.select_face_at(doc, 0.0, 0.0, 0.0, mark=1),
+                p_.insert_dome_report(doc, 5.0),
             )[-1],
         )
 
         #: 筋（★ 要一个草图 —— 建一个新草图当轮廓）
         def _rib():
             sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
-            P.start_sketch(doc, plane_name="Front Plane")
-            P.sketch_rectangle(doc, 0.0, 0.0, 20.0, 10.0)
-            sk2 = P.current_sketch_name(doc)
-            P.end_sketch(doc)
-            return P.rib_report(doc, sk2, 2.0)
+            p_.start_sketch(doc, plane_name="Front Plane")
+            p_.sketch_rectangle(doc, 0.0, 0.0, 20.0, 10.0)
+            sk2 = p_.current_sketch_name(doc)
+            p_.end_sketch(doc)
+            return p_.rib_report(doc, sk2, 2.0)
 
         _try("rib", _rib)
 
@@ -174,7 +174,7 @@ def main() -> int:
             from scripts.sw_selection_spec import resolve_selection
 
             resolve_selection(doc, "index:0", "EDGE")
-            return P.insert_composite_curve_report(doc)
+            return p_.insert_composite_curve_report(doc)
 
         _try("insert_composite_curve", _comp)
 

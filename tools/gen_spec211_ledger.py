@@ -30,7 +30,7 @@ import re
 from pathlib import Path
 
 #: ★★ 人工终判表（★ 只补空、不覆盖自动结果；★ 事实 53：启发式改了 3 次就停手）✓
-import spec211_manual_verdicts as MV
+import spec211_manual_verdicts as mv_
 
 SWAPI = Path(r"C:\swapi")
 TYPES = SWAPI / "types"
@@ -261,7 +261,7 @@ def main() -> int:
             }
         )
         #: ★★ **人工终判优先**（★ 只补空 + 不一致要留痕）✓
-        mv = MV.verdict_of(name)
+        mv = mv_.verdict_of(name)
         auto_verdict = verdict
         if mv:
             m_domain, m_verdict, m_why = mv

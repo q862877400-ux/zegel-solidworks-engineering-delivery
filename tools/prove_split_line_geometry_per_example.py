@@ -65,8 +65,8 @@ sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
 import scripts.sw_weldment as w  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts.sw_simulation import select_face_at  # noqa: E402
 
 #: ★ 例子逐字：基准面偏移 0.01778 m
@@ -76,7 +76,7 @@ EXAMPLE_COMBO = (True, True)
 
 
 def _get(o, name, *args):
-    return C.get_com_member(o, name, *args)
+    return c_.get_com_member(o, name, *args)
 
 
 def _faces(doc):
@@ -104,7 +104,7 @@ def _bbox(doc):
 def _sketch_names(doc):
     return [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
 
@@ -119,7 +119,7 @@ def _build(doc):
     fm = _get(doc, "FeatureManager")
     #: ★ ② 偏移基准面（★ 例子：InsertRefPlane(8, 0.01778, 0,0,0,0)）
     doc.ClearSelection2(True)
-    P._select_by_id(
+    p_._select_by_id(
         ext, "\u524d\u89c6\u57fa\u51c6\u9762", "PLANE", append=False, mark=0
     )
     try:
@@ -130,11 +130,11 @@ def _build(doc):
     doc.ClearSelection2(True)
     plane = None
     for cand in ("\u57fa\u51c6\u97621", "Plane1"):
-        if cand in (P.feature_names(doc) or []):
+        if cand in (p_.feature_names(doc) or []):
             plane = cand
             break
     if plane is None:
-        for n in P.feature_names(doc) or []:
+        for n in p_.feature_names(doc) or []:
             if "\u57fa\u51c6\u9762" in n or n.lower().startswith("plane"):
                 plane = n
                 break
@@ -143,7 +143,7 @@ def _build(doc):
         return False, info
     #: ★ ③ 实体：偏移基准面上的矩形 ⇒ 拉 20 mm（★ 比例子厚，只为让落点在面内更宽裕）
     try:
-        P.start_sketch(doc, plane_name=plane)
+        p_.start_sketch(doc, plane_name=plane)
     except Exception as exc:  # noqa: BLE001
         info["err_sketch_on_plane"] = str(exc)[:120]
         return False, info
@@ -157,7 +157,7 @@ def _build(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     #: ★★ 几何条件 (a)：实体必须**整个**在投影草图的 +z 一侧（★ 草图 z=0 在实体之外）。
     #: ★ 而 `extrude_boss(direction=)` 落到 `FeatureExtrusion3` 的 `Dir` 上，
     #:   它的**实际朝向跟草图的局部坐标系走** ⇒ 本机实测 `direction=True` 得到 **-Z**。
@@ -168,7 +168,7 @@ def _build(doc):
         made = None
         for cand in (_sketch_names(doc) or ["\u8349\u56fe1"])[::-1]:
             try:
-                P.extrude_boss(doc, cand, 0.02, direction=d)
+                p_.extrude_boss(doc, cand, 0.02, direction=d)
                 made = cand
                 break
             except Exception:  # noqa: BLE001
@@ -210,9 +210,9 @@ def _build(doc):
     rad = min(0.008, 0.4 * min((xmax - xmin) / 2.0, (ymax - ymin) / 2.0))
     info["circle"] = {"center_m": [cx, cy, 0.0], "radius_m": rad}
     doc.ClearSelection2(True)
-    P.start_sketch(doc, plane_name="\u524d\u89c6\u57fa\u51c6\u9762")
+    p_.start_sketch(doc, plane_name="\u524d\u89c6\u57fa\u51c6\u9762")
     _get(_get(doc, "SketchManager"), "CreateCircleByRadius", cx, cy, 0.0, rad)
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     #: ★ 落点 = 目标面上的一点（★ 例子给的就是一个坐标，z 恰在目标面平面上）
     info["pick_m"] = [cx, cy, z_near]
     return True, info
@@ -225,7 +225,7 @@ def _select(doc, info):
     doc.ClearSelection2(True)
     for nm in ("\u51f8\u53f0-\u62c9\u4f381", "Boss-Extrude1"):
         try:
-            if P._select_by_id(ext, nm, "BODYFEATURE", append=False, mark=0):
+            if p_._select_by_id(ext, nm, "BODYFEATURE", append=False, mark=0):
                 picked["feature"] = nm
                 break
         except Exception:  # noqa: BLE001
@@ -236,7 +236,7 @@ def _select(doc, info):
     info["project_sketch"] = proj
     if proj:
         try:
-            if P._select_by_id(ext, proj, "SKETCH", append=bool(picked), mark=4):
+            if p_._select_by_id(ext, proj, "SKETCH", append=bool(picked), mark=4):
                 picked["sketch"] = proj
         except Exception:  # noqa: BLE001
             pass
@@ -267,7 +267,7 @@ def _one(sw, tag, is_directional, flip_dir):
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         ok_build, info = _build(doc)
         row.update({k: v for k, v in info.items() if k != "bbox_m"})
         row["built"] = ok_build
@@ -285,7 +285,7 @@ def _one(sw, tag, is_directional, flip_dir):
         faces_before = _face_count(doc)
         before = list(fr.feature_names(doc) or [])
         try:
-            ret = C.get_com_member(
+            ret = c_.get_com_member(
                 doc, "InsertSplitLineProject", bool(is_directional), bool(flip_dir)
             )
             row["ret_is_none"] = ret is None
@@ -333,7 +333,7 @@ def _one(sw, tag, is_directional, flip_dir):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u6295\u5f71\u578b\u5206\u5272\u7ebf\uff1a**\u7167\u5b98\u65b9\u4f8b\u5b50\u91cd\u5efa\u51e0\u4f55**"

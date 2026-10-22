@@ -38,8 +38,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 from scripts.sw_connect import create_empty_dispatch_variant as _av  # noqa: E402
 
@@ -49,9 +49,9 @@ def _mk_surface(doc, plane="Front Plane", rect=(-0.02, -0.02, 0.02, 0.02), depth
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name=plane)
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name=plane)
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         rect[0],
         rect[1],
@@ -60,10 +60,10 @@ def _mk_surface(doc, plane="Front Plane", rect=(-0.02, -0.02, 0.02, 0.02), depth
         rect[3],
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
@@ -75,9 +75,9 @@ def _mk_surface(doc, plane="Front Plane", rect=(-0.02, -0.02, 0.02, 0.02), depth
 
 
 def _mk_solid(doc):
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -86,15 +86,15 @@ def _mk_solid(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -112,11 +112,11 @@ def _last_feature(doc, want_types=()):
     """
     best = None
     try:
-        f = C.get_com_member(doc, "FirstFeature")
+        f = c_.get_com_member(doc, "FirstFeature")
         while f is not None:
             try:
-                nm = str(C.get_com_member(f, "Name") or "")
-                tn = str(C.get_com_member(f, "GetTypeName2") or "")
+                nm = str(c_.get_com_member(f, "Name") or "")
+                tn = str(c_.get_com_member(f, "GetTypeName2") or "")
             except Exception:  # noqa: BLE001
                 nm, tn = "", ""
             #: \u2605 \u53ea\u6392\u9664**\u5bb9\u5668\u8282\u70b9**\u4e0e**\u57fa\u51c6
@@ -140,7 +140,7 @@ def _last_feature(doc, want_types=()):
             ):
                 best = f
             try:
-                f = C.get_com_member(f, "GetNextFeature")
+                f = c_.get_com_member(f, "GetNextFeature")
             except Exception:  # noqa: BLE001
                 break
     except Exception:  # noqa: BLE001
@@ -155,21 +155,21 @@ def _probe(doc, feat, label):
         return out
     try:
         out["feat"] = "%s / %s" % (
-            str(C.get_com_member(feat, "Name")),
-            str(C.get_com_member(feat, "GetTypeName2")),
+            str(c_.get_com_member(feat, "Name")),
+            str(c_.get_com_member(feat, "GetTypeName2")),
         )
     except Exception:  # noqa: BLE001
         pass
     fd = None
     try:
-        fd = C.get_com_member(feat, "GetDefinition")
+        fd = c_.get_com_member(feat, "GetDefinition")
         out["fd"] = type(fd).__name__ if fd is not None else "None"
     except Exception as exc:  # noqa: BLE001
         out["fd_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:100])
     if fd is None:
         return out
     try:
-        r = C.get_com_member(fd, "AccessSelections", doc, _av())
+        r = c_.get_com_member(fd, "AccessSelections", doc, _av())
         out["access_ok"] = True
         out["access_returns"] = str(r)
     except Exception as exc:  # noqa: BLE001
@@ -181,7 +181,7 @@ def _probe(doc, feat, label):
                 out["error_code"] = tok
                 break
     try:
-        C.get_com_member(fd, "ReleaseSelectionAccess")
+        c_.get_com_member(fd, "ReleaseSelectionAccess")
         out["release"] = "ok"
     except Exception as exc:  # noqa: BLE001
         out["release_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
@@ -192,7 +192,7 @@ def _run(sw, carrier, build, want_types):
     row = {"carrier": carrier, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         build(doc)
         feat = _last_feature(doc, want_types)
         row.update(_probe(doc, feat, carrier))
@@ -202,16 +202,16 @@ def _run(sw, carrier, build, want_types):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u6279\u91cf\u6d4b `*FeatureData.AccessSelections`\uff08\u2605 \u7528**\u5df2\u5efa\u6210**\u7684\u7279\u5f81\u5f53\u8f7d\u4f53\uff09",
@@ -233,9 +233,9 @@ def main() -> int:
             doc.ClearSelection2(True)
         except Exception:  # noqa: BLE001
             pass
-        P.start_sketch(doc, plane_name="Top Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        p_.start_sketch(doc, plane_name="Top Plane")
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
             -0.01,
             -0.01,
@@ -244,7 +244,7 @@ def main() -> int:
             0.01,
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         return sf.insert_planar_ref_surface_report(doc)
 
     def _revolve(doc):
@@ -252,30 +252,30 @@ def main() -> int:
             doc.ClearSelection2(True)
         except Exception:  # noqa: BLE001
             pass
-        P.start_sketch(doc, plane_name="Front Plane")
-        sm = C.get_com_member(doc, "SketchManager")
-        C.get_com_member(sm, "CreateCenterLine", 0.0, -0.03, 0.0, 0.0, 0.03, 0.0)
-        C.get_com_member(
+        p_.start_sketch(doc, plane_name="Front Plane")
+        sm = c_.get_com_member(doc, "SketchManager")
+        c_.get_com_member(sm, "CreateCenterLine", 0.0, -0.03, 0.0, 0.0, 0.03, 0.0)
+        c_.get_com_member(
             sm, "CreateCornerRectangle", 0.005, -0.02, 0.0, 0.02, 0.02, 0.0
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         names = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p_.feature_names(doc) or [])
             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
         ]
-        ext = C.get_com_member(doc, "Extension")
-        for cand in P._get_sketch_name_candidates(
+        ext = c_.get_com_member(doc, "Extension")
+        for cand in p_._get_sketch_name_candidates(
             names[-1] if names else "\u8349\u56fe1"
         ):
             try:
-                if P._select_by_id(ext, cand, "SKETCH", append=False, mark=0):
+                if p_._select_by_id(ext, cand, "SKETCH", append=False, mark=0):
                     break
             except Exception:  # noqa: BLE001
                 continue
         import math
 
-        return C.get_com_member(
+        return c_.get_com_member(
             doc, "InsertRevolvedRefSurface", math.radians(360.0), False, 0.0, 0
         )
 
@@ -289,7 +289,7 @@ def main() -> int:
         _mk_solid(doc)
         return sf.insert_replace_face_report(doc)
 
-    CASES = (
+    cases_ = (
         ("\u7b49\u8ddd\u66f2\u9762", _offset, ("OffsetSurface",)),
         ("\u5ef6\u4f38\u66f2\u9762", _extend, ("ExtendSurface",)),
         ("\u5e73\u9762\u533a\u57df", _planar, ("PlanarSurface",)),
@@ -297,7 +297,7 @@ def main() -> int:
         ("\u7f1d\u5408\u66f2\u9762", _thicken_then_knit, ("SewSurface", "KnitSurface")),
         ("\u66ff\u6362\u9762", _replace_face, ("ReplaceFace",)),
     )
-    for carrier, build, wt in CASES:
+    for carrier, build, wt in cases_:
         ev["cases"].append(_run(sw, carrier, build, wt))
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["with_fd"] = sum(1 for c in ev["cases"] if (c.get("fd") or "None") != "None")

@@ -55,13 +55,13 @@ def main() -> int:
             }
         )
 
-    R = {
+    r_ = {
         "★_判据": "★ 本仓毫米口径下建 depth=N ⇒ `extrude_depth` 应回 **N**（★ 随文档单位）",
         "★_能力": "scripts/sw_feature_readback.py::extrude_depth",
         "rows": rows,
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     for r in rows:
         rb = r["readback"]

@@ -231,7 +231,7 @@ def main() -> int:
             reachable = []
             for nm in all:
                 try:
-                    m = getattr(util, nm)
+                    getattr(util, nm)
                     reachable.append(nm)
                 except Exception:  # noqa: BLE001
                     pass

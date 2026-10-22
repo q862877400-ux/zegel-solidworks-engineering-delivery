@@ -28,7 +28,7 @@ if str(DESKTOP) not in sys.path:
 
 from cad_diagnostics import create_diagnostic_bundle  # noqa: E402
 from cad_doctor import run_doctor  # noqa: E402
-from cad_workbench.queue_worker import (
+from cad_workbench.queue_worker import (  # noqa: E402
     cancel_marker_path,
     default_tauri_queue_dir,
     process_queue,

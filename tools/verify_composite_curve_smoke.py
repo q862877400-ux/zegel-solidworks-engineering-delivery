@@ -260,7 +260,6 @@ def main() -> int:
 
         #: ⑤ 特征树条数（**不依赖顺序**的侧证）
         try:
-            before = None
             total = int(doc.GetFeatureCount)
             chk(
                 "★ 特征树**能用**（`GetFeatureCount` 是属性）",

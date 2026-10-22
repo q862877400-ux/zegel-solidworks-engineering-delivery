@@ -39,8 +39,8 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_sketch_edit_ops as seo  # noqa: E402
 
 
@@ -50,10 +50,10 @@ def _two_connected_segments(doc, plane="Front Plane"):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name=plane)
-    sm = C.get_com_member(doc, "SketchManager")
-    C.get_com_member(sm, "CreateLine", -0.02, -0.01, 0.0, 0.0, 0.0, 0.0)
-    C.get_com_member(sm, "CreateLine", 0.0, 0.0, 0.0, 0.02, 0.01, 0.0)
+    p_.start_sketch(doc, plane_name=plane)
+    sm = c_.get_com_member(doc, "SketchManager")
+    c_.get_com_member(sm, "CreateLine", -0.02, -0.01, 0.0, 0.0, 0.0, 0.0)
+    c_.get_com_member(sm, "CreateLine", 0.0, 0.0, 0.0, 0.02, 0.01, 0.0)
     return True
 
 
@@ -61,12 +61,12 @@ def _one(sw, tag, mode):
     row = {"tag": tag, "mode": mode, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         #: \u2605 \u5148\u9020\u4e00\u4e2a\u5b9e\u4f53\uff08\u2605 \u4f9b \u24d1 \u7ec4\
         #: u7528\uff09
-        P.start_sketch(doc, plane_name="Top Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        p_.start_sketch(doc, plane_name="Top Plane")
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
             -0.03,
             -0.03,
@@ -75,10 +75,10 @@ def _one(sw, tag, mode):
             0.03,
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         names = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p_.feature_names(doc) or [])
             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
         ]
         for cand in (
@@ -87,14 +87,14 @@ def _one(sw, tag, mode):
             "Sketch1",
         ):
             try:
-                P.extrude_boss(doc, cand, 0.01)
+                p_.extrude_boss(doc, cand, 0.01)
                 break
             except Exception:  # noqa: BLE001
                 continue
         _two_connected_segments(doc)
         nm2 = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p_.feature_names(doc) or [])
             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
         ]
         row["sketch"] = nm2[-1] if nm2 else None
@@ -106,7 +106,7 @@ def _one(sw, tag, mode):
         if mode == "segments":
             #: \u2605 \u24d0 **\u540c\u4e00\u8349\u56fe\u91cc\u7684\u4e24\u6761\u76f8\u8
             #: fde\u6bb5**\uff08\u2605 \u6309\u5e8f\u53f7\u9009\uff09
-            P.end_sketch(
+            p_.end_sketch(
                 doc
             )  #: \u2605 \u9009\u6bb5\u8981\u5148\u79bb\u5f00\u8349\u56fe\u5417\uff1f\u2605 \u672c\u4ed3\u90a3\u4e2a helper \u81ea\u5df1\u4f1a\u5904\u7406
             for i in (0, 1):
@@ -124,14 +124,14 @@ def _one(sw, tag, mode):
 
             for b in list(_g(doc, "GetBodies2", 0, True) or []):
                 for e in list(_g(b, "GetEdges") or [])[:2]:
-                    if P._select_com_object(e, append=(picked > 0), mark=1):
+                    if p_._select_com_object(e, append=(picked > 0), mark=1):
                         picked += 1
                 break
         row["picked"] = picked
         try:
             row["sel_count"] = int(
-                C.get_com_member(
-                    C.get_com_member(doc, "SelectionManager"),
+                c_.get_com_member(
+                    c_.get_com_member(doc, "SelectionManager"),
                     "GetSelectedObjectCount2",
                     -1,
                 )
@@ -140,7 +140,7 @@ def _one(sw, tag, mode):
         except Exception:  # noqa: BLE001
             row["sel_count"] = -1
         before = list(fr.feature_names(doc) or [])
-        r = P.insert_composite_curve_report(doc, "")
+        r = p_.insert_composite_curve_report(doc, "")
         row["report"] = dict(r or {})
         after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
@@ -150,16 +150,16 @@ def _one(sw, tag, mode):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u590d\u5408\u66f2\u7ebf\uff1a\u8bd5**\u4e09\u79cd\u5408\u6cd5\u5b9e\u4f53**\uff08\u2605 \u4e8b\u5b9e 449 \u7559\u7684\u4e0b\u4e00\u6b65\uff09",

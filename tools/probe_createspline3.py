@@ -115,13 +115,13 @@ def main() -> int:
     case("★ CreateSpline3 + None", form="v3_plain_none")
     case("★ 基线：CreateSpline2（旧的）", form="v2_baseline")
 
-    R = {
+    r_ = {
         "★_判据": "★ 建成 ⇒ 草图段数 +1（★ 本仓既有的判据）",
         "★_问题": "★ `sw_part.py` 的 docstring 说「后继末参是 BYREF Object&、pywin32 到不了」⇒ 本探针验它",
         "rows": rows,
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     for r in rows:
         print(

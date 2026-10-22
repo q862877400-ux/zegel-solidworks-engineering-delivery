@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """从 CHM 解包出的 cosworks 官方文档页里提取正文。
 
 背景 / 为什么需要这个

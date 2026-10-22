@@ -58,7 +58,7 @@ def main() -> int:
         import sw_connect
 
         from scripts import sw_feature_readback as fr
-        from scripts import sw_part as P
+        from scripts import sw_part as p_
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
@@ -69,19 +69,19 @@ def main() -> int:
         def _plate_and_sketch():
             """建板 + 一个**含一条线**的草图（★ 筋的典型轮廓）⇒ 回 (doc, 草图名)。"""
             d = sw_connect.new_document(sw, "part")
-            P.start_sketch(d, plane_name="Front Plane")
-            P.sketch_corner_rectangle(d, -50.0, -30.0, 50.0, 30.0)
-            sk = P.current_sketch_name(d)
-            P.end_sketch(d)
-            P.extrude_boss(d, sk, 20.0)
+            p_.start_sketch(d, plane_name="Front Plane")
+            p_.sketch_corner_rectangle(d, -50.0, -30.0, 50.0, 30.0)
+            sk = p_.current_sketch_name(d)
+            p_.end_sketch(d)
+            p_.extrude_boss(d, sk, 20.0)
             #: ★ 筋的轮廓草图：在右视基准面上画一条**开放线**（典型用法）
-            P.start_sketch(d, plane_name="Right Plane")
+            p_.start_sketch(d, plane_name="Right Plane")
             try:
-                P.sketch_centerline(d, 0.0, 0.0, 0.0, 30.0)  #: 参考中心线
+                p_.sketch_centerline(d, 0.0, 0.0, 0.0, 30.0)  #: 参考中心线
             except Exception:  # noqa: BLE001
                 pass
-            sk2 = P.current_sketch_name(d)
-            P.end_sketch(d)
+            sk2 = p_.current_sketch_name(d)
+            p_.end_sketch(d)
             return d, sk2
 
         def _run(label: str, ref_index: int, use_current_selection: bool) -> dict:

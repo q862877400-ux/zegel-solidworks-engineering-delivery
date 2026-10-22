@@ -53,8 +53,8 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 SW_SEL_FACES = 2
 SW_WZD_HOLE = 2  #: \u2605 \u53cd\u5c04\uff1a`swWzdHole = 2`
@@ -64,9 +64,9 @@ ANSI_METRIC = 1  #: \u2605 \u672c\u4ed3 list_hole_standards\uff1a`{1: 'ANSI Metr
 
 
 def _plate(doc, t=0.02):
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.04,
         -0.03,
@@ -75,15 +75,15 @@ def _plate(doc, t=0.02):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in ((names[-1] if names else "\u8349\u56fe1"), "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, t)
+            p_.extrude_boss(doc, cand, t)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -91,8 +91,8 @@ def _plate(doc, t=0.02):
 
 
 def _ray(doc, x=0.0, y=0.0, z=0.05, vec=(0.0, 0.0, -1.0), r=1e-4, mark=0, append=False):
-    ext = C.get_com_member(doc, "Extension")
-    return C.get_com_member(
+    ext = c_.get_com_member(doc, "Extension")
+    return c_.get_com_member(
         ext,
         "SelectByRay",
         float(x),
@@ -113,7 +113,7 @@ def _one(sw, tag, end_type, do_ray, fastener=40, ssize=""):
     row = {"tag": tag, "end_type": end_type, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row["plate"] = _plate(doc)
         if do_ray:
             try:
@@ -122,7 +122,7 @@ def _one(sw, tag, end_type, do_ray, fastener=40, ssize=""):
                 row["ray"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
         before = list(fr.feature_names(doc) or [])
         row["before"] = len(before)
-        fm = C.get_com_member(doc, "FeatureManager")
+        fm = c_.get_com_member(doc, "FeatureManager")
         args = (
             SW_WZD_HOLE,  # GenericHoleType
             ANSI_METRIC,  # StandardIndex
@@ -155,7 +155,7 @@ def _one(sw, tag, end_type, do_ray, fastener=40, ssize=""):
         row["n_args"] = len(args)
         ret = None
         try:
-            ret = C.get_com_member(fm, "HoleWizard5", *args)
+            ret = c_.get_com_member(fm, "HoleWizard5", *args)
             row["returned"] = type(ret).__name__ if ret is not None else "None"
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
@@ -167,16 +167,16 @@ def _one(sw, tag, end_type, do_ray, fastener=40, ssize=""):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u9ad8\u7ea7\u5b54\uff1a`SelectByRay` \u5b9a\u4f4d + `HoleWizard5`\uff08**27 \u53c2**\uff09",

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """生成 scripts/sw_drawing_view.py（IView 成员登记表 + 通用访问器）。"""
 
 from __future__ import annotations

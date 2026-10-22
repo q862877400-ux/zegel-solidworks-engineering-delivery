@@ -34,14 +34,14 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _box(doc, size=0.03):
-    P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Front Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -size,
         -size,
@@ -50,15 +50,15 @@ def _box(doc, size=0.03):
         size,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in ((names[-1] if names else "\u8349\u56fe1"), "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, size * 2.0)
+            p_.extrude_boss(doc, cand, size * 2.0)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -76,18 +76,18 @@ def _one(sw, tag, *, nsided, continuity, direction, n_curves=1, n_points=1, angl
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row["box"] = _box(doc)
         doc.ClearSelection2(True)  #: ★ 事实 479：发射线前先清选区
-        ext = C.get_com_member(doc, "Extension")
-        C.get_com_member(
+        ext = c_.get_com_member(doc, "Extension")
+        c_.get_com_member(
             ext, "SelectByRay", 0.0, 0.0, 0.2, 0.0, 0.0, -1.0, 1e-4, 2, False, 0, 0
         )
-        mgr = C.get_com_member(doc, "SelectionManager")
-        row["selected"] = int(C.get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
-        fm = C.get_com_member(doc, "FeatureManager")
+        mgr = c_.get_com_member(doc, "SelectionManager")
+        row["selected"] = int(c_.get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
+        fm = c_.get_com_member(doc, "FeatureManager")
         for i in range(n_curves):
-            C.get_com_member(
+            c_.get_com_member(
                 fm,
                 "SetFreeformCurveData",
                 int(direction),
@@ -100,7 +100,7 @@ def _one(sw, tag, *, nsided, continuity, direction, n_curves=1, n_points=1, angl
                 0.0,
             )
         for j in range(n_points):
-            C.get_com_member(
+            c_.get_com_member(
                 fm,
                 "SetFreeformPointData",
                 int(direction),
@@ -110,11 +110,11 @@ def _one(sw, tag, *, nsided, continuity, direction, n_curves=1, n_points=1, angl
                 0.0,
                 0.0,
             )
-        C.get_com_member(fm, "SetFreeformBoundaryContinuity", 0, int(continuity))
+        c_.get_com_member(fm, "SetFreeformBoundaryContinuity", 0, int(continuity))
         before = list(fr.feature_names(doc) or [])
         row["before"] = len(before)
         try:
-            feat = C.get_com_member(
+            feat = c_.get_com_member(
                 fm, "InsertFreeform2", bool(nsided), False, False, float(angle)
             )
             row["returned"] = type(feat).__name__ if feat is not None else "None"
@@ -129,16 +129,16 @@ def _one(sw, tag, *, nsided, continuity, direction, n_curves=1, n_points=1, angl
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u81ea\u7531\u6837\u5f0f\u53c2\u6570\u77e9\u9635\uff08\u2605 \u5b98\u65b9\u6750\u6599\u5df2\u7a77\u5c3d\u540e\u7684\u201c\u6700\u540e\u624b\u6bb5\u201d\uff09",

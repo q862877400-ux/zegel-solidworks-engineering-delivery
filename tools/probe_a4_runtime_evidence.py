@@ -175,14 +175,14 @@ def main() -> int:
     rec("custom_properties", **cp)
 
     verdict = "pass" if (para.get("ok") and cp.get("ok")) else "partial"
-    R = {
+    r_ = {
         "★_目的": "★ 两个 A4 真缺口的**真机运行证据**（★ 事实 516 的消化）",
         "verdict": verdict,
         "steps": steps,
         "parameter_updates_ok": bool(para.get("ok")),
         "custom_properties_ok": bool(cp.get("ok")),
     }
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(json.dumps(r_, ensure_ascii=False, indent=1), encoding="utf-8")
     print("★ verdict:", verdict)
     print(
         "★ parameter_updates:",

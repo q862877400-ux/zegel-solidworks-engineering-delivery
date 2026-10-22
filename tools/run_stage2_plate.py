@@ -39,11 +39,11 @@ sys.path[:0] = [
 
 import tool_caller  # noqa: E402
 
-from scripts.engineering import authorization as AUTH  # noqa: E402
+from scripts.engineering import authorization as auth_  # noqa: E402
 from scripts.engineering import drawing_obligations as DO  # noqa: E402
-from scripts.engineering import executor as X  # noqa: E402
+from scripts.engineering import executor as x_  # noqa: E402
 from scripts.engineering import expand as exp  # noqa: E402
-from scripts.engineering import registry as R  # noqa: E402
+from scripts.engineering import registry as r_  # noqa: E402
 
 OUT = ROOT / "output" / "stage2"
 
@@ -91,21 +91,21 @@ def expected_volume(c: dict) -> float:
     return v
 
 
-def build_plan(c: dict) -> R.ExecutablePlan:
+def build_plan(c: dict) -> r_.ExecutablePlan:
     """★ 方法 `plate` + 孔组（★ 板 + 逐孔切除）。"""
     steps = [
-        R.PlanStep(
+        r_.PlanStep(
             step="sketch_start",
             params={"plane_name": "Front Plane"},
             derive="★ 前视基准面",
         ),
-        R.PlanStep(
+        r_.PlanStep(
             step="sketch_add_rectangle",
             params={"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": c["w"], "y2_mm": c["h"]},
             derive="★ 板 %g×%g mm" % (c["w"], c["h"]),
         ),
-        R.PlanStep(step="sketch_end", params={}, derive="★ 退出草图"),
-        R.PlanStep(
+        r_.PlanStep(step="sketch_end", params={}, derive="★ 退出草图"),
+        r_.PlanStep(
             step="extrude_boss",
             params={"sketch_name": "草图1", "depth_mm": c["d"]},
             derive="★ 拉伸 %g mm" % c["d"],
@@ -114,14 +114,14 @@ def build_plan(c: dict) -> R.ExecutablePlan:
     #: ★ 孔组：每孔一个「画圆 + 切除」
     for i, (hx, hy) in enumerate(c["holes"], 1):
         steps.append(
-            R.PlanStep(
+            r_.PlanStep(
                 step="sketch_start",
                 params={"plane_name": "Front Plane"},
                 derive="★ 孔 %d 的草图（孔位 %g,%g —— ★ 受 holes 影响）" % (i, hx, hy),
             )
         )
         steps.append(
-            R.PlanStep(
+            r_.PlanStep(
                 step="sketch_add_circle",
                 params={
                     "center_x_mm": hx,
@@ -131,15 +131,15 @@ def build_plan(c: dict) -> R.ExecutablePlan:
                 derive="★ 孔 %d：φ%g @ (%g,%g)" % (i, c["dia"], hx, hy),
             )
         )
-        steps.append(R.PlanStep(step="sketch_end", params={}, derive="★ 退出孔草图"))
+        steps.append(r_.PlanStep(step="sketch_end", params={}, derive="★ 退出孔草图"))
         steps.append(
-            R.PlanStep(
+            r_.PlanStep(
                 step="extrude_cut",
                 params={"sketch_name": "草图%d" % (i + 1), "depth_mm": 0.0},
                 derive="★ 贯穿切（★ 0 = through all）",
             )
         )
-    return R.ExecutablePlan(method_id="plate_holes", steps=tuple(steps))
+    return r_.ExecutablePlan(method_id="plate_holes", steps=tuple(steps))
 
 
 #: ⚠ 2026-10-12 删掉了一个 `_sha()` 辅助函数 —— 它**从没被调用**
@@ -162,7 +162,7 @@ def run_case(reg, n: int, sw, *, revision: str = "rev-1") -> dict:
     OUT.mkdir(parents=True, exist_ok=True)
 
     doc = sw_connect.new_document(sw, "part")
-    owned = AUTH.OwnedDocuments()
+    owned = auth_.OwnedDocuments()
     owned.register(doc)
     rec["doc"] = owned.title_of(doc)
 
@@ -172,14 +172,14 @@ def run_case(reg, n: int, sw, *, revision: str = "rev-1") -> dict:
         rec["compiled"] = True
         rec["steps"] = len(plan.steps)
         rec["tools"] = [s.tool for s in plan.steps]
-    except (R.RegistryError, exp.ExpandError) as e:
+    except (r_.RegistryError, exp.ExpandError) as e:
         rec["compiled"] = False
         rec["compile_error"] = "%s: %s" % (getattr(e, "code", "?"), e)
         sw.CloseDoc(rec["doc"])
         return rec
 
     #: ② 授权
-    v = AUTH.authorize_plan(plan, reg, owned=owned, doc=doc)
+    v = auth_.authorize_plan(plan, reg, owned=owned, doc=doc)
     rec["authorized"] = v.ok
     if not v.ok:
         rec["auth_code"] = v.code
@@ -187,13 +187,13 @@ def run_case(reg, n: int, sw, *, revision: str = "rev-1") -> dict:
         return rec
 
     #: ③ 执行
-    X.COUNTER.reset()
-    out = X.execute_plan(
+    x_.COUNTER.reset()
+    out = x_.execute_plan(
         plan, reg, host={"model": doc, "sw_app": sw}, owned=owned, doc=doc, log_dir=OUT
     )
     rec["execute_ok"] = out["ok"]
     rec["com_writes"] = out["com_write_total"]
-    rec["records"] = X.records_to_dicts(out["records"])
+    rec["records"] = x_.records_to_dicts(out["records"])
     rec["step_errors"] = [r["error"] for r in rec["records"] if r["error"]]
 
     #: ④ 回读几何（★ SC-001：**孔是真几何** —— ★ 判据是回读，不是步骤返回值）
@@ -465,7 +465,7 @@ def run_negatives(reg) -> dict:
     c = CASES[1]
     plan = exp.expand_plan(build_plan(c), reg)
     #: ★ 造一个「没执行的」：把孔步骤全去掉，只留板
-    n1_plan = R.ExecutablePlan(
+    n1_plan = r_.ExecutablePlan(
         method_id="n1",
         steps=tuple(
             s
@@ -506,17 +506,17 @@ def run_negatives(reg) -> dict:
     )
 
     #: N3：规则**缺证据分支改成默认通过**
-    from scripts.engineering import rule_verdicts as RV
+    from scripts.engineering import rule_verdicts as rv_
 
-    spec = RV.RuleSpec(
+    spec = rv_.RuleSpec(
         id="r", required_inputs={"load": "N"}, citation="", effectiveness="effective"
     )
-    good = RV.evaluate(spec, {"load": 1.0}, compute=lambda i: True)
+    good = rv_.evaluate(spec, {"load": 1.0}, compute=lambda i: True)
     rows.append(
         {
             "name": "N3 规则缺证据分支默认通过",
             "how": "★ 真评价器 vs 突变体（无条件 PASS）对比",
-            "detected": good.verdict == RV.IND_SOURCE_MISSING and not good.releasing,
+            "detected": good.verdict == rv_.IND_SOURCE_MISSING and not good.releasing,
             "detail": "★ 真评价器回 %s（releasing=%s）"
             % (good.verdict, good.releasing),
         }
@@ -570,23 +570,23 @@ def run_change(reg, n: int, sw, *, revision: str = "rev-2") -> dict:
 
     #: ② 建新模型（★ 走**同一套**编译 + 授权 + 执行 —— ★ 不绕过）
     doc = sw_connect.new_document(sw, "part")
-    owned = AUTH.OwnedDocuments()
+    owned = auth_.OwnedDocuments()
     owned.register(doc)
     out["doc"] = owned.title_of(doc)
     plan = exp.expand_plan(build_plan(c2), reg)
-    v = AUTH.authorize_plan(plan, reg, owned=owned, doc=doc)
+    v = auth_.authorize_plan(plan, reg, owned=owned, doc=doc)
     out["authorized"] = v.ok
     if not v.ok:
         out["auth_code"] = v.code
         sw.CloseDoc(out["doc"])
         return out
-    X.COUNTER.reset()
-    res = X.execute_plan(
+    x_.COUNTER.reset()
+    res = x_.execute_plan(
         plan, reg, host={"model": doc, "sw_app": sw}, owned=owned, doc=doc, log_dir=OUT
     )
     out["execute_ok"] = res["ok"]
     out["step_errors"] = [
-        r["error"] for r in X.records_to_dicts(res["records"]) if r["error"]
+        r["error"] for r in x_.records_to_dicts(res["records"]) if r["error"]
     ]
 
     #: ③ 回读新几何（★ 改后尺寸必须真的变）
@@ -825,7 +825,7 @@ def main() -> int:
     args = ap.parse_args()
 
     OUT.mkdir(parents=True, exist_ok=True)
-    reg = R.build_registry()
+    reg = r_.build_registry()
     print(
         "★ 目录：%d 个工具（准入 %d）"
         % (len(reg), sum(1 for d in reg.values() if d.admitted))

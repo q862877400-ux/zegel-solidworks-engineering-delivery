@@ -27,7 +27,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
         sys.path.insert(0, _p)
 
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 OUT = REPO / "output" / "fillet-precall-e2e-evidence.json"
 
@@ -38,7 +38,7 @@ def _g(o, n, *a):
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
+    r_: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
     sw, _ = c.connect_solidworks(wait_seconds=30)
     import importlib
 
@@ -48,24 +48,24 @@ def main() -> int:
         None,
     )
     if spec is None:
-        R["err"] = "★ 找不到 solidworks_fillet"
+        r_["err"] = "★ 找不到 solidworks_fillet"
         OUT.write_text(
-            json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+            json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
         )
         return 0
-    R["call_path"] = "module=%s function=%s inject=%s pre_call=%s" % (
+    r_["call_path"] = "module=%s function=%s inject=%s pre_call=%s" % (
         spec.module,
         spec.function,
         spec.inject,
         getattr(spec.pre_call, "__name__", None),
     )
-    R["params"] = [getattr(p, "name", None) for p in (spec.params or [])]
+    r_["params"] = [getattr(p, "name", None) for p in (spec.params or [])]
     for sel in ("index:0", "index:4"):
         doc = None
         row: dict = {"selection": sel}
         try:
             doc = c.new_document(sw, "part")
-            P.start_sketch(doc, plane_name="Front Plane")
+            p_.start_sketch(doc, plane_name="Front Plane")
             _g(
                 _g(doc, "SketchManager"),
                 "CreateCornerRectangle",
@@ -76,10 +76,10 @@ def main() -> int:
                 0.03,
                 0.0,
             )
-            P.end_sketch(doc)
-            names = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
-            P.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
-            row["tree_before"] = list(P.feature_names(doc) or [])
+            p_.end_sketch(doc)
+            names = [n for n in (p_.feature_names(doc) or []) if n.startswith("草图")]
+            p_.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
+            row["tree_before"] = list(p_.feature_names(doc) or [])
             #: ★★ **按工具层契约调**：param_alias → 注入 → pre_call → derived_args → 目
             #: 标函数
             args = {"selection": sel, "radius_mm": 2.0}
@@ -138,7 +138,7 @@ def main() -> int:
             else:
                 row["ret_repr"] = str(ret)[:120]
             #: ★ 修：树要在 **CloseDoc 之前**读（★ 上一版读到 0 —— 文档已关）。
-            row["tree_after"] = list(P.feature_names(doc) or [])
+            row["tree_after"] = list(p_.feature_names(doc) or [])
             row["new_features"] = [
                 n for n in row["tree_after"] if n not in row["tree_before"]
             ]
@@ -152,11 +152,11 @@ def main() -> int:
                     _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
             except Exception:  # noqa: BLE001
                 pass
-        R["cases"].append(row)
-    R["passed"] = sum(1 for r in R["cases"] if r.get("ok"))
-    R["seconds"] = round(time.time() - started, 2)
+        r_["cases"].append(row)
+    r_["passed"] = sum(1 for r in r_["cases"] if r.get("ok"))
+    r_["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

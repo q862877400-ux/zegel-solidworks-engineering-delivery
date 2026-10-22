@@ -22,7 +22,9 @@ ToolSpec(
 ## 设计边界（**明确不做**什么）
 | 做 | 不做 |
 |---|---|
-| 覆盖「**调一个既有函数、参数直传**」这类工具（评估里 120 个的绝大多数） | **不**覆盖有自定义后处理的工具（如 `cadstudio_build_dxf_preview_scene`） —— 它们**继续手写**，本模块给 `extra_op` 逃生口 |
+| 覆盖「**调一个既有函数、参数直传**」这类工具（评估里 120 个的绝大多数）
+| **不**覆盖有自定义后处理的工具（如 `cadstudio_build_dxf_preview_scene`） —— 它们**继续手写**，
+本模块给 `extra_op` 逃生口 |
 | 生成 `@mcp.tool` 装饰器 + 函数 + `op()` 闭包 | **不**自动猜参数语义（`_mm` / `_deg` / `selection` 要**显式声明**） |
 | 把三条硬约束做成**注册时即报错**的门禁 | **不**改 `server.py`（本模块只提供 `register()`，接入与否由人决定） |
 
@@ -56,9 +58,10 @@ from __future__ import annotations
 import json
 import os
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any
 
 __all__ = [
     "Param",
@@ -369,7 +372,7 @@ class Param:
         return self.required if self.required is not None else self.default is ...
 
 
-def effective_inject(spec: "ToolSpec") -> str:
+def effective_inject(spec: ToolSpec) -> str:
     """把 ``inject`` 与兼容别名 ``needs_model`` 归一成一个字符串。
 
     ⚠ 两者都给且冲突 ⇒ 抛 :class:`GateError`（**不静默取其一**）。
@@ -689,7 +692,7 @@ PRECHECK_ENABLED = str(os.environ.get("SW_PRECHECK", "on")).strip().lower() not 
 )
 
 
-def precheck_payload(spec: "ToolSpec", inject_name: str, host) -> str | None:
+def precheck_payload(spec: ToolSpec, inject_name: str, host) -> str | None:
     """★★ **按声明自动生成的预检** —— ★ 返回 `None` 表示**放行**；★ 否则返回**要直接回的 JSON 串** ✓
 
     ★★ 这是 B4 的落点（★ 评审的四条之一）：★「工具层返回**结构化**的『不适用』，
@@ -846,7 +849,7 @@ def _observed_table() -> dict:
     return _OBSERVED_CACHE
 
 
-def observed_writes(spec: "ToolSpec") -> tuple | None:
+def observed_writes(spec: ToolSpec) -> tuple | None:
     """★ **真机观察到**的效应（★ 没有记录 ⇒ `None`）✓"""
     row = _observed_table().get(spec.name)
     if isinstance(row, dict) and row.get("writes"):
@@ -854,7 +857,7 @@ def observed_writes(spec: "ToolSpec") -> tuple | None:
     return None
 
 
-def effective_writes(spec: "ToolSpec") -> tuple | None:
+def effective_writes(spec: ToolSpec) -> tuple | None:
     """★ 这个工具**可能改**哪几类状态 —— ★★ `None` 表示**未知**（★ 不等于"无写"）✓
 
     ★★ 判序（★ **实证优先** —— 这是评审定的）：
@@ -874,7 +877,7 @@ def effective_writes(spec: "ToolSpec") -> tuple | None:
     return None
 
 
-def effective_read_only(spec: "ToolSpec") -> bool:
+def effective_read_only(spec: ToolSpec) -> bool:
     """★ 是否**只读** —— ★★ 由 `writes` **派生**（这是 B1-4 要修的根因：它曾是独立手填的布尔）✓
 
     判序：★ 显式声明优先（人判 / 真机实证）· 其次"**确认无写**" ⇒ 真 · 再次"确有写" ⇒ 假 ·

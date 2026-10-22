@@ -66,7 +66,7 @@ def main() -> int:
         if f.name not in seen_files:
             seen_files.add(f.name)
             files.append(f)
-    rows, ok, bad, unknown = [], 0, 0, 0
+    rows, ok, _bad, unknown = [], 0, 0, 0
     for f in files:
         text = f.read_text(encoding="utf-8", errors="replace")
         for iface, member in set(PAT_QUALIFIED.findall(text)):
@@ -81,7 +81,7 @@ def main() -> int:
                 rec["判定"] = "★ 页存在"
                 ok += 1
             rows.append(rec)
-    R = {
+    r_ = {
         "★_判据": "从 .md 抽 `IFoo.Bar(` 断言 ⇒ 去 C:\\swapi\\types\\IFoo\\Bar.md 核",
         "检的文件": [f.name for f in files],
         "★_断言总数": len(rows),
@@ -90,12 +90,12 @@ def main() -> int:
         "★★_成立率": round(100.0 * ok / max(1, len(rows)), 1),
         "明细": rows[:120],
     }
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(json.dumps(r_, ensure_ascii=False, indent=1), encoding="utf-8")
     print("★ 检了 %d 份文件" % len(files))
     print("★ 断言总数            = %d" % len(rows))
     print("★★ 官方页存在         = %d" % ok)
     print("★★ 官方页找不到（存疑）= %d" % unknown)
-    print("★★ 成立率             = %.1f%%" % R["★★_成立率"])
+    print("★★ 成立率             = %.1f%%" % r_["★★_成立率"])
     print()
     print("★ 存疑的前 12（★ 可能是另一个源里的，★ 也可能是错的）：")
     n = 0

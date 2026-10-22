@@ -73,7 +73,6 @@ __all__ = [
     "SELECTION_ARITY",
     "SELECTION_ALL_KINDS",
     "get_selection_manager",
-    "clear_selection",
     "get_selection_count",
     "get_selected_object",
     "get_selected_objects",

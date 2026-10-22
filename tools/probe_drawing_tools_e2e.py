@@ -171,9 +171,9 @@ def _build_part(sw, row: dict):
     """★ 建一块板并**存盘**（★ 视图工具的 `ModelName` 必须是含 `.sldprt` 的完整路径）。"""
     doc = c.new_document(sw, "part")
     try:
-        from scripts import sw_part as P
+        from scripts import sw_part as p_
 
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         _get(
             _get(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -184,14 +184,14 @@ def _build_part(sw, row: dict):
             0.03,
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         names = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p_.feature_names(doc) or [])
             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
         ]
         if names:
-            P.extrude_boss(doc, names[-1], 0.01)
+            p_.extrude_boss(doc, names[-1], 0.01)
             row["extrude_sketch"] = names[-1]
         # ★ 打一个孔：★ 好让"孔表 / 中心符号线（targets=['holes']）"有**圆边**可用
         # （★ 与 `tools/prove_drawing_batch.py::_build_part` 同一手法；★ 孔不成**不阻断*

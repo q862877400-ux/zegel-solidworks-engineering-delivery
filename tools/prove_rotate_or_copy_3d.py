@@ -43,13 +43,13 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
 
 
 def _seg_count(doc):
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
-        return len(list(C.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
+        sk = c_.get_com_member(doc, "GetActiveSketch2")
+        return len(list(c_.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
     except Exception:  # noqa: BLE001
         return -1
 
@@ -58,16 +58,16 @@ def _one(sw, tag, do_copy):
     row = {"tag": tag, "copy": do_copy, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        sm = C.get_com_member(doc, "SketchManager")
+        doc = c_.new_document(sw, "part")
+        sm = c_.get_com_member(doc, "SketchManager")
         #: \u2605 **\u5f00\u4e00\u4e2a 3D \u8349\u56fe**
         try:
-            C.get_com_member(sm, "Insert3DSketch", True)
+            c_.get_com_member(sm, "Insert3DSketch", True)
             row["sketch3d"] = "Insert3DSketch"
         except Exception as exc:  # noqa: BLE001
             row["sketch3d"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
         #: \u2605 \u91cc\u9762\u753b\u4e00\u6761\u7ebf
-        C.get_com_member(sm, "CreateLine", -0.02, 0.0, 0.0, 0.02, 0.0, 0.0)
+        c_.get_com_member(sm, "CreateLine", -0.02, 0.0, 0.0, 0.02, 0.0, 0.0)
         before = _seg_count(doc)
         row["seg_before"] = before
         ret = None
@@ -81,7 +81,7 @@ def _one(sw, tag, do_copy):
             #: L`\uff08`0x8002000F`\uff09
             #: \u2014\u2014 \u2605 **\u5b83\u770b\u4e0d\u51fa\u662f\u54ea\u4e2a\u53c2\u6
             #: 570\u6f0f\u4e86** \u26a0
-            ret = C.get_com_member(
+            ret = c_.get_com_member(
                 sm,
                 "RotateOrCopy3DAboutXYZ",
                 bool(do_copy),
@@ -106,16 +106,16 @@ def _one(sw, tag, do_copy):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u590d\u5236\u5b9e\u4f53\uff1a`ISketchManager.RotateOrCopy3DAboutXYZ`\uff08\u2605 **\u7b2c\u4e00\u53c2 `Copy`**\uff09",

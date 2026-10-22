@@ -2174,7 +2174,8 @@ def rib(model, sketch_name, thickness, direction=True):
       |---|---|---|---|
       | ★ ① | ★ 悬空线（★ 无板） | ★ `model.FeatureManager.InsertRib(…9 参)` | ★ **静默失败**（`error=""`）|
       | ★ ② | ★ 板内线（★ 有板） | ★ 同上 | ★ **静默失败** |
-      | ★ ③ | ★ 板内线 | ★ `call_com_member(model, "InsertRib", …**10 参**)` | ★★ **`com_error(-2147352562, '无效的参数数目。')`** |
+      | ★ ③ | ★ 板内线 | ★ `call_com_member(model, "InsertRib", …**10 参**)` | ★★ **`com_error(-2147352562,
+      '无效的参数数目。')`** |
       | ★ ④ | ★ 板内线 | ★ `call_com_member(… **8 参**)` | ★ **静默失败**（★ 而**不再报参数数目** ⇒ 8 参被接受）|
       | ★★ ⑤ | ★★ **折线**（★ 照官方 `CreateLine ×3` · ★ 跨过实体） | ★ `call_com_member(… 8 参)` | ★★ **仍静默失败**（★ `error=""`）|
       ⇒ ★★★ **⚠ 第 ⑤ 次（轮 125）**证伪了"轮廓几何是唯一真因"**** ——

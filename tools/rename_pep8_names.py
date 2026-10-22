@@ -114,24 +114,30 @@ def main() -> int:
             low = name.lower()
             if low == name:
                 continue
+            #: ★ 2026-10-22：不止试「小写」一种 —— 撞名/多绑定时依次试备选，
+            #:   全都不可用才跳过（★ 跳过仍要列出来，不静默）
+            cands = [low, low + "_", "_" + low, low + "2"]
             if bound_count(tree, name) != 1:
                 reasons.append(f"{path.name}: `{name}` 绑定 {bound_count(tree, name)} 次 ⇒ 跳过")
                 skipped += 1
                 continue
-            if re.search(r"\b%s\b" % re.escape(low), src):
-                reasons.append(f"{path.name}: 目标名 `{low}` 已存在 ⇒ 跳过")
+            done = False
+            for low in cands:
+                if re.search(r"\b%s\b" % re.escape(low), src):
+                    continue
+                new_src = re.sub(r"\b%s\b" % re.escape(name), low, src)
+                try:
+                    ast.parse(new_src)
+                except SyntaxError:
+                    continue
+                src = new_src
+                renamed += 1
+                changed = True
+                done = True
+                break
+            if not done:
+                reasons.append(f"{path.name}: `{name}` 的候选名全被占用 ⇒ 跳过")
                 skipped += 1
-                continue
-            new_src = re.sub(r"\b%s\b" % re.escape(name), low, src)
-            try:
-                ast.parse(new_src)
-            except SyntaxError:
-                reasons.append(f"{path.name}: 改 `{name}` 后语法崩 ⇒ 跳过")
-                skipped += 1
-                continue
-            src = new_src
-            renamed += 1
-            changed = True
         if changed:
             files += 1
             if write:

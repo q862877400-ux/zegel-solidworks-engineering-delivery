@@ -110,7 +110,7 @@ def main() -> int:
                 "ok": False,
                 "err": "%s: %s" % (type(exc).__name__, str(exc)[:130]),
             }
-        before = _type_names(doc)
+        _type_names(doc)
         if (ev["steps"].get("entry_check") or {}).get("ok"):
             try:
                 rep2 = create_structural_member_from_sketch(doc, sk, str(PROFILE))

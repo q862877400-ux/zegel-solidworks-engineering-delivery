@@ -40,7 +40,7 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
@@ -57,7 +57,7 @@ def main() -> int:
         doc = c.new_document(sw, "part")
         #: \u2605 \u2460 \u5148\u5efa**\u4e00\u5f20\u66f2\u9762**\uff08\u2605 \u7528\u67
         #: 2c\u4ed3\u5df2\u9a8c\u8fc7\u7684\u62d3\u5c55\u66f2\u9762\uff09
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         c.get_com_member(
             c.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -68,7 +68,7 @@ def main() -> int:
             0.02,
             0.0,
         )
-        ev["steps"].append({"step": "sketch", "tree": P.feature_names(doc)})
+        ev["steps"].append({"step": "sketch", "tree": p_.feature_names(doc)})
         ex = None
         for cand in ("\u8349\u56fe1", "Sketch1"):
             try:
@@ -90,7 +90,7 @@ def main() -> int:
             }
         )
         ev["before"] = {
-            "tree": len(P.feature_names(doc) or []),
+            "tree": len(p_.feature_names(doc) or []),
             "solid": sf._solid_body_count(doc),
             "surface": sf._surface_body_count(doc),
         }
@@ -104,10 +104,10 @@ def main() -> int:
                 "err": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
             }
         ev["after"] = {
-            "tree": len(P.feature_names(doc) or []),
+            "tree": len(p_.feature_names(doc) or []),
             "solid": sf._solid_body_count(doc),
             "surface": sf._surface_body_count(doc),
-            "names": list(P.feature_names(doc) or []),
+            "names": list(p_.feature_names(doc) or []),
         }
         ev["verdict"] = "pass" if (ev["thicken"] or {}).get("ok") else "fail"
     except Exception as exc:  # noqa: BLE001

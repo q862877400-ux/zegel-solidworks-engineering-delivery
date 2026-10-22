@@ -76,7 +76,7 @@ def _pick(doc, count, mark):
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "steps": []}
+    r_: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "steps": []}
     sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
@@ -93,17 +93,17 @@ def main() -> int:
         sk = names[-1] if names else "草图1"
         from scripts.sw_weldment import create_structural_member_from_sketch
 
-        R["weldment"] = create_structural_member_from_sketch(
+        r_["weldment"] = create_structural_member_from_sketch(
             doc, sketch_name=sk, profile_path=_profile()
         )
-        if isinstance(R["weldment"], dict):
-            R["weldment"] = {
-                k: R["weldment"].get(k) for k in ("ok", "preconditions_held", "error")
+        if isinstance(r_["weldment"], dict):
+            r_["weldment"] = {
+                k: r_["weldment"].get(k) for k in ("ok", "preconditions_held", "error")
             }
-        R["features"] = list(p.feature_names(doc) or [])
+        r_["features"] = list(p.feature_names(doc) or [])
 
         def note(tag):
-            R["steps"].append(
+            r_["steps"].append(
                 {
                     "step": tag,
                     "mark0": _cnt(doc, 0),
@@ -113,7 +113,7 @@ def main() -> int:
             )
 
         note("造完焊件（未选）")
-        R["picked"] = _pick(doc, 2, 1)
+        r_["picked"] = _pick(doc, 2, 1)
         note("选 2 个面 mark=1（刚选完）")
         #: ★★ 逐个加一步，看哪一步清掉它
         _ = list(p.feature_names(doc) or [])
@@ -130,7 +130,7 @@ def main() -> int:
         #: ★ 工具的 `_selection_marks` 走的是这条
         from scripts.sw_sheet_metal_weld_entry import _selection_marks
 
-        R["tool_sees"] = _selection_marks(doc)
+        r_["tool_sees"] = _selection_marks(doc)
         note("调了工具的 _selection_marks 之后")
         #: ★★★ **决定性单变量**：探针的 `_call` 在调工具前会先跑 `RESOLVERS[inj](None)`
         #:   ⇒ ★ 本步把它**单独插进来**，看选区在不在。
@@ -138,23 +138,23 @@ def main() -> int:
             import register_capabilities as _rc
 
             _resolved = _rc.RESOLVERS["model"](None)
-            R["resolved_type"] = type(_resolved).__name__
+            r_["resolved_type"] = type(_resolved).__name__
         except Exception as exc:  # noqa: BLE001
-            R["resolver_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
+            r_["resolver_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         note("调过 RESOLVERS['model'] 之后")
-        R["tool_sees_after_resolver"] = _selection_marks(doc)
+        r_["tool_sees_after_resolver"] = _selection_marks(doc)
         note("解析器之后再调 _selection_marks")
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:300])
+        r_["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:300])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
         except Exception:  # noqa: BLE001
             pass
-    R["seconds"] = round(time.time() - started, 2)
+    r_["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

@@ -111,9 +111,9 @@ def main() -> int:
 
     got = None
     try:
-        import sw_feature_readback as R
+        import sw_feature_readback as r_
 
-        got = R.sweep_params(model)
+        got = r_.sweep_params(model)
         step(
             "sweep_params",
             feature=got.get("feature"),

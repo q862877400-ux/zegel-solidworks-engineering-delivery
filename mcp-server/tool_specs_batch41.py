@@ -12,7 +12,8 @@
 
 ## ★ 参数命名（规则 2 / 3）
 ```
-★ `distance_mm` 带 `_mm`（★ 规则 2）· `module_mm` / `face_width_mm` / `pitch_diameter_mm` 在 **spec** 里（★ 同样带 `_mm`）
+★ `distance_mm` 带 `_mm`（★ 规则 2）
+· `module_mm` / `face_width_mm` / `pitch_diameter_mm` 在 **spec** 里（★ 同样带 `_mm`）
 ★ `chamfer_type` / `teeth` 是**枚举与计数**（★ 不是长度、不是角度）⇒ 不带后缀
 ★ `plane_name` 是**基准面名**（★ 随 UI 语言变 —— 沿用 `sw_part` 的候选名机制）· **无裸坐标** ✓
 ```

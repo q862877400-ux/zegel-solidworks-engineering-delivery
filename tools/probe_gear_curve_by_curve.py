@@ -28,7 +28,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 from scripts import gear_geometry as g  # noqa: E402
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from tools.probe_gear_tooth_pattern2 import tooth_curves  # noqa: E402
 
 
@@ -51,7 +51,7 @@ def _main() -> int:
     doc = None
     try:
         doc = c.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         sm = c.get_com_member(doc, "SketchManager")
 
         def segs():
@@ -107,8 +107,8 @@ def _main() -> int:
         except Exception as exc:  # noqa: BLE001
             rep["constrained_status_error"] = str(exc)[:90]
         try:
-            P.end_sketch(doc)
-            f = P.extrude_boss(doc, "草图1", 0.010)
+            p_.end_sketch(doc)
+            f = p_.extrude_boss(doc, "草图1", 0.010)
             rep["extrude_ok"] = f is not None
         except Exception as exc:  # noqa: BLE001
             rep["extrude_ok"] = False

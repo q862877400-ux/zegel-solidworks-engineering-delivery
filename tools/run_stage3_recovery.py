@@ -100,10 +100,9 @@ def run_window(window: str, attempt: int, *, reference: dict) -> dict:
     if window == rc.BEFORE_CALL:
         #: ★ 窗口①：意图落盘了，但**一个都没生效**
         #:   ⇒ 恢复时**全部重放**（★ 安全）
-        cut = 4
+        pass
     elif window == rc.AFTER_EFFECT:
         #: ★★ 窗口②：前 4 步**已生效但没记账**（★ 没进清单）
-        cut = 4
         applied.update(UNIQUE[:4])
         for st in UNIQUE[:4]:
             manifest.entries.append(
@@ -116,7 +115,6 @@ def run_window(window: str, attempt: int, *, reference: dict) -> dict:
             )
     else:  #: AFTER_SAVE
         #: ★ 窗口③：前 4 步**已记账**（在清单里），但**清单没发布**
-        cut = 4
         applied.update(UNIQUE[:4])
         for st in UNIQUE[:4]:
             manifest.add(

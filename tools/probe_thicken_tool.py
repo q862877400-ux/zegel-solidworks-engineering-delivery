@@ -30,7 +30,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
 import register_capabilities as rc  # noqa: E402
 
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 OUT = REPO / "output" / "thicken-tool-evidence.json"
@@ -46,12 +46,12 @@ def _mk_surface(doc):
         _g(doc, "ClearSelection2", True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name="Front Plane")
+    p_.start_sketch(doc, plane_name="Front Plane")
     _g(_g(doc, "SketchManager"), "CreateLine", -0.03, 0.0, 0.0, 0.03, 0.0, 0.0)
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("草图") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "草图1", "草图1", "Sketch1"):

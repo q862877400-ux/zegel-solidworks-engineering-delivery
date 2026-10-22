@@ -8,7 +8,7 @@
 #   > ★ 下一步：用**平面区域**（`InsertPlanarRefSurface`）从**带内环的草图**
 #   >   生成**一张真正的平面曲面** —— ★ 那才是名符其实的"带孔曲面"。
 #
-#   ★★★★★ **官方逐字**（`C:\swapi\types\IModelDoc2\InsertPlanarRefSurface.md`）：
+#   ★★★★★ **官方逐字**（`c_:\swapi\types\IModelDoc2\InsertPlanarRefSurface.md`）：
 #     ```
 # System.bool InsertPlanarRefSurface()          \u2190 \u2605 **0 \u53c2** \u00b7 \u2605
 #  **\u56de bool**
@@ -40,8 +40,8 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _mk_sketch_with_hole(doc, pick_sketch):
@@ -50,14 +50,14 @@ def _mk_sketch_with_hole(doc, pick_sketch):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name="Front Plane")
-    sm = C.get_com_member(doc, "SketchManager")
-    C.get_com_member(sm, "CreateCornerRectangle", -0.03, -0.03, 0.0, 0.03, 0.03, 0.0)
-    C.get_com_member(sm, "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.012)
-    P.end_sketch(doc)
+    p_.start_sketch(doc, plane_name="Front Plane")
+    sm = c_.get_com_member(doc, "SketchManager")
+    c_.get_com_member(sm, "CreateCornerRectangle", -0.03, -0.03, 0.0, 0.03, 0.03, 0.0)
+    c_.get_com_member(sm, "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.012)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     sk = names[-1] if names else "\u8349\u56fe1"
@@ -67,11 +67,11 @@ def _mk_sketch_with_hole(doc, pick_sketch):
         except Exception:  # noqa: BLE001
             pass
         return sk
-    ext = C.get_com_member(doc, "Extension")
+    ext = c_.get_com_member(doc, "Extension")
     ok = False
-    for cand in P._get_sketch_name_candidates(sk):
+    for cand in p_._get_sketch_name_candidates(sk):
         try:
-            if P._select_by_id(ext, cand, "SKETCH", append=False, mark=1):
+            if p_._select_by_id(ext, cand, "SKETCH", append=False, mark=1):
                 ok = True
                 break
         except Exception:  # noqa: BLE001
@@ -105,14 +105,14 @@ def _one(sw, tag, then_delete_hole):
     row = {"tag": tag, "then_delete_hole": then_delete_hole, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         before = list(fr.feature_names(doc) or [])
         sk = _mk_sketch_with_hole(doc, pick_sketch=True)
         row["sketch_selected"] = sk
         #: \u2605 \u2460 **\u5e73\u9762\u533a\u57df**
         ret = None
         try:
-            ret = C.get_com_member(doc, "InsertPlanarRefSurface")
+            ret = c_.get_com_member(doc, "InsertPlanarRefSurface")
             row["planar_returned"] = str(ret)
         except Exception as exc:  # noqa: BLE001
             row["planar_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
@@ -179,16 +179,16 @@ def _one(sw, tag, then_delete_hole):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "**\u5e73\u9762\u533a\u57df**\u9020\u771f\u6b63\u7684\u5e26\u5b54\u66f2\u9762 \u2192 \u518d\u5728\u5176\u4e0a\u8bd5**\u5220\u9664\u5b54**",

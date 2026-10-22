@@ -335,13 +335,13 @@ class ToleranceChain:
 
     def compute(self) -> dict:
         """★★★ **算公差链**（★ 转给 EC02 的两个算法 —— ★ **不重复实现**）。"""
-        from . import rules as R
+        from . import rules as r_
 
         if self.method == "rss":
-            return R.tolerance_stack_rss(
+            return r_.tolerance_stack_rss(
                 self.links, distribution=self.statistical_basis
             )
-        return R.tolerance_stack_worst_case(self.links)
+        return r_.tolerance_stack_worst_case(self.links)
 
 
 # ══════════════════════════════════════════════════════════════════════

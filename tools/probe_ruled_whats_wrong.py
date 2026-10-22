@@ -39,7 +39,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
@@ -73,13 +73,15 @@ def main() -> int:
     sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-        "_": "\u76f4\u7eb9\u66f2\u9762\u5931\u8d25\u540e\u8bfb What's Wrong\uff08\u2605 \u6362\u89c2\u6d4b\u624b\u6bb5\uff09",
+        "_":
+        "\u76f4\u7eb9\u66f2\u9762\u5931\u8d25\u540e\u8bfb What's Wrong\uff08\u2605 \u6362\u89c2\u6d4b\u624b\u6bb5\uff09"
+        ,
         "steps": [],
     }
     doc = None
     try:
         doc = c.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         c.get_com_member(
             c.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -90,10 +92,10 @@ def main() -> int:
             0.02,
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         for cand in ("\u8349\u56fe1", "Sketch1"):
             try:
-                P.extrude_boss(doc, cand, 0.02)
+                p_.extrude_boss(doc, cand, 0.02)
                 break
             except Exception:  # noqa: BLE001
                 continue
@@ -108,7 +110,7 @@ def main() -> int:
         except Exception:  # noqa: BLE001
             pass
         if idx is not None:
-            ev["selected"] = bool(P._select_com_object(edges[idx], append=True, mark=0))
+            ev["selected"] = bool(p_._select_com_object(edges[idx], append=True, mark=0))
             try:
                 ev["sel_count"] = int(
                     c.get_com_member(

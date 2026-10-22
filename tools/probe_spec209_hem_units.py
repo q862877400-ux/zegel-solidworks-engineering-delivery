@@ -40,7 +40,7 @@ OUT = R / "output" / "spec209-hem-units.json"
 
 def main() -> int:
     import sw_connect
-    import sw_part as P
+    import sw_part as p_
     import sw_selection_spec as ss
     import sw_sheet_metal as sm
     from sw_connect import get_com_member, safe_get_com_member
@@ -86,8 +86,8 @@ def main() -> int:
     def _plate(thickness):
         doc = sw_connect.new_document(sw, "part")
         opened.append(doc)
-        with P.sketch(doc, "Front Plane") as sk:
-            P.sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
+        with p_.sketch(doc, "Front Plane") as sk:
+            p_.sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
         sm.create_base_flange(
             doc,
             sk,

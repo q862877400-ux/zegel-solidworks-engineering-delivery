@@ -59,10 +59,10 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 #: **全部在 `tools/session_verdict.py`** —— ★ 本仓反复吃过的亏就是"同一套判定两处各写一
 #: 份" ✓
 #:   ★ 下面这几个薄壳**只为兼容既有调用点**保留，★ 逻辑一律走共用实现 ✓
-from session_verdict import (
+from session_verdict import (  # noqa: E402
     OURS as _OURS,
 )
-from session_verdict import (
+from session_verdict import (  # noqa: E402
     parse_title_documents,  # noqa: E402
 )
 

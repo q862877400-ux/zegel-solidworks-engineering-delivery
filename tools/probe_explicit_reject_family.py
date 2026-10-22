@@ -28,7 +28,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
         sys.path.insert(0, _p)
 
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 OUT = REPO / "output" / "explicit-reject-family-evidence.json"
 FAMILY = [
@@ -84,13 +84,13 @@ def main() -> int:
     doc = None
     try:
         doc = c.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         _g(_g(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.01)
-        P.end_sketch(doc)
-        P.start_sketch(doc, plane_name="Right Plane")
+        p_.end_sketch(doc)
+        p_.start_sketch(doc, plane_name="Right Plane")
         _g(_g(doc, "SketchManager"), "CreateLine", 0.0, 0.0, 0.0, 0.0, 0.06, 0.0)
-        P.end_sketch(doc)
-        r["setup_features"] = list(P.feature_names(doc) or [])
+        p_.end_sketch(doc)
+        r["setup_features"] = list(p_.feature_names(doc) or [])
         try:
             _g(doc, "ClearSelection2", True)
         except Exception:  # noqa: BLE001
@@ -123,7 +123,7 @@ def main() -> int:
                 )
                 row["new_features"] = [
                     x
-                    for x in (P.feature_names(doc) or [])
+                    for x in (p_.feature_names(doc) or [])
                     if x not in (r.get("setup_features") or [])
                 ]
             except Exception as exc:  # noqa: BLE001

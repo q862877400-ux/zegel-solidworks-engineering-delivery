@@ -13,7 +13,7 @@
 #     |---|---|---|
 #     | A | **正例复核**：落点在环内 + 选**近面** | ★ 该成 |
 #     | B | **只**把落点移到**环外**（★ 仍在同一张面上 ⇒ mark 1 计数仍应为 1） | ★ 该不成 |
-#     | C | **只**把面换成**远面**（★ 投影落在近面，远面拿不到） | ★ 该不成 |
+#     | c_ | **只**把面换成**远面**（★ 投影落在近面，远面拿不到） | ★ 该不成 |
 # | D | **复现上一会话的几何**：草图在实体**内部** + 取 `GetFaces()[0]` | ★ 该不成（★ 对
 # 照事实 419） |
 #
@@ -44,8 +44,8 @@ sys.path.insert(0, str(R / "tools"))
 import prove_split_line_geometry_per_example as g  # noqa: E402
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _loops_per_face(doc):
@@ -87,11 +87,11 @@ def _run_case(sw, tag, mode):
     row = {"tag": tag, "mode": mode, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         if mode == "legacy":
             #: ★ 复现上一会话的几何：Top Plane 拉 20 mm（实体 z∈[-30,30]）· 投影草图在 F
             #: ront Plane（z=0，**在实体内部**）
-            P.start_sketch(doc, plane_name="Top Plane")
+            p_.start_sketch(doc, plane_name="Top Plane")
             g._get(
                 g._get(doc, "SketchManager"),
                 "CreateCornerRectangle",
@@ -102,16 +102,16 @@ def _run_case(sw, tag, mode):
                 0.03,
                 0.0,
             )
-            P.end_sketch(doc)
+            p_.end_sketch(doc)
             for cand in (g._sketch_names(doc) or ["\u8349\u56fe1"])[::-1]:
                 try:
-                    P.extrude_boss(doc, cand, 0.02)
+                    p_.extrude_boss(doc, cand, 0.02)
                     break
                 except Exception:  # noqa: BLE001
                     continue
             box = g._bbox(doc)
             row["bbox_m"] = box
-            P.start_sketch(doc, plane_name="Front Plane")
+            p_.start_sketch(doc, plane_name="Front Plane")
             g._get(
                 g._get(doc, "SketchManager"),
                 "CreateCircleByRadius",
@@ -120,12 +120,12 @@ def _run_case(sw, tag, mode):
                 0.0,
                 0.008,
             )
-            P.end_sketch(doc)
+            p_.end_sketch(doc)
             doc.ClearSelection2(True)
             picked = {}
             for nm in ("\u51f8\u53f0-\u62c9\u4f381", "Boss-Extrude1"):
                 try:
-                    if P._select_by_id(
+                    if p_._select_by_id(
                         g._get(doc, "Extension"),
                         nm,
                         "BODYFEATURE",
@@ -137,7 +137,7 @@ def _run_case(sw, tag, mode):
                 except Exception:  # noqa: BLE001
                     continue
             try:
-                if P._select_by_id(
+                if p_._select_by_id(
                     g._get(doc, "Extension"),
                     g._sketch_names(doc)[-1],
                     "SKETCH",
@@ -153,7 +153,7 @@ def _run_case(sw, tag, mode):
                     g._get(list(g._get(doc, "GetBodies2", 0, True))[0], "GetFaces")
                     or []
                 )
-                if faces and g._get(faces[0], "Select4", True, P._empty_callout()):
+                if faces and g._get(faces[0], "Select4", True, p_._empty_callout()):
                     picked["face"] = "GetFaces()[0]"
             except Exception:  # noqa: BLE001
                 pass
@@ -171,7 +171,7 @@ def _run_case(sw, tag, mode):
                     per[str(m)] = -1
             row["picked"], row["sel_by_mark"] = picked, per
             return _call_and_read(doc, row)
-        #: ★ A / B / C 共用**同一个**（正确的）几何搭建
+        #: ★ A / B / c_ 共用**同一个**（正确的）几何搭建
         ok_build, info = g._build(doc)
         row.update({k: v for k, v in info.items() if k != "bbox_m"})
         row["built"] = ok_build
@@ -228,7 +228,7 @@ def _call_and_read(
     )
     row["called_with"] = "%s(%s)" % (member, ", ".join(str(a) for a in call_args))
     try:
-        ret = C.get_com_member(doc, member, *call_args)
+        ret = c_.get_com_member(doc, member, *call_args)
         row["ret_is_none"] = ret is None
     except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
@@ -273,10 +273,11 @@ def _feature_by_name(doc, name):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-        "_": "\u6295\u5f71\u578b\u5206\u5272\u7ebf\uff1a**\u6b63\u4f8b\u590d\u6838 + \u4e09\u4e2a\u8d1f\u4f8b\u5bf9\u7167**"
+        "_":
+        "\u6295\u5f71\u578b\u5206\u5272\u7ebf\uff1a**\u6b63\u4f8b\u590d\u6838 + \u4e09\u4e2a\u8d1f\u4f8b\u5bf9\u7167**"
         "\uff08\u53ea\u6539\u4e00\u5904\u53d8\u91cf\uff09",
         "cases": [],
     }
@@ -289,7 +290,7 @@ def main() -> int:
             "\u2605 B \u53ea\u6539\u843d\u70b9\u5230\u73af\u5916\uff08\u540c\u4e00\u5f20\u9762\uff09",
             "near_outside",
         ),
-        ("\u2605 C \u53ea\u6539\u6210\u8fdc\u9762", "far"),
+        ("\u2605 c_ \u53ea\u6539\u6210\u8fdc\u9762", "far"),
         ("\u2605 D \u590d\u73b0\u4e0a\u4e00\u4f1a\u8bdd\u7684\u51e0\u4f55", "legacy"),
     ):
         ev["cases"].append(_run_case(sw, tag, mode))

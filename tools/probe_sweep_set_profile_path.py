@@ -41,8 +41,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 SW_FM_REF_SURFACE = 62
 
@@ -51,12 +51,12 @@ def _sketch_ref(doc, idx):
     """★ 取第 idx 个草图的**引用**（★ 用来赋给 `Profile` / `Path`）。"""
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     if idx < len(names):
         try:
-            return C.get_com_member(doc, "FeatureByName", names[idx])
+            return c_.get_com_member(doc, "FeatureByName", names[idx])
         except Exception:  # noqa: BLE001
             return None
     return None
@@ -66,26 +66,26 @@ def _one(sw, tag, *, set_props):
     row = {"tag": tag, "set_props": set_props, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         #: \u8f6e\u5ed3\uff1a\u4e0a\u89c6\u9762\u7684\u5706
-        P.start_sketch(doc, plane_name="Top Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        p_.start_sketch(doc, plane_name="Top Plane")
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateCircleByRadius",
             0.0,
             0.0,
             0.0,
             5.0 / 1000.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         #: \u8def\u5f84\uff1a\u524d\u89c6\u9762\u4ece\u539f\u70b9\u6cbf X
         try:
-            C.get_com_member(doc, "ClearSelection2", True)
+            c_.get_com_member(doc, "ClearSelection2", True)
         except Exception:  # noqa: BLE001
             pass
-        P.start_sketch(doc, plane_name="Front Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        p_.start_sketch(doc, plane_name="Front Plane")
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateLine",
             0.0,
             0.0,
@@ -94,11 +94,11 @@ def _one(sw, tag, *, set_props):
             0.0,
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
 
-        fm = C.get_com_member(doc, "FeatureManager")
-        before = list(P.feature_names(doc) or [])
-        data = C.get_com_member(fm, "CreateDefinition", SW_FM_REF_SURFACE)
+        fm = c_.get_com_member(doc, "FeatureManager")
+        before = list(p_.feature_names(doc) or [])
+        data = c_.get_com_member(fm, "CreateDefinition", SW_FM_REF_SURFACE)
         row["data"] = type(data).__name__ if data is not None else None
         if data is None:
             return row
@@ -112,7 +112,7 @@ def _one(sw, tag, *, set_props):
                 refs[attr] = type(r).__name__ if r is not None else None
                 if r is not None:
                     try:
-                        C.set_com_member(data, attr, r)
+                        c_.set_com_member(data, attr, r)
                     except Exception as exc:  # noqa: BLE001
                         refs[attr + "_err"] = "%s: %s" % (
                             type(exc).__name__,
@@ -122,17 +122,17 @@ def _one(sw, tag, *, set_props):
             #: \u2605 \u5e26\u4e0a AutoSelect\uff08\u2605 \u5b83\u5728\u6210\u5458\u8868
             #: \u91cc\uff09
             try:
-                C.set_com_member(data, "AutoSelect", True)
+                c_.set_com_member(data, "AutoSelect", True)
                 row["auto_select"] = True
             except Exception as exc:  # noqa: BLE001
                 row["auto_select"] = "ERR %s" % str(exc)[:60]
 
         try:
-            feat = C.get_com_member(fm, "CreateFeature", data)
+            feat = c_.get_com_member(fm, "CreateFeature", data)
             row["create_feature"] = type(feat).__name__ if feat is not None else "None"
         except Exception as exc:  # noqa: BLE001
             row["create_feature_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-        after = list(P.feature_names(doc) or [])
+        after = list(p_.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new"])
     except Exception as exc:  # noqa: BLE001
@@ -140,16 +140,16 @@ def _one(sw, tag, *, set_props):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u626b\u63cf\u66f2\u9762\uff1a**\u8bbe\u4e0a Profile/Path \u5c5e\u6027**\u540e\u518d CreateFeature",

@@ -17,8 +17,9 @@ from __future__ import annotations
 import hashlib
 import json
 import numbers
+from collections.abc import Iterable, Mapping
 from dataclasses import asdict, dataclass
-from typing import Any, Iterable, Mapping
+from typing import Any
 
 
 @dataclass(frozen=True)

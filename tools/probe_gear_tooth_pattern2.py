@@ -66,12 +66,12 @@ def tooth_curves(spec: g.GearSpec, geo: g.GearGeometry):
 
     ★ 闭合链（★ 参数一律**升序** —— `RangeStart <= RangeEnd` 是硬要求）：
       ```
-      ① right_root   t: phi0->phi_b   角 = +(raw(t) + R)     => +A -> +P
+      ① right_root   t: phi0->phi_b   角 = +(raw(t) + R)     => +_a -> +P
       ② right_flank  t: 0->T          角 = +P - inv(t)        => +P -> +ang_tip
       ③ tip_arc      t: -ang_tip->+ang_tip（y 取负）           => +ang_tip -> -ang_tip
       ④ left_flank   t: 0->T          角 = -P + inv(T-t)      => -ang_tip -> -P
-      ⑤ left_root    t: 0->1          角 = -(raw(phi_b-span*t) + R) => -P -> -A
-      ⑥ root_arc     t: -A->+A                                => -A -> +A
+      ⑤ left_root    t: 0->1          角 = -(raw(phi_b-span*t) + R) => -P -> -_a
+      ⑥ root_arc     t: -_a->+_a                                => -_a -> +_a
       ```
       ★★ 判据：★ 12 个端点角**全部**与解析期望吻合（★ 容差 1e-6 rad）✓
     """
@@ -83,7 +83,7 @@ def tooth_curves(spec: g.GearSpec, geo: g.GearGeometry):
     hf = g.DEDENDUM_COEFF * m
     rf = r - hf
     rho = g.TOOL_TIP_RADIUS_COEFF * m
-    t_b, t_a = geo.t_root, geo.t_tip
+    _t_b, t_a = geo.t_root, geo.t_tip
     P = math.pi / (2.0 * z) + (math.tan(alpha) - alpha)
     #: ★ ① **标准齿条的刀顶圆角中心偏移**（★ 修正项 · ★ 缺它就接不上渐开线）
     uc = g.tool_tip_arc_offset_mm(m, alpha, hf, rho)
@@ -112,7 +112,7 @@ def tooth_curves(spec: g.GearSpec, geo: g.GearGeometry):
     raw_b = math.atan2(raw_tro(phi_b)[1], raw_tro(phi_b)[0])
     #: ★★ ② **旋转角**：★ 让摆线终点（★ 半径 rb）转到渐开线起点（★ 角 P）
     rot = P - raw_b
-    A = math.atan2(raw_tro(phi0)[1], raw_tro(phi0)[0]) + rot
+    _a = math.atan2(raw_tro(phi0)[1], raw_tro(phi0)[0]) + rot
     ang_tip = P - _inv(t_a)
     span = phi_b - phi0
 
@@ -189,18 +189,18 @@ def tooth_curves(spec: g.GearSpec, geo: g.GearGeometry):
             1.0,
         )
     )
-    #: ⑥ root_arc：★ -A -> +A
-    curves.append(("root_arc", "%.12f*cos(t)" % rf, "%.12f*sin(t)" % rf, -A, +A))
+    #: ⑥ root_arc：★ -_a -> +_a
+    curves.append(("root_arc", "%.12f*cos(t)" % rf, "%.12f*sin(t)" % rf, -_a, +_a))
     return curves, {
         "P": P,
-        "P_tro": A,
-        "A": A,
+        "P_tro": _a,
+        "_a": _a,
         "rot": rot,
         "ang_tip": ang_tip,
         "phi_b": phi_b,
         "phi0": phi0,
         "uc": uc,
-        "span_rad": 2.0 * A,
+        "span_rad": 2.0 * _a,
         "pitch_rad": 2.0 * math.pi / z,
     }
 

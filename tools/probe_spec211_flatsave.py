@@ -58,7 +58,7 @@ def _sheet_metal_part(sw):
 
 def main() -> int:
     import sw_connect
-    import sw_export as E
+    import sw_export as e_
 
     out: dict = {"purpose": "★ D 项：临时另存 → 展开 DXF（★ 一正两负）", "cases": []}
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
@@ -91,7 +91,7 @@ def main() -> int:
     m1 = _sheet_metal_part(sw)
     dxf1 = WORK / "refused-default.dxf"
     r1 = _case(
-        "负例① 默认（allow=False）", lambda: E.export_flat_pattern_dxf(m1, str(dxf1))
+        "负例① 默认（allow=False）", lambda: e_.export_flat_pattern_dxf(m1, str(dxf1))
     )
     r1["dxf_exists"] = dxf1.is_file()
 
@@ -100,7 +100,7 @@ def main() -> int:
     dxf2 = WORK / "refused-outside.dxf"
     r2 = _case(
         "负例② 授权但目录在仓库外",
-        lambda: E.export_flat_pattern_dxf(
+        lambda: e_.export_flat_pattern_dxf(
             m2, str(dxf2), allow_temporary_save=True, temporary_save_dir=OUTSIDE
         ),
     )
@@ -113,7 +113,7 @@ def main() -> int:
     tempdir = WORK / "_temp_save"
     r3 = _case(
         "正例 授权 + 仓库内目录",
-        lambda: E.export_flat_pattern_dxf(
+        lambda: e_.export_flat_pattern_dxf(
             m3, str(dxf3), allow_temporary_save=True, temporary_save_dir=str(tempdir)
         ),
     )

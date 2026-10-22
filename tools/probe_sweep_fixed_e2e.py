@@ -27,7 +27,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
         sys.path.insert(0, _p)
 
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 OUT = REPO / "output" / "sweep-fixed-e2e-evidence.json"
 
@@ -63,16 +63,16 @@ def main() -> int:
     try:
         doc = c.new_document(sw, "part")
         #: ★ 轮廓：前视基准面上一个**整圆**
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         _g(_g(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.012)
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         #: ★ 路径：右视基准面上一条**从原点出发**的线
         #: （★ 官方硬约束逐字：**路径的起点必须落在轮廓所在平面上** —— 原点在前视面上 ✓
         #: ）
-        P.start_sketch(doc, plane_name="Right Plane")
+        p_.start_sketch(doc, plane_name="Right Plane")
         _g(_g(doc, "SketchManager"), "CreateLine", 0.0, 0.0, 0.0, 0.0, 0.07, 0.0)
-        P.end_sketch(doc)
-        names = list(P.feature_names(doc) or [])
+        p_.end_sketch(doc)
+        names = list(p_.feature_names(doc) or [])
         r["features_before"] = names
         sketches = [n for n in names if n.startswith(("草图", "Sketch"))]
         r["sketches_found"] = sketches
@@ -135,7 +135,7 @@ def main() -> int:
                     "type_name",
                 )
             }
-        r["features_after"] = list(P.feature_names(doc) or [])
+        r["features_after"] = list(p_.feature_names(doc) or [])
         r["new_features"] = [n for n in r["features_after"] if n not in names]
     except Exception as exc:  # noqa: BLE001
         r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:250])

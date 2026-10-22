@@ -61,10 +61,10 @@ def _all_faces(doc):
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
+    r_: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
     sw, _ = c.connect_solidworks(wait_seconds=30)
     prof = _profile()
-    R["profile"] = prof
+    r_["profile"] = prof
     for i in range(6):  #: ★ 最多试前 6 张面
         row: dict = {"face_index": i}
         doc = None
@@ -88,7 +88,7 @@ def main() -> int:
             row["face_count"] = len(faces)
             if i >= len(faces):
                 row["skip"] = "★ 该体没有第 %d 张面" % i
-                R["cases"].append(row)
+                r_["cases"].append(row)
                 continue
             try:
                 _g(doc, "ClearSelection2", True)
@@ -100,7 +100,7 @@ def main() -> int:
             row["selected_all"] = _cnt(doc, -1)
             if row["selected_all"] < 1:
                 row["skip"] = "★ 这张面没选上（回读 0）"
-                R["cases"].append(row)
+                r_["cases"].append(row)
                 continue
             before = list(p.feature_names(doc) or [])
             ret = _g(
@@ -136,11 +136,11 @@ def main() -> int:
                     _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
             except Exception:  # noqa: BLE001
                 pass
-        R["cases"].append(row)
-    R["passed"] = sum(1 for r in R["cases"] if r.get("ok"))
-    R["seconds"] = round(time.time() - started, 2)
+        r_["cases"].append(row)
+    r_["passed"] = sum(1 for r in r_["cases"] if r.get("ok"))
+    r_["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

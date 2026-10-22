@@ -13,7 +13,7 @@
 #   ⇒ 本探针用那个手法重试 `insert_parting_line`。
 # 官方依据: `InsertMoldPartingLine` 的 Remarks —— 「you must select the direction of pul
 #           l and the edges
-# for the parting line by calling `IModelDocExtension::SelectByID2` with the following M
+# for the parting line by calling `IModelDocExtension::SelectByID2` with the following m_
 # arks:
 #   **Direction of pull = 1** · **Parting line edges = 4**」。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -49,7 +49,7 @@ MARK_EDGES = 4
 
 def main() -> int:
     import sw_connect
-    import sw_mold as M
+    import sw_mold as m_
     import sw_surface_features as sf
     from sw_connect import get_com_member
     from sw_part import (
@@ -60,7 +60,7 @@ def main() -> int:
         start_sketch,
     )
 
-    ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+    ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%m_:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
     doc = None
     try:
@@ -131,7 +131,7 @@ def main() -> int:
         #: ③ 插分型线
         before = sf.feature_names(doc)
         try:
-            name = M.insert_parting_line(doc)
+            name = m_.insert_parting_line(doc)
             after = sf.feature_names(doc)
             ev["steps"]["insert_parting_line"] = {
                 "ok": bool(name),

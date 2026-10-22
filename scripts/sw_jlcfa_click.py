@@ -39,9 +39,9 @@ sys.stdout.reconfigure(encoding="utf-8")
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
-import win32api
-import win32con
-import win32gui
+import win32api  # noqa: E402
+import win32con  # noqa: E402
+import win32gui  # noqa: E402
 
 warnings.filterwarnings("ignore")
 

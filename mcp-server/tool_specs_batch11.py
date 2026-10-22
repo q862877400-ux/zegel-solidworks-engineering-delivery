@@ -29,10 +29,14 @@
 
 | 不取 | 理由 |
 |---|---|
-| `sw_topology.create_symmetry_control` / `create_demold_control` | ★ **枚举值未核**（对称类型 / 拔模方向）。本批**不猜枚举**（铁律 5）⇒ 留下批，先查官方枚举 |
-| `sw_topology.create_stress_constraint` | 同族但**与本批的"两约束"重叠**（质量 + 安全系数已覆盖 A9 那一问）⇒ 分批做，避免一次改太多 |
-| `sw_surface.create_*_surface`（7 个） | ★ `IModeler.Create*Surface` **返回值跨次会变**（已知事实 40），且 `create_bspline_surface` 报 `0x80010105` ⇒ **先暴露会把"不可靠"直接摊给用户**，需先定行为 |
-| `sw_part` 的 14 个 | 多为草图/阵列辅助，且 `circular_pattern` 含 `angle_rad` ⇒ ★ **与规则 2（角度用 `_deg`）冲突**，要先决定换算边界 |
+| `sw_topology.create_symmetry_control` / `create_demold_control` | ★ **枚举值未核**（对称类型 / 拔模方向）。
+本批**不猜枚举**（铁律 5）⇒ 留下批，先查官方枚举 |
+| `sw_topology.create_stress_constraint` | 同族但**与本批的"两约束"重叠**（质量 + 安全系数已覆盖 A9 那一问）⇒ 分批做，
+避免一次改太多 |
+| `sw_surface.create_*_surface`（7 个） | ★ `IModeler.Create*Surface` **返回值跨次会变**（已知事实 40），
+且 `create_bspline_surface` 报 `0x80010105` ⇒ **先暴露会把"不可靠"直接摊给用户**，需先定行为 |
+| `sw_part` 的 14 个 | 多为草图/阵列辅助，且 `circular_pattern` 含 `angle_rad` ⇒ ★ **与规则 2（角度用 `_deg`）冲突**，
+要先决定换算边界 |
 
 ## ⚠⚠ 本批**不声称真机验证**（如实说）
 ```

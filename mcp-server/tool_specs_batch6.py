@@ -13,7 +13,8 @@
 |---|---|---|
 | `available_point_selectors` | `sw_geometry_selectors` | **无参纯读**：告诉 AI 有哪些点选择器可用 |
 | `available_direction_selectors` | `sw_geometry_selectors` | 同上，方向选择器 |
-| `collect_assembly_bom` | `sw_delivery` | 装配 BOM 表（与既有 `export_assembly_bom` **不同**：那个导出 CSV，这个取结构化数据）|
+| `collect_assembly_bom` | `sw_delivery` | 装配 BOM 表（与既有 `export_assembly_bom` **不同**：那个导出 CSV，
+这个取结构化数据）|
 | `get_mass_property_override_options` | `sw_export` | 质量属性覆盖选项（出图/导出前查）|
 
 ⚠ **两个无参函数不注入**（`inject=None`, `needs_model=False`）—— 它们不碰 COM 文档。

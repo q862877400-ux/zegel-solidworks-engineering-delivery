@@ -34,7 +34,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
 import register_capabilities as rc  # noqa: E402
 
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 OUT = REPO / "output" / "r3-tools-evidence.json"
 
@@ -160,7 +160,7 @@ def _state(doc) -> dict:
     """★ 三合一读数（★ 闭合角那条**没有"返回非 None"这条判据** ⇒ 只能靠这三个）。"""
     st: dict = {}
     try:
-        st["features"] = list(P.feature_names(doc) or [])
+        st["features"] = list(p_.feature_names(doc) or [])
     except Exception:  # noqa: BLE001
         st["features"] = None
     try:
@@ -190,7 +190,7 @@ def _l_shape_sketch(doc):
       `create_base_flange` **回了 `ok=False` 且不抛错**（★ 静默无输出那个体量）⇒
       ★ 换成**闭合矩形**（官方文档里最明确的那个形态）先把"有没有钣金件"这件事确定下来。
     """
-    P.start_sketch(doc, plane_name="Front Plane")
+    p_.start_sketch(doc, plane_name="Front Plane")
     _g(
         _g(doc, "SketchManager"),
         "CreateCornerRectangle",
@@ -201,22 +201,22 @@ def _l_shape_sketch(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("草图") or n.lower().startswith("sketch")
     ]
     return names[-1] if names else "草图1"
 
 
 def _line_sketch(doc):
-    P.start_sketch(doc, plane_name="Front Plane")
+    p_.start_sketch(doc, plane_name="Front Plane")
     _g(_g(doc, "SketchManager"), "CreateLine", -0.08, 0.0, 0.0, 0.08, 0.0, 0.0)
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("草图") or n.lower().startswith("sketch")
     ]
     return names[-1] if names else "草图1"

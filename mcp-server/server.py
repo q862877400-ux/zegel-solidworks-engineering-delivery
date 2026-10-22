@@ -19,7 +19,7 @@ import threading
 from contextlib import redirect_stdout
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Literal, Optional
+from typing import TYPE_CHECKING, Any, Literal
 
 from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -967,7 +967,7 @@ class SolidWorksConfigurationActivateInput(BaseInput):
 class SolidWorksCustomPropertiesInput(BaseInput):
     """Input for setting file-level or configuration-level custom properties."""
 
-    properties: Dict[str, str] = Field(..., min_length=1, max_length=100)
+    properties: dict[str, str] = Field(..., min_length=1, max_length=100)
     configuration_name: str = Field(default="", max_length=240)
     property_type: str = Field(
         default="text", pattern="^(text|number|double|yes_no|date)$"
@@ -1472,7 +1472,7 @@ def _active_part_required():
     return sw, model
 
 
-def _model_summary(model) -> Dict[str, Any]:
+def _model_summary(model) -> dict[str, Any]:
     """Return a compact active document summary."""
     return {
         "title": get_com_member(model, "GetTitle"),
@@ -1481,7 +1481,7 @@ def _model_summary(model) -> Dict[str, Any]:
     }
 
 
-def _component_summary(component) -> Dict[str, Any]:
+def _component_summary(component) -> dict[str, Any]:
     """Return a compact component summary."""
     return {
         "name": get_com_member(component, "Name2"),
@@ -2233,7 +2233,7 @@ def solidworks_health_check(
 
     def op():
         missing = missing_com_dependencies()
-        checks: Dict[str, Any] = {
+        checks: dict[str, Any] = {
             "python_executable": sys.executable,
             "python_version": sys.version.split()[0],
             "platform": platform.platform(),

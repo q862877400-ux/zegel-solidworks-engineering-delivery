@@ -83,7 +83,7 @@ def main() -> int:
         p.sketch_circle(model, 0.0, 0.0, R_MM)
     with p.sketch(model, "Top Plane") as sk_path:
         p.sketch_line(model, 0.0, 0.0, 0.0, L_MM)
-    got_prof = p._select_sketch_feature_by_name(model, str(sk_prof), mark=1)
+    p._select_sketch_feature_by_name(model, str(sk_prof), mark=1)
     feat = p._safe_com_member(model, "FeatureByName", str(sk_path))
     for cand in p._get_sketch_name_candidates(str(sk_path)):
         if feat is None:

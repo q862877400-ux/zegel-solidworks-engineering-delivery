@@ -1,7 +1,8 @@
 """★ 真机验证 `IPackAndGo.SetSaveToName` → `SetSaveToName2`（★ 判据：签名相同 ⇒ 疑似纯改名，仍须真机）。
 
 ★★ 官方依据（三源里的 `c:\\swapi`）：
-  · `types/IPackAndGo/SetSaveToName.md`：签名 `System.bool SetSaveToName( System.bool Override, System.string SaveToName )`
+  · `types/IPackAndGo/SetSaveToName.md`：签名 `System.bool SetSaveToName( System.bool Override, System.
+  string SaveToName )`
     逐字「**Obsolete. Superseded by [[IPackAndGo::SetSaveToName2]].**」
   · `types/IPackAndGo/SetSaveToName2.md`：签名
     `System.bool SetSaveToName2( System.bool Override, System.string SaveToName )`（★ **无 Obsolete**）

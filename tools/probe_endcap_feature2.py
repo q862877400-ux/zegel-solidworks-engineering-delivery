@@ -100,10 +100,10 @@ def _face_center(face):
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
+    r_: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
     sw, _ = c.connect_solidworks(wait_seconds=30)
     prof = _profile()
-    R["profile"] = prof
+    r_["profile"] = prof
     for idx in range(4):  #: ★ 试前 4 张面（每张单独一个案例）
         row: dict = {"face_index": idx}
         doc = None
@@ -129,7 +129,7 @@ def main() -> int:
             row["face_count"] = len(faces)
             if idx >= len(faces):
                 row["skip"] = "★ 没有第 %d 张面" % idx
-                R["cases"].append(row)
+                r_["cases"].append(row)
                 continue
             face = faces[idx]
             pt = _face_center(face)
@@ -162,7 +162,7 @@ def main() -> int:
             )
             if row["sel_count"] < 1:
                 row["skip"] = "★ 按点没选上面"
-                R["cases"].append(row)
+                r_["cases"].append(row)
                 continue
             #: ★ 官方：用 `GetSelectedObject6(1, -1)` 取回**面对象**（不是用我们自己的索
             #: 引）
@@ -201,13 +201,13 @@ def main() -> int:
                     _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
             except Exception:  # noqa: BLE001
                 pass
-        R["cases"].append(row)
+        r_["cases"].append(row)
         if row.get("ok"):
             break  #: ★ 建成一张就够了（判据是"能不能建成"）
-    R["passed"] = sum(1 for r in R["cases"] if r.get("ok"))
-    R["seconds"] = round(time.time() - started, 2)
+    r_["passed"] = sum(1 for r in r_["cases"] if r.get("ok"))
+    r_["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

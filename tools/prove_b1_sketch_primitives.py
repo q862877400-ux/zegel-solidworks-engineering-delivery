@@ -33,7 +33,7 @@ OUT = R / "output" / "b1-sketch-primitives-evidence.json"
 def main() -> int:
     import sw_connect
     import sw_part as p
-    import sw_sketch as SK
+    import sw_sketch as sk_
     import sw_sketch_primitives as sp
     from sw_connect import get_com_member, safe_get_com_member
 
@@ -56,7 +56,7 @@ def main() -> int:
                 sk = get_com_member(
                     get_com_member(doc, "SketchManager"), "ActiveSketch"
                 )
-                return int(SK.count_segments(sk) or 0)
+                return int(sk_.count_segments(sk) or 0)
 
             n0 = nseg()
             ret = fn(doc)

@@ -27,7 +27,7 @@ sys.path[:0] = [
     str(ROOT / "tools"),
 ]
 
-from scripts.engineering import catalog as C  # noqa: E402
+from scripts.engineering import catalog as c_  # noqa: E402
 
 OUT = ROOT / "output" / "s323"
 
@@ -47,10 +47,10 @@ PROBES = (
 def run_n() -> dict:
     """★ **N1~N10 逐条**。"""
     rows = []
-    cards = C.build_catalog()
-    doms = C.load_domains()
-    fac = C.load_facets()
-    th = C.load_thresholds()
+    cards = c_.build_catalog()
+    doms = c_.load_domains()
+    fac = c_.load_facets()
+    th = c_.load_thresholds()
 
     #: N1 八个域 + 每工具一个主域
     rows.append(
@@ -118,7 +118,7 @@ def run_n() -> dict:
         ("availability", {"capability": "catalog_only"}),
         ("precondition", {"doc_state": "needs_model"}),
     ):
-        r = C.retrieve(C.RetrievalQuery(**kw), cards)
+        r = c_.retrieve(c_.RetrievalQuery(**kw), cards)
         fc[facet_name] = {"used": facet_name in r.facets_used, "n": len(r.cards)}
     rows.append(
         {
@@ -133,7 +133,7 @@ def run_n() -> dict:
     hits = 0
     detail = []
     for q, want in PROBES:
-        r = C.retrieve(C.RetrievalQuery(text=q), cards)
+        r = c_.retrieve(c_.RetrievalQuery(text=q), cards)
         top = r.cards[0].name.lower() if r.cards else ""
         good = want in top
         hits += good
@@ -148,19 +148,19 @@ def run_n() -> dict:
     )
 
     #: N6 4096 预算
-    r = C.retrieve(C.RetrievalQuery(text="孔"), cards)
+    r = c_.retrieve(c_.RetrievalQuery(text="孔"), cards)
     rows.append(
         {
             "n": "N6",
             "what": "候选 ≤4096 token",
-            "ok": r.tokens <= C.TOKEN_BUDGET,
-            "got": "%d ≤ %d" % (r.tokens, C.TOKEN_BUDGET),
+            "ok": r.tokens <= c_.TOKEN_BUDGET,
+            "got": "%d ≤ %d" % (r.tokens, c_.TOKEN_BUDGET),
         }
     )
 
     #: N7 recall 指标可算
-    first = C.retrieve(C.RetrievalQuery(text="抽壳"), cards).cards[0].name
-    ev = C.evaluate_recall(
+    first = c_.retrieve(c_.RetrievalQuery(text="抽壳"), cards).cards[0].name
+    ev = c_.evaluate_recall(
         [{"id": "probe", "text": "抽壳", "gold_chains": [[first]]}], cards
     )
     rows.append(
@@ -178,13 +178,13 @@ def run_n() -> dict:
             "n": "N8",
             "what": "阈值已冻结",
             "ok": bool(th.get("frozen_at")),
-            "got": "%s · digest=%s" % (th["frozen_at"], C.thresholds_digest()),
+            "got": "%s · digest=%s" % (th["frozen_at"], c_.thresholds_digest()),
         }
     )
 
     #: N9 暴露面两模式
-    a = C.exposure(cards, C.MODE_AUTONOMOUS)
-    c = C.exposure(cards, C.MODE_COMPAT)
+    a = c_.exposure(cards, c_.MODE_AUTONOMOUS)
+    c = c_.exposure(cards, c_.MODE_COMPAT)
     rows.append(
         {
             "n": "N9",
@@ -204,12 +204,12 @@ def run_n() -> dict:
 
     #: N10 单方法契约
     card = next(x for x in cards if x.name == "solidworks_extrude_boss")
-    ct = C.load_contract(card)
+    ct = c_.load_contract(card)
     rows.append(
         {
             "n": "N10",
             "what": "单方法契约 ≤4096",
-            "ok": ct["tokens"] <= C.TOKEN_BUDGET,
+            "ok": ct["tokens"] <= c_.TOKEN_BUDGET,
             "got": "%d token · %d 参数" % (ct["tokens"], len(ct["params"])),
         }
     )
@@ -220,12 +220,12 @@ def run_n() -> dict:
 def run_v() -> dict:
     """★ **V1~V6 反向验证**。"""
     rows = []
-    cards = C.build_catalog()
+    cards = c_.build_catalog()
 
     #: V1 module 当检索字段 ⇒ 结果变化
-    real = [c.name for c in C.retrieve(C.RetrievalQuery(text="sw_part"), cards).cards]
+    real = [c.name for c in c_.retrieve(c_.RetrievalQuery(text="sw_part"), cards).cards]
 
-    class Mut(C.ToolCard):
+    class Mut(c_.ToolCard):
         def search_blob(self):
             return super().search_blob() + " " + self.module
 
@@ -240,7 +240,7 @@ def run_v() -> dict:
         )
         for c in cards
     ]
-    fake = [c.name for c in C.retrieve(C.RetrievalQuery(text="sw_part"), mut).cards]
+    fake = [c.name for c in c_.retrieve(c_.RetrievalQuery(text="sw_part"), mut).cards]
     rows.append(
         {
             "v": "V1",
@@ -251,7 +251,7 @@ def run_v() -> dict:
     )
 
     #: V2 移除 n-gram ⇒ 召回下降
-    r = C.retrieve(C.RetrievalQuery(text="打孔"), cards)
+    r = c_.retrieve(c_.RetrievalQuery(text="打孔"), cards)
     exact = [c for c in cards if "打孔" in c.search_blob()]
     rows.append(
         {
@@ -263,8 +263,8 @@ def run_v() -> dict:
     )
 
     #: V3 去掉分面过滤 ⇒ 跨域污染
-    filt = C.retrieve(C.RetrievalQuery(text="孔", domain="hole_and_interface"), cards)
-    unfilt = C.retrieve(C.RetrievalQuery(text="孔"), cards)
+    filt = c_.retrieve(c_.RetrievalQuery(text="孔", domain="hole_and_interface"), cards)
+    unfilt = c_.retrieve(c_.RetrievalQuery(text="孔"), cards)
     cross = any(c.domain != "hole_and_interface" for c in unfilt.cards)
     rows.append(
         {
@@ -279,7 +279,7 @@ def run_v() -> dict:
     from scripts.engineering import authorization as auth
 
     hidden = [c.name for c in cards if not c.admitted]
-    exposed = C.exposure(cards, C.MODE_AUTONOMOUS)["names"]
+    exposed = c_.exposure(cards, c_.MODE_AUTONOMOUS)["names"]
     rows.append(
         {
             "v": "V4",
@@ -293,7 +293,7 @@ def run_v() -> dict:
     )
 
     #: V5 删掉主域 ⇒ 断言失败
-    doms = set(C.load_domains())
+    doms = set(c_.load_domains())
     rows.append(
         {
             "v": "V5",
@@ -304,15 +304,15 @@ def run_v() -> dict:
     )
 
     #: V6 阈值下调可发现
-    th = C.load_thresholds()
-    d1 = C.thresholds_digest()
+    th = c_.load_thresholds()
+    d1 = c_.thresholds_digest()
     rows.append(
         {
             "v": "V6",
             "what": "阈值下调可发现（frozen_at + digest）",
             "ok": bool(th.get("frozen_at"))
             and len(d1) == 16
-            and C.thresholds_digest() == d1,
+            and c_.thresholds_digest() == d1,
             "got": "frozen_at=%s digest=%s" % (th["frozen_at"][:10], d1),
         }
     )
@@ -339,7 +339,7 @@ def main() -> int:
             % ("✓" if r["ok"] else "✗", r["v"], r["what"], str(r["got"])[:50])
         )
 
-    cards = C.build_catalog()
+    cards = c_.build_catalog()
     dist = dict(collections.Counter(c.domain for c in cards).most_common())
     fb = sum(1 for c in cards if getattr(c, "fallback", False))
     print()

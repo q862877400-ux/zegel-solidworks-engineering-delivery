@@ -128,7 +128,7 @@ class FenceToken:
 
     value: int = 0
 
-    def next(self) -> "FenceToken":
+    def next(self) -> FenceToken:
         return FenceToken(self.value + 1)
 
     def accepts(self, presented: int) -> bool:

@@ -71,7 +71,7 @@ def main() -> int:
         sketch_line(doc, 0.0, 0.0, 100.0, 0.0)
         sk = current_sketch_name(doc, "")
         end_sketch(doc)
-        rep = create_structural_member_from_sketch(doc, sk, str(PROFILE))
+        create_structural_member_from_sketch(doc, sk, str(PROFILE))
         ensure_cut_list(doc)
         #: ★ **先看真实属性名**（★ 不猜）
         up = update_cut_list(doc) or []

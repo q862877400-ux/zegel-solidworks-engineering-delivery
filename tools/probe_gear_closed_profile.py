@@ -93,7 +93,7 @@ def build_profile_curves(spec: g.GearSpec, geo: g.GearGeometry):
     ang_tro_start = p_tro  #: ★ φ=0 时 raw=0
 
     k_ = 1.0 / 1000.0  #: ★ 表达式单位是**米**
-    rbm, ram, rfm = rb * k_, ra * k_, rf * k_
+    _rbm, ram, rfm = rb * k_, ra * k_, rf * k_
     curves = []
     for k in range(z):
         th = k * pitch
@@ -224,9 +224,9 @@ def build_profile_curves(spec: g.GearSpec, geo: g.GearGeometry):
 
 def _features(doc):
     try:
-        from scripts import sw_feature_readback as F
+        from scripts import sw_feature_readback as f_
 
-        return list(F.feature_names(doc) or [])
+        return list(f_.feature_names(doc) or [])
     except Exception:  # noqa: BLE001
         return []
 

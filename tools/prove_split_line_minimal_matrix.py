@@ -43,11 +43,11 @@ sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "tools"))
 
 import prove_split_line_geometry_controls as k  # noqa: E402
-import prove_split_line_geometry_isolate as I  # noqa: E402
+import prove_split_line_geometry_isolate as i_  # noqa: E402
 import prove_split_line_geometry_per_example as g  # noqa: E402
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts.sw_simulation import select_face_at  # noqa: E402
 
 
@@ -75,7 +75,7 @@ def _select_for(doc, want_sketch, face_point):
         sk = g._sketch_names(doc)
         if sk:
             try:
-                if P._select_by_id(ext, sk[-1], "SKETCH", append=False, mark=4):
+                if p_._select_by_id(ext, sk[-1], "SKETCH", append=False, mark=4):
                     picked["sketch"] = sk[-1]
             except Exception:  # noqa: BLE001
                 pass
@@ -107,9 +107,9 @@ def _case(sw, tag, mode):
     row = {"tag": tag, "mode": mode, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         if mode.startswith("legacy"):
-            box = I._legacy_geometry(doc)
+            box = i_._legacy_geometry(doc)
             row["bbox_m"] = box
             row["geometry"] = "legacy(\u8349\u56fe\u5728\u5b9e\u4f53\u5185)"
             y_mid = (box[1] + box[4]) / 2.0
@@ -185,7 +185,7 @@ CASES = (
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u6295\u5f71\u578b\u5206\u5272\u7ebf\uff1a**\u6700\u5c0f\u524d\u7f6e\u77e9\u9635**"

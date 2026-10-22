@@ -52,29 +52,29 @@ sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
 import scripts.sw_weldment as w  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _mk_profile_path(doc):
     """★ 轮廓（上视面圆）+ 路径（前视面直线，★ 起点在 Z=0 上 —— 方向 1 的硬约束）。"""
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCircleByRadius",
         0.0,
         0.0,
         0.0,
         5.0 / 1000.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     try:
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Front Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateLine",
         0.0,
         0.0,
@@ -83,17 +83,17 @@ def _mk_profile_path(doc):
         0.0,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
 
 
 def _pick(doc):
     """★ 轮廓 mark=1 · 路径 mark=4（★ 官方逐字）。"""
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
-    ext = C.get_com_member(doc, "Extension")
+    ext = c_.get_com_member(doc, "Extension")
     picked = {}
     try:
         doc.ClearSelection2(True)
@@ -102,9 +102,9 @@ def _pick(doc):
     for label, idx, mark in (("profile", 0, 1), ("path", 1, 4)):
         if idx >= len(names):
             continue
-        for cand in P._get_sketch_name_candidates(names[idx]):
+        for cand in p_._get_sketch_name_candidates(names[idx]):
             try:
-                if P._select_by_id(ext, cand, "SKETCH", append=bool(picked), mark=mark):
+                if p_._select_by_id(ext, cand, "SKETCH", append=bool(picked), mark=mark):
                     picked[label] = (cand, mark)
                     break
             except Exception:  # noqa: BLE001
@@ -113,8 +113,8 @@ def _pick(doc):
     for m in (1, 4):
         try:
             per[str(m)] = int(
-                C.get_com_member(
-                    C.get_com_member(doc, "SelectionManager"),
+                c_.get_com_member(
+                    c_.get_com_member(doc, "SelectionManager"),
                     "GetSelectedObjectCount2",
                     m,
                 )
@@ -128,13 +128,13 @@ def _one(sw, tag, method):
     row = {"tag": tag, "method": method, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         _mk_profile_path(doc)
         picked, per = _pick(doc)
         row["picked"] = {k: list(v) for k, v in picked.items()}
         row["sel_by_mark"] = per
         before = list(fr.feature_names(doc) or [])
-        fm = C.get_com_member(doc, "FeatureManager")
+        fm = c_.get_com_member(doc, "FeatureManager")
         ret = None
         try:
             #: \u2605 \u53c2\u6570\uff1aPropagate \u00b7 TwistCtrlOption \u00b7 KeepTang
@@ -143,12 +143,12 @@ def _one(sw, tag, method):
             #: cope \u00b7
             #:   UseAutoSelect \u00b7 TwistAngle \u00b7 BMergeSmoothFaces
             args = (True, 0, True, False, 0, 0, 0, False, True, 0.0, True)
-            ret = C.get_com_member(fm, method, *args)
+            ret = c_.get_com_member(fm, method, *args)
             row["returned"] = type(ret).__name__ if ret is not None else "None"
             if ret is not None:
                 for k, m in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
                     try:
-                        row[k] = str(C.get_com_member(ret, m))
+                        row[k] = str(c_.get_com_member(ret, m))
                     except Exception:  # noqa: BLE001
                         pass
         except Exception as exc:  # noqa: BLE001
@@ -159,7 +159,7 @@ def _one(sw, tag, method):
         try:
             for f in w.iter_features_recursive(doc):
                 try:
-                    types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
+                    types.append(str(c_.get_com_member(f, "GetTypeName2") or ""))
                 except Exception:  # noqa: BLE001
                     pass
         except Exception:  # noqa: BLE001
@@ -171,16 +171,16 @@ def _one(sw, tag, method):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u626b\u63cf\u66f2\u9762\uff1a**\u4e13\u7528\u65b9\u6cd5** `IFeatureManager.InsertSweepSurface2/3`",

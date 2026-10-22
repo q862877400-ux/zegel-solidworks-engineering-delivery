@@ -42,15 +42,15 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
-from scripts import sw_sweep as S  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
+from scripts import sw_sweep as s_  # noqa: E402
 
 
 def _mark(obj, mark):
     """★ 按**对象**选并打 mark（★ 事实 32：实体没名字）⇒ 回来读计数。"""
     try:
-        c.get_com_member(obj, "Select4", False, P._empty_callout())
-        sel = c.get_com_member(
+        c.get_com_member(obj, "Select4", False, p_._empty_callout())
+        c.get_com_member(
             c.get_com_member(_SW[0], "SelectionManager"), "GetSelectedObjectCount2", -1
         )
         return True
@@ -65,7 +65,7 @@ def main() -> int:
     sw, _ = c.connect_solidworks(wait_seconds=30)
     _SW[0] = sw
     ev = {
-        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "at": time.strftime("%Y-%m-%dT%H:%M:%s_"),
         "_": "\u66f2\u9762\u626b\u63cf\uff1aCreateDefinition(swFmRefSurface=62) \u771f\u673a\u8bd5",
         "judge": "\u7279\u5f81\u6811\u589e\u91cf **\u4e14** \u7c7b\u578b\u540d = Sweep\uff08\u4e8b\u5b9e 242\uff09",
         "classify": "auto",
@@ -81,7 +81,7 @@ def main() -> int:
         #:  方向扫描）
         #:   ★★ 而★ 轮廓在上视面（Z=0）⇒ ★ **路径的起点必须 Z=0** ⇒
         #:     路径画在**前视面**（XZ · Y=0）上、**从 (0,0) 沿 X** ⇒ 起点 (0,0,0) 的 Z=0 ✓
-        P.start_sketch(doc, plane_name="Top Plane")
+        p_.start_sketch(doc, plane_name="Top Plane")
         c.get_com_member(
             c.get_com_member(doc, "SketchManager"),
             "CreateCircleByRadius",
@@ -90,8 +90,8 @@ def main() -> int:
             0.0,
             5.0 / 1000.0,
         )
-        P.end_sketch(doc)
-        ev["steps"].append({"step": "profile_sketch", "tree": P.feature_names(doc)})
+        p_.end_sketch(doc)
+        ev["steps"].append({"step": "profile_sketch", "tree": p_.feature_names(doc)})
 
         #: ② 路径：在右视基准面画一条直线（★ 起点落在轮廓平面上 —— 官方约束）
         #: ★★★ 2026-10-03（轮 486）**先清选区再开第二个草图** ——
@@ -116,7 +116,7 @@ def main() -> int:
             )
         except Exception:  # noqa: BLE001
             ev["sel_before_path_sketch"] = None
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         c.get_com_member(
             c.get_com_member(doc, "SketchManager"),
             "CreateLine",
@@ -127,8 +127,8 @@ def main() -> int:
             0.0,
             0.0,
         )
-        P.end_sketch(doc)
-        ev["steps"].append({"step": "path_sketch", "tree": P.feature_names(doc)})
+        p_.end_sketch(doc)
+        ev["steps"].append({"step": "path_sketch", "tree": p_.feature_names(doc)})
 
         #: ③ ★ 选 **轮廓 mark=1** + **路径 mark=4**（★ 官方专文给的 mark）
         #: ★★★★★ 2026-10-03（轮 487）**改用 `SelectByID2`（`sw_part._select_by_id`）** —
@@ -155,9 +155,9 @@ def main() -> int:
             ("\u8349\u56fe1", 1, "profile"),
             ("\u8349\u56fe2", 4, "path"),
         ):
-            for name in P._get_sketch_name_candidates(cand):
+            for name in p_._get_sketch_name_candidates(cand):
                 try:
-                    ok = P._select_by_id(
+                    ok = p_._select_by_id(
                         ext, name, "SKETCH", append=bool(picked), mark=mark
                     )
                 except Exception:  # noqa: BLE001
@@ -189,7 +189,7 @@ def main() -> int:
         ev["sel_by_mark"] = per
 
         #: ④ 调本仓的曲面扫描
-        ev["result"] = S.create_sweep_surface_report(doc)
+        ev["result"] = s_.create_sweep_surface_report(doc)
     except Exception as exc:  # noqa: BLE001
         ev["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:

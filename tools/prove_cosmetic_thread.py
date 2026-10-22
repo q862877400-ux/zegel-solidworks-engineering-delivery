@@ -45,8 +45,8 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 #: \u2605 \u53cd\u5c04\u91cc\u7684\u503c
 STD_ANSI_METRIC = 1
@@ -54,9 +54,9 @@ END_THROUGH = 2
 
 
 def _mk_block_with_hole(doc, hole_dia_m=0.008):
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -65,16 +65,16 @@ def _mk_block_with_hole(doc, hole_dia_m=0.008):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     solid = False
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             solid = True
             break
         except Exception:  # noqa: BLE001
@@ -83,28 +83,28 @@ def _mk_block_with_hole(doc, hole_dia_m=0.008):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCircleByRadius",
         0.0,
         0.0,
         0.0,
         hole_dia_m / 2.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names2 = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names2[-1] if names2 else "\u8349\u56fe2", "\u8349\u56fe2"):
         try:
-            P.extrude_cut(doc, cand, 0.0)
+            p_.extrude_cut(doc, cand, 0.0)
             break
         except Exception:  # noqa: BLE001
             try:
-                P.extrude_cut(doc, cand, 0.02)
+                p_.extrude_cut(doc, cand, 0.02)
                 break
             except Exception:  # noqa: BLE001
                 pass
@@ -115,7 +115,7 @@ def _one(sw, tag, pick):
     row = {"tag": tag, "pick": pick, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row["built"] = _mk_block_with_hole(doc)
         from sw_connect import get_com_member as _g
         from sw_part import _select_com_object as _sel
@@ -186,16 +186,16 @@ def _one(sw, tag, pick):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u87ba\u7eb9\u7ebf\uff1a`InsertCosmeticThread3`\uff08\u2605 7 \u53c2 \u00b7 \u672a\u5e9f\u5f03\uff09",

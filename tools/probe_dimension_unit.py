@@ -100,7 +100,7 @@ def main() -> int:
     except Exception as exc:  # noqa: BLE001
         rows.append({"tag": "★ 旧文档打不开", "error": str(exc)[:120]})
 
-    R = {
+    r_ = {
         "★_判据": "★ 同一个尺寸：`GetSystemValue3` 的**原始值** vs 文档 **`GetUnits()`** —— "
         "★ 若原始值≈0.02 且单位是米 ⇒ `×1000` 对；若原始值≈20 且单位是毫米 ⇒ `×1000` 错",
         "★_swLengthUnit_e": {
@@ -118,7 +118,7 @@ def main() -> int:
         },
         "rows": rows,
     }
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(json.dumps(r_, ensure_ascii=False, indent=1), encoding="utf-8")
     for r in rows:
         print("★ %s" % r.get("tag"))
         print("     GetUnits:", r.get("units_GetUnits"))

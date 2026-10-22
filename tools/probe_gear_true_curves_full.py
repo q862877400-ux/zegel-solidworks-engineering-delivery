@@ -33,7 +33,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 from scripts import gear_geometry as g  # noqa: E402
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _features(doc):
@@ -47,9 +47,9 @@ def _features(doc):
 
 def _mass(doc):
     try:
-        from scripts import sw_mass_property as M
+        from scripts import sw_mass_property as m_
 
-        return M.read_mass_properties(doc)
+        return m_.read_mass_properties(doc)
     except Exception:  # noqa: BLE001
         try:
             ext = c.get_com_member(doc, "Extension")
@@ -97,7 +97,7 @@ def main() -> int:
     )
 
     rep = {
-        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "at": time.strftime("%Y-%m-%dT%H:%m_:%S"),
         "_": "★ 真渐开线 + 真摆线齿根的**完整齿轮**（★ 交付判据）",
         "spec": {
             "module_mm": spec.module_mm,
@@ -115,7 +115,7 @@ def main() -> int:
     try:
         doc = c.new_document(sw, "part")
         before = _features(doc)
-        P.start_sketch(doc, plane_name="Front Plane")
+        p_.start_sketch(doc, plane_name="Front Plane")
         sm = c.get_com_member(doc, "SketchManager")
 
         #: ★★ ① 渐开线（★ 真曲线）
@@ -161,19 +161,19 @@ def main() -> int:
             True,
         )
         #: ★★ ③ 轴孔 + 齿根圆（★ `sketch_circle` 收**毫米** —— ★ 与表达式相反）
-        P.sketch_circle(doc, 0.0, 0.0, spec.bore_diameter_mm / 2.0)
-        P.sketch_circle(doc, 0.0, 0.0, geo.root_diameter_mm / 2.0)
+        p_.sketch_circle(doc, 0.0, 0.0, spec.bore_diameter_mm / 2.0)
+        p_.sketch_circle(doc, 0.0, 0.0, geo.root_diameter_mm / 2.0)
         sk_name = None
         try:
             sk = c.get_com_member(doc, "GetActiveSketch2")
             sk_name = str(c.get_com_member(sk, "Name") or "")
         except Exception:  # noqa: BLE001
             pass
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         rep["steps"].append({"sketch": True, "sketch_name": sk_name})
 
         #: ★★ ④ 拉伸（★ `extrude_boss` 收**米** —— ★ 第三种口径）
-        feat = P.extrude_boss(doc, sk_name, spec.face_width_mm / 1000.0)
+        feat = p_.extrude_boss(doc, sk_name, spec.face_width_mm / 1000.0)
         rep["steps"].append({"extrude": feat is not None})
         try:
             feat.Name = "SpurGear_m1_z20_involute"

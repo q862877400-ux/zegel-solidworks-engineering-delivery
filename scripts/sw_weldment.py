@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import csv
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 #: ★ 2026-10-07（规格 211 · B3-1）：下表里 `sw_feature_readback` 与 `sw_connect` 的两个
 #: 新名字

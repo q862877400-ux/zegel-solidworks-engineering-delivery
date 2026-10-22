@@ -56,7 +56,7 @@ TEST_COLOR = (0.2, 0.6, 0.9)
 
 def main() -> int:
     ev: dict = {
-        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "captured_at": time.strftime("%Y-%m-%dT%H:%m_:%S"),
         "capability": "render_materials_and_appearance",
         "steps": {},
     }
@@ -67,8 +67,8 @@ def main() -> int:
         import sw_connect
 
         from scripts import sw_appearance as a
-        from scripts import sw_part as P
-        from scripts import sw_render_material as M
+        from scripts import sw_part as p_
+        from scripts import sw_render_material as m_
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
@@ -77,15 +77,15 @@ def main() -> int:
             pass
 
         doc = sw_connect.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
-        P.sketch_corner_rectangle(doc, -50.0, -30.0, 50.0, 30.0)
-        sk = P.current_sketch_name(doc)
-        P.end_sketch(doc)
-        P.extrude_boss(doc, sk, 20.0)
+        p_.start_sketch(doc, plane_name="Front Plane")
+        p_.sketch_corner_rectangle(doc, -50.0, -30.0, 50.0, 30.0)
+        sk = p_.current_sketch_name(doc)
+        p_.end_sketch(doc)
+        p_.extrude_boss(doc, sk, 20.0)
 
         #: ① 读数：外观证据（★ 判"是 dict 且有关键键"）
         try:
-            r = M.collect_appearance_evidence(doc)
+            r = m_.collect_appearance_evidence(doc)
             ev["steps"]["collect_appearance_evidence"] = {
                 "ok": isinstance(r, dict) and bool(r),
                 "keys": sorted(r.keys())[:8] if isinstance(r, dict) else None,
@@ -104,7 +104,7 @@ def main() -> int:
 
         #: ② 渲染材质清单（★ 判"是 list"）
         try:
-            mats = M.list_render_materials(doc)
+            mats = m_.list_render_materials(doc)
             ev["steps"]["list_render_materials"] = {
                 "ok": isinstance(mats, (list, tuple)),
                 "count": len(mats) if mats is not None else None,
@@ -142,7 +142,7 @@ def main() -> int:
 
         #: ④ 推进场景图（★ 判"不抛异常"）
         try:
-            M.refresh_scene_graph(doc, update=True)
+            m_.refresh_scene_graph(doc, update=True)
             ev["steps"]["refresh_scene_graph"] = {"ok": True}
         except Exception as exc:  # noqa: BLE001
             ev["steps"]["refresh_scene_graph"] = {

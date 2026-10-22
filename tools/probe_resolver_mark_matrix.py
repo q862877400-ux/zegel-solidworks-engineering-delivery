@@ -37,7 +37,7 @@ def _g(o, n, *a):
 
 
 def main() -> int:
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "rows": []}
+    r_: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "rows": []}
     sw, _ = c.connect_solidworks(wait_seconds=30)
     import register_capabilities as rc
 
@@ -96,19 +96,19 @@ def main() -> int:
                     row["after_resolver"] = count(mark)
                     row["all_after"] = count(-1)
                     row["dropped"] = row["after_resolver"] < row["before"]
-                    R["rows"].append(row)
+                    r_["rows"].append(row)
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+        r_["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
         except Exception:  # noqa: BLE001
             pass
-    R["dropped_count"] = sum(1 for r in R["rows"] if r.get("dropped"))
-    R["total"] = len(R["rows"])
+    r_["dropped_count"] = sum(1 for r in r_["rows"] if r.get("dropped"))
+    r_["total"] = len(r_["rows"])
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

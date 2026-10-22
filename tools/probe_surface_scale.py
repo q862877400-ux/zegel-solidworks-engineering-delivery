@@ -38,7 +38,7 @@ OUT = REPO / "output" / "surface-scale-probe-evidence.json"
 
 def main() -> int:
     import sw_part as p
-    import sw_surface_features as S
+    import sw_surface_features as s_
     from sw_connect import connect_solidworks, get_com_member, new_document
 
     steps = []
@@ -70,7 +70,7 @@ def main() -> int:
     #: ）
     #:   ⇒ ★★★ **我却看不到 `error` 与 `selection`**（★ 那正是我上一轮刚定的
     #:     「探针必须把**每一次尝试 + 原始返回值**落盘」）✓
-    surf = S.create_extruded_surface_report(model, 10.0, "Sketch1")
+    surf = s_.create_extruded_surface_report(model, 10.0, "Sketch1")
     rec(
         "create_extruded_surface(depth_mm=10.0)",
         ok=(surf or {}).get("ok"),
@@ -87,7 +87,7 @@ def main() -> int:
     r["surface_new_features"] = (surf or {}).get("new_features")
 
     #: ② 加厚成实体（★ L318 那处 `th * 0.001`）—— ★ 不这样量不到（★ 曲面不是实体）
-    th = S.thicken_surface_report(model, 2.0)
+    th = s_.thicken_surface_report(model, 2.0)
     rec(
         "thicken_surface(thickness_mm=2.0)",
         ok=(th or {}).get("ok"),

@@ -25,15 +25,15 @@ sys.path[:0] = [
     str(ROOT / "tools"),
 ]
 
-from scripts.engineering import decisions as D  # noqa: E402
-from scripts.engineering import protocols as P  # noqa: E402
+from scripts.engineering import decisions as d_  # noqa: E402
+from scripts.engineering import protocols as p_  # noqa: E402
 
 OUT = ROOT / "output" / "s325"
 
 
-def _dec(**kw) -> D.Decision:
+def _dec(**kw) -> d_.Decision:
     base = dict(
-        proposer=D.PROPOSER_LLM,
+        proposer=d_.PROPOSER_LLM,
         input_version="r1",
         alternatives=["A", "B"],
         visible_rationale="按 8mm",
@@ -41,7 +41,7 @@ def _dec(**kw) -> D.Decision:
         affected_nodes=["上箱体"],
     )
     base.update(kw)
-    return D.make_decision(**base)
+    return d_.make_decision(**base)
 
 
 def run_r() -> dict:
@@ -49,12 +49,12 @@ def run_r() -> dict:
     rows = []
 
     #: R1 四类协议
-    allp = P.load_all()
+    allp = p_.load_all()
     rows.append(
         {
             "r": "R1",
             "what": "四类协议齐",
-            "ok": set(allp) == set(P.REQUIRED_PROTOCOLS),
+            "ok": set(allp) == set(p_.REQUIRED_PROTOCOLS),
             "got": ", ".join(sorted(allp)),
         }
     )
@@ -71,7 +71,7 @@ def run_r() -> dict:
     )
 
     #: R3 check_ref 解析
-    v = P.validate_all()
+    v = p_.validate_all()
     unres = sum(len(x["unresolved"]) for x in v["protocols"])
     total = sum(len(x["check_refs"]) for x in v["protocols"])
     rows.append(
@@ -84,19 +84,19 @@ def run_r() -> dict:
     )
 
     #: R4 8 项必设检查
-    rc_ok = all(P.run_required_checks(p)["ok"] for p in allp.values())
+    rc_ok = all(p_.run_required_checks(p)["ok"] for p in allp.values())
     rows.append(
         {
             "r": "R4",
             "what": "8 项必设检查",
-            "ok": rc_ok and len(P.REQUIRED_CHECKS) == 8,
+            "ok": rc_ok and len(p_.REQUIRED_CHECKS) == 8,
             "got": "%d 项 · 全过=%s · 第 9 项在测试层"
-            % (len(P.REQUIRED_CHECKS), rc_ok),
+            % (len(p_.REQUIRED_CHECKS), rc_ok),
         }
     )
 
     #: R5 重生成三视图
-    rg = P.regenerate_all()
+    rg = p_.regenerate_all()
     three = all(x["document"] and x["prompt"] and x["catalog"] for x in rg.values())
     rows.append(
         {
@@ -120,14 +120,14 @@ def run_r() -> dict:
 
     #: R7 三态
     d2 = _dec()
-    jump = D.promote(d2, D.APPROVED, by=D.PROPOSER_HUMAN)
-    llm = D.promote(
-        d2, D.VALIDATED, by=D.PROPOSER_LLM, code_verdict={"verdict": "PASS"}
+    jump = d_.promote(d2, d_.APPROVED, by=d_.PROPOSER_HUMAN)
+    llm = d_.promote(
+        d2, d_.VALIDATED, by=d_.PROPOSER_LLM, code_verdict={"verdict": "PASS"}
     )
-    code = D.promote(
-        d2, D.VALIDATED, by=D.PROPOSER_CODE, code_verdict={"verdict": "PASS"}
+    code = d_.promote(
+        d2, d_.VALIDATED, by=d_.PROPOSER_CODE, code_verdict={"verdict": "PASS"}
     )
-    human = D.promote(d2, D.APPROVED, by=D.PROPOSER_HUMAN)
+    human = d_.promote(d2, d_.APPROVED, by=d_.PROPOSER_HUMAN)
     rows.append(
         {
             "r": "R7",
@@ -139,8 +139,8 @@ def run_r() -> dict:
     )
 
     #: R8 字段门禁
-    g = P.field_gate(allp["requirement"], {"requirement_text": "x"})
-    g2 = P.field_gate(
+    g = p_.field_gate(allp["requirement"], {"requirement_text": "x"})
+    g2 = p_.field_gate(
         allp["requirement"], {"requirement_text": "x", "worst_case_load": "999kN"}
     )
     rows.append(
@@ -153,7 +153,7 @@ def run_r() -> dict:
     )
 
     #: R9 同错两次 ⇒ 诊断
-    t = D.SameErrorTrigger()
+    t = d_.SameErrorTrigger()
     t.observe("E1")
     trig = t.observe("E1")
     rows.append(
@@ -169,7 +169,7 @@ def run_r() -> dict:
     )
 
     #: R10 改 YAML 不能获得新能力
-    bad = P.resolve_check_ref("never_implemented@1")
+    bad = p_.resolve_check_ref("never_implemented@1")
     rows.append(
         {
             "r": "R10",
@@ -187,7 +187,7 @@ def run_x() -> dict:
     rows = []
 
     #: X1 跳级
-    p1 = D.promote(_dec(), D.APPROVED, by=D.PROPOSER_HUMAN)
+    p1 = d_.promote(_dec(), d_.APPROVED, by=d_.PROPOSER_HUMAN)
     rows.append(
         {
             "x": "X1",
@@ -198,8 +198,8 @@ def run_x() -> dict:
     )
 
     #: X2 LLM 自升
-    p2 = D.promote(
-        _dec(), D.VALIDATED, by=D.PROPOSER_LLM, code_verdict={"verdict": "PASS"}
+    p2 = d_.promote(
+        _dec(), d_.VALIDATED, by=d_.PROPOSER_LLM, code_verdict={"verdict": "PASS"}
     )
     rows.append(
         {
@@ -211,11 +211,11 @@ def run_x() -> dict:
     )
 
     #: X3 check_ref 指向不存在
-    P.CHECK_REGISTRY["bogus@1"] = ("engineering.protocols", "nope")
+    p_.CHECK_REGISTRY["bogus@1"] = ("engineering.protocols", "nope")
     try:
-        r3 = P.resolve_check_ref("bogus@1")
+        r3 = p_.resolve_check_ref("bogus@1")
     finally:
-        del P.CHECK_REGISTRY["bogus@1"]
+        del p_.CHECK_REGISTRY["bogus@1"]
     rows.append(
         {
             "x": "X3",
@@ -226,9 +226,9 @@ def run_x() -> dict:
     )
 
     #: X4 协议里塞 eval
-    pr = P.load_protocol("layout")
+    pr = p_.load_protocol("layout")
     pr.extra["sneaky"] = "eval('1+1')"
-    v4 = P.validate_protocol(pr)
+    v4 = p_.validate_protocol(pr)
     rows.append(
         {
             "x": "X4",
@@ -239,9 +239,9 @@ def run_x() -> dict:
     )
 
     #: X5 只改 YAML 加检查
-    pr5 = P.load_protocol("requirement")
+    pr5 = p_.load_protocol("requirement")
     pr5.checks = list(pr5.checks) + ["brand_new@1"]
-    v5 = P.validate_protocol(pr5)
+    v5 = p_.validate_protocol(pr5)
     rows.append(
         {
             "x": "X5",
@@ -252,7 +252,7 @@ def run_x() -> dict:
     )
 
     #: X6 缺必填却继续
-    g6 = P.field_gate(P.load_protocol("scheme_gate"), {})
+    g6 = p_.field_gate(p_.load_protocol("scheme_gate"), {})
     rows.append(
         {
             "x": "X6",
@@ -263,7 +263,7 @@ def run_x() -> dict:
     )
 
     #: X7 两次同错却重试
-    o7 = D.check_same_error(["E1", "E1"])
+    o7 = d_.check_same_error(["E1", "E1"])
     rows.append(
         {
             "x": "X7",
@@ -274,7 +274,7 @@ def run_x() -> dict:
     )
 
     #: X8 最坏工况当默认值
-    g8 = P.field_gate(P.load_protocol("requirement"), {"worst_case_load": "999kN"})
+    g8 = p_.field_gate(p_.load_protocol("requirement"), {"worst_case_load": "999kN"})
     rows.append(
         {
             "x": "X8",

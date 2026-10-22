@@ -21,7 +21,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-import metric_scope as ms  # ★ 口径注册表（★ 事实 517：口径必须落成代码）
+import metric_scope as ms  # ★ 口径注册表（★ 事实 517：口径必须落成代码）   # noqa: E402
 import register_capabilities as rc  # noqa: E402
 
 CJK = re.compile(r"[\u4e00-\u9fff]")

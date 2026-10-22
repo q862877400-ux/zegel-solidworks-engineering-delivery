@@ -120,7 +120,7 @@ def main() -> int:
                         "ok": False,
                         "err": "%s: %s" % (type(exc).__name__, str(exc)[:110]),
                     }
-        exec_ok = all(
+        all(
             v.get("ok")
             for v in ev["steps"].values()
             if isinstance(v, dict) and "judged_by_readback" not in ev["steps"] or True

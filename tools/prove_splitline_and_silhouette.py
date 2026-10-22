@@ -37,14 +37,14 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _mk_solid(doc):
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -53,15 +53,15 @@ def _mk_solid(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -76,7 +76,7 @@ def _case_silhouette(sw):
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         _mk_solid(doc)
         #: \u2605 \u5148\u9009\u4e00\u4e2a\u9762\uff08\u2605 \u4fa7\u5f71\u8981\u6709\u6
         #: 5b9\u5411\uff09
@@ -93,19 +93,19 @@ def _case_silhouette(sw):
             break
         before = list(fr.feature_names(doc) or [])
         try:
-            P.start_sketch(doc, plane_name="Right Plane")
-            skm = C.get_com_member(doc, "SketchManager")
-            got = C.get_com_member(skm, "SketchUseEdge3", False, False)
+            p_.start_sketch(doc, plane_name="Right Plane")
+            skm = c_.get_com_member(doc, "SketchManager")
+            got = c_.get_com_member(skm, "SketchUseEdge3", False, False)
             row["returned"] = str(got)
             row["segments"] = len(
                 list(
-                    C.get_com_member(
-                        C.get_com_member(doc, "GetActiveSketch2"), "GetSketchSegments"
+                    c_.get_com_member(
+                        c_.get_com_member(doc, "GetActiveSketch2"), "GetSketchSegments"
                     )
                     or []
                 )
             )
-            P.end_sketch(doc)
+            p_.end_sketch(doc)
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after = list(fr.feature_names(doc) or [])
@@ -118,9 +118,9 @@ def _case_silhouette(sw):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
@@ -134,7 +134,7 @@ def _case_splitline(sw):
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         _mk_solid(doc)
         #: \u2605 \u524d\u89c6\u9762\u4e0a\u753b\u4e00\u4e2a\u8349\u56fe\uff08\u2605 \u6
         #: 295\u5f71\u5206\u5272\u7ebf\u7684\u8f6e\u5ed3\uff09
@@ -142,9 +142,9 @@ def _case_splitline(sw):
             doc.ClearSelection2(True)
         except Exception:  # noqa: BLE001
             pass
-        P.start_sketch(doc, plane_name="Front Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        p_.start_sketch(doc, plane_name="Front Plane")
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
             -0.01,
             -0.005,
@@ -153,18 +153,18 @@ def _case_splitline(sw):
             0.015,
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         names = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p_.feature_names(doc) or [])
             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
         ]
-        ext = C.get_com_member(doc, "Extension")
+        ext = c_.get_com_member(doc, "Extension")
         picked = False
         if names:
-            for cand in P._get_sketch_name_candidates(names[-1]):
+            for cand in p_._get_sketch_name_candidates(names[-1]):
                 try:
-                    if P._select_by_id(ext, cand, "SKETCH", append=False, mark=0):
+                    if p_._select_by_id(ext, cand, "SKETCH", append=False, mark=0):
                         picked = True
                         break
                 except Exception:  # noqa: BLE001
@@ -172,7 +172,7 @@ def _case_splitline(sw):
         row["picked_sketch"] = picked
         before = list(fr.feature_names(doc) or [])
         try:
-            C.get_com_member(doc, "InsertSplitLineProject", False, False)
+            c_.get_com_member(doc, "InsertSplitLineProject", False, False)
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after = list(fr.feature_names(doc) or [])
@@ -183,16 +183,16 @@ def _case_splitline(sw):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u6838\u4e24\u6761\u201c\u505a\u4e86\u4f46\u6ca1\u767b\u8bb0\u201d\u7684\uff1a\u6295\u5f71\u5206\u5272\u7ebf \u00b7 \u4fa7\u5f71\u5b9e\u4f53",

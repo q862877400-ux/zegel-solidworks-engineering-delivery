@@ -66,7 +66,7 @@ def main() -> int:
         #: ★ 造一个**圆柱**（官方示例的靶子就是 `cylinder20-9`）⇒ 视图里有圆弧边/圆柱面
         part = sw_connect.new_document(sw, "part")
         opened.append(part)
-        with p.sketch(part, "Front Plane") as sk:
+        with p.sketch(part, "Front Plane"):
             p.sketch_circle(part, 0.0, 0.0, 20.0)
         p.end_sketch(part)
         p.extrude_boss(part, "草图1", 30.0)

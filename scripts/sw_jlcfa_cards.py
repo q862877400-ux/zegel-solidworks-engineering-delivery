@@ -55,7 +55,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
-import sw_jlcfa_locate as l
+import sw_jlcfa_locate as l  # noqa: E402
 
 warnings.filterwarnings("ignore")
 
@@ -204,22 +204,6 @@ def category_cards(win, allc=None) -> list[tuple[str, Any]]:
     cr = l.container_rect(win)
     if cr is None:
         return []
-    skip = {
-        "swCaption",
-        "SearchBox",
-        "swCmdMgr",
-        "swMenu",
-        "任务窗格",
-        "EM Frame",
-        "header",
-        "taskPaneConfig",
-        "expandCollapse",
-        "pin",
-        "swInnerFrame",
-        "Task Pane Tabs Wnd",
-        "工作区",
-        "设置",
-    }
     out = []
     seen = set()
     for c in l._controls(win):

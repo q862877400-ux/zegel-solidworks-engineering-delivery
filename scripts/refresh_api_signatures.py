@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """从本机 SolidWorks 安装目录的 interop DLL 反射出 API 签名清单，供 arity 审计用。
 
 用途

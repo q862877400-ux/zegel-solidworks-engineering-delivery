@@ -55,12 +55,12 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
 
 
 def _dims(doc):
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
+        sk = c_.get_com_member(doc, "GetActiveSketch2")
         if sk is None:
             return -1
         #: ★ 2026-10-03（轮 585）**修正**：★ 取法换成
@@ -68,7 +68,7 @@ def _dims(doc):
         #:   —— ★ 上一轮用 `GetSketchDimensions` **回 -1**（本仓没那个名字）。
         for nm in ("GetDimensionCount2", "GetDimensionCount3", "GetDimensionCount"):
             try:
-                v = C.get_com_member(sk, nm)
+                v = c_.get_com_member(sk, nm)
                 if v is not None:
                     return int(v)
             except Exception:  # noqa: BLE001
@@ -90,22 +90,22 @@ def _one(sw, tag, do_select):
     doc = None
     toggle_off = False
     try:
-        doc = C.new_document(sw, "part")
-        sm = C.get_com_member(doc, "SketchManager")
+        doc = c_.new_document(sw, "part")
+        sm = c_.get_com_member(doc, "SketchManager")
         #: \u2605 \u7167\u4f8b\u5b50\uff1a`InsertSketch(True)` \u2192 **centerline + 3 \
         #: u6761\u7ebf**
-        C.get_com_member(sm, "InsertSketch", True)
-        C.get_com_member(
+        c_.get_com_member(sm, "InsertSketch", True)
+        c_.get_com_member(
             sm, "CreateCenterLine", 0.0, 0.043667, 0.0, 0.0, -0.050556, 0.0
         )
-        C.get_com_member(sm, "CreateLine", -0.102, 0.039667, 0.0, -0.086223, 0.011, 0.0)
-        C.get_com_member(
+        c_.get_com_member(sm, "CreateLine", -0.102, 0.039667, 0.0, -0.086223, 0.011, 0.0)
+        c_.get_com_member(
             sm, "CreateLine", 0.142445, 0.066556, 0.0, 0.100889, -0.032333, 0.0
         )
-        C.get_com_member(
+        c_.get_com_member(
             sm, "CreateLine", 0.085334, 0.036556, 0.0, 0.049658, -0.048341, 0.0
         )
-        ext = C.get_com_member(doc, "Extension")
+        ext = c_.get_com_member(doc, "Extension")
         steps = {}
         if do_select:
             #: \u2605 **\u7167\u4f8b\u5b50\u9010\u5b57**\uff1a`("Line1","SKETCHSEGMENT",
@@ -119,7 +119,7 @@ def _one(sw, tag, do_select):
                 ("Line3", (0.113556103437018, -1.44445141358242e-03), True),
             ):
                 try:
-                    ok = C.get_com_member(
+                    ok = c_.get_com_member(
                         ext,
                         "SelectByID2",
                         nm,
@@ -156,7 +156,7 @@ def _one(sw, tag, do_select):
             from scripts.sw_automation_knowledge import DIALOG_SUPPRESSORS
 
             tog = DIALOG_SUPPRESSORS["swInputDimValOnCreate"]
-            C.get_com_member(sw, "SetUserPreferenceToggle", int(tog), False)
+            c_.get_com_member(sw, "SetUserPreferenceToggle", int(tog), False)
             toggle_off = True
             steps["toggle_off"] = "swInputDimValOnCreate=%s" % tog
         except Exception as exc:  # noqa: BLE001
@@ -169,7 +169,7 @@ def _one(sw, tag, do_select):
                 ("Line3", (0.113556103437018, -1.44445141358242e-03), True),
             ):
                 try:
-                    C.get_com_member(
+                    c_.get_com_member(
                         ext,
                         "SelectByID2",
                         nm,
@@ -190,7 +190,7 @@ def _one(sw, tag, do_select):
         try:
             #: \u2605 **\u4e3b\u8c03\u7528**\uff08\u2605 3 \u53c2\uff1a\u5c3a\u5bf8\u658
             #: 7\u5b57\u7684 x/y/z\uff09
-            ret = C.get_com_member(
+            ret = c_.get_com_member(
                 ext,
                 "AddSymmetricDimension",
                 8.32913738352659e-02,
@@ -206,14 +206,14 @@ def _one(sw, tag, do_select):
             if ret is not None:
                 for nm in ("Name", "GetName", "FullName", "GetTypeName2"):
                     try:
-                        v = C.get_com_member(ret, nm)
+                        v = c_.get_com_member(ret, nm)
                         probe[nm] = str(v)[:60] if v is not None else "None"
                     except Exception as exc:  # noqa: BLE001
                         probe[nm] = "%s: %s" % (type(exc).__name__, str(exc)[:48])
                 #: ★ 而它还应能回答“属于哪个草图”
                 for nm in ("GetSketch", "GetOwner", "GetFeature"):
                     try:
-                        o = C.get_com_member(ret, nm)
+                        o = c_.get_com_member(ret, nm)
                         if o is not None:
                             probe[nm] = type(o).__name__
                     except Exception as exc:  # noqa: BLE001
@@ -223,7 +223,7 @@ def _one(sw, tag, do_select):
             doc_dims = {}
             for nm in ("GetDimensionCount", "GetDimensionCount2"):
                 try:
-                    doc_dims[nm] = int(C.get_com_member(doc, nm))
+                    doc_dims[nm] = int(c_.get_com_member(doc, nm))
                 except Exception as exc:  # noqa: BLE001
                     doc_dims[nm] = "%s" % type(exc).__name__
             row["doc_dims"] = doc_dims
@@ -246,21 +246,21 @@ def _one(sw, tag, do_select):
                 from scripts.sw_automation_knowledge import DIALOG_SUPPRESSORS
 
                 tog = DIALOG_SUPPRESSORS["swInputDimValOnCreate"]
-                C.get_com_member(sw, "SetUserPreferenceToggle", int(tog), True)
+                c_.get_com_member(sw, "SetUserPreferenceToggle", int(tog), True)
             except Exception:  # noqa: BLE001
                 pass
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u5bf9\u79f0\u7ebf\u6027\u76f4\u5f84\u5c3a\u5bf8\uff1a`IModelDocExtension.AddSymmetricDimension`"

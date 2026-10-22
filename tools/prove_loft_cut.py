@@ -6,7 +6,7 @@
 # 定位:   ★ 2026-10-03（轮 561）★ 照新纪律（**官方文档是第 0 步**）攻台账「放样切除 /
 #           边界切除」。
 #
-#   ★★★★ **官方签名逐字**（`C:\swapi\types\IFeatureManager\InsertCutBlend.md`）：
+#   ★★★★ **官方签名逐字**（`c_:\swapi\types\IFeatureManager\InsertCutBlend.md`）：
 #     ```
 #     Feature InsertCutBlend(bool Closed, bool KeepTangency, bool ForceNonRational,
 #                            double TessToleranceFactor, short StartMatchingType,
@@ -39,17 +39,17 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
 from scripts import sw_loft as l  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _mk_solid_and_profiles(doc):
     """★ 一个**实体**（★ 要有料可切）+ ★ **两个平行剖面**。"""
     #: \u2605 \u5b9e\u4f53
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.05,
         -0.05,
@@ -58,16 +58,16 @@ def _mk_solid_and_profiles(doc):
         0.05,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     solid = False
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.03)
+            p_.extrude_boss(doc, cand, 0.03)
             solid = True
             break
         except Exception:  # noqa: BLE001
@@ -81,11 +81,11 @@ def _mk_solid_and_profiles(doc):
         except Exception:  # noqa: BLE001
             pass
         if i == 0:
-            P.start_sketch(doc, plane_name="Front Plane")
+            p_.start_sketch(doc, plane_name="Front Plane")
         else:
             from sw_connect import get_com_member as _get
 
-            P._select_by_id(
+            p_._select_by_id(
                 _get(doc, "Extension"),
                 "\u524d\u89c6\u57fa\u51c6\u9762",
                 "PLANE",
@@ -94,21 +94,21 @@ def _mk_solid_and_profiles(doc):
             )
             _get(_get(doc, "FeatureManager"), "InsertRefPlane", 8, 0.04, 0, 0, 0, 0)
             try:
-                P.start_sketch(doc, plane_name="\u57fa\u51c6\u97621")
+                p_.start_sketch(doc, plane_name="\u57fa\u51c6\u97621")
             except Exception:  # noqa: BLE001
-                P.start_sketch(doc, plane_name="Plane1")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+                p_.start_sketch(doc, plane_name="Plane1")
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateCircleByRadius",
             0.0,
             0.0,
             0.0,
             rad,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         nm = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p_.feature_names(doc) or [])
             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
         ]
         if nm:
@@ -117,12 +117,12 @@ def _mk_solid_and_profiles(doc):
 
 
 def _pick(doc, sketches):
-    ext = C.get_com_member(doc, "Extension")
+    ext = c_.get_com_member(doc, "Extension")
     picked = []
     for sk in sketches:
-        for cand in P._get_sketch_name_candidates(sk):
+        for cand in p_._get_sketch_name_candidates(sk):
             try:
-                if P._select_by_id(ext, cand, "SKETCH", append=bool(picked), mark=1):
+                if p_._select_by_id(ext, cand, "SKETCH", append=bool(picked), mark=1):
                     picked.append(cand)
                     break
             except Exception:  # noqa: BLE001
@@ -132,8 +132,8 @@ def _pick(doc, sketches):
 
 def _vol(doc):
     try:
-        mp = C.get_com_member(C.get_com_member(doc, "Extension"), "CreateMassProperty")
-        v = C.get_com_member(mp, "Volume")
+        mp = c_.get_com_member(c_.get_com_member(doc, "Extension"), "CreateMassProperty")
+        v = c_.get_com_member(mp, "Volume")
         return float(v) if v is not None else None
     except Exception:  # noqa: BLE001
         return None
@@ -143,7 +143,7 @@ def _one(sw, tag, cut):
     row = {"tag": tag, "cut": cut, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         solid, sketches = _mk_solid_and_profiles(doc)
         row["solid"] = solid
         row["sketches"] = sketches
@@ -189,16 +189,16 @@ def _one(sw, tag, cut):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u653e\u6837\u5207\u9664\uff1a`InsertCutBlend`\uff08\u2605 12 \u53c2 \u00b7 \u672a\u5e9f\u5f03\uff09",

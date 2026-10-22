@@ -60,16 +60,15 @@ def main() -> int:
         if re.match(r"^\s*- id: tool-subagent\s*$", line):
             #: 往后找这个块的 `name:` / `toolName:` / `modelSelectionSettings:` 与缩进
             j = i + 1
-            name = toolname = ""
             indent = None
             while j < len(lines) and j < i + 14:
                 out.append(lines[j])
                 s = lines[j]
                 if re.search(r"name:\s*'@deepseek-ai/dsh-tool-subagent'\s*$", s):
-                    name = "subagent"
+                    pass
                 m = re.search(r"^(\s*)toolName:\s*(\S+)", s)
                 if m:
-                    toolname = m.group(2)
+                    m.group(2)
                 m2 = re.search(r"^(\s*)provider:\s*", s)
                 if m2 and indent is None:
                     indent = m2.group(1)  #: ★ 用同块 `provider:` 的缩进

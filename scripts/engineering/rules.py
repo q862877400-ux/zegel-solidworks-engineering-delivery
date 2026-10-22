@@ -486,7 +486,7 @@ def applicability_lookup(matrix: dict, device_class: str) -> dict:
 
 
 def version_impact(
-    decisions: list[RuleDecision], registry: "RuleRegistry", changed: dict
+    decisions: list[RuleDecision], registry: RuleRegistry, changed: dict
 ) -> dict:
     """★★★★ **版本变化的影响清单**（★ EC02-T07 逐字：★「★ 标准版本变化形成**影响清单**；
     ★ 证据**自动标过期**；★ **不能只改数据库版本号**」）。

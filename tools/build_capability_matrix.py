@@ -266,7 +266,7 @@ def main() -> int:
             return "★ 好" if v >= good else ("可接受" if v >= ok else "★★ 难看")
         return "★ 好" if v <= good else ("可接受" if v <= ok else "★★ 难看")
 
-    R = {
+    r_ = {
         "at": time.strftime("%Y-%m-%d %H:%M:%S"),
         "矩阵": {
             "操作轴": ops,
@@ -312,7 +312,7 @@ def main() -> int:
             ([list(k), n] for k, n in Counter(tool_cells.values()).most_common(20))
         ),
     }
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(json.dumps(r_, ensure_ascii=False, indent=1), encoding="utf-8")
 
     print(
         "★ 规模：官方 **%d** 族 · **%d** 成员 · 我们 **%d** 工具 · 官方命令 **%d**"
@@ -326,15 +326,15 @@ def main() -> int:
     print("★★★ 三个预先写死的判据：")
     print(
         "   ① 无处可放率   = **%.2f%%**（%d/%d）⇒ %s"
-        % (r1, len(tool_unplaced), len(tools), R["判据①无处可放率"]["判定"])
+        % (r1, len(tool_unplaced), len(tools), r_["判据①无处可放率"]["判定"])
     )
     print(
         "   ② 空格率       = **%.2f%%**（%d/%d）⇒ %s（★ 参考项）"
-        % (r2, total_cells - len(filled), total_cells, R["判据②空格率"]["判定"])
+        % (r2, total_cells - len(filled), total_cells, r_["判据②空格率"]["判定"])
     )
     print(
         "   ③ 双源一致率   = **%.2f%%**（%d/%d，★ 上界）⇒ %s"
-        % (r3, hit, len(cmds), R["判据③双源一致率"]["判定"])
+        % (r3, hit, len(cmds), r_["判据③双源一致率"]["判定"])
     )
     print()
     if tool_unplaced:

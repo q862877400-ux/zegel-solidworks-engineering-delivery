@@ -22,9 +22,9 @@ from __future__ import annotations
 import argparse
 import json
 import re
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Dict, Iterable, List, Optional
 
 #: ★ 2026-10-22 统一化：本函数原在四个模块各有一份（逻辑逐字相同）
 #:   ⇒ 收敛到 scripts/sw_stdio.configure_stdio_utf8；此处保留旧名作别名
@@ -64,7 +64,7 @@ RETRY_PROMPT_SUFFIX = """
 """
 
 
-VBA_TEMPLATES: Dict[str, str] = {
+VBA_TEMPLATES: dict[str, str] = {
     "cube": r"""
 Option Explicit
 
@@ -83,7 +83,8 @@ Sub main()
     swModel.SketchManager.InsertSketch True
     swModel.SketchManager.CreateCenterRectangle 0#, 0#, 0#, 0.025, 0.025, 0#
     swModel.SketchManager.InsertSketch True
-    swModel.FeatureManager.FeatureExtrusion3 True, False, True, 0, 0, 0.05, 0#, False, False, False, False, 0#, 0#, False, False, False, False, True, False, True, 0, 0#, False
+    swModel.FeatureManager.FeatureExtrusion3 True, False, True, 0, 0, 0.05, 0#, False, False, False, False, 0#, 0#,
+    False, False, False, False, True, False, True, 0, 0#, False
     swModel.ForceRebuild3 False
 End Sub
 """.strip(),
@@ -105,7 +106,8 @@ Sub main()
     swModel.SketchManager.InsertSketch True
     swModel.SketchManager.CreateCircleByRadius 0#, 0#, 0#, 0.025
     swModel.SketchManager.InsertSketch True
-    swModel.FeatureManager.FeatureExtrusion3 True, False, True, 0, 0, 0.05, 0#, False, False, False, False, 0#, 0#, False, False, False, False, True, False, True, 0, 0#, False
+    swModel.FeatureManager.FeatureExtrusion3 True, False, True, 0, 0, 0.05, 0#, False, False, False, False, 0#, 0#,
+    False, False, False, False, True, False, True, 0, 0#, False
     swModel.ForceRebuild3 False
 End Sub
 """.strip(),
@@ -127,7 +129,8 @@ Sub main()
     swModel.SketchManager.InsertSketch True
     swModel.SketchManager.CreateCornerRectangle -0.03, -0.02, 0#, 0.03, 0.02, 0#
     swModel.SketchManager.InsertSketch True
-    swModel.FeatureManager.FeatureExtrusion3 True, False, True, 0, 0, 0.01, 0#, False, False, False, False, 0#, 0#, False, False, False, False, True, False, True, 0, 0#, False
+    swModel.FeatureManager.FeatureExtrusion3 True, False, True, 0, 0, 0.01, 0#, False, False, False, False, 0#, 0#,
+    False, False, False, False, True, False, True, 0, 0#, False
     swModel.ForceRebuild3 False
 End Sub
 """.strip(),
@@ -169,7 +172,7 @@ class MacroValidationResult:
     """VBA 宏校验结果。"""
 
     ok: bool
-    issues: List[str]
+    issues: list[str]
 
 
 @dataclass
@@ -227,7 +230,7 @@ def _contains_any_pattern(code: str, patterns: Iterable[str]) -> bool:
 
 def validate_vba_macro(code: str) -> MacroValidationResult:
     """校验 VBA 宏是否满足 SolidWorks 执行前的最低合法性要求。"""
-    issues: List[str] = []
+    issues: list[str] = []
     normalized = code.strip()
     if not normalized:
         issues.append("代码为空")

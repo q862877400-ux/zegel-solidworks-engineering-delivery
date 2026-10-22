@@ -113,7 +113,7 @@ def main() -> int:
                 comp = None
             r["组件"] = repr(comp)[:80]
             if comp is not None:
-                xf = _try(_g, comp, "GetTotalTransform") if False else None
+                _try(_g, comp, "GetTotalTransform") if False else None
                 r["旧_SetTransformAndSolve2"] = _try(
                     _g, comp, "SetTransformAndSolve2", None
                 )

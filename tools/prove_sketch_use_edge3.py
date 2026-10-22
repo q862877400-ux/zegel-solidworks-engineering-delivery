@@ -7,7 +7,7 @@
 #     「★ 待重查：第 2 参（侧影开关）与选区前置」
 #
 #   ★★★ **本轮由一名 subagent 做静态调研、我再逐条对照官方原文核过**（★ 四项全对）：
-#     ① `C:\swapi\types\ISketchManager\SketchUseEdge3.md`：
+#     ① `c_:\swapi\types\ISketchManager\SketchUseEdge3.md`：
 # 签名逐字 `System.bool SketchUseEdge3( System.bool Chain, System.bool InnerLoops )`（**
 # 2 参**）
 # `Chain`    = "True to convert an entire chain of sketch entities, false to convert onl
@@ -55,8 +55,8 @@ import pythoncom  # noqa: E402
 import win32com.client  # noqa: E402
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _empty_callout():
@@ -64,9 +64,9 @@ def _empty_callout():
 
 
 def _box(doc, size=0.03):
-    P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Front Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -size,
         -size,
@@ -75,15 +75,15 @@ def _box(doc, size=0.03):
         size,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in ((names[-1] if names else "\u8349\u56fe1"), "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, size * 2.0)
+            p_.extrude_boss(doc, cand, size * 2.0)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -95,13 +95,13 @@ def _one(sw, tag, *, chain, inner_loops, use_selection):
     row = {"tag": tag, "chain": chain, "inner_loops": inner_loops, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row["box"] = _box(doc)
-        ext = C.get_com_member(doc, "Extension")
-        sk = C.get_com_member(doc, "SketchManager")
+        c_.get_com_member(doc, "Extension")
+        sk = c_.get_com_member(doc, "SketchManager")
         #: \u2605 **\u5148\u5f00\u4e00\u4e2a\u8349\u56fe**\uff08\u2605 \u5b98\u65b9\u4f8
         #: b\u5b50\u91cc `InsertSketch True` \u5728\u9009\u9762\u4e4b\u524d\uff09
-        C.get_com_member(sk, "InsertSketch", True)
+        c_.get_com_member(sk, "InsertSketch", True)
         doc.ClearSelection2(True)
         if use_selection:
             #: \u2605\u2605\u2605 2026-10-03\uff08\u8f6e 613\uff09**\u53c8\u8e29\u4e86\u
@@ -119,7 +119,7 @@ def _one(sw, tag, *, chain, inner_loops, use_selection):
             best, best_z = None, -1e9
             for o in ss.entities_on_body(doc, "FACE"):
                 try:
-                    b = C.get_com_member(o, "GetBox")
+                    b = c_.get_com_member(o, "GetBox")
                     z = (float(b[2]) + float(b[5])) / 2.0
                     if z > best_z:
                         best_z, best = z, o
@@ -127,28 +127,28 @@ def _one(sw, tag, *, chain, inner_loops, use_selection):
                     continue
             if best is not None:
                 ss.select_object(doc, best)
-        mgr = C.get_com_member(doc, "SelectionManager")
-        row["selected"] = int(C.get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
+        mgr = c_.get_com_member(doc, "SelectionManager")
+        row["selected"] = int(c_.get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
         #: \u2605 \u8bfb\u8349\u56fe\u6bb5\u6570\uff08\u2605 \u524d\uff09
         try:
-            act = C.get_com_member(doc, "GetActiveSketch2")
+            act = c_.get_com_member(doc, "GetActiveSketch2")
             segs0 = (
-                C.get_com_member(act, "GetSketchSegments") if act is not None else None
+                c_.get_com_member(act, "GetSketchSegments") if act is not None else None
             )
             row["segments_before"] = len(segs0) if segs0 is not None else 0
         except Exception:  # noqa: BLE001
             row["segments_before"] = None
         before = list(fr.feature_names(doc) or [])
         try:
-            ok = C.get_com_member(sk, "SketchUseEdge3", bool(chain), bool(inner_loops))
+            ok = c_.get_com_member(sk, "SketchUseEdge3", bool(chain), bool(inner_loops))
             row["returned"] = str(ok)
         except Exception as exc:  # noqa: BLE001
             row["call_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:100])
             row["returned"] = "ERR"
         try:
-            act = C.get_com_member(doc, "GetActiveSketch2")
+            act = c_.get_com_member(doc, "GetActiveSketch2")
             segs1 = (
-                C.get_com_member(act, "GetSketchSegments") if act is not None else None
+                c_.get_com_member(act, "GetSketchSegments") if act is not None else None
             )
             row["segments_after"] = len(segs1) if segs1 is not None else 0
         except Exception:  # noqa: BLE001
@@ -156,7 +156,7 @@ def _one(sw, tag, *, chain, inner_loops, use_selection):
         #: \u2605 \u6536\u5c3e\uff08\u2605 \u5b98\u65b9\u4f8b\u5b50\u6700\u540e\u4e00\u8
         #: 84c\uff09
         try:
-            C.get_com_member(sk, "InsertSketch", True)
+            c_.get_com_member(sk, "InsertSketch", True)
         except Exception:  # noqa: BLE001
             pass
         after = list(fr.feature_names(doc) or [])
@@ -171,21 +171,21 @@ def _one(sw, tag, *, chain, inner_loops, use_selection):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u4fa7\u5f71\u5b9e\u4f53 / `SketchUseEdge3` \u2014\u2014 \u2605 \u6309**\u5df2\u6838\u8fc7\u7684\u5b98\u65b9\u8c03\u7528\u5e8f**",
         "official": "`ISketchManager\\SketchUseEdge3.md`\uff08**2 \u53c2**\uff09\u00d7 "
-        "`C:\\swapi\\examples\\"
+        "`c_:\\swapi\\examples\\"
         "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md`",
         "cases": [],
     }

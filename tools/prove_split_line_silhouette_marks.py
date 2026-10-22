@@ -21,7 +21,7 @@
 # 0**
 #     ⇒ ★ 而官方要的是 **mark = 2** ⇒ ★ **前置从第一步就错了**。
 #
-#   ★ 官方 `## Remarks` 逐字（`C:\swapi\types\IModelDoc2\InsertSplitLineSil.md`）：
+#   ★ 官方 `## Remarks` 逐字（`c_:\swapi\types\IModelDoc2\InsertSplitLineSil.md`）：
 #     ```
 #     The silhouette curves differ based on your orientation. Therefore, this
 #     method requires a selection to specify the desired direction.
@@ -61,21 +61,21 @@ sys.path.insert(0, str(R / "tools"))
 
 import prove_split_line_geometry_controls as k  # noqa: E402
 import prove_split_line_geometry_per_example as g  # noqa: E402
-import prove_split_line_minimal_matrix as M  # noqa: E402
+import prove_split_line_minimal_matrix as m_  # noqa: E402
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts.sw_simulation import select_face_at  # noqa: E402
 
 
 def _build_cylinder(doc):
     """★ 圆柱：前视面画圆 ⇒ 沿法向拉 30 mm（★ 有一个**曲面**才有轮廓线可切）。"""
-    P.start_sketch(doc, plane_name="Front Plane")
+    p_.start_sketch(doc, plane_name="Front Plane")
     g._get(g._get(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.015)
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     for cand in (g._sketch_names(doc) or ["\u8349\u56fe1"])[::-1]:
         try:
-            P.extrude_boss(doc, cand, 0.03)
+            p_.extrude_boss(doc, cand, 0.03)
             break
         except Exception:  # noqa: BLE001
             continue
@@ -95,7 +95,7 @@ def _case(sw, tag, dir_name, dir_mark, pick_face):
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         box, face_pt = _build_cylinder(doc)
         row["bbox_m"] = box
         ext = g._get(doc, "Extension")
@@ -104,7 +104,7 @@ def _case(sw, tag, dir_name, dir_mark, pick_face):
         if dir_mark is not None:
             #: ★ 官方：方向项用 `SelectByID2` + **mark 2**（★ 上一会话用的是 mark 0）
             try:
-                if P._select_by_id(ext, dir_name, "PLANE", append=False, mark=dir_mark):
+                if p_._select_by_id(ext, dir_name, "PLANE", append=False, mark=dir_mark):
                     picked["direction"] = "%s(mark %d)" % (dir_name, dir_mark)
             except Exception as exc:  # noqa: BLE001
                 row["err_dir"] = str(exc)[:100]
@@ -128,7 +128,7 @@ def _case(sw, tag, dir_name, dir_mark, pick_face):
                 per[str(m)] = -1
         row["picked"], row["sel_by_mark"] = picked, per
         res = k._call_and_read_sil(doc, row)
-        res["split_face_boxes"] = M._split_face_boxes(doc)
+        res["split_face_boxes"] = m_._split_face_boxes(doc)
         return res
     except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
@@ -194,9 +194,9 @@ CASES = (
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
-        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "at": time.strftime("%Y-%m-%dT%H:%m_:%S"),
         "_": "\u8f6e\u5ed3\u578b\u5206\u5272\u7ebf\uff08InsertSplitLineSil\uff09\uff1a"
         "\u7167\u5b98\u65b9 mark \u8868\uff08\u65b9\u5411\u9879 2 \u00b7 \u9762 1\uff09",
         "official": "mark 2 = direction item \u00b7 mark 1 = faces to split",

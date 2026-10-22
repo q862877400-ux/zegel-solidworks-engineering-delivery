@@ -40,7 +40,7 @@ for p in (str(ROOT), str(ROOT / "tools")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-import scan_bare_array_args as S  # noqa: E402
+import scan_bare_array_args as s_  # noqa: E402
 
 #: ★ 轮 183 修 `create_spline` 的那个提交（**修复前**的父提交就是要的原文）
 FIX_COMMIT = "482b2f3"
@@ -70,13 +70,13 @@ def main() -> int:
         if not isinstance(n, ast.Call):
             continue
         nm = getattr(n.func, "id", None) or getattr(n.func, "attr", None)
-        if nm not in S.CALLS or len(n.args) < 3:
+        if nm not in s_.CALLS or len(n.args) < 3:
             continue
         member = n.args[1].value if isinstance(n.args[1], ast.Constant) else None
         if member not in MEMBERS:
             continue
         #: ★ 判据：官方签名第 0 参是 `Object` ⇒ 该调用点**应当**被扫出来
-        obj = S.arg_is_object(member, 0)
+        obj = s_.arg_is_object(member, 0)
         print(
             "    L%-5d %-56s 签名第 0 参是 Object? **%s**"
             % (n.lineno, ast.unparse(n)[:56], obj)

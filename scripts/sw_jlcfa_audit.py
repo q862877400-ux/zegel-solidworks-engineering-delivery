@@ -38,10 +38,10 @@ sys.stdout.reconfigure(encoding="utf-8")
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
-import sw_jlcfa_cards as c
-import sw_jlcfa_locate as l
-import sw_jlcfa_select as sel
-import sw_jlcfa_steps as S
+import sw_jlcfa_cards as c  # noqa: E402
+import sw_jlcfa_locate as l  # noqa: E402
+import sw_jlcfa_select as sel  # noqa: E402
+import sw_jlcfa_steps as _s  # noqa: E402
 
 warnings.filterwarnings("ignore")
 
@@ -53,24 +53,24 @@ def _conn():
     if l._modal().modal_report(h)["count"]:
         l._modal().close_modals(h, rounds=2)
         h, w = l.connect()
-    S.cache_drop()
+    _s.cache_drop()
     return h, w
 
 
 def goto(kind: str, name: str, h: int, w, tries: int = 2):
     """走到指定页。``name`` 是分类名/卡名。返回 (h, w) 或 None。"""
-    st = S.read_state(w)
-    cur = S.page_kind(st)
+    st = _s.read_state(w)
+    cur = _s.page_kind(st)
     if cur == kind or (kind == "SELECT" and cur == "GENERATED"):
         return h, w
     for _ in range(tries):
-        S.ensure_front(h)  # 只尽力置前，**不再阻断**
-        S.cache_drop()
+        _s.ensure_front(h)  # 只尽力置前，**不再阻断**
+        _s.cache_drop()
         h, w = _conn()
         if kind == "CATEGORY":
             r = l.rect_of(w, name)
         elif kind == "RESULT":
-            r = c.locate_category(w, name, S.controls_cached(w))
+            r = c.locate_category(w, name, _s.controls_cached(w))
         elif kind == "SELECT":
             pt = c.locate_code(w, name)
             r = pt and (pt[0] - 40, pt[1] - 40, pt[0] + 40, pt[1] + 40)
@@ -85,20 +85,20 @@ def goto(kind: str, name: str, h: int, w, tries: int = 2):
         else:
             return h, w
         if r is None:
-            S.log("      定位不到「%s」" % name)
+            _s.log("      定位不到「%s」" % name)
             return None
-        S.click((r.left + r.right) // 2, (r.top + r.bottom) // 2, 1.2)
+        _s.click((r.left + r.right) // 2, (r.top + r.bottom) // 2, 1.2)
         t0 = time.time()
         while time.time() - t0 < 25:
             time.sleep(0.7)
-            S.cache_drop()
+            _s.cache_drop()
             try:
                 h, w = l.connect()
             except Exception:
                 continue
-            _k = S.page_kind(S.read_state(w))
+            _k = _s.page_kind(_s.read_state(w))
             if _k == kind or (kind == "SELECT" and _k == "GENERATED"):
-                S.log("      ✓ 到达 %s（%.1fs）" % (kind, time.time() - t0))
+                _s.log("      ✓ 到达 %s（%.1fs）" % (kind, time.time() - t0))
                 return h, w
     return None
 
@@ -112,7 +112,7 @@ def _find_target(kind: str, name: str, w):
     if kind == "CATEGORY":
         return l.rect_of(w, name)
     if kind == "RESULT":
-        return c.locate_category(w, name, S.controls_cached(w))
+        return c.locate_category(w, name, _s.controls_cached(w))
     if kind == "SELECT":
         pt = c.locate_code(w, name)
         return pt and (pt[0] - 40, pt[1] - 40, pt[0] + 40, pt[1] + 40)
@@ -129,39 +129,39 @@ def goto_element(kind: str, name: str, h: int, w, back_rounds: int = 6):
       按「必须先到某页」的思路会卡死；按「目标在不在这页」就不会。
     """
     for rnd in range(back_rounds + 1):
-        S.cache_drop()
+        _s.cache_drop()
         h, w = _conn()
-        if S.page_kind(S.read_state(w)) == kind:
+        if _s.page_kind(_s.read_state(w)) == kind:
             return h, w
-        S.ensure_front(h)
+        _s.ensure_front(h)
         r = _find_target(kind, name, w)
         if r is not None:
-            S.log(
+            _s.log(
                 "      第%d轮找到「%s」%s"
                 % (rnd, name, (r.left, r.top, r.right, r.bottom))
             )
-            S.click((r.left + r.right) // 2, (r.top + r.bottom) // 2, 1.2)
+            _s.click((r.left + r.right) // 2, (r.top + r.bottom) // 2, 1.2)
             t0 = time.time()
             while time.time() - t0 < 22:
                 time.sleep(0.7)
-                S.cache_drop()
+                _s.cache_drop()
                 try:
                     h, w = l.connect()
                 except Exception:
                     continue
-                _k = S.page_kind(S.read_state(w))
+                _k = _s.page_kind(_s.read_state(w))
                 if _k == kind or (kind == "SELECT" and _k == "GENERATED"):
-                    S.log("      ✓ 到达 %s（%.1fs）" % (kind, time.time() - t0))
+                    _s.log("      ✓ 到达 %s（%.1fs）" % (kind, time.time() - t0))
                     return h, w
-            S.log("      点了但没到 %s，继续找" % kind)
+            _s.log("      点了但没到 %s，继续找" % kind)
             continue
         # 找不到目标 → 退一级再看
         rb = l.rect_of(w, "返回")
         if rb is None:
-            S.log("      第%d轮：无目标也无「返回」" % rnd)
+            _s.log("      第%d轮：无目标也无「返回」" % rnd)
             return None
-        S.log("      第%d轮：目标「%s」不在本页，点「返回」退一级" % (rnd, name))
-        S.click((rb.left + rb.right) // 2, (rb.top + rb.bottom) // 2, 1.6)
+        _s.log("      第%d轮：目标「%s」不在本页，点「返回」退一级" % (rnd, name))
+        _s.click((rb.left + rb.right) // 2, (rb.top + rb.bottom) // 2, 1.6)
     return None
 
 
@@ -177,9 +177,9 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
         "title": "",
     }
     h, w = _conn()
-    st = S.read_state(w)
-    rec["start"] = S.page_kind(st)
-    S.log("  起点 %s" % rec["start"])
+    st = _s.read_state(w)
+    rec["start"] = _s.page_kind(st)
+    _s.log("  起点 %s" % rec["start"])
 
     # ① 直接**按元素**找一级分类并点击 —— **不再要求先回首页**。
     # ⚑⚑⚑ 「先回首页」这条路为什么废掉（2026-09-30 实测）
@@ -192,11 +192,11 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     got = goto_element("CATEGORY", cat, h, w)
     if got is None:
         rec["stage"] = "进分类失败(%s)" % cat
-        S.evidence("FAIL_cat_%s" % code, h, w, S.read_state(w), note=rec["stage"])
+        _s.evidence("FAIL_cat_%s" % code, h, w, _s.read_state(w), note=rec["stage"])
         return rec
     h, w = got
     rec["stage"] = "CATEGORY"
-    S.log("      已到分类页「%s」" % cat)
+    _s.log("      已到分类页「%s」" % cat)
 
     # ② 结果页
     got = goto("RESULT", sub, h, w)
@@ -219,24 +219,24 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     rec["pct"] = pct
     if pct != 100:
         rec["stage"] = "未到100%%(%s)" % pct
-        S.evidence("FAIL_%s_%s" % (sub, code), h, w, S.read_state(w), note=rec["stage"])
+        _s.evidence("FAIL_%s_%s" % (sub, code), h, w, _s.read_state(w), note=rec["stage"])
         return rec
 
     # ⑤ 生成预览
-    S.cache_drop()
+    _s.cache_drop()
     h, w = l.connect()
-    S.ensure_front(h)
+    _s.ensure_front(h)
     btn = l.locate(w, "生成预览", "Button")
     if btn is None:
         rec["stage"] = "无生成按钮"
         return rec
     r = btn.rectangle()
-    S.click((r.left + r.right) // 2, (r.top + r.bottom) // 2, 1.0)
+    _s.click((r.left + r.right) // 2, (r.top + r.bottom) // 2, 1.0)
     t0 = time.time()
     title = ""
     while time.time() - t0 < 30:
         time.sleep(1.0)
-        S.cache_drop()
+        _s.cache_drop()
         try:
             h, w = l.connect()
             title = w.window_text() or ""
@@ -249,13 +249,13 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     rec["ok"] = (
         "SLDPRT" in title
         or "SLDASM" in title
-        or "建模完成" in S.read_state(w)["visible"]
+        or "建模完成" in _s.read_state(w)["visible"]
     )
-    S.evidence(
+    _s.evidence(
         ("OK_" if rec["ok"] else "PART_") + "%s_%s" % (sub, code),
         h,
         w,
-        S.read_state(w),
+        _s.read_state(w),
         note=rec["title"],
     )
     return rec
@@ -265,8 +265,8 @@ def main(plan: list[tuple[str, str, str]]):
     results = []
     t_all = time.time()
     for i, (cat, sub, code) in enumerate(plan, 1):
-        S.STEP[0] = 0
-        S.log("═══ %d/%d  %s / %s / %s" % (i, len(plan), cat, sub, code))
+        _s.STEP[0] = 0
+        _s.log("═══ %d/%d  %s / %s / %s" % (i, len(plan), cat, sub, code))
         try:
             rec = run_one(cat, sub, code)
         except Exception:
@@ -278,17 +278,17 @@ def main(plan: list[tuple[str, str, str]]):
                 "stage": "异常:" + traceback.format_exc()[-160:],
             }
         results.append(rec)
-        S.log(
+        _s.log(
             "  => %s  %s  %s"
             % ("✓" if rec["ok"] else "✗", rec["stage"], rec.get("title", "")[:52])
         )
         REPORT.write_text(
             json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8"
         )
-        S.log("  用时 %.0fs" % (time.time() - t_all))
-    S.log("════ 汇总 ════")
+        _s.log("  用时 %.0fs" % (time.time() - t_all))
+    _s.log("════ 汇总 ════")
     for r in results:
-        S.log(
+        _s.log(
             "  %s %-10s %-12s %-12s %s"
             % (
                 "✓" if r["ok"] else "✗",
@@ -299,5 +299,5 @@ def main(plan: list[tuple[str, str, str]]):
             )
         )
     ok = sum(1 for r in results if r["ok"])
-    S.log("成功 %d/%d" % (ok, len(results)))
+    _s.log("成功 %d/%d" % (ok, len(results)))
     return results

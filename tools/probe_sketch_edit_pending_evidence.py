@@ -102,8 +102,8 @@ def main() -> int:
         #:   第一版是「先选边 → 再进草图」⇒ ★ 而那**可能被"进草图"这个动作清掉选区** ✓
         #:   ⇒ ★ 改成「**先进草图 → 再选边 → 再投影**」（★ 官方 Remarks 只要求
         #:     "调用前已选中"，★ 没说必须在草图外选）✓
-        sel = sel_after = None
-        with p.sketch(model, "Front Plane") as sk2:
+        sel_after = None
+        with p.sketch(model, "Front Plane"):
             get_com_member(model, "ClearSelection2", True)
             sel_after = bool(
                 get_com_member(
@@ -150,7 +150,7 @@ def main() -> int:
     r2: dict = {"项": "sketch_mirror"}
     try:
         model = new_document(app, "part")
-        with p.sketch(model, "Front Plane") as sk:
+        with p.sketch(model, "Front Plane"):
             sm = get_com_member(model, "SketchManager")
             #: ★ 中心线（★ 官方标记 **mark=2**）
             cl = get_com_member(sm, "CreateCenterLine", 0.0, -0.04, 0.0, 0.0, 0.04, 0.0)
@@ -209,7 +209,7 @@ def main() -> int:
         r2["★_异常"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
     rows.append(r2)
 
-    R = {
+    r_ = {
         "★_目的": "★ 为 SC-004 第 2 条候选（`sketch_edit_ops`）补**未取证**的两项真机读数",
         "★_官方依据": {
             "convert_entities": "ISketchManager.SketchUseEdge3(Chain, InnerLoops) —— "
@@ -220,7 +220,7 @@ def main() -> int:
         "rows": rows,
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     for r in rows:
         print(

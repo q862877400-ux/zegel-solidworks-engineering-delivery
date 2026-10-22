@@ -42,8 +42,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
@@ -60,9 +60,9 @@ def _mk_two_crossing_surfaces(doc):
             doc.ClearSelection2(True)
         except Exception:  # noqa: BLE001
             pass
-        P.start_sketch(doc, plane_name=plane)
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        p_.start_sketch(doc, plane_name=plane)
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
             rect[0],
             rect[1],
@@ -71,10 +71,10 @@ def _mk_two_crossing_surfaces(doc):
             rect[3],
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         names = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p_.feature_names(doc) or [])
             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
         ]
         for cand in ((names[-1],) + tuple(names) + ("\u8349\u56fe%d" % (i + 1),))[:4]:
@@ -93,7 +93,7 @@ def _run(sw, tag, fn):
     row = {"tag": tag, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row["made"] = _mk_two_crossing_surfaces(doc)
         r = fn(doc)
         row["result"] = {k: v for k, v in (r or {}).items() if k != "\u2605"}
@@ -103,16 +103,16 @@ def _run(sw, tag, fn):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u526a\u88c1\u66f2\u9762\uff1a`IFeatureManager.PreTrimSurface` + `PostTrimSurface`\uff08\u4e24\u6bb5\u5f0f\uff09",

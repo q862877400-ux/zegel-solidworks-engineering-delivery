@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-from cad_installation import discover_all, discover_installations
+from cad_installation import discover_all, discover_installations  # noqa: E402
 
 _AGENT_DOWNLOADS = {
     "codex": "https://developers.openai.com/codex/cli/",

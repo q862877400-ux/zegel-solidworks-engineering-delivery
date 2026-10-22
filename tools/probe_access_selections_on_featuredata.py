@@ -43,8 +43,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 #: ★ 空 Dispatch 变体（★ 事实 12/33：`VARIANT(VT_DISPATCH, None)`）
@@ -64,9 +64,9 @@ def _mk(doc):
             doc.ClearSelection2(True)
         except Exception:  # noqa: BLE001
             pass
-        P.start_sketch(doc, plane_name=plane)
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        p_.start_sketch(doc, plane_name=plane)
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
             rect[0],
             rect[1],
@@ -75,10 +75,10 @@ def _mk(doc):
             rect[3],
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         names = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p_.feature_names(doc) or [])
             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
         ]
         for cand in ((names[-1],) + tuple(names) + ("\u8349\u56fe%d" % (i + 1),))[:4]:
@@ -95,9 +95,9 @@ def _mk(doc):
 
 def _mk_faces_and_solid(doc):
     """★ 实体 + 曲面（★ 给加厚/直纹用）。"""
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -106,15 +106,15 @@ def _mk_faces_and_solid(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             break
         except Exception:  # noqa: BLE001
             continue
@@ -129,21 +129,21 @@ def _try_access(doc, feat, label):
         return out
     try:
         out["feat"] = "%s / %s" % (
-            str(C.get_com_member(feat, "Name")),
-            str(C.get_com_member(feat, "GetTypeName2")),
+            str(c_.get_com_member(feat, "Name")),
+            str(c_.get_com_member(feat, "GetTypeName2")),
         )
     except Exception:  # noqa: BLE001
         pass
     fd = None
     try:
-        fd = C.get_com_member(feat, "GetDefinition")
+        fd = c_.get_com_member(feat, "GetDefinition")
         out["getdefinition"] = type(fd).__name__ if fd is not None else "None"
     except Exception as exc:  # noqa: BLE001
         out["getdefinition_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:110])
     if fd is None:
         return out
     try:
-        r = C.get_com_member(fd, "AccessSelections", doc, _av())
+        r = c_.get_com_member(fd, "AccessSelections", doc, _av())
         out["access_returns"] = str(r)
         out["access_ok"] = True
     except Exception as exc:  # noqa: BLE001
@@ -167,7 +167,7 @@ def _try_access(doc, feat, label):
         #: `create_empty_dispatch_variant()`** \u2014\u2014 \u2605 \u4e0d\u624b\u6413\uf
         #: f08\u4e8b\u5b9e 418 \u7684\u6559\u8bad\uff09\u3002
         try:
-            r2 = C.get_com_member(fd, "AccessSelections", doc, _av())
+            r2 = c_.get_com_member(fd, "AccessSelections", doc, _av())
             out["access2_returns"] = str(r2)
             out["access2_ok"] = True
         except Exception as exc2:  # noqa: BLE001
@@ -179,7 +179,7 @@ def _try_access(doc, feat, label):
                     out["error_code2"] = tok
                     break
     try:
-        C.get_com_member(fd, "ReleaseSelectionAccess")
+        c_.get_com_member(fd, "ReleaseSelectionAccess")
         out["release"] = "ok"
     except Exception as exc:  # noqa: BLE001
         out["release_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:80])
@@ -190,7 +190,7 @@ def _run(sw, tag, build, entry_call):
     row = {"tag": tag, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         build(doc)
         feat = entry_call(doc)
         row.update(_try_access(doc, feat, tag))
@@ -200,16 +200,16 @@ def _run(sw, tag, build, entry_call):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u5bf9\u201c\u9759\u9ed8 None\u201d\u90a3\u51e0\u6761\u8bd5 `*FeatureData.AccessSelections`"
@@ -234,8 +234,8 @@ def main() -> int:
             if fs:
                 _sel(fs[0], append=True, mark=0)
             break
-        fm = C.get_com_member(doc, "FeatureManager")
-        return C.get_com_member(
+        fm = c_.get_com_member(doc, "FeatureManager")
+        return c_.get_com_member(
             fm, "InsertCutSurface", False, 0, False, True, [], _oi4()
         )
 
@@ -253,8 +253,8 @@ def main() -> int:
             for f in list(_get(b, "GetFaces") or []):
                 if _sel(f, append=(n > 0), mark=0):
                     n += 1
-        fm = C.get_com_member(doc, "FeatureManager")
-        return C.get_com_member(
+        fm = c_.get_com_member(doc, "FeatureManager")
+        return c_.get_com_member(
             fm, "FeatureBossThicken", 0.003, 0, 0, True, True, False, True
         )
 
@@ -273,8 +273,8 @@ def main() -> int:
                 for f in list(_get(b, "GetFaces") or []):
                     if _sel(f, append=(n > 0), mark=0):
                         n += 1
-        fm = C.get_com_member(doc, "FeatureManager")
-        return C.get_com_member(fm, "InsertSplitLineIntersect", 0)
+        fm = c_.get_com_member(doc, "FeatureManager")
+        return c_.get_com_member(fm, "InsertSplitLineIntersect", 0)
 
     for tag, build, call in (
         (

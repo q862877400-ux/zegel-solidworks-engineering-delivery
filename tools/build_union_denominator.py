@@ -112,7 +112,7 @@ def main() -> int:
         k for k in feature_fams if any(tok.lower() in k.lower() for tok in ui_tokens)
     )
 
-    R = {
+    r_ = {
         "at": time.strftime("%Y-%m-%d %H:%M:%S"),
         "口径": "并集（UI 功能 ∪ 纯 API 功能）—— 业主 2026-10-03 定",
         "N_ui": n_ui,
@@ -134,7 +134,7 @@ def main() -> int:
         "ui_items": ui,
         "feature_families": sorted(feature_fams),
     }
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(json.dumps(r_, ensure_ascii=False, indent=1), encoding="utf-8")
 
     print("★★★ 并集分母（三口径，★ 不挑一个好看的报）：")
     print("   ★ N_ui（UI 心智单位，现成的那份）            = **%d**" % n_ui)

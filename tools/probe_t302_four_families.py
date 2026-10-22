@@ -137,11 +137,11 @@ def main() -> int:
         #: ★★★★ **修 1**（★ 我第一版猜错了签名 —— ★ 事实 517）：★ 真签名是
         #: `create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` ⇒ **要一个 spec
         #:  对象** ✓
-        import sw_sheet_metal as SM
+        import sw_sheet_metal as sm_
 
         try:
-            spec = SM.BaseFlangeSpec(thickness=2.0, bend_radius=1.0, depth=20.0)
-            SM.create_base_flange(model, sk, spec)
+            spec = sm_.BaseFlangeSpec(thickness=2.0, bend_radius=1.0, depth=20.0)
+            sm_.create_base_flange(model, sk, spec)
             rows.append({"项": "钣金基体法兰（★ 前置）", "★_ok": True, "返回": "ok"})
         except Exception as exc:  # noqa: BLE001
             rows.append(
@@ -267,7 +267,7 @@ def main() -> int:
             }
         )
 
-    R = {
+    r_ = {
         "★_目的": "真机预试 T302 的四个「无 IAccessSelections」族",
         "★_判据": "★ 每个入口记 ① 特征名增量 ② 实体数增量 ③ 有没有报 0x80010105"
         "（★ 含几何读数 —— 事实 486：树会涨而几何没变）",
@@ -276,7 +276,7 @@ def main() -> int:
         "rows": rows,
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     for r in rows:
         print(

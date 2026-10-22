@@ -43,8 +43,8 @@ sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
 import scripts.sw_weldment as w  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
@@ -60,9 +60,9 @@ def _mk_two_crossing_surfaces(doc):
             doc.ClearSelection2(True)
         except Exception:  # noqa: BLE001
             pass
-        P.start_sketch(doc, plane_name=plane)
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        p_.start_sketch(doc, plane_name=plane)
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
             rect[0],
             rect[1],
@@ -71,10 +71,10 @@ def _mk_two_crossing_surfaces(doc):
             rect[3],
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         names = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p_.feature_names(doc) or [])
             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
         ]
         for cand in ((names[-1],) + tuple(names) + ("\u8349\u56fe%d" % (i + 1),))[:4]:
@@ -115,30 +115,30 @@ def _one(sw, tag, mode):
     row = {"tag": tag, "mode": mode, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row["surfaces_made"] = _mk_two_crossing_surfaces(doc)
         try:
             doc.ClearSelection2(True)
         except Exception:  # noqa: BLE001
             pass
-        fm = C.get_com_member(doc, "FeatureManager")
+        fm = c_.get_com_member(doc, "FeatureManager")
         before = list(fr.feature_names(doc) or [])
         if mode == "pre_then_bodies":
-            pre = C.get_com_member(fm, "PreTrimSurface", False, True, False, False)
+            pre = c_.get_com_member(fm, "PreTrimSurface", False, True, False, False)
             row["pre"] = str(pre)
             row["picked"] = _pick_bodies_by_object(doc)
         elif mode == "pre_then_bodies_faces":
-            pre = C.get_com_member(fm, "PreTrimSurface", False, True, False, False)
+            pre = c_.get_com_member(fm, "PreTrimSurface", False, True, False, False)
             row["pre"] = str(pre)
             row["picked"] = _pick_bodies_by_object(doc, faces_too=True)
         else:  # bodies_then_pre
             row["picked"] = _pick_bodies_by_object(doc)
-            pre = C.get_com_member(fm, "PreTrimSurface", False, True, False, False)
+            pre = c_.get_com_member(fm, "PreTrimSurface", False, True, False, False)
             row["pre"] = str(pre)
         try:
             row["sel"] = int(
-                C.get_com_member(
-                    C.get_com_member(doc, "SelectionManager"),
+                c_.get_com_member(
+                    c_.get_com_member(doc, "SelectionManager"),
                     "GetSelectedObjectCount2",
                     -1,
                 )
@@ -148,12 +148,12 @@ def _one(sw, tag, mode):
             row["sel"] = -1
         post = None
         try:
-            post = C.get_com_member(fm, "PostTrimSurface", True)
+            post = c_.get_com_member(fm, "PostTrimSurface", True)
             row["post"] = type(post).__name__ if post is not None else "None"
             if post is not None:
                 for k, m in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
                     try:
-                        row[k] = str(C.get_com_member(post, m))
+                        row[k] = str(c_.get_com_member(post, m))
                     except Exception:  # noqa: BLE001
                         pass
         except Exception as exc:  # noqa: BLE001
@@ -164,7 +164,7 @@ def _one(sw, tag, mode):
         try:
             for f in w.iter_features_recursive(doc):
                 try:
-                    types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
+                    types.append(str(c_.get_com_member(f, "GetTypeName2") or ""))
                 except Exception:  # noqa: BLE001
                     pass
         except Exception:  # noqa: BLE001
@@ -176,16 +176,16 @@ def _one(sw, tag, mode):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u526a\u88c1\u66f2\u9762\uff1a\u4f8b\u5b50\u7684**\u987a\u5e8f** + \u6309**\u5bf9\u8c61**\u9009\u66f2\u9762\u4f53",

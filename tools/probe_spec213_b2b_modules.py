@@ -51,7 +51,7 @@ def main() -> int:
     import sw_assembly_doc as ad
     import sw_connect
     import sw_part as pt
-    import sw_pattern as P
+    import sw_pattern as p_
 
     out: dict = {
         "purpose": "★ 验 B2b 缝进 scripts/ 的三个模块函数（★ 走模块、不走探针实现）",
@@ -183,7 +183,7 @@ def main() -> int:
         seed = extrudes[0] if extrudes else sk3
         row3["feature_names"] = feat_names
         row3["seed_used"] = seed
-        res3 = P.insert_local_curve_driven_pattern_report(
+        res3 = p_.insert_local_curve_driven_pattern_report(
             m3, seed_feature=seed, curve_sketch=curve_sk
         )
         row3.update(

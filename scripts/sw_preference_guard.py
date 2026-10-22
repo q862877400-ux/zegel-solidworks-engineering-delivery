@@ -32,10 +32,11 @@
 from __future__ import annotations
 
 import sys
+from collections.abc import Iterable
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 _REPO = Path(__file__).resolve().parents[1]
 if str(_REPO / "scripts") not in sys.path:

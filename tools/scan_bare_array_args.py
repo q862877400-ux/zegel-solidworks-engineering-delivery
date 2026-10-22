@@ -74,7 +74,7 @@ def load_signatures() -> dict:
         m = re.match(r"^([\w\.<>\[\]]+)\s+(\w+)\s*\((.*)\)\s*$", s)
         if not m:
             continue
-        ret, name, args = m.group(1), m.group(2), m.group(3)
+        _ret, name, args = m.group(1), m.group(2), m.group(3)
         types = []
         for part in args.split(","):
             part = part.strip()

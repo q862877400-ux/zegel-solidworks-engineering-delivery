@@ -6,7 +6,7 @@
 # 定位:   ★ 2026-10-03（轮 551）★ 照新纪律读文档后的**一个推论验证**。
 #
 #   ★★ **推论怎么来的**：
-# · 官方 `C:\swapi\types\IFeatureManager\InsertProtrusionBlend2.md` 的 `## Remarks` 逐字
+# · 官方 `c_:\swapi\types\IFeatureManager\InsertProtrusionBlend2.md` 的 `## Remarks` 逐字
 # ：
 #       「Set the mark for: **1 = profile selections** · **2 = guide curve selections** ·
 #         **4 = centerline selection**」；★ 并强调
@@ -45,9 +45,9 @@ sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
 import scripts.sw_weldment as w  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
 from scripts import sw_loft as l  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _two_profiles(doc):
@@ -61,7 +61,7 @@ def _two_profiles(doc):
         #: \u2605 \u7b2c\u4e8c\u4e2a\u8349\u56fe\u8981\u5728**\u53e6\u4e00\u4e2a\u57fa\u
         #: 51c6\u9762**\u4e0a\uff08\u2605 \u504f\u79fb\u4e00\u4e2a\uff09
         if i == 0:
-            P.start_sketch(doc, plane_name=plane)
+            p_.start_sketch(doc, plane_name=plane)
         else:
             #: \u2605 \u7528 InsertRefPlane \u5efa\u4e00\u4e2a\u504f\u79fb\u57fa\u51c6\u
             #: 9762\uff08\u2605 \u672c\u4ed3\u5df2\u6709 ref_geometry\uff09
@@ -69,26 +69,26 @@ def _two_profiles(doc):
 
             fm = _get(doc, "FeatureManager")
             ext = _get(doc, "Extension")
-            P._select_by_id(
+            p_._select_by_id(
                 ext, "\u524d\u89c6\u57fa\u51c6\u9762", "PLANE", append=False, mark=0
             )
             _get(fm, "InsertRefPlane", 8, 0.03, 0, 0, 0, 0)
             try:
-                P.start_sketch(doc, plane_name="\u57fa\u51c6\u97621")
+                p_.start_sketch(doc, plane_name="\u57fa\u51c6\u97621")
             except Exception:  # noqa: BLE001
-                P.start_sketch(doc, plane_name="Plane1")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+                p_.start_sketch(doc, plane_name="Plane1")
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateCircleByRadius",
             0.0,
             0.0,
             0.0,
             half,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         names = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p_.feature_names(doc) or [])
             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
         ]
         if names:
@@ -98,12 +98,12 @@ def _two_profiles(doc):
 
 def _pick_profiles(doc, sketches):
     """★ 按**期望的顺序**选轮廓 —— ★ 官方 Remarks 的硬约束（★ mark=1）。"""
-    ext = C.get_com_member(doc, "Extension")
+    ext = c_.get_com_member(doc, "Extension")
     picked = []
     for sk in sketches:
-        for cand in P._get_sketch_name_candidates(sk):
+        for cand in p_._get_sketch_name_candidates(sk):
             try:
-                if P._select_by_id(ext, cand, "SKETCH", append=bool(picked), mark=1):
+                if p_._select_by_id(ext, cand, "SKETCH", append=bool(picked), mark=1):
                     picked.append(cand)
                     break
             except Exception:  # noqa: BLE001
@@ -112,7 +112,7 @@ def _pick_profiles(doc, sketches):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u8fb9\u754c\u51f8\u53f0/\u57fa\u4f53 \u2014\u2014 \u5b83\u4e0e\u300c\u653e\u6837\u300d\u5728 API \u4e0a\u662f\u4e0d\u662f\u540c\u4e00\u4e2a",
@@ -121,7 +121,7 @@ def main() -> int:
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         sketches = _two_profiles(doc)
         before = list(fr.feature_names(doc) or [])
         picked = _pick_profiles(doc, sketches)
@@ -144,7 +144,7 @@ def main() -> int:
         try:
             for f in w.iter_features_recursive(doc):
                 try:
-                    types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
+                    types.append(str(c_.get_com_member(f, "GetTypeName2") or ""))
                 except Exception:  # noqa: BLE001
                     pass
         except Exception:  # noqa: BLE001
@@ -162,9 +162,9 @@ def main() -> int:
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))

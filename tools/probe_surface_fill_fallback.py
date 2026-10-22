@@ -51,7 +51,7 @@ def _plate_with_hole(doc):
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
+    r_: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
     sw, _ = c.connect_solidworks(wait_seconds=30)
     #: ★★★ 第三例的关键：**先显式清掉选区**再调 —— ★ 这才**复现了工具层的条件**。
     #:   ★★ 为什么必须这样：`RESOLVERS["model"]` 经 `connect_solidworks()` **会清空选区**
@@ -103,11 +103,11 @@ def main() -> int:
                     _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
             except Exception:  # noqa: BLE001
                 pass
-        R["cases"].append(row)
-    R["passed"] = sum(1 for r in R["cases"] if r.get("ok"))
-    R["seconds"] = round(time.time() - started, 2)
+        r_["cases"].append(row)
+    r_["passed"] = sum(1 for r in r_["cases"] if r.get("ok"))
+    r_["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

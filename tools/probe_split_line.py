@@ -43,15 +43,15 @@ sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
 import scripts.sw_weldment as w  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_solid(doc):
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -60,15 +60,15 @@ def _mk_solid(doc):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -80,9 +80,9 @@ def _mk_surface(doc, plane="Front Plane"):
         doc.ClearSelection2(True)
     except Exception:  # noqa: BLE001
         pass
-    P.start_sketch(doc, plane_name=plane)
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name=plane)
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.02,
         -0.02,
@@ -91,10 +91,10 @@ def _mk_surface(doc, plane="Front Plane"):
         0.02,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
@@ -164,33 +164,33 @@ def _one(sw, tag, kind):
     row = {"tag": tag, "kind": kind, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row["solid"] = _mk_solid(doc)
         row["surface"] = _mk_surface(doc)
         before = list(fr.feature_names(doc) or [])
-        fm = C.get_com_member(doc, "FeatureManager")
+        fm = c_.get_com_member(doc, "FeatureManager")
         picked = {}
         ret = None
         if kind == "sil":
             #: ★ \u8f6e\u5ed3\u578b\uff1a\u9009\u4e00\u4e2a**\u57fa\u51c6\u9762**\uff08\
             #: u2605 0 \u53c2\uff09
             picked["plane"] = _pick_plane(doc)
-            ret = C.get_com_member(doc, "InsertSplitLineSil")
+            ret = c_.get_com_member(doc, "InsertSplitLineSil")
         elif kind == "project":
             #: ★ \u6295\u5f71\u578b\uff1a\u9009\u9762/\u57fa\u51c6\u9762\uff08\u2605 2 \
             #: u53c2\uff09
             picked["plane"] = _pick_plane(doc)
-            ret = C.get_com_member(doc, "InsertSplitLineProject", False, False)
+            ret = c_.get_com_member(doc, "InsertSplitLineProject", False, False)
         else:
             #: ★ \u4ea4\u53c9\u578b\uff1a\u5168\u9009\u9762\uff08\u2605 1 in\uff09
             picked["faces"] = _pick_all_faces(doc)
-            ret = C.get_com_member(fm, "InsertSplitLineIntersect", 0)
+            ret = c_.get_com_member(fm, "InsertSplitLineIntersect", 0)
         row["picked"] = picked
         row["returned"] = type(ret).__name__ if ret is not None else "None"
         if ret is not None:
             for k, m in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
                 try:
-                    row[k] = str(C.get_com_member(ret, m))
+                    row[k] = str(c_.get_com_member(ret, m))
                 except Exception:  # noqa: BLE001
                     pass
         after = list(fr.feature_names(doc) or [])
@@ -199,7 +199,7 @@ def _one(sw, tag, kind):
         try:
             for f in w.iter_features_recursive(doc):
                 try:
-                    types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
+                    types.append(str(c_.get_com_member(f, "GetTypeName2") or ""))
                 except Exception:  # noqa: BLE001
                     pass
         except Exception:  # noqa: BLE001
@@ -211,20 +211,23 @@ def _one(sw, tag, kind):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-        "_": "\u5206\u5272\u7ebf\uff08B7/T705\uff09\u4e09\u6761\u5165\u53e3\uff1a\u8f6e\u5ed3 / \u6295\u5f71 / \u4ea4\u53c9",
-        "why": "\u8ba1\u5212\u91cc\u90a3\u53e5\u201c\u5206\u5272\u7ebf\u4e24\u6761\u771f\u673a\u6811\u65e0\u589e\u91cf\u201d**\u6ca1\u5199\u6e05\u662f\u54ea\u4e2a\u5165\u53e3\u4e0e\u4ec0\u4e48\u524d\u7f6e**",
+        "_":
+        "\u5206\u5272\u7ebf\uff08B7/T705\uff09\u4e09\u6761\u5165\u53e3\uff1a\u8f6e\u5ed3 / \u6295\u5f71 / \u4ea4\u53c9",
+        "why":
+        "\u8ba1\u5212\u91cc\u90a3\u53e5\u201c\u5206\u5272\u7ebf\u4e24\u6761\u771f\u673a\u6811\u65e0\u589e\u91cf\u201d**\
+        u6ca1\u5199\u6e05\u662f\u54ea\u4e2a\u5165\u53e3\u4e0e\u4ec0\u4e48\u524d\u7f6e**",
         "cases": [],
     }
     for tag, kind in (

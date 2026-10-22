@@ -48,16 +48,16 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _build_surface(sw):
-    doc = C.new_document(sw, "part")
-    P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    doc = c_.new_document(sw, "part")
+    p_.start_sketch(doc, plane_name="Front Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.02,
         -0.02,
@@ -66,7 +66,7 @@ def _build_surface(sw):
         0.02,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     for cand in ("\u8349\u56fe1", "Sketch1"):
         try:
             if sf.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get("ok"):
@@ -85,14 +85,14 @@ def _one(sw, tag, fn):
             "solid": sf._solid_body_count(doc),
             "surface": sf._surface_body_count(doc),
         }
-        before = list(P.feature_names(doc) or [])
+        before = list(p_.feature_names(doc) or [])
         try:
             ret = fn(doc)
             row["returned"] = type(ret).__name__ if ret is not None else "None"
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
             row["code"] = getattr(exc, "args", (None,))[0]
-        after = list(P.feature_names(doc) or [])
+        after = list(p_.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["post"] = {
             "solid": sf._solid_body_count(doc),
@@ -104,16 +104,16 @@ def _one(sw, tag, fn):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u52a0\u539a\uff1a`IModelDoc2.FeatureBossThicken2`\uff084 \u53c2\uff09\u2014\u2014 **\u6ca1\u8bd5\u8fc7\u7684\u5165\u53e3**",
@@ -125,7 +125,7 @@ def main() -> int:
         _one(
             sw,
             "FeatureBossThicken2\uff084 \u53c2\uff09",
-            lambda d: C.get_com_member(
+            lambda d: c_.get_com_member(
                 d, "FeatureBossThicken2", 3.0 * 0.001, 0, 0, True
             ),
         )
@@ -136,7 +136,7 @@ def main() -> int:
         _one(
             sw,
             "FeatureBossThicken2\uff083 \u53c2\uff09",
-            lambda d: C.get_com_member(d, "FeatureBossThicken2", 3.0 * 0.001, 0, 0),
+            lambda d: c_.get_com_member(d, "FeatureBossThicken2", 3.0 * 0.001, 0, 0),
         )
     )
     #: \u2605 \u2462 \u5bf9\u7167\uff1aFeatureCutThicken2\uff084 \u53c2\uff09
@@ -144,7 +144,7 @@ def main() -> int:
         _one(
             sw,
             "FeatureCutThicken2\uff084 \u53c2\uff09",
-            lambda d: C.get_com_member(
+            lambda d: c_.get_com_member(
                 d, "FeatureCutThicken2", 3.0 * 0.001, 0, 0, True
             ),
         )

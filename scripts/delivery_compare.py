@@ -10,9 +10,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 #: ★ 2026-10-22（仓库统一化）：`_sha256` 原在本文件与 `sw_delivery.py` 各有一份（逐字相
 #: 同）

@@ -10,7 +10,7 @@
 # ⇒ ★ 故本探针问一个更大的问题：★ **这一族是"只有 CreateVector 不行"还是"整族都不行"？**
 #  ⚠
 #
-#   ★ 反射里的成员（`C:\swapi\types\IMathUtility\`）共 **9** 个：
+#   ★ 反射里的成员（`c_:\swapi\types\IMathUtility\`）共 **9** 个：
 #     ```
 # ComposeTransform \u00b7 CreatePoint \u00b7 CreateTransform \u00b7 CreateTransformRotat
 # eAxis \u00b7
@@ -41,7 +41,7 @@ sys.path.insert(0, str(R / "scripts"))
 import pythoncom  # noqa: E402
 import win32com.client  # noqa: E402
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
 
 
 def _arr(values, vt=pythoncom.VT_R8):
@@ -62,7 +62,7 @@ CASES = [
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "`IMathUtility` \u90a3\u4e00\u65cf\u7684**\u53ef\u8fbe\u6027\u5730\u56fe**"
@@ -74,7 +74,7 @@ def main() -> int:
     }
     mv = None
     try:
-        mv = C.get_com_member(sw, "GetMathUtility")
+        mv = c_.get_com_member(sw, "GetMathUtility")
         ev["get_math_utility"] = "ok" if mv is not None else "None"
     except Exception as exc:  # noqa: BLE001
         ev["get_math_utility"] = "%s: %s" % (type(exc).__name__, str(exc)[:80])
@@ -83,7 +83,7 @@ def main() -> int:
             row = {"member": name, "ok": False}
             for args_ in variants:
                 try:
-                    ret = C.call_com_member(mv, name, *args_)
+                    ret = c_.call_com_member(mv, name, *args_)
                     row["returned"] = type(ret).__name__ if ret is not None else "None"
                     row["ok"] = ret is not None
                 except Exception as exc:  # noqa: BLE001

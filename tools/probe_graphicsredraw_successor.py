@@ -52,7 +52,7 @@ def _g(o, n, *a):
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
+    r_: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
     sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
@@ -75,61 +75,61 @@ def main() -> int:
         #: ★ 基线：旧的 `IModelDoc2.GraphicsRedraw2()`
         try:
             r0 = _g(doc, "GraphicsRedraw2")
-            R["old_GraphicsRedraw2"] = "★ 能调（ret=%r）" % (r0,)
-            R["old_ok"] = True
+            r_["old_GraphicsRedraw2"] = "★ 能调（ret=%r）" % (r0,)
+            r_["old_ok"] = True
         except Exception as exc:  # noqa: BLE001
-            R["old_GraphicsRedraw2"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
-            R["old_ok"] = False
+            r_["old_GraphicsRedraw2"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
+            r_["old_ok"] = False
 
         #: ★ ① `model.ActiveView` 拿到没
         view = None
         try:
             view = _g(doc, "ActiveView")
-            R["ActiveView"] = "★ %r" % (view,)
-            R["get_view_ok"] = view is not None
+            r_["ActiveView"] = "★ %r" % (view,)
+            r_["get_view_ok"] = view is not None
         except Exception as exc:  # noqa: BLE001
-            R["ActiveView"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
-            R["get_view_ok"] = False
+            r_["ActiveView"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
+            r_["get_view_ok"] = False
 
         #: ★ ② `GraphicsRedraw(None)`（★ 官方例子的 `null` / `Empty` / `Nothing` 用法）
         if view is not None:
             try:
                 r1 = _g(view, "GraphicsRedraw", None)
-                R["GraphicsRedraw_None"] = "★ 能调（ret=%r）" % (r1,)
-                R["none_ok"] = True
+                r_["GraphicsRedraw_None"] = "★ 能调（ret=%r）" % (r1,)
+                r_["none_ok"] = True
             except Exception as exc:  # noqa: BLE001
-                R["GraphicsRedraw_None"] = "%s: %s" % (
+                r_["GraphicsRedraw_None"] = "%s: %s" % (
                     type(exc).__name__,
                     str(exc)[:160],
                 )
-                R["none_ok"] = False
+                r_["none_ok"] = False
             #: ★ ③ `GraphicsRedraw([0,0,w,h])`（★ 官方例子的 `rect` 用法）
             try:
                 r2 = _g(view, "GraphicsRedraw", [0, 0, 800, 600])
-                R["GraphicsRedraw_rect"] = "★ 能调（ret=%r）" % (r2,)
-                R["rect_ok"] = True
+                r_["GraphicsRedraw_rect"] = "★ 能调（ret=%r）" % (r2,)
+                r_["rect_ok"] = True
             except Exception as exc:  # noqa: BLE001
-                R["GraphicsRedraw_rect"] = "%s: %s" % (
+                r_["GraphicsRedraw_rect"] = "%s: %s" % (
                     type(exc).__name__,
                     str(exc)[:160],
                 )
-                R["rect_ok"] = False
+                r_["rect_ok"] = False
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+        r_["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
         except Exception:  # noqa: BLE001
             pass
-    R["verdict"] = (
+    r_["verdict"] = (
         "★ PASS —— `ActiveView.GraphicsRedraw(None)` 与 `(rect)` 都能调 ⇒ **可以换**"
-        if R.get("get_view_ok") and R.get("none_ok") and R.get("rect_ok")
+        if r_.get("get_view_ok") and r_.get("none_ok") and r_.get("rect_ok")
         else "★★ FAIL —— 至少一条不通 ⇒ **如实记「不可换，保留现状」**"
     )
-    R["seconds"] = round(time.time() - started, 2)
+    r_["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

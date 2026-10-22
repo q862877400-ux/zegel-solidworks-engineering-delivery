@@ -46,7 +46,7 @@ for _i, _a in enumerate(sys.argv):
 def main() -> int:
     import sw_connect
     import sw_part as p
-    import sw_sketch_dimensions as D
+    import sw_sketch_dimensions as d_
     from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -79,7 +79,7 @@ def main() -> int:
 
     def rel_count(model):
         try:
-            return int(D.count_sketch_relations(model, -1))
+            return int(d_.count_sketch_relations(model, -1))
         except Exception:
             return -1
 
@@ -183,7 +183,7 @@ def main() -> int:
     run(
         "\u6c34\u5e73\u5c3a\u5bf8",
         s_h,
-        lambda d: D.add_horizontal_dimension(d, 0.0, 30.0),
+        lambda d: d_.add_horizontal_dimension(d, 0.0, 30.0),
         "dim_up",
     )
 
@@ -195,7 +195,7 @@ def main() -> int:
     run(
         "\u7ad6\u76f4\u5c3a\u5bf8",
         s_v,
-        lambda d: D.add_vertical_dimension(d, 35.0, 0.0),
+        lambda d: d_.add_vertical_dimension(d, 35.0, 0.0),
         "dim_up",
     )
 
@@ -207,7 +207,7 @@ def main() -> int:
     run(
         "\u8def\u5f84\u957f\u5ea6\u5c3a\u5bf8",
         s_p,
-        lambda d: D.add_path_length_dimension(d, 0.0, 30.0),
+        lambda d: d_.add_path_length_dimension(d, 0.0, 30.0),
         "dim_up",
     )
 
@@ -220,14 +220,14 @@ def main() -> int:
     run(
         "\u5c3a\u5bf8\u94fe",
         s_c,
-        lambda d: D.insert_chain_dimensions(d, "__current_selection__"),
+        lambda d: d_.insert_chain_dimensions(d, "__current_selection__"),
         "dim_up",
     )
     #: \u2464 \u5b8c\u5168\u5b9a\u4e49\u8349\u56fe
     run(
         "\u5b8c\u5168\u5b9a\u4e49\u8349\u56fe",
         box,
-        lambda d: D.fully_define_sketch(d),
+        lambda d: d_.fully_define_sketch(d),
         "any_change",
         note="\u2605 \u679a\u4e3e\u53d6\u503c\u8868\u4e24\u5957\u6e90\u90fd\u6ca1\u67e5\u5230 \u21d2 \u53ea\u5982\u5b9e\u8bb0\u5b83\u56de\u4e86\u4ec0\u4e48\u6570",
     )
@@ -248,7 +248,7 @@ def main() -> int:
     run(
         "\u5173\u7cfb\u8ba1\u6570",
         s_r,
-        lambda d: D.count_sketch_relations(d, -1),
+        lambda d: d_.count_sketch_relations(d, -1),
         "readable",
     )
 
@@ -261,7 +261,7 @@ def main() -> int:
     run(
         "\u5220\u9664\u5168\u90e8\u5173\u7cfb",
         s_del,
-        lambda d: D.delete_all_sketch_relations(d),
+        lambda d: d_.delete_all_sketch_relations(d),
         "rel_down",
     )
 

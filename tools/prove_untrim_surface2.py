@@ -7,7 +7,7 @@
 #           曲面」。
 #
 #   ★★★★ **而读文档时先把台账的 api 名推翻了一半**：
-#     `C:\swapi\types\IFeatureManager\InsertUntrimSurface.md` 逐字：
+#     `c_:\swapi\types\IFeatureManager\InsertUntrimSurface.md` 逐字：
 #     > "**Obsolete. Superseded by `IFeatureManager::InsertUntrimSurface2`.**"
 #     ⇒ ★★ **故用**第二代**** ✓
 #
@@ -46,8 +46,8 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
@@ -65,9 +65,9 @@ def _mk_trimmed_surface(doc):
             doc.ClearSelection2(True)
         except Exception:  # noqa: BLE001
             pass
-        P.start_sketch(doc, plane_name=plane)
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        p_.start_sketch(doc, plane_name=plane)
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
             rect[0],
             rect[1],
@@ -76,10 +76,10 @@ def _mk_trimmed_surface(doc):
             rect[3],
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         names = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p_.feature_names(doc) or [])
             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
         ]
         for cand in ((names[-1],) + tuple(names) + ("\u8349\u56fe%d" % (i + 1),))[:4]:
@@ -96,8 +96,8 @@ def _mk_trimmed_surface(doc):
 
 def _volume(doc):
     try:
-        mp = C.get_com_member(C.get_com_member(doc, "Extension"), "CreateMassProperty")
-        v = C.get_com_member(mp, "SurfaceArea") if False else None
+        mp = c_.get_com_member(c_.get_com_member(doc, "Extension"), "CreateMassProperty")
+        c_.get_com_member(mp, "SurfaceArea") if False else None
         return None
     except Exception:  # noqa: BLE001
         return None
@@ -107,7 +107,7 @@ def _one(sw, tag, entry, distance, b_merge, b_trim):
     row = {"tag": tag, "entry": entry, "distance": distance, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row["surfaces_made"] = _mk_trimmed_surface(doc)
         #: \u2605 \u9884\u9009**\u66f2\u9762\u7684\u4e00\u5f20\u9762**\uff08\u2605 \u5b9
         #: 8\u65b9 "requires preselection"\uff09
@@ -156,16 +156,16 @@ def _one(sw, tag, entry, distance, b_merge, b_trim):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u89e3\u9664\u526a\u88c1\u66f2\u9762\uff1a`InsertUntrimSurface2`\uff08\u2605 \u7b2c\u4e8c\u4ee3 \u2014\u2014 \u53f0\u8d26\u5199\u7684\u662f\u5df2\u5e9f\u5f03\u7684\u7b2c\u4e00\u4ee3\uff09",

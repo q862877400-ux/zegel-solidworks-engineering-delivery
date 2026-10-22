@@ -1,6 +1,6 @@
 """★ 真机试：`FeatureLinearPattern4`（20 参）在前置成立时能不能建成线性阵列。
 
-★★ 官方依据（三源里的 `C:\\swapi`）：
+★★ 官方依据（三源里的 `c_:\\swapi`）：
   · `types/IFeatureManager/FeatureLinearPattern3.md`（10 参）⇒ 逐字
     「Obsolete. Superseded by [[IFeatureManager::FeatureLinearPattern4]].」
   · `types/IFeatureManager/FeatureLinearPattern4.md`（**20 参**）`## Parameters` 逐字：
@@ -43,14 +43,14 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
 from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "linearpattern4-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c_.get_com_member(o, n, *a)
 
 
 def _try(fn, *a):
@@ -70,7 +70,7 @@ def _names(doc) -> list:
 def main() -> int:
     started = time.time()
     r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "试法": []}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     #: ★ 新入口要"定义方向的尺寸名" ⇒ ★ 用**带尺寸的现成件**（★ 上一轮验证过它带 `D1@凸
     #: 台-拉伸1`）
     exist = REPO / "output" / "_probe_drawing_part.SLDPRT"
@@ -80,7 +80,7 @@ def main() -> int:
         if not exist.exists():
             r["skip"] = "★ 没有带尺寸的件"
             raise SystemExit(0)
-        doc = C.open_document(sw, str(exist), read_only=False, silent=True)
+        doc = c_.open_document(sw, str(exist), read_only=False, silent=True)
         r["打开"] = repr(doc)[:60] if doc is not None else "None"
         if doc is None:
             raise SystemExit(0)

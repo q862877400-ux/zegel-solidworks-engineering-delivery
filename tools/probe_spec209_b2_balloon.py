@@ -44,7 +44,7 @@ OUT = R / "output" / "spec209-balloon.json"
 
 
 def main() -> int:
-    import sw_assembly as A
+    import sw_assembly as a_
     import sw_connect
     import sw_drawing_create_missing as dm
     import sw_drawing_expose as e0
@@ -94,7 +94,7 @@ def main() -> int:
         #: ① 零件（存盘）→ ② 装配（两个组件，存盘）→ ③ 装配工程图 + 一个投影视图
         part = sw_connect.new_document(sw, "part")
         opened.append(part)
-        with p.sketch(part, "Front Plane") as sk:
+        with p.sketch(part, "Front Plane"):
             p.sketch_corner_rectangle(part, -30.0, -20.0, 30.0, 20.0)
         p.end_sketch(part)
         p.extrude_boss(part, "草图1", 10.0)
@@ -103,8 +103,8 @@ def main() -> int:
 
         asm = sw_connect.new_document(sw, "assembly")
         opened.append(asm)
-        A.add_component(asm, part_path, 0.0, 0.0, 0.0, sw=sw)
-        A.add_component(asm, part_path, 0.06, 0.0, 0.0, sw=sw)
+        a_.add_component(asm, part_path, 0.0, 0.0, 0.0, sw=sw)
+        a_.add_component(asm, part_path, 0.06, 0.0, 0.0, sw=sw)
         asm_path = str(outdir / "probe209_balloon_asm.sldasm")
         ev["asm_saved"] = bool(sw_connect.save_document(asm, asm_path))
 

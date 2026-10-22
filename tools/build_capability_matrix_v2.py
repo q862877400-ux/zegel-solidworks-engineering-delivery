@@ -107,7 +107,7 @@ def main() -> int:
             return "★ 好" if v >= good else ("可接受" if v >= ok else "★★ 难看")
         return "★ 好" if v <= good else ("可接受" if v <= ok else "★★ 难看")
 
-    R = {
+    r_ = {
         "at": time.strftime("%Y-%m-%d %H:%M:%S"),
         "版本": "v2（真实映射）",
         "规模": {
@@ -160,10 +160,10 @@ def main() -> int:
     }
     #: ★★★ 空格清单 = 有官方成员、但没有工具覆盖 —— ★★ 这就是"缺口地图"
     gap = [c for c, n in official_cells.items() if n and c not in covered]
-    R["★_有功能但无工具的格子"] = sorted(
+    r_["★_有功能但无工具的格子"] = sorted(
         [[list(c), official_cells[c]] for c in gap], key=lambda x: -x[1]
     )
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(json.dumps(r_, ensure_ascii=False, indent=1), encoding="utf-8")
 
     print(
         "★ 规模：工具 **%d**（★ 有成员的 **%d**）· 官方 **%d** 族 / **%d** 成员 / **%d** 命令"
@@ -189,14 +189,14 @@ def main() -> int:
     print("★★★ 三个判据（★ 与第一版**同一套阈值**，★ 未改）：")
     print(
         "   ① 无处可放率 = **%.2f%%**（%d/%d）⇒ %s ★（第一版是 100%%）"
-        % (r1, len(unplaced), len(rows), R["判据①无处可放率"]["判定"])
+        % (r1, len(unplaced), len(rows), r_["判据①无处可放率"]["判定"])
     )
     print(
-        "   ② 空格率     = **%.2f%%** ⇒ %s（参考项）" % (r2, R["判据②空格率"]["判定"])
+        "   ② 空格率     = **%.2f%%** ⇒ %s（参考项）" % (r2, r_["判据②空格率"]["判定"])
     )
     print(
         "   ③ 双源一致率 = **%.2f%%**（%d/%d，上界）⇒ %s"
-        % (r3, hit, len(cmds), R["判据③双源一致率"]["判定"])
+        % (r3, hit, len(cmds), r_["判据③双源一致率"]["判定"])
     )
     print()
     print("★ 工具覆盖的格子（前 14）：")

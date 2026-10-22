@@ -1,6 +1,6 @@
 """★ 真机验证 `IDimension.GetSystemValue2` / `SystemValue` → `GetSystemValue3`。
 
-★★ 官方依据（三源里的 `C:\\swapi`）：
+★★ 官方依据（三源里的 `c_:\\swapi`）：
   · `types/IDimension/GetSystemValue2.md`（1 参）⇒ 逐字
     「**Obsolete. See [[IDimension::GetSystemValue3]] and [[IDimension::IGetSystemValue3]].**」
   · `types/IDimension/SystemValue.md` ⇒ 逐字「**Obsolete. Superseded by [[IDimension::GetSystemValue3]]…**」
@@ -42,14 +42,14 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
 from scripts.sw_connect import create_empty_dispatch_variant  # noqa: E402
 
 OUT = REPO / "output" / "getsystemvalue-on-existing-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c_.get_com_member(o, n, *a)
 
 
 def _try(fn, *a):
@@ -106,7 +106,7 @@ def _find_dimension(doc):
 def main() -> int:
     started = time.time()
     r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "候选文档": [], "cases": []}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     for cand in CANDIDATES:
         r["候选文档"].append({"path": str(cand), "exists": cand.exists()})
     try:
@@ -116,7 +116,7 @@ def main() -> int:
             doc = None
             case: dict = {"doc": str(cand.name)}
             try:
-                doc = C.open_document(sw, str(cand), read_only=True, silent=True)
+                doc = c_.open_document(sw, str(cand), read_only=True, silent=True)
                 if doc is None:
                     case["open"] = "★ 打开失败"
                     r["cases"].append(case)

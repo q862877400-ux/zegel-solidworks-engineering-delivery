@@ -120,12 +120,12 @@ def main() -> int:
         if missing:
             rows.append({"id": c["id"], "level": c.get("level"), "missing": missing})
 
-    R = {
+    r_ = {
         "★_判据": "★ verified 条目挂的 MCP 工具 ⇒ 其声明的 function 必须能在实现面找到",
         "★_合计": len(rows),
         "rows": rows,
     }
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(json.dumps(r_, ensure_ascii=False, indent=1), encoding="utf-8")
     print()
     print("★★ 挂的工具**指不到实现**的 `verified` 条目：**%d** 个" % len(rows))
     for r in rows:

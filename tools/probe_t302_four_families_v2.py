@@ -113,7 +113,7 @@ def _run(label: str, model, call) -> dict:
 
 def main() -> int:
     import sw_part as p
-    import sw_sheet_metal as SM
+    import sw_sheet_metal as sm_
     from sw_connect import (
         connect_solidworks,
         create_empty_dispatch_variant,
@@ -138,8 +138,8 @@ def main() -> int:
             ):
                 get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
         p.extrude_boss(model, sk, 2.0)
-        SM.create_base_flange(
-            model, sk, SM.BaseFlangeSpec(thickness=2.0, bend_radius=1.0, depth=20.0)
+        sm_.create_base_flange(
+            model, sk, sm_.BaseFlangeSpec(thickness=2.0, bend_radius=1.0, depth=20.0)
         )
         rows.append(
             {
@@ -291,7 +291,7 @@ def main() -> int:
             )
         )
 
-    R = {
+    r_ = {
         "★_目的": "T302 第二版：★ 按官方签名逐参试那四个「无 IAccessSelections」族",
         "★_核心判据": "★ 区分「★ 指针族（0x80010105）」与「★ 我的实参不对（-2147352561）」—— "
         "★ 两者**长得像但含义相反**（★ 事实 517）",
@@ -299,7 +299,7 @@ def main() -> int:
         "rows": rows,
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     for r in rows:
         print("★ %-58s ok=%-6s" % (r["项"], r.get("★_ok")))

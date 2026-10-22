@@ -18,7 +18,7 @@
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_equation_expression_power.py
 # 定位:   ★ 业主 2026-10-10 指令「方法要规范」—— ★ 判方程式曲线的**表达力边界**。
-# 官方依据: `C:\swapi\types\ISketchManager\CreateEquationSpline2.md`（★ 11 参 + Remarks
+# 官方依据: `c_:\swapi\types\ISketchManager\CreateEquationSpline2.md`（★ 11 参 + Remarks
 #           ）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
@@ -35,14 +35,14 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _seg_count(doc):
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
-        return len(list(C.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
+        sk = c_.get_com_member(doc, "GetActiveSketch2")
+        return len(list(c_.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
     except Exception:  # noqa: BLE001
         return -1
 
@@ -51,12 +51,12 @@ def _one(sw, tag, xexpr, yexpr, t0, t1):
     row = {"tag": tag, "ok": False, "x_len": len(xexpr), "y_len": len(yexpr)}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
-        sm = C.get_com_member(doc, "SketchManager")
+        doc = c_.new_document(sw, "part")
+        p_.start_sketch(doc, plane_name="Front Plane")
+        sm = c_.get_com_member(doc, "SketchManager")
         before = _seg_count(doc)
         try:
-            C.get_com_member(
+            c_.get_com_member(
                 sm,
                 "CreateEquationSpline2",
                 xexpr,
@@ -77,7 +77,7 @@ def _one(sw, tag, xexpr, yexpr, t0, t1):
         row["seg"] = [before, after]
         row["ok"] = bool(after >= 0 and before >= 0 and after > before)
         try:
-            P.end_sketch(doc)
+            p_.end_sketch(doc)
         except Exception:  # noqa: BLE001
             pass
     except Exception as exc:  # noqa: BLE001
@@ -85,16 +85,16 @@ def _one(sw, tag, xexpr, yexpr, t0, t1):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "★ 方程式曲线的**表达力**（★ sqrt / ^ / 长表达式 / 嵌套）",

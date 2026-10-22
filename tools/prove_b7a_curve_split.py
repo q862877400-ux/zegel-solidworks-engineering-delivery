@@ -8,7 +8,7 @@
 #   ★ 结构照抄**已被真机验证过的**骨架（`tools/prove_b6a_surface_edit.py`）：
 #     · `sw, _ = connect_solidworks(wait_seconds=30)`（★ 它回元组）
 #     · **每个用例一个新文档** ⇒ 失败不拖累后续
-#     · 用本仓包装（`P.start_sketch` / `P.extrude_boss` / `P.feature_names`）
+#     · 用本仓包装（`p_.start_sketch` / `p_.extrude_boss` / `p_.feature_names`）
 #     · **判据 = 特征树叶子名增量**（★ 轮 473 的教训：判据函数必须用本仓验证过的那个）
 #
 #   ★★ **前置（★ 三条各不相同）**：
@@ -38,8 +38,8 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_curve_and_split as M  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_curve_and_split as m_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 #: ★ 中转：COM 实体放这里（★ **不进 JSON**）
 _LAST_ENTITY = []
@@ -48,20 +48,20 @@ import scripts.sw_sketch_primitives as sp  # noqa: E402
 
 def _solid(doc, depth=0.02):
     """★ 建实体（★ 判据 = 树里真出现"凸台/拉伸" —— ★ 别信 `extrude_boss` 的 bool，轮 480 的教训）。"""
-    before = P.feature_names(doc) or []
-    P.start_sketch(doc, plane_name="Front Plane")
+    before = p_.feature_names(doc) or []
+    p_.start_sketch(doc, plane_name="Front Plane")
     sp.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     rets = []
     for cand in ("草图1", "Sketch1"):
         try:
-            r = P.extrude_boss(doc, cand, depth)
+            r = p_.extrude_boss(doc, cand, depth)
             rets.append(repr(r)[:40])
             if r:
                 break
         except Exception as exc:  # noqa: BLE001
             rets.append("%s: %s" % (type(exc).__name__, str(exc)[:60]))
-    after = P.feature_names(doc) or []
+    after = p_.feature_names(doc) or []
     added = [n for n in after if n not in before]
     return any(("凸台" in n) or ("拉伸" in n) for n in added), {
         "returns": rets,
@@ -82,7 +82,7 @@ def _pick_face(doc, idx=0, mark=0):
             c.get_com_member(doc, "ClearSelection2", True)
         except Exception:  # noqa: BLE001
             pass
-        ok = bool(P._select_com_object(fs[idx], append=False, mark=int(mark)))
+        ok = bool(p_._select_com_object(fs[idx], append=False, mark=int(mark)))
         try:
             n = int(
                 c.get_com_member(
@@ -131,7 +131,7 @@ def _one(sw, zh, fn):
 
 def _case_curve(doc):
     """★ 通过参考点的曲线：★ **零前置**（★ 只要 3 个点）。"""
-    return M.insert_curve_through_points(
+    return m_.insert_curve_through_points(
         doc, [[0.0, 0.0, 0.0], [20.0, 0.0, 0.0], [40.0, 10.0, 0.0]]
     )
 
@@ -142,9 +142,9 @@ def _case_split_project(doc):
     #: ★ 在**体的一个面上**开草图（★ 投影分割线需要"要投影的草图"）
     ok, sel = _pick_face(doc, 0, 0)
     try:
-        P.start_sketch(doc)
+        p_.start_sketch(doc)
         sp.sketch_3point_corner_rectangle(doc, -5, -5, 5, -5, 5, 5)
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
     except Exception as exc:  # noqa: BLE001
         return {
             "ok": False,
@@ -152,7 +152,7 @@ def _case_split_project(doc):
             "solid": built,
             "err": "开草图失败：%s" % str(exc)[:110],
         }
-    r = M.insert_split_line_project(doc, True, False)
+    r = m_.insert_split_line_project(doc, True, False)
     r["solid"] = built
     r["solid_info"] = info
     r["face_pick"] = sel if isinstance(sel, dict) else str(sel)
@@ -163,7 +163,7 @@ def _case_split_sil(doc):
     """★ 分割线（轮廓）：★ 先建实体 + 选一个面。"""
     built, info = _solid(doc)
     ok, sel = _pick_face(doc, 0, 0)
-    r = M.insert_split_line_silhouette(doc)
+    r = m_.insert_split_line_silhouette(doc)
     r["solid"] = built
     r["solid_info"] = info
     r["face_pick"] = sel if isinstance(sel, dict) else str(sel)
@@ -182,7 +182,7 @@ def _case_mate(doc):
     ok, sel = _pick_face(doc, 0, 0)
     ent = _LAST_ENTITY[-1] if _LAST_ENTITY else None
     #: ★ `swMateReferenceType_e` 的成员名要**现查**（★ 本探针先用官方常见的 `PLANE`）
-    r = M.insert_mate_reference(doc, "MCP_MateRef", ent, 0, 0, False)
+    r = m_.insert_mate_reference(doc, "MCP_MateRef", ent, 0, 0, False)
     r["solid"] = built
     r["solid_info"] = info
     r["face_pick"] = sel if isinstance(sel, dict) else str(sel)
@@ -193,7 +193,7 @@ def _case_mate(doc):
 def main() -> int:
     sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
-        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "at": time.strftime("%Y-%m-%dT%H:%m_:%S"),
         "_": "B7-a 分割线/曲线/配合参考逐个真机跑（specs/201-toolbar-gaps）",
         "judge": "特征树叶子名增量（sw_part.feature_names）",
         "items": [],

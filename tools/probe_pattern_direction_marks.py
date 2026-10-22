@@ -103,7 +103,7 @@ def main() -> int:
         try:
             sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
             ok_dir = sel("", "EDGE", 0.0, -0.015, 0.0, 1)
-            n_dir = len(
+            len(
                 sw_connect.safe_get_com_member(
                     get_com_member(doc, "SelectionManager"),
                     "GetSelectedObjectCount2",

@@ -93,7 +93,7 @@ def main() -> int:
         "★ 不读 D1OffsetDistance": "D1OffsetDistance" not in r,
         "★ 无 error": not r.get("error"),
     }
-    R = {
+    r_ = {
         "★_判据": "★ 逐个对官方 `## Returns`（★ 见 `output/_read_flange_members.py`）",
         "★_建法兰": built,
         "读取": {k: str(v)[:60] for k, v in r.items()},
@@ -102,11 +102,11 @@ def main() -> int:
         "★_单位判定": verdict,
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("★ spec 字段:", fields)
     print("★ 建法兰:", json.dumps(built, ensure_ascii=False)[:180])
-    print("★ 读取:", json.dumps(R["读取"], ensure_ascii=False)[:420])
+    print("★ 读取:", json.dumps(r_["读取"], ensure_ascii=False)[:420])
     for k, v in checks.items():
         print("   %-34s %s" % (k, "✓" if v else "**✗**"))
     print("★ 全过 =", all(checks.values()))

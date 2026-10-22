@@ -7,7 +7,7 @@
 # 仓库:   本项目自身（真机验证）。
 # 文件:   tools/probe_feature_suppress_e2e.py
 # 定位:   ★ 阶段 5：验证新增的 `sw_part.feature_suppress` / `feature_unsuppress`。
-#   官方依据: `C:\\swapi\\types\\IModelDoc2\\EditSuppress2.md` ·
+#   官方依据: `c_:\\swapi\\types\\IModelDoc2\\EditSuppress2.md` ·
 #     `EditUnsuppress2.md` · `IFeature\\IsSuppressed2.md`
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
@@ -25,14 +25,14 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
 from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "feature-suppress-e2e-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c_.get_com_member(o, n, *a)
 
 
 def _try(fn, *a):
@@ -72,10 +72,10 @@ def _is_suppressed(model, name: str):
 def main() -> int:
     started = time.time()
     r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         p.start_sketch(doc, plane_name="Front Plane")
         _g(
             _g(doc, "SketchManager"),

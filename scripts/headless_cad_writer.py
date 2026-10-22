@@ -34,7 +34,7 @@ DESKTOP = ROOT / "apps" / "desktop"
 if str(DESKTOP) not in sys.path:
     sys.path.insert(0, str(DESKTOP))
 
-from cad_workbench.cad_core_contracts import (
+from cad_workbench.cad_core_contracts import (  # noqa: E402
     preview_manifest_for_artifact,
     sha256_file,
     write_json_contract,

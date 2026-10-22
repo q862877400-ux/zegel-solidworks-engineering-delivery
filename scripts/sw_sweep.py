@@ -221,7 +221,8 @@ def create_sweep_surface_report(model) -> dict:
     ★ 判据与 `create_sweep_report` 同口径（★ 事实 242）：**特征树多了新特征** **且** **类型名 = `Sweep`**。
     ⚠⚠ **2026-10-03（轮 486）真机**：本函数**尚未建成** —— 卡在**最后的选区 mark**上。
       ★ 而三个真因都**定位到了**（★ 已写进 `output/sweep-surface-evidence.json`）：
-        ① `IFeatureManager.FeatureName` 是**属性**，★★ 而**取特征的真名是 `IModelDoc2.FeatureByName(name)`**（**方法**）—— 两个名字极像，用错**不报错、只是选不上**（**事实 383**）；
+        ① `IFeatureManager.FeatureName` 是**属性**，★★ 而**取特征的真名是 `IModelDoc2.FeatureByName(name)`**（**方法**）
+        —— 两个名字极像，用错**不报错、只是选不上**（**事实 383**）；
         ② `sw_part._select_sketch_feature_by_name` 内部用 **`append=False`**（`sw_part.py` L350）⇒ **调两次只剩第二次**；
         ③ 开**第二个草图**前要先 `ClearSelection2`，★ 否则 `start_sketch` 选不中基准面、**草图根本不建成**。
       ★ 下一轮：`append=True` 后变成 `{1:1, 4:0}`（**反过来了**）⇒ 去查**扫描自己的**官方专文（而不是照搬 `sw_loft` 里那张针对 `InsertProtrusionBlend2` 的 mark 表）。
@@ -278,7 +279,7 @@ def create_sweep_surface_report(model) -> dict:
     except Exception as exc:  # noqa: BLE001
         access = "ERR %s: %s" % (type(exc).__name__, str(exc)[:110])
     try:
-        feat = get_com_member(fm, "CreateFeature", data)
+        get_com_member(fm, "CreateFeature", data)
     except Exception as exc:  # noqa: BLE001
         return {
             "ok": False,

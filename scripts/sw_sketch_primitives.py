@@ -44,8 +44,8 @@ from __future__ import annotations
 
 _MM_TO_M = 1.0 / 1000.0  #: ★ 毫米 → 米（事实 2 的换算口径）
 
-import sys
-from pathlib import Path
+import sys  # noqa: E402
+from pathlib import Path  # noqa: E402
 
 _HERE = Path(__file__).resolve()
 for _p in (_HERE.parent, _HERE.parent.parent):

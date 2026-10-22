@@ -283,7 +283,7 @@ def calculate_gear_geometry(spec: GearSpec) -> GearGeometry:
       ★ 本实现返回**解析尺寸 + 参数范围** —— ★★ 曲线由**方程式驱动曲线**直接建 ✓
     """
     module_mm = _finite_positive(spec.module_mm, "模数")
-    face_width_mm = _finite_positive(spec.face_width_mm, "齿宽")
+    _finite_positive(spec.face_width_mm, "齿宽")
     if isinstance(spec.teeth, bool) or int(spec.teeth) != spec.teeth:
         raise ValueError("齿数必须是整数")
     teeth = int(spec.teeth)
@@ -317,7 +317,7 @@ def calculate_gear_geometry(spec: GearSpec) -> GearGeometry:
         raise ValueError("齿顶未超出渐开线起点；该参数组合不可用")
 
     #: ★ 齿顶厚检查（★ 标准做法：★ 齿顶不能变尖）
-    pitch = 2.0 * math.pi / teeth
+    2.0 * math.pi / teeth
     inv_alpha = math.tan(alpha) - alpha
     half_at_pitch = math.pi / (2.0 * teeth) + inv_alpha
     tip_half = half_at_pitch - (math.tan(math.acos(rb / ra)) - math.acos(rb / ra))

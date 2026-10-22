@@ -62,9 +62,9 @@ def main() -> int:
         import sw_connect
         import tool_specs_batch33 as b33
 
-        from scripts import sw_document_data as D
+        from scripts import sw_document_data as d_
         from scripts import sw_export as e
-        from scripts import sw_part as P
+        from scripts import sw_part as p_
 
         #: ① 静态：12 个工具声明解析得到
         bindings = {}
@@ -86,16 +86,16 @@ def main() -> int:
 
         #: 造零件
         doc = sw_connect.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
-        P.sketch_corner_rectangle(doc, -50.0, -30.0, 50.0, 30.0)
-        sk = P.current_sketch_name(doc)
-        P.end_sketch(doc)
-        P.extrude_boss(doc, sk, 20.0)
+        p_.start_sketch(doc, plane_name="Front Plane")
+        p_.sketch_corner_rectangle(doc, -50.0, -30.0, 50.0, 30.0)
+        sk = p_.current_sketch_name(doc)
+        p_.end_sketch(doc)
+        p_.extrude_boss(doc, sk, 20.0)
 
         #: ② 配置族 6 个（★ 能力层回 dict ⇒ 判"非空"）
         cfg: dict = {}
         try:
-            r = D.inspect_configurations(doc)
+            r = d_.inspect_configurations(doc)
             cfg["inspect_configurations"] = {
                 "ok": isinstance(r, dict) and bool(r),
                 "keys": sorted(r.keys())[:6],
@@ -103,7 +103,7 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             cfg["inspect_configurations"] = {"ok": False, "error": str(exc)[:120]}
         try:
-            r = D.create_configuration(doc, "DSH-CFG-A", activate=False, rebuild=True)
+            r = d_.create_configuration(doc, "DSH-CFG-A", activate=False, rebuild=True)
             cfg["create_configuration"] = {
                 "ok": isinstance(r, dict) and bool(r),
                 "keys": sorted(r.keys())[:6],
@@ -111,7 +111,7 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             cfg["create_configuration"] = {"ok": False, "error": str(exc)[:120]}
         try:
-            r = D.activate_configuration(doc, "DSH-CFG-A", rebuild=True)
+            r = d_.activate_configuration(doc, "DSH-CFG-A", rebuild=True)
             cfg["activate_configuration"] = {
                 "ok": isinstance(r, dict) and bool(r),
                 "keys": sorted(r.keys())[:6],
@@ -119,7 +119,7 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             cfg["activate_configuration"] = {"ok": False, "error": str(exc)[:120]}
         try:
-            r = D.set_custom_properties(doc, {"DSH_MARK": "1", "DSH_NOTE": "smoke"})
+            r = d_.set_custom_properties(doc, {"DSH_MARK": "1", "DSH_NOTE": "smoke"})
             cfg["set_custom_properties"] = {
                 "ok": bool(r),
                 "n": len(r) if hasattr(r, "__len__") else None,
@@ -127,7 +127,7 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             cfg["set_custom_properties"] = {"ok": False, "error": str(exc)[:120]}
         try:
-            r = D.read_custom_property(doc, "DSH_MARK")
+            r = d_.read_custom_property(doc, "DSH_MARK")
             cfg["read_custom_property"] = {
                 "ok": isinstance(r, dict) and bool(r),
                 "value": (r or {}).get("value"),
@@ -135,7 +135,7 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             cfg["read_custom_property"] = {"ok": False, "error": str(exc)[:120]}
         try:
-            r = D.update_dimension_mm(doc, "D1@%s" % sk, 80.0, rebuild=True)
+            r = d_.update_dimension_mm(doc, "D1@%s" % sk, 80.0, rebuild=True)
             cfg["update_dimension_mm"] = {
                 "ok": isinstance(r, dict) and bool(r),
                 "keys": sorted(r.keys())[:6],

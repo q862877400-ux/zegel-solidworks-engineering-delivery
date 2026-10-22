@@ -99,7 +99,7 @@ def main() -> int:
     )
 
     #: ③ **轮询**查（改之后的默认）—— 也必须**制造一个只看一眼**的对照
-    t0 = time.time()
+    time.time()
     d, w = sw_connect.residual_dialogs(settle_seconds=0.0)
     ev["single_look_now"] = len(d)
     print("  ③ 此刻**只看一眼** ⇒ **%d** 个框" % len(d))

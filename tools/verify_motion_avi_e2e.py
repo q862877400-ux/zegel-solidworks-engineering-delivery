@@ -39,11 +39,11 @@ for _p in (str(_REPO), str(_REPO / "scripts")):
         sys.path.insert(0, _p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-from scripts import (
+from scripts import (  # noqa: E402
     sw_assembly,  # noqa: E402
     sw_part,  # noqa: E402
 )
-from scripts import sw_motion as M  # noqa: E402
+from scripts import sw_motion as m_  # noqa: E402
 from scripts.sw_connect import (  # noqa: E402
     connect_solidworks,
     get_com_member,
@@ -109,7 +109,7 @@ def main() -> int:
     sw.CommandInProgress = True
     opened = []
     ev: dict = {
-        "started": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "started": time.strftime("%Y-%m-%d %H:%m_:%S"),
         "verdict": "unknown",
         "steps": {},
     }
@@ -172,14 +172,14 @@ def main() -> int:
         # ③ Motion
         print()
         print("=== ③ Motion 类型库 + manager + 算例 ===")
-        step("ensure_motion_type_library()", lambda: M.ensure_motion_type_library())
+        step("ensure_motion_type_library()", lambda: m_.ensure_motion_type_library())
         mgr = step(
-            "get_motion_study_manager(asm)", lambda: M.get_motion_study_manager(asm)
+            "get_motion_study_manager(asm)", lambda: m_.get_motion_study_manager(asm)
         )
         if mgr is None:
             ev["verdict"] = "fail: 拿不到 MotionStudyManager"
             return 2
-        study = step("create_motion_study(asm)", lambda: M.create_motion_study(asm))
+        study = step("create_motion_study(asm)", lambda: m_.create_motion_study(asm))
         if study is None:
             ev["verdict"] = "fail: 建不了算例"
             return 2
@@ -206,14 +206,14 @@ def main() -> int:
         )
         study2 = step(
             "create_motion_study(asm, study_type=2)",
-            lambda: M.create_motion_study(
+            lambda: m_.create_motion_study(
                 asm, name="MCP_AVI_PhysSim", duration=4.0, study_type=2
             ),
         )
         if study2 is not None:
             back = step(
                 "study2.StudyType（回读，应 2）",
-                lambda: M.motion_member(study2, "StudyType"),
+                lambda: m_.motion_member(study2, "StudyType"),
             )
             study = study2
             ev["steps"]["study_type"] = 2
@@ -226,7 +226,7 @@ def main() -> int:
         if c1 is not None and c2 is not None:
             motor = step(
                 "add_constant_speed_rotary_motor_by_cylinders(...)",
-                lambda: M.add_constant_speed_rotary_motor_by_cylinders(
+                lambda: m_.add_constant_speed_rotary_motor_by_cylinders(
                     study, c1, c2, rpm=60.0
                 ),
             )
@@ -237,11 +237,11 @@ def main() -> int:
         print("=== ⑤ Calculate ===")
         step(
             "calculate_and_play(study, play=False)",
-            lambda: M.calculate_and_play(study, play=False),
+            lambda: m_.calculate_and_play(study, play=False),
         )
         step(
             "collect_motion_study_summary(asm)",
-            lambda: M.collect_motion_study_summary(asm),
+            lambda: m_.collect_motion_study_summary(asm),
         )
 
         # ⑥ 导出（**判据看文件，不看返回值**）
@@ -257,7 +257,7 @@ def main() -> int:
         print("   ── 先挑出「有马达」的算例 ──")
         summary = step(
             "collect_motion_study_summary(asm)",
-            lambda: M.collect_motion_study_summary(asm),
+            lambda: m_.collect_motion_study_summary(asm),
         )
         if summary:
             with_motor = [
@@ -282,23 +282,23 @@ def main() -> int:
                 target = (
                     step(
                         "mgr.GetMotionStudy(%r)" % name,
-                        lambda: M.motion_member(mgr, "GetMotionStudy", name),
+                        lambda: m_.motion_member(mgr, "GetMotionStudy", name),
                     )
                     or study
                 )
                 step(
                     "mgr.ActivateMotionStudy(%r)" % name,
-                    lambda: M.motion_member(mgr, "ActivateMotionStudy", name),
+                    lambda: m_.motion_member(mgr, "ActivateMotionStudy", name),
                 )
                 ev["steps"]["target_study"] = name
             else:
                 print("   ⚠ 没有任何算例含马达 ⇒ 仍用 create_motion_study 返回的那个")
 
-        param = step("create_avi_parameter(mgr)", lambda: M.create_avi_parameter(mgr))
+        param = step("create_avi_parameter(mgr)", lambda: m_.create_avi_parameter(mgr))
         if param is not None:
             step(
                 "configure(FramePerSecond=10, SaveEntireAnimation=True)",
-                lambda: M.configure_avi_parameter(
+                lambda: m_.configure_avi_parameter(
                     param, FramePerSecond=10.0, SaveEntireAnimation=True
                 ),
             )
@@ -316,14 +316,14 @@ def main() -> int:
         )
         step(
             "calculate_and_play(target, play=True)",
-            lambda: M.calculate_and_play(target, play=True),
+            lambda: m_.calculate_and_play(target, play=True),
         )
 
         if os.path.isfile(out):
             os.remove(out)
         res = step(
             "export_motion_study_avi(target, out, param)",
-            lambda: M.export_motion_study_avi(target, out, param),
+            lambda: m_.export_motion_study_avi(target, out, param),
         )
         ev["steps"]["export"] = res or {}
         if res:
@@ -344,7 +344,7 @@ def main() -> int:
             ev["verdict"] = "fail: export 抛异常"
         return 0 if ev["verdict"] == "pass" else 1
     finally:
-        ev["finished"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        ev["finished"] = time.strftime("%Y-%m-%d %H:%m_:%S")
     #: ★★ 2026-10-01（轮 288）：把 `step()` 捕到的**每一环异常**也写进证据
     #:   —— 旧行为只把它们 print 到屏幕，于是证据里只剩 `ok: false`。
     if STEP_ERRORS:

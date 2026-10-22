@@ -45,8 +45,8 @@ sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_sketch_primitives as sp  # noqa: E402
 from scripts import sw_connect as c  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_edit_ops as M  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
+from scripts import sw_surface_edit_ops as m_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
@@ -89,9 +89,9 @@ def _select(obj, mark=0, append=False):
       ⚠ 我第一版裸调 `Select4` + `SetSelectedObjectMark` —— ★ 绕远、而且
         `SetSelectedObjectMark` 的参数顺序我是**猜**的。
     """
-    if not hasattr(P, "_select_com_object"):
+    if not hasattr(p_, "_select_com_object"):
         return False
-    return bool(P._select_com_object(obj, append=append, mark=int(mark)))
+    return bool(p_._select_com_object(obj, append=append, mark=int(mark)))
 
 
 _SW = [None]
@@ -121,19 +121,19 @@ def _one(sw, zh, fn):
 
 def _case_planar(doc):
     """★ 平面区域：闭合矩形草图 ⇒ 退出草图 ⇒ 选草图（★ 官方语义是用选中边界）⇒ 调。"""
-    P.start_sketch(doc, plane_name="Front Plane")
+    p_.start_sketch(doc, plane_name="Front Plane")
     sp.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     #: ★★ `IFeatureManager` 上**没有** `FeatureByName`（★ 我第一版报
     #:   `AttributeError: <unknown>.FeatureByName`）；真名是 **`FeatureName`**，
     #:   ★ 而本仓更干净的路是 `sw_part._select_sketch_feature_by_name`。
     for cand in ("草图1", "Sketch1"):
         try:
-            if P._select_sketch_feature_by_name(doc, cand):
+            if p_._select_sketch_feature_by_name(doc, cand):
                 break
         except Exception:  # noqa: BLE001
             continue
-    return M.insert_planar_surface(doc)
+    return m_.insert_planar_surface(doc)
 
 
 def _make_surface(doc):
@@ -145,9 +145,9 @@ def _make_surface(doc):
       ★ 改用 `sw_surface_features.create_extruded_surface_report`（★ 走 `FeatureExtruRefSurface3`，
       **特征级、已真机验证**，判据 = 特征树增量）。
     """
-    P.start_sketch(doc, plane_name="Front Plane")
+    p_.start_sketch(doc, plane_name="Front Plane")
     sp.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     return sf.create_extruded_surface_report(doc, 30.0)
 
 
@@ -161,12 +161,12 @@ def _make_solid(doc):
       ⇒ ★ 它们要的是**实体的面**（★ 而拉伸曲面只有 4 个开放边界面）。
       ★ 故改用 `sw_part.extrude_boss`（★ 已验证的实体拉伸）。
     """
-    P.start_sketch(doc, plane_name="Front Plane")
+    p_.start_sketch(doc, plane_name="Front Plane")
     sp.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     for cand in ("\u8349\u56fe1", "Sketch1"):
         try:
-            r = P.extrude_boss(doc, cand, 0.02)
+            r = p_.extrude_boss(doc, cand, 0.02)
             if r:
                 return r
         except Exception:  # noqa: BLE001
@@ -179,7 +179,7 @@ def _case_offset(doc):
     fs = _faces(doc)
     if fs:
         _select(fs[0], mark=0)
-    return M.insert_offset_surface(doc, 5.0, False)
+    return m_.insert_offset_surface(doc, 5.0, False)
 
 
 def _case_ruled(doc):
@@ -188,7 +188,7 @@ def _case_ruled(doc):
     if es:
         #: ★ 官方 Remarks：边要按 **mark = 4**
         _select(es[0], mark=4)
-    return M.insert_ruled_surface(doc, 0, 10.0, trim_and_sew=True)
+    return m_.insert_ruled_surface(doc, 0, 10.0, trim_and_sew=True)
 
 
 def _case_delete(doc):
@@ -196,7 +196,7 @@ def _case_delete(doc):
     fs = _faces(doc)
     if fs:
         _select(fs[0], mark=0)
-    return M.insert_delete_face(doc, 0)
+    return m_.insert_delete_face(doc, 0)
 
 
 def _case_replace(doc):
@@ -206,14 +206,14 @@ def _case_replace(doc):
     if len(fs) >= 2:
         _select(fs[0], mark=1)
         _select(fs[1], mark=2, append=True)
-    return M.insert_replace_face(doc)
+    return m_.insert_replace_face(doc)
 
 
 def main() -> int:
     sw, _ = c.connect_solidworks(wait_seconds=30)
     _SW[0] = sw
     ev = {
-        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "at": time.strftime("%Y-%m-%dT%H:%m_:%S"),
         "_": "B6-a 曲面特征第一组 5 条逐个真机跑（specs/201-toolbar-gaps）",
         "judge": "特征树叶子名增量（★ 3/5 的官方返回是 void，返回值单独不可信）",
         "items": [],

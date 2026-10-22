@@ -52,18 +52,18 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
 from scripts import sw_hole_features as hf  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 SW_SEL_FACES = 2  #: \u2605 \u53cd\u5c04 dump\uff1a`swSelFACES = 2`
 SW_SEL_EDGES = 1
 
 
 def _plate(doc, t=0.02):
-    P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Top Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.04,
         -0.03,
@@ -72,15 +72,15 @@ def _plate(doc, t=0.02):
         0.03,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in ((names[-1] if names else "\u8349\u56fe1"), "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, t)
+            p_.extrude_boss(doc, cand, t)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -90,8 +90,8 @@ def _plate(doc, t=0.02):
 def _sel_count(doc):
     try:
         return int(
-            C.get_com_member(
-                C.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1
+            c_.get_com_member(
+                c_.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1
             )
             or 0
         )
@@ -111,8 +111,8 @@ def _ray_select(
     append=False,
 ):
     """★ 从 `(x, y, z_from)` 沿 `vec` 发一条射线（★ 官方：圆柱形区域、无限长）。"""
-    ext = C.get_com_member(doc, "Extension")
-    return C.get_com_member(
+    ext = c_.get_com_member(doc, "Extension")
+    return c_.get_com_member(
         ext,
         "SelectByRay",
         float(x),
@@ -130,7 +130,7 @@ def _ray_select(
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u9ad8\u7ea7\u5b54\uff1a`SelectByRay` \u5b9a\u5b54\u4f4d + `HoleWizard5`\uff0827 \u53c2\uff09",
@@ -141,7 +141,7 @@ def main() -> int:
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         row = {
             "tag": "\u2605 \u5c04\u7ebf\u9009\u9762\uff08\u2605 `SelectByRay`\uff09",
             "ok": False,
@@ -163,8 +163,8 @@ def main() -> int:
         #: \u2605 \u800c**\u770b\u770b\u9009\u4e2d\u7684\u662f\u4ec0\u4e48**\uff08\u2605
         #:  \u8bed\u4e49\u6838\u5bf9\uff09
         try:
-            sm = C.get_com_member(doc, "SelectionManager")
-            o = C.get_com_member(sm, "GetSelectedObject6", 1, -1)
+            sm = c_.get_com_member(doc, "SelectionManager")
+            o = c_.get_com_member(sm, "GetSelectedObject6", 1, -1)
             row["sel_type"] = type(o).__name__ if o is not None else "None"
         except Exception as exc:  # noqa: BLE001
             row["sel_type"] = "%s" % type(exc).__name__
@@ -182,9 +182,9 @@ def main() -> int:
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))

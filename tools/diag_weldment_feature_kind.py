@@ -66,7 +66,7 @@ def _profile():
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
+    r_: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
     sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
@@ -79,35 +79,35 @@ def main() -> int:
             for n in (p.feature_names(doc) or [])
             if n.startswith("草图") or n.lower().startswith("sketch")
         ]
-        R["sketch"] = names[-1] if names else "草图1"
-        R["tree_before"] = _walk(doc)
+        r_["sketch"] = names[-1] if names else "草图1"
+        r_["tree_before"] = _walk(doc)
         from scripts.sw_weldment import create_structural_member_from_sketch
 
         sm = create_structural_member_from_sketch(
-            doc, sketch_name=R["sketch"], profile_path=_profile()
+            doc, sketch_name=r_["sketch"], profile_path=_profile()
         )
-        R["sm_ok"] = bool(isinstance(sm, dict) and sm.get("ok"))
+        r_["sm_ok"] = bool(isinstance(sm, dict) and sm.get("ok"))
         if isinstance(sm, dict):
-            R["sm_keys"] = sorted(sm)
-        R["tree_after"] = _walk(doc)
-        R["types_after"] = sorted(
-            {t.get("type", "") for t in R["tree_after"] if t.get("type")}
+            r_["sm_keys"] = sorted(sm)
+        r_["tree_after"] = _walk(doc)
+        r_["types_after"] = sorted(
+            {t.get("type", "") for t in r_["tree_after"] if t.get("type")}
         )
-        R["is_weldment"] = any(
-            "weld" in (t.get("type", "") or "").lower() for t in R["tree_after"]
+        r_["is_weldment"] = any(
+            "weld" in (t.get("type", "") or "").lower() for t in r_["tree_after"]
         )
-        R["bodies"] = len(list(_g(doc, "GetBodies2", 0, True) or []))
+        r_["bodies"] = len(list(_g(doc, "GetBodies2", 0, True) or []))
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:300])
+        r_["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:300])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
         except Exception:  # noqa: BLE001
             pass
-    R["seconds"] = round(time.time() - started, 2)
+    r_["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

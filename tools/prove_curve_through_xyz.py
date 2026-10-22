@@ -6,7 +6,7 @@
 # 定位:   ★ 2026-10-03（轮 582）★ 照新纪律（**官方文档是第 0 步**）攻台账「曲线-通过XY
 #           Z点的曲线」。
 #
-#   ★★ **官方四页（`C:\swapi\types\IModelDoc2\`，★ 四者全**未标废弃****）**：
+#   ★★ **官方四页（`c_:\swapi\types\IModelDoc2\`，★ 四者全**未标废弃****）**：
 #     ```
 #     void InsertCurveFileBegin()
 # Remarks \u9010\u5b57\uff1a"This method: - **is the first method called that create a c
@@ -45,7 +45,7 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
 
 #: \u2605 \u8981\u7a7f\u8fc7\u7684\u70b9\uff08\u2605 **\u6beb\u7c73**\uff0c\u2605 \u672c
 #: \u4ed3\u7ea6\u5b9a\uff1a\u8fb9\u754c\u6362\u7b97\u4e00\u6b21\uff09
@@ -56,7 +56,7 @@ def _one(sw, tag, mode):
     row = {"tag": tag, "mode": mode, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         before = list(fr.feature_names(doc) or [])
         row["before"] = len(before)
         if mode == "steps":
@@ -65,14 +65,14 @@ def _one(sw, tag, mode):
             #: *\u6240\u6709 Point\uff09
             steps = {}
             try:
-                C.get_com_member(doc, "InsertCurveFileBegin")
+                c_.get_com_member(doc, "InsertCurveFileBegin")
                 steps["Begin"] = "ok"
             except Exception as exc:  # noqa: BLE001
                 steps["Begin"] = "%s: %s" % (type(exc).__name__, str(exc)[:60])
             pts = []
             for x, y, z in PTS_MM:
                 try:
-                    ok = C.get_com_member(
+                    ok = c_.get_com_member(
                         doc, "InsertCurveFilePoint", x / 1000.0, y / 1000.0, z / 1000.0
                     )
                     pts.append(bool(ok))
@@ -80,7 +80,7 @@ def _one(sw, tag, mode):
                     pts.append("%s: %s" % (type(exc).__name__, str(exc)[:50]))
             steps["Point"] = pts
             try:
-                steps["End"] = bool(C.get_com_member(doc, "InsertCurveFileEnd"))
+                steps["End"] = bool(c_.get_com_member(doc, "InsertCurveFileEnd"))
             except Exception as exc:  # noqa: BLE001
                 steps["End"] = "%s: %s" % (type(exc).__name__, str(exc)[:60])
             row["steps"] = steps
@@ -99,7 +99,7 @@ def _one(sw, tag, mode):
             )
             row["file"] = str(f)
             try:
-                row["returned"] = str(C.get_com_member(doc, "InsertCurveFile", str(f)))
+                row["returned"] = str(c_.get_com_member(doc, "InsertCurveFile", str(f)))
             except Exception as exc:  # noqa: BLE001
                 row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
         after = list(fr.feature_names(doc) or [])
@@ -110,16 +110,16 @@ def _one(sw, tag, mode):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u901a\u8fc7 XYZ \u70b9\u7684\u66f2\u7ebf\uff1a`InsertCurveFileBegin/Point/End`\uff08\u4e09\u6b65\u5f0f\uff09\u00b7 `InsertCurveFile`",

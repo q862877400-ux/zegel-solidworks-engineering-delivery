@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """通用「接口族成员登记表」生成器。
 
 这套做法本项目已经用到第三遍（StudyOptions 242 setter / IView 207 能力 /

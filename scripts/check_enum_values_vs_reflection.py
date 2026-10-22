@@ -246,7 +246,7 @@ CLAIM = re.compile(
 INVENTORY_LIMIT = 20
 
 
-def _int_dict_len(node) -> "int | None":
+def _int_dict_len(node) -> int | None:
     """★ 节点是「全 `str` 键 + 全 `int` 值」的字典 ⇒ 返回条目数；否则 `None`。"""
     if not isinstance(node, ast.Dict):
         return None

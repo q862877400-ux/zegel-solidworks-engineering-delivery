@@ -77,7 +77,7 @@ def main() -> int:
         import sw_connect
 
         from scripts import sw_feature_readback as fr
-        from scripts import sw_part as P
+        from scripts import sw_part as p_
         from scripts.sw_simulation import select_face_at
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -90,11 +90,11 @@ def main() -> int:
         def _make_plate() -> float | None:
             """建 100×60×20 的板，回体积。"""
             sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
-            P.start_sketch(doc, plane_name="Front Plane")
-            P.sketch_corner_rectangle(doc, -50.0, -30.0, 50.0, 30.0)
-            sk = P.current_sketch_name(doc)
-            P.end_sketch(doc)
-            P.extrude_boss(doc, sk, 20.0)
+            p_.start_sketch(doc, plane_name="Front Plane")
+            p_.sketch_corner_rectangle(doc, -50.0, -30.0, 50.0, 30.0)
+            sk = p_.current_sketch_name(doc)
+            p_.end_sketch(doc)
+            p_.extrude_boss(doc, sk, 20.0)
             return _volume_mm3(doc)
 
         v0 = _make_plate()
@@ -107,16 +107,16 @@ def main() -> int:
             x = sw_connect.new_document(sw, "part")
             try:
                 sw_connect.safe_get_com_member(x, "ClearSelection2", True)
-                P.start_sketch(x, plane_name="Front Plane")
-                P.sketch_corner_rectangle(x, -50.0, -30.0, 50.0, 30.0)
-                sk = P.current_sketch_name(x)
-                P.end_sketch(x)
-                P.extrude_boss(x, sk, 20.0)
+                p_.start_sketch(x, plane_name="Front Plane")
+                p_.sketch_corner_rectangle(x, -50.0, -30.0, 50.0, 30.0)
+                sk = p_.current_sketch_name(x)
+                p_.end_sketch(x)
+                p_.extrude_boss(x, sk, 20.0)
                 vb = _volume_mm3(x)
                 #: 选顶面（★ 官方 Remarks 要求先选要移除的面）
                 sw_connect.safe_get_com_member(x, "ClearSelection2", True)
                 select_face_at(x, 0.0, 0.0, 0.0)
-                r = P.shell_report(x, t)
+                r = p_.shell_report(x, t)
                 va = _volume_mm3(x)
                 runs[str(t)] = {
                     "ok": bool(r.get("ok")),

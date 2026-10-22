@@ -43,12 +43,12 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8")
 sys.path.insert(0, Path(__file__).resolve().parents[1])
 
-import uiautomation as auto
-import win32api
-import win32con
-import win32gui
+import uiautomation as auto  # noqa: E402
+import win32api  # noqa: E402
+import win32con  # noqa: E402
+import win32gui  # noqa: E402
 
-import shot
+import shot  # noqa: E402
 
 SHOTS = Path(Path(__file__).resolve().parents[1] / "shots")
 SHOTS.mkdir(exist_ok=True)

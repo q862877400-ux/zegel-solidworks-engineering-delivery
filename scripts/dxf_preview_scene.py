@@ -19,8 +19,9 @@ import argparse
 import json
 import math
 from collections import Counter
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 MAX_DXF_BYTES = 50 * 1024 * 1024
 MAX_ENTITIES = 200_000

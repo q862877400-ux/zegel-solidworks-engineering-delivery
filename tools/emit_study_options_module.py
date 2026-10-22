@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 r"""生成 scripts/sw_simulation_study_options.py（含 setter 登记表）。
 
 登记表由反射清单机械生成，**不手抄**。生成后请跑：

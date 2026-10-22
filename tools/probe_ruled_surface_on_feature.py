@@ -45,15 +45,15 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_feature_readback as fr  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_solid(doc):
-    P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    p_.start_sketch(doc, plane_name="Front Plane")
+    c_.get_com_member(
+        c_.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.02,
         -0.02,
@@ -62,15 +62,15 @@ def _mk_solid(doc):
         0.02,
         0.0,
     )
-    P.end_sketch(doc)
+    p_.end_sketch(doc)
     names = [
         n
-        for n in (P.feature_names(doc) or [])
+        for n in (p_.feature_names(doc) or [])
         if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            P.extrude_boss(doc, cand, 0.02)
+            p_.extrude_boss(doc, cand, 0.02)
             return True
         except Exception:  # noqa: BLE001
             continue
@@ -106,7 +106,7 @@ def _one(sw, tag, mode):
     row = {"tag": tag, "mode": mode, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         _mk_solid(doc)
         from sw_connect import get_com_member as _get
         from sw_part import _select_com_object as _sel
@@ -130,10 +130,10 @@ def _one(sw, tag, mode):
             #: （★ 第一版就死在这 —— `TypeError: can only concatenate list (not "tuple")
             #:  to list`，
             #:    ★ 而那两组**正是最关键的两组**）
-            cands = list(P._get_sketch_name_candidates(want)) + [want]
+            cands = list(p_._get_sketch_name_candidates(want)) + [want]
             for cand in cands:
                 try:
-                    if P._select_by_id(ext, cand, "BODYFEATURE", append=False, mark=0):
+                    if p_._select_by_id(ext, cand, "BODYFEATURE", append=False, mark=0):
                         picked["feature"] = cand
                         break
                 except Exception:  # noqa: BLE001
@@ -184,16 +184,16 @@ def _one(sw, tag, mode):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u76f4\u7eb9\u66f2\u9762\uff1a\u5b98\u65b9\u539f\u8bdd\u91cc\u7684 **on this feature** \u600e\u4e48\u843d\u5b9e",

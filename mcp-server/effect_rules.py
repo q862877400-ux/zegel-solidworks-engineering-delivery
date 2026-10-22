@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 #: ★ 七类状态（★ 顺序固定，便于比对与显示）✓
 STATE_CLASSES = (

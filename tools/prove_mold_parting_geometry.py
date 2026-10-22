@@ -45,7 +45,7 @@ OUT = Path(
 
 def main() -> int:
     import sw_connect
-    import sw_mold as M
+    import sw_mold as m_
     from sw_connect import get_com_member
     from sw_part import (
         current_sketch_name,
@@ -55,12 +55,12 @@ def main() -> int:
         start_sketch,
     )
 
-    ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+    ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%m_:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
     doc = None
 
     def counts(model):
-        e = M.mold_evidence(model)
+        e = m_.mold_evidence(model)
         return (e.get("counts") or {}) if isinstance(e, dict) else {}
 
     try:
@@ -82,7 +82,7 @@ def main() -> int:
         #: 恒真）
         doc.ClearSelection2(True)
         try:
-            M.insert_parting_line(doc)
+            m_.insert_parting_line(doc)
             ev["steps"]["negative_unprepared"] = {
                 "ok": False,
                 "note": "**未选参考却成功了** ⇒ 判据①恒真、该判据无效",
@@ -153,7 +153,7 @@ def main() -> int:
 
         #: ④ 插入分型线 ⇒ ★ 回读计数（★ 定量判据）
         try:
-            name = M.insert_parting_line(doc)
+            name = m_.insert_parting_line(doc)
             ev["steps"]["insert_parting_line"] = {
                 "ok": bool(name),
                 "feature_name": str(name)[:60],

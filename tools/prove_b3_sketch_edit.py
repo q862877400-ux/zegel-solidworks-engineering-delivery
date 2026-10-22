@@ -36,8 +36,8 @@ OUT = R / "output" / "b3-sketch-edit-evidence.json"
 def main() -> int:
     import sw_connect
     import sw_part as p
-    import sw_sketch as SK
-    import sw_sketch_edit_ops as E
+    import sw_sketch as sk_
+    import sw_sketch_edit_ops as e_
     from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -55,13 +55,13 @@ def main() -> int:
 
     def nseg(d):
         sk = get_com_member(get_com_member(d, "SketchManager"), "ActiveSketch")
-        return int(SK.count_segments(sk) or 0)
+        return int(sk_.count_segments(sk) or 0)
 
     def seg_len_sum(d):
         """★ 几何判据：所有草图段的**长度之和**（★ 延伸会改变它，而段数不变）。"""
         sk = get_com_member(get_com_member(d, "SketchManager"), "ActiveSketch")
         tot = 0.0
-        for s in SK.get_sketch_segments(sk) or []:
+        for s in sk_.get_sketch_segments(sk) or []:
             try:
                 tot += float(get_com_member(s, "GetLength") or 0.0)
             except Exception:
@@ -127,7 +127,7 @@ def main() -> int:
     run(
         "剪裁-最近",
         s_trim,
-        lambda d: E.sketch_trim(d, "index:0", option="closest"),
+        lambda d: e_.sketch_trim(d, "index:0", option="closest"),
         "count_change",
     )
 
@@ -137,13 +137,13 @@ def main() -> int:
         p.sketch_line(d, -20.0, 0.0, 0.0, 0.0)
         p.sketch_line(d, 25.0, 0.0, 40.0, 0.0)
 
-    run("延伸实体", s_ext, lambda d: E.sketch_extend(d, "index:0"), "geom_change")
+    run("延伸实体", s_ext, lambda d: e_.sketch_extend(d, "index:0"), "geom_change")
 
     #: \u2462 \u7b49\u8ddd\uff08\u2605 \u5224\u636e = \u6bb5\u6570\u6da8\uff09
     def s_off(d):
         p.sketch_corner_rectangle(d, -20.0, -15.0, 20.0, 15.0)
 
-    run("等距实体", s_off, lambda d: E.sketch_offset(d, "index:0", 5.0), "count_up")
+    run("等距实体", s_off, lambda d: e_.sketch_offset(d, "index:0", 5.0), "count_up")
 
     #: \u2463 \u5706\u89d2\uff08\u2605 \u4e24\u6761\u76f8\u4ea4\u7ebf\uff09
     def s_fil(d):
@@ -153,7 +153,7 @@ def main() -> int:
     run(
         "绘制圆角",
         s_fil,
-        lambda d: E.sketch_fillet(d, "index:0,index:1", 5.0),
+        lambda d: e_.sketch_fillet(d, "index:0,index:1", 5.0),
         "count_change",
     )
 
@@ -164,7 +164,7 @@ def main() -> int:
     run(
         "线性草图阵列",
         s_lp,
-        lambda d: E.sketch_linear_pattern(
+        lambda d: e_.sketch_linear_pattern(
             d, "index:0", num_x=3, num_y=1, spacing_x_mm=15.0
         ),
         "count_up",
@@ -177,7 +177,7 @@ def main() -> int:
     run(
         "圆周草图阵列",
         s_cp,
-        lambda d: E.sketch_circular_pattern(
+        lambda d: e_.sketch_circular_pattern(
             d, "index:0", arc_radius_mm=15.0, arc_angle_deg=360.0, pattern_num=4
         ),
         "count_up",
@@ -188,7 +188,7 @@ def main() -> int:
     run(
         "交叉曲线",
         lambda d: p.sketch_circle(d, 0.0, 0.0, 10.0),
-        lambda d: E.sketch_intersect_curves(d),
+        lambda d: e_.sketch_intersect_curves(d),
         "count_change",
         note="★ 官方前置：3D 草图 + 两个相交面；本探针只有 2D 草图 ⇒ 失败不构成能力结论",
     )

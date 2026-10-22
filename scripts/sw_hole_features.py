@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Iterable, Sequence
 from dataclasses import asdict, dataclass
-from typing import Iterable, Sequence
 
 #: ★ 长度换算助手：`_mm(v)` = **毫米→米**（恰好一次）。
 #: 依据：`FeatureCut4.md:22`「D1 … in meters」+ `output/probe-unit-decisive/decisive.jso

@@ -1235,7 +1235,8 @@ def rib_params(model, feature_name: str = "") -> dict:
       | ★ `ExtrusionDirection` | ★ `Direction as defined in swRibExtrusionDirection_e` |
       | ★ `RefSketchIndex` | ★ `Index of the sketch segment that defines the draft direction` |
       | ★ `NextReference()` | ★ `Index of the entity that is used`（★ 零参方法）|
-      | ★ 六个 bool | ★ `EnableDraft` · `DraftOutward` · `DraftFromWall` · `FlipSide` · `IsTwoSided` · `ReverseThicknessDir` |
+      | ★ 六个 bool | ★ `EnableDraft` · `DraftOutward` · `DraftFromWall` · `FlipSide` · `IsTwoSided` · `ReverseThickness
+      Dir` |
 
     ★★★★★ **⚠ 不碰**：★ `Body`（★ `## Remarks` 指向「Accessing Selections」）·
       ★ `IAccessSelections` / ★ `AccessSelections` / ★ `ReleaseSelectionAccess`（★ 前置）✓
@@ -1334,7 +1335,8 @@ def sweep_params(model, feature_name: str = "") -> dict:
       |---|---|---|
       | ★★ **`GetTwistAngle()`** | ★「Angle of twist **in radians**」 | ★★ **radians（★ 官方**写了**）⇒ **不用量**** ✓ |
       | ★★ **`GetD2TwistAngle()`** | ★「Angle of twist **in radians** in Direction 2」 | ★★ 同上 ✓ |
-      | ★ **`CircularProfileDiameter`** | ★「Diameter of the circular profile」（★ **无单位**）| ★ **unknown** ⇒ ★ **要真机量** ✓ |
+      | ★ **`CircularProfileDiameter`** | ★「Diameter of the circular profile」（★ **无单位**）
+      | ★ **unknown** ⇒ ★ **要真机量** ✓ |
       | ★ **`GetWallThickness(Forward)`** | ★「Wall thickness」（★ **无单位**）| ★ **unknown** ⇒ ★ **要真机量** ✓ |
       ★★ **⚠ **已真机跑过一轮、★ 而那两个量**仍未定案****（★ 轮 126 · 如实记）：
         ★ **真机读数**（★ `output/sweep-params-capability-recheck.json`）：
@@ -1528,8 +1530,10 @@ def loft_params(model, feature_name: str = "") -> dict:
     ★★★★★★ **单位口径 —— ★ 本族有**四个**待量的量**（★ 第十四 ~ 十七族候选）**：
       | ★ 量 | ★ 官方 `## Returns` | ★ 口径 |
       |---|---|---|
-      | ★ **`StartConstraintDraftAngle`** / ★ **`EndConstraintDraftAngle`** | ★「Draft angle」 | ★ **unknown** ⇒ ★ **要真机量**（★ **度 vs 弧度**）✓ |
-      | ★ **`StartTangentLength`** / ★ **`EndTangentLength`** | ★「(Start/End) tangent length」 | ★ **unknown** ⇒ ★ **要真机量** ✓ |
+      | ★ **`StartConstraintDraftAngle`** / ★ **`EndConstraintDraftAngle`** | ★「Draft angle」
+      | ★ **unknown** ⇒ ★ **要真机量**（★ **度 vs 弧度**）✓ |
+      | ★ **`StartTangentLength`** / ★ **`EndTangentLength`** | ★「(Start/End) tangent length」
+      | ★ **unknown** ⇒ ★ **要真机量** ✓ |
       | ★★ **`GetWallThickness(Forward)`** | ★「Wall thickness」（★ **无单位**）| ★ **unknown** ⇒ ★ **要真机量** ✓ |
       ★★★ **⚠ 而两个拔模角有**前置****（★ 官方 `## Remarks` 逐字）：
         ★「This property is only valid if …`StartConstraint…`」⇒ ★ **只有开了那个起/止约束才有意义** ✓
@@ -1662,7 +1666,8 @@ def revolve_params(model, feature_name: str = "") -> dict:
     ★★★★★★ **单位口径 —— ★ 本族有两个**待量的量**（★ 第十三四族）**：
       | ★ 量 | ★ 官方 `## Returns` | ★ 口径 |
       |---|---|---|
-      | ★★ **`GetRevolutionAngle(Forward)`** | ★「Angle of revolution」（★ **无单位**）| ★ **unknown** ⇒ ★ **要真机量**（★ 度 vs 弧度）✓ |
+      | ★★ **`GetRevolutionAngle(Forward)`** | ★「Angle of revolution」（★ **无单位**）
+      | ★ **unknown** ⇒ ★ **要真机量**（★ 度 vs 弧度）✓ |
       | ★★ **`GetWallThickness(Forward)`** | ★「Wall thickness」（★ **无单位**）| ★ **unknown** ⇒ ★ **要真机量** ✓ |
       ★★★ **⚠ 而两者都**带一个 `bool Forward` 实参**** ⇒ ★ 本函数**单独带参调**它们 ——
         ★ **因为 `get_com_member` 对"必须带实参"的成员会**静默回 bound method****

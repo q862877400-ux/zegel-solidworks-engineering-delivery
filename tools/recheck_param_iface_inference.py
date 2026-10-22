@@ -43,7 +43,7 @@ for p in (str(ROOT), str(ROOT / "scripts")):
 sys.stdout.reconfigure(encoding="utf-8")
 
 sys.path.insert(0, str(ROOT / "scripts"))
-import check_member_owner_interface as C  # noqa: E402
+import check_member_owner_interface as c_  # noqa: E402
 
 
 def param_ifaces_from_docstring(fn, iface_names: set) -> dict:
@@ -98,7 +98,7 @@ EXPECT = {
 
 
 def main() -> int:
-    ifaces = C.load_interfaces(C.REFLECT)
+    ifaces = c_.load_interfaces(c_.REFLECT)
     names = set(ifaces.keys())
     print("  反射: %d 个接口" % len(ifaces))
 

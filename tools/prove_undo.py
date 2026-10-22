@@ -43,7 +43,7 @@ OUT = Path(Path(__file__).resolve().parents[1] / "output" / "undo-evidence.json"
 
 def main() -> int:
     import sw_connect
-    import sw_session as S
+    import sw_session as s_
     from sw_part import (
         current_sketch_name,
         end_sketch,
@@ -52,7 +52,7 @@ def main() -> int:
         start_sketch,
     )
 
-    ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+    ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%s_")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
     doc = None
     try:
@@ -76,14 +76,14 @@ def main() -> int:
             "returned": str(r)[:60],
         }
         #: ② 负例：steps = 0 ⇒ 必须被拒
-        neg = S.undo_report(doc, 0)
+        neg = s_.undo_report(doc, 0)
         ev["steps"]["negative_zero_steps"] = {
             "ok": (not neg.get("ok")),
             "returned_ok": bool(neg.get("ok")),
             "error": str(neg.get("error"))[:110],
         }
         #: ③ 正例：steps = 1 ⇒ 树应退回
-        pos = S.undo_report(doc, 1)
+        pos = s_.undo_report(doc, 1)
         ev["steps"]["undo"] = {
             "ok": bool(pos.get("ok")),
             "steps": pos.get("steps"),

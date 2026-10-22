@@ -73,7 +73,7 @@ def main() -> int:
         opened.append(part)
         import sw_sketch_dimensions as sd
 
-        with p.sketch(part, "Front Plane") as sk:
+        with p.sketch(part, "Front Plane"):
             p.sketch_corner_rectangle(part, -30.0, -20.0, 30.0, 20.0)
             ev["dimension_added"] = []
             for fn, args in (

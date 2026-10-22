@@ -341,7 +341,7 @@ def classify_dialog(d: dict) -> dict:
         "do you want",
     )
     #: ★ **确认类**（★ 可以安全点的）
-    OKISH = (
+    okish_ = (
         "确定",
         "确认",
         "关闭",
@@ -402,7 +402,7 @@ def classify_dialog(d: dict) -> dict:
     hit_danger = _hit(danger)
     hit_question = _hit(question)
     hit_risky = _hit(risky)
-    okish = _hit(OKISH)
+    okish = _hit(okish_)
     if hit_danger:
         return {
             "mode": "forbidden",
@@ -1028,7 +1028,7 @@ class Sentinel:
             self._sweep()
             self._stop.wait(self.interval)
 
-    def start(self) -> "Sentinel":
+    def start(self) -> Sentinel:
         self._th = threading.Thread(target=self._loop, daemon=True)
         self._th.start()
         return self

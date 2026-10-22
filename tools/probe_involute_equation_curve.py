@@ -22,9 +22,9 @@
 # 文件:   tools/probe_involute_equation_curve.py
 # 定位:   ★ 业主 2026-10-10 指令「方法要按机械工程的规范做法」——
 #         ★ 渐开线**必须是真曲线**，★ 不是 12 段折线。
-# 官方依据: `C:\swapi\types\ISketchManager\CreateEquationSpline2.md`（★ 11 参签名 + Rema
+# 官方依据: `c_:\swapi\types\ISketchManager\CreateEquationSpline2.md`（★ 11 参签名 + Rema
 #           rks）
-#         `C:\swapi\examples\Create_Equation-driven_Curve_Example_VB.md`（★ 调用序）
+#         `c_:\swapi\examples\Create_Equation-driven_Curve_Example_VB.md`（★ 调用序）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -40,14 +40,14 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 
 def _seg_count(doc):
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
-        return len(list(C.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
+        sk = c_.get_com_member(doc, "GetActiveSketch2")
+        return len(list(c_.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
     except Exception:  # noqa: BLE001
         return -1
 
@@ -56,14 +56,14 @@ def _one(sw, tag, xexpr, yexpr, t0, t1):
     row = {"tag": tag, "x": xexpr, "y": yexpr, "range": [t0, t1], "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
-        sm = C.get_com_member(doc, "SketchManager")
+        doc = c_.new_document(sw, "part")
+        p_.start_sketch(doc, plane_name="Front Plane")
+        sm = c_.get_com_member(doc, "SketchManager")
         before = _seg_count(doc)
         row["seg_before"] = before
         try:
             #: ★ **11 参**（★ 顺序照官方签名）
-            ret = C.get_com_member(
+            ret = c_.get_com_member(
                 sm,
                 "CreateEquationSpline2",
                 xexpr,
@@ -89,16 +89,16 @@ def _one(sw, tag, xexpr, yexpr, t0, t1):
         #: 2`）——
         #:   ★ 那能证明「SolidWorks 认了这条方程」，★ 而不只是「画了点什么」✓
         try:
-            sk = C.get_com_member(doc, "GetActiveSketch2")
-            segs = list(C.get_com_member(sk, "GetSketchSegments") or [])
+            sk = c_.get_com_member(doc, "GetActiveSketch2")
+            segs = list(c_.get_com_member(sk, "GetSketchSegments") or [])
             if segs:
                 sp = segs[0]
-                got = C.get_com_member(sp, "GetEquationParameters2")
+                got = c_.get_com_member(sp, "GetEquationParameters2")
                 row["equation_readback"] = str(got)[:220]
         except Exception as exc:  # noqa: BLE001
             row["readback_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
         try:
-            P.end_sketch(doc)
+            p_.end_sketch(doc)
         except Exception:  # noqa: BLE001
             pass
     except Exception as exc:  # noqa: BLE001
@@ -106,16 +106,16 @@ def _one(sw, tag, xexpr, yexpr, t0, t1):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "★ 渐开线**真曲线**探针：`CreateEquationSpline2` 能否直接建渐开线参数方程",
@@ -131,14 +131,14 @@ def main() -> int:
         },
         "cases": [],
     }
-    RB = 9.396926  #: ★ 模数 1 · 齿数 20 · 20° ⇒ rb = m·z/2·cos20° = 10·0.9396926
+    rb_ = 9.396926  #: ★ 模数 1 · 齿数 20 · 20° ⇒ rb = m·z/2·cos20° = 10·0.9396926
     #: ★ ① **渐开线参数方程**（★ 本探针的主角）
     ev["cases"].append(
         _one(
             sw,
             "★ **渐开线** x=rb(cos t+t sin t) · y=rb(sin t−t cos t)",
-            "%.7f*(cos(t)+t*sin(t))" % RB,
-            "%.7f*(sin(t)-t*cos(t))" % RB,
+            "%.7f*(cos(t)+t*sin(t))" % rb_,
+            "%.7f*(sin(t)-t*cos(t))" % rb_,
             "0",
             "0.6",
         )

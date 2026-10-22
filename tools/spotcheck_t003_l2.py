@@ -80,7 +80,7 @@ def claimed_names(text: str) -> list:
 def main() -> int:
     text = L2.read_text(encoding="utf-8", errors="replace")
     rows, names = claimed_names(text)
-    R = {
+    r_ = {
         "★_目的": "T003 抽查 · recon/bunny-L2-official-member-calls.md",
         "★_声称": "函数总数 83 / 有成员的 67 / 去重成员名 143",
         "★_解析到的数据行": rows,
@@ -100,17 +100,17 @@ def main() -> int:
     for n in sorted(names):
         #: ★ 官方页名 = 成员名 + `.md`（★ 大小写敏感；★ 先在 types/ 下递归找）
         found = any(SWAPI.rglob(n + ".md"))
-        R["成员"][n] = {"找到": found, "出现于函数": sorted(set(names[n]))[:6]}
+        r_["成员"][n] = {"找到": found, "出现于函数": sorted(set(names[n]))[:6]}
         if not found:
-            R["没找到"].append(n)
-    ok = len(names) - len(R["没找到"])
+            r_["没找到"].append(n)
+    ok = len(names) - len(r_["没找到"])
     print(
-        "   ★ 找到 **%d / %d** ⇒ 没找到 **%d** 个" % (ok, len(names), len(R["没找到"]))
+        "   ★ 找到 **%d / %d** ⇒ 没找到 **%d** 个" % (ok, len(names), len(r_["没找到"]))
     )
-    if R["没找到"]:
+    if r_["没找到"]:
         print("   ★★ 没找到（★ 编造嫌疑 / ★ 或名字属于**枚举/常量**不是成员）：")
-        for n in R["没找到"]:
-            print("      %-34s ← 出现在 %s" % (n, R["成员"][n]["出现于函数"][:3]))
+        for n in r_["没找到"]:
+            print("      %-34s ← 出现在 %s" % (n, r_["成员"][n]["出现于函数"][:3]))
 
     print("=" * 78)
     print("★ 判据②：核它 §五 那条**代码断言**（★ 「Any 未导入」）")
@@ -119,7 +119,7 @@ def main() -> int:
     has_any_import = bool(re.search(r"^\s*from typing import .*\bAny\b", src, re.M))
     has_future = "from __future__ import annotations" in src
     uses_any = bool(re.search(r"\bdict\[str,\s*Any\]", src))
-    R["代码断言"] = {
+    r_["代码断言"] = {
         "用到 dict[str, Any]": uses_any,
         "有 from typing import Any": has_any_import,
         "有 from __future__ import annotations": has_future,
@@ -132,16 +132,16 @@ def main() -> int:
     print("   ★ 用到 `dict[str, Any]`：%s" % uses_any)
     print("   ★ 有 `from typing import Any`：**%s**" % has_any_import)
     print("   ★ 有 `from __future__ import annotations`：%s" % has_future)
-    print("   ★ 顶部 import：%s" % R["代码断言"]["文件顶部 60 行的 import"])
-    R["代码断言"]["L2 的说法成立"] = bool(uses_any and not has_any_import)
+    print("   ★ 顶部 import：%s" % r_["代码断言"]["文件顶部 60 行的 import"])
+    r_["代码断言"]["L2 的说法成立"] = bool(uses_any and not has_any_import)
 
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r_, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("=" * 78)
     print(
         "★ 汇总：★ 成员名 %d/%d 在官方源找到 · ★「Any 未导入」这条断言 %s"
-        % (ok, len(names), "成立" if R["代码断言"]["L2 的说法成立"] else "**不成立**")
+        % (ok, len(names), "成立" if r_["代码断言"]["L2 的说法成立"] else "**不成立**")
     )
     print("★ wrote", OUT)
     return 0

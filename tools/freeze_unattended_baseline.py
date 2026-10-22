@@ -23,7 +23,7 @@ _ROOT_S = str(Path(__file__).resolve().parents[1])
 
 sys.path.insert(0, r"" + _ROOT_S + r"")
 sys.stdout.reconfigure(encoding="utf-8")
-from scripts.capabilities import load_capabilities, unattended_allowed
+from scripts.capabilities import load_capabilities, unattended_allowed  # noqa: E402
 
 payload = load_capabilities()
 caps = payload["capabilities"]

@@ -25,7 +25,7 @@ import sys
 from ctypes import wintypes
 
 sys.stdout.reconfigure(encoding="utf-8")
-from PIL import Image
+from PIL import Image  # noqa: E402
 
 user32 = ctypes.windll.user32
 gdi32 = ctypes.windll.gdi32

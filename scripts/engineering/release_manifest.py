@@ -62,9 +62,9 @@ def _digest(obj) -> str:
 
 def part_digest_tools() -> str:
     """★ 工具面摘要（★ 521 个工具名 + 效应）。"""
-    from . import registry as REG  # noqa: PLC0415
+    from . import registry as reg_  # noqa: PLC0415
 
-    reg = REG.build_registry()
+    reg = reg_.build_registry()
     rows = sorted(
         (n, getattr(d, "effect", ""), getattr(d, "admitted", False))
         for n, d in reg.items()
@@ -131,7 +131,7 @@ class ReleaseManifest:
     release_digest: str = ""
     created_at: str = ""
 
-    def compute(self) -> "ReleaseManifest":
+    def compute(self) -> ReleaseManifest:
         self.parts = {k: PART_FUNCS[k]() for k in MANIFEST_PARTS}
         self.release_digest = _digest(self.parts)
         return self

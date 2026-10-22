@@ -46,8 +46,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c_  # noqa: E402
+from scripts import sw_part as p_  # noqa: E402
 
 SW_FM_REF_SURFACE = 62
 
@@ -59,8 +59,8 @@ def _types(model):
 
         for feat in w.iter_features_recursive(model):
             out.setdefault(
-                str(C.get_com_member(feat, "GetTypeName2") or ""), []
-            ).append(str(C.get_com_member(feat, "Name") or ""))
+                str(c_.get_com_member(feat, "GetTypeName2") or ""), []
+            ).append(str(c_.get_com_member(feat, "Name") or ""))
     except Exception as exc:  # noqa: BLE001
         return {"err": "%s: %s" % (type(exc).__name__, str(exc)[:80])}
     return out
@@ -70,27 +70,27 @@ def _one(sw, tag, *, use_access, set_props=True):
     row = {"tag": tag, "use_access": use_access, "ok": False}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c_.new_document(sw, "part")
         #: \u2605 \u8f6e\u5ed3\uff1a\u4e0a\u89c6\u9762\u7684\u5706\uff08Z=0\uff09
-        P.start_sketch(doc, plane_name="Top Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        p_.start_sketch(doc, plane_name="Top Plane")
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateCircleByRadius",
             0.0,
             0.0,
             0.0,
             5.0 / 1000.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         #: \u2605 \u8def\u5f84\uff1a\u524d\u89c6\u9762\u4ece\u539f\u70b9\u6cbf X\uff08\u
         #: 2605 \u8d77\u70b9 (0,0,0) \u7684 Z=0 \u2713\uff09
         try:
-            C.get_com_member(doc, "ClearSelection2", True)
+            c_.get_com_member(doc, "ClearSelection2", True)
         except Exception:  # noqa: BLE001
             pass
-        P.start_sketch(doc, plane_name="Front Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        p_.start_sketch(doc, plane_name="Front Plane")
+        c_.get_com_member(
+            c_.get_com_member(doc, "SketchManager"),
             "CreateLine",
             0.0,
             0.0,
@@ -99,18 +99,18 @@ def _one(sw, tag, *, use_access, set_props=True):
             0.0,
             0.0,
         )
-        P.end_sketch(doc)
+        p_.end_sketch(doc)
         #: \u2605 \u9009\u533a\uff1a\u8f6e\u5ed3 mark=1 + \u8def\u5f84 mark=4\uff08\u260
         #: 5 \u7528 SelectByID2 \u2014\u2014 \u4e8b\u5b9e 384 \u7684\u6b63\u89e3\uff09
-        ext = C.get_com_member(doc, "Extension")
+        ext = c_.get_com_member(doc, "Extension")
         picked = {}
         for cand, mark, label in (
             ("\u8349\u56fe1", 1, "profile"),
             ("\u8349\u56fe2", 4, "path"),
         ):
-            for name in P._get_sketch_name_candidates(cand):
+            for name in p_._get_sketch_name_candidates(cand):
                 try:
-                    if P._select_by_id(
+                    if p_._select_by_id(
                         ext, name, "SKETCH", append=bool(picked), mark=mark
                     ):
                         picked[label] = name
@@ -122,8 +122,8 @@ def _one(sw, tag, *, use_access, set_props=True):
         for m in (1, 4):
             try:
                 per[str(m)] = int(
-                    C.get_com_member(
-                        C.get_com_member(doc, "SelectionManager"),
+                    c_.get_com_member(
+                        c_.get_com_member(doc, "SelectionManager"),
                         "GetSelectedObjectCount2",
                         m,
                     )
@@ -132,9 +132,9 @@ def _one(sw, tag, *, use_access, set_props=True):
                 per[str(m)] = -1
         row["sel_by_mark"] = per
 
-        fm = C.get_com_member(doc, "FeatureManager")
-        before = list(P.feature_names(doc) or [])
-        data = C.get_com_member(fm, "CreateDefinition", SW_FM_REF_SURFACE)
+        fm = c_.get_com_member(doc, "FeatureManager")
+        before = list(p_.feature_names(doc) or [])
+        data = c_.get_com_member(fm, "CreateDefinition", SW_FM_REF_SURFACE)
         row["data"] = type(data).__name__ if data is not None else None
         if data is None:
             return row
@@ -146,16 +146,16 @@ def _one(sw, tag, *, use_access, set_props=True):
         if use_access:
             try:
                 row["access"] = bool(
-                    C.get_com_member(data, "AccessSelections", doc, P._empty_callout())
+                    c_.get_com_member(data, "AccessSelections", doc, p_._empty_callout())
                 )
             except Exception as exc:  # noqa: BLE001
                 row["access"] = "ERR %s" % str(exc)[:80]
         try:
-            feat = C.get_com_member(fm, "CreateFeature", data)
+            feat = c_.get_com_member(fm, "CreateFeature", data)
             row["create_feature"] = type(feat).__name__ if feat is not None else "None"
         except Exception as exc:  # noqa: BLE001
             row["create_feature_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-        after = list(P.feature_names(doc) or [])
+        after = list(p_.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["types"] = _types(doc)
         row["ok"] = bool(row["new"])
@@ -164,16 +164,16 @@ def _one(sw, tag, *, use_access, set_props=True):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c_.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c_.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c_.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u626b\u63cf\u66f2\u9762\uff1a**\u8df3\u8fc7 AccessSelections** \u76f4\u63a5 CreateFeature",

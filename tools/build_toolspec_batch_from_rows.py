@@ -18,10 +18,10 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 ROOT = Path(Path(__file__).resolve().parents[1])
 
-import importlib
-import inspect
-import sys
-from pathlib import Path as _Path
+import importlib  # noqa: E402
+import inspect  # noqa: E402
+import sys  # noqa: E402
+from pathlib import Path as _Path  # noqa: E402
 
 #: ★★★ 本脚本要 **import 目标能力模块**（核"真形参名"）⇒ ★ 必须把仓库的两处放进 `sys.pat
 #: h`，

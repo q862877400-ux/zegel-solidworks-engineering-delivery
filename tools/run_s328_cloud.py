@@ -33,7 +33,7 @@ OUT = ROOT / "output" / "s328"
 def run_u() -> dict:
     """★ **U1~U7 逐条**。"""
     rows = []
-    pol = cp.load_policy()
+    cp.load_policy()
 
     #: U1 离线承诺
     c = cp.offline_commitment()
