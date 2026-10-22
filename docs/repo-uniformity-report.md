@@ -494,3 +494,65 @@ python scripts/release_check.py           ⇒ exit 0 · status pass · 57 道 ·
 
 ★ 待裁决剩 **2 组**：`click/click_point`、`capture_front/screen_png` —— 都是一次性 GUI 自动化脚本里的
 截图/点击助手，★ 动前须确认没有别处 import，★ 本轮仍不做（不硬凑）。
+
+## 十八、第 31 轮：消除最后两组**生产代码**逐字重复 ⇒ ⑤ 76（纯生产冲突清零）
+
+### 18.1 两组同形不同名（业主第二个关切的又一实例）
+
+| 组 | 位置 | 事实 |
+|---|---|---|
+| `click` ↔ `click_point` | `sw_jlcfa_steps.py` / `sw_jlcfa_click.py` | ★ 两个函数体**逐字相同**（7 行 `SetCursorPos` + 按下 + 抬起 + sleep），★ **只差名字与 docstring** |
+| `capture_front` ↔ `screen_png` | `sw_jlcfa_locate.py` / `sw_gui_modal.py` | ★ 两个函数体**逐字相同**（整屏 `ImageGrab.grab()` → `save`），★ 同上 |
+
+⇒ ★ 同一件事、**两个名字**。收敛方向：把唯一实现留在**名字更准**的那一份
+（`click_point` 明确是「点屏幕坐标」、`screen_png` 明确是「整屏 PNG」），另一处**保留旧名作别名** ⇒ 调用点零改动。
+
+### 18.2 ★★ 一个只有**实跑**才能发现的坑（留档）
+
+`sw_jlcfa_locate.py` 对 `sw_gui_modal` 是**函数内延迟导入**（该模块有 `_modal()` 助手，
+按需 import）。我的第一版把别名写成**模块级**：
+
+```python
+capture_front = sw_gui_modal.screen_png      # ✗ 模块级
+```
+⇒ 实测立刻 `NameError: name 'sw_gui_modal' is not defined`（★ 报在 `import sw_jlcfa_locate` 时）
+★ 修法：写成**薄适配**，让别名仍走那个延迟导入助手：
+
+```python
+def capture_front(path: str):
+    return _modal().screen_png(path)
+```
+
+★ 教训：**把「函数内延迟导入」的模块名用到模块级 = 必然 NameError**；
+★ 而且这个错只有**运行期**才暴露（`ast.parse` 完全通过）——★ 又一次印证「改了就要真跑」。
+
+### 18.3 顺带清掉两个「孤儿导入」
+
+`sw_jlcfa_steps.click` 删掉后，`win32api` / `win32con` 在该文件里**再无使用者**（实测各 0 处）
+⇒ 一并删掉（否则 ruff F401 +2）。★ 而 `click` 这个**公开别名**按既有约定标 `# noqa: F401 -- 公开别名`。
+
+### 18.4 验证（★ 都是实跑，不是只看语法）
+
+| 项 | 结果 |
+|---|---|
+| 四模块 import | ✓（`sw_jlcfa_steps` / `sw_jlcfa_click` / `sw_jlcfa_locate` / `sw_gui_modal`） |
+| 别名同一性 | ✓ `sw_jlcfa_steps.click is sw_jlcfa_click.click_point` |
+| **真点击** | ✓ `S.click(767,426)` 实跑成功（移动光标 + 左右键） |
+| **真截图** | ✓ `L.capture_front(临时文件)` ⇒ **505,016 字节 / 2560×1440** |
+| 六道 dispatch 门禁 | ✓ 计数**一格未变**（byref 323 · entry 37 · arg 45/41/131 · forward 8/4/12 · upstream 3/10/5 · blindspot 371） |
+
+### 18.5 ★★ 纯生产代码的「重复实现」已清零
+
+收敛后 ⑤ **76** 组里，**涉及 `scripts/` 且不与 `tools/` 混的只剩 4 组 —— 全部是已登记豁免**：
+
+| 组 | 裁决 |
+|---|---|
+| `_checked` | ★ 判定不统一（统一会丢 10 个可解析调用点的核验，见 §十七） |
+| `_optional_com_member` / `_safe_com_member` | ★ 判定不统一（−21 调用点，见 §九） |
+| `assert_no_com_imports` | ★ 判定不统一（各自读 `__file__` 做本文件自证，合并会变成假自证） |
+| `_require` | ★ 登记豁免（12 个 `sw_api_*.py` 是机械生成的纯抄录） |
+
+★ 其余 **75 组**全部落在 `tools/` 下的**一次性探针/取证脚本**（`probe_*` / `prove_*` / `verify_*`）——
+它们是**用完即弃的证据脚本**，彼此抄同一段取数样板是**刻意的**（每个脚本要能独立跑、独立读）。
+★ 这 75 组**不打算收敛**，但**也不打算豁免掩盖**：它们继续计入 ⑤ 的读数，
+★ 因为「它们确实是重复」是事实；把它们登记成豁免会让基线**看起来更干净但实际没变**。

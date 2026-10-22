@@ -368,15 +368,14 @@ def focus_solidworks(hwnd: int) -> bool:
                 pass
             time.sleep(0.35)
     return win32gui.GetForegroundWindow() == hwnd
-
-
+#: ★★ 2026-10-22（仓库统一化）本函数与 `sw_gui_modal.screen_png` **逐字相同**
+#:   （只差名字与 docstring）⇒ 收敛到那一份；保留旧名 `capture_front` 作别名。
+#:   ⚠ 不能写成模块级 `capture_front = sw_gui_modal.screen_png`：本模块对
+#:     `sw_gui_modal` 是**函数内延迟导入**（`_modal()`），模块级写法会
+#:     `NameError: name 'sw_gui_modal' is not defined`（实测）✗
 def capture_front(path: str):
     """★ 置前 + **整屏**截图 —— 唯一能看到**浮窗/模态框**的取证方式。"""
-    from PIL import ImageGrab
-
-    img = ImageGrab.grab()
-    img.save(path)
-    return img
+    return _modal().screen_png(path)
 
 
 def capture_window(hwnd: int, path: str):

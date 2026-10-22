@@ -45,6 +45,24 @@
 
 ## 一 · 游标（**唯一必须维护的字段**）
 
+2026-10-22 ★★★ **仓库统一化 · 第 31 轮：纯生产代码的「重复实现」清零**
+  收敛两组同形不同名：`sw_jlcfa_steps.click` → `sw_jlcfa_click.click_point`（别名）·
+  `sw_jlcfa_locate.capture_front` → `sw_gui_modal.screen_png`（薄适配）。★ 唯一实现留在**名字更准**的一份。
+  ★★ **一个只有实跑才能发现的坑**：`sw_jlcfa_locate` 对 `sw_gui_modal` 是**函数内延迟导入**，
+  我第一版写成模块级 `capture_front = sw_gui_modal.screen_png` ⇒ 实测 `NameError`（报在 import 时）
+  ⇒ 改成薄适配走 `_modal()`。★ 教训：把「函数内延迟导入」的模块名用到模块级 = 必 NameError，而
+  `ast.parse` 完全通过 ✗ —— 再次印证「改了就要真跑」。
+  ★ 验证（实跑）：四模块 import ✓ · 别名同一性 ✓ · **真点击** `S.click(767,426)` ✓ ·
+  **真截图** `L.capture_front` ⇒ **505,016 字节 / 2560×1440** ✓ · 六道 dispatch 门禁计数**一格未变** ✓
+  ★★ **纯生产（scripts/ 且不与 tools/ 混）剩下的 4 组全部是已登记豁免**：`_checked` ·
+  `_optional_com_member/_safe_com_member` · `assert_no_com_imports` · `_require` —— 四条各有书面理由。
+  ★ 其余 **75 组全在 `tools/` 一次性探针**（probe_/prove_/verify_）—— 彼此抄同一段取数样板是**刻意的**
+  （每个脚本要能独立跑）。★ **不打算收敛、也不打算豁免掩盖** —— 它们确实是重复，
+  继续计入读数（登记豁免会让基线看起来更干净、而实际没变）。
+  **读数**：⑤ **78 → 76**（基线 76、无余量）· ① ruff 439 · ②(信息项) 2,315 · ③/④ = 0/0。
+  **下一 WIP**：① 剩 439（E501 302 多为中文散文/文档串，已按两档判据处理）；
+  ② ④ 只有 tools/ 探针的重复（刻意保留）。
+
 2026-10-22 ★★★ **仓库统一化 · 第 29 轮：修掉⑤自己的一个 bug + 一处命名不一致**
   ★★ **⑤ 的 `_AlphaRename` 会改写原始 AST**：`_dup_functions` 在同一棵树上 `ast.walk` 边走边算哈希，
   外层函数算哈希时把**嵌套函数名改成 `@@F@@`** ⇒ 组名显示成 `@@F@@` ✗（已实测到）

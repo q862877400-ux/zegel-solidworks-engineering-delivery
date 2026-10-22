@@ -61,8 +61,6 @@ sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
 import sw_jlcfa_cards as c_  # noqa: E402
 import sw_jlcfa_locate as l  # noqa: E402
-import win32api  # noqa: E402
-import win32con  # noqa: E402
 
 warnings.filterwarnings("ignore")
 
@@ -296,15 +294,13 @@ def run_step(
     st = read_state(w)
     evidence(name + "_FAIL", h, w, st, note="判据=%s 实到=%s" % (expect, page_kind(st)))
     raise StepFailed("%s 失败：判据 %s，实到 %s" % (name, expect, page_kind(st)))
-
-
-def click(x: int, y: int, pause: float = 0.5) -> None:
-    win32api.SetCursorPos((int(x), int(y)))
-    time.sleep(0.1)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
-    time.sleep(0.06)
-    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
-    time.sleep(pause)
+#: ★★ 2026-10-22（仓库统一化）本函数与 `sw_jlcfa_click.click_point`
+#:   **逐字相同**（只差名字与 docstring）⇒ 收敛到那一份；
+#:   此处保留旧名 `click` 作别名 ⇒ **调用点零改动**。
+try:
+    from .sw_jlcfa_click import click_point as click  # noqa: F401 -- 公开别名
+except ImportError:
+    from sw_jlcfa_click import click_point as click  # noqa: F401 -- 公开别名
 
 
 # ── 控件缓存（性能）─────────────────────────────────────────────
