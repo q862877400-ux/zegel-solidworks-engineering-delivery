@@ -134,20 +134,10 @@ def _table_of(node: ast.stmt) -> dict[str, int] | None:
                 tbl[k.value] = v.value
         return {"name": nm.id, "entries": tbl}
     return None
-
-
-def declaration_above(lines: list[str], lineno: int) -> str | None:
-    """⇒ 表起始行（1-based `lineno`）上方**最近的声明**；`None` = 未表态。
-
-    ★ **确定性**：只跳过空行，第一行非空行必须是 `#: arity-reflect: …`。
-    """
-    i = lineno - 2
-    while i >= 0 and not lines[i].strip():
-        i -= 1
-    if i < 0:
-        return None
-    m = DECL.match(lines[i].strip())
-    return m.group("mode") if m else None
+try:
+    from .gate_decl import arity_mode_above as _decl
+except ImportError:
+    from gate_decl import arity_mode_above as _decl
 
 
 def find_arity_tables() -> list[dict]:
@@ -169,7 +159,7 @@ def find_arity_tables() -> list[dict]:
                 "line": node.lineno,
                 "name": found["name"],
                 "entries": found["entries"],
-                "decl": declaration_above(lines, node.lineno),
+                "decl": _decl(lines, node.lineno),
             })
     return out
 

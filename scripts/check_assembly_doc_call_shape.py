@@ -121,20 +121,10 @@ def _table_of(node: ast.stmt):
                 tbl[k.value] = v.value
         return tbl
     return None
-
-
-def declaration_above(lines: list[str], lineno: int) -> str | None:
-    """⇒ 表起始行（1-based `lineno`）上方**最近的声明**；`None` = 未表态。
-
-    ★ **确定性**：只跳过空行，第一行非空行必须是 `#: arity-reflect: …`（与 227 同一关联方式）。
-    """
-    i = lineno - 2
-    while i >= 0 and not lines[i].strip():
-        i -= 1
-    if i < 0:
-        return None
-    m = DECL.match(lines[i].strip())
-    return m.group("mode") if m else None
+try:
+    from .gate_decl import arity_mode_above as _decl
+except ImportError:
+    from gate_decl import arity_mode_above as _decl
 
 
 def iter_sources():
@@ -155,7 +145,7 @@ def find_table():
             tbl = _table_of(node)
             if tbl is not None:
                 return (tbl, path.relative_to(ROOT).as_posix(), node.lineno,
-                        declaration_above(lines, node.lineno))
+                        _decl(lines, node.lineno))
     return None, None, None, None
 
 

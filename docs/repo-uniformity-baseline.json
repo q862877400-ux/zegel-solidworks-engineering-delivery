@@ -7,8 +7,8 @@
   "dup_filename": "AGENTS.md 铁律 3（结构按顶层白名单）引申：跨目录同名 .py 视为重复实现嫌疑"
  },
  "measured_at": "2026-10-21",
- "ruff_total_ceiling": 25858,
- "clone_groups_ceiling": 2497,
+ "ruff_total_ceiling": 25857,
+ "clone_groups_ceiling": 2494,
  "no_source_block_ceiling": 0,
  "dup_filename_allow": [],
  "_★待裁决": {
@@ -111,9 +111,23 @@
     108
    ],
    "why": "收敛 _configure_stdio_utf8 ×4（sw_macro_guard/sw_preflight/validate_mcp/validate_skill）到 scripts/sw_stdio.py"
+  },
+  {
+   "at": "2026-10-22g",
+   "from": [
+    25858,
+    2497,
+    108
+   ],
+   "to": [
+    25857,
+    2494,
+    106
+   ],
+   "why": "收敛 declaration_above ×4（两个变体都参数化到 scripts/gate_decl.py，正则由调用方传入）"
   }
  ],
- "dup_function_groups_ceiling": 108,
+ "dup_function_groups_ceiling": 106,
  "dup_function_allow": [
   {
    "functions": "_optional_com_member/_safe_com_member",

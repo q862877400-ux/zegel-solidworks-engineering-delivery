@@ -173,19 +173,10 @@ def forward_sites(entries, files):
             out.append((rel, p, fn, enclosing_def(files[p][1], call.lineno), m, call.lineno))
     out.sort(key=lambda r: (r[0], r[5]))
     return out
-
-
-def declaration_above(lines: list[str], lineno: int):
-    """⇒ `(head, rest)` 或 `None`（未表态）。★ 确定性：向上跳过空行取第一行非空行。"""
-    i = lineno - 2
-    while i >= 0 and not lines[i].strip():
-        i -= 1
-    if i < 0:
-        return None
-    m = DECL.match(lines[i].strip())
-    if not m:
-        return None
-    return m.group("head"), (m.group("rest") or "").strip()
+try:
+    from .gate_decl import decl_parts_above as _decl
+except ImportError:
+    from gate_decl import decl_parts_above as _decl
 
 
 def judge(got, decl, arg, encl, params, uncovered):
@@ -267,7 +258,7 @@ def main() -> int:
         env = cdag.scope_env(fnode) if fnode is not None else {}
         modenv = cdag.scope_env(files[path][1])
         got, why = candidates(arg, fnode, env, modenv)
-        decl = declaration_above(lines, lineno)
+        decl = _decl(lines, lineno, DECL)
         params = cdeg._params(encl) if encl is not None else []
         shown = rel.replace(ROOT.as_posix() + "/", "")
         uncovered = sorted({c for c in got if c not in official}) if got else []

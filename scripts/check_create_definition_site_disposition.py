@@ -130,19 +130,10 @@ def _cimo():
     if DUMPS_ENV:
         cimo.RAW = Path(DUMPS_ENV)
     return cimo
-
-
-def declaration_above(lines: list, lineno: int):
-    """⇒ `(head, rest)` 或 `None`（未表态）。★ 确定性：向上跳过空行取第一行非空行。"""
-    i = lineno - 2
-    while i >= 0 and not lines[i].strip():
-        i -= 1
-    if i < 0:
-        return None
-    m = DECL.match(lines[i].strip())
-    if not m:
-        return None
-    return m.group("head"), (m.group("rest") or "").strip()
+try:
+    from .gate_decl import decl_parts_above as _decl
+except ImportError:
+    from gate_decl import decl_parts_above as _decl
 
 
 def _arg_is_dynamic(text: str, consts: dict) -> bool:
@@ -237,7 +228,7 @@ def main() -> int:
                 lines_cache[path] = []
         lines = lines_cache[path]
         shown = path.name
-        decl = declaration_above(lines, line)
+        decl = _decl(lines, line, DECL)
         non_checked = [s for s in group if s["code"] != "checked"]
         if not non_checked:
             if decl is not None:

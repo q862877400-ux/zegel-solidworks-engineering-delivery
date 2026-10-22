@@ -219,7 +219,11 @@ def main() -> int:
 
     decls = []
     for rel, path, _entry_fn, encl, arg, lineno in fwd:
-        decl = cdfag.declaration_above(files[path][2], lineno)
+        #: ★ 2026-10-22 统一化：原借用 cdfag.declaration_above（跨门禁依赖），
+        #:   现直接用共享实现 scripts/gate_decl.decl_parts_above，
+        #:   正则用前向门禁已定义的那一份（cdfag.DECL）
+        from gate_decl import decl_parts_above as _decl_parts
+        decl = _decl_parts(files[path][2], lineno, cdfag.DECL)
         if decl is None or decl[0] != "upstream":
             continue
         decls.append((rel, path, encl, arg, lineno, (decl[1] or "").split()))
