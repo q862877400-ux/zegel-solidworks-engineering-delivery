@@ -60,7 +60,7 @@ class PreflightResult:
 
     missing_packages: List[str]
     dependencies_ready: bool
-    solidworks_ready: Optional[bool]
+    solidworks_ready: bool | None
 
 
 def _module_available(module_name: str) -> bool:
@@ -90,7 +90,7 @@ def missing_com_dependencies() -> List[str]:
 
 
 def pip_install_command(
-    python_executable: Optional[str] = None,
+    python_executable: str | None = None,
     requirements: Sequence[str] = PIP_REQUIREMENTS,
 ) -> List[str]:
     """生成补齐依赖的 pip 命令。"""
@@ -111,7 +111,7 @@ def shell_command_text(command: Sequence[str]) -> str:
 
 
 def install_com_dependencies(
-    python_executable: Optional[str] = None,
+    python_executable: str | None = None,
     requirements: Sequence[str] = PIP_REQUIREMENTS,
 ) -> None:
     """执行 pip 安装，补齐 Python COM 依赖。"""
@@ -133,7 +133,7 @@ def ask_install_permission(
 
 
 def ensure_com_dependencies(
-    allow_install: Optional[bool] = None,
+    allow_install: bool | None = None,
     input_func: Callable[[str], str] = input,
     output_func: Callable[[str], None] = print,
 ) -> List[str]:
@@ -171,7 +171,7 @@ def ensure_com_dependencies(
     return missing
 
 
-def import_com_dependencies(allow_install: Optional[bool] = None):
+def import_com_dependencies(allow_install: bool | None = None):
     """
     导入 pythoncom、win32com 和 VARIANT。
 
@@ -222,11 +222,11 @@ def ensure_solidworks_installed() -> None:
 
 
 def run_preflight(
-    allow_install: Optional[bool] = None,
+    allow_install: bool | None = None,
     check_solidworks: bool = True,
 ) -> PreflightResult:
     """执行依赖和 SolidWorks 安装状态自检。"""
-    solidworks_ready: Optional[bool] = None
+    solidworks_ready: bool | None = None
     if check_solidworks:
         ensure_solidworks_installed()
         solidworks_ready = True

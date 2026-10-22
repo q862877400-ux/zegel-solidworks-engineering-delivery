@@ -325,7 +325,7 @@ class CadStudioBackendRouteInput(BaseInput):
     operation_id: str = Field(..., min_length=1, max_length=160)
     available_backends: list[str] = Field(default_factory=list, max_length=50)
     available_requirements: list[str] = Field(default_factory=list, max_length=50)
-    solidworks_revision: Optional[str] = Field(default=None, max_length=40)
+    solidworks_revision: str | None = Field(default=None, max_length=40)
     exact_api: bool = Field(default=False)
     response_format: ResponseFormat = Field(
         default=ResponseFormat.JSON, description="Return format."
@@ -442,7 +442,7 @@ class CadStudioDfmReviewInput(BaseInput):
         max_length=8,
         description="Optional DFM profile JSON paths; merged as supplier capability intersection.",
     )
-    brep_evidence_path: Optional[str] = Field(
+    brep_evidence_path: str | None = Field(
         default=None, description="Optional SolidWorks/OCCT B-Rep evidence JSON path."
     )
     response_format: ResponseFormat = Field(
@@ -488,7 +488,7 @@ class CadStudioDfmReviewInput(BaseInput):
 
     @field_validator("brep_evidence_path")
     @classmethod
-    def brep_evidence_must_exist(cls, value: Optional[str]) -> Optional[str]:
+    def brep_evidence_must_exist(cls, value: str | None) -> str | None:
         if value is None:
             return value
         path = Path(os.path.expandvars(value)).expanduser()
@@ -745,7 +745,7 @@ class SolidWorksNewDocumentInput(BaseInput):
     doc_type: DocType = Field(
         default=DocType.PART, description="Document type to create."
     )
-    template_path: Optional[str] = Field(
+    template_path: str | None = Field(
         default=None, description="Optional explicit SolidWorks template path."
     )
     response_format: ResponseFormat = Field(
@@ -759,7 +759,7 @@ class SolidWorksCreateBasicPartInput(BaseInput):
     shape: BasicPartShape = Field(
         default=BasicPartShape.CYLINDER, description="Part primitive to create."
     )
-    output_path: Optional[str] = Field(
+    output_path: str | None = Field(
         default=None, description="Optional absolute .SLDPRT Save As path."
     )
     plane_name: str = Field(
@@ -779,7 +779,7 @@ class SolidWorksCreateBasicPartInput(BaseInput):
     depth_mm: float = Field(
         default=50.0, gt=0.0, le=5000.0, description="Extrusion depth in mm."
     )
-    color: Optional[str] = Field(
+    color: str | None = Field(
         default=None, description="Optional document appearance color, e.g. #BFC4C8."
     )
     response_format: ResponseFormat = Field(
@@ -812,7 +812,7 @@ class SolidWorksOpenDocumentInput(BaseInput):
 class SolidWorksSaveDocumentInput(BaseInput):
     """Input for saving the active document."""
 
-    path: Optional[str] = Field(
+    path: str | None = Field(
         default=None,
         description="Optional Save As path. Omit to save current document.",
     )
@@ -919,7 +919,7 @@ class SolidWorksDimensionUpdateInput(BaseInput):
 class SolidWorksAddinHostStatusInput(BaseInput):
     """Input for read-only C# Add-in host deployment and runtime diagnostics."""
 
-    assembly_path: Optional[str] = Field(
+    assembly_path: str | None = Field(
         default=None, description="Optional absolute Add-in assembly path."
     )
     response_format: ResponseFormat = Field(
@@ -1103,7 +1103,7 @@ class SolidWorksReviewDrawingInput(BaseInput):
     output_dir: str = Field(
         ..., min_length=1, description="Directory for review reports and previews."
     )
-    pdf_path: Optional[str] = Field(
+    pdf_path: str | None = Field(
         default=None, description="Optional exported PDF for vector text evidence."
     )
     basename: str = Field(default="drawing_review", min_length=1, max_length=80)
@@ -1129,7 +1129,7 @@ class SolidWorksReviewDrawingInput(BaseInput):
 
     @field_validator("pdf_path")
     @classmethod
-    def review_pdf_must_exist(cls, value: Optional[str]) -> Optional[str]:
+    def review_pdf_must_exist(cls, value: str | None) -> str | None:
         if value is None:
             return value
         path = Path(os.path.expandvars(value)).expanduser()
@@ -1148,7 +1148,7 @@ class SolidWorksInspectDrawingInput(BaseInput):
         ..., min_length=1, description="Directory for structural report and previews."
     )
     basename: str = Field(default="drawing_inspect", min_length=1, max_length=80)
-    paper_size_hint: Optional[str] = Field(default=None, pattern="^(A4|A3|A2|A1|A0)$")
+    paper_size_hint: str | None = Field(default=None, pattern="^(A4|A3|A2|A1|A0)$")
     response_format: ResponseFormat = Field(
         default=ResponseFormat.JSON, description="Return format."
     )
@@ -1175,16 +1175,16 @@ class SolidWorksHoleFeatureInput(BaseInput):
     diameter_mm: float = Field(
         default=5.0, gt=0.0, le=1000.0, description="Main hole diameter, mm."
     )
-    depth_mm: Optional[float] = Field(
+    depth_mm: float | None = Field(
         default=None, gt=0.0, le=5000.0, description="Blind depth, mm."
     )
-    secondary_diameter_mm: Optional[float] = Field(
+    secondary_diameter_mm: float | None = Field(
         default=None,
         gt=0.0,
         le=2000.0,
         description="Counterbore/countersink diameter, mm.",
     )
-    secondary_depth_mm: Optional[float] = Field(
+    secondary_depth_mm: float | None = Field(
         default=None, gt=0.0, le=5000.0, description="Counterbore depth, mm."
     )
     included_angle_deg: float = Field(
@@ -1193,10 +1193,10 @@ class SolidWorksHoleFeatureInput(BaseInput):
         lt=170.0,
         description="Countersink included angle, degrees.",
     )
-    slot_end_x_mm: Optional[float] = Field(
+    slot_end_x_mm: float | None = Field(
         default=None, description="Slot end X on the sketch plane, mm."
     )
-    slot_end_y_mm: Optional[float] = Field(
+    slot_end_y_mm: float | None = Field(
         default=None, description="Slot end Y on the sketch plane, mm."
     )
     plane_name: str = Field(
@@ -1254,7 +1254,7 @@ class SolidWorksPlaneCoincidentMateInput(BaseInput):
         min_length=1,
         description="Feature/plane name inside component B.",
     )
-    mate_name: Optional[str] = Field(
+    mate_name: str | None = Field(
         default=None, max_length=120, description="Optional mate feature name."
     )
     response_format: ResponseFormat = Field(
@@ -1284,7 +1284,7 @@ class SolidWorksPlaneDistanceMateInput(BaseInput):
     distance_mm: float = Field(
         default=0.0, ge=0.0, le=5000.0, description="Mate distance in mm."
     )
-    mate_name: Optional[str] = Field(
+    mate_name: str | None = Field(
         default=None, max_length=120, description="Optional mate feature name."
     )
     response_format: ResponseFormat = Field(
@@ -1304,20 +1304,20 @@ class SolidWorksConcentricMateInput(BaseInput):
     radius_a_min_mm: float = Field(
         default=0.0, ge=0.0, description="Minimum cylinder radius in component A, mm."
     )
-    radius_a_max_mm: Optional[float] = Field(
+    radius_a_max_mm: float | None = Field(
         default=None, ge=0.0, description="Maximum cylinder radius in component A, mm."
     )
     radius_b_min_mm: float = Field(
         default=0.0, ge=0.0, description="Minimum cylinder radius in component B, mm."
     )
-    radius_b_max_mm: Optional[float] = Field(
+    radius_b_max_mm: float | None = Field(
         default=None, ge=0.0, description="Maximum cylinder radius in component B, mm."
     )
     lock_rotation: bool = Field(
         default=False,
         description="Whether to lock concentric rotation. Keep false for motors.",
     )
-    mate_name: Optional[str] = Field(
+    mate_name: str | None = Field(
         default=None, max_length=120, description="Optional mate feature name."
     )
     response_format: ResponseFormat = Field(
@@ -1326,14 +1326,14 @@ class SolidWorksConcentricMateInput(BaseInput):
 
     @field_validator("radius_a_max_mm")
     @classmethod
-    def radius_a_range_valid(cls, value: Optional[float], info):
+    def radius_a_range_valid(cls, value: float | None, info):
         if value is not None and value < info.data.get("radius_a_min_mm", 0.0):
             raise ValueError("radius_a_max_mm must be >= radius_a_min_mm")
         return value
 
     @field_validator("radius_b_max_mm")
     @classmethod
-    def radius_b_range_valid(cls, value: Optional[float], info):
+    def radius_b_range_valid(cls, value: float | None, info):
         if value is not None and value < info.data.get("radius_b_min_mm", 0.0):
             raise ValueError("radius_b_max_mm must be >= radius_b_min_mm")
         return value
@@ -1346,7 +1346,7 @@ class SolidWorksSetAppearanceInput(BaseInput):
         default=AppearanceTarget.DOCUMENT, description="Appearance target."
     )
     color: str = Field(..., min_length=1, description="Preset name or #RRGGBB color.")
-    component_keyword: Optional[str] = Field(
+    component_keyword: str | None = Field(
         default=None, description="Required when target=component."
     )
     response_format: ResponseFormat = Field(
@@ -1368,13 +1368,13 @@ class SolidWorksRotaryMotorInput(BaseInput):
     shaft_radius_min_mm: float = Field(
         default=0.0, ge=0.0, description="Minimum shaft cylinder radius in mm."
     )
-    shaft_radius_max_mm: Optional[float] = Field(
+    shaft_radius_max_mm: float | None = Field(
         default=None, ge=0.0, description="Maximum shaft cylinder radius in mm."
     )
     rotor_radius_min_mm: float = Field(
         default=0.0, ge=0.0, description="Minimum rotor cylinder radius in mm."
     )
-    rotor_radius_max_mm: Optional[float] = Field(
+    rotor_radius_max_mm: float | None = Field(
         default=None, ge=0.0, description="Maximum rotor cylinder radius in mm."
     )
     rpm: float = Field(default=60.0, description="Constant motor speed in RPM.")
@@ -1405,14 +1405,14 @@ class SolidWorksRotaryMotorInput(BaseInput):
 
     @field_validator("shaft_radius_max_mm")
     @classmethod
-    def shaft_radius_range_valid(cls, value: Optional[float], info):
+    def shaft_radius_range_valid(cls, value: float | None, info):
         if value is not None and value < info.data.get("shaft_radius_min_mm", 0.0):
             raise ValueError("shaft_radius_max_mm must be >= shaft_radius_min_mm")
         return value
 
     @field_validator("rotor_radius_max_mm")
     @classmethod
-    def rotor_radius_range_valid(cls, value: Optional[float], info):
+    def rotor_radius_range_valid(cls, value: float | None, info):
         if value is not None and value < info.data.get("rotor_radius_min_mm", 0.0):
             raise ValueError("rotor_radius_max_mm must be >= rotor_radius_min_mm")
         return value
@@ -1429,8 +1429,8 @@ class SolidWorksMotionAuditInput(BaseInput):
 class SolidWorksMotionValidationInput(BaseInput):
     """Input for enforcing Motion Study delivery requirements."""
 
-    study_name: Optional[str] = Field(default=None, max_length=120)
-    expected_study_type: Optional[int] = Field(default=None, ge=0, le=10)
+    study_name: str | None = Field(default=None, max_length=120)
+    expected_study_type: int | None = Field(default=None, ge=0, le=10)
     minimum_duration_seconds: float = Field(default=0.001, gt=0.0, le=3600.0)
     minimum_motor_count: int = Field(default=1, ge=0, le=1000)
     require_results: bool = Field(default=True)

@@ -199,7 +199,7 @@ def classify_members(members, kinds=()) -> dict:
 _KIND_INDEX_PATH = (
     Path(__file__).resolve().parents[1] / ".api-signatures" / "member-kinds.json"
 )
-_KIND_CACHE: Optional[dict] = None
+_KIND_CACHE: dict | None = None
 
 
 def load_kind_index() -> dict:
@@ -219,7 +219,7 @@ def load_kind_index() -> dict:
     return _KIND_CACHE
 
 
-def classify_member(member: str, kinds: Optional[dict] = None) -> Optional[str]:
+def classify_member(member: str, kinds: dict | None = None) -> str | None:
     """★ 单个成员判成 `"write"` / `"read"` / `None`（**判不出**）—— ★ 三态，`None` 不是「读」 ✓
 
     ★ 判序（★ **任一来源说「写」就不许标只读**，这是外部评审给的裁决规则）：
@@ -305,7 +305,7 @@ _DOC_TYPE_MARKERS = (
 )
 
 
-def derive_doc_type(source: str) -> Optional[str]:
+def derive_doc_type(source: str) -> str | None:
     """★ 从**工具源码**推它要哪种文档；★ 认不出 ⇒ `None`（★ 不许瞎猜）✓
 
     ★ 判序：★ 先看"不是 X"这类**直白说法**，★ 再看枚举名 —— ★ 两者都是**工具自己写的** ✓

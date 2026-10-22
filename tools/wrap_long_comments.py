@@ -24,7 +24,8 @@ import pathlib
 import re
 import sys
 import tokenize
-import unicodedata
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "scripts"))
+from display_width import display_width as width  # noqa: E402
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -51,15 +52,11 @@ SKIP_MARKERS = (
 DIRECTIVE = re.compile(r"^#:\s*[a-z][a-z0-9-]*:")
 
 
-def width(s: str) -> int:
-    return sum(2 if unicodedata.east_asian_width(c) in ("W", "F") else 1 for c in s)
-
-
 def split_width(body: str, budget: int) -> list[str]:
     parts: list[str] = []
     cur = ""
     for ch in body:
-        cw = 2 if unicodedata.east_asian_width(ch) in ("W", "F") else 1
+        cw = width(ch)                    # ★ 单个字符的显示宽度（共享实现，CJK 计 2）
         if width(cur) + cw > budget:
             parts.append(cur)
             cur = ch

@@ -397,7 +397,7 @@ def selection_point(model, selection: str = "", selection_kind: str = "FACE") ->
         return out
     try:
         vals = [float(x) for x in pt][:3]
-    except Exception as exc:  # noqa: BLE001
+    except Exception:  # noqa: BLE001
         out["error"] = "返回值不是可转 float 的序列：%s（%s）" % (
             str(pt)[:60],
             type(pt).__name__,

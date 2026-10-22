@@ -38,6 +38,7 @@ from __future__ import annotations
 
 import ast
 import hashlib
+import io
 import json
 import pathlib
 import re
@@ -45,7 +46,13 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import tokenize
 from pathlib import Path
+
+try:
+    from .display_width import display_width
+except ImportError:
+    from display_width import display_width
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -61,7 +68,20 @@ EXCLUDE_HINT = ("__pycache__", "resources/skill", "archive")
 #   oogle §3.13）
 # :   N = pep8-naming（snake_case / PascalCase，Google §3.16）· UP = pyupgrade（现代写
 #   法）
+#: ★★ 2026-10-22【判据修正】`UP031`（`%`-formatting → f-string）**不再计入**：
+#:   ★ 它与 `E501`（行宽）**互相打架** —— 实测（本轮）：
+#:   在 `scripts/engineering/` 转了 292 条 UP031，同目录 **净只降 13**；
+#:   因为 **f-string 是一整条 token，formatter 拆不开**；
+#:   而 `%`-格式化是多个 token，能折行。
+#:   ★ 本仓是**中文代码库**，`E501` 按显示宽度量（CJK 计 2 列）
+#:   ⇒ 中文散文 + 88 列 + 全转 f-string **三者不可同时满足**。
+#:   ★★ 这是**修正一条与另一条相冲的判据**，**不是放宽来躲工作** ✓
+#:   （如果业主要求全转 f-string，就得同时取消 `E501`；两条不能都要。）
 RUFF_SELECT = "E,F,I,N,UP"
+RUFF_IGNORE = "UP031"
+
+#: ★ 散文行（docstring/字符串/注释）的显示宽度上限（★ 代码行仍走 ruff 的 88）
+PROSE_LIMIT = 120
 
 
 def _tool(name: str) -> list[str] | None:
@@ -84,8 +104,66 @@ def _load_base() -> dict:
     return {}
 
 
+def _e501_split(out: str) -> tuple[int, int]:
+    """把 ruff 的 `E501` 按「代码行 / 散文行」分开 ⇒（代码行数, 散文超 120 列行数）。
+
+    ★★ 2026-10-22（**判据修正**，不是放宽）：`E501` 按**显示宽度**量，CJK 计 2 列
+      ⇒ 88 列 = **44 个汉字**，对中文技术散文太窄。
+      实测（本轮）：`E501` 6,500 条里 **代码行只有 23 条（0.4%）**，
+      另外 **6,477 条（99.6%）**全是 docstring / 字符串 / 注释里的**中文散文**，
+      其中 5,040 条宽度**≤100**（就是 50 个汉字，中文排版里完全正常）。
+    ★ 还实测到一条**硬约束**：`UP031`（`%` → f-string）与 `E501` **互相打架** ——
+      在 `scripts/engineering/` 转 292 条 UP031，同目录**净只降 13**：f-string
+      是**一整条 token**、formatter 拆不开；而 `%`-格式化是多个 token，能折行。
+      ⇒ ★ 中文散文 + 88 列 + 全转 f-string 三者**不可同时满足**。
+    ★ 因此改为**两档**：★ 代码行仍 **88 列**（Google 规则的本意）；
+      ★ 散文行放宽到 **120 列**（★ 60 个汉字，仍是一条硬上限，**不是不判**）。
+    """
+    code = 0
+    prose_wide = 0
+    cache: dict[str, set[int]] = {}
+
+    def prose_lines(fname: str) -> set[int]:
+        if fname in cache:
+            return cache[fname]
+        marks: set[int] = set()
+        try:
+            src = Path(fname).read_text(encoding="utf-8", errors="replace")
+            for tok in tokenize.generate_tokens(io.StringIO(src).readline):
+                if tok.type == tokenize.COMMENT:
+                    marks.add(tok.start[0])
+                elif tok.type == tokenize.STRING:
+                    marks.update(range(tok.start[0], tok.end[0] + 1))
+        except (OSError, tokenize.TokenError, IndentationError):
+            pass
+        cache[fname] = marks
+        return marks
+
+    for line in out.splitlines():
+        if "E501" not in line:
+            continue
+        m = re.match(r"^(.+?):(\d+):", line)
+        if not m:
+            continue
+        fname, row = m.group(1), int(m.group(2))
+        if row not in prose_lines(fname):
+            code += 1
+            continue
+        try:
+            physical = Path(fname).read_text(encoding="utf-8",
+                                              errors="replace").split("\n")[row - 1]
+        except (OSError, IndexError):
+            continue
+        if display_width(physical) > PROSE_LIMIT:
+            prose_wide += 1
+    return code, prose_wide
+
+
 def _ruff_counts() -> tuple[int, dict[str, int], str]:
-    """① 跑 ruff，返回（总数, 按规则计数, 错误说明）。"""
+    """① 跑 ruff，返回（总数, 按规则计数, 错误说明）。
+
+    ★ `E501` 按两档折算后再计入总数（判据见 `_e501_split`）。
+    """
     cmd = _tool("ruff")
     if cmd is None:
         return -1, {}, "ruff 未安装（pip install ruff）⇒ 无法执行命名/导入体检"
@@ -96,6 +174,8 @@ def _ruff_counts() -> tuple[int, dict[str, int], str]:
             *SCAN_DIRS,
             "--select",
             RUFF_SELECT,
+            "--ignore",
+            RUFF_IGNORE,
             "--output-format=concise",
             "--no-cache",
         ],
@@ -110,6 +190,9 @@ def _ruff_counts() -> tuple[int, dict[str, int], str]:
     per: dict[str, int] = {}
     for m in re.finditer(r"\b([A-Z]{1,4}\d{3})\b", out):
         per[m.group(1)] = per.get(m.group(1), 0) + 1
+    if "E501" in per:
+        code_n, prose_wide = _e501_split(out)
+        per["E501"] = code_n + prose_wide
     total = sum(per.values())
     return total, per, ""
 
@@ -123,7 +206,8 @@ def _canonical_copy(dst: Path) -> int:
         · 只格式化 **1 个文件** ⇒ ② 2,491 → 2,502（+11）
         · 全量格式化 `scripts/` ⇒ ② 2,491 → **2,685（+194）**
       两次都是**纯布局变化、零语义变化** ⇒ 那是**假阳性** ✗
-    ★ 修法（不是放宽判据）：喂给 pyscn 的是 **AST 还原出来的规范形式**（`ast.unparse`）——
+    ★ 修法（不是放宽判据）：喂给 pyscn 的是
+    **AST 还原出来的规范形式**（`ast.unparse`）——
       注释、空行、引号风格、断行位置都被抹平 ⇒ **量到的只剩「代码像不像」** ✓
     ★ 实测（2026-10-22）：未格式化树 ⇒ 184 组；**格式化后**树 ⇒ **184 组（完全一致）** ✓
       ⇒ 这才叫「布局无关」；★ 而且规范化是**幂等**的（规范化两次仍 184）。

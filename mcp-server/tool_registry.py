@@ -362,7 +362,7 @@ class Param:
     kind: type
     default: Any = ...
     description: str = ""
-    required: Optional[bool] = None
+    required: bool | None = None
 
     @property
     def is_required(self) -> bool:
@@ -440,20 +440,20 @@ class ToolSpec:
     params: list[Param] = field(default_factory=list)
     inject: str = ""
     needs_model: bool = False
-    read_only: Optional[bool] = None
+    read_only: bool | None = None
     #: ★★ **效应声明**（规格 210 · B1）：**可能改**哪几类状态 ——
     #: 类别固定七类：文档内容 / 文件系统 / 选区 / 激活文档 / 编辑态 / 视图 / 重建或解析
     #: 。
     #:   ★★ **三态**：`None` = **未知**（★ 机械初判判不出的那批，**不许当成"无写"**）·
     #:   `()` = **确认不改任何状态**（这才是"纯读"）· 非空 = 改这几类 ✓
     #:   ★ 由 `scripts/` 侧的效应表（生成物）填充，见 `effective_writes()`。
-    writes: Optional[tuple] = None
+    writes: tuple | None = None
     #: ★ `writes` 的**来源**：`static`（机械初判）/ `observed`（真机指纹实证）/ `human`
     #: （人判）
     writes_source: str = "unknown"
     #: ★ **依赖**哪几类状态（前置）。★ 与 `writes` 同一套类别名 ✓
     requires: tuple = ()
-    idempotent: Optional[bool] = None
+    idempotent: bool | None = None
     #: ★ `idempotent` 的**来源**（`static` / `observed` / `human`；`unknown` = 尚未判过
     #: ）✓
     idempotent_source: str = "unknown"
@@ -461,14 +461,14 @@ class ToolSpec:
     #:   ★ "写"可以是可补偿的（新增特征就删掉增量），★ "破坏性"是**不可逆**的那类 ✓
     #:   ★ 三态：`None` = **未声明** ⇒ ★ 注解里**不发**这一条 ⇒ ★ 按 MCP 缺省语义
     #:   **客户端会当作"可能破坏"**（★ 这正是我们要的保守方向）✓
-    destructive: Optional[bool] = None
+    destructive: bool | None = None
     load_automation: bool = True
-    extra_op: Optional[Callable[[Any], Any]] = None
+    extra_op: Callable[[Any], Any] | None = None
     doc: str = ""
     omitted_params: tuple[str, ...] = ()
-    param_alias: dict[str, Optional[str]] = field(default_factory=dict)
-    derived_args: Optional[Callable[[Any], dict]] = None
-    pre_call: Optional[Callable[[Any], None]] = None
+    param_alias: dict[str, str | None] = field(default_factory=dict)
+    derived_args: Callable[[Any], dict] | None = None
+    pre_call: Callable[[Any], None] | None = None
 
 
 def check_spec(spec: ToolSpec) -> None:
@@ -689,7 +689,7 @@ PRECHECK_ENABLED = str(os.environ.get("SW_PRECHECK", "on")).strip().lower() not 
 )
 
 
-def precheck_payload(spec: "ToolSpec", inject_name: str, host) -> Optional[str]:
+def precheck_payload(spec: "ToolSpec", inject_name: str, host) -> str | None:
     """★★ **按声明自动生成的预检** —— ★ 返回 `None` 表示**放行**；★ 否则返回**要直接回的 JSON 串** ✓
 
     ★★ 这是 B4 的落点（★ 评审的四条之一）：★「工具层返回**结构化**的『不适用』，
@@ -724,9 +724,9 @@ def make_tool_function(
     spec: ToolSpec,
     input_model: type,
     run_locked: Callable[..., str],
-    resolve_model: Optional[Callable[[], Any]] = None,
-    resolvers: Optional[dict[str, Callable[[Any], Any]]] = None,
-    inject_as: Optional[str] = None,
+    resolve_model: Callable[[], Any] | None = None,
+    resolvers: dict[str, Callable[[Any], Any]] | None = None,
+    inject_as: str | None = None,
 ) -> Callable[..., str]:
     """生成与 `server.py` 既有工具**同形状**的函数体。
 
@@ -801,7 +801,7 @@ def make_tool_function(
 _EFFECTS_PATH = (
     Path(__file__).resolve().parents[1] / "docs" / "effect-declarations.json"
 )
-_EFFECTS_CACHE: Optional[dict] = None
+_EFFECTS_CACHE: dict | None = None
 
 
 def _effects_table() -> dict:
@@ -828,7 +828,7 @@ def _effects_table() -> dict:
 #:  ·
 #:     ★ `motion_create_study` 静态 `[]` 而观察 **改了 `selection`+`dirty`+`features`** ✓
 _OBSERVED_PATH = Path(__file__).resolve().parents[1] / "docs" / "effect-observed.json"
-_OBSERVED_CACHE: Optional[dict] = None
+_OBSERVED_CACHE: dict | None = None
 
 
 def _observed_table() -> dict:
@@ -846,7 +846,7 @@ def _observed_table() -> dict:
     return _OBSERVED_CACHE
 
 
-def observed_writes(spec: "ToolSpec") -> Optional[tuple]:
+def observed_writes(spec: "ToolSpec") -> tuple | None:
     """★ **真机观察到**的效应（★ 没有记录 ⇒ `None`）✓"""
     row = _observed_table().get(spec.name)
     if isinstance(row, dict) and row.get("writes"):
@@ -854,7 +854,7 @@ def observed_writes(spec: "ToolSpec") -> Optional[tuple]:
     return None
 
 
-def effective_writes(spec: "ToolSpec") -> Optional[tuple]:
+def effective_writes(spec: "ToolSpec") -> tuple | None:
     """★ 这个工具**可能改**哪几类状态 —— ★★ `None` 表示**未知**（★ 不等于"无写"）✓
 
     ★★ 判序（★ **实证优先** —— 这是评审定的）：
@@ -942,8 +942,8 @@ def register(
     base: type,
     response_enum: Any,
     run_locked: Callable[..., str],
-    resolve_model: Optional[Callable[[], Any]] = None,
-    resolvers: Optional[dict[str, Callable[[Any], Any]]] = None,
+    resolve_model: Callable[[], Any] | None = None,
+    resolvers: dict[str, Callable[[Any], Any]] | None = None,
 ) -> list[str]:
     """把声明注册成 MCP 工具。返回**已注册的工具名**（供日志与门禁核对）。
 

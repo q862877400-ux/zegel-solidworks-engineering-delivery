@@ -182,7 +182,7 @@ class MacroGenerationResult:
     validation: MacroValidationResult
 
 
-def normalize_model_family(model_name: Optional[str]) -> str:
+def normalize_model_family(model_name: str | None) -> str:
     """将具体模型名归一为 gpt / kimi / claude / generic。"""
     name = (model_name or "").strip().lower()
     if not name:
@@ -197,7 +197,7 @@ def normalize_model_family(model_name: Optional[str]) -> str:
 
 
 def build_prompt(
-    user_request: str, model_name: Optional[str] = None, strict: Optional[bool] = None
+    user_request: str, model_name: str | None = None, strict: bool | None = None
 ) -> str:
     """按模型族生成提示词。"""
     family = normalize_model_family(model_name)
@@ -244,7 +244,7 @@ def validate_vba_macro(code: str) -> MacroValidationResult:
     return MacroValidationResult(ok=not issues, issues=issues)
 
 
-def select_template_key(user_request: str) -> Optional[str]:
+def select_template_key(user_request: str) -> str | None:
     """根据用户指令关键词选择本地 VBA 模板。"""
     text = user_request.lower()
     for key, keywords in KEYWORD_TEMPLATE_MAP.items():
@@ -253,7 +253,7 @@ def select_template_key(user_request: str) -> Optional[str]:
     return None
 
 
-def fallback_macro_for_request(user_request: str) -> Optional[str]:
+def fallback_macro_for_request(user_request: str) -> str | None:
     """按用户需求返回本地兜底 VBA 模板。"""
     key = select_template_key(user_request)
     if key is None:
@@ -264,7 +264,7 @@ def fallback_macro_for_request(user_request: str) -> Optional[str]:
 def generate_macro_with_guard(
     user_request: str,
     model_call: Callable[[str, int], str],
-    model_name: Optional[str] = None,
+    model_name: str | None = None,
     timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS,
     max_retries: int = MAX_RETRIES,
 ) -> MacroGenerationResult:
