@@ -5,7 +5,8 @@
 # 文件:   scripts/check_repo_uniformity.py
 # 定位:   业主 2026-10-21 指令 ——「避免局部很整洁但整体很混乱；同一个功能多个函数重复
 #           实现；
-#         同一个东西在不同的地方命名不一样」。业主明确要求「**参考编程规范，不要自己随便想几个标准**」。
+# 同一个东西在不同的地方命名不一样」。业主明确要求「**参考编程规范，不要自己随便想几个
+#   标准**」。
 #
 # ★★ 判据的权威出处（★ 每一条都能指回去）：
 #   ① 命名 / 导入风格 —— **Google Python Style Guide**
@@ -18,12 +19,14 @@
 #      https://github.com/ludo-technologies/pyscn
 #      → 用 `pyscn analyze --select clones` 机械执行
 #   ③ 死代码 / 循环依赖 / 分层违规 / 复杂度 —— 同样 **pyscn**
-#   ④ 本仓契约 —— `AGENTS.md`（六铁律 + A1–A10）· `docs/union-conventions.md`（五统一 + R1–R14）
+# ④ 本仓契约 —— `AGENTS.md`（六铁律 + A1–A10）· `docs/union-conventions.md`（五统一 + 
+#   R1–R14）
 #      · 来源块（AGENTS.md §十八）· 顶层白名单（AGENTS.md 铁律 3）
 #
 # ★ 设计原则：
 #   · **本文件不发明判据** —— 只把上面四类权威判据"接线"成一道可执行的门禁。
-#   · 每个指标都记录**基线**，基线**只许降不许升**（`docs/repo-uniformity-baseline.json`）。
+# · 每个指标都记录**基线**，基线**只许降不许升**（`docs/repo-uniformity-baseline.json`
+#   ）。
 #   · 工具不可用（ruff/pyscn 未安装）时 → **FAIL 并说明**，不静默跳过
 #     （★ 静默跳过与没跑等价 —— 见 `docs/known-facts.md` 事实 62）。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -32,6 +35,8 @@
 """
 from __future__ import annotations
 
+import ast
+import hashlib
 import json
 import pathlib
 import re
@@ -49,8 +54,10 @@ SCAN_DIRS = ("scripts", "tools", "mcp-server")
 EXCLUDE_HINT = ("__pycache__", "resources/skill", "archive")
 
 #: ① ruff 选哪些规则族 —— ★ 全部对应 Google Style Guide 的硬条目
-#:   E = pycodestyle 错误 · F = pyflakes（未定义名/未用导入）· I = isort（导入分组，Google §3.13）
-#:   N = pep8-naming（snake_case / PascalCase，Google §3.16）· UP = pyupgrade（现代写法）
+# :   E = pycodestyle 错误 · F = pyflakes（未定义名/未用导入）· I = isort（导入分组，G
+#   oogle §3.13）
+# :   N = pep8-naming（snake_case / PascalCase，Google §3.16）· UP = pyupgrade（现代写
+#   法）
 RUFF_SELECT = "E,F,I,N,UP"
 
 
@@ -92,16 +99,18 @@ def _pyscn_clones() -> tuple[int, dict[str, int], str]:
     cmd = _tool("pyscn")
     if cmd is None:
         return -1, {}, "pyscn 未安装（pip install pyscn）⇒ 无法执行重复代码体检"
-    p = subprocess.run(cmd + ["analyze", "--select", "clones", "--json", "--output", "-",
-                              *SCAN_DIRS],
+    p = subprocess.run(cmd + ["analyze", "--select", "clones",
+                              "--json", "--output", "-", *SCAN_DIRS],
                        capture_output=True, text=True, encoding="utf-8",
                        errors="replace", cwd=str(R), stdin=subprocess.DEVNULL)
     raw = p.stdout or ""
     try:
         d = json.JSONDecoder().raw_decode(raw, 0)[0]["clone"]
     except Exception:                                                     # noqa: BLE001
-        return -1, {}, "pyscn 输出无法解析（%s）" % (raw[:120] or (p.stderr or "")[:120])
-    by_type = {str(k): int(v) for k, v in (d.get("statistics") or {}).get("clones_by_type", {}).items()}
+        bad = (raw or (p.stderr or ""))[:120]
+        return -1, {}, f"pyscn 输出无法解析（{bad}）"
+    stats = d.get("statistics") or {}
+    by_type = {str(k): int(v) for k, v in stats.get("clones_by_type", {}).items()}
     return len(d.get("clone_groups") or []), by_type, ""
 
 
@@ -127,14 +136,78 @@ def _dup_filenames() -> list[str]:
             if any(k in s for k in EXCLUDE_HINT):
                 continue
             seen.setdefault(f.name, []).append(f.relative_to(R).as_posix())
-    return ["%s ⇒ %s" % (n, " · ".join(v)) for n, v in seen.items()
+    return ["{} ⇒ {}".format(n, " · ".join(v)) for n, v in seen.items()
             if len(v) > 1 and n != "__init__.py"]
+
+
+#: ★★ ⑤ 跨文件「同函数体」—— 业主指令的头号关切：「同一个功能多个函数重复实现」。
+#:   判据：函数体归一化（去 docstring、把 Name 与形参名换成占位符）后取哈希，
+#:   **跨文件同哈希** = 同一函数的多份实现（★ 同一文件内同名不算，那是重载）。
+#:   算法口径 = Type-2 克隆（重命名标识符后相同），出处
+#:   https://github.com/ludo-technologies/pyscn
+_TOKEN = "@@ID@@"
+
+
+class _NormNames(ast.NodeTransformer):
+    """把 Name / arg 全换成占位符（让「变量名不同、逻辑相同」也归到一组）。"""
+
+    def visit_Name(self, node: ast.Name) -> ast.AST:                      # noqa: N802
+        return ast.copy_location(ast.Name(id=_TOKEN, ctx=node.ctx), node)
+
+    def visit_arg(self, node: ast.arg) -> ast.AST:                        # noqa: N802
+        node.arg = _TOKEN
+        return node
+
+
+def _body_hash(node: ast.AST) -> str:
+    """函数体的归一化哈希（去 docstring、去名字差异）。"""
+    try:
+        body = list(getattr(node, "body", []))
+        first = body[0] if body else None
+        is_doc = (isinstance(first, ast.Expr)
+                  and isinstance(getattr(first, "value", None), ast.Constant)
+                  and isinstance(first.value.value, str))
+        if is_doc:
+            body = body[1:]
+        mod = _NormNames().visit(ast.Module(body=body, type_ignores=[]))
+        ast.fix_missing_locations(mod)
+        dumped = ast.dump(mod, annotate_fields=False, include_attributes=False)
+        return hashlib.sha256(dumped.encode("utf-8")).hexdigest()[:16]
+    except Exception:                                                     # noqa: BLE001
+        return ""
+
+
+def _dup_functions() -> list[str]:
+    """⑤ 跨文件同函数体组（返回可直接打印的清单）。"""
+    groups: dict[str, list[tuple[str, str]]] = {}
+    for d in SCAN_DIRS:
+        for f in (R / d).rglob("*.py"):
+            s = str(f).replace("\\", "/")
+            if any(k in s for k in EXCLUDE_HINT):
+                continue
+            try:
+                tree = ast.parse(f.read_text(encoding="utf-8", errors="replace"))
+            except Exception:                                             # noqa: BLE001
+                continue
+            for n in ast.walk(tree):
+                if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    h = _body_hash(n)
+                    if h:
+                        rel = f.relative_to(R).as_posix()
+                        groups.setdefault(h, []).append((n.name, rel))
+    out: list[str] = []
+    for members in groups.values():
+        names = sorted({m[0] for m in members})
+        files = sorted({m[1] for m in members})
+        if len(files) > 1:
+            out.append("{} ⇒ {}".format("/".join(names[:3]), " · ".join(files)))
+    return out
 
 
 def main() -> int:
     base = _load_base()
     ok = True
-    print("  ★ 判据出处：① ruff=Google Python Style Guide · ② pyscn 克隆检测 · ④ AGENTS.md 契约")
+    print("  ★ 判据出处：① ruff=Google Style Guide · ② pyscn 克隆 · ④ AGENTS.md 契约")
     print()
 
     # ① ruff
@@ -147,7 +220,7 @@ def main() -> int:
         st = "PASS" if n1 <= ceil1 else "FAIL"
         print(f"  [{st}] ① ruff（{RUFF_SELECT}）= {n1}（上界 {ceil1}）")
         top = sorted(per1.items(), key=lambda x: -x[1])[:6]
-        print("        Top 规则: " + " · ".join("%s×%d" % (k, v) for k, v in top))
+        print("        Top: " + " · ".join(f"{k}×{v}" for k, v in top))
         ok = ok and n1 <= ceil1
 
     # ② pyscn 克隆
@@ -172,10 +245,24 @@ def main() -> int:
     dups = _dup_filenames()
     allow = set(base.get("dup_filename_allow") or [])
     real = [d for d in dups if d.split(" ⇒ ")[0] not in allow]
-    print(f"  [{'PASS' if not real else 'FAIL'}] ④ 同名 .py = {len(real)}（上界 0 · 豁免 {len(allow)} 条）")
+    tag = "PASS" if not real else "FAIL"
+    print(f"  [{tag}] ④ 同名 .py = {len(real)}（上界 0 · 豁免 {len(allow)} 条）")
     for d in real:
         print(f"        {d}")
     ok = ok and not real
+
+    # ⑤ 跨文件同函数体（★ 业主头号关切：同一个功能多个函数重复实现）
+    dfun = _dup_functions()
+    ceil5 = int(base.get("dup_function_groups_ceiling", 10 ** 9))
+    allow5 = set(base.get("dup_function_allow") or [])
+    real5 = [d for d in dfun if d.split(" ⇒ ")[0] not in allow5]
+    st = "PASS" if len(real5) <= ceil5 else "FAIL"
+    print(f"  [{st}] ⑤ 跨文件同函数体组 = {len(real5)}"
+          f"（上界 {ceil5} · 豁免 {len(allow5)} 组）")
+    if len(real5) > ceil5:
+        for d in sorted(real5, key=len)[:10]:
+            print(f"        {d[:150]}")
+    ok = ok and len(real5) <= ceil5
 
     print()
     print(f"  ★ 结论：{'仓库统一化体检通过' if ok else '仓库统一化体检未通过'}")

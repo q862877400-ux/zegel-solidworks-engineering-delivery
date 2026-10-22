@@ -235,21 +235,12 @@ def insert_boundary_surface_report(
         tangency_deg=tangency_deg, merge_body=merge_body,
     )
 
-def _feature_count(model) -> int:
-    """★ 特征树计数 —— ★ 本 COM 绑定里 `GetFeatureCount` 是**属性**（`() `会报
-    `TypeError: 'int' object is not callable`）⇒ ★ 这里两种形态都吃 ✓"""
-    attr = getattr(model, "GetFeatureCount", None)
-    if attr is None:
-        return -1
-    if callable(attr):
-        try:
-            return int(attr())
-        except TypeError:
-            pass
-    try:
-        return int(attr)
-    except (TypeError, ValueError):
-        return -1
+#: ★ 2026-10-22（仓库统一化）：`_feature_count` 原在本文件与 `sw_cosmetic_weld_bead.py` /
+#:   `sw_weld_bead.py` 各有一份（逻辑逐字相同）⇒ 收敛到 `scripts/sw_feature_tree.py` ✓
+try:
+    from .sw_feature_tree import feature_count as _feature_count
+except ImportError:
+    from sw_feature_tree import feature_count as _feature_count
 
 def select_face_with_fallback(model, face_index: int, append: bool,
                               before_count: int) -> dict:

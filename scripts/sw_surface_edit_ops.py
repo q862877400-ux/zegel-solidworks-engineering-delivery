@@ -83,26 +83,12 @@ SURFACE_EDIT_STATUS = {
 }
 
 
-def _tree_names(model):
-    """★ 特征树的**有序特征名清单**（★ 判据用：调用前后比它）。
-
-    ★★ 2026-10-03（轮 473）**用本仓现成的 `sw_part.feature_names`** ——
-      ⚠ 我第一版自己写了一条路（`FeatureManager.GetFeatureCount(True)` +
-        `FeatureByPositionReverse(i)`）⇒ ★ **真机上它回 `None`** ⇒
-        5 条**全记成"树无增量"**，★ 而**真因是判据坏了、不是能力不行** ⚠
-      ★ `sw_part.feature_names` 是本仓已验证过的：★ **两层过滤**
-        （① `GetTypeName2` 非空 ⇒ 排除容器、与 UI 语言无关 ② 再排 `_CONTAINER_NODES`）
-        ⇒ ★ 那种过滤正是"按名找特征"不假通过的前提 ✓
-    ⚠ 取不到 ⇒ 回 `None`（★ 调用方写 `tree_delta: null`，**不猜**）。
-    """
-    try:
-        from .sw_part import feature_names as _fn
-    except ImportError:
-        from sw_part import feature_names as _fn
-    try:
-        return list(_fn(model) or [])
-    except Exception:                                                # noqa: BLE001
-        return None
+#: ★ 2026-10-22（仓库统一化）：`_tree_names` 原在本文件与另外 3 个模块各有一份（逻辑逐字相同）
+#:   ⇒ 收敛到单一实现 `scripts/sw_feature_tree.py`（★ 轮 473 那条教训的完整说明也搬过去了 ✓）
+try:
+    from .sw_feature_tree import tree_names as _tree_names
+except ImportError:
+    from sw_feature_tree import tree_names as _tree_names
 
 
 def _delta(before, after):

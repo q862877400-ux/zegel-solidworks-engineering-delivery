@@ -30,8 +30,10 @@
 #   （把它们一次判完需要逐个人工定性，会变成半成品 —— 先可见化 + 冻结下界）。
 #
 # ## ★★★ spec 233：上面那组读数**是虚增的**（口径缺陷，已修）
-# `ast.walk(fn)` 会**下钻到嵌套 `def`** ⇒ 嵌套函数里的同一个调用点被**外层与内层各计一次**。
-# 真树实测虚增：`visible` **+34** · `非字面量` **+6**（其中 3 处被同时计进 `param` 与 `local`，
+# `ast.walk(fn)` 会**下钻到嵌套 `def`** ⇒ 嵌套函数里的同一个调用点被**外层与内层各计一次
+# **。
+# 真树实测虚增：`visible` **+34** · `非字面量` **+6**（其中 3 处被同时计进 `param` 与 `l
+# ocal`，
 # 3 处被计两次 `local`）。修正后（按调用点去重 + 按**最内层包围 `def`** 归属）：
 # ```
 #   COM 包装器调用点总数 1266   （1310 → 1270 → ★ spec 240：1266）
@@ -41,15 +43,20 @@
 #         ├ 局部变量               46   （52 → 46）
 #         └ 计算式                  2   （不变）
 # ```
-# ★★ **spec 240 的 -4**：`sw_weldment.py` 删掉无调用方的共用骨架 `_create_from_definition`
-#   （它含 4 个 `get_com_member(..., "<字面量>")` 调用点：`FeatureManager` / `CreateDefinition` /
+# ★★ **spec 240 的 -4**：`sw_weldment.py` 删掉无调用方的共用骨架 `_create_from_definitio
+# n`
+# （它含 4 个 `get_com_member(..., "<字面量>")` 调用点：`FeatureManager` / `CreateDefini
+# tion` /
 #   `CreateFeature` / `GetErrorCode`）⇒ 可见调用点 1187 → **1183**。
 #   ★ 这是**正当减少**（删了代码，不是探测器漏了）；★ 替代的内容断言 =
 #   `tests/test_mate_official_entry.py`（按名字定位 `create_profile_center_mate`，
-#   断言它不走 `CreateDefinition`、且逐字调 `call_assembly_doc(…, "CreateMateData"/"CreateMate")`）。
+# 断言它不走 `CreateDefinition`、且逐字调 `call_assembly_doc(…, "CreateMateData"/"Create
+# Mate")`）。
 #   ★★ 注意：新加的 2 个 `call_assembly_doc(...)` **不计入本计数** —— `call_assembly_doc`
-#   **不在** `audit_call_arity.WRAPPERS`（`{_safe_member, get_com_member, safe_get_com_member,
-#   call_com_member}`）里 ⇒ 它由**另一条**门禁 `check_assembly_doc_call_shape.py`（spec 228）管。
+# **不在** `audit_call_arity.WRAPPERS`（`{_safe_member, get_com_member, safe_get_com_mem
+# ber,
+# call_com_member}`）里 ⇒ 它由**另一条**门禁 `check_assembly_doc_call_shape.py`（spec 22
+# 8）管。
 # ★ `sum(buckets) == nonliteral` 现在是**门禁内的一条硬断言**（口径自洽）——
 #   它自己就是这条缺陷的判据：虚增时 `91 != 85` 即红。
 #
@@ -63,11 +70,14 @@
 #
 # | code | 自证条件 |
 # |---|---|
-# | `covered <gate-id>` | `<gate-id>` 必须是 `docs/gate-classification.json` 里**已登记**的门禁（承重性：登记表改名即红）|
-# | `covered-wrappers`  | 该 `def` 名**就在** `audit_call_arity.WRAPPERS` 里（口径从那里 import，不重写）|
+# | `covered <gate-id>` | `<gate-id>` 必须是 `docs/gate-classification.json` 里**已登记*
+# *的门禁（承重性：登记表改名即红）|
+# | `covered-wrappers`  | 该 `def` 名**就在** `audit_call_arity.WRAPPERS` 里（口径从那里
+#  import，不重写）|
 # | `exempt generated-api` | 文件名匹配 `sw_api_*.py`（生成模块）|
 # | `exempt internal-helper` | `def` 名以 `_` 开头（模块私有）|
-# | `exempt module-local` | 该 `def` 名**全仓只此一处**，且它**所有调用点都在本文件内** |
+# | `exempt module-local` | 该 `def` 名**全仓只此一处**，且它**所有调用点都在本文件内** 
+# |
 #
 # ★ `exempt *` 的语义是**「已知盲区，登记在案」**，**不是**「已验证安全」——
 #   门禁只保证「盲区被枚举且不会被悄悄扩大」，**不保证**这些入口的 by-ref 是对的。
@@ -81,7 +91,8 @@
 #
 # ## 便携性
 # 纯 AST + 两个仓内文件，**不需要反射转储** ⇒ 没有 SKIP 路径。
-# 合成树开关：`DSH_DISPATCH_ROOT`（扫描根）· `DSH_DISPATCH_CLASSIFICATION`（登记表路径）·
+# 合成树开关：`DSH_DISPATCH_ROOT`（扫描根）· `DSH_DISPATCH_CLASSIFICATION`（登记表路径）
+# ·
 # `DSH_DISPATCH_BASELINE_MIN`（下界，仅测试用）。
 from __future__ import annotations
 
@@ -99,7 +110,8 @@ ROOT = Path(os.environ.get("DSH_DISPATCH_ROOT") or Path(__file__).resolve().pare
 #: 门禁分类登记表路径（`covered <gate-id>` 的承重性依据）。
 CLASSIFICATION = Path(os.environ.get("DSH_DISPATCH_CLASSIFICATION")
                       or ROOT / "docs" / "gate-classification.json")
-#: 声明（确定性关联：`def` 上方第一行非空行）。两种头：`covered <gate-id>` / `exempt <code>`。
+#: : 声明（确定性关联：`def` 上方第一行非空行）。两种头：`covered <gate-id>` / `exempt <
+#: code>`。
 DECL = re.compile(r"^#:\s*dispatch-guard:\s*(?P<head>[A-Za-z_-]+)(?:\s+(?P<rest>\S.*?))?\s*$")
 #: 封闭词表（`covered` 带参数；`covered-wrappers` 与四个 `exempt` 子码不带）。
 CODES = {"covered", "covered-wrappers", "generated-api", "internal-helper", "module-local"}
@@ -107,37 +119,81 @@ CODES = {"covered", "covered-wrappers", "generated-api", "internal-helper", "mod
 EXEMPT_CODES = {"generated-api", "internal-helper", "module-local"}
 #: 明细打印上限。
 DETAIL_LIMIT = 30
-#: ★ 下界（真树实测 · 2026-10-09 · spec 229；★ **spec 233 按去重口径订正**）—— 只增不减。
+#: : ★ 下界（真树实测 · 2026-10-09 · spec 229；★ **spec 233 按去重口径订正**）—— 只增不
+#: 减。
 BASELINE_ENTRIES = 37
-BASELINE_INVISIBLE = 85          # spec 233：91 → 85（原先把嵌套 `def` 的调用点计了两次）
-BASELINE_VISIBLE = 1174          # spec 233：1219 → 1185（同上，虚增 34）
-#:                               ★ spec 240：1185 → **1183** —— `sw_weldment._create_from_definition`
-#:                               整体删除（无调用方 + 官方不支持该路径）⇒ 少 4 个字面量调用点。
-#:                               ★ 替代的内容断言见 `tests/test_mate_official_entry.py`。
-#:                               ★★ spec 256：1183 → **1180** —— **`IView::Name` 换路由**：
-#:                               `sw_drawing_query.py:194` / `:264` 与 `sw_drawing_view.py:436` 三处
-#:                               **兜底调用被去掉**（★ 官方 `IView/Name.md` 已标 Obsolete），
-#:                               `sw_review.py:637` 是**同位置换名**（`Name` → `GetName2`，★ 净 0）⇒ **净少 3**。
-#:                               ★★ **为什么是正当减少**：★ 那 3 处是**调废弃成员**，★ 删它们是**目的**不是副作用。
-#:                               ★ 替代的内容断言见 `tests/test_iview_name_routing_done.py`
-#:                               （★ AST 按名字断言「对 `view`/`av` 调 `Name` 的处数 == 0」+
+BASELINE_INVISIBLE = 84          # ★ 2026-10-22：85 → 84（见下方「仓库统一化」那条）
+BASELINE_VISIBLE = 1173          # ★ 2026-10-22：1174 → 1173（同上）
+#: :                               ★★ **2026-10-22（仓库统一化 · 待办「同一功能多份实现
+#: 」）：1174 → 1173
+#: :                                  · 85 → 84** —— ★ 把 `_feature_type_name` 的**两份
+#: 实现**收敛成一份
+#: :                                 （原在 `sw_sweep.py` 与 `sw_wrap.py` 各有一份，逻辑
+#: 逐字相同；
+#: :                                  现统一到 `scripts/sw_feature_tree.py`，两处改为导
+#: 入别名）。
+#: :                               ★ **为什么是正当减少**：★ 少掉的那份是**重复实现**，★
+#:  删它是**目的**不是副作用；
+#: :                                 行为不变（`feature_type_name` 同一实现，两模块仍以 
+#: `_feature_type_name` 可见）。
+#: :                               ★ 替代的内容断言：★ `scripts/check_repo_uniformity.py
+#: ` 的**指标⑤**
+#: :                                 「跨文件同函数体组」—— 它按**函数体归一化哈希**判「
+#: 同一函数多份实现」，
+#:                                 ★ 基线只许降 ⇒ 这类重复**再出现就会被拦** ✓
+#: :                                 （本轮它从 122 降到 113，见 `docs/repo-uniformity-b
+#: aseline.json` 的下调记录）
+#: :                               ★ spec 240：1185 → **1183** —— `sw_weldment._create_f
+#: rom_definition`
+#: :                               整体删除（无调用方 + 官方不支持该路径）⇒ 少 4 个字面
+#: 量调用点。
+#: :                               ★ 替代的内容断言见 `tests/test_mate_official_entry.py
+#: `。
+#: :                               ★★ spec 256：1183 → **1180** —— **`IView::Name` 换路
+#: 由**：
+#: :                               `sw_drawing_query.py:194` / `:264` 与 `sw_drawing_vie
+#: w.py:436` 三处
+#: :                               **兜底调用被去掉**（★ 官方 `IView/Name.md` 已标 Obsol
+#: ete），
+#: :                               `sw_review.py:637` 是**同位置换名**（`Name` → `GetNam
+#: e2`，★ 净 0）⇒ **净少 3**。
+#: :                               ★★ **为什么是正当减少**：★ 那 3 处是**调废弃成员**，★
+#:  删它们是**目的**不是副作用。
+#: :                               ★ 替代的内容断言见 `tests/test_iview_name_routing_don
+#: e.py`
+#: :                               （★ AST 按名字断言「对 `view`/`av` 调 `Name` 的处数 =
+#: = 0」+
 #:                                 ★ 「`sw_review.py` 用的是官方后继 `GetName2`」）。
-#:                               ★★★ 2026-10-10：1180 → **1174** —— **`configure_force` 修一处真 bug**：
+#: :                               ★★★ 2026-10-10：1180 → **1174** —— **`configure_force
+#: ` 修一处真 bug**：
 #:                               `sw_simulation_loadprops.configure_force` 里 **6 处**把
-#:                               `get_com_member(force, "<可写属性>", 值)` **当 setter 用** ✗ ——
-#:                               ★★ `get_com_member` 的语义是「**取或调**」（★ 有实参 ⇒ **一定调用**）；
-#:                               而 `NormalForceOrTorqueValue` / `PhaseAngle` / `PhaseAngleUnit` /
+#: :                               `get_com_member(force, "<可写属性>", 值)` **当 setter
+#:  用** ✗ ——
+#: :                               ★★ `get_com_member` 的语义是「**取或调**」（★ 有实参 
+#: ⇒ **一定调用**）；
+#: :                               而 `NormalForceOrTorqueValue` / `PhaseAngle` / `Phase
+#: AngleUnit` /
 #:                               `EquationLinearUnit` / `EquationAngularUnit` /
-#:                               `EquationCoordinateSystemType` / `IncludeNonUniformDistribution2`
-#:                               是**可写属性**（★ 不是方法）⇒ ★ **抛 `TypeError`** ⇒ **属性从来没设上** ✓
-#:                               ★★★ **真机后果**：★ 求解弹窗报「★ **未定义载荷或规定的位移**」
-#:                               +「固定-刚性零件上的载荷将不处于活动状态」⇒ **求解被前置检查拦住** ✓
-#:                               ★★ **为什么是正当减少**：★ 那 6 处**本就是误用**（把 getter 当 setter）——
-#:                               ★ 改成 `set_com_member` 是**修 bug 的目的**，★ 不是副作用 ✓
-#:                               ★ 替代的内容断言见 `tests/test_simulation_force_property_write.py`
-#:                               （★ AST 断言：★ 「`get_com_member(<可写属性>, …)` **带实参**的处数 == 0」+
-#:                                 ★ 「那三个属性走 `set_com_member`」+ ★ 「`applied` 里记了
-#:                                 `NormalForceOrTorqueValue`」+ ★ 真机证据断言求解成功）✓
+#: :                               `EquationCoordinateSystemType` / `IncludeNonUniformDi
+#: stribution2`
+#: :                               是**可写属性**（★ 不是方法）⇒ ★ **抛 `TypeError`** ⇒ 
+#: **属性从来没设上** ✓
+#: :                               ★★★ **真机后果**：★ 求解弹窗报「★ **未定义载荷或规定
+#: 的位移**」
+#: :                               +「固定-刚性零件上的载荷将不处于活动状态」⇒ **求解被
+#: 前置检查拦住** ✓
+#: :                               ★★ **为什么是正当减少**：★ 那 6 处**本就是误用**（把 
+#: getter 当 setter）——
+#: :                               ★ 改成 `set_com_member` 是**修 bug 的目的**，★ 不是副
+#: 作用 ✓
+#: :                               ★ 替代的内容断言见 `tests/test_simulation_force_prope
+#: rty_write.py`
+#: :                               （★ AST 断言：★ 「`get_com_member(<可写属性>, …)` **
+#: 带实参**的处数 == 0」+
+#: :                                 ★ 「那三个属性走 `set_com_member`」+ ★ 「`applied` 
+#: 里记了
+#: :                                 `NormalForceOrTorqueValue`」+ ★ 真机证据断言求解成
+#: 功）✓
 #: ★★ 下界（真树实测 · 2026-10-09 · spec 230「解析面」）—— 只增不减。
 #: `resolved` = **调用点全部可静态解析出字面量成员名**的分发口数；
 #: `sites` = 这些可解析的调用点数（= 将来能继承 `audit_byref_args` 判据的规模）。

@@ -79,20 +79,12 @@ SURFACE_REF_STATUS = {
 }
 
 
-def _tree_names(model):
-    """★ 特征树的**有序特征名清单**（★ 判据用；★ 用本仓已验证的 `sw_part.feature_names`）。
-
-    ⚠ **不要自己写一条**：★ 轮 473 我用 `GetFeatureCount(True)` + `FeatureByPositionReverse(i)`
-      自己拼了一条，真机上**回 `None`** ⇒ 5 条能力**全被记成"不能"**，★ 而那是**判据坏了**。
-    """
-    try:
-        from .sw_part import feature_names as _fn
-    except ImportError:
-        from sw_part import feature_names as _fn
-    try:
-        return list(_fn(model) or [])
-    except Exception:                                                # noqa: BLE001
-        return None
+#: ★ 2026-10-22（仓库统一化）：`_tree_names` 原在本文件与另外 3 个模块各有一份（逻辑逐字相同）
+#:   ⇒ 收敛到单一实现 `scripts/sw_feature_tree.py`，此处只做导入别名 ✓
+try:
+    from .sw_feature_tree import tree_names as _tree_names
+except ImportError:
+    from sw_feature_tree import tree_names as _tree_names
 
 
 def _delta(before, after):

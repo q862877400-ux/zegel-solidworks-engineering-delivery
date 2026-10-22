@@ -7,8 +7,8 @@
   "dup_filename": "AGENTS.md 铁律 3（结构按顶层白名单）引申：跨目录同名 .py 视为重复实现嫌疑"
  },
  "measured_at": "2026-10-21",
- "ruff_total_ceiling": 25933,
- "clone_groups_ceiling": 2501,
+ "ruff_total_ceiling": 25876,
+ "clone_groups_ceiling": 2498,
  "no_source_block_ceiling": 0,
  "dup_filename_allow": [],
  "_★待裁决": {
@@ -41,6 +41,33 @@
     0
    ],
    "why": "补 75 个来源块（缺来源块 75→0）+ 宽度感知重排来源块（ruff 26373→25933，因 E501 按显示宽度算、CJK 算 2 列）"
+  },
+  {
+   "at": "2026-10-22",
+   "from": [
+    25933,
+    2501,
+    122
+   ],
+   "to": [
+    25921,
+    2498,
+    113
+   ],
+   "why": "收敛 3 组同函数体（_tree_names×4 / _feature_count×3 / _feature_type_name×2）+ 新增指标⑤ 并清理新代码 lint"
+  },
+  {
+   "at": "2026-10-22b",
+   "from": [
+    25921
+   ],
+   "to": [
+    25876
+   ],
+   "why": "两个 dispatch 门禁里本人新增注释按显示宽度折行（顺带修好既有超宽注释）"
   }
- ]
+ ],
+ "dup_function_groups_ceiling": 113,
+ "dup_function_allow": [],
+ "_★新增判据": "⑤ 跨文件同函数体组 = 122 —— 判据：函数体归一化哈希（去 docstring、Name/形参换占位符），跨文件同哈希即同一函数多份实现。出处：Type-2 克隆定义（pyscn）"
 }

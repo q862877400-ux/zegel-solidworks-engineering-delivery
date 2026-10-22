@@ -48,18 +48,12 @@ SW_FM_SWEEP_CUT = 18
 SW_FM_REF_SURFACE = 62
 
 
-def _feature_type_name(model, name):
-    """★ 读特征类型名（★ 事实 242：那是**只依赖 API 对不对**的硬判据）。"""
-    try:
-        f = get_com_member(model, "FeatureByName", name)
-        for meth in ("GetTypeName2", "GetTypeName"):
-            try:
-                return str(get_com_member(f, meth))
-            except Exception:                                  # noqa: BLE001
-                continue
-    except Exception:                                          # noqa: BLE001
-        pass
-    return None
+#: ★ 2026-10-22（仓库统一化）：`_feature_type_name` 原在本文件与 `sw_wrap.py` 各有一份
+#:   （逻辑逐字相同，只差 docstring）⇒ 收敛到 `scripts/sw_feature_tree.py` ✓
+try:
+    from .sw_feature_tree import feature_type_name as _feature_type_name
+except ImportError:
+    from sw_feature_tree import feature_type_name as _feature_type_name
 
 
 def create_sweep_report(model, cut: bool = False, mutate=None) -> dict:

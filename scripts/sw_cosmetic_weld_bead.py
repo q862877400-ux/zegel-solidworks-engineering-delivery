@@ -27,20 +27,12 @@ from typing import Any
 _MM = 0.001                                                                        #: ★ 毫米 → 米（事实 2）
 
 
-def _feature_count(model) -> int:
-    """★ 特征树计数 —— ★ 本绑定里 `GetFeatureCount` 是**属性**（★ 调 `()` 会报 not callable）✓"""
-    attr = getattr(model, "GetFeatureCount", None)
-    if attr is None:
-        return -1
-    if callable(attr):
-        try:
-            return int(attr())
-        except TypeError:
-            pass
-    try:
-        return int(attr)
-    except (TypeError, ValueError):
-        return -1
+#: ★ 2026-10-22（仓库统一化）：`_feature_count` 原在本文件与 `sw_net_blend.py` /
+#:   `sw_weld_bead.py` 各有一份（逻辑逐字相同）⇒ 收敛到 `scripts/sw_feature_tree.py` ✓
+try:
+    from .sw_feature_tree import feature_count as _feature_count
+except ImportError:
+    from sw_feature_tree import feature_count as _feature_count
 
 
 def _faces_all_bodies(model) -> list[Any]:

@@ -1,0 +1,151 @@
+# 仓库统一化报告
+
+**依据**：业主 2026-10-21 指令 ——「我要避免的是**局部很整洁，但是整体很混乱或者很精神分裂**，
+比如同一个功能多个函数重复实现，或者同一个东西在不同的地方命名不一样。整个项目要统一化、规范化，
+有统一的契约、统一的字段，各种各样的东西全部要统一成同一个口径，让整个项目从局部到整体全部都是
+干净整洁、优雅、结构化且系统化。」并明确要求「**参考编程规范，不要自己随便想几个标准**」。
+
+**日期**：2026-10-21 ~ 2026-10-22　**判据机器化**：`scripts/check_repo_uniformity.py`（已接进 `release_check`）
+
+---
+
+## 一、为什么先做「尺子」而不是先改代码
+
+★★ 盘查发现：本仓已有 **50+ 道门禁，但每道只管一摊** —— **没有任何一道在看「全局一致性」** ⇒
+局部全绿而整体可能已分裂。且本机**一个 lint 工具都没装**（ruff / flake8 / pylint / mypy 全无），
+也没有 `ruff.toml` / `setup.cfg` / `mypy.ini`。
+
+⇒ 第一步不是改代码，是**把「整体干净」量出来**（`scripts/check_repo_uniformity.py`），
+并在 `docs/repo-uniformity-baseline.json` 记基线 —— ★ **基线只许降不许升**。
+
+## 二、五条指标的权威出处（不自定义标准）
+
+| # | 指标 | 权威出处 | 机械执行 |
+|---|---|---|---|
+| ① | 命名 / 导入 / 循环依赖 | [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html) —— `snake_case` 模块/函数/变量 · `PascalCase` 类 · `_` 前缀内部成员 · 导入分组且分行 · 循环依赖是 code smell | **ruff 0.17.1** `--select E,F,I,N,UP` |
+| ② | 重复代码（行块级） | [pyscn](https://github.com/ludo-technologies/pyscn) Type 1–4 克隆检测 | **pyscn 1.32.5** `analyze --select clones` |
+| ③ | 来源块 | `AGENTS.md` §十八「新建 `.py` 的模板：docstring 一行 + 来源块紧随其后」 | 自写扫描 |
+| ④ | 同名 `.py` | `AGENTS.md` 铁律 3（结构按顶层白名单）引申 | 自写扫描 |
+| ⑤ | **跨文件同函数体** | 业主头号关切；判据口径 = Type-2 克隆（重命名标识符后相同），出处同 ② | 自写 AST 归一化哈希 |
+
+★ **⑤ 是本轮新增的关键指标** —— ② 的克隆检测按**行块**判，2,501 组里绝大多数是样板
+（probe 样例代码、ToolSpec 声明、来源块）；⑤ 按**函数体**判，只有 113 组，**直接对准
+「同一个功能多个函数重复实现」**。判据：函数体去 docstring、把 `Name` 与形参名换成占位符后取哈希，
+跨文件同哈希即同一函数的多份实现（★ 同文件同名不算，那是重载）。
+
+## 三、本轮读数（★ 只降不升，每一步都有下调记录）
+
+| 指标 | 起点 | 现在 | 变化 |
+|---|---|---|---|
+| ① ruff（E,F,I,N,UP） | 26,378 | **25,876** | **−502** ✓ |
+| ② pyscn 克隆组 | 2,515 | **2,498** | −17 ✓ |
+| ③ 缺来源块 | 189 | **0** | **−189** ✓ |
+| ④ 同名 `.py` | 2 | **0** | −2 ✓ |
+| ⑤ 跨文件同函数体组 | 125 | **113** | **−12** ✓ |
+
+## 四、做过的事
+
+### 4.1 建门禁并接线（★ 不接线 = 空转，事实 62）
+
+新建 `scripts/check_repo_uniformity.py`；`_run_repo_uniformity_gate` 接进 `scripts/release_check.py`
+（`_gate_results` 汇总**两处同时加** —— 元门禁 `check_gate_wiring.py` 在守）；`docs/gate-classification.json`
+登记分类。★ 工具未安装时 **FAIL 而非跳过**（静默跳过与没跑等价）。
+
+### 4.2 删掉一份重复实现（`audit_call_arity.py`）
+
+`scripts/`（337 行 · **有来源块** · 9 符号 · 活版）vs `tools/`（149 行 · **无来源块** · 6 符号 · 停在最早入库）。
+证据：tools 版独有的 `SAFE_MEMBER` 正则（只认 2 个包装名）已被 scripts 版 `WRAPPERS`（认 4 个）+ `call_sites()` 覆盖；
+9 处真 import **全部**解析到 `scripts/`（`sys.path` 优先）⇒ 删除 ✓ · 删后 import 仍成功、9 个相关测试全过 ✓
+
+★ **另一处判为「不是重复」**：`drawing_spec.py` 两份是「真源 + importlib 转发壳」——
+★ 删了会在**运行期 ImportError** ✗ ⇒ 留豁免机制。
+
+### 4.3 补 75 个文件的来源块（★ 一条都不编）
+
+按**可核实证据**分六类，每类的「官方依据」写法不同：
+
+| 类 | 数 | 官方依据 |
+|---|---|---|
+| pure | 51 | 不适用（本仓工具，不调 COM） |
+| swapi | 8 | 官方源 `C:\swapi\types\**`（逐条见文件内引用） |
+| manual | 8 | 逐条人工确证（见下） |
+| deleg | 3 | 经由本仓 COM 封装，签名见被调模块的来源块 |
+| shim | 3 | 不适用（兼容转发壳，真源见 `_IMPLEMENTATION`） |
+| spec | 2 | = 各条 ToolSpec 所包装函数的来源 |
+
+★ **「待回填」最终为 0** —— 75 条每条都有据可查。
+
+★★ 三条分类误判在 **dry-run 阶段**被抓到（★ 没写盘就改掉了）：
+1. `sw_appearance.py` / `routing_review.py` / `cad_doctor.py` 判成「不调 COM」✗ —— 它们经
+   `sw_preflight.import_com_dependencies` **间接**碰 COM ⇒ 补 `COM_IMPORT` 判据 ⇒ 改判 `deleg`。
+2. `map_tools_to_members.py` 判成「兼容转发壳」✗ —— 它只在**注释里**提到别处的 importlib 用法
+   ⇒ 判据改为**只看非注释行**。
+3. 8 条 probe/scan 落到「待回填」⇒ 人工逐条读 docstring 写成具体依据
+   （它们判的是**本仓**运行时行为，不是官方签名），如 `probe_resolver_mark_matrix.py` ⇒
+   「判的是本仓 `RESOLVERS` 的运行时行为（事实 503 一族），不涉官方签名」。
+
+### 4.4 收敛 5 组同函数体（★ 生产代码里的真重复）
+
+新建 **`scripts/sw_feature_tree.py`** = 特征树读取的**单一实现**；原来的多份实现改为导入别名：
+
+| 函数 | 原份数 | 原位置 | 处置 |
+|---|---|---|---|
+| `_tree_names` | **4** | `sw_curve_and_split` · `sw_ref_geometry` · `sw_surface_edit_ops` · `sw_surface_ref_ops` | 全部改为 `from sw_feature_tree import tree_names as _tree_names` |
+| `_feature_count` | **3** | `sw_cosmetic_weld_bead` · `sw_net_blend` · `sw_weld_bead` | 同上（`feature_count`） |
+| `_feature_type_name` | **2** | `sw_sweep` · `sw_wrap` | 同上（`feature_type_name`） |
+
+★ **保留的价值**：四份 `_tree_names` 里最详细的那份 docstring（轮 473 的教训：
+「自己拼 `GetFeatureCount(True)` + `FeatureByPositionReverse(i)` ⇒ 真机回 `None` ⇒
+5 条能力全被记成"不能"，而那是**判据坏了**、不是能力不行」）已搬进单一实现 ✓
+
+★ **连带更新两处「只增不减」下界**（★ 合法下降，原因与替代断言都写进代码注释）：
+- `check_dispatch_entry_guard.py`：`BASELINE_VISIBLE` 1174 → **1173** · `BASELINE_INVISIBLE` 85 → **84**
+- `check_dispatch_arg_guard.py`：`BASELINE_SITES` 46 → **45** · `BASELINE_ENUM` 42 → **41**
+- ★ 替代断言：指标 ⑤ 的基线只许降 ⇒ 这类重复**再出现就会被拦**。
+
+### 4.5 顶层目录 40 → 39 的复核更正
+
+原记「40 个顶层目录」，复核发现**多算一个**：把 `.pytest_cache`（工具缓存、gitignore、不入库）
+当成仓库目录了 ✗。正确口径：**39 个仓库目录 + 3 个工具缓存**（`.pytest_cache` / `.codebase-memory` /
+`.ruff_cache`，三者均 gitignore）。已按 `AGENTS.md` §九 停止条件 #5 更新本文件 ✓
+
+## 五、本轮踩的坑（★ 都是我自己的，已修）
+
+★★ **ruff 的 E501 按「显示宽度」算，CJK 字符算 2 列** ✗
+- 我第一次按**字符数**折行 ⇒ 「字符数 ≤88 但显示宽度 >88」的行仍违规（按 `# 定位:` / `# 官方依据:`
+  前缀用 `unicodedata.east_asian_width` 复算，见本轮 `git log` 里 `698a4453` 的中间态）⇒
+  ruff 反而从 26373 **涨到** 26416（读数来自 `python scripts/check_repo_uniformity.py` 当轮输出）✗
+- 改用 `unicodedata.east_asian_width` **宽度感知**切分 ⇒ 降到 25,876 ✓
+- ★ **教训：给 CJK 项目做行长门禁，不能按字符数切，要按显示宽度。**
+
+★ 其余三个：编辑 `release_check.py` 时误吞掉了 `def _run_tools_index_fresh_gate()` 那一行（运行期 `NameError`）；
+删文件后没重生成 `tools-index.md`；提交时漏列被删文件（描述说删了、索引里没删，补一个提交才真正入库）。
+
+## 六、事实 61 的四道自查（批量改动必做）
+
+- `git diff --numstat` 逐文件核对规模
+- **逐条核对删除行**：1337 处（来源块那批）与 194 处（本轮）**全部**是注释 / 来源块 / 被合并的函数体，
+  **其他 0 处** ✓
+- **内容守恒**：426 个既有来源块文件去空白后正文与 HEAD **逐字相同** ✓
+- `ast.parse` 全部 `.py` ⇒ **语法错 0** ✓
+
+## 七、还剩什么（★ 如实，都记在基线上）
+
+| 项 | 数量 | 性质 | 后续 |
+|---|---|---|---|
+| ① ruff E501 | 16,817 | **风格存量**（本仓大量长中文注释与长字符串） | 逐批折行，基线只降 |
+| ① ruff UP031 | 6,649 | **风格存量**（`%` 格式化是全仓主导写法） | 批量转 f-string 需谨慎（含 `%` 字面量的字符串） |
+| ② pyscn 克隆组 | 2,498 | **多为样板**（probe 样例、ToolSpec 声明、来源块） | 逐组裁决；一次性探针脚本可登记豁免 |
+| ⑤ 同函数体组 | 113 | **真重复嫌疑**，其中 38 组涉及 `scripts/` 生产代码 | 按「真重复 / 转发壳 / 同签名不同语义」三类逐组处置 |
+
+★★ **明确判过、没动的**：`drawing_spec.py` 转发壳（删了会 ImportError）·
+`_select_by_id` / `_empty_callout`（`sw_part` 是被 16 个模块依赖的基座，抽取需单独论证）·
+各类 `main()` / `check()` / `scan()` 同名（**同签名不同语义**，不是重复）。
+
+## 八、判据（当前状态）
+
+```
+python scripts/check_repo_uniformity.py   ⇒ exit 0（五项全 PASS）
+python scripts/check_gate_wiring.py       ⇒ exit 0（门禁全部已接线）
+python scripts/release_check.py           ⇒ exit 0 · status pass · 57 道 · passed 54 · missing []
+```
