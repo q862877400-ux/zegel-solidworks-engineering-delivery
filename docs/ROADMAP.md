@@ -11148,6 +11148,35 @@ elease_check.py **exit 0 · status pass · 57 道 · passed 54 · missing []** �
     ★ 剩下的是后续 de todos（② 缺来源块 · ③ 克隆裁决）✓
 
 
+2026-10-22 ★★★★★ **第 50 轮**（★ DSH 循环 · ★ 目标 = 仓库整体统一化 · ★ 待办 1）
+  **★★★ 主产出：缺来源块 75 → 0，ruff 26373 → 25933（降 440）** ✓
+  **★★ 75 个文件的来源块，按可核实证据分六类 —— ★ 一条都不编**：
+    pure 51（不调 COM）· swapi 8（官方源 C:/swapi）· manual 8（人工确证）·
+    deleg 3（经本仓 COM 封装）· shim 3（兼容转发壳）· spec 2（声明式批次）
+    ⇒ ★★ 「待回填」最终为 0 —— 每条都有据可查 ✓
+  **★★ 三条分类误判在 dry-run 阶段被抓到（★ 没写进盘就改掉了）**：
+    · sw_appearance / routing_review / cad_doctor 判成「不调 COM」✗ —— 它们经
+      sw_preflight.import_com_dependencies **间接**碰 COM ⇒ 补 COM_IMPORT 判据 ⇒ 改判 deleg ✓
+    · map_tools_to_members 判成「兼容转发壳」✗ —— 它只在**注释里**提到别处的 importlib 用法
+      ⇒ 判据改成只看非注释行（_code_lines）✓
+    · 8 条 probe/scan 落到「待回填」⇒ 人工逐条读 docstring 写成具体依据
+      （它们判的是**本仓**运行时行为，不是官方签名）✓
+  **★★★★ 一个大坑：ruff 的 E501 按显示宽度算，CJK 算 2 列** ✗
+    · 第一次按**字符数**切 ⇒ 400 行「字符数≤88 但宽度>88」仍违规 ⇒ ruff 反涨到 **26416** ✗
+    · 改用 unicodedata.east_asian_width 宽度感知切分 ⇒ E501 17315→**16872**、总违规 →**25933** ✓
+    · ★ 教训：**给 CJK 项目做行长门禁，不能按字符数切，要按显示宽度** ✓
+  **★★ 事实 61 四道自查（1337 处删除全部核对）**：
+    · numstat：501 文件 / +2270 / −1337
+    · **逐条核对删除行**：1337 处**全部**是来源块行（定位/官方依据/续行），**其他 0 处** ✓
+    · **内容守恒**：426 个既有块文件去空白后正文与 HEAD **逐字相同** ✓；75 个是本次新增 ✓
+    · ast.parse 全部 ⇒ **语法错 0** ✓
+  **读数**：★ check_repo_uniformity.py **exit 0**（缺来源块 **0** · ruff **25933** · pyscn 2501 · 同名 0）·
+    ★ 基线再下调（ruff 26373→**25933** · 缺来源块 75→**0**）· ★ 重生成 tools-index ·
+    ★ sync_bundled_skill pass · ★ release_check.py **exit 0 · 57 道 · passed 54 · missing []** ✓
+  **未做（★ 如实）**：★ pyscn **2,501 组克隆**、ruff 里 **16,872 条 E501 + 6,651 条 UP031** 都**还在** ✗ ——
+    ★ 本轮清的是「**结构性**缺失（来源块）」，不是「**风格**存量」；★ 风格存量归后续轮次 ✓
+
+
 ## 一·C · 支线：Bunny 并行批量作业（规格 specs/203-bunny-sideline-batches）
 
 > **这一节是支线的**（另一个对话在做，见 docs/kickoff-bunny-sideline.md）。
