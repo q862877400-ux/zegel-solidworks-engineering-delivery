@@ -36,6 +36,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 _REPO = Path(r"" + _ROOT_S + r"")
 for _p in (str(_REPO), str(_REPO / "scripts")):
     if _p not in sys.path:
@@ -43,10 +45,6 @@ for _p in (str(_REPO), str(_REPO / "scripts")):
 sys.stdout.reconfigure(encoding="utf-8")
 
 from scripts.dfm_review import build_dfm_report  # noqa: E402
-
-
-#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
-_ROOT_S = str(Path(__file__).resolve().parents[1])
 
 
 def _doc(path: Path) -> Path:

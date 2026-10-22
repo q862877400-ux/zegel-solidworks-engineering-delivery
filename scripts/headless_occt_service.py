@@ -150,10 +150,10 @@ def build_shape(document: dict[str, Any]):
 
 def collect_evidence(shape) -> dict[str, Any]:
     """@brief 回读有效性、体积、包围盒和拓扑数量。"""
+    from OCP.Bnd import Bnd_Box
     from OCP.BRepBndLib import BRepBndLib
     from OCP.BRepCheck import BRepCheck_Analyzer
     from OCP.BRepGProp import BRepGProp
-    from OCP.Bnd import Bnd_Box
     from OCP.GProp import GProp_GProps
     from OCP.TopAbs import TopAbs_EDGE, TopAbs_FACE, TopAbs_SOLID, TopAbs_VERTEX
     from OCP.TopExp import TopExp_Explorer
@@ -208,13 +208,12 @@ def export_occt(
     overwrite: bool = False,
 ) -> dict[str, Any]:
     """@brief 执行真实 OCCT 写入并返回结构化证据。"""
+    from cad_workbench.cad_core_contracts import sha256_file
     from OCP.BRepTools import BRepTools
-    from OCP.IGESControl import IGESControl_Writer
     from OCP.IFSelect import IFSelect_RetDone
+    from OCP.IGESControl import IGESControl_Writer
     from OCP.STEPControl import STEPControl_AsIs, STEPControl_Writer
     from OCP.StlAPI import StlAPI_Writer
-
-    from cad_workbench.cad_core_contracts import sha256_file
 
     document = json.loads(document_path.read_text(encoding="utf-8"))
     name = str(document.get("documentId") or document_path.stem).replace(" ", "_")

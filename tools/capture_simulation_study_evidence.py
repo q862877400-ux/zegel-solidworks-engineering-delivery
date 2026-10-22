@@ -62,10 +62,11 @@ def main() -> int:
     doc = None
     ok = True
     try:
-        import sw_connect
-        from scripts import sw_part, sw_simulation as sim
         import register_capabilities as rc
+        import sw_connect
         import tool_specs_batch27 as b27
+
+        from scripts import sw_part
 
         #: ① 核声明解析得到 + 记下 inject
         bindings = {}

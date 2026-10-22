@@ -33,10 +33,10 @@ OUT = R / "output" / "family-d-readback-evidence.json"
 
 
 def main() -> int:
-    import sw_connect
-    from sw_connect import get_com_member, safe_get_com_member
     import sw_automation_knowledge as AK
+    import sw_connect
     import sw_selection as SE
+    from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
     ev = {

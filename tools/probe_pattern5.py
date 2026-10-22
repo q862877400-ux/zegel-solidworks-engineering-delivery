@@ -47,8 +47,8 @@ def _feature_names(model):
 
 def _make_block(model, tag):
     """★ 脚手架：★ 建一块**带凸台的板**（★ 阵列需要有一个可阵的特征）。"""
-    from sw_connect import get_com_member
     import sw_part as P
+    from sw_connect import get_com_member
 
     with P.sketch(model, "Front Plane") as sk1:
         sm = get_com_member(model, "SketchManager")
@@ -68,7 +68,7 @@ def _make_block(model, tag):
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document, out_i4
+    from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
     rows = []

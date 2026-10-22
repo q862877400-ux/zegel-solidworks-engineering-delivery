@@ -33,7 +33,6 @@ import re
 import sys
 from pathlib import Path
 
-
 #: ★ 本仓库根（★ 2026-10-03 合并后自定位）
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 ROOT = Path(r"" + _ROOT_S + r"")
@@ -114,7 +113,6 @@ def main() -> int:
     #    ⚠⚠ **第二版修正**（轮 87 抽验发现）：第一版**只扫 `scripts/*.py`**，
     #      于是 `add_component` 被判成"孤立"，而它其实被 `examples/` 与 `tests/` 调用。
     #      ⇒ **调用者扫描必须覆盖所有可能调用它的地方**，否则"孤立"是假的。
-    import ast
 
     called_prod: set = set()
     called_tests: set = set()

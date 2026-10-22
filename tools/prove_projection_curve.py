@@ -46,9 +46,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+import scripts.sw_feature_readback as FR  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-import scripts.sw_feature_readback as FR  # noqa: E402
 
 #: \u2605 \u53cd\u5c04\u91cc\u7684\u503c\uff08\u2605 \u94c1\u5f8b 4\uff1a\u6570\u503c\u5
 #: 3bb\u53cd\u5c04\uff09

@@ -62,8 +62,9 @@ def main() -> int:
     ok = True
     try:
         import sw_connect
-        from scripts import sw_custom_property as cp
         import tool_specs_batch20 as b20
+
+        from scripts import sw_custom_property as cp
 
         #: ① ★ 核声明解析得到
         bindings = {}

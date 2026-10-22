@@ -37,9 +37,9 @@ OUT = R / "output" / "spec209-unfold-fold.json"
 
 def main() -> int:
     import sw_connect
-    from sw_connect import safe_get_com_member
     import sw_part as P
     import sw_sheet_metal as SM
+    from sw_connect import safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
     ev = {

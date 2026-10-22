@@ -21,8 +21,6 @@ r"""@brief 真机冒烟：`sw_export.export_to_bmp` —— ★★ **读 BMP 头�
 
 from __future__ import annotations
 
-import ctypes
-import ctypes.wintypes as w
 import json
 import struct
 import sys
@@ -81,6 +79,7 @@ def main() -> int:
     doc = None
     try:
         import sw_connect
+
         from scripts import sw_export, sw_part
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

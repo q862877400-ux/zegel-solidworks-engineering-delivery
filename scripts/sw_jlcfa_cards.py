@@ -45,21 +45,18 @@ r"""嘉立创 FA 结果卡定位 —— **不依赖列数、不依赖宽度**。
 
 from __future__ import annotations
 
-from pathlib import Path
-
-import re
 import sys
 import warnings
+from pathlib import Path
 from typing import Any
 
 sys.stdout.reconfigure(encoding="utf-8")
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
 import sw_jlcfa_locate as L
 
-
-#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
-_ROOT_S = str(Path(__file__).resolve().parents[1])
 warnings.filterwarnings("ignore")
 
 #: 结构名/导航名 —— 不是分类卡，收集时要排除
@@ -182,6 +179,7 @@ def _scrollbar(win):
 
 def _drag(x1, y1, x2, y2, steps: int = 12) -> None:
     import time
+
     import win32api
     import win32con
 

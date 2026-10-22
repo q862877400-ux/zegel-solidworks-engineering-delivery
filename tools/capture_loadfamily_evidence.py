@@ -61,8 +61,11 @@ def main() -> int:
     ok = True
     try:
         import sw_connect
-        from scripts import sw_part, sw_simulation as sim, sw_simulation_loads as L
         import tool_specs_batch29 as b29
+
+        from scripts import sw_part
+        from scripts import sw_simulation as sim
+        from scripts import sw_simulation_loads as L
 
         #: ① 核 4 个工具声明解析得到（★ 静态那一半）
         bindings = {}

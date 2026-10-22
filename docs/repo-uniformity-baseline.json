@@ -7,7 +7,7 @@
   "dup_filename": "AGENTS.md 铁律 3（结构按顶层白名单）引申：跨目录同名 .py 视为重复实现嫌疑"
  },
  "measured_at": "2026-10-21",
- "ruff_total_ceiling": 15328,
+ "ruff_total_ceiling": 14499,
  "clone_groups_ceiling": 2283,
  "no_source_block_ceiling": 0,
  "dup_filename_allow": [],
@@ -197,6 +197,16 @@
     2283
    ],
    "why": "★ ② 判据修正为【布局无关】（喂 pyscn 规范化副本 ast.unparse）；随后全量 ruff format scripts+tools+mcp-server（1,005 文件）⇒ ① 21,642→15,328、② 稳定 2,283（证明布局无关）"
+  },
+  {
+   "at": "2026-10-22n",
+   "from": [
+    15328
+   ],
+   "to": [
+    14499
+   ],
+   "why": "F821 真 bug 修复 13 文件（_ROOT_S 先用后赋值等）+ TYPE_CHECKING 声明消除 158 个假阳性 + I001/F401 安全自动修"
   }
  ],
  "dup_function_groups_ceiling": 101,

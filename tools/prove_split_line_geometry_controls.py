@@ -41,11 +41,11 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "tools"))
 
+import prove_split_line_geometry_per_example as G  # noqa: E402
+
+import scripts.sw_feature_readback as FR  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-import scripts.sw_feature_readback as FR  # noqa: E402
-from scripts.sw_simulation import select_face_at  # noqa: E402
-import prove_split_line_geometry_per_example as G  # noqa: E402
 
 
 def _loops_per_face(doc):

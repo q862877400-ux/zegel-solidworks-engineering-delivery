@@ -23,7 +23,7 @@ import json
 import re
 import sys
 import time
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
@@ -32,7 +32,7 @@ SWAPI = Path(r"C:\swapi")
 MAP = REPO / "output" / "tool-to-member-map.json"
 OUT = REPO / "output" / "operation-object-matrix-v2.json"
 sys.path.insert(0, str(REPO / "tools"))
-from build_capability_matrix import OPS, OBJ_RULES, classify  # noqa: E402
+from build_capability_matrix import OBJ_RULES, OPS, classify  # noqa: E402
 
 
 def main() -> int:

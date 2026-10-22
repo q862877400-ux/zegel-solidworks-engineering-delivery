@@ -37,7 +37,6 @@ r"""模态弹窗检测与处置 —— 本项目 GUI 自动化的**前置断言*
 
 from __future__ import annotations
 
-import sys
 import time
 from typing import Any
 
@@ -121,6 +120,7 @@ def close_modals(main_hwnd: int, rounds: int = 5) -> int:
     ⇒ 现在**全部**走 `sw_gui_input` 的异常安全原语（抬起在 `finally` 里）。
     """
     import win32api
+
     from scripts import sw_gui_input as _gi
 
     closed = 0

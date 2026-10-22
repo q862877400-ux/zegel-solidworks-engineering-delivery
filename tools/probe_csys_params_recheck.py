@@ -34,9 +34,9 @@ OUT = REPO / "output" / "csys-params-capability-recheck.json"
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_part as P
     import sw_ref_geometry as RG  # noqa: PLC0415
+    from sw_connect import connect_solidworks, get_com_member, new_document
     from sw_feature_readback import csys_params
 
     app, _ = connect_solidworks(visible=True)

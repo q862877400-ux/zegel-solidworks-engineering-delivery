@@ -63,8 +63,8 @@ def _new_part(sw):
 def main() -> int:
     import sw_connect
     import sw_part
-    import sw_surface_features as sf
     import sw_selection_spec as SS
+    import sw_surface_features as sf
 
     out: dict = {
         "official": "IFeatureManager.InsertSweepSurface2",

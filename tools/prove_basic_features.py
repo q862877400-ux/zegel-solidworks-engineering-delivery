@@ -40,19 +40,18 @@ OUT = R / "output" / "basic-features-evidence.json"
 
 def main() -> int:
     import sw_connect
-    from sw_connect import get_com_member, safe_get_com_member
+    from sw_connect import safe_get_com_member
     from sw_part import (
         chamfer,
+        current_sketch_name,
+        end_sketch,
         extrude_boss,
         extrude_cut,
         feature_names,
         fillet,
         sketch_circle,
         sketch_corner_rectangle,
-        sketch_line,
-        end_sketch,
         start_sketch,
-        current_sketch_name,
     )
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)

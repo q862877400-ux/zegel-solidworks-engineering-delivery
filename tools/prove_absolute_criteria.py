@@ -44,6 +44,7 @@ OUT = Path(
 
 
 def main() -> int:
+    import compare_geometry as CG
     import sw_connect
     from sw_connect import get_com_member
     from sw_part import (
@@ -53,7 +54,6 @@ def main() -> int:
         sketch_corner_rectangle,
         start_sketch,
     )
-    import compare_geometry as CG
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]

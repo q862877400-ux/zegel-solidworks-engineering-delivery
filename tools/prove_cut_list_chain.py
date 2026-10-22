@@ -52,7 +52,7 @@ PROFILE = Path(
 
 def main() -> int:
     import sw_connect
-    from sw_connect import safe_get_com_member
+
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,

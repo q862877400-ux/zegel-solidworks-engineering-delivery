@@ -52,11 +52,13 @@ def main() -> int:
     doc = None
     try:
         import sw_connect
-        from scripts import sw_part as P, sw_feature_readback as FR
+        import tool_specs_batch32 as b32
+
+        from scripts import sw_feature_readback as FR
+        from scripts import sw_part as P
         from scripts import (
             sw_simulation as S,
         )  #: ★ select_face_at 在这里（不在 sw_part）
-        import tool_specs_batch32 as b32
 
         #: ① 静态：4 个工具声明解析得到
         bindings = {}

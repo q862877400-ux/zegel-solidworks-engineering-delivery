@@ -22,7 +22,6 @@ from collections import Counter
 from pathlib import Path
 from typing import Any, Iterable
 
-
 MAX_DXF_BYTES = 50 * 1024 * 1024
 MAX_ENTITIES = 200_000
 SUPPORTED_TYPES = {

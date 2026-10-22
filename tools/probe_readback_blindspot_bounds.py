@@ -36,11 +36,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_weldment as W  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_surface_features as SF  # noqa: E402
-import scripts.sw_feature_readback as FR  # noqa: E402
-import scripts.sw_weldment as W  # noqa: E402
 
 
 def _mk_surface(doc, plane="Front Plane", rect=(-0.02, -0.02, 0.02, 0.02)):

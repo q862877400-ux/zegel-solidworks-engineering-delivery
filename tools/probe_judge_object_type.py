@@ -48,8 +48,7 @@ STUDY = "DSH-JOBJ_%s" % time.strftime("%H%M%S")
 
 def _read_objects(manager) -> dict:
     """★ 新判据：**按序号取载荷对象，读它自己的属性**（★ 不读 `Count`）。"""
-    from sw_connect import get_com_member, out_i4
-    from sw_connect import safe_get_com_member
+    from sw_connect import get_com_member, out_i4, safe_get_com_member
 
     items, err = [], None
     for i in range(0, 16):
@@ -72,7 +71,9 @@ def _read_objects(manager) -> dict:
 
 def main() -> int:
     import sw_connect
+
     from scripts import sw_simulation as sim
+    from scripts import sw_simulation_loads as SL
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
@@ -80,7 +81,6 @@ def main() -> int:
         sketch_corner_rectangle,
         start_sketch,
     )
-    from scripts import sw_simulation_loads as SL
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S"), "study": STUDY}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]

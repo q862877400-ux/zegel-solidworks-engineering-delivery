@@ -54,10 +54,11 @@ def main() -> int:
     sw = None
     doc = None
     try:
-        import sw_connect
-        from scripts import sw_simulation as sim
         import register_capabilities as rc
+        import sw_connect
         import tool_specs_batch58 as b58
+
+        from scripts import sw_simulation as sim
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         doc = sw_connect.new_document(sw, "part")

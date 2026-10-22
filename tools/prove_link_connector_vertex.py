@@ -58,6 +58,7 @@ OUT = Path(
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
+
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
@@ -178,8 +179,8 @@ def main() -> int:
                 #:      ★★ **故对象形态是对的，卡在 out 参数**）✓
                 #:   ★ 而本仓早有先例：`tools/audit_byref_args.py` 记着
                 #:     `v = VARIANT(VT_BYREF | VT_R8, 0.0)` → `get_com_member(..., v)` ✓
-                from win32com.client import VARIANT
                 from pythoncom import VT_BYREF, VT_I4
+                from win32com.client import VARIANT
 
                 try:
                     a, b = mk()

@@ -38,8 +38,8 @@ RECT = {"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": 100.0, "y2_mm": 60.0}
 
 def main() -> int:
     import sw_connect
-    import tool_caller
     import sw_surface_features as sf
+    import tool_caller
 
     out = {
         "official": "IFeatureManager.InsertUntrimSurface2",

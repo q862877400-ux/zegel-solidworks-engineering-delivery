@@ -50,8 +50,8 @@ def main() -> int:
     import sw_assembly
     import sw_assembly_doc as AD
     import sw_connect
-    import sw_pattern as P
     import sw_part as PT
+    import sw_pattern as P
 
     out: dict = {
         "purpose": "★ 验 B2b 缝进 scripts/ 的三个模块函数（★ 走模块、不走探针实现）",

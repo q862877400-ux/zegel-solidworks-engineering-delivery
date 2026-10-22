@@ -39,11 +39,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+import scripts.sw_feature_readback as FR  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
-from scripts.sw_connect import create_empty_dispatch_variant as _av  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_surface_features as SF  # noqa: E402
-import scripts.sw_feature_readback as FR  # noqa: E402
+from scripts.sw_connect import create_empty_dispatch_variant as _av  # noqa: E402
 
 
 def _mk_two_crossing_surfaces(doc):
@@ -110,7 +110,8 @@ def _run(sw, tag, cutter):
         doc = C.new_document(sw, "part")
         row["made"] = _mk_two_crossing_surfaces(doc)
         row["geom_before"] = _geom(doc)
-        from sw_connect import get_com_member as _g, out_i4 as _oi4
+        from sw_connect import get_com_member as _g
+        from sw_connect import out_i4 as _oi4
         from sw_part import _select_com_object as _sel
 
         fm = _g(doc, "FeatureManager")

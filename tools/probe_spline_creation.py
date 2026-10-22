@@ -22,8 +22,6 @@ r"""@brief 探针：`sw_part.sketch_spline` 到底建没建成？（轮 141 里 
 
 from __future__ import annotations
 
-import ctypes
-import ctypes.wintypes as w
 import json
 import sys
 import time
@@ -60,6 +58,7 @@ def main() -> int:
     docs: list = []
     try:
         import sw_connect
+
         from scripts import sw_part, sw_sketch
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

@@ -17,7 +17,6 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
-
 _IMPLEMENTATION = (
     Path(__file__).resolve().parents[1]
     / "subskills"

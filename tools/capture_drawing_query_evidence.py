@@ -59,8 +59,9 @@ def main() -> int:
     ok = True
     try:
         import sw_connect
-        from scripts import sw_drawing_query as dq
         import tool_specs_batch19 as b19
+
+        from scripts import sw_drawing_query as dq
 
         #: ① ★ 先核"声明的东西真的存在"（工具层与能力层没断链）
         bindings = {}

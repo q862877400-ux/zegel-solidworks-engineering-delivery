@@ -37,10 +37,11 @@ sys.path[:0] = [
     str(ROOT / "tools"),
 ]
 
+import tool_caller  # noqa: E402
+
 from scripts.engineering import authorization as AUTH  # noqa: E402
 from scripts.engineering import executor as X  # noqa: E402
 from scripts.engineering import registry as R
-import tool_caller  # noqa: E402
 
 OUT = ROOT / "output" / "stage1"
 
@@ -106,7 +107,7 @@ def build_plan(case: dict) -> R.ExecutablePlan:
 
 def run_case(reg, n: int, sw) -> dict:
     """★ 跑一个用例（★ 真机）。"""
-    from scripts import sw_connect, sw_part
+    from scripts import sw_connect
 
     c = CASES[n]
     rec: dict = {"case": n, "params": c, "started": time.strftime("%H:%M:%S")}
@@ -222,7 +223,6 @@ def run_case(reg, n: int, sw) -> dict:
 
 def run_negatives(reg, sw) -> dict:
     """★ 跑四类负例（★ SC-005~SC-009：COM 写调用数必须为 0）。"""
-    from scripts import sw_connect
 
     out: dict = {"negatives": [], "started": time.strftime("%H:%M:%S")}
     c = CASES[1]

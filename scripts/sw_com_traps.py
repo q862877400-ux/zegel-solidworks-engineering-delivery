@@ -29,6 +29,7 @@ r"""pywin32 × SolidWorks 的实操坑（外部调研 + 本机反射双重核实
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 __all__ = [

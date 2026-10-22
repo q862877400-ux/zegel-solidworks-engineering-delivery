@@ -53,8 +53,8 @@ def step(name: str, **kw) -> None:
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_part as P
+    from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
     #: ★ 先建一个零件（★ 工程图要有模型才能投影；★ 而空图纸也能验"读侧"）
@@ -87,6 +87,7 @@ def main() -> int:
     saved = {"error": None}
     try:
         import tempfile
+
         from sw_connect import save_document
 
         dst = str(Path(tempfile.gettempdir()) / "dsh_probe_drawing_annot_source.SLDPRT")

@@ -264,8 +264,8 @@ def run_s7b(live: dict | None = None) -> dict:
 
 def run_live() -> dict:
     """★ 真机档：建一个箱体毛坯 + 两个轴承孔。"""
+
     from scripts import sw_connect, sw_part
-    import tool_caller
 
     out: dict = {}
     sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

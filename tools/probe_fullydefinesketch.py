@@ -56,9 +56,9 @@ def _dim_count(model) -> int:
 def main() -> int:
     from sw_connect import (
         connect_solidworks,
+        create_empty_dispatch_variant,
         get_com_member,
         new_document,
-        create_empty_dispatch_variant,
     )
 
     app, _ = connect_solidworks(visible=True)

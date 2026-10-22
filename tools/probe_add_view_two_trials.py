@@ -49,9 +49,9 @@ A3_GB = Path(
 
 
 def main() -> int:
+    import drawing_workflow as DW
     import sw_connect
     from sw_connect import safe_get_com_member
-    import drawing_workflow as DW
 
     ev: dict = {"trials": [], "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]

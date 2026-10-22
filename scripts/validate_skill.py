@@ -18,7 +18,6 @@ import json
 import pathlib
 import sys
 
-
 #: ★ 2026-10-22 统一化：本函数原在四个模块各有一份（逻辑逐字相同）
 #:   ⇒ 收敛到 scripts/sw_stdio.configure_stdio_utf8；此处保留旧名作别名
 try:

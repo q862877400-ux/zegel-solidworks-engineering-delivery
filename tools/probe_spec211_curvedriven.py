@@ -70,7 +70,6 @@ def _fnames(model):
 def main() -> int:
     import sw_connect
     import sw_part
-    import sw_weldment as W
     import sw_selection_spec as SS
 
     out: dict = {

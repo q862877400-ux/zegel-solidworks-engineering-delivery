@@ -6,22 +6,22 @@ SolidWorks 结果自审查工具。
     或导出的 BMP 判断几何是否符合用户意图。
 """
 
-import os
-import json
 import argparse
+import json
 import math
+import os
 import re
 import sys
 from pathlib import Path
 
 try:
     from .sw_connect import connect_solidworks, get_com_member, open_document
-    from .sw_preflight import import_com_dependencies
     from .sw_drawing_view_types import LABELLED_VIEW_TYPES
+    from .sw_preflight import import_com_dependencies
 except ImportError:
     from sw_connect import connect_solidworks, get_com_member, open_document
-    from sw_preflight import import_com_dependencies
     from sw_drawing_view_types import LABELLED_VIEW_TYPES
+    from sw_preflight import import_com_dependencies
 
 
 pythoncom, _win32com, VARIANT = import_com_dependencies()

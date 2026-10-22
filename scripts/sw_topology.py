@@ -117,7 +117,7 @@ except Exception:  # noqa: BLE001
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 try:
-    from .sw_connect import get_com_member, call_com_member, out_i4
+    from .sw_connect import call_com_member, get_com_member, out_i4
     from .sw_simulation import get_cw_document, get_study_manager
 
     #: ★★★★ 2026-10-04（接手轮）**补上 `delete_study`** ——
@@ -127,7 +127,7 @@ try:
     #: _study`）✓
     from .sw_simulation_study import delete_study
 except ImportError:
-    from sw_connect import get_com_member, call_com_member
+    from sw_connect import call_com_member, get_com_member
     from sw_simulation import get_cw_document, get_study_manager
     from sw_simulation_study import delete_study
 
@@ -650,8 +650,9 @@ def _apply_declarative_selection(selection: str, selection_kind: str) -> int:
       ★ 规则 3 **不许收裸坐标** ⇒ ★ 收**声明式选择器**（`index:<n>` / `__current_selection__`）✓
     :returns: ★ **回读**到的选区计数（★ 0 会抛 —— ★ 事实 8：不信返回值）✓
     """
-    from sw_connect import connect_solidworks, get_com_member as _get
     import sw_selection_spec as _SS
+    from sw_connect import connect_solidworks
+    from sw_connect import get_com_member as _get
 
     sw, _m = connect_solidworks(wait_seconds=10)
     doc = _get(sw, "ActiveDoc")

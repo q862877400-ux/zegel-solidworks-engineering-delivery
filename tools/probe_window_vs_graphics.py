@@ -43,6 +43,7 @@ import struct
 import sys
 import time
 from pathlib import Path
+
 from sw_guard import sw_pid
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -117,6 +118,7 @@ def main() -> int:
     hwnd = None
     try:
         import sw_connect
+
         from scripts import sw_export, sw_part
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

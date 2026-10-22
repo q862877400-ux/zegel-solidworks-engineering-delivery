@@ -27,7 +27,6 @@ for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
         sys.path.insert(0, _p)
 
 import sw_connect  # noqa: E402
-import tool_caller  # noqa: E402
 from sw_net_blend import _feature_count as _fc  # noqa: E402
 
 #: ★ 100 × 60 × 20 mm 板（★ 与既有探针同口径）
@@ -125,8 +124,8 @@ def _run_one(sw, tool_caller, net, kind: str, fn_name: str) -> dict:
 
 def main() -> int:
     import sw_connect
-    import tool_caller
     import sw_net_blend as net
+    import tool_caller
 
     out = {
         "official": "IFeatureManager.InsertNetBlend",
@@ -149,8 +148,8 @@ def main() -> int:
 
     #: ── ①b 逐面盒中心（★ 只读诊断：确认 face_index 0/1 的点是否不同、是否落在面内）──
     try:
-        import sw_selection_spec as _SS
         import sw_part as _sp
+        import sw_selection_spec as _SS
 
         _faces = list(
             _SS.entities_on_body(_build_plate(sw, tool_caller), "FACE", body_index=0)

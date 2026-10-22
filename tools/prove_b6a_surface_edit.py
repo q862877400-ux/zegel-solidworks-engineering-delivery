@@ -43,11 +43,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+import scripts.sw_sketch_primitives as SP  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
 from scripts import sw_surface_edit_ops as M  # noqa: E402
-import scripts.sw_sketch_primitives as SP  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
 
 
 def _bodies(model):

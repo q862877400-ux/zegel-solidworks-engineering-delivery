@@ -55,7 +55,9 @@ def main() -> int:
     doc = None
     try:
         import sw_connect
-        from scripts import sw_part, sw_simulation as sim
+
+        from scripts import sw_part
+        from scripts import sw_simulation as sim
         from scripts.sw_simulation import out_i4  #: ★ by-ref 出参包装（既有）
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]

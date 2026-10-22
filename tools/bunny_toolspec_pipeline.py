@@ -23,7 +23,6 @@ from __future__ import annotations
 import argparse
 import ast
 import collections
-import importlib
 import json
 import re
 import subprocess

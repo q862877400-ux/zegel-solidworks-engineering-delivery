@@ -48,9 +48,10 @@ def _select_faces_for(mark: int, count: int):
     """★ 造一个 `pre_call`：调目标函数前按官方 mark 选 `count` 个面。"""
 
     def _pick(params):  # noqa: ANN001, ARG001
+        import register_capabilities as _rc
+
         from scripts.sw_connect import get_com_member
         from scripts.sw_part import _select_com_object
-        import register_capabilities as _rc
 
         model = _rc.RESOLVERS["model"](None)  #: ★ 与注册器取同一个对象
         try:

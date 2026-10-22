@@ -50,9 +50,9 @@ sys.path.insert(0, str(R / "scripts"))
 
 import pythoncom  # noqa: E402
 import win32com.client  # noqa: E402
+
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
 
 #: \u2605 **2D**\uff1a\u81f3\u5c11 6 \u4e2a\u5750\u6807
 PTS_2D = [-0.02, -0.01, 0.0, 0.0, 0.02, 0.0, 0.02, -0.01, 0.0]

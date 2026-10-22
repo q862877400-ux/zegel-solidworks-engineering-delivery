@@ -26,10 +26,10 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 
 try:
-    from .sw_connect import get_com_member, call_com_member, save_document
+    from .sw_connect import call_com_member, get_com_member, save_document
     from .sw_preflight import import_com_dependencies
 except ImportError:
-    from sw_connect import get_com_member, call_com_member, save_document
+    from sw_connect import call_com_member, get_com_member, save_document
     from sw_preflight import import_com_dependencies
 
 

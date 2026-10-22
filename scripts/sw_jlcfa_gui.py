@@ -36,7 +36,6 @@ r"""嘉立创 FA 选型插件的 GUI 自动化 —— 实测跑通全链路（20
 
 from __future__ import annotations
 
-import json
 import sys
 import time
 from pathlib import Path
@@ -44,10 +43,10 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8")
 sys.path.insert(0, Path(__file__).resolve().parents[1])
 
+import uiautomation as auto
 import win32api
 import win32con
 import win32gui
-import uiautomation as auto
 
 import shot
 

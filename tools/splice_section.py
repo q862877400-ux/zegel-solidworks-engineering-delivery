@@ -17,7 +17,6 @@
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
-import sys
 from pathlib import Path
 
 ROOT = Path(Path(__file__).resolve().parents[1])

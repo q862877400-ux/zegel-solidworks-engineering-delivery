@@ -36,8 +36,8 @@ CANDIDATE_DIMS = ["D1@草图1", "D2@草图1", "D1@Sketch1", "D2@Sketch1"]
 
 
 def main() -> int:
-    import sw_part as P
     import sw_document_data as D
+    import sw_part as P
     from sw_connect import connect_solidworks, new_document
 
     steps = []

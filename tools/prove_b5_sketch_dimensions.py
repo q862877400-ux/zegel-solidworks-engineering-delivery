@@ -45,10 +45,9 @@ for _i, _a in enumerate(sys.argv):
 
 def main() -> int:
     import sw_connect
-    from sw_connect import get_com_member, safe_get_com_member
     import sw_part as P
-    import sw_sketch as SK
     import sw_sketch_dimensions as D
+    from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
     ev = {

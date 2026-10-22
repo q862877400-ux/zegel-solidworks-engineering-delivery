@@ -46,9 +46,10 @@ sys.path.insert(0, str(R / "scripts"))
 
 import pythoncom
 import win32com.client
+
+import scripts.sw_feature_readback as FR  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-import scripts.sw_feature_readback as FR  # noqa: E402
 
 
 def _sketch_with_spline(doc, plane, pts):

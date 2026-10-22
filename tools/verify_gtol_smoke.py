@@ -28,8 +28,6 @@ r"""@brief 真机冒烟：`sw_gtol` —— 验**上轮选的那条 2022 格式�
 
 from __future__ import annotations
 
-import ctypes
-import ctypes.wintypes as w
 import json
 import sys
 import time

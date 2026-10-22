@@ -53,9 +53,9 @@ def main() -> int:
     #: )` ✓
     #: ★★★★ **⇒ 又验证那条判据**：★★★ **"在仓里搜"要搜够 —— 搜一行 grep 的成本 < 猜错的
     #: 成本** ✓
-    from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_feature_readback as R
-    from sw_part import shell_report, sketch, extrude_boss
+    from sw_connect import connect_solidworks, get_com_member, new_document
+    from sw_part import extrude_boss, shell_report, sketch
 
     app, _ = connect_solidworks(visible=True)
     step("connect", ok=bool(app))

@@ -50,10 +50,10 @@ SAMPLES = Path(
 
 def main() -> int:
     import sw_connect
-    from sw_connect import safe_get_com_member
+
     from scripts import sw_simulation as sim
-    from scripts.sw_assembly import add_component, get_components
     from scripts import sw_simulation_loads as SL
+    from scripts.sw_assembly import add_component, get_components
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S"), "study": STUDY}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]

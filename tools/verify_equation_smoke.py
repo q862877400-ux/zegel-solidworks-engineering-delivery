@@ -23,8 +23,6 @@ r"""@brief 真机冒烟：`sw_equation`（把 `stitched` 往 `verified` 推一�
 
 from __future__ import annotations
 
-import ctypes
-import ctypes.wintypes as w
 import json
 import sys
 import time

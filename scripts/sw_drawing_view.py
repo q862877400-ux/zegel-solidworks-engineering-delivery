@@ -66,7 +66,7 @@ from __future__ import annotations
 from typing import Any
 
 try:
-    from .sw_connect import get_com_member, call_com_member, set_com_member
+    from .sw_connect import call_com_member, get_com_member, set_com_member
 except ImportError:
     #: ★★★ 2026-10-03（轮 470）**这一支原先缺 `set_com_member`** ——
     #:   ★ 它那一行是 `from sw_connect import get_com_member, call_com_member`，
@@ -80,7 +80,7 @@ except ImportError:
     #: ★ 实测（轮 470）：16 个用 `set_com_member` 的模块里，**只有这一个**在顶层口径下取
     #: 不到它。
     #:   ★ 修法：把它**插在注释之前**（★ 与另外 15 个一致）✓
-    from sw_connect import get_com_member, call_com_member, set_com_member
+    from sw_connect import call_com_member, get_com_member, set_com_member
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）
 # 文件:   scripts/sw_drawing_view.py —— 本文件自身

@@ -19,11 +19,10 @@ import threading
 from contextlib import redirect_stdout
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Literal, Optional
+from typing import TYPE_CHECKING, Any, Dict, Literal, Optional
 
 from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-
 
 _MCP_STDOUT = sys.stdout
 for _stream in (_MCP_STDOUT, sys.stderr):
@@ -42,6 +41,82 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 from scripts.sw_preflight import missing_com_dependencies, solidworks_installed  # noqa: E402
+
+#: ★★ 2026-10-22：下面这些名字由 `_load_automation_modules()` 里的
+#:   `globals().update(exports)` **运行期注入**（见 L133）⇒ 静态检查看不见、报 158 个 F821 假阳性。
+#:   ★ 用标准做法声明一次（`TYPE_CHECKING` 不会执行、零运行期开销）。
+if TYPE_CHECKING:  # pragma: no cover
+    from scripts.sw_drawing_spec import drawing_validate_spec
+    from scripts.sw_holes import (
+        create_blind_hole,
+        create_counterbore_hole,
+        create_countersink_hole,
+        create_semicircular_slot,
+        create_through_hole,
+    )
+
+    from scripts.sw_appearance import set_component_appearance, set_document_appearance
+    from scripts.sw_assembly import (
+        SW_MATE_COINCIDENT,
+        SW_MATE_DISTANCE,
+        add_concentric_mate_by_cylinders,
+        add_mate5_checked,
+        assembly_add_component,
+        collect_mate_feature_summary,
+        find_component_by_name,
+        get_component_feature_entity,
+        get_components,
+        resolve_component,
+        select_entities_for_mate,
+    )
+    from scripts.sw_connect import (
+        connect_solidworks,
+        create_empty_dispatch_variant,
+        get_com_member,
+        mm,
+        new_document,
+        open_document,
+        save_document,
+    )
+    from scripts.sw_delivery import export_assembly_bom_csv, pack_and_go
+    from scripts.sw_document_data import (
+        activate_configuration,
+        create_configuration,
+        inspect_configurations,
+        set_custom_properties,
+        update_dimension_mm,
+    )
+    from scripts.sw_drawing import (
+        drawing_export_sheet_to_pdf,
+        drawing_generate_from_spec,
+        drawing_inspect_structure,
+    )
+    from scripts.sw_drawing_review import drawing_review_artifacts
+    from scripts.sw_export import (
+        batch_export_formats,
+        export_to_dxf,
+        export_to_iges,
+        export_to_parasolid,
+        export_to_pdf,
+        export_to_step,
+        export_to_stl,
+    )
+    from scripts.sw_motion import (
+        add_constant_speed_rotary_motor_by_cylinders,
+        calculate_and_play,
+        collect_motion_study_summary,
+        create_motion_study,
+        ensure_motion_type_library,
+        validate_motion_studies,
+    )
+    from scripts.sw_part import extrude_boss, sketch, sketch_circle, sketch_rectangle
+    from scripts.sw_review import (
+        collect_geometry_measurements,
+        drawing_inspect_bmp_preview,
+        drawing_save_review_previews,
+        run_review,
+        validate_hole_positions,
+    )
 
 
 pythoncom = None

@@ -53,10 +53,10 @@ def main() -> int:
     import sw_part as P
     from sw_connect import (
         connect_solidworks,
+        create_empty_dispatch_variant,
         get_com_member,
         new_document,
         out_dispatch,
-        create_empty_dispatch_variant,
     )
 
     app, _ = connect_solidworks(visible=True)
@@ -69,8 +69,8 @@ def main() -> int:
         before = _seg_count(model)
         sk = get_com_member(model, "SketchManager")
         pts = [0.0, 0.0, 0.0, 0.05, 0.03, 0.0, 0.10, 0.0, 0.0]  #: 三点、单位**米**
-        from win32com.client import VARIANT
         import pythoncom
+        from win32com.client import VARIANT
 
         data = VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, pts)
         got = err = None

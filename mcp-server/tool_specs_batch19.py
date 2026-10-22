@@ -50,7 +50,7 @@
 
 from __future__ import annotations
 
-from tool_registry import Param, ToolSpec
+from tool_registry import ToolSpec
 
 __all__ = ["SPECS_BATCH19"]
 

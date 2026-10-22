@@ -38,7 +38,6 @@ from __future__ import annotations
 
 import json
 import sys
-import time
 import traceback
 from pathlib import Path
 
@@ -58,6 +57,7 @@ def main() -> int:
     doc = None
     try:
         import sw_connect
+
         from scripts import sw_part
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

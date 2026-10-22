@@ -58,7 +58,7 @@ import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Literal, Optional
+from typing import Any, Callable, Optional
 
 __all__ = [
     "Param",

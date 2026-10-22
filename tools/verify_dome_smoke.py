@@ -28,8 +28,6 @@ r"""@brief 真机冒烟：`sw_part.insert_dome` —— ★★ **定量**验证 +
 
 from __future__ import annotations
 
-import ctypes
-import ctypes.wintypes as w
 import json
 import sys
 import time
@@ -99,6 +97,7 @@ def main() -> int:
     doc = None
     try:
         import sw_connect
+
         from scripts import sw_part
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

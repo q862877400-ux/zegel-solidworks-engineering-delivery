@@ -42,10 +42,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+import scripts.sw_sketch as SK  # noqa: E402                                   # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_weldment as W  # noqa: E402
-import scripts.sw_sketch as SK  # noqa: E402                                   # noqa: E402
 
 
 def _cut_list_folders(model):

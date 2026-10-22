@@ -29,8 +29,8 @@ OUT = REPO / "output" / "fillet-params-capability-recheck.json"
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_part as P
+    from sw_connect import connect_solidworks, get_com_member, new_document
     from sw_feature_readback import fillet_params
 
     app, _ = connect_solidworks(visible=True)

@@ -57,6 +57,7 @@ OUT = Path(
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
+
     from scripts.sw_feature_readback import feature_names
     from scripts.sw_part import (
         _select_by_id,

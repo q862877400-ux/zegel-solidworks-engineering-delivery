@@ -39,7 +39,6 @@ import sys
 import tempfile
 from pathlib import Path
 
-
 #: ★ 本仓库根（★ 2026-10-03 合并后自定位）
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 REPO = Path(r"" + _ROOT_S + r"")

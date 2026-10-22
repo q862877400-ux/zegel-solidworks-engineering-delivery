@@ -45,7 +45,6 @@ python tools/reclaim_solidworks.py --close          # ★ **只关**（★ 纪�
 from __future__ import annotations
 
 import argparse
-import re
 import subprocess
 import sys
 import time
@@ -62,8 +61,9 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 #:   ★ 下面这几个薄壳**只为兼容既有调用点**保留，★ 逻辑一律走共用实现 ✓
 from session_verdict import (
     OURS as _OURS,
+)
+from session_verdict import (
     parse_title_documents,  # noqa: E402
-    session_verdict as _session_verdict,
 )
 
 

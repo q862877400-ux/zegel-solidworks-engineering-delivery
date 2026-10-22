@@ -52,8 +52,8 @@ def _extrude_feature(model):
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_part as P
+    from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")

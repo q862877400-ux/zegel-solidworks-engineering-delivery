@@ -27,8 +27,6 @@ ToolSpec（手抄的参数名 + 注入名） → register_capabilities.RESOLVERS
 
 from __future__ import annotations
 
-import ctypes
-import ctypes.wintypes as w
 import importlib
 import json
 import sys
@@ -72,10 +70,11 @@ def main() -> int:
     sw = None
     scratch = None
     try:
-        import sw_connect
-        from scripts import sw_part
         import register_capabilities as rc
+        import sw_connect
         from tool_registry import effective_inject
+
+        from scripts import sw_part
 
         specs = {s.name: s for s in rc.all_specs()}
         mine = [

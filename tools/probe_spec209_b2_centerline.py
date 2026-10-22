@@ -37,10 +37,10 @@ OUT = R / "output" / "spec209-centerline.json"
 
 def main() -> int:
     import sw_connect
-    from sw_connect import safe_get_com_member
-    import sw_part as P
     import sw_drawing_create_missing as DM
     import sw_drawing_expose as E0
+    import sw_part as P
+    from sw_connect import safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
     ev = {

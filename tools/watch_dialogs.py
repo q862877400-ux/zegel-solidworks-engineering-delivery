@@ -23,7 +23,6 @@ from __future__ import annotations
 import argparse
 import ctypes
 import json
-import sys
 import time
 from ctypes import wintypes as wt
 from datetime import datetime

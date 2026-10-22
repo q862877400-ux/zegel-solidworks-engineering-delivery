@@ -667,6 +667,7 @@ def insert_weldment_end_cap(
             "error": "取不到 FeatureManager",
         }
     before = _tree(model)
+    before_faces = _body_face_count(model)
     marks = _selection_marks(model)
     feature = get_com_member(
         fm,
@@ -683,6 +684,7 @@ def insert_weldment_end_cap(
         int(is_end_cap_inward),
     )
     after = _tree(model)
+    after_faces = _body_face_count(model)
     added = new_features(before, after)
     #: ★ 回读的成员名与单位换算**逐条照官方例子**（`swEndCap.X * 1000# & " mm"` ⇒ 官方回
     #: 米）

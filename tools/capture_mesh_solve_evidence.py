@@ -64,11 +64,12 @@ def main() -> int:
     ok = True
     try:
         import sw_connect
-        from scripts import sw_part, sw_simulation as sim
+        import tool_specs_batch28 as b28
+
+        from scripts import sw_part
+        from scripts import sw_simulation as sim
         from scripts.sw_isolate import run_isolated
         from scripts.sw_simulation import out_i4
-        import register_capabilities as rc
-        import tool_specs_batch28 as b28
 
         #: ① 核声明解析得到
         bindings = {}

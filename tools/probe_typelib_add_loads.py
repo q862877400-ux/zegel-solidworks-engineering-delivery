@@ -48,6 +48,7 @@ WANT = (
 
 def main() -> int:
     import sw_connect
+
     from scripts import sw_simulation as sim
     from scripts.sw_part import (
         current_sketch_name,

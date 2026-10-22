@@ -25,7 +25,6 @@ import math
 import os
 
 try:
-    from .sw_preflight import import_com_dependencies
     from .sw_connect import (
         call_com_member,
         get_com_member,
@@ -33,8 +32,8 @@ try:
         safe_get_com_member,
         set_com_member,
     )
+    from .sw_preflight import import_com_dependencies
 except ImportError:
-    from sw_preflight import import_com_dependencies
     from sw_connect import (
         call_com_member,
         get_com_member,
@@ -42,6 +41,7 @@ except ImportError:
         safe_get_com_member,
         set_com_member,
     )
+    from sw_preflight import import_com_dependencies
 
 pythoncom, _win32com, VARIANT = import_com_dependencies()
 

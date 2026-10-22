@@ -61,7 +61,6 @@ def _feature_names(model):
 def main() -> int:
     import sw_connect
     import sw_part
-    import sw_selection_spec as SS
     import sw_sheet_metal as SM
     import sw_weldment as W
 

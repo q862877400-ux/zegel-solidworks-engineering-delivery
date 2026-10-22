@@ -43,10 +43,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+import scripts.sw_feature_readback as FR  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_surface_features as SF  # noqa: E402
-import scripts.sw_feature_readback as FR  # noqa: E402
 
 
 def _mk_solid(doc):
@@ -162,7 +162,8 @@ def main() -> int:
             doc.ClearSelection2(True)
         except Exception:  # noqa: BLE001
             pass
-        from sw_connect import get_com_member as _get, out_i4 as _oi4
+        from sw_connect import get_com_member as _get
+        from sw_connect import out_i4 as _oi4
         from sw_part import _select_com_object as _sel
 
         for b in list(_get(doc, "GetBodies2", 1, True) or []):

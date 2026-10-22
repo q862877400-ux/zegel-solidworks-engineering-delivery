@@ -21,9 +21,9 @@
 from __future__ import annotations
 
 import json
+import pathlib
 import re
 import sys
-import pathlib
 
 sys.stdout.reconfigure(encoding="utf-8")  # 事实 58：管道下 GBK 会崩
 ROOT = pathlib.Path(__file__).resolve().parents[1]

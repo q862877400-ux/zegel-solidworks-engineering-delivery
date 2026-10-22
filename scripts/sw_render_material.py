@@ -39,10 +39,10 @@ from typing import Any
 
 try:
     from .sw_connect import (
-        out_i4,
-        get_com_member,
-        set_com_member,
         create_empty_dispatch_variant,
+        get_com_member,
+        out_i4,
+        set_com_member,
     )
 except ImportError:
     #: ★★ 2026-10-01（轮 319）：**这条 fallback 原本少了 `set_com_member`** ——
@@ -50,10 +50,10 @@ except ImportError:
     #:   立刻报 `NameError: name 'set_com_member' is not defined`。
     #:   ★ 教训：两条 import 分支的**名字集合必须一致**（★ 否则"只在 package 模式能跑"）。
     from sw_connect import (
-        out_i4,
-        get_com_member,
-        set_com_member,
         create_empty_dispatch_variant,
+        get_com_member,
+        out_i4,
+        set_com_member,
     )
 
 # ── 来源 ─────────────────────────────────────────────────────────────

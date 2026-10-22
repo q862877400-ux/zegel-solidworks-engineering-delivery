@@ -54,10 +54,10 @@ def step(name: str, **kw) -> None:
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_feature_readback as R
     import sw_loft as L
     import sw_part as P
+    from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")

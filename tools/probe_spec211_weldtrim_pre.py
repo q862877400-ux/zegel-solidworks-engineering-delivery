@@ -45,8 +45,8 @@ BODY_B = {"x1_mm": 30.0, "y1_mm": -20.0, "x2_mm": 90.0, "y2_mm": 60.0}
 def main() -> int:
     import sw_connect
     import sw_part
-    import sw_weldment as W
     import sw_selection_spec as SS
+    import sw_weldment as W
 
     out: dict = {
         "official": "IFeatureManager.InsertWeldmentTrimFeature2",

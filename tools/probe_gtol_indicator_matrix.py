@@ -41,7 +41,6 @@ from __future__ import annotations
 import itertools
 import json
 import sys
-import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -62,6 +61,7 @@ def main() -> int:
     sw = None
     try:
         import sw_connect
+
         from scripts import sw_gtol
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

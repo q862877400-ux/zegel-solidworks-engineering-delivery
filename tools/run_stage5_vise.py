@@ -183,9 +183,10 @@ def run_reverse() -> dict:
 
 def run_live() -> dict:
     """★ 真机档：建一个平口钳的**底座**并出图（★ 复用阶段 2 的链）。"""
+    import tool_caller
+
     from scripts import sw_connect
     from scripts.engineering import drawing_run as DR
-    import tool_caller
 
     out: dict = {}
     sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

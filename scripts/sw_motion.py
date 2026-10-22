@@ -10,15 +10,15 @@ import os
 from pathlib import Path
 
 try:
-    from .sw_preflight import import_com_dependencies
-    from .sw_connect import safe_get_com_member
-    from .sw_assembly import find_largest_cylinder_face
     from .cad_installation import discover_installations
+    from .sw_assembly import find_largest_cylinder_face
+    from .sw_connect import safe_get_com_member
+    from .sw_preflight import import_com_dependencies
 except ImportError:
-    from sw_preflight import import_com_dependencies
-    from sw_connect import safe_get_com_member
-    from sw_assembly import find_largest_cylinder_face
     from cad_installation import discover_installations
+    from sw_assembly import find_largest_cylinder_face
+    from sw_connect import safe_get_com_member
+    from sw_preflight import import_com_dependencies
 
 pythoncom, win32com_client, VARIANT = import_com_dependencies()
 

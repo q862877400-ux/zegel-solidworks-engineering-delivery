@@ -68,8 +68,9 @@ def _counts(model) -> tuple:
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_part as P
+    from sw_connect import connect_solidworks, get_com_member, new_document
+
     from scripts import sw_sheet_metal as SM
     from scripts import sw_weldment as W  # noqa: F401  (★ 包上下文：本仓的导入法)
 

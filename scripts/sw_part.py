@@ -25,9 +25,8 @@ SolidWorks 零件建模工具
 #         它**不替代**本文件里原有的、更精确的逐函数来源块。
 # ─────────────────────────────────────────────────────────────────────
 
-from sw_feature_readback import feature_names
-from dataclasses import dataclass
 from contextlib import contextmanager
+from dataclasses import dataclass
 
 #: ★★★ 2026-10-08（spec 222）**补一个缺失的导入** —— 本文件此前用了
 #:   `dict[str, Any]`（`_feature_report` 的返回注解）却**从未导入 `Any`**，
@@ -39,6 +38,8 @@ from contextlib import contextmanager
 #: 。
 #:   ⇒ ★ 修法：补 `from typing import Any`（最小改动，不改任何行为）✓
 from typing import Any
+
+from sw_feature_readback import feature_names
 
 try:
     from .sw_connect import get_com_member
@@ -2615,7 +2616,7 @@ def _feature_report(model, feature_name: str, call, label: str) -> dict[str, Any
 
     ★ 这样报告里能区分「**本来就有**」与「**这次建出来的**」（★ 比只看"在不在"硬）。
     """
-    from sw_feature_readback import feature_readback, feature_present
+    from sw_feature_readback import feature_present, feature_readback
 
     before = feature_present(model, feature_name)
     err = None

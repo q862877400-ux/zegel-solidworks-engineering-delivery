@@ -133,9 +133,10 @@ def _select_faces_for(mark: int, count: int):
     """
 
     def _pick(params):  # noqa: ANN001, ARG001
+        import register_capabilities as _rc
+
         from scripts.sw_connect import get_com_member
         from scripts.sw_part import _select_com_object
-        import register_capabilities as _rc
 
         model = _rc.RESOLVERS["model"](None)  #: ★ 与注册器取同一个对象
         try:

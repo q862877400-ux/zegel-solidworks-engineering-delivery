@@ -30,8 +30,6 @@ r"""@brief 探针：**所有**按类型取法的返回形状 —— 是「对象
 
 from __future__ import annotations
 
-import ctypes
-import ctypes.wintypes as w
 import json
 import sys
 import time
@@ -108,6 +106,7 @@ def main() -> int:
     docs: list = []
     try:
         import sw_connect
+
         from scripts import sw_part, sw_sketch
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

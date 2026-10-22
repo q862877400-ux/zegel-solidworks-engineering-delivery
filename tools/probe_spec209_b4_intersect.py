@@ -34,10 +34,10 @@ OUT = R / "output" / "spec209-intersect.json"
 
 
 def main() -> int:
-    import sw_connect
-    from sw_connect import get_com_member, safe_get_com_member
-    import sw_part as P
     import sw_boolean_ops as BO
+    import sw_connect
+    import sw_part as P
+    from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
     ev = {

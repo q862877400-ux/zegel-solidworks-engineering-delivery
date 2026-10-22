@@ -13,24 +13,24 @@ from typing import Any, Iterable
 #:     「相对导入必须**紧跟** `try:`」⇒ ★ 夹在导入之间会把连续块打断、被算成"无兜底" ✗ ✓
 try:
     from .sw_connect import (
-        get_com_member,
         call_com_member,
+        create_empty_dispatch_variant,
+        get_com_member,
+        mm,
         save_document,
         set_com_member,
-        mm,
-        create_empty_dispatch_variant,
     )
     from .sw_document_data import set_custom_properties
     from .sw_part import _ensure_sketch_selected
     from .sw_preflight import import_com_dependencies
 except ImportError:
     from sw_connect import (
-        get_com_member,
         call_com_member,
+        create_empty_dispatch_variant,
+        get_com_member,
+        mm,
         save_document,
         set_com_member,
-        mm,
-        create_empty_dispatch_variant,
     )
     from sw_document_data import set_custom_properties
     from sw_part import _ensure_sketch_selected

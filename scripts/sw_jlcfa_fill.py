@@ -25,22 +25,20 @@ r"""参数完整性 —— 以**插件自己的型号行**为准，不看输入�
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import sys
 import time
 import warnings
+from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
 import sw_jlcfa_locate as L
 import sw_jlcfa_select as SEL
 import sw_jlcfa_steps as S
 
-
-#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
-_ROOT_S = str(Path(__file__).resolve().parents[1])
 warnings.filterwarnings("ignore")
 
 PLACEHOLDER = "【去填写】"
@@ -240,8 +238,9 @@ def _keys(*seq):
     且 **Ctrl 的按下与抬起分列在 `sleep` 两侧、没有 `finally`** ⇒ 中断即 **Ctrl 卡在按下态**
     （后果：之后按 `A` 就是**全选（蓝底）**）。⇒ 现在全部走 `sw_gui_input` 的异常安全原语。
     """
-    from scripts import sw_gui_input as _gi
     import win32con
+
+    from scripts import sw_gui_input as _gi
 
     for item in seq:
         vk, ctrl = item if isinstance(item, tuple) else (item, False)
@@ -526,7 +525,6 @@ def param_rows(win):
       按坐标邻近配对（我此前的做法）在换显示器或拉窗口后会错配。
     ⚑ **范围不用记，也不用猜** —— 插件把它印在每一行上。
     """
-    import re
 
     out = []
     for c in list(S.controls_cached(win)):

@@ -43,9 +43,9 @@ def _units_of(model):
 
 
 def main() -> int:
-    import sw_part as P
     import sw_document_data as D
-    from sw_connect import connect_solidworks, new_document, get_com_member
+    import sw_part as P
+    from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
     rows = []

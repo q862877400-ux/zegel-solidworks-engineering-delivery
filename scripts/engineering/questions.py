@@ -25,7 +25,7 @@ from __future__ import annotations
 
 import json
 import pathlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RUNS = ROOT / "output" / "runs"

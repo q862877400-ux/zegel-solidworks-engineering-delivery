@@ -29,8 +29,6 @@ r"""@brief 真机冒烟：`sw_sketch` 的取法 —— 重点验**轮 111 换到
 
 from __future__ import annotations
 
-import ctypes
-import ctypes.wintypes as w
 import json
 import sys
 import time

@@ -112,15 +112,14 @@ def _run(label: str, model, call) -> dict:
 
 
 def main() -> int:
-    from sw_connect import (
-        connect_solidworks,
-        get_com_member,
-        new_document,
-        create_empty_dispatch_variant,
-    )
     import sw_part as P
     import sw_sheet_metal as SM
-    import sw_weldment as W
+    from sw_connect import (
+        connect_solidworks,
+        create_empty_dispatch_variant,
+        get_com_member,
+        new_document,
+    )
 
     app, _ = connect_solidworks(visible=True)
     rows: list = []

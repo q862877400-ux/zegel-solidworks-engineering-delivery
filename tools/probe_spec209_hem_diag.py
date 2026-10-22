@@ -36,10 +36,10 @@ OUT = R / "output" / "spec209-hem-diag.json"
 
 def main() -> int:
     import sw_connect
-    from sw_connect import get_com_member, safe_get_com_member
     import sw_part as P
-    import sw_sheet_metal as SM
     import sw_selection_spec as SS
+    import sw_sheet_metal as SM
+    from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
     ev = {

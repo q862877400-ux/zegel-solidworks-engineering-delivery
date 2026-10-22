@@ -58,12 +58,12 @@ def _volume_mm3(model) -> float | None:
 def _one_run(sw, sw_connect, axis_x_mm: float) -> dict:
     """★ **一次独立运行**：新文档 → 非对称矩形轮廓 → 一条竖直线当轴 → 旋转 360° → 回读体积。"""
     from sw_part import (
-        start_sketch,
-        sketch_corner_rectangle,
         current_sketch_name,
         end_sketch,
-        sketch_line,
         revolve_boss,
+        sketch_corner_rectangle,
+        sketch_line,
+        start_sketch,
     )
 
     doc = sw_connect.new_document(sw, "part")

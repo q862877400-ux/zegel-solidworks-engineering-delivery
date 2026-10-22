@@ -60,10 +60,11 @@ def main() -> int:
     ok = True
     try:
         import sw_connect
-        from scripts import sw_part as P
+        import tool_specs_batch33 as b33
+
         from scripts import sw_document_data as D
         from scripts import sw_export as E
-        import tool_specs_batch33 as b33
+        from scripts import sw_part as P
 
         #: ① 静态：12 个工具声明解析得到
         bindings = {}

@@ -40,6 +40,7 @@ FIXTURE = Path(
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
+
     from scripts.sw_drawing_view import get_first_view
 
     ev: dict = {"trials": [], "at": time.strftime("%Y-%m-%dT%H:%M:%S")}

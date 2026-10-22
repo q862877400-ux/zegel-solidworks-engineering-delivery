@@ -39,7 +39,7 @@ OUT = REPO / "output" / "surface-scale-probe-evidence.json"
 def main() -> int:
     import sw_part as P
     import sw_surface_features as S
-    from sw_connect import connect_solidworks, new_document, get_com_member
+    from sw_connect import connect_solidworks, get_com_member, new_document
 
     steps = []
     R = {

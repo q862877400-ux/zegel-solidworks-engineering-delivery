@@ -41,15 +41,12 @@
 
 from __future__ import annotations
 
-import ast
-import io
 import json
 import re
 import sys
 import time
 from collections import defaultdict
 from pathlib import Path
-
 
 #: ★ 本仓库根（★ 2026-10-03 合并后自定位）
 _ROOT_S = str(Path(__file__).resolve().parents[1])
@@ -507,7 +504,6 @@ def _unmapped_sldworks() -> list[str]:
       把差集单列成一个域，是为了让表**说清自己的范围**，
       而不是让读者以为 374 就是全部。
     """
-    import json
     import re as _re
     from pathlib import Path as _P
 

@@ -73,6 +73,7 @@ def main() -> int:
     doc = None
     try:
         import sw_connect
+
         from scripts import sw_part as P
         from scripts import sw_simulation as S
 

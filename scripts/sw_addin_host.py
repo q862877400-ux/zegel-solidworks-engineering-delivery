@@ -10,14 +10,13 @@
 
 from __future__ import annotations
 
-import json
 import argparse
+import json
 import os
 import platform
 import sys
 from pathlib import Path
 from typing import Any
-
 
 ADDIN_GUID = "{8EE76E8D-9B47-4DE0-AFA2-B2E36621A134}"
 TYPE_LIBRARY_GUID = "{AF071B05-0956-3EFB-B3F0-77BC51751AC9}"

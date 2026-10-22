@@ -57,8 +57,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+from scripts import sw_part  # noqa: E402
+from scripts import sw_simulation as sim
+from scripts import sw_topology as topo
 from scripts.sw_connect import connect_solidworks, get_com_member, new_document  # noqa: E402
-from scripts import sw_part, sw_simulation as sim, sw_topology as topo  # noqa: E402
 
 DEFAULT_OUT = ROOT / "output" / "topology-evidence.json"
 MEM_LIMIT_MB = 6000

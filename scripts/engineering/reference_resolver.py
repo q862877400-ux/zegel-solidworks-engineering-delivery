@@ -31,7 +31,7 @@
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 #: ★ 平面包含容差（毫米）—— ★ 借鉴来源用 `_PLANE_TOL`
 PLANE_TOL_MM = 1e-3

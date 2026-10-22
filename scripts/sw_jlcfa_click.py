@@ -29,22 +29,20 @@ r"""DPI 自适应点击 —— 换显示器/改缩放都不失效。
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import sys
 import time
 import warnings
+from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
 import win32api
 import win32con
 import win32gui
 
-
-#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
-_ROOT_S = str(Path(__file__).resolve().parents[1])
 warnings.filterwarnings("ignore")
 
 

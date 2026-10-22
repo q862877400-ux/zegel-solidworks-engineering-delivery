@@ -40,13 +40,11 @@ r"""GUI 输入层 —— **配置化的输入方式** + **稳定的控件标注*
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import sys
 import time
 import warnings
+from pathlib import Path
 from typing import Any
-
 
 #: ★ 本仓库根（★ 2026-10-03 合并后自定位）
 _ROOT_S = str(Path(__file__).resolve().parents[1])

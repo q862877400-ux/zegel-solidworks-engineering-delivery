@@ -29,8 +29,8 @@ OUT = REPO / "output" / "feature-info-capability-recheck.json"
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_part as P
+    from sw_connect import connect_solidworks, get_com_member, new_document
     from sw_feature_readback import feature_info
 
     app, _ = connect_solidworks(visible=True)

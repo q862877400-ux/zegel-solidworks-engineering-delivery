@@ -60,7 +60,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from sw_connect import get_com_member, set_com_member
+from sw_connect import get_com_member
 
 __all__ = [
     "SW_CUSTOM_INFO_TYPES",

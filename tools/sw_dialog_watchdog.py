@@ -89,7 +89,6 @@ import argparse
 import ctypes
 import ctypes.wintypes as wt
 import json
-import sys
 import time
 from pathlib import Path
 

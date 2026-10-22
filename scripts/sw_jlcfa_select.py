@@ -88,8 +88,9 @@ def pick_first(gui) -> None:
     后果与用户报告逐一吻合（Ctrl 卡住 ⇒ 按 A 变全选；**Enter 卡住 ⇒ 忽然回车**）。
     ⇒ 现在**全部**走 `sw_gui_input` 的异常安全原语（`_hold` / `_press`，抬起在 `finally` 里）。
     """
-    from scripts import sw_gui_input as _gi
     import win32con
+
+    from scripts import sw_gui_input as _gi
 
     _gi._hold([win32con.VK_MENU], win32con.VK_DOWN, pause=0.25)  # Alt+↓ 展开
     _gi._press(win32con.VK_DOWN, pause=0.3)  # ↓ 到第一项
@@ -98,7 +99,6 @@ def pick_first(gui) -> None:
 
 def wait_until_changed(gui, probe, max_wait=12.0, step=0.6):
     """等界面变化：反复截**小区域**比哈希，变了就返回，**不用固定 sleep**。"""
-    import shot
 
     base = md5_png(probe())
     t0 = time.time()
@@ -255,7 +255,7 @@ def fill_edit(h, w, edit, r, hint, log=None):
       且不再出现在待填列表里。**与焦点无关。**
     """
     import time as _t
-    import sw_jlcfa_steps as S
+
 
     rg = _parse_hint(hint)
     val = str(int(rg[0])) if rg else "100"
@@ -282,8 +282,9 @@ def fill_edit(h, w, edit, r, hint, log=None):
     #   中途异常会让 **Tab 卡在按下态**（外层还是 `except: pass` ⇒ 没人收尾）。
     #   ⇒ 改走 `sw_gui_input._press`（抬起在 `finally` 里）。
     try:
-        from scripts import sw_gui_input as _gi
         import win32con
+
+        from scripts import sw_gui_input as _gi
 
         _gi._press(win32con.VK_TAB, pause=0.4)
     except Exception:

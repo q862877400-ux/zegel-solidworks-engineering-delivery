@@ -44,10 +44,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
 import scripts.sw_feature_readback as FR  # noqa: E402
 import scripts.sw_weldment as W  # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 
 def _build(doc):
@@ -101,7 +101,8 @@ def _build(doc):
 def _pick(doc):
     """★ 照例子选：**实体特征**（mark 0）→ **草图**（mark 4）→ **面**（mark 1）。"""
     from sw_connect import get_com_member as _get
-    from sw_part import _select_com_object as _sel, _select_by_id as _sel_id
+    from sw_part import _select_by_id as _sel_id
+    from sw_part import _select_com_object as _sel
 
     ext = _get(doc, "Extension")
     picked = {}

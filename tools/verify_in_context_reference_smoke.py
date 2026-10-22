@@ -72,12 +72,13 @@ def main() -> int:
     docs: list = []
     try:
         import sw_connect
+
         from scripts import (
-            sw_part,
+            sketch_relations,
             sw_assembly,
             sw_assembly_doc,
+            sw_part,
             sw_sketch_edit,
-            sketch_relations,
         )
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

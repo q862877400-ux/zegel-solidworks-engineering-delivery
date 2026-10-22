@@ -59,14 +59,14 @@ def step(name: str, **kw) -> None:
 
 
 def main() -> int:
+    import sw_part as P
+    import sw_sweep as SW
     from sw_connect import (
         connect_solidworks,
         get_com_member,
         new_document,
         set_com_member,
     )
-    import sw_part as P
-    import sw_sweep as SW
 
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")

@@ -48,7 +48,7 @@ from __future__ import annotations
 try:
     from .sw_connect import get_com_member, set_com_member
 except ImportError:  # pragma: no cover - 直接以 scripts/ 为根导入时
-    from sw_connect import get_com_member, set_com_member  # type: ignore, set_com_member
+    from sw_connect import get_com_member  # type: ignore, set_com_member
 
 #: 官方 `Add2` 的 `Index` 语义：`-1` 表示**追加到末尾**。
 APPEND_AT_END = -1

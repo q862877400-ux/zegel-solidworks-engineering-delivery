@@ -25,7 +25,6 @@
 from __future__ import annotations
 
 import hashlib
-import json
 from dataclasses import dataclass, field
 
 #: ★★ Q13 L245 逐字给的四档 verdict

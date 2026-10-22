@@ -65,6 +65,7 @@ def main() -> int:
     args = ap.parse_args()
 
     import sw_connect
+    import sw_render_material as M
     from sw_connect import get_com_member, out_i4
     from sw_part import (
         _select_com_object,
@@ -74,7 +75,6 @@ def main() -> int:
         sketch_corner_rectangle,
         start_sketch,
     )
-    import sw_render_material as M
 
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
     ev: dict = {"steps": {}, "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S")}

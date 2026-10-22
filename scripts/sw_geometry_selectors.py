@@ -47,13 +47,12 @@
 
 from __future__ import annotations
 
-from typing import Any
 
 try:
-    from .sw_connect import get_com_member, call_com_member
+    from .sw_connect import call_com_member, get_com_member
     from .sw_part import _empty_callout  # noqa: F401 —— 供同模块其它函数用
 except ImportError:  # pragma: no cover
-    from sw_connect import get_com_member, call_com_member
+    from sw_connect import call_com_member, get_com_member
     from sw_part import _empty_callout  # noqa: F401
 
 __all__ = [

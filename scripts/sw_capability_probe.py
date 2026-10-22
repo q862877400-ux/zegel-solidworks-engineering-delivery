@@ -20,11 +20,7 @@ import os
 from pathlib import Path
 
 try:
-    from .sw_preflight import (
-        import_com_dependencies,
-        missing_com_dependencies,
-        solidworks_installed,
-    )
+    from .cad_installation import discover_installations
     from .capabilities import (
         UNATTENDED_MODE,
         backend_route_snapshot,
@@ -32,13 +28,13 @@ try:
         load_capabilities,
         manifest_path,
     )
-    from .cad_installation import discover_installations
-except ImportError:
-    from sw_preflight import (
+    from .sw_preflight import (
         import_com_dependencies,
         missing_com_dependencies,
         solidworks_installed,
     )
+except ImportError:
+    from cad_installation import discover_installations
     from capabilities import (
         UNATTENDED_MODE,
         backend_route_snapshot,
@@ -46,7 +42,11 @@ except ImportError:
         load_capabilities,
         manifest_path,
     )
-    from cad_installation import discover_installations
+    from sw_preflight import (
+        import_com_dependencies,
+        missing_com_dependencies,
+        solidworks_installed,
+    )
 
 
 TYPELIB_PATTERNS = {

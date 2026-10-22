@@ -47,7 +47,6 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
         sys.path.insert(0, _p)
 
 from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
 from scripts.sw_connect import out_i4  # noqa: E402
 
 OUT = REPO / "output" / "render-material-family-evidence.json"

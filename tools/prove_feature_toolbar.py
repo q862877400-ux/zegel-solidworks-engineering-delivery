@@ -41,8 +41,8 @@ OUT = R / "output" / "feature-toolbar-evidence.json"
 
 def main() -> int:
     import sw_connect
-    from sw_connect import get_com_member, safe_get_com_member
     import sw_part as P
+    from sw_connect import get_com_member, safe_get_com_member
     from sw_selection_spec import clear_selection, resolve_selection
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)

@@ -89,10 +89,9 @@ def _dim_count(model) -> int:
 def main() -> int:
     from sw_connect import (
         connect_solidworks,
+        create_empty_dispatch_variant,
         get_com_member,
         new_document,
-        create_empty_dispatch_variant,
-        out_i4,
     )
 
     rel = _relations_value()

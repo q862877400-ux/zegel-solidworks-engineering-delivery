@@ -52,9 +52,9 @@ sys.path.insert(0, str(REPO))
 #: r`。
 sys.path.insert(0, str(REPO / "scripts"))
 
+import scripts.sw_drawing_query as DQ  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-import scripts.sw_drawing_query as DQ  # noqa: E402
 
 OUT = REPO / "output" / "view-name-matrix-evidence.json"
 PART = REPO / "output" / "_probe_viewname_part.SLDPRT"

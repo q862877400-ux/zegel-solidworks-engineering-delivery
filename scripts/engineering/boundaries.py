@@ -26,7 +26,7 @@
 from __future__ import annotations
 
 import shutil
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 #: ══════════════════════════════════════════════════════════════════════
 # 一、事务边界（★ S15 —— ★ Q15 L314）

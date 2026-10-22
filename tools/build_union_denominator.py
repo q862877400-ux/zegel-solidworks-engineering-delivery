@@ -34,7 +34,6 @@ import json
 import re
 import sys
 import time
-from collections import Counter
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")

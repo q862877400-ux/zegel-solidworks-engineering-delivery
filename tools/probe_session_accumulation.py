@@ -37,6 +37,7 @@ OUT = Path(
 
 def main() -> int:
     import sw_connect
+
     from scripts import sw_simulation as sim
 
     ev: dict = {"at": time.strftime("%Y-%m-%dT%H:%M:%S")}

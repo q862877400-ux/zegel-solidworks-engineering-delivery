@@ -55,8 +55,8 @@ def _select_edge_by_index(model, edge_index: int, append: bool) -> dict[str, Any
       ★ 而本仓真机已定案（★ 事实 32 + 边界特征实测）：★ **`SelectByID2` 按点对某些面/边永远选不上** ✗
       ⇒ ★ 必须 **`IEntity.Select4(Append, Callout)`** ✓
     """
-    import sw_selection_spec as _SS
     import sw_part as _sp
+    import sw_selection_spec as _SS
 
     edges = []
     _bi = 0

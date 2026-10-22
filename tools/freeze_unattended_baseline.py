@@ -14,7 +14,8 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 
-import json, sys
+import json
+import sys
 from pathlib import Path
 
 #: ★ 本仓库根（★ 2026-10-03 合并后自定位）
@@ -23,7 +24,6 @@ _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"")
 sys.stdout.reconfigure(encoding="utf-8")
 from scripts.capabilities import load_capabilities, unattended_allowed
-
 
 payload = load_capabilities()
 caps = payload["capabilities"]

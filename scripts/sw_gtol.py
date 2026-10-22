@@ -82,9 +82,9 @@ from pathlib import Path as _Path
 _REPO_SCRIPTS = _Path(__file__).resolve().parent
 
 try:
-    from .sw_connect import get_com_member, call_com_member
+    from .sw_connect import call_com_member, get_com_member
 except ImportError:  # pragma: no cover - 直接以 scripts/ 为根导入时
-    from sw_connect import get_com_member, call_com_member  # type: ignore
+    from sw_connect import call_com_member, get_com_member  # type: ignore
 
 #: `swGtolIndicatorBorderType_e` —— **取出厂反射**（与 `C:\swapi\enums\` 的同名 md 一致
 #: ）。

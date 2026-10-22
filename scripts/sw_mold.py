@@ -66,9 +66,9 @@ except Exception:  # noqa: BLE001
 
 
 try:
-    from .sw_connect import get_com_member, call_com_member, set_com_member
+    from .sw_connect import call_com_member, get_com_member, set_com_member
 except ImportError:
-    from sw_connect import get_com_member, call_com_member, set_com_member
+    from sw_connect import call_com_member, get_com_member
 __all__ = [
     "insert_parting_line",
     "insert_parting_surface",

@@ -392,8 +392,8 @@ def resolve_selected_component(params: Any):
     ⚠ ★ **没有选中就没有** ⇒ ★ **响亮报错**，★ **绝不猜**（"取第一个组件"是另一种对象，
       语义不同 —— 事实 36 那一族）✓
     """
-    from scripts.sw_selection import get_selected_component
     from scripts.sw_connect import get_com_member
+    from scripts.sw_selection import get_selected_component
 
     model = resolve_model(params)
     #: ★★★ 2026-10-04（接手轮 · **真机探针**发现并修）：这里原先把 **`model`** 当 `selec

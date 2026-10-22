@@ -27,8 +27,6 @@ r"""@brief 探针：样条到底是"没建成"还是"建成了但没重绘"？�
 from __future__ import annotations
 
 import array
-import ctypes
-import ctypes.wintypes as w
 import json
 import sys
 import time
@@ -77,6 +75,7 @@ def main() -> int:
         arr.extend([x, y, 0.0])
     try:
         import sw_connect
+
         from scripts import sw_part, sw_sketch
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

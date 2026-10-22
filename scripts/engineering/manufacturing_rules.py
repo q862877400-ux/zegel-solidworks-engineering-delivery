@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import pathlib
-from dataclasses import dataclass
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RULES_FILE = (

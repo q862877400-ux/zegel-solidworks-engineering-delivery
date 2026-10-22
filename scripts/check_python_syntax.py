@@ -39,7 +39,6 @@ python scripts/check_python_syntax.py -v       # 列出扫过的目录与文件�
 from __future__ import annotations
 
 import argparse
-import ast
 import sys
 from pathlib import Path
 

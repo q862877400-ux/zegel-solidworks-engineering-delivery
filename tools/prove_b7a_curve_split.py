@@ -38,8 +38,8 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
 from scripts import sw_curve_and_split as M  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 #: ★ 中转：COM 实体放这里（★ **不进 JSON**）
 _LAST_ENTITY = []

@@ -153,9 +153,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+import scripts.sw_drawing_query as DQ  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-import scripts.sw_drawing_query as DQ  # noqa: E402
 
 #: ★ 官方 `SelectByID2` 按点选时用的 z —— ★ 逐字抄自官方例子
 #:   `Insert_Hole_Table_Example_VB` 的 `SelectByID2("", "VERTEX", …, **-500.0075**, …)`

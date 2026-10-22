@@ -54,7 +54,7 @@ PROFILE = Path(
 
 def _type_names(model) -> set:
     """★ 特征树里全部特征的**类型名**（★ 判据用）—— ★ 照 `sw_weldment` 里既有的遍历写法。"""
-    from sw_connect import get_com_member, safe_get_com_member
+    from sw_connect import safe_get_com_member
 
     names, feature, guard = set(), safe_get_com_member(model, "FirstFeature"), 0
     while feature is not None and guard < 500:
@@ -66,7 +66,8 @@ def _type_names(model) -> set:
 
 def main() -> int:
     import sw_connect
-    from sw_connect import get_com_member, safe_get_com_member
+    from sw_connect import get_com_member
+
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,

@@ -17,7 +17,6 @@ import json
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
-
 MANIFEST_PATH = Path(__file__).resolve().parents[1] / "capabilities.yaml"
 VALID_LEVELS = {"verified", "source_verified", "stitched", "indexed", "not_implemented"}
 VALID_MODES = {"interactive", "reviewed", "unattended"}

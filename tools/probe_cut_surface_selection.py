@@ -40,7 +40,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from win32com.client import VARIANT as _V  # noqa: E402
+
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_surface_features as SF  # noqa: E402

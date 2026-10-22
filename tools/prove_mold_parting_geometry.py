@@ -45,6 +45,7 @@ OUT = Path(
 
 def main() -> int:
     import sw_connect
+    import sw_mold as M
     from sw_connect import get_com_member
     from sw_part import (
         current_sketch_name,
@@ -53,7 +54,6 @@ def main() -> int:
         sketch_corner_rectangle,
         start_sketch,
     )
-    import sw_mold as M
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]

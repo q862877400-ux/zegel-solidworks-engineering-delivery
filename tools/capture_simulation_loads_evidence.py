@@ -75,10 +75,12 @@ def main() -> int:
     doc = None
     ok = True
     try:
-        import sw_connect
-        from scripts import sw_part, sw_simulation as sim
         import register_capabilities as rc
+        import sw_connect
         import tool_specs_batch26 as b26
+
+        from scripts import sw_part
+        from scripts import sw_simulation as sim
 
         #: ① 核声明解析得到 + 记下三件套
         bindings = {}

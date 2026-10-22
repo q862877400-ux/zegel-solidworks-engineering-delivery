@@ -6,8 +6,8 @@ SolidWorks 友好会话 API
 sw_part.py、sw_export.py 等模块中，便于精细控制。
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
 
 try:
     from .sw_connect import (
@@ -22,8 +22,8 @@ try:
         export_to_dxf,
         export_to_iges,
         export_to_pdf,
-        export_to_stl,
         export_to_step,
+        export_to_stl,
     )
 except ImportError:
     from sw_connect import (
@@ -38,8 +38,8 @@ except ImportError:
         export_to_dxf,
         export_to_iges,
         export_to_pdf,
-        export_to_stl,
         export_to_step,
+        export_to_stl,
     )
 
 
@@ -228,7 +228,6 @@ def session(version=None, wait_seconds=5, visible=True):
 #: ★ 本模块新增入口所需的两个依赖（★ 就地 import，★ 避免动首部结构）
 from sw_connect import get_com_member  # noqa: E402
 from sw_feature_readback import feature_names  # noqa: E402
-
 
 # ── objective② / 四家缺口 `undo`：**撤销（`IModelDoc2.EditUndo2`）** ──────────────────
 # ───

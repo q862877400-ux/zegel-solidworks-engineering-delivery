@@ -75,8 +75,8 @@ def _components(model) -> list:
 
 
 def main() -> int:
-    import sw_connect
     import sw_assembly
+    import sw_connect
 
     out: dict = {
         "official": "IAssemblyDoc.CreateSpeedPak",

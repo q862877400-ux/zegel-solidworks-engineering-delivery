@@ -24,6 +24,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
         sys.path.insert(0, _p)
 
 import register_capabilities as RC  # noqa: E402
+
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_surface_features as SF  # noqa: E402

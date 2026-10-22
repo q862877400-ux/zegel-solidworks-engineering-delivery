@@ -34,8 +34,8 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, _p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-from scripts import sw_connect  # noqa: E402
 from scripts import sw_assembly_doc as A  # noqa: E402
+from scripts import sw_connect  # noqa: E402
 from scripts import sw_macro as M  # noqa: E402
 
 SRC_ASM = Path(

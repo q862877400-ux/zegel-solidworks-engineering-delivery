@@ -53,6 +53,7 @@ OUT = Path(
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
+
     from scripts.sw_feature_readback import feature_names
     from scripts.sw_part import (
         current_sketch_name,
@@ -123,8 +124,8 @@ def main() -> int:
                 per_body.append([])
         ev["verts_per_body"] = [len(v) for v in per_body]
 
-        from win32com.client import VARIANT
         from pythoncom import VT_BYREF, VT_I4
+        from win32com.client import VARIANT
 
         def call(a, b):
             ec = VARIANT(VT_BYREF | VT_I4, 0)

@@ -46,8 +46,8 @@ OUT = Path(
 
 def main() -> int:
     import sw_connect
-    from sw_part import end_sketch, start_sketch
     import sw_part as P
+    from sw_part import end_sketch, start_sketch
     from sw_sketch import count_segments, resolve_sketch
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}

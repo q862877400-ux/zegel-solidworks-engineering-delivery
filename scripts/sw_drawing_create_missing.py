@@ -514,43 +514,6 @@ def create_auxiliary_view(
     before_views = _iter_views(model)
     before_names = _view_names(model)
     before_count = None if before_views is None else len(before_views)
-    #: ★★★ 2026-10-07（规格 216 T-216-08）**声明式视图名 + 紧邻选区检查之前选** ——
-    #:   ★ 官方那**四步**的第 1 步逐字：「Select one or more views or sheets for which to
-    #:     automatically create BOM balloons」⇒ ★ 是**官方前置** ✓
-    #:   ★★ 而**注入解析器会清空选区**（**事实 503**）⇒ ★ 模型没法在调工具前选好 ✗
-    #:   ★ 规则 3 **不许收裸坐标** ⇒ ★ 收**视图名**（★ 名字不是坐标）；★ 选法走本仓既有的
-    #:     `SelectByID2(<名字>, "DRAWINGVIEW", …)` 那一族（★ 同 create_hole_table 等）✓
-    #:   ★ 判据是**回读选区计数**（★ 事实 8：SelectByID2 的返回值不可信）✓
-    if str(view_name or "").strip():
-        ext = get_com_member(model, "Extension")
-        if ext is None:
-            return {
-                "ok": False,
-                "op": "auto_insert_balloons",
-                "error": "取不到 model.Extension ⇒ ★ 选不了视图（★ 前置未成立）",
-            }
-        import sw_part as _sp
-
-        try:
-            ext.SelectByID2(
-                str(view_name),
-                "DRAWINGVIEW",
-                0,
-                0,
-                0,
-                False,
-                0,
-                _sp._empty_callout(),
-                0,
-            )
-        except Exception as exc:  # noqa: BLE001
-            return {
-                "ok": False,
-                "op": "auto_insert_balloons",
-                "view_name": str(view_name),
-                "error": "按视图名选失败：%s: %s（★ 前置未成立、★ 与「气泡进不了图纸」是两件事）"
-                % (type(exc).__name__, str(exc)[:120]),
-            }
     sel = _selection_count(model)
 
     aux = get_com_member(
@@ -942,6 +905,43 @@ def auto_insert_balloons(
     }
 
 
+    #: ★★★ 2026-10-07（规格 216 T-216-08）**声明式视图名 + 紧邻选区检查之前选** ——
+    #:   ★ 官方那**四步**的第 1 步逐字：「Select one or more views or sheets for which to
+    #:     automatically create BOM balloons」⇒ ★ 是**官方前置** ✓
+    #:   ★★ 而**注入解析器会清空选区**（**事实 503**）⇒ ★ 模型没法在调工具前选好 ✗
+    #:   ★ 规则 3 **不许收裸坐标** ⇒ ★ 收**视图名**（★ 名字不是坐标）；★ 选法走本仓既有的
+    #:     `SelectByID2(<名字>, "DRAWINGVIEW", …)` 那一族（★ 同 create_hole_table 等）✓
+    #:   ★ 判据是**回读选区计数**（★ 事实 8：SelectByID2 的返回值不可信）✓
+    if str(view_name or "").strip():
+        ext = get_com_member(model, "Extension")
+        if ext is None:
+            return {
+                "ok": False,
+                "op": "auto_insert_balloons",
+                "error": "取不到 model.Extension ⇒ ★ 选不了视图（★ 前置未成立）",
+            }
+        import sw_part as _sp
+
+        try:
+            ext.SelectByID2(
+                str(view_name),
+                "DRAWINGVIEW",
+                0,
+                0,
+                0,
+                False,
+                0,
+                _sp._empty_callout(),
+                0,
+            )
+        except Exception as exc:  # noqa: BLE001
+            return {
+                "ok": False,
+                "op": "auto_insert_balloons",
+                "view_name": str(view_name),
+                "error": "按视图名选失败：%s: %s（★ 前置未成立、★ 与「气泡进不了图纸」是两件事）"
+                % (type(exc).__name__, str(exc)[:120]),
+            }
 # ── ★★ 本模块**不做**的，以及为什么（★ 铁律 4 + 铁律 5）──────────────────────────
 #
 # ① **`InsertBreak` / `InsertBreak2`**（断裂视图的另两条路）：★ 官方**都标 Obsolete**
@@ -1400,8 +1400,8 @@ def insert_center_lines(
     out["view"] = _view_name(target)
     out["centerline_count_before"] = _sum_over_views(model, "GetCenterLineCount")
     try:
-        from sw_part import _empty_callout  # noqa: E402
         from sw_connect import create_empty_dispatch_variant  # noqa: E402
+        from sw_part import _empty_callout  # noqa: E402
 
         #: ★★ **`LpViewComponent` 传裸 `None` 会 `类型不匹配`**（`com_error` -2147352571
         #: ）——

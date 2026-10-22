@@ -51,6 +51,7 @@ OUT = Path(
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
+
     from scripts.sw_part import (
         _empty_callout,
         current_sketch_name,

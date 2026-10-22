@@ -56,7 +56,9 @@ def main() -> int:
     sw = None
     try:
         import sw_connect
-        from scripts import sw_part as P, sw_feature_readback as FR
+
+        from scripts import sw_feature_readback as FR
+        from scripts import sw_part as P
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:

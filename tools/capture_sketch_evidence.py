@@ -67,8 +67,9 @@ def main() -> int:
     ok = True
     try:
         import sw_connect
-        from scripts import sw_part
         import tool_specs_batch18 as b18
+
+        from scripts import sw_part
         from scripts.sw_sketch import (
             count_arcs,
             count_lines,

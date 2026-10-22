@@ -85,6 +85,7 @@ def main() -> int:
 
     try:
         import sw_connect
+
         from scripts import sw_mold
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

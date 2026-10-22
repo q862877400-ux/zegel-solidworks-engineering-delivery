@@ -59,7 +59,8 @@ def main() -> int:
     asm = None
     try:
         import sw_connect
-        from scripts import sw_part, sw_assembly
+
+        from scripts import sw_assembly, sw_part
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:

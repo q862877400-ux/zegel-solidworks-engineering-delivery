@@ -46,12 +46,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from win32com.client import VARIANT as _V  # noqa: E402
-import pythoncom  # noqa: E402
+
+import scripts.sw_feature_readback as FR  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_surface_features as SF  # noqa: E402
-import scripts.sw_feature_readback as FR  # noqa: E402
 
 
 def _mk_solid(doc):
@@ -125,7 +124,8 @@ def _one(sw, tag, bodies_kind, feat_scope, auto_select):
         doc = C.new_document(sw, "part")
         _mk_solid(doc)
         _mk_surface(doc)
-        from sw_connect import get_com_member as _get, out_i4 as _oi4
+        from sw_connect import get_com_member as _get
+        from sw_connect import out_i4 as _oi4
         from sw_part import _select_com_object as _sel
 
         #: \u2605 \u53ea\u9009\u7b2c\u4e00\u5f20\u66f2\u9762\u9762\uff08\u2605 \u4e8b\u5

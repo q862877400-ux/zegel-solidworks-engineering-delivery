@@ -28,7 +28,6 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 from cad_installation import discover_all, discover_installations
 
-
 _AGENT_DOWNLOADS = {
     "codex": "https://developers.openai.com/codex/cli/",
     "claude": "https://docs.anthropic.com/en/docs/claude-code/overview",

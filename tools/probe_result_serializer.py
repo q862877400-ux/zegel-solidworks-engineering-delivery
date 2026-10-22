@@ -50,7 +50,7 @@ def main() -> int:
         names = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
         P.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
         #: ★ 选一条边（★ 用仓内声明式解析）
-        import register_capabilities as rc
+
         from scripts.sw_selection_spec import resolve_selection
 
         R["selected"] = resolve_selection(doc, "index:0", "EDGE")

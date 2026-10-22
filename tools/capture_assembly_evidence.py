@@ -71,8 +71,9 @@ def main() -> int:
     ok = True
     try:
         import sw_connect
-        from scripts import sw_part, sw_assembly
         import tool_specs_batch25 as b25
+
+        from scripts import sw_assembly, sw_part
 
         #: ① 核声明解析得到 + 记下 inject 名（本批第一次用 asm_model）
         bindings = {}

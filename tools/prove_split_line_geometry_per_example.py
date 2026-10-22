@@ -63,10 +63,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
 import scripts.sw_feature_readback as FR  # noqa: E402
 import scripts.sw_weldment as W  # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 from scripts.sw_simulation import select_face_at  # noqa: E402
 
 #: ★ 例子逐字：基准面偏移 0.01778 m

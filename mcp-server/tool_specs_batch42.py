@@ -28,7 +28,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 """
 
-from tool_registry import Param, ToolSpec
+from tool_registry import ToolSpec
 
 __all__ = ["SPECS_BATCH42"]
 

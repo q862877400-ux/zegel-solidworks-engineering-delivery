@@ -47,9 +47,9 @@ def step(name: str, **kw) -> None:
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_part as P
     import sw_sweep as SW
+    from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
     step("connect", ok=bool(app))

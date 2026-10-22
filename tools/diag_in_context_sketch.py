@@ -74,10 +74,11 @@ def main() -> int:
     docs: list = []
     try:
         import sw_connect
+
         from scripts import (
-            sw_part,
             sw_assembly,
             sw_assembly_doc,
+            sw_part,
             sw_sketch,
             sw_sketch_edit,
         )

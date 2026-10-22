@@ -29,7 +29,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 
-from tool_registry import Param, ToolSpec
+from tool_registry import ToolSpec
 
 SPECS_BATCH51 = [
     ToolSpec(

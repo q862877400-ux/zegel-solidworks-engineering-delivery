@@ -35,7 +35,7 @@ WANT = {"A4_探针_甲": "alpha", "A4_探针_乙": "beta", "A4_探针_丙": "gam
 
 def main() -> int:
     import sw_document_data as D
-    from sw_connect import connect_solidworks, new_document, get_com_member
+    from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")

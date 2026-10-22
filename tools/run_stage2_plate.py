@@ -38,6 +38,7 @@ sys.path[:0] = [
 ]
 
 import tool_caller  # noqa: E402
+
 from scripts.engineering import authorization as AUTH  # noqa: E402
 from scripts.engineering import drawing_obligations as DO  # noqa: E402
 from scripts.engineering import executor as X  # noqa: E402
@@ -377,7 +378,8 @@ def run_drawing(c: dict, n: int, *, revision: str = "rev-1") -> dict:
         #:   ⇒ 报「打开失败, 错误码: 65536」。
         #:   ★ 它本来就只该在**会弹模态框的建模调用**期间持有，不该跨到出图。
         try:
-            sw.CommandInProgress = False
+            #: 2026-10-22: the handle in this function is `_sw` (L338), not `sw`.
+            _sw.CommandInProgress = False
         except Exception:  # noqa: BLE001
             pass
         ok_d, res = tool_caller.call(
@@ -394,7 +396,9 @@ def run_drawing(c: dict, n: int, *, revision: str = "rev-1") -> dict:
         out["drawing_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     finally:
         try:
-            sw.CommandInProgress = True
+            #: 2026-10-22: the handle in this function is `_sw` (L338), not `sw`
+            #: -- the old line raised NameError (silently swallowed by `except`).
+            _sw.CommandInProgress = True
         except Exception:  # noqa: BLE001
             pass
 

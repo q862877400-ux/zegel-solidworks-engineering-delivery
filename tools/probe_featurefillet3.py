@@ -65,8 +65,8 @@ def _active_or_last_sketch(model) -> str:
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_part as P
+    from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")
@@ -110,7 +110,8 @@ def main() -> int:
                 ((-0.05, 0.03), (-0.05, -0.03)),
             ):
                 get_com_member(sk, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
-        sk_name = sk_name_raw or sk_name
+        #: 2026-10-22: was `sk_name = sk_name_raw or sk_name` -- RHS self-reference, always NameError
+        sk_name = sk_name_raw or ""
         probe = {}
         try:
             P.extrude_boss(model, sk_name, 20.0)

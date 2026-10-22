@@ -46,7 +46,9 @@ OUT = Path(
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
+
     from scripts.sw_part import (
+        _empty_callout,
         current_sketch_name,
         end_sketch,
         extrude_boss,
@@ -54,7 +56,6 @@ def main() -> int:
         start_sketch,
     )
     from scripts.sw_surface_features import insert_fill_surface_report
-    from scripts.sw_part import _empty_callout
 
     ev: dict = {"trials": [], "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]

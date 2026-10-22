@@ -13,17 +13,18 @@
 # ────────────────────────────────────────────────────────────────────
 """
 
-import json, sys, time
+import json
+import sys
+import time
 from pathlib import Path
 
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"")
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 sys.stdout.reconfigure(encoding="utf-8")
 import sw_connect
 
-
-#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
-_ROOT_S = str(Path(__file__).resolve().parents[1])
 OUT = Path(
     Path(__file__).resolve().parents[1] / "output" / "batch6-smoke-evidence.json"
 )
@@ -46,7 +47,7 @@ try:
         str(sw_connect.safe_get_com_member(model, "GetTitle")) if model else "无文档",
     )
 
-    from scripts import sw_delivery, sw_export, sw_geometry_selectors
+    from scripts import sw_delivery, sw_geometry_selectors
 
     def timed(fn):
         t0 = time.time()

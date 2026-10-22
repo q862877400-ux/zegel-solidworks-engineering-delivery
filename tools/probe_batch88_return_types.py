@@ -28,9 +28,12 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, _p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-from scripts import sw_connect  # noqa: E402
-from scripts import sw_part  # noqa: E402
 import register_capabilities as rc  # noqa: E402
+
+from scripts import (
+    sw_connect,  # noqa: E402
+    sw_part,  # noqa: E402
+)
 
 PART = ROOT / "output" / "_probe_tools_e2e_part_210427.SLDPRT"
 ASM = ROOT / "output" / "fr008-assembly-copy.SLDASM"

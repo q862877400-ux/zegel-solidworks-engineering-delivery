@@ -47,10 +47,10 @@ WORK = ROOT / "output" / "spec211-b6-asm"
 
 
 def main() -> int:
-    import sw_connect
-    import sw_part
     import sw_assembly
     import sw_assembly_doc as AD
+    import sw_connect
+    import sw_part
     import sw_surface_features as SF
 
     out: dict = {

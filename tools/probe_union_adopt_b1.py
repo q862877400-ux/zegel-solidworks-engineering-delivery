@@ -40,13 +40,13 @@ OUT = R / "output" / "union-adopt-b1-evidence.json"
 
 def main() -> int:
     import sw_connect
-    from sw_connect import get_com_member, get_com_member_raw, safe_get_com_member  # noqa: F401
+    import sw_document_data as DD
     import sw_part as P
+    import sw_render_material as RM
+    import sw_session as S
     import sw_sketch as SK
     import sw_sketch_edit_ops as E
-    import sw_render_material as RM
-    import sw_document_data as DD
-    import sw_session as S
+    from sw_connect import get_com_member, get_com_member_raw, safe_get_com_member  # noqa: F401
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
     ev = {

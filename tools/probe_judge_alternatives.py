@@ -74,7 +74,9 @@ def _read_list(manager):
 
 def main() -> int:
     import sw_connect
+
     from scripts import sw_simulation as sim
+    from scripts import sw_simulation_loads as SL
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
@@ -82,7 +84,6 @@ def main() -> int:
         sketch_corner_rectangle,
         start_sketch,
     )
-    from scripts import sw_simulation_loads as SL
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S"), "study": STUDY}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]

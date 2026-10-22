@@ -29,8 +29,6 @@ r"""@brief 真机冒烟：`sw_helix` —— 验 `insert_helix` 那条路。
 
 from __future__ import annotations
 
-import ctypes
-import ctypes.wintypes as w
 import json
 import sys
 import time

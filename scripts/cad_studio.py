@@ -26,6 +26,8 @@ if str(SCRIPTS) not in sys.path:
 if str(DESKTOP) not in sys.path:
     sys.path.insert(0, str(DESKTOP))
 
+from cad_diagnostics import create_diagnostic_bundle  # noqa: E402
+from cad_doctor import run_doctor  # noqa: E402
 from cad_workbench.queue_worker import (
     cancel_marker_path,
     default_tauri_queue_dir,
@@ -33,8 +35,6 @@ from cad_workbench.queue_worker import (
     read_job,
     write_job,
 )  # noqa: E402
-from cad_doctor import run_doctor  # noqa: E402
-from cad_diagnostics import create_diagnostic_bundle  # noqa: E402
 
 
 def _queue_jobs(queue_dir: Path) -> list[dict[str, Any]]:

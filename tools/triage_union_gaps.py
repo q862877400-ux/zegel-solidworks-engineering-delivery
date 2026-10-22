@@ -39,7 +39,6 @@ solidworks_mold_parting_line → mold_parting_line     ≠  parting_line（外�
 from __future__ import annotations
 
 import json
-import re
 import sys
 from pathlib import Path
 

@@ -34,6 +34,8 @@ from pathlib import Path
 from typing import Any
 
 sys.stdout.reconfigure(encoding="utf-8")
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
 import sw_jlcfa_cards as C
@@ -41,9 +43,6 @@ import sw_jlcfa_locate as L
 import sw_jlcfa_select as SEL
 import sw_jlcfa_steps as S
 
-
-#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
-_ROOT_S = str(Path(__file__).resolve().parents[1])
 warnings.filterwarnings("ignore")
 
 REPORT = Path(Path(__file__).resolve().parents[1] / "audit_report.json")

@@ -69,9 +69,10 @@ def main() -> int:
     ok = True
     try:
         import sw_connect
+        import tool_specs_batch24 as b24
+
         from scripts import sw_part
         from scripts.sw_mass_property import mass_properties, mass_property_object
-        import tool_specs_batch24 as b24
 
         #: ① 核声明解析得到
         bindings = {}

@@ -74,7 +74,8 @@ def main() -> int:
     doc = None
     try:
         import sw_connect
-        from scripts import sw_part, sw_sketch
+
+        from scripts import sw_part
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
@@ -193,8 +194,9 @@ def main() -> int:
         except Exception:  # noqa: BLE001
             pass
 
-    from tools.probe_sketch_enumeration_lag import SW_PID as _P  # noqa: F401
     import sw_connect as _sc
+
+    from tools.probe_sketch_enumeration_lag import SW_PID as _P  # noqa: F401
 
     dialogs, _点掉, scanned = _sc.settle_residual_dialogs()
     print(

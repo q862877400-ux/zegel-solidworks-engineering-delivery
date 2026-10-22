@@ -36,10 +36,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+import scripts.sw_sketch_primitives as SP  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_ref_geometry as M  # noqa: E402
-import scripts.sw_sketch_primitives as SP  # noqa: E402
 
 
 def _solid(doc, plane="Front Plane", pts=(-20, -10, 20, -10, 20, 10), depth=0.02):

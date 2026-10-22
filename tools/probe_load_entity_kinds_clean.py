@@ -40,7 +40,9 @@ OUT = Path(
 
 def main() -> int:
     import sw_connect
+
     from scripts import sw_simulation as sim
+    from scripts import sw_simulation_loads as SL
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
@@ -49,7 +51,6 @@ def main() -> int:
         start_sketch,
     )
     from scripts.sw_selection_spec import select_entity_by_index
-    from scripts import sw_simulation_loads as SL
 
     ev: dict = {"grid": {}, "order": [], "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]

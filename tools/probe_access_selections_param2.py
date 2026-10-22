@@ -41,6 +41,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 import pythoncom  # noqa: E402
 import win32com.client  # noqa: E402
+
 from scripts import sw_connect as C  # noqa: E402
 
 SW_FM_FILL_PATTERN = 105  #: ★ 反射 dump：`swFmFillPattern = 105`

@@ -7,10 +7,10 @@ from dataclasses import dataclass
 from typing import Any
 
 try:
-    from .sw_connect import get_com_member, call_com_member
+    from .sw_connect import call_com_member, get_com_member
     from .sw_part import _ensure_sketch_selected
 except ImportError:
-    from sw_connect import get_com_member, call_com_member
+    from sw_connect import call_com_member, get_com_member
     from sw_part import _ensure_sketch_selected
 
 
@@ -1494,7 +1494,6 @@ def create_hem(
     if not allow_unverified:
         require_verified("create_hem")  #: ★ 本机实测失败 ⇒ 调用前抛**带原因**的错误
     import sw_selection_spec as SS  # noqa: E402
-    from sw_part import _empty_callout  # noqa: E402
 
     out: dict = {
         "ok": False,

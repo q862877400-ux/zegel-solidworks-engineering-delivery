@@ -44,12 +44,11 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
 
 #: ★ 空 Dispatch 变体（★ 事实 12/33：`VARIANT(VT_DISPATCH, None)`）
 from scripts.sw_connect import create_empty_dispatch_variant as _av  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
-import scripts.sw_feature_readback as FR  # noqa: E402
 
 
 def _mk(doc):
@@ -221,7 +220,8 @@ def main() -> int:
     }
 
     def _surfcut(doc):
-        from sw_connect import get_com_member as _get, out_i4 as _oi4
+        from sw_connect import get_com_member as _get
+        from sw_connect import out_i4 as _oi4
         from sw_part import _select_com_object as _sel
 
         _mk(doc)

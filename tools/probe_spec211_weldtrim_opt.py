@@ -45,8 +45,8 @@ OPTION_CANDIDATES = (1, 0)  #: ★ 1 = AllowTrimmedExtensionTrim ✓
 def main() -> int:
     import sw_connect
     import sw_part
-    import sw_weldment as W
     import sw_selection_spec as SS
+    import sw_weldment as W
 
     out: dict = {
         "official": "IFeatureManager.InsertWeldmentTrimFeature2",

@@ -52,11 +52,11 @@ sys.path.insert(0, str(R / "scripts"))
 #: **
 #:   （★ 轮 522 第一版我 `import pythoncom` 就取 `pythoncom.VARIANT` ⇒ 三组白跑、
 #:    ★ 报 `module 'pythoncom' has no attribute 'VARIANT'` —— ★ **那是探针的毛病**）
-from win32com.client import VARIANT as _V  # noqa: E402
 import pythoncom  # noqa: E402
+from win32com.client import VARIANT as _V  # noqa: E402
+
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
 
 
 def _mk_solid(doc):
@@ -97,8 +97,11 @@ def _bodies_variants():
             )
         )
     except Exception as exc:  # noqa: BLE001
+        #: 2026-10-22: `except ... as exc` deletes `exc` at block end, so a lambda
+        #: capturing it would raise NameError when called later; bind a local first.
+        _bind_err = str(exc)[:60]
         out.append(
-            ("VT_ARRAY|VT_DISPATCH \u6784\u4e0d\u51fa", lambda: ("ERR", str(exc)[:60]))
+            ("VT_ARRAY|VT_DISPATCH 构不出", lambda: ("ERR", _bind_err))
         )
     out.append(("VARIANT()\uff08\u7a7a\uff09", lambda: _V()))
     try:
@@ -109,8 +112,10 @@ def _bodies_variants():
             )
         )
     except Exception as exc:  # noqa: BLE001
+        #: 2026-10-22: same as above -- bind the message before the except scope ends.
+        _bind_var = str(exc)[:60]
         out.append(
-            ("VT_ARRAY|VT_VARIANT \u6784\u4e0d\u51fa", lambda: ("ERR", str(exc)[:60]))
+            ("VT_ARRAY|VT_VARIANT 构不出", lambda: ("ERR", _bind_var))
         )
     out.append(("None", lambda: None))
     return out
@@ -150,7 +155,8 @@ def _one(sw, tag, factory):
                     break
             except Exception:  # noqa: BLE001
                 continue
-        from sw_connect import out_dispatch as _od, out_i4 as _oi4
+        from sw_connect import out_dispatch as _od
+        from sw_connect import out_i4 as _oi4
 
         fm = C.get_com_member(doc, "FeatureManager")
         before = list(P.feature_names(doc) or [])

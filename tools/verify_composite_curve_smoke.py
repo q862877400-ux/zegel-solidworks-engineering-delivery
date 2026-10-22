@@ -59,6 +59,7 @@ def main() -> int:
     doc = None
     try:
         import sw_connect
+
         from scripts import sw_part
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

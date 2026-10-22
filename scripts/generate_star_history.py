@@ -22,7 +22,6 @@ from datetime import datetime, timedelta, timezone
 from html import escape
 from pathlib import Path
 
-
 GRAPHQL_URL = "https://api.github.com/graphql"
 QUERY = """
 query($owner: String!, $name: String!, $cursor: String) {

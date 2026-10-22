@@ -24,8 +24,6 @@ r"""@brief 真机冒烟：`sw_part.sketch_centerline` + **再测一次长度单�
 
 from __future__ import annotations
 
-import ctypes
-import ctypes.wintypes as w
 import json
 import sys
 import time
@@ -73,6 +71,7 @@ def main() -> int:
     scratch = None
     try:
         import sw_connect
+
         from scripts import sw_part, sw_sketch
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

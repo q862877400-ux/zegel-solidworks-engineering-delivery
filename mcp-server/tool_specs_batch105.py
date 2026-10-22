@@ -20,7 +20,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
-from tool_registry import Param, ToolSpec
+from tool_registry import ToolSpec
 
 SPECS_BATCH105 = [
     ToolSpec(

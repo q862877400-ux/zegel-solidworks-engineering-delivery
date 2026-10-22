@@ -44,7 +44,6 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
 
 
 def _seg_count(doc):

@@ -85,8 +85,8 @@ def synth_args(spec) -> dict:
     ⇒ ★ 判序：★ **① 真函数签名的类型注解 → ② 名字后缀启发式 → ③ 兜底字符串** ✓
       ★（★ 把类型放**第一位**，★ 因为它是**真的**；★ 名字后缀是**猜的**）✓
     """
-    import inspect
     import importlib
+    import inspect
 
     ann: dict = {}
     try:

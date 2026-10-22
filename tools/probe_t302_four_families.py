@@ -80,7 +80,6 @@ def _counts(model) -> tuple:
 
 def _try(label: str, fn) -> dict:
     """★ 跑一个入口，★ 回「成功/报错/几何增量」。"""
-    from sw_connect import connect_solidworks
 
     r = {"项": label}
     try:
@@ -115,8 +114,8 @@ def _try(label: str, fn) -> dict:
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_part as P
+    from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
     rows: list = []

@@ -42,8 +42,8 @@ EXPECT_AFTER = EXPECT_BEFORE * FACTOR**3  #: ★ ×27 = 3240000 ✓
 
 def main() -> int:
     import sw_connect
-    import tool_caller
     import sw_part
+    import tool_caller
     from sw_mass_property import mass_properties
 
     out = {

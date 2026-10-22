@@ -26,9 +26,7 @@ from __future__ import annotations
 import json
 import re
 import sys
-from collections import Counter
 from pathlib import Path
-
 
 #: ★ 本仓库根（★ 2026-10-03 合并后自定位）
 _ROOT_S = str(Path(__file__).resolve().parents[1])

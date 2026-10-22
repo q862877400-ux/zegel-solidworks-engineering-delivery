@@ -25,7 +25,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -41,7 +40,6 @@ try:
     from .sw_review import run_review
 except ImportError:
     from sw_connect import (
-        call_com_member,
         connect_solidworks,
         create_empty_dispatch_variant,
         get_com_member,

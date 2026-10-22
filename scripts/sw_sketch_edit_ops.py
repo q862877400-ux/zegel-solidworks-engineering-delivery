@@ -72,7 +72,8 @@ for _p in (_HERE.parent, _HERE.parent.parent):
         sys.path.insert(0, str(_p))
 
 import sw_sketch as _SK  # noqa: E402
-from sw_connect import get_com_member, set_com_member as _set_com_member  # noqa: E402
+from sw_connect import get_com_member  # noqa: E402
+from sw_connect import set_com_member as _set_com_member
 from sw_part import _empty_callout  # noqa: E402
 
 #: ★ 长度换算助手：`_mm(v)` = **毫米→米**（恰好一次）。

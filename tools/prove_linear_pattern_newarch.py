@@ -49,10 +49,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+import scripts.sw_sketch_primitives as SPK  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_pattern as SP  # noqa: E402
-import scripts.sw_sketch_primitives as SPK  # noqa: E402
 
 #: ★ 真名（★ 来自 `_raw/enum_values_sldworks.txt`，**不是**注释里那个 `swFmLinearPattern
 #: `）

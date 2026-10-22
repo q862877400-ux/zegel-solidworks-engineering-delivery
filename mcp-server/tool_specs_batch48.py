@@ -33,7 +33,6 @@
 
 from tool_registry import Param, ToolSpec
 
-
 #: ★★★ 2026-10-03（接手轮）**为「显式拒」这一族补上"给选区"的入口**。
 #:   ★★ **病灶**（真机证出，证据 `output/explicit-reject-family-evidence.json`）：
 #:     `create_sweep_report` 读到 `mark1 < 1 or mark4 < 1` 就

@@ -41,10 +41,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
 import scripts.sw_feature_readback as FR  # noqa: E402
 import scripts.sw_weldment as W  # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 
 def _mk_solid(doc):
@@ -133,7 +133,8 @@ def _one(sw, tag, kind):
         if kind in ("project", "sil"):
             _mk_sketch2(doc)
         from sw_connect import get_com_member as _get
-        from sw_part import _select_com_object as _sel, _select_by_id as _sel_id
+        from sw_part import _select_by_id as _sel_id
+        from sw_part import _select_com_object as _sel
 
         ext = _get(doc, "Extension")
         picked = {}

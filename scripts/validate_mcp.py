@@ -22,7 +22,6 @@ from pathlib import Path
 from mcp import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
-
 ROOT = Path(__file__).resolve().parents[1]
 SERVER_PATH = ROOT / "mcp-server" / "server.py"
 

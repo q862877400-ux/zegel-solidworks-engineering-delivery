@@ -39,10 +39,9 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as C  # noqa: E402
-from scripts.sw_connect import create_empty_dispatch_variant as _av  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_surface_features as SF  # noqa: E402
-import scripts.sw_feature_readback as FR  # noqa: E402
+from scripts.sw_connect import create_empty_dispatch_variant as _av  # noqa: E402
 
 
 def _mk_surface(doc, plane="Front Plane", rect=(-0.02, -0.02, 0.02, 0.02), depth=30.0):

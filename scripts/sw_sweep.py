@@ -42,7 +42,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 
-from sw_connect import get_com_member, set_com_member
+from sw_connect import get_com_member
 from sw_feature_readback import feature_names
 
 #: ★ `swFeatureNameID_e` 的取值（★ 反射来的，★ 事实 43：数值必须去反射）

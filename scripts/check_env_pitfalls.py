@@ -42,8 +42,8 @@ r"""@brief 环境坑静态检查：`subprocess` 缺 `encoding=` / `Path("<盘符
 
 from __future__ import annotations
 
-import io
 import ast
+import io
 import re
 import sys
 import tokenize

@@ -75,7 +75,9 @@ def main() -> int:
     doc = None
     try:
         import sw_connect
-        from scripts import sw_part as P, sw_feature_readback as FR
+
+        from scripts import sw_feature_readback as FR
+        from scripts import sw_part as P
         from scripts.sw_simulation import select_face_at
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]

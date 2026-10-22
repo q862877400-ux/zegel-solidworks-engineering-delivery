@@ -86,11 +86,11 @@ def _vol(sw_connect, model):
 def _one_run(sw, sw_connect, axis_x_mm: float) -> dict:
     from sw_connect import get_com_member
     from sw_part import (
-        start_sketch,
-        sketch_corner_rectangle,
         current_sketch_name,
         end_sketch,
+        sketch_corner_rectangle,
         sketch_line,
+        start_sketch,
     )
 
     doc = sw_connect.new_document(sw, "part")

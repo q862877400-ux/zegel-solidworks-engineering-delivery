@@ -36,9 +36,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+from scripts import gear_geometry as G  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import gear_geometry as G  # noqa: E402
 from tools.probe_gear_tooth_pattern2 import tooth_curves  # noqa: E402
 
 

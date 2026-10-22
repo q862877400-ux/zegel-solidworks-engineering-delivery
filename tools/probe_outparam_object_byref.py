@@ -37,8 +37,6 @@ C  传两个裸 None
 
 from __future__ import annotations
 
-import ctypes
-import ctypes.wintypes as w
 import json
 import sys
 import time

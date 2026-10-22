@@ -111,9 +111,10 @@ def main() -> int:
     ok = True
     try:
         import sw_connect
+        import tool_specs_batch23 as b23
+
         from scripts import sw_part
         from scripts.sw_selection_spec import clear_selection
-        import tool_specs_batch23 as b23
 
         #: ① 核声明解析得到 + 记下 param_alias / pre_call 是否存在
         bindings = {}

@@ -113,7 +113,6 @@ def build_objects(sw, model):
         study = None
         if mgr is not None:
             try:
-                from scripts.sw_connect import out_i4
 
                 # `CWStudy GetStudy(Int32)` —— **只一个参数**（反射与 CHM 一致）
                 study = get_com_member(
@@ -186,8 +185,8 @@ def main() -> int:
         "几乎全是假阳性。"
     )
 
-    from scripts.sw_connect import connect_solidworks, new_document
     from scripts import sw_part
+    from scripts.sw_connect import connect_solidworks, new_document
 
     sw, _m, _meta = connect_solidworks(wait_seconds=20, return_metadata=True)
     title = None

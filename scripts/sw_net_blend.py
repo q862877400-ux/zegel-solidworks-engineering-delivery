@@ -69,8 +69,8 @@ def _select_face_by_index(model, face_index: int, append: bool):
     #: .py`）
     #: ★ `body.GetFaces` 报逐字「**没有这个成员**」✗ ⇒ ★ 迟到绑定的成员要走 `get_com_mem
     #: ber` ✓
-    import sw_selection_spec as _SS
     import sw_part  # 同目录模块
+    import sw_selection_spec as _SS
 
     #: ★★★ 2026-10-07（规格 220 续 · 第 39 轮）★ **遍历所有体**（★ 不再只看 `body_index=
     #: 0`）✓

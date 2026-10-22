@@ -70,7 +70,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from audit_call_arity import IFACE_HEAD, IFACE_SIG, WRAPPERS, call_sites  # noqa: E402
+from audit_call_arity import IFACE_HEAD, IFACE_SIG, WRAPPERS  # noqa: E402
 
 #: 纯出参的容器类型 —— **不计入**「调用方要传的实参」
 PURE_OUT = re.compile(r"^(Object|Variant|Dispatch)&\s*$", re.I)

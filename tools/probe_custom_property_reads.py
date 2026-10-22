@@ -173,6 +173,7 @@ def main() -> int:
     doc = None
     try:
         import sw_connect
+
         from scripts.sw_connect import mm as _mm  # noqa: F401  (确认模块可用)
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

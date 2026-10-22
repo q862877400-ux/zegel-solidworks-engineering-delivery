@@ -24,13 +24,13 @@ OUT = REPO / "output" / "linear-pattern-production-recheck.json"
 
 
 def main() -> int:
+    import sw_part as P
     from sw_connect import (
         connect_solidworks,
+        create_empty_dispatch_variant,
         get_com_member,
         new_document,
-        create_empty_dispatch_variant,
     )
-    import sw_part as P
     from sw_feature_readback import feature_names
 
     app, _ = connect_solidworks(visible=True)

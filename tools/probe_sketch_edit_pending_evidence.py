@@ -72,14 +72,14 @@ def _seg(model) -> object:
 
 
 def main() -> int:
-    from sw_connect import (
-        connect_solidworks,
-        get_com_member,
-        new_document,
-        create_empty_dispatch_variant,
-    )
     import sw_part as P
     import sw_sketch_edit as SE
+    from sw_connect import (
+        connect_solidworks,
+        create_empty_dispatch_variant,
+        get_com_member,
+        new_document,
+    )
 
     app, _ = connect_solidworks(visible=True)
     rows: list = []

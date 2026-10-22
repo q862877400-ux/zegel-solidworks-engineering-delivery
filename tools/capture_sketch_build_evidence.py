@@ -63,6 +63,8 @@ def main() -> int:
     ok = True
     try:
         import sw_connect
+        import tool_specs_batch21 as b21
+
         from scripts import sw_part
         from scripts.sw_sketch import (
             count_arcs,
@@ -70,7 +72,6 @@ def main() -> int:
             count_segments,
             resolve_sketch,
         )
-        import tool_specs_batch21 as b21
 
         #: ① 核声明解析得到（★ 并**收集每个声明的 param_alias**，用来证明改名那层）
         bindings = {}

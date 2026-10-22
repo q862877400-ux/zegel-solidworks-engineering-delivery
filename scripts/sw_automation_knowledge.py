@@ -20,7 +20,6 @@ r"""SolidWorks 自动化的通用可复用知识：错误码、弹窗、选区�
 
 from __future__ import annotations
 
-from typing import Any
 
 try:
     from .sw_connect import get_com_member, set_com_member

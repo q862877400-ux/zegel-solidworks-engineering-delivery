@@ -39,15 +39,17 @@ for _p in (str(_REPO), str(_REPO / "scripts")):
         sys.path.insert(0, _p)
 sys.stdout.reconfigure(encoding="utf-8")
 
+from scripts import (
+    sw_assembly,  # noqa: E402
+    sw_part,  # noqa: E402
+)
+from scripts import sw_motion as M  # noqa: E402
 from scripts.sw_connect import (  # noqa: E402
     connect_solidworks,
     get_com_member,
     new_document,
     save_document,
 )
-from scripts import sw_assembly  # noqa: E402
-from scripts import sw_motion as M  # noqa: E402
-from scripts import sw_part  # noqa: E402
 
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "motion-avi-evidence.json")
 

@@ -60,10 +60,10 @@ from typing import Any
 # 覆盖:   下面这段 `try` 导入
 # ─────────────────────────────────────────────────────────────────────
 try:
-    from .sw_connect import get_com_member, create_empty_dispatch_variant, out_i4
+    from .sw_connect import create_empty_dispatch_variant, get_com_member, out_i4
 except ImportError:
     try:
-        from sw_connect import get_com_member, create_empty_dispatch_variant, out_i4
+        from sw_connect import create_empty_dispatch_variant, get_com_member, out_i4
     except ImportError:
         #: ★★ **测试环境**（`tests/test_sw_simulation_loads_contract.py` 把 `sw_connect`
         #:   stub 掉）⇒ 这个名字取不到 ⇒ ★ **置 None 而不是让 import 炸**。

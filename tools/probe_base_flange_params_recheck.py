@@ -49,9 +49,9 @@ def _spec_fields() -> list:
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_part as P
     import sw_sheet_metal as SM
+    from sw_connect import connect_solidworks, get_com_member, new_document
     from sw_feature_readback import base_flange_params
 
     fields = _spec_fields()

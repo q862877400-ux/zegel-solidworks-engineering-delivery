@@ -47,14 +47,15 @@ class _P:
 
 def main() -> int:
     import sw_connect
+    import tool_specs_batch3 as b3
+
+    from scripts.sw_export import export_flat_pattern_dxf_report
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
         sketch_corner_rectangle,
         start_sketch,
     )
-    from scripts.sw_export import export_flat_pattern_dxf_report
-    import tool_specs_batch3 as b3
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]

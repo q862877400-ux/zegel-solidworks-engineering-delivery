@@ -44,7 +44,6 @@ sys.path.insert(0, str(R / "scripts"))
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_sweep as S  # noqa: E402
-import scripts.sw_sketch_primitives as SPK  # noqa: E402
 
 
 def _mark(obj, mark):

@@ -1,6 +1,5 @@
-from sw_feature_readback import feature_names
 from sw_connect import get_com_member
-
+from sw_feature_readback import feature_names
 
 # ── 24h 计划 段 6 续（Spec Kit `168`）：**放样（loft）** ──────────────────────────────
 # ★★★★★ 2026-10-01（轮 313）**这是"四家有我们没有"里核实的一个真缺**：

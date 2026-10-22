@@ -46,7 +46,6 @@ r"""@brief 按**能力**对照各域缺口（补上广度地图只数 MCP 工具
 from __future__ import annotations
 
 import re
-import sys
 from pathlib import Path
 
 # ⚠ **可移植**：不要硬编码机器路径（原先写死 ``）。

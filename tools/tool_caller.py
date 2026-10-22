@@ -55,7 +55,6 @@ def _specs() -> dict:
             _SPECS_CACHE[s.name] = (s, effective_inject(s))
         #: ★ 第二来源：`server.py` 的 `@mcp.tool(...)`（★ 45 个）
         try:
-            import importlib.util
             import pathlib as _pl
             import re as _re
 

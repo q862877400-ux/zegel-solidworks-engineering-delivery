@@ -43,11 +43,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
-from scripts import sw_loft as L  # noqa: E402
 import scripts.sw_feature_readback as FR  # noqa: E402
 import scripts.sw_weldment as W  # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_loft as L  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 
 def _two_profiles(doc):

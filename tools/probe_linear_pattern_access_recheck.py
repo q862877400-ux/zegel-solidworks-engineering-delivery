@@ -45,9 +45,8 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as C  # noqa: E402
-from scripts.sw_connect import create_empty_dispatch_variant as _av  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-
+from scripts.sw_connect import create_empty_dispatch_variant as _av  # noqa: E402
 
 SW_FM_LPATTERN = 6
 

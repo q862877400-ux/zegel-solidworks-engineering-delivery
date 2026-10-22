@@ -41,11 +41,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_weldment as W  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_surface_features as SF  # noqa: E402
-import scripts.sw_feature_readback as FR  # noqa: E402
-import scripts.sw_weldment as W  # noqa: E402
 
 
 def _mk_solid(doc):
@@ -141,7 +141,6 @@ def _pick_plane(doc, names=("\u524d\u89c6\u57fa\u51c6\u9762", "Front Plane")):
     #: ）。
     #:   ⚠ **轮 537 第一版就是踩在这**：★ 报错被 `except: continue` 吞掉 ⇒
     #:     `picked={"plane": null}` ⇒ ★ 两条**根本没真试到**，★ 而读起来像"前置不够"。
-    from sw_part import _empty_callout as _ec
     from sw_part import _select_by_id as _sel_id
 
     errs = []

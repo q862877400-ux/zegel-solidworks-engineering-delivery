@@ -43,8 +43,6 @@ from __future__ import annotations
 
 import sys
 import time
-import warnings
-from typing import Any
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -388,9 +386,10 @@ def capture_window(hwnd: int, path: str):
     """
     import ctypes
     from ctypes import wintypes
-    from PIL import Image
+
     import win32gui
     import win32guiui
+    from PIL import Image
 
     user32 = ctypes.windll.user32
     gdi32 = ctypes.windll.gdi32

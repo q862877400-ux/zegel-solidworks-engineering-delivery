@@ -23,8 +23,8 @@ OUT = REPO / "output" / "extrude-depth-capability-recheck.json"
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_part as P
+    from sw_connect import connect_solidworks, get_com_member, new_document
     from sw_feature_readback import extrude_depth
 
     app, _ = connect_solidworks(visible=True)

@@ -85,8 +85,9 @@ def main() -> int:
     ok = True
     try:
         import sw_connect
-        from scripts import sw_part
         import tool_specs_batch22 as b22
+
+        from scripts import sw_part
 
         #: ① 核声明解析得到 + 记下 param_alias
         bindings = {}

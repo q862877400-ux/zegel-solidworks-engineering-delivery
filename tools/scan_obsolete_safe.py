@@ -82,7 +82,6 @@ def main() -> int:
     started = time.time()
     sys.path.insert(0, str(REPO / "scripts"))
     sys.path.insert(0, str(REPO))
-    from check_env_pitfalls import strip_comments_and_strings  # noqa: E402
 
     obs = json.loads(IDX.read_text(encoding="utf-8", errors="replace"))["entries"]
     mem = json.loads(MEM.read_text(encoding="utf-8", errors="replace"))

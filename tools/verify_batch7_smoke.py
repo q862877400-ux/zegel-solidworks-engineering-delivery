@@ -12,17 +12,18 @@
 # ────────────────────────────────────────────────────────────────────
 """
 
-import json, sys, time
+import json
+import sys
+import time
 from pathlib import Path
 
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"")
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 sys.stdout.reconfigure(encoding="utf-8")
 import sw_connect
 
-
-#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
-_ROOT_S = str(Path(__file__).resolve().parents[1])
 OUT = Path(
     Path(__file__).resolve().parents[1] / "output" / "batch7-smoke-evidence.json"
 )

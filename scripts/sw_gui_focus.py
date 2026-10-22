@@ -31,7 +31,6 @@ r"""GUI 焦点守卫 —— 每个动作之前强制检查并修复输入焦点�
 
 from __future__ import annotations
 
-import sys
 import time
 from typing import Any
 

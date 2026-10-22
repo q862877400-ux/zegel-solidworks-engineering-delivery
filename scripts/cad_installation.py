@@ -27,7 +27,6 @@ import re
 from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping
 
-
 PUBLIC_DESKTOP = Path(os.environ.get("PUBLIC", r"C:\Users\Public")) / "Desktop"
 SHORTCUTS = {
     "solidworks": PUBLIC_DESKTOP / "SOLIDWORKS 2024.lnk",

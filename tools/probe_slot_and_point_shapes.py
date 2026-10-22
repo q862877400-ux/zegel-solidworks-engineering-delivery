@@ -25,8 +25,6 @@ r"""@brief 探针：`get_sketch_slots` / `get_sketch_points` 的形状（轮 142
 
 from __future__ import annotations
 
-import ctypes
-import ctypes.wintypes as w
 import json
 import sys
 import time
@@ -74,6 +72,7 @@ def main() -> int:
     docs: list = []
     try:
         import sw_connect
+
         from scripts import sw_part, sw_sketch
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]

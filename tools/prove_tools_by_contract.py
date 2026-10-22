@@ -40,11 +40,13 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "mcp-server"))
 
+import importlib  # noqa: E402
+
 import register_capabilities as RC  # noqa: E402
+
+import scripts.sw_sketch_primitives as SP  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-import scripts.sw_sketch_primitives as SP  # noqa: E402
-import importlib  # noqa: E402
 
 #: ★ 按**声明的类型**取样（★ 探针自己的表，不是产品逻辑）
 _VALUE_BY_KIND = {float: 1.0, int: 1, bool: True, str: ""}

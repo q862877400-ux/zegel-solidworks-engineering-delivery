@@ -224,7 +224,6 @@ def _face_object(params):
       （★ 296 真机实测：`mark1` 从 1 变 **0**，★ 而真机随即报 `InsertMultiFaceDraft 创建失败`）。
     ⇒ ★★ 所以「取对象」与「选择」**必须分开**：先选平面（mark 1），再 `append=True` + `mark=2` 选面。
     """
-    from scripts.sw_connect import get_com_member
     from scripts.sw_selection_spec import current_selection, entities_on_body
 
     model = _model()

@@ -65,8 +65,9 @@ def main() -> int:
     ok = True
     try:
         import sw_connect
-        from scripts import sw_part as P
+
         from scripts import sw_appearance as A
+        from scripts import sw_part as P
         from scripts import sw_render_material as M
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]

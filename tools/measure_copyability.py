@@ -21,13 +21,11 @@ import sys
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
-REPO = Path(r"" + _ROOT_S + r"")
-sys.path[:0] = [str(REPO / "mcp-server"), str(REPO)]
-import register_capabilities as rc
-
-
 #: ★ 本仓库根（★ 2026-10-03 合并后自定位）
 _ROOT_S = str(Path(__file__).resolve().parents[1])
+REPO = Path(r"" + _ROOT_S + r"")
+sys.path[:0] = [str(REPO / "mcp-server"), str(REPO)]
+
 u = json.loads((REPO / "tools" / "union-sources.json").read_text(encoding="utf-8"))
 four = {}
 for s in u["sources"]:

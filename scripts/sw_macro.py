@@ -300,8 +300,9 @@ def run_macro(
     :param options: `swRunMacroOption_e`（默认 0 = `swRunMacroDefault`）。
     :returns: `{ok, return_value, error_code, error_name, file, module, procedure, options}`
     """
-    from .sw_connect import get_com_member, out_i4
     import os
+
+    from .sw_connect import get_com_member, out_i4
 
     err_holder = out_i4()
     ret = None

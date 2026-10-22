@@ -42,10 +42,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+import scripts.sw_sketch_primitives as SP  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_sketch as SK  # noqa: E402
-import scripts.sw_sketch_primitives as SP  # noqa: E402
 from scripts import sw_sketch_modify_ops as M  # noqa: E402
 
 

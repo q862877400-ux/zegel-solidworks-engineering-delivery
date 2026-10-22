@@ -32,7 +32,6 @@ r"""@brief 验收命令：`dxf_preview_scene` 的**端到端**（离线，**不�
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 import sys
 import tempfile

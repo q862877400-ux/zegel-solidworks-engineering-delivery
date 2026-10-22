@@ -26,11 +26,11 @@ from typing import Any
 
 try:
     from .cad_installation import discover_installation
-    from .sw_capability_probe import _find_typelib, _type_names, TYPELIB_PATTERNS
+    from .sw_capability_probe import TYPELIB_PATTERNS, _find_typelib, _type_names
     from .sw_preflight import import_com_dependencies, missing_com_dependencies
 except ImportError:
     from cad_installation import discover_installation
-    from sw_capability_probe import _find_typelib, _type_names, TYPELIB_PATTERNS
+    from sw_capability_probe import TYPELIB_PATTERNS, _find_typelib, _type_names
     from sw_preflight import import_com_dependencies, missing_com_dependencies
 
 

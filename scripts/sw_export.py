@@ -5,10 +5,9 @@ SolidWorks 文件导出工具
 
 import os
 from pathlib import Path
+from typing import Any
 
 try:
-    from .sw_preflight import import_com_dependencies
-
     #: ★★ 2026-10-07（规格 211 · D 项）：★ 加 `save_document` 到**已有的**导入行 ——
     #: ★ 那是「受控临时另存」要用的（★ 用户授权，见 `export_flat_pattern_dxf` 的 docstri
     #: ng ✓）
@@ -17,12 +16,12 @@ try:
         create_empty_dispatch_variant,
         get_com_member,
         open_document,
+        out_i4,
         save_document,
         set_com_member,
     )
-    from .sw_connect import out_i4
+    from .sw_preflight import import_com_dependencies
 except ImportError:
-    from sw_preflight import import_com_dependencies
     from sw_connect import (
         create_empty_dispatch_variant,
         get_com_member,
@@ -31,6 +30,7 @@ except ImportError:
         save_document,
         set_com_member,
     )
+    from sw_preflight import import_com_dependencies
 
 pythoncom, _win32com, VARIANT = import_com_dependencies()
 

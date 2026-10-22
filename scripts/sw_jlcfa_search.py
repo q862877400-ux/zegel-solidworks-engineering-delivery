@@ -28,21 +28,19 @@ r"""搜索取件 —— **全 UIA，不用截图**。
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import sys
 import time
 import warnings
+from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
+#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
+_ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
 import sw_jlcfa_locate as L
 import sw_jlcfa_steps as S
 
-
-#: ★ 本仓库根（★ 2026-10-03 合并后自定位）
-_ROOT_S = str(Path(__file__).resolve().parents[1])
 warnings.filterwarnings("ignore")
 
 #: 结果卡上的型号标签前缀（**两种页面不同名**，都要认）
@@ -125,6 +123,7 @@ def search(hwnd: int, win, code: str, log=S.log):
         # ly`）
         #   ⇒ 中途异常会把**那个字符键卡在按下态**。⇒ 改走 `sw_gui_input._press`。
         import win32api
+
         from scripts import sw_gui_input as _gi
 
         for ch in code:

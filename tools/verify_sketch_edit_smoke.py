@@ -30,8 +30,6 @@ r"""@brief 真机冒烟：`sw_sketch_edit.create_sketch_chamfer`（草图倒角�
 
 from __future__ import annotations
 
-import ctypes
-import ctypes.wintypes as w
 import json
 import sys
 import time

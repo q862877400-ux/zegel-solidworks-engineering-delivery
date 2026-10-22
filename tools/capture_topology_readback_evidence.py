@@ -55,8 +55,10 @@ def main() -> int:
     ok = True
     try:
         import sw_connect
-        from scripts import sw_part, sw_topology as T
         import tool_specs_batch30 as b30
+
+        from scripts import sw_part
+        from scripts import sw_topology as T
 
         #: ① 静态：6 个工具声明解析得到
         bindings = {}
