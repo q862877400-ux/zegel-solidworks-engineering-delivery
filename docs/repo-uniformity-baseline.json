@@ -79,9 +79,33 @@
     112
    ],
    "why": "收敛 _sha256（delivery_compare + sw_delivery 逐字相同）到 scripts/sw_file_digest.py"
+  },
+  {
+   "at": "2026-10-22d",
+   "from": [
+    112
+   ],
+   "to": [
+    111
+   ],
+   "why": "登记 1 组否定裁决豁免（_optional_com_member/_safe_com_member/_safe_member：统一会丢 21 个调用点的 dispatch 核验）"
   }
  ],
- "dup_function_groups_ceiling": 112,
- "dup_function_allow": [],
+ "dup_function_groups_ceiling": 111,
+ "dup_function_allow": [
+  {
+   "functions": "_optional_com_member/_safe_com_member",
+   "files": [
+    "scripts/sw_delivery.py",
+    "scripts/sw_part.py",
+    "subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py"
+   ],
+   "verdict": "★ 判定【不统一】—— 保留三份实现",
+   "reason": "同一段逻辑三个名字三份实现（逐字相同），看似该收敛。★ 但实测：把 sw_part 与 sw_delivery 的本地 def 改成导入别名后，`check_dispatch_byref_guard` 的**已核调用点从 323 掉到 302（−21）**、`check_dispatch_entry_guard` 从全 PASS 变成 5 处违规 —— ★ 因为那道门禁正是**靠本地 def** 才能把调用点识别为「分发口」并逐条核验成员名是否在官方源里。⇒ ★★ **统一它就是拿掉 21 个调用点的核验面** ❌ ⇒ 验证能力 > 去重收益 ⇒ 判不统一，留档于此。",
+   "evidence": "本轮实测：改为别名后 check_dispatch_byref_guard 报 `已核调用点 302`；回滚后回到 `323` 且 exit 0",
+   "date": "2026-10-22",
+   "note_subskills": "★ 同族还有第三份 subskills/.../drawing_workflow._safe_member（★ 门禁 SCAN_DIRS 不含 subskills，故组串只出现两个名字）"
+  }
+ ],
  "_★新增判据": "⑤ 跨文件同函数体组 = 122 —— 判据：函数体归一化哈希（去 docstring、Name/形参换占位符），跨文件同哈希即同一函数多份实现。出处：Type-2 克隆定义（pyscn）"
 }

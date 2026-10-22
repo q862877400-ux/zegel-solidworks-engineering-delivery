@@ -149,3 +149,37 @@ python scripts/check_repo_uniformity.py   ⇒ exit 0（五项全 PASS）
 python scripts/check_gate_wiring.py       ⇒ exit 0（门禁全部已接线）
 python scripts/release_check.py           ⇒ exit 0 · status pass · 57 道 · passed 54 · missing []
 ```
+
+## 九、第 9 轮的两条裁决（★ 一条「不统一」，一条「暂缓」）
+
+### 9.1 ★ `_optional_com_member` / `_safe_com_member` / `_safe_member` —— **判定不统一，保留三份**
+
+同一段逻辑（`if obj is None: return default` + try/except 回 default）**三个名字三份逐字相同的实现**，
+分别位于 `scripts/sw_delivery.py`、`scripts/sw_part.py`、
+`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py`。看似最该收敛的一组。
+
+★ **实测否决**：把 `sw_part` 与 `sw_delivery` 的本地 `def` 改成导入别名后，
+`check_dispatch_byref_guard` 的**已核调用点从 323 掉到 302（−21）**、
+`check_dispatch_entry_guard` 从全 PASS 变成 **5 处违规**。
+
+★★ **原因**：那几道 dispatch 门禁正是**靠「本地 def」**才能把调用点识别为「分发口」，
+并逐条核验「传进去的成员名在官方源里查得到」。**统一它就是拿掉 21 个调用点的核验面。**
+
+⇒ ★★ **验证能力 > 去重收益 ⇒ 判不统一**，回滚，并把否定裁决与证据登记在
+`docs/repo-uniformity-baseline.json` 的 `dup_function_allow`（★ 带 `reason` 与 `evidence`）。
+
+### 9.2 ★ `_checked` ×4 —— **暂缓（不登记豁免）**
+
+`sw_costing` / `sw_pdm` / `sw_routing` / `sw_simulation_results` 各一份，**同一逻辑两种签名**
+（两份硬编码表、两份传表参数）。收敛需改 **57 处调用点** ⇒ 风险与本轮收益不匹配 ⇒
+★ 留作专项（★ **不登记豁免** —— 它仍是真重复，继续计入基线）。
+
+### 9.3 ★★ 我自己制造并修掉的回归（留档）
+
+我在 `sw_part.py` **按显示宽度折行了 121 处注释**，其中包含**机器可读指令**
+（`#: dispatch-arg: probe …` 与 `#: dispatch-guard: exempt …`）⇒ 指令被拆断 / 被删 ⇒
+`check_dispatch_byref_guard` 报「可解析调用点 315 < 下界 327」。
+⇒ 处置：`git checkout HEAD --` 回滚这两个文件，**重做时只删函数体、不折行既有注释**。
+
+★★ **教训（新增）**：**折行不是纯格式操作** —— 本仓的 `#:` 注释里有**门禁读取的指令**；
+批量折行前必须先 grep `#:` / `dispatch-` / `noqa` 这类机器可读标记，把它们排除在折行之外。

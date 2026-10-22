@@ -254,7 +254,9 @@ def main() -> int:
     # ⑤ 跨文件同函数体（★ 业主头号关切：同一个功能多个函数重复实现）
     dfun = _dup_functions()
     ceil5 = int(base.get("dup_function_groups_ceiling", 10 ** 9))
-    allow5 = set(base.get("dup_function_allow") or [])
+    raw5 = base.get("dup_function_allow") or []
+    allow5 = {r["functions"] for r in raw5
+              if isinstance(r, dict) and r.get("functions")}
     real5 = [d for d in dfun if d.split(" ⇒ ")[0] not in allow5]
     st = "PASS" if len(real5) <= ceil5 else "FAIL"
     print(f"  [{st}] ⑤ 跨文件同函数体组 = {len(real5)}"
