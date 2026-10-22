@@ -7,7 +7,7 @@
   "dup_filename": "AGENTS.md 铁律 3（结构按顶层白名单）引申：跨目录同名 .py 视为重复实现嫌疑"
  },
  "measured_at": "2026-10-21",
- "ruff_total_ceiling": 21643,
+ "ruff_total_ceiling": 21642,
  "clone_groups_ceiling": 2491,
  "no_source_block_ceiling": 0,
  "dup_filename_allow": [],
@@ -175,6 +175,16 @@
     21643
    ],
    "why": "批量折行超宽注释 4,216 处（tools/wrap_long_comments.py，用 tokenize 精确定位整行注释；排除行尾注释与 #: <name>: 机器可读指令）"
+  },
+  {
+   "at": "2026-10-22l",
+   "from": [
+    21643
+   ],
+   "to": [
+    21642
+   ],
+   "why": "cd_calls 改 AST 版（格式鲁棒）+ sw_sweep 实参提成局部变量；顺带消掉一条 137 列超宽注释"
   }
  ],
  "dup_function_groups_ceiling": 101,

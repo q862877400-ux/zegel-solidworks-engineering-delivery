@@ -91,8 +91,11 @@ def create_sweep_report(model, cut: bool = False, mutate=None) -> dict:
     #: ★ 官方调用序：CreateDefinition ⇒ ISweepFeatureData ⇒ CreateFeature
     try:
         fm = get_com_member(model, "FeatureManager")
-        #: cd-site: no-members-used 本站点只调 `AccessSelections` / `CreateFeature`，**不设任何成员**（实测 0 个 `data.X`）⇒ 确实无事可查
-        data = get_com_member(fm, "CreateDefinition", SW_FM_SWEEP_CUT if cut else SW_FM_SWEEP)
+        #: ★ 2026-10-22：实参原是条件表达式，现提成局部变量
+        #:   ⇒ 调用处只传一个名字，该站点如实归 `dynamic`
+        cd_const = SW_FM_SWEEP_CUT if cut else SW_FM_SWEEP
+        #: cd-site: dynamic 实参是局部变量，定不到哪次生效
+        data = get_com_member(fm, "CreateDefinition", cd_const)
     except Exception as exc:                                   # noqa: BLE001
         return {"ok": False, "stage": "CreateDefinition", "selected_by_mark": sel,
                 "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}

@@ -110,8 +110,8 @@ BASELINE_UNMAPPED = 0          # 常量未进 `CONST → 接口` 映射表（★
 #:                              —— ★ 三个「该审却漏审」的常量**全部处置完毕**，
 #:                              **不是**取点/读取器漏了）
 BASELINE_EMPTY_MEMBERS = 0     # 期望接口的成员集为空
-BASELINE_NO_MEMBERS_USED = 2   # 建了 data 但不设成员
-BASELINE_DYNAMIC = 0           # 常量静态解析不出
+BASELINE_NO_MEMBERS_USED = 1   # 建了 data 但不设成员
+BASELINE_DYNAMIC = 1           # 常量静态解析不出
 
 
 def _baseline() -> dict:

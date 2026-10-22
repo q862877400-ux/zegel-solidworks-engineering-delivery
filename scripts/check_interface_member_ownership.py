@@ -48,6 +48,7 @@ r"""@brief 接口归属检查 —— 装上**可核验的 `CONST → 接口` 映
 from __future__ import annotations
 
 import argparse
+import ast
 import re
 import sys
 from pathlib import Path
@@ -373,29 +374,66 @@ def module_consts(path: Path) -> dict:
         return {}
 
 
+def _cd_arg_node(call):
+    """⇒ `CreateDefinition` 那个**常量实参**的 AST 节点；不是该类调用就回 `None`。
+
+    ★ 两种写法（与原逐行正则同口径）：
+      ① 直调 `fm.CreateDefinition(<常量>, …)` ⇒ 取第 1 个实参；
+      ② 包装 `wrapper(obj, "CreateDefinition", <常量>, …)` ⇒ 取字符串**后面那个**。
+    """
+    fn = call.func
+    if isinstance(fn, ast.Attribute) and fn.attr == "CreateDefinition" and call.args:
+        return call.args[0]
+    for i, a in enumerate(call.args):
+        if isinstance(a, ast.Constant) and a.value == "CreateDefinition":
+            return call.args[i + 1] if i + 1 < len(call.args) else None
+    return None
+
+
+def _cd_assigned_var(tree, call):
+    """⇒ 调用所在**赋值语句的左侧变量名**；不在赋值里回 `None`（与原口径一致）。"""
+    parents = {}
+    for node in ast.walk(tree):
+        for child in ast.iter_child_nodes(node):
+            parents[id(child)] = node
+    node = call
+    while id(node) in parents:
+        node = parents[id(node)]
+        if isinstance(node, ast.Assign) and len(node.targets) == 1:
+            tgt = node.targets[0]
+            return tgt.id if isinstance(tgt, ast.Name) else None
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Module)):
+            return None
+    return None
+
+
 def cd_calls(path: Path) -> list:
-    """``var = ...CreateDefinition(<实参>)...`` ⇒ ``[(var, 行号, 实参文本)]``（**两种写法**）。"""
+    """``var = ...CreateDefinition(<实参>)...`` ⇒ ``[(var, 行号, 实参文本)]``（**两种写法**）。
+
+    ★★★ **AST 版**（2026-10-22 重写）：原先按行正则抠右侧，★ 只认「整条调用在一行」——
+      `ruff format` 把调用拆成多行后就取不全 ⇒ **站点数 8 → 6**（第 17 轮实测；
+      门禁自己报「先查取点/读取器」）✗
+    ★ 改判据（不是放宽）：照样**只收「赋值语句右值里的调用」**，但改用 AST 找调用节点
+      ⇒ 跨行调用照样取得到；实参用 `ast.get_source_segment` 取**原始源码片段**（保真）。
+    """
     try:
-        lines = path.read_text(encoding="utf-8").splitlines()
-    except OSError:
+        src = path.read_text(encoding="utf-8")
+        tree = ast.parse(src)
+    except (OSError, SyntaxError):
         return []
     out = []
-    for i, line in enumerate(lines):
-        m = ASSIGN.match(line)
-        if not m:
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
             continue
-        var, rhs = m.group(1), m.group(2)
-        if not (CD_PAREN.search(rhs) or CD_STR.search(rhs)):
+        arg_node = _cd_arg_node(node)
+        if arg_node is None:
             continue
-        arg = ""
-        mm = re.search(r"[\"']CreateDefinition[\"']\s*,\s*([^)\s]+)", rhs)
-        if mm:
-            arg = mm.group(1)
-        else:
-            mm = re.search(r"CreateDefinition\s*\(([^)]*)\)", rhs)
-            if mm:
-                arg = mm.group(1).strip()
-        out.append((var, i + 1, arg))
+        var = _cd_assigned_var(tree, node)
+        if var is None:
+            continue
+        arg = ast.get_source_segment(src, arg_node) or ""
+        out.append((var, node.lineno, arg.strip()))
+    out.sort(key=lambda x: x[1])
     return out
 
 
