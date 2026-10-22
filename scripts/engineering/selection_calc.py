@@ -26,16 +26,16 @@ import math
 ALPHA_DEG = 20.0
 
 
-class CalcError(Exception):
+try:
+    from ._coded_error import CodedError
+except ImportError:
+    from _coded_error import CodedError
+
+
+class CalcError(CodedError):
     """★ 计算失败（★ 带封闭码）。"""
 
     CODES = ("bad-input", "out-of-range")
-
-    def __init__(self, code: str, detail: str = "") -> None:
-        assert code in self.CODES, "★ 非法拒绝码：%r" % code
-        self.code = code
-        self.detail = detail
-        super().__init__("%s: %s" % (code, detail))
 
 
 #: ══════════════════════════════════════════════════════════════════════

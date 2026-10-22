@@ -65,16 +65,16 @@ TABLES: dict[str, str] = {
 }
 
 
-class TableError(Exception):
+try:
+    from ._coded_error import CodedError
+except ImportError:
+    from _coded_error import CodedError
+
+
+class TableError(CodedError):
     """★ 数据表失败（★ 带封闭码）。"""
 
     CODES = ("no-tables", "unknown-table", "empty", "bad-row")
-
-    def __init__(self, code: str, detail: str = "") -> None:
-        assert code in self.CODES, "★ 非法拒绝码：%r" % code
-        self.code = code
-        self.detail = detail
-        super().__init__("%s: %s" % (code, detail))
 
 
 def available() -> dict:

@@ -43,16 +43,17 @@ BRANCHES = (BRANCH_OPEN, BRANCH_CROSSED)
 DEFAULT_TOL_MM = 1e-6
 
 
-class LinkageError(Exception):
+try:
+    from ._coded_error import CodedError
+except ImportError:
+    from _coded_error import CodedError
+
+
+class LinkageError(CodedError):
     """★ 连杆求解失败（★ 带封闭码）。"""
 
     CODES = ("not-closed", "no-solution", "bad-branch", "bad-lengths")
-
-    def __init__(self, code: str, detail: str = "") -> None:
-        assert code in self.CODES, "★ 非法连杆拒绝码：%r" % code
-        self.code = code
-        self.detail = detail
-        super().__init__("%s: %s" % (code, detail))
+    ASSERT_LABEL = "★ 非法连杆拒绝码"
 
 
 #: ══════════════════════════════════════════════════════════════════════

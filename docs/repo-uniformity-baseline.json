@@ -7,8 +7,8 @@
   "dup_filename": "AGENTS.md 铁律 3（结构按顶层白名单）引申：跨目录同名 .py 视为重复实现嫌疑"
  },
  "measured_at": "2026-10-21",
- "ruff_total_ceiling": 25857,
- "clone_groups_ceiling": 2492,
+ "ruff_total_ceiling": 25851,
+ "clone_groups_ceiling": 2491,
  "no_source_block_ceiling": 0,
  "dup_filename_allow": [],
  "_★待裁决": {
@@ -137,9 +137,23 @@
     105
    ],
    "why": "收敛 new_features（5 份 2 名）+ ★ 修同名不同语义：把数值版 _delta 改名为 _numeric_delta（横跨 2 文件 19 处）"
+  },
+  {
+   "at": "2026-10-22i",
+   "from": [
+    25857,
+    2492,
+    105
+   ],
+   "to": [
+    25851,
+    2491,
+    104
+   ],
+   "why": "抽出 CodedError 基类：4 个模块的 *Error.__init__ 逐字相同（design_rules/selection_calc/standard_parts/linkage）"
   }
  ],
- "dup_function_groups_ceiling": 105,
+ "dup_function_groups_ceiling": 104,
  "dup_function_allow": [
   {
    "functions": "_optional_com_member/_safe_com_member",

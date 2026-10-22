@@ -30,16 +30,16 @@ FILES = {
 }
 
 
-class RuleError(Exception):
+try:
+    from ._coded_error import CodedError
+except ImportError:
+    from _coded_error import CodedError
+
+
+class RuleError(CodedError):
     """★ 规则库失败（★ 带封闭码）。"""
 
     CODES = ("no-lib", "unknown-key", "unknown-material", "unknown-fit")
-
-    def __init__(self, code: str, detail: str = "") -> None:
-        assert code in self.CODES, "★ 非法拒绝码：%r" % code
-        self.code = code
-        self.detail = detail
-        super().__init__("%s: %s" % (code, detail))
 
 
 def _load(which: str) -> dict:
