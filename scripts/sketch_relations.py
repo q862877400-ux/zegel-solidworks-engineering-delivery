@@ -192,13 +192,11 @@ SKETCH_RELATION_ENTITY_TYPES = {
 # 仓库:   SolidWorks 官方 API 签名（SolidWorks.Interop.sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt
 #           → ISketchRelationManager 段
-# 定位:   草图几何约束的增删查。官方签名：
-#           SketchRelation AddRelation(Object Entities, Int32 Type)  ← 2 参
-#           Boolean      DeleteRelation(SketchRelation)
-#           Boolean      DeleteAllRelations()
-#           Object       GetRelations(Int32)              ← 1 参（实体索引）
-#           Int32        GetRelationsCount(Int32)         ← 1 参
-#           Object       GetAllowedRelations(Object)      ← 1 参
+# 定位:   草图几何约束的增删查。官方签名：SketchRelation AddRelation(Object Entities, 
+#           Int32 Type)  ← 2 参Boolean      DeleteRelation(SketchRelation)Boolean      D
+#           eleteAllRelations()Object       GetRelations(Int32)              ← 1 参（实
+#           体索引）Int32        GetRelationsCount(Int32)         ← 1 参Object       Get
+#           AllowedRelations(Object)      ← 1 参
 # ⚠ GetRelations / GetRelationsCount 的 Int32 语义（草图实体下标？）两套官方源
 #   都未说明，故本模块只透传不解释。
 # ⚠ 返回的 SketchRelation 上可继续查 ISketchRelation 的成员
@@ -268,8 +266,8 @@ def get_allowed_relations(sketch, entity):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → ISketchRelation 段
-# 定位:   约束对象的抑制开关。官方签名：``Boolean set_Suppressed(Boolean)``
-#           —— 是**属性**（setter），不是方法。
+# 定位:   约束对象的抑制开关。官方签名：``Boolean set_Suppressed(Boolean)``—— 是**属性
+#           **（setter），不是方法。
 # ⚠ 迟到绑定下 Suppressed 是属性，加括号调用会 TypeError
 #   （见 AGENTS.md §六 事实 4）。故本函数用单参数赋值而不是 ``(True)``。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
@@ -285,14 +283,12 @@ def suppress_relation(relation, suppressed: bool = True):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → ISketchManager 段
-# 定位:   样条曲线创建。官方签名（按参数个数从小到大）：
-#           SketchSegment CreateSpline(Object Points)                     ← 1 参
-#           SketchSegment CreateSpline2(Object Points, Boolean Simulate)  ← 2 参
-#           Object        CreateSpline3(Object, Object, Object, Boolean, Object&)
-#                         ← 4 参 + 1 个 by-ref 出参
-#           SketchSpline  CreateEquationSpline(String, Double, Double,
-#                         Boolean, Double, Double, Double, Boolean, Boolean)
-#           SplineParamData CreateSplineParamData()
+# 定位:   样条曲线创建。官方签名（按参数个数从小到大）：SketchSegment CreateSpline(Obj
+#           ect Points)                     ← 1 参SketchSegment CreateSpline2(Object Poi
+#           nts, Boolean Simulate)  ← 2 参Object        CreateSpline3(Object, Object, Ob
+#           ject, Boolean, Object&)              ← 4 参 + 1 个 by-ref 出参SketchSpline  
+#           CreateEquationSpline(String, Double, Double,              Boolean, Double, D
+#           ouble, Double, Boolean, Boolean)SplineParamData CreateSplineParamData()
 # ⚠ CreateSpline3 末位是 by-ref 出参，迟到绑定下不保证回写；
 #   本模块只提供 1 参与 2 参版本，不碰带 by-ref 的 CreateSpline3。
 # ⚠ CreateSpline 第一个参数的期望类型（点数组 SAFEARRAY）两套官方源都未细说，
@@ -373,13 +369,10 @@ def create_spline_by_points(sketch_manager, points, simulate: bool = False):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → ISketchSlot 段
-# 定位:   槽的尺寸调整。官方签名（全部是**属性**）：
-#           Void set_Length(Double) / get_Length()
-#           Void set_Width(Double)  / get_Width()
-#           Void set_LengthType(Int32) / get_LengthType()
-#           Int32 get_CreationType() / get_CenterArcDirection()
-#           MathPoint GetCenterPoint() / GetCenterPointHandle()
-#           Object  GetSlotPoints()
+# 定位:   槽的尺寸调整。官方签名（全部是**属性**）：Void set_Length(Double) / get_Leng
+#           th()Void set_Width(Double)  / get_Width()Void set_LengthType(Int32) / get_Le
+#           ngthType()Int32 get_CreationType() / get_CenterArcDirection()MathPoint GetCe
+#           nterPoint() / GetCenterPointHandle()Object  GetSlotPoints()
 # ⚑ 名称歧义提示: Length / Width / LengthType 都是**属性**（setter 形式），
 #   不是方法。迟到绑定下 ``slot.Length(0.1)`` 会 TypeError。
 # ⚠ 槽的创建入口是 ISketchManager.CreateSketchSlot，共 **14 个参数**

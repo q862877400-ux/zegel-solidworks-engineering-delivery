@@ -25,7 +25,8 @@ r"""@brief 小实验：**子进程能否安全地连到**同一个** SolidWorks 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机小实验）
 # 文件:   tools/experiment_subprocess_com.py
-# 定位:   给 known-facts 176 的"进程隔离"方案**验前提**；产物 `output/subprocess-com.json`。
+# 定位:   给 known-facts 176 的"进程隔离"方案**验前提**；产物 `output/subprocess-com.j
+#           son`。
 # 官方依据: 不适用（探的是"同一 COM 实例能否被两个进程用"这一事实）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。

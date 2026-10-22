@@ -3,19 +3,17 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/housing.py
-# 定位:   规格 `specs/322-stage7-housing-final-dod` 的 M1（共享接口控制关联零件）/
-#           M2（证据非循环）/ M3（四层区分）/ M4（最终 DoD 清单）。
-#           ★★ 实测（2026-10-12）起点：`assembly.py` 已有 `ToleranceChain`；
-#           `sw_hole_features.py` + `prove_hole_pattern.py` 已有孔系能力；
-#           `sw_mold.py` 已有分型/剖分能力；阶段 3 的 `recovery.py` 已有
-#           `ArtifactDigest`/`changed_after_revision`；阶段 4~6 已有三类产品的规划。
-#           ★ 而**没有最终 DoD 清单、没有「证据非循环」检查、
-#             没有四层区分、没有 9 案例汇总**。
-# 官方依据: ① 外部方案阶段 7 的验收 S7-A / S7-B（逐字）
-#           ② 外部方案 §5 R7 ④ 逐字：「替换一份证据为『读取台账并断言 verified』、
-#              移除必需图纸、替换旧版本产物、隐藏一次人工接管，
-#              交付完整性与证据检查必须分别失败」
-#           ③ `scripts/engineering/recovery.py` 的 `ArtifactDigest`
+# 定位:   规格 `specs/322-stage7-housing-final-dod` 的 M1（共享接口控制关联零件）/M2（
+#           证据非循环）/ M3（四层区分）/ M4（最终 DoD 清单）。★★ 实测（2026-10-12）起点
+#           ：`assembly.py` 已有 `ToleranceChain`；`sw_hole_features.py` + `prove_hole_p
+#           attern.py` 已有孔系能力；`sw_mold.py` 已有分型/剖分能力；阶段 3 的 `recovery
+#           .py` 已有`ArtifactDigest`/`changed_after_revision`；阶段 4~6 已有三类产品的
+#           规划。★ 而**没有最终 DoD 清单、没有「证据非循环」检查、  没有四层区分、没有 
+#           9 案例汇总**。
+# 官方依据: ① 外部方案阶段 7 的验收 S7-A / S7-B（逐字）② 外部方案 §5 R7 ④ 逐字：「替换一
+#           份证据为『读取台账并断言 verified』、   移除必需图纸、替换旧版本产物、隐藏一
+#           次人工接管，   交付完整性与证据检查必须分别失败」③ `scripts/engineering/reco
+#           very.py` 的 `ArtifactDigest`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收入口 `tools/run_stage7_final_dod.py`）。

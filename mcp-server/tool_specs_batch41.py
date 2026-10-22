@@ -29,7 +29,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装的函数各自的来源块在其源码里）
 # 文件:   mcp-server/tool_specs_batch41.py
-# 定位:   24h 计划 段 5/6 续（Spec Kit `158`）—— 填三条空条目（齿轮 / Toolbox / 草图倒角）。
+# 定位:   24h 计划 段 5/6 续（Spec Kit `158`）—— 填三条空条目（齿轮 / Toolbox / 草图倒
+#           角）。
 # 官方依据: 渐开线直齿轮几何（★ 见 `scripts/sw_gear.py` 的来源块）·
 #          Toolbox 索引（★ `sw_toolbox_index` 读本地索引文件）·
 #          `ISketchManager` 族（★ 见 `scripts/sw_sketch_edit.py`）

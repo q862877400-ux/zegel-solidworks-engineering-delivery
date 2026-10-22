@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 212 · C 批的第二版）
 # 文件:   tools/check_unit_suffix_consistency.py
-# 定位:   ★ 规格 `specs/212-unit-discipline` 的 **C**。★ 第一版（`tools/check_unit_suffix_reverse.py`）
+# 定位:   ★ 规格 `specs/212-unit-discipline` 的 **C**。★ 第一版（`tools/check_unit_suf
+#           fix_reverse.py`）
 #   走的是「**从描述推断这个形参是不是长度**」⇒ ★★ **需要识别量纲，假阳性压不住** ✗
 #   （★ 实录：`deg` 命中 `degenerate` · 「度」命中「**深**度」「**厚**度」「粗糙**度**」）✓
 # 判据:   ★★★ **第二版换了立足点** —— ★ **名字已经带后缀 ⇒ 只查"描述里有没有对应的单位词"** ✓

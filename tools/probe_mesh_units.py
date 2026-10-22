@@ -27,7 +27,8 @@ r"""@brief 探针：`default_element_size_and_tolerance` 的 **`units` 口径** 
 # 文件:   tools/probe_mesh_units.py
 # 定位:   查清 `units` 口径（父/子进程差异）——"跑求解必挂"的根因候选；
 #          产物 `output/mesh-units.json`。
-# 官方依据: `ICWMesh.GetDefaultElementSizeAndTolerance`（★ 其 `units` 参数语义由本探针实测）
+# 官方依据: `ICWMesh.GetDefaultElementSizeAndTolerance`（★ 其 `units` 参数语义由本探针实
+#           测）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。
 # 覆盖:   全文件

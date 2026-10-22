@@ -23,7 +23,8 @@ r"""@brief 探针：**回读着 mark 计数**去选 2 个草图实体，再试 `
 # ── 来源 ──
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_composite_curve_segments.py
-# 定位:   给 Spec Kit `074` 取「**前提真的满足了**之后，`InsertCompositeCurve` 成不成」的证据。
+# 定位:   给 Spec Kit `074` 取「**前提真的满足了**之后，`InsertCompositeCurve` 成不成
+#           」的证据。
 # 官方依据: `IModelDoc2.InsertCompositeCurve`（Remarks：`SelectByID2` + mark 1）·
 #          `ICompositeCurveFeatureData.GetEntitiesToJoinCount` · `ISketch.GetSketchSegments`
 # 许可:   本仓库 MIT。无第三方代码引入。

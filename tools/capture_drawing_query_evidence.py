@@ -20,8 +20,10 @@ r"""@brief 真机证据：**当前活动工程图的轻量只读读数 3 个工�
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机证据脚本，**不是**从四家外部 MCP 项目移植）
 # 文件:   tools/capture_drawing_query_evidence.py
-# 定位:   砌墙 W2（Spec Kit `132`）的**验收②**：产出 `output/drawing-query-evidence.json`（`verdict`）。
-# 官方依据: `IDrawingDoc.GetCurrentSheet` / `GetSheetCount` / `GetSheetNames` · `ISheet.GetProperties2`
+# 定位:   砌墙 W2（Spec Kit `132`）的**验收②**：产出 `output/drawing-query-evidence.js
+#           on`（`verdict`）。
+# 官方依据: `IDrawingDoc.GetCurrentSheet` / `GetSheetCount` / `GetSheetNames` · `ISheet.
+#           GetProperties2`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。
 # 覆盖:   全文件

@@ -3,14 +3,13 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/drawing_obligations.py
-# 定位:   规格 `specs/317-stage2-real-holes` 的 D4（图纸义务）/ D5（变更传播）。
-#           ★★ 实测（2026-10-12）缺口：
-#             · **没有图纸义务模块** —— `processes.py` 只有 4 个工艺函数（钣金/焊件）
-#             · **没有变更传播** —— 没有「改尺寸 → 重建 → 出图 → 校验」的编排
-# 官方依据: ① 外部方案阶段 2 的「图纸义务」「变更传播」（逐字）
-#           ② 本仓 `scripts/engineering/compiler.METHOD_LIBRARY` 的
-#              `verification_obligations`（★ 义务的**真源** —— 不是手工列）
-#           ③ 本仓**事实 71**（`GetPartBox` 回毫米）
+# 定位:   规格 `specs/317-stage2-real-holes` 的 D4（图纸义务）/ D5（变更传播）。★★ 实
+#           测（2026-10-12）缺口：  · **没有图纸义务模块** —— `processes.py` 只有 4 个工
+#           艺函数（钣金/焊件）  · **没有变更传播** —— 没有「改尺寸 → 重建 → 出图 → 校验
+#           」的编排
+# 官方依据: ① 外部方案阶段 2 的「图纸义务」「变更传播」（逐字）② 本仓 `scripts/engineeri
+#           ng/compiler.METHOD_LIBRARY` 的   `verification_obligations`（★ 义务的**真源*
+#           * —— 不是手工列）③ 本仓**事实 71**（`GetPartBox` 回毫米）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收见 `tools/run_stage2_plate.py`）。

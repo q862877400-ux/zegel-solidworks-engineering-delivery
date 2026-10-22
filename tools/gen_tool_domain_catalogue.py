@@ -13,6 +13,16 @@
     python tools/gen_tool_domain_catalogue.py                 # 打印统计 + 写两个文件
     python tools/gen_tool_domain_catalogue.py --check         # 只比对是否最新（门禁用）
 """
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   tools/gen_tool_domain_catalogue.py
+# 定位:   生成"工具域目录"（供 AGENTS.md 引用 + 独立索引文档）—— ★ 判据全从 `all_specs
+#           ()` 重推。
+# 官方依据: 不适用（本仓工具，不调 COM）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
 from __future__ import annotations
 
 import argparse

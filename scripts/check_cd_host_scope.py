@@ -9,11 +9,10 @@
 #         ★★ 而官方有**两个**宿主页（`IFeatureManager` / `IMotionStudy`），各自有**自己的**
 #         `Type` 常量域。`sw_motion.py` 的站点宿主是 `IMotionStudy`，却被拿去查 `IFeatureManager`
 #         的表 ⇒ 判成 `unmapped`。**「宿主没被表达」= 一个数里混了两种东西**（spec 237 同族）。
-# 官方依据: ① `C:\swapi\types\IFeatureManager\CreateDefinition.md` 的 `## Parameters`
-#              （35 条，括注是**散文标签**）
-#           ② `C:\swapi\types\IMotionStudy\CreateDefinition.md` 的 `## Parameters`
-#              （11 条，括注是 **`[[接口]]` 逐条点名**）
-#           ★ 读取器**全部 import** `check_interface_member_ownership`，不重写。
+# 官方依据: ① `C:\swapi\types\IFeatureManager\CreateDefinition.md` 的 `## Parameters`   
+#           （35 条，括注是**散文标签**）② `C:\swapi\types\IMotionStudy\CreateDefinition
+#           .md` 的 `## Parameters`   （11 条，括注是 **`[[接口]]` 逐条点名**）★ 读取器*
+#           *全部 import** `check_interface_member_ownership`，不重写。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────

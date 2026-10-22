@@ -22,7 +22,8 @@
 # 文件:   `~/.dsh/storages/session_projcache/sessions/*.json`（DSH 的会话投影缓存）
 # 定位:   处置"派活参数 ≠ 运行期实际模型"这一**静默**风险；★ 与 `docs/team-roles.md`
 #         的「子代理一律用 space-bunny」配套 ✓
-# 官方依据: 无（本仓自建工具）；★ 字段名 `model`/`provider`/`lastModel` 是**实测读出来的**
+# 官方依据: 无（本仓自建工具）；★ 字段名 `model`/`provider`/`lastModel` 是**实测读出来的
+#           **
 #         （2026-10-04：62 路 Bunny 的子代理会话里逐字存在这三个字段）✓
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件

@@ -9,7 +9,8 @@
 # 仓库:   本项目自身（真机探针）
 # 文件:   `scripts/sw_assembly_doc.py`（本批新增的 9 个爆炸视图包装）· `scripts/sw_macro.py`（新建）
 #         `C:\\swapi\\types\\IAssemblyDoc\\*.md` · `C:\\swapi\\types\\ISldWorks\\RunMacro2.md`
-# 定位:   规格 `specs/204-tool-ramp/spec.md` 的 **SC-005**（FR-008 两块各至少 1 个工具并**真机跑过**）
+# 定位:   规格 `specs/204-tool-ramp/spec.md` 的 **SC-005**（FR-008 两块各至少 1 个工具
+#           并**真机跑过**）
 # 官方依据: 逐页见上面两个模块的来源块
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件

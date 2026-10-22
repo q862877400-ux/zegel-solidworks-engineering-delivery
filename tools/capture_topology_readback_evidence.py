@@ -16,7 +16,8 @@ r"""@brief 真机证据：**拓扑读数与参数 6 个工具**（24h 段 2.2 / 
 # 仓库:   本项目自身（真机证据脚本）
 # 文件:   tools/capture_topology_readback_evidence.py
 # 定位:   Spec Kit `144` 的**验收②**：产出 `output/topology-readback-evidence.json`。
-# 官方依据: `ICWTopologyStudyManager` / `ICWTopologyStudyOptions`（见 `scripts/sw_topology.py`）
+# 官方依据: `ICWTopologyStudyManager` / `ICWTopologyStudyOptions`（见 `scripts/sw_topolo
+#           gy.py`）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。
 # 覆盖:   全文件

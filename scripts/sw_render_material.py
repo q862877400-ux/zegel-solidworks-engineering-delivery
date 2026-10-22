@@ -167,14 +167,12 @@ class RenderMaterialSpec:
 # 仓库:   SolidWorks 官方 API 签名（SolidWorks.Interop.sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt
 #           → IModelDocExtension 段 + IRenderMaterial 段
-# 定位:   现代外观的创建与属性装配。官方签名：
-#           RenderMaterial CreateRenderMaterial(String Name)      ← 1 参
-#           Boolean       AddRenderMaterial(RenderMaterial, Int32& Count)  ← 2 参
-#           Boolean       AddDefaultRenderMaterial(RenderMaterial, Int32& Count)
-#           IRenderMaterial 上确认为 Double 的属性（本模块用到的 7 个）：
-#             Ambient / Brightness / Diffuse / Emission / Roughness /
-#             Specular / Transparency
-#             全部 get/set 成对，**无 Initialize 成员**，故只设属性。
+# 定位:   现代外观的创建与属性装配。官方签名：RenderMaterial CreateRenderMaterial(Stri
+#           ng Name)      ← 1 参Boolean       AddRenderMaterial(RenderMaterial, Int32& C
+#           ount)  ← 2 参Boolean       AddDefaultRenderMaterial(RenderMaterial, Int32& C
+#           ount)IRenderMaterial 上确认为 Double 的属性（本模块用到的 7 个）：  Ambient 
+#           / Brightness / Diffuse / Emission / Roughness /  Specular / Transparency  全
+#           部 get/set 成对，**无 Initialize 成员**，故只设属性。
 # ⚑ 曾误写 Shininess（凭印象），反射清单中**无此成员**，
 #   由 audit_call_arity.py 报「查不到」抓出。镜面锐度用 Roughness。
 # ⚠ AddRenderMaterial 末位是 Int32& 出参，pywin32 迟到绑定下不保证回写，
@@ -280,13 +278,12 @@ def refresh_scene_graph(model, update: bool = True):
 # 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt
 #           → IModelDocExtension 段 + IComponent2 段
-# 定位:   外观清单读取。官方签名（两处都提供，优先用文档级）：
-#           IModelDocExtension : Int32  GetRenderMaterialsCount()
-#                                : Object GetRenderMaterials()
-#                                : RenderMaterial GetMaterial(Int32, String)
-#                                : Boolean DeleteRenderMaterial(Int32, Boolean)
-#           IComponent2        : Int32  GetRenderMaterialsCount()
-#                                : Object GetRenderMaterials()
+# 定位:   外观清单读取。官方签名（两处都提供，优先用文档级）：IModelDocExtension : Int
+#           32  GetRenderMaterialsCount()                     : Object GetRenderMaterial
+#           s()                     : RenderMaterial GetMaterial(Int32, String)         
+#                       : Boolean DeleteRenderMaterial(Int32, Boolean)IComponent2       
+#            : Int32  GetRenderMaterialsCount()                     : Object GetRenderMa
+#           terials()
 #   ⚠ 注意 GetMaterial 的两个参数在反射清单里是 (Int32, String)，
 #     语义（配置索引? 外观名?）两套官方源均未说明，故本模块只透传不解释。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
@@ -350,10 +347,9 @@ def delete_render_material(model, index: int, cascade: bool = False) -> bool:
 # 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt
 #           → IMaterialVisualPropertiesData 段
-# 定位:   显示状态里的「材质可视化属性」。官方签名（**全部是属性，无方法**）：
-#           Boolean  ApplyAppearance / AdvancedGraphics / RealView / BlendColor /
-#                    ApplyMaterialColorToPart / ApplyMaterialHatchToSection
-#           Double   Angle / Scale2
+# 定位:   显示状态里的「材质可视化属性」。官方签名（**全部是属性，无方法**）：Boolean 
+#            ApplyAppearance / AdvancedGraphics / RealView / BlendColor /         ApplyM
+#           aterialColorToPart / ApplyMaterialHatchToSectionDouble   Angle / Scale2
 # ⚑ 名称歧义提示: 该接口的 `get_ApplyAppearance()` 读起来像方法，
 #   但反射清单里它是 `Boolean get_ApplyAppearance()` —— **属性**。
 #   迟到绑定下加括号调用会 TypeError（见 AGENTS.md §六 事实 4）。
@@ -448,7 +444,8 @@ def collect_appearance_evidence(model) -> dict[str, Any]:
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_render_material.py —— 追加 `list_display_states` / `apply_display_state`
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **97 `display_states`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **97 `display
+#           _states`**。
 #   ★ 裁决书（`docs/recon-207/adjudication.md` §一 / §五）给的落点与理由：
 #   「读侧落 `sw_render_material.py`（那一族已摸过，**事实 286 真机 PASS**）；显示状态与外观 ID
 #    是同一条链」✓ ★ 且「一次真机可拿全 L1–L4」✓

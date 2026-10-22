@@ -44,10 +44,9 @@ from typing import Any
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）
 # 文件:   scripts/sw_simulation_loads.py —— 本文件**顶部导入区**
-# 定位:   两个来自 `sw_connect` 的 COM 助手：
-#           · `get_com_member`                —— 全模块取 COM 成员的唯一入口
-#           · `create_empty_dispatch_variant` —— **空 Dispatch 参数包**
-#             （`VARIANT(VT_DISPATCH, None)`，**已知事实 12**）
+# 定位:   两个来自 `sw_connect` 的 COM 助手：· `get_com_member`                —— 全模
+#           块取 COM 成员的唯一入口· `create_empty_dispatch_variant` —— **空 Dispatch 参
+#           数包**  （`VARIANT(VT_DISPATCH, None)`，**已知事实 12**）
 # ⚠⚠ 为什么是**三层 try**（2026-10-01 轮 246）：
 #   ★ 本模块的设计约束是「**不连 COM 也能 import**」—— 契约测试
 #     `tests/test_sw_simulation_loads_contract.py` 把 `sw_connect` stub 掉后仍要能导入。
@@ -941,7 +940,8 @@ def apply_radiation_report(manager, model, radiation_type: int = 0):
 #     ★★ 官方的 Object 入参**不能裸传 `None`**（会 `类型不匹配`），
 #     要用本项目的空 Dispatch 参数包 `create_empty_dispatch_variant()`。
 #     ⇒ ★ 本包装**显式补它**（★ 而**不改裸函数** —— 免得动到别的调用方）。
-# 官方依据: CHM `ICWLoadsAndRestraintsManager~Add{DistributedMass,Force,RemoteLoad}.html` 的 VB 声明 ·
+# 官方依据: CHM `ICWLoadsAndRestraintsManager~Add{DistributedMass,Force,RemoteLoad}.html
+#           ` 的 VB 声明 ·
 #   本模块既有的来源块（`AddDistributedMass` / `AddRemoteLoad` 的官方声明**逐字抄在 L441-449**）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
@@ -1062,14 +1062,16 @@ def apply_rigid_connector_report(manager, model, *, faces_per_side: int = 1):
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_simulation_loads.py —— 追加 `apply_rigid_connector_by_objects_report`
-# 定位:   ★ 2026-10-03（轮 424）承**事实 337 的正解**：★ **不读选区，按已知的实体清单装数组**。
+# 定位:   ★ 2026-10-03（轮 424）承**事实 337 的正解**：★ **不读选区，按已知的实体清单
+#           装数组**。
 #   ★★ 为什么另起一个包装而**不动** `apply_rigid_connector_report`：
 #     · 后者走 `_selected_dispatch_array`（★ 读选区）—— ★ 它服务的是**交互式**假设
 #       （"用户先在界面上选好"），★ **仍有其用**，★ 只是**多实体时拿不全**（★ 事实 336/337）；
 #     · 而本包装走 **`entities_as_array`**（★ 由**序号**取对象）—— ★ 那是**脚本**假设
 #       （★ "对象我们本来就有"）。
 #   ⇒ ★★ 两者并存，★ 由调用方按场景选；★ **而探针与工具用后者**。
-# 官方依据: `ICWLoadsAndRestraintsManager.AddRigidConnector(PersistIDFaceArray, PersistIDTargetArray)`
+# 官方依据: `ICWLoadsAndRestraintsManager.AddRigidConnector(PersistIDFaceArray, PersistI
+#           DTargetArray)`
 #   （★ 出厂类型库反射逐字）· `IBody2.GetFaces`（★ `entities_on_body` 已在用）· 事实 32 / 336 / 337
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
@@ -1103,7 +1105,8 @@ def apply_rigid_connector_by_objects_report(manager, model, source_indices, targ
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_simulation_loads.py —— 追加 `apply_pin_connector_report`
-# 定位:   ★ 2026-10-03（轮 426）`plan-200r-v3` 段 1（B 组）—— ★ 承**事实 339** 给同族开的门。
+# 定位:   ★ 2026-10-03（轮 426）`plan-200r-v3` 段 1（B 组）—— ★ 承**事实 339** 给同族
+#           开的门。
 #   ★★ 事实 339 的结论：★ 连接件一族的**两条硬前提**是
 #     ⓐ **它要两个东西**（★ 同族形参名写着 `Comp1`/`Comp2`）·
 #     ⓑ **不要从选区读多实体**（★ `ISelectionMgr` 那族只回得到第 1 个）。
@@ -1116,7 +1119,8 @@ def apply_rigid_connector_by_objects_report(manager, model, source_indices, targ
 #   ★ 而**装配体那条路**在硬约束⑦（禁保存）下**仍然走得通**：
 #     ★ 用**已在盘上的**自带零件（★ 本机 `…\samples\tutorial\api\` 下有几十个 `.sldprt`）
 #       ⇒ ★ **不保存任何东西** ✓
-# 官方依据: 出厂类型库（`SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）反射的形参名 ·
+# 官方依据: 出厂类型库（`SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）反射的形参名 
+#           ·
 #   `IAssemblyDoc.AddComponent5`（★ `sw_assembly.add_component` 已在用）· `swsAnalysisStudyTypeStatic = 0`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义

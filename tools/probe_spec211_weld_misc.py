@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B3-2/B3-3 的真机探针）
 # 文件:   tools/probe_spec211_weld_misc.py
-# 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B3-2「圆角焊缝」** 与 **B3-3「角撑板（焊件）」**。
+# 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B3-2「圆角焊缝」** 与 **B3-3「角撑
+#           板（焊件）」**。
 #   ★★ 两项的官方页都读了（★ 三样 ✓）：
 #     · ★★ `IFeatureManager::InsertGussetFeature3` —— ★ **纯参数式 20 参**、
 #       ★ **不带 `AccessSelections`**、★ **无 `object` 数组** ✓
@@ -21,7 +22,8 @@
 #     · ★ **静默回 `None` / 回对象而无特征** ⇒ ★ **还不算试死**（★ 前置没上 ——
 #       ★ 定则：「读到静默」≠「判定试死」✓）
 #     · ★ **特征树 +1** ⇒ ★★ **大发现** ✓（★ 参数式翻案 ✓）
-# 官方依据: `C:\swapi\types\IFeatureManager\{InsertGussetFeature3,InsertFilletBeadFeature3}.md`
+# 官方依据: `C:\swapi\types\IFeatureManager\{InsertGussetFeature3,InsertFilletBeadFeatur
+#           e3}.md`
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

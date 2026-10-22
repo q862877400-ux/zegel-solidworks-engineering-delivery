@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_rigid_by_objects.py
-# 定位:   ★ 2026-10-03（轮 424）`plan-200r-v3` 段 1（B 组）—— ★ 而这是**换假设**之后的第一枪。
+# 定位:   ★ 2026-10-03（轮 424）`plan-200r-v3` 段 1（B 组）—— ★ 而这是**换假设**之后的
+#           第一枪。
 #   ★★ **事实 337 的正解**：★ `ISelectionMgr` 上"按序号取对象"那一族**只拿得到第 1 个**
 #     （★ `GetSelectedObject6`/`4`/`5`/`GetSelectedObjectsFace` 五个入口都试过），
 #     ★ 而 `GetSelectedObjectCount2(-1)` **如实报 2** ⇒ ★★ **"从选区读回多个"不通**。
@@ -13,7 +14,8 @@
 #     ★ 先量 `entities_as_array` 拿到的**数组长度**对不对（★ 那才是"验判据"），
 #     ★ 长度对了才继续施加。
 #   ★ 算例名用**唯一名**（事实 329/414 的教训）。
-# 官方依据: `ICWLoadsAndRestraintsManager.AddRigidConnector(PersistIDFaceArray, PersistIDTargetArray)`
+# 官方依据: `ICWLoadsAndRestraintsManager.AddRigidConnector(PersistIDFaceArray, PersistI
+#           DTargetArray)`
 #   （★ 出厂类型库反射）· `IBody2.GetFaces` · `swsAnalysisStudyTypeStatic = 0`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

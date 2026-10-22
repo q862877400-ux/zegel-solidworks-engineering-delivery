@@ -51,7 +51,8 @@ if result["timed_out"]:
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_isolate.py
 # 定位:   24h 计划的**地基**：让"模态框永久挂起"这一类事故**在结构上不可能外溢**。
-# 官方依据: 不适用（纯进程隔离）；★ 判据来自 `tools/experiment_subprocess_com.py` 的真机三条
+# 官方依据: 不适用（纯进程隔离）；★ 判据来自 `tools/experiment_subprocess_com.py` 的真机
+#           三条
 # 许可:   本仓库 MIT。只用标准库。
 # ⚠ 子进程里的异常会**序列化**回来（★ 不吞掉），并带 `isolated: True` 标记。
 # 覆盖:   全文件

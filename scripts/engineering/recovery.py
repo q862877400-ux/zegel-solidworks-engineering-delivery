@@ -3,17 +3,16 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/recovery.py
-# 定位:   规格 `specs/318-stage3-crash-recovery` 的 E1（检查点+提交清单）/
-#           E2（失效闭包）/ E3（恢复判定）。
-#           ★★ 实测（2026-10-12）起点：`jobs.py` 已有 `Lease` / `NodeLease` /
-#           `VersionBinding` / `ArtifactRecord` / `EvidenceChain` / `RecoveryPlan`
-#           与 4 个测试，**而 5 个封闭码（COMMITTED / STALE / REVISION_CONFLICT /
-#           UNKNOWN_EFFECT / BLOCKED_VERIFICATION）全仓没有**，
-#           也**没有三类崩溃窗口的注入与恢复编排**、**没有失效闭包**。
-# 官方依据: ① 外部方案阶段 3 的验收 S3-A / S3-B（逐字）
-#           ② 本仓 `scripts/engineering/jobs.py` 的既有资产（`FenceToken` /
-#              `VersionBinding.matches` / `RecoveryPlan.HAS_GLOBAL_TRANSACTION = False`）
-#           ③ 本仓**事实 8**（返回值不可信 ⇒ 窗口②必须**回读**判）
+# 定位:   规格 `specs/318-stage3-crash-recovery` 的 E1（检查点+提交清单）/E2（失效闭包
+#           ）/ E3（恢复判定）。★★ 实测（2026-10-12）起点：`jobs.py` 已有 `Lease` / `Nod
+#           eLease` /`VersionBinding` / `ArtifactRecord` / `EvidenceChain` / `RecoveryPl
+#           an`与 4 个测试，**而 5 个封闭码（COMMITTED / STALE / REVISION_CONFLICT /UNKN
+#           OWN_EFFECT / BLOCKED_VERIFICATION）全仓没有**，也**没有三类崩溃窗口的注入与
+#           恢复编排**、**没有失效闭包**。
+# 官方依据: ① 外部方案阶段 3 的验收 S3-A / S3-B（逐字）② 本仓 `scripts/engineering/jobs.
+#           py` 的既有资产（`FenceToken` /   `VersionBinding.matches` / `RecoveryPlan.HA
+#           S_GLOBAL_TRANSACTION = False`）③ 本仓**事实 8**（返回值不可信 ⇒ 窗口②必须**
+#           回读**判）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收入口 `tools/run_stage3_recovery.py`）。

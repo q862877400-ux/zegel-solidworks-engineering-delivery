@@ -2,8 +2,9 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/extract_exclusive_ops.py
-# 定位:   ★ 为「一个 bunny 一个操作」的调度准备输入。清单权威源是 `tools/union-sources.json`
-#           （`sources[].tools` 是四家各自的**真实工具名**，`union_operations` 是去重并集）✓
+# 定位:   ★ 为「一个 bunny 一个操作」的调度准备输入。清单权威源是 `tools/union-sources
+#           .json`（`sources[].tools` 是四家各自的**真实工具名**，`union_operations` 是
+#           去重并集）✓
 #         ★★ 「独家」的定义：某个操作名**只出现在四家里的恰好一家** —— ★ 与
 #           `docs/union-coverage-matrix.md` §三「每个域的独家来源（只有一家有 ⇒ 只能抄它）」同义 ✓
 #         ★★★ 为什么先用**名字**筛：★ 名字级差异**约 59% 是假阳性**（历史分诊结论）——

@@ -722,15 +722,15 @@ def set_mass_property_override(
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（**不是**从四家外部 MCP 项目移植）。
 # 文件:   scripts/sw_export.py —— 「视图存图」这一段（2026-10-01 轮 146）。
-# 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `export_image` / `capture_screenshot`。
+# 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `export_image` / `capture_screen
+#           shot`。
 #         ⚑ 本模块原有 step/stl/iges/parasolid/pdf/dxf，**没有图片** ⇒ 这是真缺口。
-# 官方依据: ① 出厂类型库反射 `iface_sldworks.txt`：`Boolean SaveBMP(String, Int32, Int32)`
-#           ② `C:\swapi\types\IModelDoc2\SaveBMP.md`：
-#             `bool SaveBMP(string FileNameIn, int WidthIn, int HeightIn)`
-#             · Returns: **True if file is created successfully, false if not**
-#             · Remarks: **必须带完整路径且扩展名是 `.bmp`**；
-#               **WidthIn/HeightIn ≤ 0 ⇒ 按当前窗口尺寸**
-#           ③ ★ 三源一致（反射 / swapi / 官方示例链接），无冲突（铁律 4）。
+# 官方依据: ① 出厂类型库反射 `iface_sldworks.txt`：`Boolean SaveBMP(String, Int32, Int32
+#           )`② `C:\swapi\types\IModelDoc2\SaveBMP.md`：  `bool SaveBMP(string FileNameI
+#           n, int WidthIn, int HeightIn)`  · Returns: **True if file is created success
+#           fully, false if not**  · Remarks: **必须带完整路径且扩展名是 `.bmp`**；    *
+#           *WidthIn/HeightIn ≤ 0 ⇒ 按当前窗口尺寸**③ ★ 三源一致（反射 / swapi / 官方示
+#           例链接），无冲突（铁律 4）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义 —— 本块文档化 `export_to_bmp` 一个单元。
 # ─────────────────────────────────────────────────────────────────────
@@ -762,18 +762,18 @@ def export_to_bmp(model, output_path, width=0, height=0):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（**不是**从四家外部 MCP 项目移植）。
 # 文件:   scripts/sw_export.py —— 「视图存成 PNG/JPG」这一段（2026-10-01 轮 147）。
-# 定位:   补 `export_image` 那一档的**非 BMP 格式** —— 轮 146 只做了 `SaveBMP`（**只出 `.bmp`**），
+# 定位:   补 `export_image` 那一档的**非 BMP 格式** —— 轮 146 只做了 `SaveBMP`（**只出
+#            `.bmp`**），
 #         当时把"png/jpg 要走 SaveAs 的图片过滤器"写进限度、**未做**。本函数收掉那条边界。
-# 官方依据: ① 出厂类型库反射 `iface_sldworks.txt` —— ★ **两个重载**：
-#             `Int32   SaveAs3(String, Int32, Int32)`
-#             `Boolean SaveAs3(String, Int32, Int32, Object, Object, Int32&, Int32&)`
-#           ② `C:\swapi\types\IModelDocExtension\SaveAs3.md`：
-#             `bool SaveAs3(string Name, int Version, int Options, object ExportData,
-#              object AdvancedSaveAsOptions, out int Errors, out int Warnings)`
-#             ⚠ **三级废弃链**：`SaveAs` ⇒（Superseded）⇒ `SaveAs2` ⇒（Superseded）⇒ **`SaveAs3`**
-#             ⇒ 本模块**只用现行那个**。
-#           ③ ★ 本函数用的是**反射里那个 3 参重载**（`Int32 SaveAs3(String, Int32, Int32)`）——
-#             它**没有出参** ⇒ 免掉 `out_i4()`（事实 12/68 那一族的坑），返回 `Int32` 状态码。
+# 官方依据: ① 出厂类型库反射 `iface_sldworks.txt` —— ★ **两个重载**：  `Int32   SaveAs3(
+#           String, Int32, Int32)`  `Boolean SaveAs3(String, Int32, Int32, Object, Objec
+#           t, Int32&, Int32&)`② `C:\swapi\types\IModelDocExtension\SaveAs3.md`：  `bool
+#            SaveAs3(string Name, int Version, int Options, object ExportData,   object 
+#           AdvancedSaveAsOptions, out int Errors, out int Warnings)`  ⚠ **三级废弃链**
+#           ：`SaveAs` ⇒（Superseded）⇒ `SaveAs2` ⇒（Superseded）⇒ **`SaveAs3`**  ⇒ 本模
+#           块**只用现行那个**。③ ★ 本函数用的是**反射里那个 3 参重载**（`Int32 SaveAs3(
+#           String, Int32, Int32)`）——  它**没有出参** ⇒ 免掉 `out_i4()`（事实 12/68 那
+#           一族的坑），返回 `Int32` 状态码。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义 —— 本块文档化 `export_to_image` 一个单元。
 # ─────────────────────────────────────────────────────────────────────

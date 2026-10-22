@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/prove_ruled_surface.py
-# 定位:   ★ 2026-10-03（轮 505）★ 给 `sw_surface_features.insert_ruled_surface_report` 留真机证据。
+# 定位:   ★ 2026-10-03（轮 505）★ 给 `sw_surface_features.insert_ruled_surface_report`
+#            留真机证据。
 #   ★ 对应 `specs/201-toolbar-gaps` 的 **T608**（★ 而 T605-T609 这几条一直空着）。
 #
 # ★★ **本轮逮到一处两源冲突**（★ 正是**铁律 4** 的活教材）⚠：

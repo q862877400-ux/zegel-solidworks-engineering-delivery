@@ -15,7 +15,8 @@
 #     ② 给 selection   ⇒ **声明式选**（★ 规则 3 要求的形态）
 #     ```
 #   ★ 判据（★ 规则 6）：★ **回 `Feature` 非 None** **且** **特征树增量非空**。
-# 官方依据: `IFeatureManager.InsertFillSurface2`（★ 6 参）· 本仓 `insert_fill_surface_report` ·
+# 官方依据: `IFeatureManager.InsertFillSurface2`（★ 6 参）· 本仓 `insert_fill_surface_re
+#           port` ·
 #   `sw_selection_spec.resolve_selection`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

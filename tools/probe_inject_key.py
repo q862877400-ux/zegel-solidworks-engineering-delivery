@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机判定探针）。规格 `specs/202-user-coverage-gaps` 的 **R3 收口**。
 # 文件:   tools/probe_inject_key.py
-# 定位:   ★★ `tools/check_tool_param_binding.py` 静态查出 **11 条**「声明注入键与目标函数形参不符」
+# 定位:   ★★ `tools/check_tool_param_binding.py` 静态查出 **11 条**「声明注入键与目标
+#           函数形参不符」
 #   （`sw_app` vs `sw` · `manager` vs `cost_manager`）。★ 本探针**按注册器的真路径**调一条，
 #   用真机判定这 11 条**是真坏还是我的静态判据错**。
 #   依据: `mcp-server/tool_registry.py:507`「`kwargs[inject_as or inj] = resolver(params)`」

@@ -3,21 +3,18 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/linkage.py
-# 定位:   规格 `specs/321-stage6-adjustable-linkage` 的 L1（闭环求解）/
-#           L2（分支标识）/ L3（奇异区间）/ L4（采样证据判定）。
-#           ★★ 实测（2026-10-12）起点：`part_loop.DofPlan` 已有
-#           `is_acceptable()`（★ 逐字「**有意保留自由度必须标注**，
-#           **不机械要求全锁死**」）与 `add_intentional_dof`（★ 理由必填）；
-#           `assembly.ConstraintGraph.verdict()` 已有五档；
-#           `assembly.InterferenceScan.verdict()` 已有三结论。
-#           ★ 而**没有平面四杆闭环求解器、没有分支标识、没有奇异检测、
-#             没有「采样证据 ⇒ INDETERMINATE」**。
-# 官方依据: ① 外部方案阶段 6 的验收 S6（逐字）
-#           ② 外部方案 §5 R6 ④ 逐字：「**将一切图中有环都拒绝，正确闭链正例
-#              必须失败**，以防『**保守到失去能力**』」⇒ ★ 本模块的核心判据是
-#              **正例必须能过**，★ 不是「把所有环都拒掉」
-#           ③ `scripts/engineering/part_loop.py` 的 `DofPlan.is_acceptable()`
-#           ④ `scripts/engineering/rule_verdicts.py` 的 `INDETERMINATE` / `BLOCKED_VERIFICATION`
+# 定位:   规格 `specs/321-stage6-adjustable-linkage` 的 L1（闭环求解）/L2（分支标识）/
+#            L3（奇异区间）/ L4（采样证据判定）。★★ 实测（2026-10-12）起点：`part_loop.D
+#           ofPlan` 已有`is_acceptable()`（★ 逐字「**有意保留自由度必须标注**，**不机械
+#           要求全锁死**」）与 `add_intentional_dof`（★ 理由必填）；`assembly.Constraint
+#           Graph.verdict()` 已有五档；`assembly.InterferenceScan.verdict()` 已有三结论
+#           。★ 而**没有平面四杆闭环求解器、没有分支标识、没有奇异检测、  没有「采样证据
+#            ⇒ INDETERMINATE」**。
+# 官方依据: ① 外部方案阶段 6 的验收 S6（逐字）② 外部方案 §5 R6 ④ 逐字：「**将一切图中有
+#           环都拒绝，正确闭链正例   必须失败**，以防『**保守到失去能力**』」⇒ ★ 本模块
+#           的核心判据是   **正例必须能过**，★ 不是「把所有环都拒掉」③ `scripts/engineer
+#           ing/part_loop.py` 的 `DofPlan.is_acceptable()`④ `scripts/engineering/rule_ve
+#           rdicts.py` 的 `INDETERMINATE` / `BLOCKED_VERIFICATION`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（★ 本模块是**纯数学**，无真机依赖）。

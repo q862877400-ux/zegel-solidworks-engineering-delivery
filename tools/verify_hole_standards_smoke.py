@@ -20,8 +20,8 @@ r"""@brief 真机冒烟：`sw_hole_features.list_hole_standards`（把孤儿包�
 # 仓库:   本项目自身（真机验收）
 # 文件:   tools/verify_hole_standards_smoke.py
 # 定位:   给 `scripts/sw_hole_features.list_hole_standards` 取**真机**证据。
-# 官方依据: `C:\swapi\types\ISldWorks\GetHoleStandardsData.md` ·
-#           `C:\swapi\types\IHoleStandardsData\GetHoleStandards.md`
+# 官方依据: `C:\swapi\types\ISldWorks\GetHoleStandardsData.md` ·`C:\swapi\types\IHoleSta
+#           ndardsData\GetHoleStandards.md`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────

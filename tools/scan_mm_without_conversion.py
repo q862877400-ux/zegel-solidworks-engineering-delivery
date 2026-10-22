@@ -2,9 +2,9 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/scan_mm_without_conversion.py
-# 定位:   规格 206 / 本轮**同一类缺陷的普查**。已确证两处真缺陷：
-#           · `solidworks_extrude_{boss,cut,midplane}`（已修，提交 0055b7c）
-#           · `solidworks_sketch_add_circle`（本轮踩到：给 (30,43,r7) 画出 30 米外的圆）
+# 定位:   规格 206 / 本轮**同一类缺陷的普查**。已确证两处真缺陷：· `solidworks_extrude
+#           _{boss,cut,midplane}`（已修，提交 0055b7c）· `solidworks_sketch_add_circle`
+#           （本轮踩到：给 (30,43,r7) 画出 30 米外的圆）
 #         ★ 判据（静态可判）：**声明了 `Param("*_mm")`，而该文件里没有 `derived_args`**
 #           ⇒ 那个 `_mm` 值只能经 `param_alias` **改名直传**（或同名直传）⇒ **不换算** ✓
 #         ⚠ 本扫描**只筛候选**：`derived_args` 也可能只服务别的参数 ⇒ **命中≠确证**，

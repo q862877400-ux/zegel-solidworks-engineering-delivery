@@ -3,13 +3,12 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/change_run.py
-# 定位:   规格 `specs/317-stage2-real-holes` 的 D5（变更传播）的**真机链**。
-#           ★★ 上一轮（第 1/2 轮）D5 只做了机制与测试，**没跑真机链**
-#           ⇒ 本模块补「改尺寸 → 重建 → 出图 → 校验」那一段。
-# 官方依据: ① 本仓 `scripts/engineering/drawing_obligations.py` 的
-#              `ArtifactDigest` / `changed_after_revision` / `propagation_report`
-#           ② 本仓 `scripts/config_update_dimension.py` 与
-#              `solidworks_config_update_dimension`（改具名尺寸的入口）
+# 定位:   规格 `specs/317-stage2-real-holes` 的 D5（变更传播）的**真机链**。★★ 上一轮
+#           （第 1/2 轮）D5 只做了机制与测试，**没跑真机链**⇒ 本模块补「改尺寸 → 重建 → 
+#           出图 → 校验」那一段。
+# 官方依据: ① 本仓 `scripts/engineering/drawing_obligations.py` 的   `ArtifactDigest` / 
+#           `changed_after_revision` / `propagation_report`② 本仓 `scripts/config_update
+#           _dimension.py` 与   `solidworks_config_update_dimension`（改具名尺寸的入口）
 #           ③ 本仓**事实 71**（`GetPartBox` 回毫米）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件

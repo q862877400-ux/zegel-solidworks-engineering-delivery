@@ -5,8 +5,8 @@
 #         `specs/303-ec01-engineering-contract/spec.md`（★ 15 FR · 8 V）
 #         `specs/302-ec00-trustworthy-tool-base/contracts/quantity.md`（★ **复用**的 Quantity）
 #         `subskills/solidworks-vibecad/schemas/design_plan.schema.json`（★ 旧计划 · 10 字段）
-# 定位:   ★ **EC01** 的**唯一权威**实现。★★★ 依据计划 §5 EC01 逐字：
-#           「★ 增加单一权威 EngineeringContract 定义」
+# 定位:   ★ **EC01** 的**唯一权威**实现。★★★ 依据计划 §5 EC01 逐字：「★ 增加单一权威 E
+#           ngineeringContract 定义」
 #         ★★ **铁律 1（只做缝合）**：★ `Quantity` **复用 EC00 的定义**（★ 不另建一套量纲）；
 #         ★ 只在「design_plan 装不下」时才新增概念（★ 工况/义务/批准/四类信息）。
 # 官方依据: 不适用（本仓的工程契约模型 —— ★ 不调 SolidWorks API）

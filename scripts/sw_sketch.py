@@ -567,7 +567,8 @@ def count_segments(sketch) -> int:
 #         **草图已关闭**时回**英文 fallback `"Sketch1"`**，而中文 UI 下真名是「草图1」
 #         ⇒ 第一次真机调用就报「找不到名为 'Sketch1' 的草图特征」。
 #         ★ 这个错**只有真机能暴露** —— 静态门禁、62 个工具全部挂载成功，全绿。
-# 官方依据: `IModelDoc2.FeatureByName` / `IFeature.GetSpecificFeature2` / `IModelDoc2.FeatureByPositionReverse`
+# 官方依据: `IModelDoc2.FeatureByName` / `IFeature.GetSpecificFeature2` / `IModelDoc2.Fe
+#           atureByPositionReverse`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 名字随 UI 语言变是本仓库的既有事实（见 `docs/known-facts.md` 第 9 条：
 #   基准面名 `Front Plane` / `前视基准面` 同理）⇒ **一律走候选名，不写死一种**。
@@ -694,7 +695,8 @@ def resolve_sketch(model, name: str = ""):
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力实现）· ★ 铁律 1「只缝合不发明」
 # 文件:   scripts/sw_sketch.py —— 追加 `feature_visibility` / `set_sketch_blanked`
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-4** · 外部项目 idx **175 `hide_all_sketches`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-4** · 外部项目 idx **175 `hide_al
+#           l_sketches`**。
 #   ★★★ 裁决书的硬约束（§九）逐字：「官方 `BlankSketch` 逐字是「Hides the **selected** sketches」
 #     ⇒ ★ **官方没有 "all" 这个语义**（是别家自己许的）⇒ 工具名**不许叫 `hide_all_sketches`**，
 #     要照官方的「**隐藏选中的草图**」；★ 别家**零选区 + 返回常量** = **规则 6 的反例**」✓

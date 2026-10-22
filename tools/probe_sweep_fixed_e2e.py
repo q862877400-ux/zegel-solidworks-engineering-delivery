@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机验证）。规格 `specs/202-user-coverage-gaps` 的质量线。
 # 文件:   tools/probe_sweep_fixed_e2e.py
-# 定位:   ★★★ 上一轮真机证出 `solidworks_part_sweep` **经工具层必然失败**（`stage: selection`），
+# 定位:   ★★★ 上一轮真机证出 `solidworks_part_sweep` **经工具层必然失败**（`stage: sel
+#           ection`），
 #   因为 spec **既无 `selection` 类参数、也无 `pre_call`**。★ 本轮给它加了
 #   `profile_sketch`（mark 1）+ `path_sketch`（mark 4）与 `pre_call=_pre_sweep`。
 #   ★ 本探针**按工具层契约**调（`param_alias` → 注入 → `pre_call` → 目标函数），★ 看它建不建得成。

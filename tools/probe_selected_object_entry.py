@@ -21,7 +21,8 @@
 #       ⇒ ★ 所以 `(2, -1)` 越界 ⇒ 回 `None` ✓
 #     ⇒ ★★ 而 `GetSelectedObject5` **按位置取、不按 mark 分** ⇒ ★ 它才是"枚举整个选区"的入口。
 #   ★ 本探针**逐个试**（★ 而每个都是**官方存在的方法**，★ 不是猜参数）。
-# 官方依据: `SolidWorks.Interop.sldworks.dll` 的元数据反射（★ 四个方法的形参名与类型逐字）·
+# 官方依据: `SolidWorks.Interop.sldworks.dll` 的元数据反射（★ 四个方法的形参名与类型逐字
+#           ）·
 #   `C:\swapi\types\ISelectionMgr\GetSelectedObject6.md` · 事实 8（返回值不可信，以计数为准）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

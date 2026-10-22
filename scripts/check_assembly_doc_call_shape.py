@@ -3,10 +3,11 @@
 # ── 来源 ─────────────────────────────────────────────────
 # 仓库:   本项目自身（元门禁）
 # 文件:   scripts/check_assembly_doc_call_shape.py
-# 定位:   补 `call_assembly_doc` 在 **by-ref 审计**里的**盲区**（2026-10-09 · spec 228）。
-# 官方依据: `_raw/**/iface_*.txt`（出厂反射转储，纯元数据，非实测）
-#           + `scripts/sw_assembly_doc.py` 上方已有的 `#: arity-reflect: byref=included` 声明
-#           + `scripts/sw_connect.py::out_i4` 的**真机结论**（2026-10-01 · SW 2026 SP4.1）
+# 定位:   补 `call_assembly_doc` 在 **by-ref 审计**里的**盲区**（2026-10-09 · spec 228
+#           ）。
+# 官方依据: `_raw/**/iface_*.txt`（出厂反射转储，纯元数据，非实测）+ `scripts/sw_assembl
+#           y_doc.py` 上方已有的 `#: arity-reflect: byref=included` 声明+ `scripts/sw_co
+#           nnect.py::out_i4` 的**真机结论**（2026-10-01 · SW 2026 SP4.1）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────

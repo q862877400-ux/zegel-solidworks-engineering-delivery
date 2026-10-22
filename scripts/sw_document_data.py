@@ -469,7 +469,8 @@ def set_custom_properties(
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_document_data.py —— 追加 `document_dependencies`
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **244 `referenced_documents`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **244 `refere
+#           nced_documents`**。
 #   ★ 裁决书（`docs/recon-207/adjudication.md` §一）逐字：「补齐 `solidworks_pack_and_go`
 #   一直枚举却不暴露的**读侧**」✓ ★ 落点由我先确认本模块职责后选定（该模块 = 文档数据读/写）。
 # 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：

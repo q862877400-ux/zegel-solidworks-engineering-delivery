@@ -3,7 +3,8 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身（骨架照 tools/probe_spec211_scale.py 的先例）
 # 文件:   tools/probe_spec220_boundary.py
-# 定位:   ★ 规格 220 的 **T-220-01（还验证债）** —— ★ 把 `scripts/sw_net_blend.py` 的两个
+# 定位:   ★ 规格 220 的 **T-220-01（还验证债）** —— ★ 把 `scripts/sw_net_blend.py` 的
+#           两个
 #         工具从 `stitched` 推向 `verified`（★ 或如实报"没验成"）✓
 # 官方依据: ★ 三样读过（★ 见 `scripts/sw_net_blend.py` 来源块）：
 #   · 签名 `C:\swapi\types\IFeatureManager\InsertNetBlend.md`（20 参）⇒ `Type` 1=Boss / 2=Surface

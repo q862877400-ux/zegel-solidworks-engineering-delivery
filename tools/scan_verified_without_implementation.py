@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身。
 # 文件:   tools/scan_verified_without_implementation.py
-# 定位:   ★ 起点：★ 轮 79 查出 `drawing_dimension_insertion` **能力层零实现**、★ 而 `level` 是 `verified`
+# 定位:   ★ 起点：★ 轮 79 查出 `drawing_dimension_insertion` **能力层零实现**、★ 而 `l
+#           evel` 是 `verified`
 #   ⇒ ★★ **那说明"标 `verified`"与"东西在不在"是两件事**（★ 与事实 518/519 **同族**）✓
 #   ★★★ **本扫描把它系统化** —— ★ 判据（★ 可核、★ 不猜名字）：
 #     ★ 对每个 `verified` 条目：★ 取它 `mcp_tools` 里每个工具名

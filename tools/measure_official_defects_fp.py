@@ -1,4 +1,14 @@
 """★ D-1 合规实测（第 2 道门禁）：`check_official_source_defects` 的误报率与漏报率。"""
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   tools/measure_official_defects_fp.py
+# 定位:   D-1 合规实测（第 2 道门禁）：`check_official_source_defects` 的误报率与漏报
+#           率。
+# 官方依据: 官方源 `C:\swapi\types\**`（★ 逐条见文件内引用）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
 from __future__ import annotations
 
 import sys

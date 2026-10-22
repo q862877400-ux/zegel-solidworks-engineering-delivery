@@ -36,7 +36,8 @@ swAddinsDisabled=4 · swLoadConflict=5 · swRegistrationError=6 · **swLicenseEr
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_simulation_loadaddin_by_path.py
 # 定位:   给「仿真加载项取不到」**定因**（许可 vs 未启用 vs 参数形态）。
-# 官方依据: `C:\swapi\types\ISldWorks\LoadAddIn.md`（参数与返回值）+ `C:\swapi\enums\swLoadAddinError_e.md`
+# 官方依据: `C:\swapi\types\ISldWorks\LoadAddIn.md`（参数与返回值）+ `C:\swapi\enums\swL
+#           oadAddinError_e.md`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

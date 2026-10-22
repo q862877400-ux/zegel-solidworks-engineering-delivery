@@ -2,11 +2,12 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（实现 = scripts/sw_assembly.py 的 iter_feature_tree，**早已存在**）
 # 文件:   mcp-server/tool_specs_batch110.py
-# 定位:   ★ 补一格用户可感知功能：★ **装配/零部件阵列**（生成器关键词 `("component_pattern",)`）✓
-# 官方依据: ★★ 如实交代：★ 官方层面有 `IAssemblyDoc::DissolveComponentPattern` 与
-#           `GetPatternComponentCount` 等成员 ✓ —— ★ 但**本批不新建包装** ✗，
-#           ★ 而是**直接把工具指向本仓现成的** `sw_assembly.iter_feature_tree` ✓
-#           （★ 它遍历装配特征树 ⇒ ★ **零部件阵列节点就在其中** ✓）
+# 定位:   ★ 补一格用户可感知功能：★ **装配/零部件阵列**（生成器关键词 `("component_pat
+#           tern",)`）✓
+# 官方依据: ★★ 如实交代：★ 官方层面有 `IAssemblyDoc::DissolveComponentPattern` 与`GetPat
+#           ternComponentCount` 等成员 ✓ —— ★ 但**本批不新建包装** ✗，★ 而是**直接把工具
+#           指向本仓现成的** `sw_assembly.iter_feature_tree` ✓（★ 它遍历装配特征树 ⇒ ★ *
+#           *零部件阵列节点就在其中** ✓）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 规模:   **1 个工具** ⇒ 工具数 476 → 477
 # ★★★ 等级如实：★★ 尚未真机验证 ⇒ ★ 台账**不提 level**（红线⑥）✓

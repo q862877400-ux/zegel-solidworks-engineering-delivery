@@ -13,9 +13,9 @@
 # 仓库:   本项目自身
 # 文件:   tools/diag_residual_selection.py
 # 定位:   规格 315 的 ① 在位设计攻关 —— 查残留选择
-# 官方依据: ① 本仓事实 8（选择返回值不可信，回读计数）
-#           ② ISelectionMgr.GetSelectedObject6(Index, Mark) / GetSelectedObjectType3
-#           ③ C:\swapi\types\ISelectionMgr\GetSelectedObjectCount2.md（Mark 语义）
+# 官方依据: ① 本仓事实 8（选择返回值不可信，回读计数）② ISelectionMgr.GetSelectedObject6
+#           (Index, Mark) / GetSelectedObjectType3③ C:\swapi\types\ISelectionMgr\GetSele
+#           ctedObjectCount2.md（Mark 语义）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────

@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\`）
 # 文件:   `scripts/sw_part.py::linear_pattern`（★ 生产）
-# 定位:   ★★★★ **官方示例逐字**（★ `C:\swapi\examples\Change_Linear_Pattern_Example_VB.md`）：
+# 定位:   ★★★★ **官方示例逐字**（★ `C:\swapi\examples\Change_Linear_Pattern_Example_VB
+#           .md`）：
 #     ```
 #     swModel.ClearSelection2 True
 #     status = swModelDocExt.SelectByID2("", "EDGE", x, y, z, True, 1,   Nothing, 0)

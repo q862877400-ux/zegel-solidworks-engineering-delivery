@@ -3,35 +3,24 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/runs.py
-# 定位:   规格 `specs/327-release-manifest-rules-and-runs` 的 T10（`runs` 结构）/
-#           T11（同卷原子重命名）/ T12（旧版本不覆盖不删除）/ T13（孤立暂存不算完成）/
-#           T14（四类持久化）/ T15（B 侧薄编排入口）。
-#           ★★ 实测（2026-10-12）起点：`output/runs/` **存在**（460 项，★ 是
-#           阶段 326 的 `questions/`）；「旧版本不覆盖、不删除」与「单写者」
-#           **已有**；★ 而**没有 `attempts/` / `checkpoints/` / `commits/`、
+# 定位:   规格 `specs/327-release-manifest-rules-and-runs` 的 T10（`runs` 结构）/T11（
+#           同卷原子重命名）/ T12（旧版本不覆盖不删除）/ T13（孤立暂存不算完成）/T14（四
+#           类持久化）/ T15（B 侧薄编排入口）。★★ 实测（2026-10-12）起点：`output/runs/`
+#            **存在**（460 项，★ 是阶段 326 的 `questions/`）；「旧版本不覆盖、不删除」
+#           与「单写者」**已有**；★ 而**没有 `attempts/` / `checkpoints/` / `commits/`、
 #           没有同卷原子重命名、没有四类持久化、没有 B 侧入口**。
-# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q14（L261-297）逐字：
-#           L269「一期单机单写者，采用**不可变版本文件与提交清单**，
-#             **不引入数据库**」
-#           L271-281 逐字给的目录图：
-#             ```
-#             output/runs/<run_id>/
-#               plans/<revision>.json
-#               interfaces/<revision>.json
-#               questions/<revision>.json
-#               events/<sequence>.json
-#               attempts/<attempt_id>/...
-#               checkpoints/<checkpoint_id>/CAD/...
-#               checkpoints/<checkpoint_id>/evidence/...
-#               commits/<sequence>.json
-#             ```
-#           L283「唯一权威是**完整的提交链及其引用内容**；Markdown 和状态摘要
-#             都是**派生视图**。新版本写入、校验、刷盘后，**以同卷原子重命名
-#             发布新的提交清单**。**旧版本不覆盖、不删除**。**孤立的暂存文件保留，
-#             但没有提交记录就不能自动视作完成**」
-#           L297「**任务树、接口、证据、未决问题四类均持久化**；可重建的是
-#             派生展示、调度就绪队列和 COM 对象，不是用户已批准的工程决定」
-#           L265「后续 A 只能做**同一核心的另一个适配器**」
+# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q14（L261-297）逐字：L269「一
+#           期单机单写者，采用**不可变版本文件与提交清单**，  **不引入数据库**」L271-281
+#            逐字给的目录图：  ```  output/runs/<run_id>/    plans/<revision>.json    in
+#           terfaces/<revision>.json    questions/<revision>.json    events/<sequence>.j
+#           son    attempts/<attempt_id>/...    checkpoints/<checkpoint_id>/CAD/...    c
+#           heckpoints/<checkpoint_id>/evidence/...    commits/<sequence>.json  ```L283
+#           「唯一权威是**完整的提交链及其引用内容**；Markdown 和状态摘要  都是**派生视
+#           图**。新版本写入、校验、刷盘后，**以同卷原子重命名  发布新的提交清单**。**旧
+#           版本不覆盖、不删除**。**孤立的暂存文件保留，  但没有提交记录就不能自动视作完
+#           成**」L297「**任务树、接口、证据、未决问题四类均持久化**；可重建的是  派生展
+#           示、调度就绪队列和 COM 对象，不是用户已批准的工程决定」L265「后续 A 只能做**
+#           同一核心的另一个适配器**」
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证。

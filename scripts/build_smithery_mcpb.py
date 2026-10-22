@@ -1,5 +1,14 @@
 """为 Smithery 构建带完整 MCP 工具 schema 的 MCPB 发布包。"""
 
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   scripts/build_smithery_mcpb.py
+# 定位:   为 Smithery 构建带完整 MCP 工具 schema 的 MCPB 发布包。
+# 官方依据: 不适用（本仓工具，不调 COM）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
 from __future__ import annotations
 
 import argparse

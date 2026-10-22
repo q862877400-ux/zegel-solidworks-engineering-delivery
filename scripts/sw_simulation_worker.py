@@ -29,7 +29,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_simulation_worker.py
-# 定位:   `sw_isolate` 的**子进程侧入口**：把仿真域"会弹框"的三件事做成 JSON 入参的薄壳。
+# 定位:   `sw_isolate` 的**子进程侧入口**：把仿真域"会弹框"的三件事做成 JSON 入参的薄
+#           壳。
 # 官方依据: 被包住的调用见 `scripts/sw_simulation.py` 的来源块
 #          （`ICWStudy.CreateMesh` / `RunAnalysis` / `ICWMesh.ElementCount` / `ICWResults.GetPlotCount`）
 # 许可:   本仓库 MIT。无第三方代码引入。

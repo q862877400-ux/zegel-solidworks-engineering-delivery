@@ -4,6 +4,15 @@
 该脚本不调用 SolidWorks COM 工具，只启动本地 stdio MCP server 并检查
 `tools/list` 是否包含关键工具，适合在提交前或 CI 中发现 schema/注册错误。
 """
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   scripts/validate_mcp.py
+# 定位:   验证 SolidWorks MCP Server 的协议层可用性。
+# 官方依据: 不适用（本仓工具，不调 COM）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
 from __future__ import annotations
 
 import asyncio

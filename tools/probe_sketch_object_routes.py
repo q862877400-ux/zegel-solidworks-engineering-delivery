@@ -23,7 +23,8 @@ r"""@brief 探针：**从 model 取「草图对象」的三条路**，以及关�
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针，**不是**从四家外部 MCP 项目移植）
 # 文件:   tools/probe_sketch_object_routes.py
-# 定位:   给「砌墙 A 第一批（草图只读工具）」定包装层的取法；产出 `output/sketch-object-routes.json`。
+# 定位:   给「砌墙 A 第一批（草图只读工具）」定包装层的取法；产出 `output/sketch-objec
+#           t-routes.json`。
 # 官方依据: `IModelDoc2.GetActiveSketch2` · `ISketchManager.ActiveSketch`
 #          （见 `C:\swapi\` 与 `D:\AI\SW\AI Solidworks\官方文档\` 的两处官方示例）
 # 许可:   本仓库 MIT。无第三方代码引入。

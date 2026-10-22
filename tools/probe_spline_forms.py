@@ -27,7 +27,8 @@ r"""@brief 探针：`ISketchManager.CreateSpline` 的**实参形态**（官方�
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_spline_forms.py
 # 定位:   给 Spec Kit `103` 判定「样条建不出来」是**实参形态**问题还是**后端到不了**。
-# 官方依据: `C:/swapi/types/ISketchManager/CreateSpline.md`（Remarks：**扁平的 X,Y,Z 序列**）·
+# 官方依据: `C:/swapi/types/ISketchManager/CreateSpline.md`（Remarks：**扁平的 X,Y,Z 序
+#           列**）·
 #          `CreateSpline2.md`（同 Remarks + `SimulateNaturalEnds`）· 出厂反射
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

@@ -7,9 +7,9 @@
   "dup_filename": "AGENTS.md 铁律 3（结构按顶层白名单）引申：跨目录同名 .py 视为重复实现嫌疑"
  },
  "measured_at": "2026-10-21",
- "ruff_total_ceiling": 26373,
+ "ruff_total_ceiling": 25933,
  "clone_groups_ceiling": 2501,
- "no_source_block_ceiling": 75,
+ "no_source_block_ceiling": 0,
  "dup_filename_allow": [],
  "_★待裁决": {
   "audit_call_arity.py": "scripts/(337行·有来源块) vs tools/(149行·无来源块) —— 疑 tools/ 为旧版，待删",
@@ -29,6 +29,18 @@
     75
    ],
    "why": "batch116 后 + 删除 tools/audit_call_arity.py 旧版 + 重生成派生文档；★ 基线只许降 ✓"
+  },
+  {
+   "at": "2026-10-21",
+   "from": [
+    26373,
+    75
+   ],
+   "to": [
+    25933,
+    0
+   ],
+   "why": "补 75 个来源块（缺来源块 75→0）+ 宽度感知重排来源块（ruff 26373→25933，因 E501 按显示宽度算、CJK 算 2 列）"
   }
  ]
 }

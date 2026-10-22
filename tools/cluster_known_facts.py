@@ -3,8 +3,8 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   tools/cluster_known_facts.py
-# 定位:   规格 `specs/332-known-facts-triage` —— 把粗筛出的「该吸收」条目
-#           **按主题聚类**，★ 优先看**与 L3 那 24 条做法直接相关**的。
+# 定位:   规格 `specs/332-known-facts-triage` —— 把粗筛出的「该吸收」条目**按主题聚类*
+#           *，★ 优先看**与 L3 那 24 条做法直接相关**的。
 # 官方依据: `output/known-facts-index.json`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件

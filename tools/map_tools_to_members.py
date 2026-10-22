@@ -11,6 +11,15 @@
   ★ 抽出 `get_com_member(x, "Member")` / `call_com_member(x, "Member")` 的**字符串字面量**。
 ★ 只读。产出 `output/tool-to-member-map.json`。
 """
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   tools/map_tools_to_members.py
+# 定位:   筛选器**：把 277 个工具映射到「它真正调的 COM 成员」⇒ 再投影到官方结构上。
+# 官方依据: 官方源 `C:\swapi\types\**`（★ 逐条见文件内引用）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
 from __future__ import annotations
 
 import ast

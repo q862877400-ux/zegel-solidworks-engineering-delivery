@@ -28,7 +28,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装的函数各自的来源块在其源码里）
 # 文件:   mcp-server/tool_specs_batch43.py
-# 定位:   24h 计划 段 6 续（Spec Kit `160`）—— 工程图视图 4 个（★ 补上此前完全没挂的那一族）。
+# 定位:   24h 计划 段 6 续（Spec Kit `160`）—— 工程图视图 4 个（★ 补上此前完全没挂的那
+#           一族）。
 # 官方依据: `IView` 族（★ `Name` / `ScaleDecimal` / `GetAnnotationCount` /
 #          `GetVisibleComponentCount` / `SetScale`）—— ★ 见 `scripts/sw_drawing_view.py`
 # 许可:   本仓库 MIT。无第三方代码引入。

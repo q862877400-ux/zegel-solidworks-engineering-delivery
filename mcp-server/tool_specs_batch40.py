@@ -41,7 +41,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装的函数各自的来源块在其源码里）
 # 文件:   mcp-server/tool_specs_batch40.py
-# 定位:   24h 计划 段 5 续（Spec Kit `157`）—— 填 `motion_study` 这条空壳（verified 却 0 工具）。
+# 定位:   24h 计划 段 5 续（Spec Kit `157`）—— 填 `motion_study` 这条空壳（verified 却
+#            0 工具）。
 # 官方依据: `IMotionStudyManager` / `IMotionStudy` / `ISimulation` 族
 #          （★ 见 `scripts/sw_motion.py` 的来源块）· `swmotionstudy.tlb`（★ Motion 类型库）
 # 许可:   本仓库 MIT。无第三方代码引入。

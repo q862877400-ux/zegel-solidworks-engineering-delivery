@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力实现）
 # 文件:   scripts/sw_sketch_edit_ops.py
-# 定位:   ★ 2026-10-03（轮 465）★ `specs/201-toolbar-gaps` 的 **B3 批**（草图编辑 7 条）。
+# 定位:   ★ 2026-10-03（轮 465）★ `specs/201-toolbar-gaps` 的 **B3 批**（草图编辑 7 条
+#           ）。
 #   ★★ 起因：用户贴草图工具条截图逐条问「能/不能」，这 7 个当时全答「不能」（本仓无入口）；
 #     随后要求「把这些不能实现的都攻关好」。
 #   ★★★ **签名与枚举三源互证（铁律 4）**：全部逐条读自 `C:\\swapi\\`：
@@ -249,7 +250,8 @@ B3_MEMBERS = (
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_sketch_edit_ops.py —— 追加 `sketch_set_construction_geometry`
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **79 `construction_geometry`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **79 `constru
+#           ction_geometry`**。
 #   ★★ 裁决书的强制约束（`docs/recon-207/adjudication.md` §一）：「零参 + 普通 dispinterface ⇒
 #   后端可达性最高。落 `sw_sketch_edit_ops.py`，**复用**该文件已有的声明式选段包装」✓
 # 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：

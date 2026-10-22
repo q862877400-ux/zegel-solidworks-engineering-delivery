@@ -16,7 +16,8 @@
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_gear_coincident.py
 # 定位:   ★ 业主 2026-10-10「方法要规范」—— ★ 真曲线齿廓的**显式重合**闭合。
-# 官方依据: `C:\swapi\types\ISketch\MergePoints.md`（★ Remarks 推荐 AddRelation+COINCIDENT）
+# 官方依据: `C:\swapi\types\ISketch\MergePoints.md`（★ Remarks 推荐 AddRelation+COINCIDE
+#           NT）
 #         `C:\swapi\types\ISketchRelationManager\AddRelation.md`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件

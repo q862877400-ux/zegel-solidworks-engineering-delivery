@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_structure_system.py
-# 定位:   ★ 2026-10-03（轮 445）承**事实 358**（那条链的官方序列）与**事实 359**（判据的最后一块拼图）。
+# 定位:   ★ 2026-10-03（轮 445）承**事实 358**（那条链的官方序列）与**事实 359**（判据
+#           的最后一块拼图）。
 #   ★★★ **它要证明的**：★ 结构系统那条链**能不能建成** —— ★ 而它是
 #     `configure_member_profile` / `configure_split_member` 那两条**从"不做"回到"该挂"**的依赖。
 #   ★★ 官方序列（★ 逐句，★ 出自 `Access_Structure_System_Corner_Treatments_Example_VB.htm`）：
@@ -20,7 +21,8 @@
 #     ```
 # ★ 判据（★ 规则 6：★ 建/改特征后**回读**）：★ 特征树**有增量** · 且报出**新特征的类型名**。
 #   ★★ 而**不拿 COM 返回值当判据**（★ 本仓一贯；★ 事实 8）。
-# 官方依据: `IModelDocExtension.CreateStructureSystemMemberData`（1 参 ⇒ `IStructureSystemMemberFeatureData`）·
+# 官方依据: `IModelDocExtension.CreateStructureSystemMemberData`（1 参 ⇒ `IStructureSyst
+#           emMemberFeatureData`）·
 #   `IModelDocExtension.CreateStructureSystem`（2 参 ⇒ `IFeature`，实为 `IStructureSystemFolder`）·
 #   `swStructureSystemMemberCreationType_Primary_PathSegment = 0` · 本机轮廓库 `GB\round-rods.sldlfp`
 # 许可:   本仓库 MIT。无第三方代码引入。

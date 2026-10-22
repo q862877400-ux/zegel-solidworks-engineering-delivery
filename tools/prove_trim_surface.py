@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/prove_trim_surface.py
-# 定位:   ★ 2026-10-03（轮 519）★ 给 `sw_surface_features.trim_surface_report` 留真机证据。
+# 定位:   ★ 2026-10-03（轮 519）★ 给 `sw_surface_features.trim_surface_report` 留真机
+#           证据。
 #
 #   ★★ **T607 的真名是上一轮（518）才找到的**：
 #     · 轮 516/518 我按 `InsertTrimSurface` 查 ⇒ **swapi 里查不到**（★ 当时按铁律 5 记了）

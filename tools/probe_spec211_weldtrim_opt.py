@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B3-1 的第三步探针）
 # 文件:   tools/probe_spec211_weldtrim_opt.py
-# 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B3-1**。★ 前两步：★ 第一步"查行为"（★ 前置没上 ⇒
+# 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B3-1**。★ 前两步：★ 第一步"查行为"
+#           （★ 前置没上 ⇒
 #   没建 ✓）⇒ ★ 第二步"把 mark 1/2 选上"（★ 而**仍不建** ⇒ ★ 我当时**拒称"完全试死"** ✓）。
 #   ★★★ **本探针查到"不建"的第三种成因：档位传错** ✓✓ ——
 #     ★ `EndCond` 取 `swSolidworksWeldmentEndCondOptions_e`，★ 而该枚举里
@@ -15,7 +16,8 @@
 #     · ★ **建成** ⇒ ★★★ **「大发现」**：★ 裁剪/延伸焊件走得通 ✓
 #     ★ · ★ **仍不建** ⇒ ★★ **那才够格叫「试死」**（★ 因为三处都追过了：★ 前置 ✓ · mark ✓ · 档位 ✓）
 #   ★ 主判据一律**回读**：★ **特征树多了新特征**（★ 不看返回值 ✓）
-# 官方依据: `C:\swapi\types\IFeatureManager\InsertWeldmentTrimFeature2.md`（签名 + Parameters + Remarks）
+# 官方依据: `C:\swapi\types\IFeatureManager\InsertWeldmentTrimFeature2.md`（签名 + Param
+#           eters + Remarks）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

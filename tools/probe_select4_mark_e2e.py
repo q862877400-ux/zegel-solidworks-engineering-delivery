@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机验证）。规格 `specs/202-user-coverage-gaps` 的质量线。
 # 文件:   tools/probe_select4_mark_e2e.py
-# 定位:   ★★★ bunny 读官方文档指出：官方 `IEntity/Select2.md` 逐字「**Obsolete. Superseded by
+# 定位:   ★★★ bunny 读官方文档指出：官方 `IEntity/Select2.md` 逐字「**Obsolete. Supers
+#           eded by
 #   [[IEntity::Select4]].**」，而 `Select4(bool Append, **SelectData** Data)` 的第 2 参是 `ISelectData`
 #   —— ★★ 而仓内 `_select_com_object` 原先给 `Select4` 传的是**空 VARIANT**
 #   ⇒ **`Select4` 分支的 `Mark` 永远是 0**（靠 `Select2` 排前面才没暴露）。

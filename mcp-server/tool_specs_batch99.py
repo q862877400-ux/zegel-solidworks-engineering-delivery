@@ -7,7 +7,8 @@
 #   `DSldWorksEvents::BeginRecordNotify`/`EndRecordNotify` ✓
 #   ★★★ 裁决书点名的**头号风险**：`swCommands_StopMacro`(31) **逐字会弹 Save As 对话框**
 #     ⇒ ★★ 本工具**永不调用 31**，改用 `swCommands_RecordPauseMacro`(29) 这个**切换**成对开关 ✓
-# 官方依据: `C:\\swapi\\types\\ISldWorks\\RecordLine.md`（★ `## Remarks` 逐字给两个硬事实）·
+# 官方依据: `C:\\swapi\\types\\ISldWorks\\RecordLine.md`（★ `## Remarks` 逐字给两个硬事
+#           实）·
 #   `C:\\swapi\\types\\ISldWorks\\RunCommand.md` · `C:\\swapi\\enums\\swCommands_e.md`
 #   （`RecordPauseMacro=29` · `StopMacro=31; **opens the Save As dialog**`）✓
 # 许可:   本仓库 MIT。★ 无第三方代码引入。

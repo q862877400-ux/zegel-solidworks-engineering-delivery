@@ -13,7 +13,8 @@
 #     · `AddHeatPower`「bodies, faces, edges, and **vertices**」
 #     · `AddTemperature`「entities (**faces, edges, and vertices**)」
 #     ⇒ ★★ 即：★ **它们各自允许的实体种类不同** —— ★ 而我此前**一律只给"一个面"**。
-# 官方依据: `D:\AI\SW\_raw\cosworks_signatures.md`（★ 逐条的 Parameters 段，转储自官方页）·
+# 官方依据: `D:\AI\SW\_raw\cosworks_signatures.md`（★ 逐条的 Parameters 段，转储自官方页
+#           ）·
 #   `ICWLoadsAndRestraintsManager~Add*.html`（CHM）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

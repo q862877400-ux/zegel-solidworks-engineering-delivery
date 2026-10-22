@@ -157,9 +157,8 @@ SURFACE_CREATION_METHODS = {
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt  →  ISldWorks 段
-# 定位:   官方同时提供两个取 Modeler 的入口：
-#             Object   GetModeler()   ← Automation 友好，Python 可用
-#             Modeler  IGetModeler()  ← 指针版，进程内非托管 C++ 专用
+# 定位:   官方同时提供两个取 Modeler 的入口：  Object   GetModeler()   ← Automation 友
+#           好，Python 可用  Modeler  IGetModeler()  ← 指针版，进程内非托管 C++ 专用
 #         本模块只走前者，与上游 capabilities.yaml 中
 #         「默认优先同名非 I 方法」的路由约定一致。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
@@ -440,8 +439,8 @@ def create_sheet_from_surface(sw_app, surface, tolerance):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt
-# 定位:   证据回读只使用已核实的**属性**成员（ISurface 族 82 成员）：
-#             ISurface : get_Identity / IsPeriodic / IsRational / Area 等
+# 定位:   证据回读只使用已核实的**属性**成员（ISurface 族 82 成员）：  ISurface : get_
+#           Identity / IsPeriodic / IsRational / Area 等
 #         涉及面/边/顶点的读取走 IBody2 / IFace2 / IEdge / IVertex，
 #         同样只取属性，不臆造方法名。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）

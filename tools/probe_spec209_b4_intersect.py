@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_spec209_b4_intersect.py
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-3**：外部项目 idx **181 `intersect`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-3**：外部项目 idx **181 `intersec
+#           t`**。
 #   ★★ 裁决书逐字：「真名是**两步** `PreIntersect2` → `PostIntersect`；RegionType 三值表 +
 #   示例 mark=0 + 排除数组形状齐备；★ 读侧 `IIntersectFeatureData` 零指针族 ⇒
 #   ★ **唯一要实测的只有 `System.object` 布尔 SafeArray 的包装**」✓

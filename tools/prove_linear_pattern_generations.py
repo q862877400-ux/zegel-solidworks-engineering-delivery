@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_linear_pattern_generations.py
-# 定位:   ★ 2026-10-03（轮 454）—— ★ 承**事实 368**（排除性结论：★ 成员可用 · 判据没问题 · 选区没问题）。
+# 定位:   ★ 2026-10-03（轮 454）—— ★ 承**事实 368**（排除性结论：★ 成员可用 · 判据没问
+#           题 · 选区没问题）。
 #   ★★★ **所以本轮的维度是**换成员代 + 看返回值****（★ 而不是再调参数）：
 #     ```
 #     ★ 对照：`circular_pattern`（**能用**）用的是
@@ -19,7 +20,8 @@
 #     ```
 #   ⚠ 选区**逐字照搬** `circular_pattern`（★ `_select_by_id(..., "BODYFEATURE", mark=4)`）——
 #     ★★ 因为★ 它**能用**，★ 故那是"已知可用的选区形态" ✓
-# 官方依据: `IFeatureManager.FeatureLinearPattern3/4/5`（★ 出厂程序集有**四代**：`FeatureLinearPattern` /
+# 官方依据: `IFeatureManager.FeatureLinearPattern3/4/5`（★ 出厂程序集有**四代**：`Featur
+#           eLinearPattern` /
 #   `2` / `3` / `4` / `5`）· `FeatureLinearPattern3` 的 10 参
 #   （`Num1, Spacing1, Num2, Spacing2, FlipDir1, FlipDir2, DName1, DName2, GeometryPattern, VaryInstance`）·
 #   间距**单位是米**（事实 315）· 本仓 `scripts/sw_part.py` 的 `linear_pattern` / `circular_pattern`

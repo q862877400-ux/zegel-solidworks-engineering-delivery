@@ -3,7 +3,8 @@
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
 # 文件:   `scripts/sw_costing.py`（`include_body` / `set_costing_method` / `update_cost_for_all_bodies`）·
 #         `scripts/sw_motion.py`（`calculate_and_play` / `export_motion_study_avi`）
-# 定位:   ★ 规格 `specs/205-tool-ramp/` §8 的**批 89** —— ★ 走的是「**加解析器换工具**」那条路：
+# 定位:   ★ 规格 `specs/205-tool-ramp/` §8 的**批 89** —— ★ 走的是「**加解析器换工具**
+#           」那条路：
 #         C 类里**最后两组语义无歧义**的组（`cost_part` / `motion_study`），
 #         ★ 两个新注入键 `"cost_part"` / `"motion_study"` 已在本笔同一提交里加进 `RESOLVERS` ✓
 # 官方依据: **两组分别不同，如实分开写**：

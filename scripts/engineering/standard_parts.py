@@ -3,14 +3,13 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/standard_parts.py
-# 定位:   规格 `specs/333-standard-parts-tables` ——
-#           ★★ 把 `~/.agents/skills/mech-design/标准件数据表/` 的 **22 个 CSV**
-#             接成**可查服务**。
-#           ★★★ 触发它的是 2026-10-14 全自动挖掘：`mech-design`（★ 业主早装好的）
-#             里有 **O 型圈 349 规格 · 底孔 99 · 通孔 90 · 螺钉长度 29 种 ·
-#             5 类轴承 102 型号** —— ★ 而本仓 `manufacturing_rules.yaml` **只有 5 个规格**。
-# 官方依据: ① `~/.agents/skills/mech-design/标准件数据表/*.csv`（★ 只读）
-#           ② 该 skill 自述「**直接查表，不要凭记忆写标准数值**」
+# 定位:   规格 `specs/333-standard-parts-tables` ——★★ 把 `~/.agents/skills/mech-design
+#           /标准件数据表/` 的 **22 个 CSV**  接成**可查服务**。★★★ 触发它的是 2026-10-1
+#           4 全自动挖掘：`mech-design`（★ 业主早装好的）  里有 **O 型圈 349 规格 · 底孔
+#            99 · 通孔 90 · 螺钉长度 29 种 ·  5 类轴承 102 型号** —— ★ 而本仓 `manufactu
+#           ring_rules.yaml` **只有 5 个规格**。
+# 官方依据: ① `~/.agents/skills/mech-design/标准件数据表/*.csv`（★ 只读）② 该 skill 自述
+#           「**直接查表，不要凭记忆写标准数值**」
 # 许可:   本仓库 MIT。★ 外部数据表**只读**；★ 引用时标注来源路径。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（★ 纯查表，不碰 COM）。

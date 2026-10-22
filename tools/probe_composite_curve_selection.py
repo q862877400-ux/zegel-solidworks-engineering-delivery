@@ -27,8 +27,10 @@ r"""@brief 探针：`InsertCompositeCurve` 到底要选**实体（草图段）**
 # ── 来源 ──
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_composite_curve_selection.py
-# 定位:   给 Spec Kit `104` 判定「选实体 vs 选特征」是不是 `InsertCompositeCurve` 的成败关键。
-# 官方依据: `C:/swapi/types/IModelDoc2/InsertCompositeCurve.md`（Remarks：**select the entities**，
+# 定位:   给 Spec Kit `104` 判定「选实体 vs 选特征」是不是 `InsertCompositeCurve` 的成
+#           败关键。
+# 官方依据: `C:/swapi/types/IModelDoc2/InsertCompositeCurve.md`（Remarks：**select the e
+#           ntities**，
 #          mark = 1）· 官方样例（两条**样条**草图）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

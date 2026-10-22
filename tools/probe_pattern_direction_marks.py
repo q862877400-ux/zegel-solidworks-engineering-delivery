@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_pattern_direction_marks.py
-# 定位:   ★ 2026-10-03（轮 406）24h 计划 v2 收敛报告 §五 第 ③ 条的**后半**（`linear_pattern`）。
+# 定位:   ★ 2026-10-03（轮 406）24h 计划 v2 收敛报告 §五 第 ③ 条的**后半**（`linear_pa
+#           ttern`）。
 #   ★★ **假设从官方 Remarks 读出**（★ 不是猜）：`IFeatureManager.FeatureLinearPattern3` 的
 #     Remarks 给了 mark 表 ——
 #     ```

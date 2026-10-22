@@ -26,7 +26,8 @@ except ImportError:
 # ── 来源 ───────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   scripts/sw_hole_features.py
-# 定位:   本模块的证据数据类与入参校验（★ `HoleFeatureEvidence` / `_positive` / `_center`）。
+# 定位:   本模块的证据数据类与入参校验（★ `HoleFeatureEvidence` / `_positive` / `_cent
+#           er`）。
 # 官方依据: `ISketchManager` / `ICurve` 族（★ 见本文件各段自己的来源块）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 未在本机实测: 见各条 `limitations`。
@@ -269,15 +270,13 @@ def create_hole_pattern(model, positions: Iterable[Sequence[float]], creator, **
 # 定位:   把 `get_fastener_types` / `get_fastener_table_types` / `get_fastener_table`
 #         三个包装接成可用的高层入口（它们此前同样**没有调用方**）。
 #         链路：标准（15）→ 紧固件类型（14）→ 表类型（`[0,1,2]`）。
-# 官方依据: ① 出厂类型库反射 `iface_*.txt`：
-#             `Boolean GetFastenerTypes(String, Object&, Object&)` ·
-#             `Boolean GetFastenerTableTypes(String, Int32, Object&)` ·
-#             `Boolean GetFastenerTable(String, Int32, Int32, out Object)`
-#           ② `C:\swapi\types\IHoleStandardsData\GetFastenerTable.md`
-#             （第 4 参是 `out System.object HoleTable`，类型 `[[IHoleDataTable]]`）
-#           ③ ★ **必须热身的约束**是**真机查出**的，官方**未写**
-#             （`_probe_fastener_ordering.py` 四组对照 A/B/C/D）
-#           ④ ★ 出参读回来是 `tuple`、两组一一对应（`tools/verify_hole_standards_smoke.py` 11/11）
+# 官方依据: ① 出厂类型库反射 `iface_*.txt`：  `Boolean GetFastenerTypes(String, Object&,
+#            Object&)` ·  `Boolean GetFastenerTableTypes(String, Int32, Object&)` ·  `Bo
+#           olean GetFastenerTable(String, Int32, Int32, out Object)`② `C:\swapi\types\I
+#           HoleStandardsData\GetFastenerTable.md`  （第 4 参是 `out System.object HoleT
+#           able`，类型 `[[IHoleDataTable]]`）③ ★ **必须热身的约束**是**真机查出**的，官
+#           方**未写**  （`_probe_fastener_ordering.py` 四组对照 A/B/C/D）④ ★ 出参读回来
+#           是 `tuple`、两组一一对应（`tools/verify_hole_standards_smoke.py` 11/11）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件 —— ⚠ 本段与文件里**已有**的来源块交错，用「后续同级定义」会被
 #         下一个来源块截断（**轮 125 实测踩到**）⇒ 这里用「全文件」以保证覆盖。
@@ -379,16 +378,14 @@ def get_fastener_table(sw, standard_name: str, fastener_id: int, table_id: int,
 # 文件:   scripts/sw_hole_features.py —— 「把孤儿包装接成可用 API」这一段。
 # 定位:   2026-10-01（轮 124）补：`get_hole_standards` 等 4 个包装**在仓库里没有调用方**
 #         （它们把出参甩给调用方）⇒ 本节提供自己造容器、自己读回来的高层入口。
-# 官方依据: ① 出厂类型库反射 `iface_*.txt`：
-#             `Object GetHoleStandardsData(Int32)`（在 `ISldWorks` 上）
-#             `Boolean GetHoleStandards(Object&, Object&)`（在 `IHoleStandardsData` 上）
-#           ② `C:\swapi\types\ISldWorks\GetHoleStandardsData.md`
-#             （`HoleTypeID` 取自 `swWzdGeneralHoleTypes_e`；**= 5 `swWzdLegacy` 时返回 null**）
-#           ③ `C:\swapi\types\IHoleStandardsData\GetHoleStandards.md`
-#           ④ ★ **出参传法**取自真机裁断（已知事实 68，
-#             `tools/probe_outparam_object_byref.py`）：只有 `VT_BYREF|VT_VARIANT` 可用。
-#           ⑤ ★ **出参读回来是 tuple**：真机量到两组各 15 元、**一一对应**
-#             （`tools/verify_hole_standards_smoke.py`）。
+# 官方依据: ① 出厂类型库反射 `iface_*.txt`：  `Object GetHoleStandardsData(Int32)`（在 `
+#           ISldWorks` 上）  `Boolean GetHoleStandards(Object&, Object&)`（在 `IHoleStan
+#           dardsData` 上）② `C:\swapi\types\ISldWorks\GetHoleStandardsData.md`  （`Hole
+#           TypeID` 取自 `swWzdGeneralHoleTypes_e`；**= 5 `swWzdLegacy` 时返回 null**）③
+#            `C:\swapi\types\IHoleStandardsData\GetHoleStandards.md`④ ★ **出参传法**取自
+#           真机裁断（已知事实 68，  `tools/probe_outparam_object_byref.py`）：只有 `VT_
+#           BYREF|VT_VARIANT` 可用。⑤ ★ **出参读回来是 tuple**：真机量到两组各 15 元、**
+#           一一对应**  （`tools/verify_hole_standards_smoke.py`）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义 —— 本块文档化 `_out_container` / `_out_value` / `_as_list` /
 #         `list_hole_standards` 四个单元。
@@ -464,16 +461,14 @@ def _as_list(v):
 # 文件:   scripts/sw_hole_features.py —— 「紧固件链路」这一段（轮 125）。
 # 定位:   把 `get_fastener_types` / `get_fastener_table_types` / `get_fastener_table`
 #         三个包装接成可用的高层入口（它们此前同样**没有调用方**）。
-# 官方依据: ① 出厂类型库反射 `iface_*.txt`：
-#             `Object GetHoleStandardsData(Int32)` ·
-#             `Boolean GetFastenerTypes(String, Object&, Object&)` ·
-#             `Boolean GetFastenerTableTypes(String, Int32, Object&)` ·
-#             `Boolean GetFastenerTable(String, Int32, Int32, out Object)`
-#           ② `C:\swapi\types\IHoleStandardsData\GetFastenerTable.md`
-#             （正式签名里第 4 参是 `out System.object HoleTable`，类型是 `[[IHoleDataTable]]`）
-#           ③ ★ **必须热身的约束**是本轮**真机查出**的，官方**未写**
-#             （`_probe_fastener_ordering.py` 四组对照 A/B/C/D）。
-#           ④ ★ 出参读回来是 `tuple`、两组一一对应（`tools/verify_hole_standards_smoke.py`）。
+# 官方依据: ① 出厂类型库反射 `iface_*.txt`：  `Object GetHoleStandardsData(Int32)` ·  `B
+#           oolean GetFastenerTypes(String, Object&, Object&)` ·  `Boolean GetFastenerTa
+#           bleTypes(String, Int32, Object&)` ·  `Boolean GetFastenerTable(String, Int32
+#           , Int32, out Object)`② `C:\swapi\types\IHoleStandardsData\GetFastenerTable.m
+#           d`  （正式签名里第 4 参是 `out System.object HoleTable`，类型是 `[[IHoleData
+#           Table]]`）③ ★ **必须热身的约束**是本轮**真机查出**的，官方**未写**  （`_prob
+#           e_fastener_ordering.py` 四组对照 A/B/C/D）。④ ★ 出参读回来是 `tuple`、两组一
+#           一对应（`tools/verify_hole_standards_smoke.py`）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义 —— 本块文档化 `_hole_standards_data` / `_pair` /
 #         `list_fastener_types` / `list_fastener_table_types` / `get_fastener_table` 五个单元。
@@ -625,11 +620,11 @@ def configure_tapered_tap(
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IHoleStandardsData 段
-# 定位:   孔标准查询。官方签名（**全部是方法**，均带 by-ref 出参）：
-#             Boolean GetHoleStandards(Object& Standards, Object& Types)
-#             Boolean GetFastenerTypes(String, Object& Types, Object& Sizes)
-#             Boolean GetFastenerTableTypes(String, Int32, Object& TableTypes)
-#             Boolean GetFastenerTable(String, Int32, Int32, Object& TableData)
+# 定位:   孔标准查询。官方签名（**全部是方法**，均带 by-ref 出参）：  Boolean GetHoleS
+#           tandards(Object& Standards, Object& Types)  Boolean GetFastenerTypes(String,
+#            Object& Types, Object& Sizes)  Boolean GetFastenerTableTypes(String, Int32,
+#            Object& TableTypes)  Boolean GetFastenerTable(String, Int32, Int32, Object&
+#            TableData)
 # ⚠ 4 个方法的末位都是 by-ref 出参，pywin32 迟到绑定下**不保证回写**
 #   （与 AGENTS.md §六 事实 8 记载的 ISelectionMgr bool 返回值不可信同源）。
 #   故本函数**只透传返回值、不据此判定查询成功**，也不代为分配输出对象 ——
@@ -1032,7 +1027,8 @@ def _find_hole_entry_edge(model, plane_name: str, center: tuple[float, float], r
 #     它们吃的是 `IStraightTapElementData` / `ITaperedTapElementData` **COM 元素对象**，
 #     而本仓**没有任何路径能从孔特征拿到那个元素**（只在 mock 测试里出现过）
 #     ⇒ ★ MCP 层**给不出** ⇒ 记「内部件」并把理由写清（★ 而不是挂一个调不通的按钮）。
-# 官方依据: `IFeatureManager.HoleWizard5`（各 `create_*_hole` 走它）· `IWizardHoleFeatureData2`
+# 官方依据: `IFeatureManager.HoleWizard5`（各 `create_*_hole` 走它）· `IWizardHoleFeatur
+#           eData2`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────────

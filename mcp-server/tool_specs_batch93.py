@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
 # 文件:   `scripts/sw_sheet_metal.py`（本轮追加段）
-# 定位:   ★ 规格 `specs/209-union-adopt-18/`：**B2-1（idx 336 unfold）** · **B4-4（idx 155 fold）** ·
+# 定位:   ★ 规格 `specs/209-union-adopt-18/`：**B2-1（idx 336 unfold）** · **B4-4（idx
+#            155 fold）** ·
 #         **B4-2（idx 173 hem）**。★ 三条都落在**已有模块** `sw_sheet_metal.py`（铁律 3）✓
 # 官方依据: ★★ 逐页读过 —— 见 `scripts/sw_sheet_metal.py` 本轮追加段的来源块：
 #   `IModelDoc2\{InsertSheetMetalUnfold,InsertSheetMetalFold}.md` ·

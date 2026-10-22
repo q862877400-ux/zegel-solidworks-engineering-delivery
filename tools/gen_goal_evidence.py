@@ -11,7 +11,8 @@
 # 仓库:   本项目自身（验收证据生成器）
 # 文件:   `mcp-server/register_capabilities.py`（工具清单）· `mcp-server/tool_specs_batch*.py`（各批）·
 #         `capabilities.yaml`（能力等级）· `scripts/check_param_binding.py` / `check_union_conventions.py`
-# 定位:   规格 `specs/205-tool-ramp/` 的 **SC-001**（工具数 ≥400）与 **SC-008**（能力侧真实性）验收 ✓
+# 定位:   规格 `specs/205-tool-ramp/` 的 **SC-001**（工具数 ≥400）与 **SC-008**（能力
+#           侧真实性）验收 ✓
 # 官方依据: 无（本仓自建工具）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件

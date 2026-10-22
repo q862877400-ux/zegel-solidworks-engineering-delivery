@@ -28,7 +28,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch60.py —— 本文件（新）
-# 定位:   24h 计划 v2 段 5 A 组收尾：把 `apply_distributed_mass_report` / `apply_force_report`
+# 定位:   24h 计划 v2 段 5 A 组收尾：把 `apply_distributed_mass_report` / `apply_force
+#           _report`
 #   挂成 MCP 工具。
 # 官方签名依据: CHM `ICWLoadsAndRestraintsManager~Add{DistributedMass,Force}.html` ·
 #   本模块既有来源块（`AddDistributedMass` 的官方声明**逐字抄在 L444-445**）·

@@ -5,8 +5,8 @@
 # 文件:   scripts/check_dispatch_byref_guard.py
 # 定位:   收 spec 230 登记的「下一 WIP ①」—— 230 **只分类、不判罪**，
 #         本门禁把 `resolved` 的那批分发口调用点喂进 `audit_byref_args` 的**同一套**判据。
-# 官方依据: `_raw/**/iface_*.txt`（由 `tools/reflect-interop.ps1` 对出厂程序集做的
-#           **纯元数据反射**转储，非实测）；by-ref 语义依据见 spec 228 §三。
+# 官方依据: `_raw/**/iface_*.txt`（由 `tools/reflect-interop.ps1` 对出厂程序集做的**纯元
+#           数据反射**转储，非实测）；by-ref 语义依据见 spec 228 §三。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────

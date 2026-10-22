@@ -4,8 +4,8 @@
 # 仓库:   本项目自身（元门禁）
 # 文件:   scripts/check_arity_tables_vs_reflection.py
 # 定位:   补「`not-enum arity` 声明**不验值**」的缺口（224 / 225 / 226 三次登记）。
-# 官方依据: `_raw/reflect_sldworks/iface_sldworks.txt` 等 `_raw/**/iface_*.txt`
-#           （由 `tools/reflect-interop.ps1` 对出厂程序集做的**纯元数据反射**转储，非实测）
+# 官方依据: `_raw/reflect_sldworks/iface_sldworks.txt` 等 `_raw/**/iface_*.txt`（由 `too
+#           ls/reflect-interop.ps1` 对出厂程序集做的**纯元数据反射**转储，非实测）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────

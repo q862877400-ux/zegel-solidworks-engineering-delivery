@@ -4,8 +4,8 @@
 # 仓库:   本项目自身
 # 文件:   tools/check_corpus.py
 # 定位:   规格 `specs/315-eval-corpus` 的 FR-010 / FR-011（门禁 + 反向验证）
-# 官方依据: 工具面真源 `register_capabilities.all_specs()`（★ 不是本仓自造口径）
-#           · 规格约束见 `specs/315-eval-corpus/spec.md` §3/§4
+# 官方依据: 工具面真源 `register_capabilities.all_specs()`（★ 不是本仓自造口径）· 规格约
+#           束见 `specs/315-eval-corpus/spec.md` §3/§4
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # -----------------------------------------------------------------------------

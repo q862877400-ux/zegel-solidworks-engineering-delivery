@@ -17,7 +17,8 @@
 #     ⇒ ★★ **新判据：按序号取到那个对象 ⇒ 读它自己的 `Type`/`Name`** ——
 #       ★ **不读 `Count`、也不读管理器**（拿到对象之后就在对象上读）。
 #     ⇒ ★★★ 而它**比计数更强**：★ 计数只说明"多了一个"，★ `Type` 说明"多的是哪个"。
-# 官方依据: 出厂类型库（`SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）的元数据反射 ·
+# 官方依据: 出厂类型库（`SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）的元数据反射 
+#           ·
 #   `swsAnalysisStudyTypeStatic = 0`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

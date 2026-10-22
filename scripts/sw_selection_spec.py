@@ -394,7 +394,8 @@ def selection_point(model, selection: str = "", selection_kind: str = "FACE") ->
 #   ★ 该模块已有 `select_object`（吃一个 **COM 对象**）与 `resolve_entity`（**返回**一个 COM 对象）
 #   ★★ 而 **这两者的返回值 MCP 层过不去**（COM 对象不可 JSON 序列化）⇒ 本段给它们各加一层
 #   **只回 JSON** 的 report 包装（★ 而"选中"这个动作本身靠 `Select4` —— 事实 32：对边/面按名字选不中）。
-# 官方依据: `C:\swapi\types\IModelDocExtension\SelectByID2.md` · `IEntity` 的 `Select4` ·
+# 官方依据: `C:\swapi\types\IModelDocExtension\SelectByID2.md` · `IEntity` 的 `Select4` 
+#           ·
 #   `ISelectionMgr.GetSelectedObjectCount2`（★ 判据永远是这个回读数 —— 事实 8）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
@@ -470,7 +471,8 @@ def resolve_entity_report(model, selector, kind: str = "EDGE", *, body_index: in
 #     或按面上的点 ⇒ ★★ **而"实体对象"本仓**本来就能直接拿到**（`entities_on_body`）——
 #     ★ 它用 `IBody2.GetFaces()/GetEdges()/GetVertices()` 直接列出一个体上的实体 ✓
 #   ⇒ ★★ 于是"多实体"载荷**根本不需要"从选区读回来"**：★ **把已知的那些对象直接装成数组** ✓
-# 官方依据: `IBody2.GetFaces` / `GetEdges` / `GetVertices`（★ 本模块 `entities_on_body` 已在用）·
+# 官方依据: `IBody2.GetFaces` / `GetEdges` / `GetVertices`（★ 本模块 `entities_on_body` 
+#           已在用）·
 #   事实 32（选实体的可行路径）· 事实 8（返回值不可信，以计数为准）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义

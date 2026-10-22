@@ -1621,8 +1621,8 @@ def linear_pattern(model, feature_name, d1_x, d1_y, d1_z, d1_spacing, d1_count,
 #           → `System.bool EditSuppress2()`（0 参）
 #         C:\swapi\types\IModelDoc2\EditUnsuppress2.md
 #           → `System.bool EditUnsuppress2()`（0 参）
-# 定位:   ★ 阶段 5（按缺口密度补能力）—— ★ **「改 × 特征」格**是本仓密度最低的一格
-#           （★ 官方 **275** 个成员，★ 我们只有 **2** 个工具 ⇒ ★ **0.7%**）。
+# 定位:   ★ 阶段 5（按缺口密度补能力）—— ★ **「改 × 特征」格**是本仓密度最低的一格（★ 
+#           官方 **275** 个成员，★ 我们只有 **2** 个工具 ⇒ ★ **0.7%**）。
 #         ★ 而"抑制/解除抑制一个**特征**"正是这一格最基础的能力，★ 本仓**没有**：
 #           · 已有 `sw_assembly.suppress_component`（★ 那是**组件**）
 #           · 已有 `sw_assembly_doc.suppress_mate`（★ 那是**配合**）
@@ -1694,8 +1694,8 @@ def feature_unsuppress(model, feature_name: str) -> bool:
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API（`C:\swapi`，三源之一）+ 本项目既有模式
 # 文件:   C:\swapi\types\IModelDoc2\EditDelete.md → `void EditDelete()`（0 参，★ 无废弃）
-# 定位:   ★ 阶段 5「按缺口密度补能力」—— ★ 继续补**「改 × 特征」格**
-#           （★ 本仓密度**最低**的一格：★ 官方 275 / 我们 2 ⇒ 0.7%）。
+# 定位:   ★ 阶段 5「按缺口密度补能力」—— ★ 继续补**「改 × 特征」格**（★ 本仓密度**最低
+#           **的一格：★ 官方 275 / 我们 2 ⇒ 0.7%）。
 #         ★★ 与 `feature_suppress` **同族**：★ `EditDelete()` 也是**文档级**、
 #            ★ **作用在当前选择上**（★ 官方 `## Parameters` 无参数 ⇒ 无对象形参）✓
 #        ★★★ 真机证据见 `tools/probe_feature_edit_e2e.py` ·
@@ -1751,7 +1751,8 @@ def circular_pattern(model, feature_name, axis_name, angle_rad, count, equal_spa
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   `wzyn20051216/solidworks-automation-skill`（**上游**，MIT）—— 上游继承的函数。
 # 文件:   scripts/sw_part.py —— 这一段（L836 起，到下一个来源块之前）。
-# 定位:   2026-10-01（轮 132）**只做了一件事**：把长度单位声明从「米」校正为「**毫米**」。
+# 定位:   2026-10-01（轮 132）**只做了一件事**：把长度单位声明从「米」校正为「**毫米**
+#           」。
 #         实测依据见 `tools/verify_ellipse_smoke.py`（圆半径 25 ⇒ 边界框跨度 50 毫米）；
 #         ★ 与已知事实 71（`GetBodyBox` 返回毫米）一致。
 # 官方签名依据: 见**原上游代码**与 `docs/signature-audit.md`；本块**不改任何调用**。
@@ -1958,16 +1959,14 @@ def rib(model, sketch_name, thickness, direction=True):
 # 仓库:   本项目自身（**不是**从四家外部 MCP 项目移植）。
 # 文件:   scripts/sw_part.py —— 「边界框」这一段（2026-10-01 轮 127）。
 # 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `bbox`。
-# 官方依据: ① 出厂类型库反射 `iface_*.txt`：`Object GetBodyBox()`（在 `IBody2` 上）·
-#             `Object GetBodies2(Int32, Boolean)`（在 `IPartDoc` 上）
-#           ② `C:\swapi\types\IBody2\GetBodyBox.md`：
-#             **返回 6 个 double** —— `[X1, Y1, Z1, X2, Y2, Z2]`（包围盒的**对角线两端**，
-#             盒面**平行于 XYZ 轴**）。
-#           ③ ⚠⚠ **同一份文档的 IMPORTANT 段**（**必须照抄给调用方看**）：
-#             > The values returned are **approximate** and **should not be used for
-#             > comparison or calculation purposes**. Furthermore, the bounding box
-#             > **may vary after rebuilding the model**.
-#           ④ 单位：与官方其它几何接口一致，是**米** ⇒ 本模块在边界处换成毫米。
+# 官方依据: ① 出厂类型库反射 `iface_*.txt`：`Object GetBodyBox()`（在 `IBody2` 上）·  `O
+#           bject GetBodies2(Int32, Boolean)`（在 `IPartDoc` 上）② `C:\swapi\types\IBody
+#           2\GetBodyBox.md`：  **返回 6 个 double** —— `[X1, Y1, Z1, X2, Y2, Z2]`（包围
+#           盒的**对角线两端**，  盒面**平行于 XYZ 轴**）。③ ⚠⚠ **同一份文档的 IMPORTANT
+#            段**（**必须照抄给调用方看**）：  > The values returned are **approximate**
+#            and **should not be used for  > comparison or calculation purposes**. Furth
+#           ermore, the bounding box  > **may vary after rebuilding the model**.④ 单位：
+#           与官方其它几何接口一致，是**米** ⇒ 本模块在边界处换成毫米。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件 —— ⚠ 追加在文件尾，前面已有来源块 ⇒ 用「全文件」最稳。
 # ─────────────────────────────────────────────────────────────────────
@@ -2022,17 +2021,14 @@ def get_bounding_box(model, *, body_index: int = 0, include_hidden: bool = False
 # 仓库:   本项目自身（**不是**从四家外部 MCP 项目移植）。
 # 文件:   scripts/sw_part.py —— 「椭圆」这一段（2026-10-01 轮 132）。
 # 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `ellipse`。
-# 官方依据: ① 出厂类型库反射 `iface_*.txt`：
-#             `SketchSegment CreateEllipse(Double ×9)`（在 `ISketchManager` 上）
-#           ② `C:\swapi\types\ISketchManager\CreateEllipse.md`：
-#             `SketchSegment CreateEllipse(XC, YC, Zc, XMajor, YMajor, ZMajor,
-#              XMinor, YMinor, ZMinor)` —— **9 个 double**，返回草图线段。
-#           ③ ⚠ **两级废弃链**（本模块**不走前两级**）：
-#             `IModelDoc2.CreateEllipse(Object,Object,Object)`
-#               ⇒ `Obsolete. Superseded by IModelDoc2::CreateEllipse2.`
-#             `IModelDoc2.CreateEllipse2(Double ×9)`
-#               ⇒ `Obsolete. Superseded by ISketchManager::CreateEllipse.`
-#             ⇒ **现行入口是 `ISketchManager.CreateEllipse`**（本模块采用的那个）。
+# 官方依据: ① 出厂类型库反射 `iface_*.txt`：  `SketchSegment CreateEllipse(Double ×9)`（
+#           在 `ISketchManager` 上）② `C:\swapi\types\ISketchManager\CreateEllipse.md`：
+#             `SketchSegment CreateEllipse(XC, YC, Zc, XMajor, YMajor, ZMajor,   XMinor,
+#            YMinor, ZMinor)` —— **9 个 double**，返回草图线段。③ ⚠ **两级废弃链**（本模
+#           块**不走前两级**）：  `IModelDoc2.CreateEllipse(Object,Object,Object)`    ⇒ 
+#           `Obsolete. Superseded by IModelDoc2::CreateEllipse2.`  `IModelDoc2.CreateEll
+#           ipse2(Double ×9)`    ⇒ `Obsolete. Superseded by ISketchManager::CreateEllips
+#           e.`  ⇒ **现行入口是 `ISketchManager.CreateEllipse`**（本模块采用的那个）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义 —— 本块文档化 `sketch_ellipse` 一个单元。
 # ─────────────────────────────────────────────────────────────────────
@@ -2076,21 +2072,18 @@ def sketch_ellipse(model, cx, cy, major_x, major_y, minor_x, minor_y, z=0.0):
 # 仓库:   本项目自身（**不是**从四家外部 MCP 项目移植）。
 # 文件:   scripts/sw_part.py —— 「中心线」这一段（2026-10-01 轮 140）。
 # 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `centerline`。
-# 官方依据: ① 出厂类型库反射 `iface_*.txt`：
-#             `SketchSegment CreateCenterLine(Double ×6)`（在 `ISketchManager` 上）
-#           ② `C:\swapi\types\ISketchManager\CreateCenterLine.md`：
-#             `SketchSegment CreateCenterLine(X1, Y1, Z1, X2, Y2, Z2)` —— **6 个 double**。
-#             ⚠⚠ **官方文档写「in meters」，而实测是毫米**（见已知事实 73 与
-#             `tools/verify_centerline_smoke.py` 的**再测**）—— 按实测来。
-#             ★ 官方 Remarks 还给了**另一条路**：「`ISketchManager::CreateLine` +
-#             `ISketchSegment::ConstructionGeometry`」—— 本函数**不走那条**，
-#             因为 `CreateCenterLine` 是**现行入口**且直接就是中心线。
-#           ③ ⚠ **两级废弃链**（本模块**不走前两级**）：
-#             `IModelDoc2.CreateCenterLine(Object,Object)`
-#               ⇒ `Obsolete. Superseded by ISketchManager::CreateCenterLine.`
-#             `IModelDoc2.CreateCenterLineVB(Double ×6)` —— **Void** 返回，
-#               是同一件事的 VB 变体（不取返回值）。
-#             ⇒ **现行入口是 `ISketchManager.CreateCenterLine`**（本函数采用的那个）。
+# 官方依据: ① 出厂类型库反射 `iface_*.txt`：  `SketchSegment CreateCenterLine(Double ×6)
+#           `（在 `ISketchManager` 上）② `C:\swapi\types\ISketchManager\CreateCenterLine
+#           .md`：  `SketchSegment CreateCenterLine(X1, Y1, Z1, X2, Y2, Z2)` —— **6 个 d
+#           ouble**。  ⚠⚠ **官方文档写「in meters」，而实测是毫米**（见已知事实 73 与  `
+#           tools/verify_centerline_smoke.py` 的**再测**）—— 按实测来。  ★ 官方 Remarks 
+#           还给了**另一条路**：「`ISketchManager::CreateLine` +  `ISketchSegment::Const
+#           ructionGeometry`」—— 本函数**不走那条**，  因为 `CreateCenterLine` 是**现行
+#           入口**且直接就是中心线。③ ⚠ **两级废弃链**（本模块**不走前两级**）：  `IMode
+#           lDoc2.CreateCenterLine(Object,Object)`    ⇒ `Obsolete. Superseded by ISketch
+#           Manager::CreateCenterLine.`  `IModelDoc2.CreateCenterLineVB(Double ×6)` —— *
+#           *Void** 返回，    是同一件事的 VB 变体（不取返回值）。  ⇒ **现行入口是 `ISke
+#           tchManager.CreateCenterLine`**（本函数采用的那个）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义 —— 本块文档化 `sketch_centerline` 一个单元。
 # ─────────────────────────────────────────────────────────────────────
@@ -2134,20 +2127,19 @@ def sketch_centerline(model, x1, y1, x2, y2, z=0.0):
 # 仓库:   本项目自身（**不是**从四家外部 MCP 项目移植）。
 # 文件:   scripts/sw_part.py —— 「圆顶」这一段（2026-10-01 轮 143）。
 # 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `dome`。
-# 官方依据: ① 出厂类型库反射 `iface_*.txt`：
-#             `Void InsertDome(Double, Boolean, Boolean)`（在 **`IModelDoc2`** 上）·
-#             接口 `IDomeFeatureData` / `IDomeFeatureData2` / `DomeFeatureData` / `DomeFeatureData2`
-#           ② `C:\swapi\types\IModelDoc2\InsertDome.md`：
-#             `void InsertDome(double Height, bool ReverseDir, bool DoEllipticSurface)`
-#             ⚠ 文档写 `Height` 是「in **meters**」—— 与草图侧的实测（事实 73）矛盾，
-#             本函数按**毫米**并**在冒烟里量**（`tools/verify_dome_smoke.py`）。
-#           ③ ★★ **`swFmDome` 不存在** —— 枚举转储 `enum_values_sldworks.txt` **0 命中**，
-#             `CreateDefinition.md` 的 **35 个**合法常量里也**没有**它
-#             ⇒ **圆顶走不了 `CreateDefinition` 那条路**（与事实 43 的 `swFmOneBend`/`swFmDraft` 同族）
-#             ⇒ 只能走 `IModelDoc2.InsertDome`（**未标 Obsolete**）。
-#             ★ `IDomeFeatureData2` 只能在**建完之后**从特征上取（`IFeature::GetDefinition`）。
-#           ④ ⚠ **`InsertDome` 返回 `Void`** ⇒ **没有返回值可查** ⇒ 照事实 40：
-#             失败必须用**别的**证据暴露（本函数的冒烟用**特征树** + **边界框增长**）。
+# 官方依据: ① 出厂类型库反射 `iface_*.txt`：  `Void InsertDome(Double, Boolean, Boolean)
+#           `（在 **`IModelDoc2`** 上）·  接口 `IDomeFeatureData` / `IDomeFeatureData2` 
+#           / `DomeFeatureData` / `DomeFeatureData2`② `C:\swapi\types\IModelDoc2\InsertD
+#           ome.md`：  `void InsertDome(double Height, bool ReverseDir, bool DoEllipticS
+#           urface)`  ⚠ 文档写 `Height` 是「in **meters**」—— 与草图侧的实测（事实 73）
+#           矛盾，  本函数按**毫米**并**在冒烟里量**（`tools/verify_dome_smoke.py`）。③ 
+#           ★★ **`swFmDome` 不存在** —— 枚举转储 `enum_values_sldworks.txt` **0 命中**，
+#             `CreateDefinition.md` 的 **35 个**合法常量里也**没有**它  ⇒ **圆顶走不了 `
+#           CreateDefinition` 那条路**（与事实 43 的 `swFmOneBend`/`swFmDraft` 同族）  ⇒
+#            只能走 `IModelDoc2.InsertDome`（**未标 Obsolete**）。  ★ `IDomeFeatureData2
+#           ` 只能在**建完之后**从特征上取（`IFeature::GetDefinition`）。④ ⚠ **`InsertDo
+#           me` 返回 `Void`** ⇒ **没有返回值可查** ⇒ 照事实 40：  失败必须用**别的**证据
+#           暴露（本函数的冒烟用**特征树** + **边界框增长**）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义 —— 本块文档化 `insert_dome` 一个单元。
 # ─────────────────────────────────────────────────────────────────────
@@ -2184,21 +2176,19 @@ def insert_dome(model, height, reverse=False, elliptic=False):
 # 仓库:   本项目自身（**不是**从四家外部 MCP 项目移植）。
 # 文件:   scripts/sw_part.py —— 「合成曲线」这一段（2026-10-01 轮 151）。
 # 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `composite_curve`。
-# 官方依据: ① 出厂类型库反射 `iface_sldworks.txt`：`Boolean InsertCompositeCurve()`
-#             （在 **`IModelDoc2`** 上）· 接口 `ICompositeCurveFeatureData` / `CompositeCurveFeatureData`
-#           ② `C:\swapi\types\IModelDoc2\InsertCompositeCurve.md`：
-#             `bool InsertCompositeCurve()` —— **零参**；Returns ⇒ **True 才是成功**
-#             · Remarks：**要先用 `SelectByID2` 以 mark number of 1 选实体**
-#           ③ ★ 官方示例 `examples\Insert_a_Composite_Curve_Example_CSharp.md`：
-#             `SelectByID2("Sketch2","SKETCH",…,false,**1**,null,0)`
-#             `SelectByID2("Sketch1","SKETCH",…,true, **1**,null,0)`
-#             `swModel.InsertCompositeCurve()`
-#             ⇒ 建完后 `SelectByID2("CompCurve1","REFERENCECURVES",…)` +
-#               `((CompositeCurveFeatureData)feat.GetDefinition()).GetEntitiesToJoinCount()`
-#               ⇒ ★★ **能读回"并了几个实体"** ⇒ 这是**定量往返**的抓手。
-#           ④ ⚠⚠ 本函数**必须用 `call_com_member`**（不是 `get_com_member`）：
-#             官方签名**零参** ⇒ 而 `get_com_member` 在无实参时会「**先试调一次**」
-#             （已知事实 84：对 COM 成员，"取"就等于"调"）⇒ 那样会**替调用方悄悄调一次**。
+# 官方依据: ① 出厂类型库反射 `iface_sldworks.txt`：`Boolean InsertCompositeCurve()`  （
+#           在 **`IModelDoc2`** 上）· 接口 `ICompositeCurveFeatureData` / `CompositeCurv
+#           eFeatureData`② `C:\swapi\types\IModelDoc2\InsertCompositeCurve.md`：  `bool 
+#           InsertCompositeCurve()` —— **零参**；Returns ⇒ **True 才是成功**  · Remarks
+#           ：**要先用 `SelectByID2` 以 mark number of 1 选实体**③ ★ 官方示例 `examples\
+#           Insert_a_Composite_Curve_Example_CSharp.md`：  `SelectByID2("Sketch2","SKETC
+#           H",…,false,**1**,null,0)`  `SelectByID2("Sketch1","SKETCH",…,true, **1**,nul
+#           l,0)`  `swModel.InsertCompositeCurve()`  ⇒ 建完后 `SelectByID2("CompCurve1",
+#           "REFERENCECURVES",…)` +    `((CompositeCurveFeatureData)feat.GetDefinition()
+#           ).GetEntitiesToJoinCount()`    ⇒ ★★ **能读回"并了几个实体"** ⇒ 这是**定量往
+#           返**的抓手。④ ⚠⚠ 本函数**必须用 `call_com_member`**（不是 `get_com_member`）
+#           ：  官方签名**零参** ⇒ 而 `get_com_member` 在无实参时会「**先试调一次**」  
+#           （已知事实 84：对 COM 成员，"取"就等于"调"）⇒ 那样会**替调用方悄悄调一次**。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义 —— 本块文档化 `insert_composite_curve` 一个单元。
 # ─────────────────────────────────────────────────────────────────────
@@ -2523,7 +2513,8 @@ def create_axis_report(model, reverse: bool = True,
 #   ★★ 两个包装都按**规则 2**（对外 `*_mm`，换算只在这一处）× **规则 3**（声明式选择）
 #      × **规则 6**（建完回读）来写；★ `add_dimension` 的"必须先选中实体"直接复用
 #      **段 1 的选择底座**（`resolve_selection`）—— ★ 那正是"把选择底座排在前面"的红利。
-# 官方依据: `C:\swapi\types\IModelDoc2\AddDimension2.md` · `C:\swapi\types\IFeatureManager\FeatureLinearPattern3.md`
+# 官方依据: `C:\swapi\types\IModelDoc2\AddDimension2.md` · `C:\swapi\types\IFeatureManag
+#           er\FeatureLinearPattern3.md`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────────

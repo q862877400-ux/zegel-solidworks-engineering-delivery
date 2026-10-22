@@ -6,9 +6,9 @@
 # 仓库:   本项目自身 + SOLIDWORKS Simulation 官方手册（本机解包 `C:\cworks_manual\`）
 # 文件:   `scripts/sw_simulation.py`（`solve_memory_preflight` / `default_solve_memory_budget_gb`）
 #         `scripts/sw_connect.py`（`read_owned_instance` —— ★ 只认**我们自己启动的**那份 SW）
-# 官方依据: `c_Analysis_Solvers.htm` 逐字「If a solver requires more memory than available on
-#           the computer, then the solver uses disk space … the solution progress can be
-#           extremely slow.」⇒ ★ 内存不够**不是报错、是极慢** ⇒ 必须由外部闸来拦 ✓
+# 官方依据: `c_Analysis_Solvers.htm` 逐字「If a solver requires more memory than availab
+#           le onthe computer, then the solver uses disk space … the solution progress c
+#           an beextremely slow.」⇒ ★ 内存不够**不是报错、是极慢** ⇒ 必须由外部闸来拦 ✓
 # 定位:   ★★★ **为什么需要它**：仓内两道闸（`check_mesh_size_sane` 按包围盒估、
 #   `solve_memory_preflight` 按真实单元数估）都是**事前估计**；★ 而估算总有偏
 #   （非长方体 / 局部细化 / 接触迭代）⇒ ★★ **第三层是"运行期实测 + 越线就斩"** ✓

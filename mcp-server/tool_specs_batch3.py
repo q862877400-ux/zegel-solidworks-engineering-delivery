@@ -20,7 +20,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植）
 # 文件:   mcp-server/tool_specs_batch3.py
-# 定位:   `docs/T-011-expose-capabilities-assessment.md` §9.2 分类表里 C 类的落地（能做的部分）。
+# 定位:   `docs/T-011-expose-capabilities-assessment.md` §9.2 分类表里 C 类的落地（能
+#           做的部分）。
 #         参数**逐条照真实签名与 dataclass 定义抄**（守卫测试用 `inspect.signature` + `dataclasses.fields` 核）。
 # 官方签名依据: 不适用（只做参数搬运；被搬运函数的依据在其源码来源块里）
 # 许可:   本仓库 MIT。无第三方代码引入。

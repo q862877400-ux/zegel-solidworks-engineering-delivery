@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_pin_connector_asm.py
-# 定位:   ★ 2026-10-03（轮 426）`plan-200r-v3` 段 1（B 组）—— ★ 承**事实 339** 给同族开的门。
+# 定位:   ★ 2026-10-03（轮 426）`plan-200r-v3` 段 1（B 组）—— ★ 承**事实 339** 给同族
+#           开的门。
 #   ★★ 事实 339 的结论：★ 连接件一族有**两条硬前提** ——
 #     ⓐ **它要两个东西**（★ 同族形参名写着 `Comp1`/`Comp2`）·
 #     ⓑ **不要从选区读多实体**（★ `ISelectionMgr` 那族只回得到第 1 个，★ 五入口都试过）。
@@ -16,7 +17,8 @@
 #   ★ 而**装配体那条路在硬约束⑦（禁保存）下仍走得通**：★ 用**已在盘上的**自带零件
 #     （★ 本机 `…\samples\tutorial\api\` 下有几十个 `.sldprt`）⇒ ★ **不保存任何东西** ✓
 #   ★ 算例名用**唯一名**（事实 329/414）；★ 而**先验入口**（★ 本轮纪律）：★ 先看顶层组件是不是 2 个。
-# 官方依据: 出厂类型库反射（`AddPinConnector(DispArrayComp1, DispArrayComp2, ErrorCode&)`）·
+# 官方依据: 出厂类型库反射（`AddPinConnector(DispArrayComp1, DispArrayComp2, ErrorCode&)
+#           `）·
 #   `IAssemblyDoc.AddComponent5` · `swsAnalysisStudyTypeStatic = 0`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

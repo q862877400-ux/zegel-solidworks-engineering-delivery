@@ -3,16 +3,14 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/design_rules.py
-# 定位:   规格 `specs/335-design-rules-lib` ——
-#           ★★ 把 `~/.agents/skills/mech-design/知识库/` 的 **3 个 YAML**
-#             接成**可查服务**：
-#             · `design_rules.yaml`（**225 行** 通用设计规则）
-#             · `material_db.yaml`（**材料库** —— 含 **SolidWorks 牌号映射**）
-#             · `fits_iso286.yaml`（**孔/轴极限偏差** + 计算公式）
-#           ★★★ 触发它的是 2026-10-14 全自动挖掘。
-# 官方依据: ① `~/.agents/skills/mech-design/知识库/*.yaml`（★ 只读）
-#           ② `design_rules.yaml` 自述：「**先查此库推导缺失参数，再执行建模**
-#              （原则：**先确认参数，不猜**）」—— ★ 与本仓「该问就问」同源
+# 定位:   规格 `specs/335-design-rules-lib` ——★★ 把 `~/.agents/skills/mech-design/知识
+#           库/` 的 **3 个 YAML**  接成**可查服务**：  · `design_rules.yaml`（**225 行**
+#            通用设计规则）  · `material_db.yaml`（**材料库** —— 含 **SolidWorks 牌号映
+#           射**）  · `fits_iso286.yaml`（**孔/轴极限偏差** + 计算公式）★★★ 触发它的是 2
+#           026-10-14 全自动挖掘。
+# 官方依据: ① `~/.agents/skills/mech-design/知识库/*.yaml`（★ 只读）② `design_rules.yaml
+#           ` 自述：「**先查此库推导缺失参数，再执行建模**   （原则：**先确认参数，不猜*
+#           *）」—— ★ 与本仓「该问就问」同源
 # 许可:   本仓库 MIT。★ 外部数据**只读**；★ 引用标注来源路径。
 #           ⚠ `design_rules.yaml` 自述来源含 `SHY-563/solidworks-draw`
 #             ⇒ ★ 本模块**只读它已汇总的规则**，★ 不引入第三方代码。

@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 624 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 625 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -37,7 +37,7 @@
 | 统计判定结果 | **计票** | 2 | `tally_*` |
 | 弹窗处置相关（配 sw_guard 用） | **弹窗** | 2 | `modal_*` |
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
-| （未归入上面任何一类） | 其他 | 64 | — |
+| （未归入上面任何一类） | 其他 | 65 | — |
 
 ## 探针（251 个）
 
@@ -556,7 +556,7 @@
 |---|---|
 | `measure_copyability.py` | 量一件事：我们**已经挂出去**的工具，四家外部项目**有没有对应物**（能抄的话在哪儿） |
 | `measure_fact_single_home_fp.py` | ★ T5-1 的 D-1 合规实测：给 `check_fact_single_home` 造 20 例，量它的误报率 |
-| `measure_four_merged.py` | : ★ 本仓库根（★ 2026-10-03 合并后自定位） |
+| `measure_four_merged.py` | 仓库: 本项目自身 |
 | `measure_function_fate.py` | 量清 692 个公开函数的三种命运：**挂了 / 被别的函数调用 / 两者都没有** |
 | `measure_lean_catalog.py` | ★ 量一量：504 个工具按 **lean-mode 的规则**渲染出来到底多大（★ 并揪出废话最多的） |
 | `measure_official_defects_fp.py` | ★ D-1 合规实测（第 2 道门禁）：`check_official_source_defects` 的误报率与漏报率 |
@@ -774,7 +774,7 @@
 |---|---|
 | `t2_intersect_past_errors.py` | ★ T2-4 的交集法：把「102 条可机检前置」与「本仓自己的过去错误笔记」交叉，挑出下一批该写断言的 |
 
-## 其他（64 个）
+## 其他（65 个）
 
 > 用途：未按前缀归类的脚本
 
@@ -784,6 +784,7 @@
 | `annotate_obsolete_form.py` | ★ 给废弃命中补一维标注「方法 ↔ 属性」（★ 任务书阶段 2 要的那一类 · 轮 135 · 第二版） |
 | `apply_dsh_sw_preset.py` | ★ 把生成好的 preset 块**安全地**追加进 DSH 活配置（★ 校验不过就自动回滚） |
 | `arity_negative_case.py` | @brief **故意写错**的 arity 负例 —— 给 `scripts/audit_call_arity.py` 当"应该抓住"的输入 |
+| `backfill_source_blocks.py` | 给早于 §十八 的 .py 补来源块（dry-run 先看，--write 才落盘） |
 | `bunny_toolspec_pipeline.py` | ★ Bunny 扇出 → ToolSpec 批次 的**五步管线驱动**（collect → backfill → gate → remaining → build） |
 | `capability_gap.py` | @brief 按**能力**对照各域缺口（补上广度地图只数 MCP 工具名的口径缺陷） |
 | `census_orphan_callability.py` | @brief 可调用性普查：22 个「暴露候选」孤立能力，**真机各调一次** |

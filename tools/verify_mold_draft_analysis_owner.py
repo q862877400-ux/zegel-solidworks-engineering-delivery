@@ -19,7 +19,8 @@ r"""@brief 真机核 `MoldDraftAnalysis` 到底在不在 `IFeatureManager` 上�
 # 仓库:   本项目自身（真机核对静态结论）
 # 文件:   tools/verify_mold_draft_analysis_owner.py
 # 定位:   给 Spec Kit `097` 核对检查器的 L197 新命中。
-# 官方依据: 反射 `D:/AI/SW/_raw/reflect_sldworks/iface_sldworks.txt`（`MoldDraftAnalysis` 出现在哪些段）
+# 官方依据: 反射 `D:/AI/SW/_raw/reflect_sldworks/iface_sldworks.txt`（`MoldDraftAnalysis
+#           ` 出现在哪些段）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

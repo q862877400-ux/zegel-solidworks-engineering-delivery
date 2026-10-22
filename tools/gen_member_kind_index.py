@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（生成器）
 # 文件:   tools/gen_member_kind_index.py
-# 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B1-7**（外部评审说的「第二路判据」）。
+# 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B1-7**（外部评审说的「第二路判据
+#           」）。
 #   ★★ 为什么需要它：B1-1 用**底层成员动词**只覆盖了 **88/448（20%）**，★ 因为成员里大量是
 #     **属性式访问**（`FeatureManager` / `FirstFeature` / `Extension` / `SelectionManager` 这类名词），
 #     动词表认不出它们。★ 评审的原话是「类型库能标出 `propget`/`propput`，但**普通方法没有读写标记**，

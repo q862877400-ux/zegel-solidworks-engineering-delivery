@@ -1,4 +1,13 @@
 """SolidWorks BOM 清单与 Pack and Go 交付工具。"""
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   scripts/sw_delivery.py
+# 定位:   SolidWorks BOM 清单与 Pack and Go 交付工具。
+# 官方依据: 官方源 `C:\swapi\types\**`（★ 逐条见文件内引用）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
 from __future__ import annotations
 
 import csv

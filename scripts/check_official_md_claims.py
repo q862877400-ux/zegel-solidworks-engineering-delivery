@@ -34,7 +34,8 @@
 #   ⚠ ★ **限度（如实写）**：★ token 集目前只有 `mark` —— ★ 它**不是**"所有官方断言"的通用校验器；
 #     ★ 扩 token 只需往 `CLAIM_TOKENS` 里加，★ 而**判据不动**。
 #   ⚠ 官方源不在本机 ⇒ `[SKIP]` 并**如实说明这是静默通过**（★ 与 check_member_names.py 同口径）。
-# 官方依据: `C:\swapi\types\*\*.md` 的 YAML front-matter（`member:` 字段）+ 正文（`## Remarks`）
+# 官方依据: `C:\swapi\types\*\*.md` 的 YAML front-matter（`member:` 字段）+ 正文（`## Re
+#           marks`）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

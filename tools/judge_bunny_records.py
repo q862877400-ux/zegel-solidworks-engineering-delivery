@@ -2,12 +2,13 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/judge_bunny_records.py
-# 定位:   ★ 主裁判工序。★★ **事故与教训**：workflow 的返回体存进溢出文件后 `json.loads` **失败**
-#           （先是 `Invalid control character`、`strict=False` 后变 `Unterminated string`）——
-#           根因是**我在 workflow 的 schema 里把该被机器判读的字段（verdict / recommendation）
-#           声明成了普通 string** ⇒ bunny 把它们写成一整段带引号与换行的散文 ⇒ ★ 返回体不再是合法 JSON ✓✗
-#           ⇒ ★★ **判据**：**给机器读的字段必须是 enum 或受长度约束的短串**（本脚本只能补救，
-#             下一轮派活**必须**在 schema 里用 `enum` 限死 ✓
+# 定位:   ★ 主裁判工序。★★ **事故与教训**：workflow 的返回体存进溢出文件后 `json.loads
+#           ` **失败**（先是 `Invalid control character`、`strict=False` 后变 `Untermina
+#           ted string`）——根因是**我在 workflow 的 schema 里把该被机器判读的字段（verdi
+#           ct / recommendation）声明成了普通 string** ⇒ bunny 把它们写成一整段带引号与
+#           换行的散文 ⇒ ★ 返回体不再是合法 JSON ✓✗⇒ ★★ **判据**：**给机器读的字段必须是
+#            enum 或受长度约束的短串**（本脚本只能补救，  下一轮派活**必须**在 schema 里
+#           用 `enum` 限死 ✓
 #         ★ 本脚本因此改为**按字段正则容错抽取**：只要 `"index": N` 与 `"op": "..."` 还在，
 #           就按记录边界切开，再逐字段捞 ✓
 # 官方依据: 不适用（本仓工序）

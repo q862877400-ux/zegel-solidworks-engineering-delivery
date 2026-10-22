@@ -9,7 +9,8 @@
 #     ⇒ ★ 那次失败**不构成能力结论**（★ 本会话已反复栽在"判据/前置不对 ⇒ 能力看着坏"上）✓
 #   ★★★ 本脚本的做法：★ 建两个**相交**的体 ⇒ 起一个 **3D 草图** ⇒ **按对象**选中两个面
 #     （事实 32：面按名字选不中）⇒ 调 `IntersectCurves` ⇒ ★ 回读**段数增量** ✓
-# 官方依据: `C:\swapi\types\ISketchManager\IntersectCurves.md`（`void IntersectCurves()`）·
+# 官方依据: `C:\swapi\types\ISketchManager\IntersectCurves.md`（`void IntersectCurves()`
+#           ）·
 #   `Insert3DSketch`（同接口，起 3D 草图）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

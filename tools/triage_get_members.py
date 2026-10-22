@@ -3,7 +3,8 @@
 # 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types`）
 # 文件:   `tools/triage_get_members.py`（★ **不碰 `scripts/`** —— 另一个对话在改那里）·
 #         产出 `output/get-member-triage.csv` + `output/get-member-triage.json`
-# 定位:   ★ 判据（★ 全部**可数、★ 纯读文档**）：★ 池子 = 官方 `*FeatureData` 族的 `Get*` 成员 ⇒
+# 定位:   ★ 判据（★ 全部**可数、★ 纯读文档**）：★ 池子 = 官方 `*FeatureData` 族的 `Get
+#           *` 成员 ⇒
 #   ★★ **每个成员抄出 8 个字段** ⇒ ★★★ **那张表就是"按官方成员批量补"的施工队列** ✓
 #   ★★★★ **为什么先分诊**：★ 其中一部分**根本不该进队列** ——
 #     · ★ **带 `out` 参数的**（★ pywin32 上多半到不了 —— ★ 事实 47）

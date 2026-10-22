@@ -32,7 +32,8 @@ r"""@brief 真机证据：**倒角 / 圆角 2 个工具**（砌墙 W4 续 / Spec
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机证据脚本，**不是**从四家外部 MCP 项目移植）
 # 文件:   tools/capture_chamfer_fillet_evidence.py
-# 定位:   砌墙 W4 续（Spec Kit `137`）的**验收②**：产出 `output/chamfer-fillet-evidence.json`。
+# 定位:   砌墙 W4 续（Spec Kit `137`）的**验收②**：产出 `output/chamfer-fillet-evidenc
+#           e.json`。
 # 官方依据: `IFeatureManager.InsertFeatureChamfer`（★ 形态已按铁律 4 核过，见事实 164）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。

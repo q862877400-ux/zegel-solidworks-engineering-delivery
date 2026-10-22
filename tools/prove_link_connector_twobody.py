@@ -18,7 +18,8 @@
 #   ★ 而★ 上一轮**体数 = 1** ⇒ ★★ **那个维度根本没试到** ⚠ ⇒ 故本轮**先建两个不相连的凸台** ✓
 # ★ 判据（★ 与 `rigid` 同口径）：★ **`Count` 0 → 1** · ★ 特征树增量 · ★ 体数仍是 2。
 #   ★★ 而★ **带一个对照**：★ **同一体**上的两个顶点（★ 若那个也成 ⇒ 说明"两个体"不是必要条件）
-# 官方依据: `ICWLoadsAndRestraintsManager.AddLinkConnector`（★ arity 3 · 形参名 `VertexPointfor*Location`）·
+# 官方依据: `ICWLoadsAndRestraintsManager.AddLinkConnector`（★ arity 3 · 形参名 `VertexP
+#           ointfor*Location`）·
 #   `IBody2.GetVertices` · `IBody2.GetBodyBox` · `VARIANT(VT_BYREF | VT_I4)`（★ 本仓 `audit_byref_args.py` 先例）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

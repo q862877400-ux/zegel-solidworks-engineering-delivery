@@ -21,7 +21,8 @@ r"""@brief 复算：`check_member_owner_interface.py` 的**形参接口推断**�
 # ── 来源 ──
 # 仓库:   本项目自身（把轮 174 的一次性验证收进 tools/，按门禁要求）
 # 文件:   tools/recheck_param_iface_inference.py
-# 定位:   复算「从 docstring 推形参接口」这条退路**为什么会错**（事实 114 的可复算证据）。
+# 定位:   复算「从 docstring 推形参接口」这条退路**为什么会错**（事实 114 的可复算证据
+#           ）。
 # 官方依据: `D:/AI/SW/_raw/reflect_sldworks/iface_sldworks.txt` 的 `## <Iface>` 分段
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

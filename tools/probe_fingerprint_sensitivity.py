@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_fingerprint_sensitivity.py
-# 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B2**（★ 评审原话：「**量具是指纹，所以要校准它**」）✓
+# 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B2**（★ 评审原话：「**量具是指纹
+#           ，所以要校准它**」）✓
 # 运行:   ★ **一律走护栏**：`python tools/sw_guard.py --timeout 900 -- python tools/probe_fingerprint_sensitivity.py`
 #   ★ 护栏现在会给子进程设 `SW_SANDBOX_MODE=enforce` ⇒ ★ 打开的**永远是副本** ✓
 # 判据:   ★★ **第 0 格（最要紧）**：★ 连读两次、**中间什么都不做** ⇒ ★ 两次必须**完全相等**

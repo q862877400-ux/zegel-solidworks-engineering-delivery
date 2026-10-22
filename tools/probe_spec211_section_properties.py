@@ -17,7 +17,8 @@
 # 判据:   ★★ **双判**：`retval[0] == 0`（★ 官方定义的状态码）**且** `retval[1]`（面积）
 #   与**几何算出来的**吻合（★ 100×60 的矩形 ⇒ 6000 mm²）—— ★ **不看"有没有抛异常"** ✓
 #   ★ 副作用判据：★ `selection` 计数在**调用前后**的变化（★ 用回读，不看返回值）✓
-# 官方依据: `C:\swapi\types\IModelDocExtension\GetSectionProperties2.md`（签名 + Remarks + 24 元格式）
+# 官方依据: `C:\swapi\types\IModelDocExtension\GetSectionProperties2.md`（签名 + Remarks
+#            + 24 元格式）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

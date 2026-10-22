@@ -11,7 +11,8 @@ r"""@brief 负例：`check_spec_acceptance_paths` 对 glob 的处理必须**两�
 # ── 来源 ──
 # 仓库:   本项目自身（只读探针）
 # 文件:   tools/probe_spec_glob_gate.py
-# 定位:   为 `scripts/check_spec_acceptance_paths.py` 的 glob 分支取证（负例是唯一的证明）。
+# 定位:   为 `scripts/check_spec_acceptance_paths.py` 的 glob 分支取证（负例是唯一的证
+#           明）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────

@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/prove_weldment_cut_list.py
-# 定位:   ★ 2026-10-03（轮 497）★ 给 `scripts/sw_weldment.ensure_cut_list` 留**当前**的真机证据。
+# 定位:   ★ 2026-10-03（轮 497）★ 给 `scripts/sw_weldment.ensure_cut_list` 留**当前**
+#           的真机证据。
 #
 #   ★★ **为什么要重做**（★ 本轮的发现链）：
 #     · `output/weldment-evidence.json` 里 `create_cut_list` 是 **`ok:false`**，

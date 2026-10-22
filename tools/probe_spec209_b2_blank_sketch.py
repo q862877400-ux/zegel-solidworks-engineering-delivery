@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_spec209_b2_blank_sketch.py
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-4**：外部项目 idx **175 `hide_all_sketches`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-4**：外部项目 idx **175 `hide_all
+#           _sketches`**。
 #   ★★ 裁决书点名的**真风险**：「怎么回读「隐藏了没有」」—— 官方 `BlankSketch` 回 `void`、
 #     且那页**既无 Returns 也无 Remarks**；★ 官方示例的判据是**肉眼**
 #     （「Examine the graphics area」）⇒ ★ 本探针就是去**定出那个回读入口** ✓

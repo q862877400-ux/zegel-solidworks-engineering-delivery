@@ -18,7 +18,8 @@ r"""@brief 证伪实验：证明**一次性**模态框检查**真的会漏**，�
 # 仓库:   本项目自身（真机证伪实验）
 # 文件:   tools/verify_modal_polling_catches_async_dialog.py
 # 定位:   给 Spec Kit `088` 证明「轮询默认值」修掉的是**真实盲区**，不是纸面改动。
-# 官方依据: Win32 `WC_DIALOG`；`ISldWorks.GetProcessID()`；`IFeatureManager.MoldUndercutDetect` 的
+# 官方依据: Win32 `WC_DIALOG`；`ISldWorks.GetProcessID()`；`IFeatureManager.MoldUndercut
+#           Detect` 的
 #          `BCoordInput`（官方 md）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

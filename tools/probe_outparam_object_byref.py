@@ -28,8 +28,8 @@ C  传两个裸 None
 # 仓库:   本项目自身（真机验收）
 # 文件:   tools/probe_outparam_object_byref.py
 # 定位:   给 `docs/signature-audit.md` 批次 7 那条「未查证的遗留」取**真机**裁断。
-# 官方依据: `C:\swapi\types\ISldWorks\GetHoleStandardsData.md` ·
-#           `C:\swapi\types\IHoleStandardsData\GetHoleStandards.md` · 出厂反射
+# 官方依据: `C:\swapi\types\ISldWorks\GetHoleStandardsData.md` ·`C:\swapi\types\IHoleSta
+#           ndardsData\GetHoleStandards.md` · 出厂反射
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────

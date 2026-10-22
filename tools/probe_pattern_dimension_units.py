@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_pattern_dimension_units.py
-# 定位:   ★ 2026-10-03（轮 400）24h 计划 v2 段 3 的**S0 前置**：`add_dimension` 与 `linear_pattern`
+# 定位:   ★ 2026-10-03（轮 400）24h 计划 v2 段 3 的**S0 前置**：`add_dimension` 与 `li
+#           near_pattern`
 #   的包装**都不做单位换算**，★ 而官方 API 吃**米**、`linear_pattern` 的文档串却写着**毫米**
 #   （★ 并注明"间距已测"）⇒ ★★ **在测清楚之前挂出去会把"单位"这个错固化进工具面**。
 # 官方依据: `IFeatureManager.FeatureLinearPattern3` · `IModelDoc2.AddDimension2` ·

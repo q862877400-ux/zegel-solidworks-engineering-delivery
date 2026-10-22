@@ -18,7 +18,8 @@ r"""@brief 探针：**导出格式矩阵** —— 逐个格式**读魔数**，�
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_export_magic_matrix.py
 # 定位:   给 Spec Kit `076` 产出「导出格式 ↔ 魔数」矩阵（事实 96 的扩展）。
-# 官方依据: 各格式规范：STEP(`ISO-10303-21`) · STL(`solid`/二进制长度字段) · IGES(`S`/`1H`) ·
+# 官方依据: 各格式规范：STEP(`ISO-10303-21`) · STL(`solid`/二进制长度字段) · IGES(`S`/`1
+#           H`) ·
 #          Parasolid(`**ABCDEFGH`/文本) · PDF(`%PDF-`) · DXF(文本 `0/SECTION`) ·
 #          DWG(`AC10xx`) · PNG(`\x89PNG`) · JPEG(`\xff\xd8\xff`) · BMP(`BM`)
 # 许可:   本仓库 MIT。无第三方代码引入。

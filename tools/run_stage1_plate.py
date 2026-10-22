@@ -14,10 +14,9 @@
 # 仓库:   本项目自身
 # 文件:   tools/run_stage1_plate.py
 # 定位:   规格 `specs/316-stage1-parameter-plate` 的**生产入口**（真机验收）
-# 官方依据: ① 本仓 `tools/sw_guard.py`（真机命令一律走弹窗护栏 —— AGENTS.md §十五）
-#           ② 本仓**事实 71**（`GetPartBox` 回毫米）
-#           ③ `register_capabilities.all_specs()`（工具契约真源）
-#           ④ 规格 316 的 §4 SC-001~SC-010 与 §5 的 M1~M4
+# 官方依据: ① 本仓 `tools/sw_guard.py`（真机命令一律走弹窗护栏 —— AGENTS.md §十五）② 本
+#           仓**事实 71**（`GetPartBox` 回毫米）③ `register_capabilities.all_specs()`（
+#           工具契约真源）④ 规格 316 的 §4 SC-001~SC-010 与 §5 的 M1~M4
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────

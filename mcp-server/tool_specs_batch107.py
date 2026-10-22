@@ -3,7 +3,8 @@
 # 仓库:   本项目自身（实现与来源块在 scripts/sw_net_blend.py）
 # 文件:   specs/219-user-coverage-100/ 的 T-219-04
 # 定位:   ★ 补两个真缺口：★ 特征/边界凸台 · 曲面/边界曲面
-# 官方依据: 签名 C:\swapi\types\IFeatureManager\InsertNetBlend.md（20 参，逐参含义官方有）
+# 官方依据: 签名 C:\swapi\types\IFeatureManager\InsertNetBlend.md（20 参，逐参含义官方有
+#           ）
 #   · Type 枚举 0=Base · 1=Boss · 2=Surface · 3=Cut
 #   · 调用序出自官方示例 Insert_Boundary_Feature_Example_VB.htm 第 67-74 行
 # 许可:   本仓库 MIT。★ 无第三方代码引入。

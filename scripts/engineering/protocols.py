@@ -3,26 +3,22 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/protocols.py
-# 定位:   规格 `specs/325-declarative-protocols-and-decisions` 的 R1（四类协议）/
-#           R2（五要素）/ R3（`check_ref` 解析）/ R4（8 项必设检查）/
-#           R5（改一处 ⇒ 重生成三视图）/ R8（缺需求先问转字段门禁）/
-#           R10（改 YAML 不能获得新能力）。
-#           ★★ 实测（2026-10-12）起点：**没有 `decision_id`、没有三态、
-#           没有四类协议、没有 `check_ref` 解析器、没有禁止 eval 的判据、
-#           没有 8 项必设检查、没有任何协议目录**；
-#           ★ 而 `design_ir.WAITING_INPUT` **已有**，且可作 `check_ref` 后端的
-#           既有函数**充足**（`rule_verdicts.evaluate` / `design_ir.parse_requirement` /
-#           `registry.resolve_step_name` / `recovery.resume_verdict` /
-#           `catalog.retrieve` / `compiler.METHOD_LIBRARY` …）。
-# 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q5（L63-94）逐字：
-#             「`check_ref` **必须解析到已登记的代码**，禁止任意 Python、
-#               `eval` 或 LLM 生成脚本进入生产执行」；
-#             「改协议参数或流程：**改一处源数据，重新生成文档、提示与目录**」；
-#             「增加真正的新判定逻辑：**增加实现与测试，再登记引用**，
-#               不能假装只改 YAML 就能获得新能力」；
-#             L92 逐字给的 8 项必设检查
-#           ② 同文件 Q1（L10-34）逐字：四类协议 + 五要素 + 「缺需求先问转字段门禁」
-#           ③ `metadata/protocols/*.yaml`（四份协议）
+# 定位:   规格 `specs/325-declarative-protocols-and-decisions` 的 R1（四类协议）/R2（
+#           五要素）/ R3（`check_ref` 解析）/ R4（8 项必设检查）/R5（改一处 ⇒ 重生成三视
+#           图）/ R8（缺需求先问转字段门禁）/R10（改 YAML 不能获得新能力）。★★ 实测（202
+#           6-10-12）起点：**没有 `decision_id`、没有三态、没有四类协议、没有 `check_ref
+#           ` 解析器、没有禁止 eval 的判据、没有 8 项必设检查、没有任何协议目录**；★ 而 
+#           `design_ir.WAITING_INPUT` **已有**，且可作 `check_ref` 后端的既有函数**充足*
+#           *（`rule_verdicts.evaluate` / `design_ir.parse_requirement` /`registry.resol
+#           ve_step_name` / `recovery.resume_verdict` /`catalog.retrieve` / `compiler.ME
+#           THOD_LIBRARY` …）。
+# 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q5（L63-94）逐字：  「`chec
+#           k_ref` **必须解析到已登记的代码**，禁止任意 Python、    `eval` 或 LLM 生成脚
+#           本进入生产执行」；  「改协议参数或流程：**改一处源数据，重新生成文档、提示与
+#           目录**」；  「增加真正的新判定逻辑：**增加实现与测试，再登记引用**，    不能
+#           假装只改 YAML 就能获得新能力」；  L92 逐字给的 8 项必设检查② 同文件 Q1（L10-
+#           34）逐字：四类协议 + 五要素 + 「缺需求先问转字段门禁」③ `metadata/protocols/
+#           *.yaml`（四份协议）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收入口 `tools/run_s325_protocols.py`）。

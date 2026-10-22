@@ -7,7 +7,8 @@
 #   ★★ 要判的就是一件事：★ **`sw_fingerprint.read()` 会不会把草图编辑态弄没** ✓
 # 判据:   ★ 顺序：★ `sketch_start` → **读 `edit_mode`** → **跑一次全指纹 `read`** → **再读 `edit_mode`** ✓
 #   ★★ 若第二次变了 ⇒ ★ **是量具有副作用**（★ 那必须记进 `KNOWN_UNAVAILABLE` 或改成不进草图）✓
-# 官方依据: `ISketchManager.ActiveSketch` / `IModelDoc2.GetActiveSketch2`（★ 见 `sw_fingerprint` 的 OFFICIAL）✓
+# 官方依据: `ISketchManager.ActiveSketch` / `IModelDoc2.GetActiveSketch2`（★ 见 `sw_fing
+#           erprint` 的 OFFICIAL）✓
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

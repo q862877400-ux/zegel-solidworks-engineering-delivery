@@ -1,4 +1,13 @@
 """★ 判 `check_official_source_defects` 那 2 处边界：哪个是误报、哪个是真漏。"""
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   tools/judge_two_boundary_cases.py
+# 定位:   判 `check_official_source_defects` 那 2 处边界：哪个是误报、哪个是真漏。
+# 官方依据: 官方源 `C:\swapi\types\**`（★ 逐条见文件内引用）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
 from __future__ import annotations
 
 import re

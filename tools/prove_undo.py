@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_undo.py
-# 定位:   ★ 2026-10-03（轮 395）objective② 补真缺 `undo`：官方 `IModelDoc2.EditUndo2(int Steps)`
+# 定位:   ★ 2026-10-03（轮 395）objective② 补真缺 `undo`：官方 `IModelDoc2.EditUndo2(i
+#           nt Steps)`
 #   （★ 1 参 · 回 `void`）⇒ 判据只能是**特征树退回了**。
 #   ★ 本探针：★ 先建一个特征（树 +1）⇒ 调 `undo_report(model, 1)` ⇒ **树应退回**（★ 定量）。
 # 官方依据: `C:\swapi\types\IModelDoc2\EditUndo2.md`（★ `void EditUndo2(int Steps)`；

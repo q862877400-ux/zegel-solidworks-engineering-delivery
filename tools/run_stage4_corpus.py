@@ -15,10 +15,9 @@
 # 仓库:   本项目自身
 # 文件:   tools/run_stage4_corpus.py
 # 定位:   规格 `specs/319-stage4-constrained-planning` 的**验收入口**（S4-A/S4-B）
-# 官方依据: ① 外部方案阶段 4 的验收 S4-A / S4-B（逐字）
-#           ② `corpus/l3-semantic.yaml`（★ 60 条 · 24/12/12/12 · 20/40）
-#           ③ `scripts/engineering/design_ir.py`（G1~G4）
-#           ④ `scripts/engineering/planner.py`（G5）
+# 官方依据: ① 外部方案阶段 4 的验收 S4-A / S4-B（逐字）② `corpus/l3-semantic.yaml`（★ 60
+#            条 · 24/12/12/12 · 20/40）③ `scripts/engineering/design_ir.py`（G1~G4）④ `s
+#           cripts/engineering/planner.py`（G5）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # -----------------------------------------------------------------------------

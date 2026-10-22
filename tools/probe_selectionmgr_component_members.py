@@ -4,7 +4,8 @@
 # 文件:   `C:\\swapi\\types\\ISelectionMgr\\GetSelectedObjectsComponent*.md`（官方 4 代）
 # 定位:   ★ 2026-10-04：`get_selected_component` 改用后继 `…Component4` 后**仍**报
 #         `<unknown>.GetSelectedObjectsComponent3/4` ⇒ ★ **不再猜**，直接在活对象上枚举可达性 ✓
-# 官方依据: `GetSelectedObjectsComponent4.md:31` 逐字「the now obsolete `GetSelectedObjectsComponent3`」；
+# 官方依据: `GetSelectedObjectsComponent4.md:31` 逐字「the now obsolete `GetSelectedObje
+#           ctsComponent3`」；
 #         `…4.md:14` 签名 `System.object GetSelectedObjectsComponent4( System.int Index, System.int Mark )`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件

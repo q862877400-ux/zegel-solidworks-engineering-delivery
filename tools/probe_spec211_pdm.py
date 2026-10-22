@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B7 PDM 的待实测）
 # 文件:   tools/probe_spec211_pdm.py
-# 定位:   ★ 规格 `specs/211-user-feature-gaps` 的「其他 / PDM」—— ★ 21 项里**唯一一项"待实测"** ✓
+# 定位:   ★ 规格 `specs/211-user-feature-gaps` 的「其他 / PDM」—— ★ 21 项里**唯一一项"
+#           待实测"** ✓
 # 官方依据（★ 本批现场全扫所得）：
 #   · ★★★ **`ISldWorks` 下**没有** PDM 入口** ✗ —— 入口在 **`IApplication::PDMDocManager`** ✓
 #     ★★ 而 `IApplication` **不是** `ISldWorks` ✗（★ 拿它要另找路 ✓）

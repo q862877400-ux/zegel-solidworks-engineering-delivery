@@ -19,7 +19,8 @@ Spec Kit `071`（轮 152）用**三种独立数法**核对 ⇒ **那个结论是
 # 仓库:   本项目自身（真机探针，**不是**从四家外部 MCP 项目移植）
 # 文件:   tools/probe_sketch_enumeration_lag.py
 # 定位:   给已知事实 92 提供可复跑的证据（三种数法对照）。
-# 官方依据: `IModelDoc2.FeatureByPositionReverse` / `IFeatureManager` / `FeatureByName` /
+# 官方依据: `IModelDoc2.FeatureByPositionReverse` / `IFeatureManager` / `FeatureByName` 
+#           /
 #          `ISketchManager.ActiveSketch`（见 `C:\swapi\types\` 对应 md）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

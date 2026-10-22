@@ -207,11 +207,10 @@ SWS_ANALYSIS_STUDY_TYPES = {
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（SolidWorks.Interop.cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect\iface_cosworks.txt
-# 定位:   Simulation 入口链的逐跳签名：
-#           ICwAddincallback : CosmosWorks get_CosmosWorks()   ← 属性
-#           ICosmosWorks     : CWModelDoc get_ActiveDoc()      ← 属性
-#                             : String     get_VersionNumber() ← 属性
-#           ICWModelDoc      : CWStudyManager get_StudyManager() ← 属性
+# 定位:   Simulation 入口链的逐跳签名：ICwAddincallback : CosmosWorks get_CosmosWorks(
+#           )   ← 属性ICosmosWorks     : CWModelDoc get_ActiveDoc()      ← 属性         
+#                    : String     get_VersionNumber() ← 属性ICWModelDoc      : CWStudyMa
+#           nager get_StudyManager() ← 属性
 # 查证:   对上述 4 个接口逐个 GetMembers() 后人工筛出上列 5 个成员。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 #
@@ -308,15 +307,12 @@ def get_study_manager(sw_app):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect\iface_cosworks.txt
-# 定位:   ICWStudyManager.CreateNewStudy3 的官方签名（共 4 个参数）：
-#             CWStudy CreateNewStudy3( String Name,
-#                                     Int32 StudyType,
-#                                     Int32 MeshType,
-#                                     Int32& ErrorCode )
-#           另有降级入口 CreateNewStudy2(String, Int32, Int32&) 与
-#           CreateNewStudy(String, Int32, Int32&) —— 两者少一个 MeshType，
-#           本模块只在 CreateNewStudy3 不可用时按序降级，并在返回值里如实
-#           报告实际用到的入口名。
+# 定位:   ICWStudyManager.CreateNewStudy3 的官方签名（共 4 个参数）：  CWStudy CreateN
+#           ewStudy3( String Name,                          Int32 StudyType,            
+#                         Int32 MeshType,                          Int32& ErrorCode )另
+#           有降级入口 CreateNewStudy2(String, Int32, Int32&) 与CreateNewStudy(String, I
+#           nt32, Int32&) —— 两者少一个 MeshType，本模块只在 CreateNewStudy3 不可用时按
+#           序降级，并在返回值里如实报告实际用到的入口名。
 # ⚠ 关于末位 Int32& ErrorCode：pywin32 迟到绑定下 by-ref 出参**不一定**
 #   回写到 Python 标量（与 AGENTS.md §六 事实 11 同源问题）。故本函数
 #   **不以 error_code 作为成功判据**，只以返回值是否为 None 判成败，
@@ -377,11 +373,10 @@ def create_static_study(
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect\iface_cosworks.txt
-# 定位:   ICWStudyManager.get_StudyCount()（属性）与 GetStudy(Int32)（方法）。
-#           ⚠ 二者形态不同：StudyCount 是**属性**、不可加括号调用；
-#           GetStudy 是**方法**、必须传下标。AGENTS.md §六 事实 4 记载的
-#           「迟到绑定下同一成员可能是属性也可能是方法」在此处成立，
-#           故统一经 get_com_member 取值。
+# 定位:   ICWStudyManager.get_StudyCount()（属性）与 GetStudy(Int32)（方法）。⚠ 二者形
+#           态不同：StudyCount 是**属性**、不可加括号调用；GetStudy 是**方法**、必须传下
+#           标。AGENTS.md §六 事实 4 记载的「迟到绑定下同一成员可能是属性也可能是方法」
+#           在此处成立，故统一经 get_com_member 取值。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 def iter_studies(sw_app):
@@ -413,8 +408,8 @@ def get_study_by_name(sw_app, name: str):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect\iface_cosworks.txt
-# 定位:   ICWStudy.get_LoadsAndRestraintsManager() → CWLoadsAndRestraintsManager。
-#           该成员是**属性**（getter 名含 get_），不是无参方法。
+# 定位:   ICWStudy.get_LoadsAndRestraintsManager() → CWLoadsAndRestraintsManager。该成
+#           员是**属性**（getter 名含 get_），不是无参方法。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 def _loads_and_restraints_manager(study):
@@ -474,12 +469,11 @@ def _selected_dispatch_array(model, expected: int | None = None):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect\iface_cosworks.txt
-# 定位:   ICWLoadsAndRestraintsManager.AddRestraint 的官方签名（共 4 个参数）：
-#             CWRestraint AddRestraint( Int32   RestraintType,
-#                                       Object  Entities,
-#                                       Object  <第 3 参语义未查证>,
-#                                       Int32&  ErrorCode )
-#           返回的 CWRestraint 上有 set_RestraintType(Int32) 可事后改类型。
+# 定位:   ICWLoadsAndRestraintsManager.AddRestraint 的官方签名（共 4 个参数）：  CWRes
+#           traint AddRestraint( Int32   RestraintType,                            Objec
+#           t  Entities,                            Object  <第 3 参语义未查证>,        
+#                               Int32&  ErrorCode )返回的 CWRestraint 上有 set_Restraint
+#           Type(Int32) 可事后改类型。
 # 查证:   sw_know.py 对 cosworks 无收录（其镜像只含 12 个程序集），
 #         故本签名取自 D:\AI\SW\_raw\reflect\iface_cosworks.txt。
 # ⚠ 查不到故不编（AGENTS.md 铁律 5）:
@@ -566,14 +560,11 @@ def apply_fixed_restraint(study, *, model=None, face_selector: str | None = None
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect\iface_cosworks.txt
-# 定位:   ICWLoadsAndRestraintsManager.AddForce 的官方签名（共 4 个参数）：
-#             CWForce AddForce( Int32  ForceType,
-#                               Object Entities,
-#                               Object <第 3 参语义未查证>,
-#                               Int32& ErrorCode )
-#           ⚠ **力的大小不在 AddForce 的参数里**。大小要在返回的 CWForce 上
-#           用 set_NormalForceOrTorqueValue(Double) 回填 —— 该 setter 已在
-#           ICWForce 的反射清单中核到。
+# 定位:   ICWLoadsAndRestraintsManager.AddForce 的官方签名（共 4 个参数）：  CWForce A
+#           ddForce( Int32  ForceType,                    Object Entities,              
+#                 Object <第 3 参语义未查证>,                    Int32& ErrorCode )⚠ **
+#           力的大小不在 AddForce 的参数里**。大小要在返回的 CWForce 上用 set_NormalForc
+#           eOrTorqueValue(Double) 回填 —— 该 setter 已在ICWForce 的反射清单中核到。
 # ⚑ 这纠正了外部实现的错误形状: alisamsam (MIT) 写成
 #   ``AddForce3(0, None, magnitude, err)``（把第 3 参当大小），而官方
 #   AddForce3 实为 **21 个参数**，AddForce 只有 4 个且第 3 参不是大小。
@@ -657,12 +648,10 @@ SWSU_METRIC = 2
 # 仓库:   SolidWorks 官方 Simulation **VB6 类型库 CHM**（唯一给出参数名的源）
 # 文件:   `lang\english\api\cworksapivb6.chm` 的
 #         `CosmosWorksLib~CWStudy~CreateMesh.html`（解包到 `C:\cworks_vb6`）
-# 定位:   ``ICWStudy.CreateMesh`` 的**官方参数名与顺序**：
-#             Public Function CreateMesh( _
-#                 ByVal NUnits As Long, _          ' ← 第 1 参 = 单位（swsUnit_e）
-#                 ByVal DElementSize As Double, _  ' ← 第 2 参 = 单元尺寸
-#                 ByVal DTolerance As Double _     ' ← 第 3 参 = 容差
-#             ) As Long
+# 定位:   ``ICWStudy.CreateMesh`` 的**官方参数名与顺序**：  Public Function CreateMesh
+#           ( _      ByVal NUnits As Long, _          ' ← 第 1 参 = 单位（swsUnit_e）   
+#              ByVal DElementSize As Double, _  ' ← 第 2 参 = 单元尺寸      ByVal DToler
+#           ance As Double _     ' ← 第 3 参 = 容差  ) As Long
 # 枚举:   ``swsUnit_e`` = SI 0 / English 1 / Metric 2
 #         （同源页 `CosmosWorksLib~swsUnit_e.html`）
 # ⚠⚠ **本函数此前把第 2、3 参写反了**（旧签名 `create_mesh(study, mesh_type, tolerance, size)`
@@ -708,10 +697,9 @@ def create_mesh(study, *, units: int = SWSU_SI, element_size: float = 0.0,
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 Simulation VB6 类型库 CHM（同 `create_mesh` 的来源块）
 # 文件:   `CosmosWorksLib~CWMesh~GetDefaultElementSizeAndTolerance.html`
-# 定位:   ``Public Sub GetDefaultElementSizeAndTolerance( _
-#             ByVal NUnits As Long, _      ' 与 CreateMesh 的第 1 参同义
-#             ByRef DElementSize As Double, _
-#             ByRef DTolerance As Double _ )``
+# 定位:   ``Public Sub GetDefaultElementSizeAndTolerance( _  ByVal NUnits As Long, _  
+#               ' 与 CreateMesh 的第 1 参同义  ByRef DElementSize As Double, _  ByRef DT
+#           olerance As Double _ )``
 # ⚠ 真机实测（2026-10-01）：传 ``NUnits=-1`` 返回**毫米级**（4.9339 / 0.2467）；
 #   传 ``NUnits=2``（Metric）返回**米级**（0.0049339 / 0.0002467）—— 同一个建议值两种量纲。
 #   **⇒ 用哪个 unit 取，就用哪个 unit 传给 `create_mesh` 的位置参数会错**；
@@ -1010,13 +998,12 @@ def run_analysis(study):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect\iface_cosworks.txt
-# 定位:   证据回读只使用已核实的**属性**成员，避免触碰未查证的方法：
-#             ICWStudy                    : Name / MeshType / AnalysisType /
-#                                           ConfigurationName（均为属性）
-#             ICWStudyManager             : StudyCount / ActiveStudy（属性）
-#             ICWLoadsAndRestraintsManager: Count（属性）
-#             ICWLoadsAndRestraints       : Name / EntityCount / Type / State（属性）
-#           方法侧只用一个：GetLoadsAndRestraints(Int32 Index, Int32& ErrCode)，共 2 参。
+# 定位:   证据回读只使用已核实的**属性**成员，避免触碰未查证的方法：  ICWStudy        
+#                       : Name / MeshType / AnalysisType /                              
+#             ConfigurationName（均为属性）  ICWStudyManager             : StudyCount / 
+#           ActiveStudy（属性）  ICWLoadsAndRestraintsManager: Count（属性）  ICWLoadsAn
+#           dRestraints       : Name / EntityCount / Type / State（属性）方法侧只用一个
+#           ：GetLoadsAndRestraints(Int32 Index, Int32& ErrCode)，共 2 参。
 # ⚑ 修正记录: 本函数初稿误用 ``lrm.EntityCount`` 计数、并把
 #   ``GetLoadsAndRestraints`` 当成单参方法调用。反射清单显示该方法是
 #   **双参（末位 by-ref）**，计数属性在管理器上叫 ``Count`` 而非
@@ -1252,7 +1239,8 @@ def run_analysis_report(study) -> dict[str, Any]:
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_simulation.py —— 本段
 # 定位:   建网格前的**参数合理性判据**（24h 段 5「修地基」）。
-# 官方依据: `ICWMesh.GetDefaultElementSizeAndTolerance`（本模块已记：两次实测差 1000 倍）；
+# 官方依据: `ICWMesh.GetDefaultElementSizeAndTolerance`（本模块已记：两次实测差 1000 倍
+#           ）；
 #          零件尺寸取 `IBody2.GetBodyBox`（本模块/`sw_part` 已有）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   下面这个 `check_mesh_size_sane`

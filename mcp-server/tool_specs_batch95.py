@@ -3,7 +3,8 @@
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
 # 文件:   `scripts/sw_boolean_ops.py`（★ **新建**，铁律 3：`scripts/` 白名单内；
 #         ★ 本仓既有零件特征模块里**没有多体/布尔这一族** —— 裁决书指定的落点就是它）
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-3** · 外部项目 idx **181 `intersect`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-3** · 外部项目 idx **181 `interse
+#           ct`**。
 #   ★★ 裁决书逐字：「真名是**两步** `PreIntersect2` → `PostIntersect`；RegionType 三值表 +
 #   示例 mark=0 + 排除数组形状齐备；★ 读侧 `IIntersectFeatureData` **零指针族** ⇒
 #   ★ **唯一要实测的只有 `System.object` 布尔 SafeArray 的包装**」✓

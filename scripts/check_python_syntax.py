@@ -29,7 +29,8 @@ python scripts/check_python_syntax.py -v       # 列出扫过的目录与文件�
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（门禁）
 # 文件:   scripts/check_python_syntax.py
-# 定位:   把"文件头 docstring 未闭合"这一类**反复踩**的错机械化（objective⑤ 的同族：静态比对）。
+# 定位:   把"文件头 docstring 未闭合"这一类**反复踩**的错机械化（objective⑤ 的同族：静
+#           态比对）。
 # 官方依据: 不适用（★ 用 Python 标准库 `ast`）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

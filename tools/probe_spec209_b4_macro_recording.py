@@ -9,7 +9,8 @@
 #     并**明确写出限度**：★ **「宏文件真的落了盘」证不了**（那要弹 Save As 的 31）✓
 #   ⚠ 安全：★ 全程走 `tools/sw_guard.py`（弹窗哨兵 + 硬超时）；★ **绝不调 31**；
 #     ★ 收尾**必须把录制停掉**（否则 SW 一直在录 —— 那是留给用户的脏状态）✓
-# 官方依据: `C:\\swapi\\types\\ISldWorks\\RecordLine.md`（★ `## Remarks` 逐字给出两个硬事实）·
+# 官方依据: `C:\\swapi\\types\\ISldWorks\\RecordLine.md`（★ `## Remarks` 逐字给出两个硬
+#           事实）·
 #   `C:\\swapi\\types\\ISldWorks\\RunCommand.md` · `C:\\swapi\\enums\\swCommands_e.md`
 #   （`RecordPauseMacro=29` · `StopMacro=31; **opens the Save As dialog**`）
 # 许可:   本仓库 MIT。无第三方代码引入。

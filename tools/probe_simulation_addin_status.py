@@ -29,7 +29,8 @@ RuntimeError: GetAddInObject('SldWorks.Simulation') 返回 None：
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_simulation_addin_status.py
 # 定位:   给 Spec Kit `099` 分辨「拓扑验收变红」是**加载项没加载**还是**许可没了**。
-# 官方依据: `ISldWorks.GetAddInObject(String)` / `ISldWorks.LoadAddIn(String)`（出厂反射）
+# 官方依据: `ISldWorks.GetAddInObject(String)` / `ISldWorks.LoadAddIn(String)`（出厂反射
+#           ）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

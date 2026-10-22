@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B2-2 的收口探针）
 # 文件:   tools/probe_spec211_sweep_variants.py
-# 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B2-2**。★ 上一轮**建成**了最基本的那一种
+# 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B2-2**。★ 上一轮**建成**了最基本的
+#           那一种
 #   （★ 圆轮廓 mark 1 + 直线路径 mark 4 ⇒ ★ 特征树 +1 `曲面-扫描1` ✓）。
 #   ★★★ 而 `capabilities.yaml` 的 `limitations` 里**明写了一条"不许推广"** ✓：
 #     ★ 本次只试了**一条**几何 ⇒ **不许推广成"扫描曲面全形态都成"** ✗
@@ -18,7 +19,8 @@
 #     ★ · ★ **静默回 `None`**（★ 不抛、特征树不变）⇒ ★★ **那才是真正的「试死」** ✓
 #       ★（★ 因为本轮**前置已完全对上** —— ★ 与上一轮「前置没上」**不同** ✓）
 #     · ★ **抛异常** ⇒ ★ 记下来（★ 那说明形态本身被拒 ✓）
-# 官方依据: `C:\swapi\types\IFeatureManager\InsertSweepSurface2.md`（签名 + Remarks 的 mark 表）
+# 官方依据: `C:\swapi\types\IFeatureManager\InsertSweepSurface2.md`（签名 + Remarks 的 m
+#           ark 表）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

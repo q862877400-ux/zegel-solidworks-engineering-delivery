@@ -19,12 +19,11 @@
 # 仓库:   本项目自身
 # 文件:   tools/diag_in_context_projection.py
 # 定位:   规格 315 的 ① 在位设计攻关 —— 诊断探针（只读+建临时件，不碰业主文件）
-# 官方依据: ① C:\swapi\examples\Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_CSharp.md
-#              （★ 官方示例给的是「调用序」：先开草图 → 再选面 → 再 SketchUseEdge3）
-#           ② C:\swapi\types\ISketchManager\SketchUseEdge3.md（签名 2 参 + Remarks）
-#           ③ 本仓事实 8（选择返回值不可信，回读计数）
-#           ④ 本仓事实 32（边/面没有名字，按对象选或按点选）
-#           ⑤ 本仓事实 102（旧诊断：四个可能已排除，真因未查明）
+# 官方依据: ① C:\swapi\examples\Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities
+#           _Example_CSharp.md   （★ 官方示例给的是「调用序」：先开草图 → 再选面 → 再 Sk
+#           etchUseEdge3）② C:\swapi\types\ISketchManager\SketchUseEdge3.md（签名 2 参 +
+#            Remarks）③ 本仓事实 8（选择返回值不可信，回读计数）④ 本仓事实 32（边/面没有
+#           名字，按对象选或按点选）⑤ 本仓事实 102（旧诊断：四个可能已排除，真因未查明）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────

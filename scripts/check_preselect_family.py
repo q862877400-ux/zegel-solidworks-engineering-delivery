@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（门禁）
 # 文件:   scripts/check_preselect_family.py
-# 定位:   ★ 本道闸是 **`specs/202-user-coverage-gaps/recon/preselect-family-merged.md`**（277 条
+# 定位:   ★ 本道闸是 **`specs/202-user-coverage-gaps/recon/preselect-family-merged.md`
+#           **（277 条
 #         总表，2026-10-03 三路并集复核）**§四 通用建议 3** 点名要建的那一条 ✓ ——
 #         原文逐字：「★ **补一条静态门禁**：现状是『只有 `batch4`/`batch23`/`batch26`/
 #         `batch29`/`batch58`/`batch60`/`batch74` 记得写 `pre_call`』… ★ 这条门禁一次就会

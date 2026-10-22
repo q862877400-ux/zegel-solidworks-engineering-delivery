@@ -5,7 +5,8 @@
 # 定位:   ★ 规格 `specs/204-tool-ramp/spec.md` 的批 86；
 #         ★★ **本文件由 `tools/build_toolspec_batch_from_rows.py` 生成** ——
 #         行来自 Bunny 子代理（**只读官方源与仓库**），而**判据、门禁、真机、提交归主线** ✓
-# 官方依据: 逐行的 `official_file` / `official_signature` 见下表（★ 每条都是官方页的逐字签名）
+# 官方依据: 逐行的 `official_file` / `official_signature` 见下表（★ 每条都是官方页的逐字
+#           签名）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 规模:   **30 个工具**
 # ⚠ 生成器**只收 `exposable=True` 且门禁 0 问题的行**（★ 被门禁挡下的 0 行见 `output/`）

@@ -11,7 +11,8 @@
 #         idx  97        display_states   ★ 读侧落 sw_render_material（事实 286 已真机 PASS）
 #         idx 244        referenced_documents  ★ 补 pack_and_go 一直枚举却不暴露的**读侧**
 #         ```
-# 官方依据: ★★ **逐页读过**（`C:\swapi` 的 md + 出厂类型库反射 arity）—— 逐条见各函数来源块：
+# 官方依据: ★★ **逐页读过**（`C:\swapi` 的 md + 出厂类型库反射 arity）—— 逐条见各函数来
+#           源块：
 #   `IModelDoc2\{EditRebuild3,ForceRebuild3}.md` · `IModelDocExtension\{ForceRebuildAll,NeedsRebuild2}.md` ·
 #   `enums\swModelRebuildStatus_e.md` · `ISketchManager\CreateConstructionGeometry.md` ·
 #   `ISketchSegment\ConstructionGeometry.md` · `IConfiguration\{GetDisplayStates,ApplyDisplayState,

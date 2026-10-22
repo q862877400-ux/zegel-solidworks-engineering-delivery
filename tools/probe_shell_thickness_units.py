@@ -23,7 +23,8 @@ r"""@brief 探针：`IModelDoc2.InsertFeatureShell` 的 **`Thickness` 单位**�
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_shell_thickness_units.py
-# 定位:   分辨 `InsertFeatureShell` 的 `Thickness` 口径；产物 `output/shell-thickness-units.json`。
+# 定位:   分辨 `InsertFeatureShell` 的 `Thickness` 口径；产物 `output/shell-thickness-
+#           units.json`。
 # 官方依据: `C:\swapi\types\IModelDoc2\InsertFeatureShell.md`（写着 meters）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。

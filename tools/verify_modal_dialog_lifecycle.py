@@ -29,7 +29,8 @@ r"""@brief 端到端验证：**故意复现**模态框 ⇒ 验证「能发现」
 # 仓库:   本项目自身（真机端到端验证）
 # 文件:   tools/verify_modal_dialog_lifecycle.py
 # 定位:   给 Spec Kit `087` 证明「模态框能被发现并点掉」，且机制**不含硬编码**。
-# 官方依据: `ISldWorks.GetProcessID()`（出厂反射）；Win32 `WC_DIALOG`/`WM_COMMAND`/`IDOK`（公开常量）
+# 官方依据: `ISldWorks.GetProcessID()`（出厂反射）；Win32 `WC_DIALOG`/`WM_COMMAND`/`IDOK
+#           `（公开常量）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

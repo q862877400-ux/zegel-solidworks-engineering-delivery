@@ -4,8 +4,8 @@
 # 仓库:   本项目自身
 # 文件:   tools/run_s327_manifest.py
 # 定位:   规格 `specs/327-release-manifest-rules-and-runs` 的**验收入口**
-# 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q12（L214-231）逐字
-#           ② 同文件 Q13（L233-259）· Q14（L261-297）逐字
+# 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q12（L214-231）逐字② 同文件
+#            Q13（L233-259）· Q14（L261-297）逐字
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # -----------------------------------------------------------------------------

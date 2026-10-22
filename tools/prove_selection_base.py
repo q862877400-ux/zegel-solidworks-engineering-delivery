@@ -7,7 +7,8 @@
 #   （见 `mcp-server/tool_specs_batch53.py`）：`get_selection_count` · `select_entity_by_index` ·
 #   `resolve_selection` · `selection_point` · `select_by_selector_report` · `resolve_entity_report`。
 #   ★★ **按 ToolSpec 的契约调**（`inject="model"` ⇒ 传文档对象），**不手调内部实现**。
-# 官方依据: `ISelectionMgr.GetSelectedObjectCount2(-1)`（判据回读数）· `IEntity.Select4`（按对象选）·
+# 官方依据: `ISelectionMgr.GetSelectedObjectCount2(-1)`（判据回读数）· `IEntity.Select4`
+#           （按对象选）·
 #   `IModelDocExtension` 的 `GetSelectionPoint2` / `GetSelectionPoint`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

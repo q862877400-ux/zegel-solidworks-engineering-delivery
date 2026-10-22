@@ -541,7 +541,8 @@ def collect_view_evidence(view) -> dict[str, Any]:
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_drawing_view.py —— 本段
 # 定位:   段 6 续：让"工程图视图"从工具层可表达（★ 此前 12 个函数一个工具都没挂）。
-# 官方依据: `IView` 族（★ Name / ScaleDecimal / GetAnnotationCount / GetVisibleComponentCount /
+# 官方依据: `IView` 族（★ Name / ScaleDecimal / GetAnnotationCount / GetVisibleComponent
+#           Count /
 #          SetScale）—— ★ 见 `scripts/sw_drawing_view.py` 的既有来源块
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   下面 4 个包装
@@ -689,8 +690,10 @@ def collect_view_evidence_report(model) -> dict:
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_drawing_view.py —— 本段
-# 定位:   段 6 续：把"视图比例"的成员名从**臆造的 `Scale`** 更正为官方真名 `ScaleRatio`。
-# 官方依据: `C:\swapi\types\IView\ScaleRatio.md`（★ 真名 + "Array of 2 doubles" + ratio 语义）·
+# 定位:   段 6 续：把"视图比例"的成员名从**臆造的 `Scale`** 更正为官方真名 `ScaleRatio
+#           `。
+# 官方依据: `C:\swapi\types\IView\ScaleRatio.md`（★ 真名 + "Array of 2 doubles" + ratio 
+#           语义）·
 #          ★ 与 `ScaleDecimal` 同族（★ 本文件 docstring 里的那条已存在的更正经）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   下面 3 个函数
@@ -778,7 +781,8 @@ def set_view_scale(view, scale: float) -> bool:
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_drawing_view.py —— 本段
-# 定位:   段 6 续：把"设视图比例"从**取值 helper** 改到**赋值 helper**，并处理 `UseSheetScale` 前置。
+# 定位:   段 6 续：把"设视图比例"从**取值 helper** 改到**赋值 helper**，并处理 `UseShe
+#           etScale` 前置。
 # 官方依据: `C:\swapi\types\IView\ScaleRatio.md`（★ ratio 形态 / Array of 2 doubles）·
 #          `UseSheetScale.md`（★ 布尔：视图是否跟随图纸比例）·
 #          ★ 本项目 `sw_connect.set_com_member` 的真机结论（"唯一被验证通过的形态：属性赋值"）

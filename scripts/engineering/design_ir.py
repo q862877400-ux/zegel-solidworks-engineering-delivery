@@ -3,16 +3,15 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/design_ir.py
-# 定位:   规格 `specs/319-stage4-constrained-planning` 的 G1（需求与布局协议）/
-#           G2（方法检索）/ G3（问题回答契约）/ G4（受控客户端与出站许可）。
-#           ★★ 实测（2026-10-12）起点：`evaluation.py` 已有 `EvalCase`/`EvalSet`/
-#           `AdmissionGate`，`engineering_contract.py` 已有 `EngineeringContract`，
-#           `corpus/l3-semantic.yaml` **就是** S4-A 要的 60 条（分布完全对得上）；
-#           ★ 而**没有规划器、没有方法检索、没有 DesignIR、没有候选预算/出站许可**。
-# 官方依据: ① 外部方案阶段 4 的验收 S4-A / S4-B（逐字）
-#           ② `corpus/l3-semantic.yaml`（★ 60 条 · 24/12/12/12 · 20/40）
-#           ③ `scripts/engineering/compiler.py` 的 `METHOD_LIBRARY` 与 `RejectCode`
-#           ④ 本仓 `scripts/check_corpus.py` 的既有语料判据
+# 定位:   规格 `specs/319-stage4-constrained-planning` 的 G1（需求与布局协议）/G2（方
+#           法检索）/ G3（问题回答契约）/ G4（受控客户端与出站许可）。★★ 实测（2026-10-1
+#           2）起点：`evaluation.py` 已有 `EvalCase`/`EvalSet`/`AdmissionGate`，`enginee
+#           ring_contract.py` 已有 `EngineeringContract`，`corpus/l3-semantic.yaml` **就
+#           是** S4-A 要的 60 条（分布完全对得上）；★ 而**没有规划器、没有方法检索、没有
+#            DesignIR、没有候选预算/出站许可**。
+# 官方依据: ① 外部方案阶段 4 的验收 S4-A / S4-B（逐字）② `corpus/l3-semantic.yaml`（★ 60
+#            条 · 24/12/12/12 · 20/40）③ `scripts/engineering/compiler.py` 的 `METHOD_LI
+#           BRARY` 与 `RejectCode`④ 本仓 `scripts/check_corpus.py` 的既有语料判据
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收入口 `tools/run_stage4_corpus.py`）。

@@ -3,18 +3,16 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/vise.py
-# 定位:   规格 `specs/320-stage5-bench-vise` 的 H1（共享接口）/ H2（传动计算）/
-#           H3（活动钳口不得被误固定）/ H4（螺纹工程定义）。
-#           ★★ 实测（2026-10-12）起点：`assembly.py` 已有 `DofVerdict`（5 档）/
-#           `MateKind`（含 `REMOVES` 表）/ `ConstraintGraph.total_dof()` /
-#           `ConstraintGraph.verdict()`（五档保守顺序）/ `InterferenceScan` /
-#           `ToleranceChain`；`part_loop.py` 已有 `DofPlan` / `check_dof_plan`。
-#           ★ 而**没有平口钳的共享接口模型、没有导程→位移计算、
-#             没有「无误固定活动钳口」的检查、没有螺纹工程定义**。
-# 官方依据: ① 外部方案阶段 5 的验收 S5（逐字）
-#           ② `scripts/engineering/assembly.py` 的 `DofVerdict.RELEASING`
-#              —— ★★ **「预期运动」是允许的**（★ 那正是活动钳口需要的）
-#           ③ 本仓**事实 2**（入参毫米 · COM 侧米）
+# 定位:   规格 `specs/320-stage5-bench-vise` 的 H1（共享接口）/ H2（传动计算）/H3（活
+#           动钳口不得被误固定）/ H4（螺纹工程定义）。★★ 实测（2026-10-12）起点：`assemb
+#           ly.py` 已有 `DofVerdict`（5 档）/`MateKind`（含 `REMOVES` 表）/ `ConstraintG
+#           raph.total_dof()` /`ConstraintGraph.verdict()`（五档保守顺序）/ `Interferenc
+#           eScan` /`ToleranceChain`；`part_loop.py` 已有 `DofPlan` / `check_dof_plan`。
+#           ★ 而**没有平口钳的共享接口模型、没有导程→位移计算、  没有「无误固定活动钳口
+#           」的检查、没有螺纹工程定义**。
+# 官方依据: ① 外部方案阶段 5 的验收 S5（逐字）② `scripts/engineering/assembly.py` 的 `Do
+#           fVerdict.RELEASING`   —— ★★ **「预期运动」是允许的**（★ 那正是活动钳口需要的
+#           ）③ 本仓**事实 2**（入参毫米 · COM 侧米）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收入口 `tools/run_stage5_vise.py --live`）。

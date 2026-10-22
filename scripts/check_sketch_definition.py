@@ -3,23 +3,21 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/check_sketch_definition.py
-# 定位:   规格 `specs/315-eval-corpus` 的**草图完全定义门禁**。
-#           ★★ 触发它的是 2026-10-12（业主审 L3-001~008 的 4 处批注）：
-#           ★ 我写的做法只到「把图画出来」，**没写怎么让它完全定义** ⇒
-#             ★ 结果「肉眼看着没问题，一打开草图全是**蓝线**」⇒ 改一个尺寸就乱跑。
-#           ★★ 业主的四条批注指向同一个根因：
-#             · L 形用直线工具画 ⇒ **直线之间没有任何关系**（矩形/圆工具才自带）
-#             · 不定原点 ⇒ **加了尺寸也不是完全定义**
-#             · 直径长度都约束了 ⇒ **平行垂直关系呢？**
-#             · 槽口 ⇒ 位置怎么定、尺寸标在哪、**方向关系**怎么约定？
-# 官方依据: ① SolidWorks 官方
-#             [草图状态](https://help.solidworks.com/2026/Chinese-simplified/SolidWorks/acadhelp/c_moving2d3d_sketch_states.htm)
-#             逐字：「**尺寸和几何关系为两种类型的约束**」「矩形本身**固定到原点**」
-#             「**蓝色**表示实体未固定」「如果完全定义，**可预料变更**」
-#           ② [槽口尺寸 2026 SP1](https://help.solidworks.com/2026/Chinese-simplified/WhatsNew/c_wn2026_sketch_slot_dimensions.htm)
-#             逐字：「您可在**圆弧中心之间**标注槽口尺寸……清除后，尺寸会显示
-#               **圆弧切线的长度**」
-#           ③ `specs/315-eval-corpus/sketch-definition-protocol.md`（★ 本仓协议）
+# 定位:   规格 `specs/315-eval-corpus` 的**草图完全定义门禁**。★★ 触发它的是 2026-10-1
+#           2（业主审 L3-001~008 的 4 处批注）：★ 我写的做法只到「把图画出来」，**没写怎
+#           么让它完全定义** ⇒  ★ 结果「肉眼看着没问题，一打开草图全是**蓝线**」⇒ 改一个
+#           尺寸就乱跑。★★ 业主的四条批注指向同一个根因：  · L 形用直线工具画 ⇒ **直线之
+#           间没有任何关系**（矩形/圆工具才自带）  · 不定原点 ⇒ **加了尺寸也不是完全定义
+#           **  · 直径长度都约束了 ⇒ **平行垂直关系呢？**  · 槽口 ⇒ 位置怎么定、尺寸标在
+#           哪、**方向关系**怎么约定？
+# 官方依据: ① SolidWorks 官方  [草图状态](https://help.solidworks.com/2026/Chinese-simpl
+#           ified/SolidWorks/acadhelp/c_moving2d3d_sketch_states.htm)  逐字：「**尺寸和
+#           几何关系为两种类型的约束**」「矩形本身**固定到原点**」  「**蓝色**表示实体未
+#           固定」「如果完全定义，**可预料变更**」② [槽口尺寸 2026 SP1](https://help.sol
+#           idworks.com/2026/Chinese-simplified/WhatsNew/c_wn2026_sketch_slot_dimensions
+#           .htm)  逐字：「您可在**圆弧中心之间**标注槽口尺寸……清除后，尺寸会显示    **
+#           圆弧切线的长度**」③ `specs/315-eval-corpus/sketch-definition-protocol.md`（★
+#            本仓协议）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `verified`：★ 本门禁**自带负例自证**（★ 见 `selftest()`）——

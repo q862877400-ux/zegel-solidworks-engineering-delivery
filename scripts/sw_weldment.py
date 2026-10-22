@@ -41,7 +41,8 @@ SW_SOLID_BODY = 0
 # 仓库:   SolidWorks 官方 API 枚举定义（SolidWorks.Interop.swconst.dll）
 # 文件:   D:\AI\SW\_raw\reflect\  —— 由 D:\AI\SW\tools\reflect-enum.ps1
 #         对官方程序集做纯元数据反射取得（swFeatureNameID_e）。
-# 定位:   本模块新增的 `CreateDefinition` 入口的 Type 实参（★ spec 240 后：**无代码使用**）。
+# 定位:   本模块新增的 `CreateDefinition` 入口的 Type 实参（★ spec 240 后：**无代码使
+#           用**）。
 # 取值:   逐个反射核出，未臆造；`C:\swapi\enums\swFeatureNameID_e.md` 只有名称列、
 #         **无数值列**，故不以该文件为取值依据（见 AGENTS.md 铁律 4）。
 # ⚠ 扫描 131 个条目确认：焊件相关的**只有这 3 个**，没有「下料表」或「构件分割」
@@ -63,7 +64,8 @@ SW_FM_MATE_PROFILE_CENTER = 101  # swFmMateProfileCenter
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 枚举定义（SolidWorks.Interop.swconst.dll）
 # 文件:   C:\swapi\enums\swMateType_e.md:34 —— `| swMatePROFILECENTER | 24 |`
-# 定位:   `create_profile_center_mate` 走**官方入口** `IAssemblyDoc::CreateMateData(Type)`
+# 定位:   `create_profile_center_mate` 走**官方入口** `IAssemblyDoc::CreateMateData(Ty
+#           pe)`
 #         时要传的 `Type` 实参。★ 它**不是** `swFm*` 族（`CreateDefinition` 的那套）——
 #         配合族走 `IAssemblyDoc`，不走 `IFeatureManager::CreateDefinition`。
 # 覆盖:   `create_profile_center_mate`
@@ -777,9 +779,9 @@ def configure_member_profile(
 #           → 5 个属性 / **0 个方法**；`## Remarks` 第 2 步：`EntitiesToMate` 或预选（Mark = 1）。
 #         C:\swapi\enums\swMateType_e.md:34 → `| swMatePROFILECENTER | 24 |`
 #         D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IProfileCenterMateFeatureData 段
-# 定位:   型材中心配合。★ **spec 240 改走官方入口**：
-#           `call_assembly_doc(model, "CreateMateData", SW_MATE_PROFILE_CENTER)`
-#             → 设 5 个属性 → `call_assembly_doc(model, "CreateMate", data)`。
+# 定位:   型材中心配合。★ **spec 240 改走官方入口**：`call_assembly_doc(model, "Create
+#           MateData", SW_MATE_PROFILE_CENTER)`  → 设 5 个属性 → `call_assembly_doc(mode
+#           l, "CreateMate", data)`。
 #         ★★ **为什么不再走 `CreateDefinition`**：`swFmMateProfileCenter(101)` **不在任何**
 #           官方 `CreateDefinition` 宿主页（`IFeatureManager` / `IMotionStudy`）的 `Type` 清单里
 #           —— 只有枚举页收录 ⇒ 官方**不支持**那条路径（spec 238 的 `unsupported-path` 靶子）。
@@ -793,7 +795,8 @@ def configure_member_profile(
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本机实测结论的固化）
 # 文件:   scripts/sw_weldment.py —— 本函数
-# 定位:   ★★★ 2026-10-10（规格 285）**首次真机验证** ⇒ ★★ **本机建不出**（★ 且**静默**）：
+# 定位:   ★★★ 2026-10-10（规格 285）**首次真机验证** ⇒ ★★ **本机建不出**（★ 且**静默**
+#           ）：
 #         ★ ① `IAssemblyDoc::CreateMateData(24)` ⇒ ★ **回对象** ✓（★ 与 280/281 的 `AccessSelections` **不同因**）；
 #         ★ ② `EntitiesToMate` 试了**三条实体路**（★ 随便两个面 / 两个圆柱面 / 另一对圆柱面）⇒ ★ **全回 None**；
 #         ★ ③ `CreateMate` 回 `None` 时★ **消息栈 n=0**（★ **空**）⇒ ★★★ **读不到任何原因**（★ 与 263 同族）。
@@ -804,7 +807,8 @@ def configure_member_profile(
 #         ★★★ **处置**：★ **代码路线是对的**（★ 官方三步逐条照做）⇒ ★ 结论记「**本机建不出**」而不是「写错了」；
 #         ★ 与 `CreateMateData` **通**这一点也要记 —— ★ 它排除了「整条 API 不可用」。
 #         ★ 读数：`output/_probe285_mate.txt` · `_probe285_mate_cyl.txt` · `_probe285_mate_presel.txt`。
-# 官方依据: `C:/swapi/types/{IAssemblyDoc/CreateMate,IAssemblyDoc/CreateMateData,IProfileCenterMateFeatureData/_overview}.md`
+# 官方依据: `C:/swapi/types/{IAssemblyDoc/CreateMate,IAssemblyDoc/CreateMateData,IProfil
+#           eCenterMateFeatureData/_overview}.md`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数
 # ────────────────────────────────────────────────────────────────────
@@ -891,11 +895,11 @@ def configure_split_member(
 # 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt
 #           → ICutListSortOptions 段 + IFeatureManager 段
-# 定位:   下料表排序选项 + 下料表插入。官方签名：
-#           ICutListSortOptions.CollectIdenticalBodies            (Boolean 属性)
-#                              .GetFacesOrFeaturesToExclude()      (Object, 0 参)
-#                              .SetFacesOrFeaturesToExclude(Object) (Int32 返回)
-#           IFeatureManager.InsertWeldmentCutList2(Object SortOptions) -> Feature
+# 定位:   下料表排序选项 + 下料表插入。官方签名：ICutListSortOptions.CollectIdenticalB
+#           odies            (Boolean 属性)                   .GetFacesOrFeaturesToExclu
+#           de()      (Object, 0 参)                   .SetFacesOrFeaturesToExclude(Obje
+#           ct) (Int32 返回)IFeatureManager.InsertWeldmentCutList2(Object SortOptions) -
+#           > Feature
 # ⚠ InsertWeldmentCutList2 接受一个 Object 参数（排序选项），
 #   官方未标注其类型，**按 ICutListSortOptions 传**；若本机版本签名不同，
 #   需按该版本官方文档调整。
@@ -969,9 +973,9 @@ def create_cut_list(model, sort_options=None, *, collect_identical_bodies: bool 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IFeatureManager 段
-# 定位:   焊接文件夹（子装配层级）插入。官方签名：
-#           Feature InsertSubWeldFolder2(Object Folder)   ← 1 参
-#           Feature InsertSubWeldFolder()                ← 0 参（无参旧版）
+# 定位:   焊接文件夹（子装配层级）插入。官方签名：Feature InsertSubWeldFolder2(Object 
+#           Folder)   ← 1 参Feature InsertSubWeldFolder()                ← 0 参（无参旧
+#           版）
 #         本函数走 2 参版以支持指定父文件夹；不传 folder 时传 None。
 # ⚠ 官方未标注该 Object 参数的确切类型（预期为 IStructureSystemFolder），
 #   故只透传不校验。
@@ -1002,7 +1006,8 @@ def create_sub_weld_folder(model, folder=None):
 #     ★ 它自己取线段、建构件、**并用特征树回读**（★ 判据是**特征树**，★ 不是计数）✓
 #   ★ **取线段用的是现成物**（★ "先找后搓"）：`sw_sketch.get_sketch_segments` +
 #     `FeatureByName` → `GetSpecificFeature2`（★ `sw_part._select_revolve_axis` 里那条现成路）。
-# 官方依据: `IFeatureManager.InsertStructuralWeldment5`（★ `create_structural_member` 已在用）·
+# 官方依据: `IFeatureManager.InsertStructuralWeldment5`（★ `create_structural_member` 已
+#           在用）·
 #   `ISketch.GetSketchSegments()`（★ 出厂类型库：**0 参** → Object）· `IFeature.GetSpecificFeature2`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义

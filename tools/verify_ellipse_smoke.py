@@ -19,8 +19,8 @@ r"""@brief 真机冒烟：`sw_part.sketch_ellipse` + **顺带量准 sketch 助�
 # 文件:   tools/verify_ellipse_smoke.py
 # 定位:   给 `scripts/sw_part.sketch_ellipse`（轮 132 补的 `ellipse`）取真机证据；
 #         并**量准 sketch 助手的长度单位**。
-# 官方依据: `C:\swapi\types\ISketchManager\CreateEllipse.md`；
-#           `C:\swapi\types\IBody2\GetBodyBox.md`（已知事实 71：返回**毫米**）
+# 官方依据: `C:\swapi\types\ISketchManager\CreateEllipse.md`；`C:\swapi\types\IBody2\Get
+#           BodyBox.md`（已知事实 71：返回**毫米**）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

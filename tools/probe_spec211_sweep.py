@@ -16,7 +16,8 @@
 # 判据:   ★★ **行为三分**（★ 上面那条）+ ★ **特征树变化**（★ 回读，★ 不看返回值 ✓）
 #   ★★ **本探针不建复杂几何** —— ★ 那需要"轮廓草图 + 路径草图 + 按 mark 选"一整条链，
 #     ★ 而**先看行为**才知道那条链**值不值得建** ✓（★ 事实 53 的精神：★ 别一头扎进去 ✓）
-# 官方依据: `C:\swapi\types\IFeatureManager\InsertSweepSurface2.md`（签名 + Remarks 的 mark 表）
+# 官方依据: `C:\swapi\types\IFeatureManager\InsertSweepSurface2.md`（签名 + Remarks 的 m
+#           ark 表）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

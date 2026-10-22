@@ -10,7 +10,8 @@
 #   ⇒ ★ 本版照**事实 53 的处方**：★ **把猜测变成一张穷举表** ——
 #      ★ 从 `entities_on_body` 取每条边，★ 用 `IEdge.GetStartVertex/GetEndVertex` →
 #      `IVertex.GetPoint` 算**中点**，★ 逐条试 `SelectByID2(…, mark=1)`，★ 直到选上。
-# 官方依据: `IFeatureManager.FeatureLinearPattern3` 的 Remarks（**1/2 标方向 · 4 标要阵列的特征**）·
+# 官方依据: `IFeatureManager.FeatureLinearPattern3` 的 Remarks（**1/2 标方向 · 4 标要阵
+#           列的特征**）·
 #   `IModelDocExtension.SelectByID2`（**9 参**，第 7 个是 `Mark`）·
 #   `IEdge.GetStartVertex/GetEndVertex` + `IVertex.GetPoint`
 # 许可:   本仓库 MIT。无第三方代码引入。

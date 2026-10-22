@@ -4,9 +4,8 @@
 # 仓库:   本项目自身
 # 文件:   tools/run_s328_cloud.py
 # 定位:   规格 `specs/328-cloud-whitelist-and-degradation` 的**验收入口**
-# 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q7（L114-161）逐字
-#           ② `metadata/cloud-policy.json`
-#           ③ ★★ 业主 2026-10-12 三条拍板
+# 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q7（L114-161）逐字② `metada
+#           ta/cloud-policy.json`③ ★★ 业主 2026-10-12 三条拍板
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # -----------------------------------------------------------------------------

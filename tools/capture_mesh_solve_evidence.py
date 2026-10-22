@@ -25,7 +25,8 @@ r"""@brief 真机证据：**网格 / 求解 / 读数 4 个工具**（24h 段 1.2
 # 仓库:   本项目自身（真机证据脚本）
 # 文件:   tools/capture_mesh_solve_evidence.py
 # 定位:   Spec Kit `142` 的**验收②**：产出 `output/mesh-solve-evidence.json`。
-# 官方依据: `ICWStudy.CreateMesh` / `RunAnalysis` · `ICWMesh.ElementCount` · `ICWResults.GetPlotCount`
+# 官方依据: `ICWStudy.CreateMesh` / `RunAnalysis` · `ICWMesh.ElementCount` · `ICWResults
+#           .GetPlotCount`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。
 # 覆盖:   全文件

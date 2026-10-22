@@ -11,7 +11,8 @@
 #     `undecided`    = 有一侧读不到 ⇒ ★ **未判定**（★ **不算通过也不算失败**）✓
 #   ★ 并写明**这一次排除了哪几类**（★ `KNOWN_UNAVAILABLE`，如 `display` 是后端限定）——
 #     ★★ 不写清楚，读者会以为九类都验过了 ✓
-# 官方依据: 读数出处见 `scripts/sw_fingerprint.py` 的 `OFFICIAL`；声明出自 `docs/effect-declarations.json`
+# 官方依据: 读数出处见 `scripts/sw_fingerprint.py` 的 `OFFICIAL`；声明出自 `docs/effect-
+#           declarations.json`
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

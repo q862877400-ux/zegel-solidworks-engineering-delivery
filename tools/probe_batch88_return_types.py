@@ -7,7 +7,8 @@
 # 定位:   规格 `specs/205-tool-ramp/` 的 SC-005 精神；★ **本探针补的是一处明写的缺口**：
 #         批 88 的提交信息里写着「这 4 个的**返回可能是 COM 对象**、★ 我的门禁**只看入参**、
 #         静态查不到 ⇒ **未做真机验证**」⇒ 本探针就是去补那一刀 ✓
-# 官方依据: 各实现的来源块（本探针只按 **ToolSpec 的契约**调，不手调内部实现 —— AGENTS.md 的纪律）
+# 官方依据: 各实现的来源块（本探针只按 **ToolSpec 的契约**调，不手调内部实现 —— AGENTS.m
+#           d 的纪律）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ★ 跑法：`python tools/sw_guard.py --timeout 420 -- python tools/probe_batch88_return_types.py`

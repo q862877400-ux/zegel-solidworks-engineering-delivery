@@ -14,7 +14,8 @@
 #     ★ 可调 ⇒ 方法 · ★ 其它 ⇒ 属性
 #     ```
 #   ⚠ **只 `getattr`、不调用**（★ "取或调"的坑见事实 227）。
-# 官方依据: 出厂程序集 `SolidWorks.Interop.sldworks.dll` 的 `IModelDocExtension`（★ 396 个成员）·
+# 官方依据: 出厂程序集 `SolidWorks.Interop.sldworks.dll` 的 `IModelDocExtension`（★ 396 
+#           个成员）·
 #   pywin32 迟到绑定只认 `DispInterface`（★ `IDispatch::GetIDsOfNames`）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

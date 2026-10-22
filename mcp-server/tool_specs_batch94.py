@@ -2,13 +2,15 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
 # 文件:   `scripts/sw_sketch.py`（本轮追加段）
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-4** · 外部项目 idx **175 `hide_all_sketches`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-4** · 外部项目 idx **175 `hide_al
+#           l_sketches`**。
 #   ★★★ 裁决书的硬约束（§九）逐字：「官方 `BlankSketch` 逐字是「Hides the **selected** sketches」
 #     ⇒ ★ **官方没有 "all" 这个语义**（是别家自己许的）⇒ 工具名**不许叫 `hide_all_sketches`**」·
 #     「★ 别家**零选区 + 返回常量** = **规则 6 的反例**」✓
 #   ⇒ ★ 本批工具名 = **`solidworks_sketch_set_blanked`**（动词用官方的 Blank、**不承诺 all**）；
 #     ★★ 收**声明式选择器**（不新开「全隐藏」那条官方没有的路）✓
-# 官方依据: `C:\\swapi\\types\\IModelDoc2\\{BlankSketch,UnblankSketch}.md`（都零参回 `void`；
+# 官方依据: `C:\\swapi\\types\\IModelDoc2\\{BlankSketch,UnblankSketch}.md`（都零参回 `vo
+#           id`；
 #   ★ `BlankSketch` 那页**既无 Returns 也无 Remarks**）·
 #   ★★ `C:\\swapi\\types\\IFeature\\Visible.md`（`System.int Visible {get;}` → `swVisibilityState_e`）
 #   —— ★ **这是「隐藏了没有」的唯一官方回读入口**（官方示例里只有肉眼）·

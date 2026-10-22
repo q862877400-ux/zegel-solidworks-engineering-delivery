@@ -3,14 +3,16 @@
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
 # 文件:   `scripts/sw_drawing_create_missing.py::auto_insert_balloons`（★ 能力层**早已实现**，
 #         本批做两件事：★ **把判据收紧成纯回读** + ★ **把它挂成工具**）✓
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-2** · 外部项目 idx **34 `balloon`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-2** · 外部项目 idx **34 `balloon`
+#           **。
 #   ★★★ 裁决书硬约束（§一）逐字：「★★ 两家结论**互相矛盾**（Slacker-LLC 说静默无效、
 #     Eduardof0nt 直接调并回 `bool(result)`）⇒ **不许照抄任何一家**，必须真机定案」✓
 #   ★★ 而**原函数自述「不建 ToolSpec」的理由是过期的**：它写「`AutoBalloon5` 的形参是
 #     `AutoBalloonOptions` **COM 对象** ⇒ `Param` 表达不了」—— ★★ 那句说的是**底层成员**，
 #     ★ 而**包装函数的形参全是标量**（`layout`/`style`/`size`/…）⇒ ★ **它能挂** ✓
 #     （★ 这也是裁决书 §九 的原话：「建议挂在 `auto_insert_balloons` 之上」）
-# 官方依据: `C:\\swapi\\types\\IDrawingDoc\\AutoBalloon5.md`（Returns = **Array of INotes**；
+# 官方依据: `C:\\swapi\\types\\IDrawingDoc\\AutoBalloon5.md`（Returns = **Array of INote
+#           s**；
 #   `## Remarks` 给**四步前置**）· `C:\\swapi\\types\\IView\\GetNoteCount.md`（**判据来源**）·
 #   `C:\\swapi\\types\\IModelDocExtension\\InsertBOMBalloon2.md`（单发气泡，四步前置）·
 #   ★★ `examples\\Add_Autoballoon_to_Face_Example_VB.md`（**调用序**）✓

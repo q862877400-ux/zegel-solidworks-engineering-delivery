@@ -3,13 +3,12 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/check_fact_provenance.py
-# 定位:   `docs/text-to-cad-lessons-verdict.md` §2.3 的落地 ——
-#           ★ 经验①「事实/尺寸来源分级」的**改造后采纳**形态。
-#           ★ 判据：`docs/*.md` 里形如「N 条 / N 个 / N% / N 秒 / N MB」的
-#             量化断言，若来自实测，**同一行或同一段落**内必须能找到可追溯的
-#             出处（命令 / 脚本路径 / 日志路径 / `git show` 引用 / 上游路径:行号）。
-# 官方依据: `docs/text-to-cad-lessons-verdict.md` §1.3（增量豁免范式）
-#           + `docs/known-facts.md` 事实 62（负例测试是门禁有效的唯一证明）
+# 定位:   `docs/text-to-cad-lessons-verdict.md` §2.3 的落地 ——★ 经验①「事实/尺寸来源分
+#           级」的**改造后采纳**形态。★ 判据：`docs/*.md` 里形如「N 条 / N 个 / N% / N 
+#           秒 / N MB」的  量化断言，若来自实测，**同一行或同一段落**内必须能找到可追溯
+#           的  出处（命令 / 脚本路径 / 日志路径 / `git show` 引用 / 上游路径:行号）。
+# 官方依据: `docs/text-to-cad-lessons-verdict.md` §1.3（增量豁免范式）+ `docs/known-fact
+#           s.md` 事实 62（负例测试是门禁有效的唯一证明）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   `docs/*.md` 的**增量行**（相对 `origin/main` 的 diff）
 # ⚠ 存量不查：★ 依据 §1.3 的既有范式（同 `scripts/check_provenance.py`）——

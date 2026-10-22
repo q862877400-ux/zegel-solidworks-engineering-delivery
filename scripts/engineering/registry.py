@@ -3,13 +3,13 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/registry.py
-# 定位:   规格 `specs/316-stage1-parameter-plate` 的 C1（统一目录）/ C3（名字解析）
-#           / C4（参数绑定）。★ 这是阶段 1 的**核心缺口**：
-#           实测（2026-10-11）`compiler.py` 的 `DAGNode.tool` 存的是**裸步名**
-#           （`tool=step`），而全仓**没有**「裸步名 → `solidworks_*`」的解析器。
-# 官方依据: 不适用（本仓自研编排层，不包装单一官方成员）。
-#           注册真源：`register_capabilities.all_specs()`（476 个）
-#                    + `mcp-server/server.py` 的 `@mcp.tool`（45 个）
+# 定位:   规格 `specs/316-stage1-parameter-plate` 的 C1（统一目录）/ C3（名字解析）/ C
+#           4（参数绑定）。★ 这是阶段 1 的**核心缺口**：实测（2026-10-11）`compiler.py` 
+#           的 `DAGNode.tool` 存的是**裸步名**（`tool=step`），而全仓**没有**「裸步名 → 
+#           `solidworks_*`」的解析器。
+# 官方依据: 不适用（本仓自研编排层，不包装单一官方成员）。注册真源：`register_capabiliti
+#           es.all_specs()`（476 个）         + `mcp-server/server.py` 的 `@mcp.tool`（4
+#           5 个）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收见 `tools/run_stage1_plate.py`）。

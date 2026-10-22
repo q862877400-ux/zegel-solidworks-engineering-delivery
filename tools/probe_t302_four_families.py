@@ -6,7 +6,8 @@
 # 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\`）
 # 文件:   `scripts/sw_weldment.py`（`create_structural_member`）· `scripts/sw_sheet_metal.py`
 #         （`create_base_flange`）· `scripts/sw_selection_spec.py`（声明式选择）
-# 定位:   ★ SPEC 的 **T302** 逐字：「**有 `AccessSelections` 的**先判指针族**再决定做不做**（事实 47/474）」⇒
+# 定位:   ★ SPEC 的 **T302** 逐字：「**有 `AccessSelections` 的**先判指针族**再决定做
+#           不做**（事实 47/474）」⇒
 #   ★★ 我在 `output/t400-t302-official-entries.md` 里把 12 个钣金/焊件族分了档：
 #     · **8 个有 `IAccessSelections`**（★ 指针变体）⇒ 按事实 47 **预判**为指针族
 #     · ★★ **4 个没有** ⇒ ★ **本探针就是来试这 4 个的** ✓

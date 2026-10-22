@@ -42,8 +42,8 @@ r"""@brief 门禁：代码里写的**官方枚举值**，必须与**出厂反射
 # 仓库:   本项目自身（元门禁）
 # 文件:   scripts/check_enum_values_vs_reflection.py
 # 定位:   补「值级」覆盖缺口 —— 名字有人查，**值此前没人查**。
-# 官方依据: `D:\AI\SW\_raw\enum_values_sldworks.txt`
-#           （由 `SolidWorks.Interop.swconst.dll` 的**纯元数据读取**生成，非实测）
+# 官方依据: `D:\AI\SW\_raw\enum_values_sldworks.txt`（由 `SolidWorks.Interop.swconst.dll
+#           ` 的**纯元数据读取**生成，非实测）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────

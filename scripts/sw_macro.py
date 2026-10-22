@@ -7,7 +7,8 @@
 #         `C:\swapi\enums\swRunMacroOption_e.md`（2 成员）·
 #         `C:\swapi\enums\swRunMacroError_e.md`（28 成员）·
 #         `_raw\enum_values_sldworks.txt`（出厂反射，**与官方页逐条一致**）
-# 定位:   宏执行域此前**完全空白** —— 实测 `capabilities.yaml` 里没有一条与 `RunMacro` 有关；
+# 定位:   宏执行域此前**完全空白** —— 实测 `capabilities.yaml` 里没有一条与 `RunMacro`
+#            有关；
 #         `scripts/sw_macro_guard.py` 只做**生成 / 校验 / 落盘** VBA 文本，**不执行**。
 #         ★ 规格 202 的 FR-008 逐字要求「**宏/VBA 执行** MUST 可用」⇒ 本模块补的就是它。
 # ⚠ 官方 `## Remarks` 对本机版本**是空的**（该页 Remarks 段无内容）⇒ 本模块不替它补语义，

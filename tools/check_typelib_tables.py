@@ -15,7 +15,8 @@
 #     $t.GetMethods() | ? { $_.Name -like 'Add*' } | % { $_.Name; $_.GetParameters() }
 #     ```
 #   ⇒ ★ 本工具把这条**做成可重复的一步**：★ 读仓里那三张表，★ 读类型库，★ **逐条比**。
-# 官方依据: `SolidWorks.Interop.cosworks.dll`（本机 `api\redist\` 下，版本 **34.4.1.1011**）
+# 官方依据: `SolidWorks.Interop.cosworks.dll`（本机 `api\redist\` 下，版本 **34.4.1.1011
+#           **）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

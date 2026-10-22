@@ -3,20 +3,17 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/manufacturing_rules.py
-# 定位:   规格 `specs/331-manufacturing-rules-wiring` ——
-#           ★★ 把 `subskills/solidworks-vibecad/knowledge/manufacturing_rules.yaml`
-#             （★ **早就在仓库里**）接成**可调用的规则服务**。
-#           ★★★ 触发它的是 2026-10-14 业主：「继续搜索你本项目内部已经有的东西，
-#             说不定**还有很多我早就提供给你了**，你只是**文件太多给忘了**。」
-#           ★ 实测：这份规则**只被一个测试引用**（`test_threaded_hole_subskill.py`），
-#             ★★ **工具层完全没用** —— 而它里面有：
-#               · **螺纹底孔表**（M3~M12 的 pitch / tap_drill / 口部倒角）
-#               · **间隙孔表**（M3~M8）
-#               · **特征顺序**（13 步 · ★ 大圆角在孔槽之前）
-#               · **槽/口袋的最小尺寸**（端部半径 / 壁厚 / 底厚）
-# 官方依据: ① 该 YAML 本身（★ 来源块在 `subskills/solidworks-vibecad/`）
-#           ② `subskills/solidworks-fillet-chamfer-cnc/references/
-#              cnc-fillet-chamfer-lessons.md`（★ 特征顺序与降级策略的另一份来源）
+# 定位:   规格 `specs/331-manufacturing-rules-wiring` ——★★ 把 `subskills/solidworks-vi
+#           becad/knowledge/manufacturing_rules.yaml`  （★ **早就在仓库里**）接成**可调
+#           用的规则服务**。★★★ 触发它的是 2026-10-14 业主：「继续搜索你本项目内部已经有
+#           的东西，  说不定**还有很多我早就提供给你了**，你只是**文件太多给忘了**。」★ 
+#           实测：这份规则**只被一个测试引用**（`test_threaded_hole_subskill.py`），  ★★
+#            **工具层完全没用** —— 而它里面有：    · **螺纹底孔表**（M3~M12 的 pitch / t
+#           ap_drill / 口部倒角）    · **间隙孔表**（M3~M8）    · **特征顺序**（13 步 · 
+#           ★ 大圆角在孔槽之前）    · **槽/口袋的最小尺寸**（端部半径 / 壁厚 / 底厚）
+# 官方依据: ① 该 YAML 本身（★ 来源块在 `subskills/solidworks-vibecad/`）② `subskills/sol
+#           idworks-fillet-chamfer-cnc/references/   cnc-fillet-chamfer-lessons.md`（★ 
+#           特征顺序与降级策略的另一份来源）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（★ 纯查表，不碰 COM）。

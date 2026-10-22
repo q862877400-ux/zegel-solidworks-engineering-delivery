@@ -26,7 +26,8 @@ scratch 存到 `output/` 的**每轮子目录**；收尾**关件不保存** + **
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_add_relation_forms.py
 # 定位:   给 Spec Kit `081` 定位 `AddRelation` 的**可行调用形态**。
-# 官方依据: 反射 `SketchRelation AddRelation(Object, Int32)` / `Void AddRelation(String)` ·
+# 官方依据: 反射 `SketchRelation AddRelation(Object, Int32)` / `Void AddRelation(String)
+#           ` ·
 #          `C:\swapi\types\ISketchRelationManager\AddRelation.md`（Remarks：**必须有活动草图**）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

@@ -34,7 +34,8 @@ previews  = drawing_save_review_previews(drawing_model, out/"previews", views=(.
 # 仓库:   本项目自身（不是第三方移植）
 # 文件:   scripts/sw_drawing_query.py
 # 定位:   砌墙 W2（Spec Kit `132`）的能力层：当前活动工程图的轻量只读读数。
-# 官方依据: `IDrawingDoc.GetCurrentSheet` / `GetSheetCount` / `GetSheetNames` / `GetFirstView` ·
+# 官方依据: `IDrawingDoc.GetCurrentSheet` / `GetSheetCount` / `GetSheetNames` / `GetFirs
+#           tView` ·
 #          `ISheet.GetName` / `GetProperties2` / `GetSheetFormatName` · `IView.GetName2` / `Type` / `GetNextView`；
 #          官方示例 `C:\\swapi\\examples\\Get_Drawing_View_Names_and_Types_Example_CSharp.md`
 # 许可:   本仓库 MIT。无第三方代码引入。

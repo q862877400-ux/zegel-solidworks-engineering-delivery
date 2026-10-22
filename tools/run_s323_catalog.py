@@ -5,8 +5,8 @@
 # 文件:   tools/run_s323_catalog.py
 # 定位:   规格 `specs/323-task-domains-and-faceted-retrieval` 的**验收入口**
 # 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q4（L36-57）· Q6（L96-112）
-#           ② `metadata/domains.yaml` · `facets.yaml` · `thresholds.json`
-#           ③ `scripts/engineering/catalog.py`
+#           ② `metadata/domains.yaml` · `facets.yaml` · `thresholds.json`③ `scripts/engi
+#           neering/catalog.py`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # -----------------------------------------------------------------------------

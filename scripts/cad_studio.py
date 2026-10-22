@@ -1,4 +1,13 @@
 """CAD Studio 统一 CLI：doctor/run/status/retry/cancel/export-diagnostics。"""
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   scripts/cad_studio.py
+# 定位:   CAD Studio 统一 CLI：doctor/run/status/retry/cancel/export-diagnostics。
+# 官方依据: 不适用（本仓工具，不调 COM）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
 from __future__ import annotations
 
 import argparse

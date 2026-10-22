@@ -260,7 +260,8 @@ _TOPOLOGY_GETTERS: dict[str, str] = {
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\topo-reflect\iface_cosworks.txt
-# 定位:   ICWStudyManager.CreateNewStudy3(String Name, Int32 StudyType, Int32 MeshType, Int32& Err)
+# 定位:   ICWStudyManager.CreateNewStudy3(String Name, Int32 StudyType, Int32 MeshType
+#           , Int32& Err)
 #         与 ICWStudy.get_TopologyStudyManager() / get_TopologyStudyOptions()。
 #         本函数复用既有模块的 get_study_manager，不重复实现取入口的逻辑。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
@@ -527,12 +528,11 @@ def set_topology_goal(
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\topo-reflect\iface_cosworks.txt
-# 定位:   ICWTopologyStudyManager 的其余 Create*：
-#           CreateStressConstraint(Int32&)      → CWTopologyStressConstraint
-#           CreatePreservedRegionControl(Int32&) → CWTopologyPreservedRegion
-#           CreateSymmetryControl(Int32&)        → CWTopologySymmetryControl
-#           CreateDemoldControl(Int32&)          → CWTopologyDemoldControl
-#           CreateThicknessControl(Int32&)       → CWTopologyThicknessControl
+# 定位:   ICWTopologyStudyManager 的其余 Create*：CreateStressConstraint(Int32&)      
+#           → CWTopologyStressConstraintCreatePreservedRegionControl(Int32&) → CWTopolog
+#           yPreservedRegionCreateSymmetryControl(Int32&)        → CWTopologySymmetryCon
+#           trolCreateDemoldControl(Int32&)          → CWTopologyDemoldControlCreateThic
+#           knessControl(Int32&)       → CWTopologyThicknessControl
 # 官方做法依据: C:\topo_en 的 t_defining_preserved_region.htm /
 #         t_defining_quarter_symmetry_control.htm / t_defining_de-mold_manufacturing.htm。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）

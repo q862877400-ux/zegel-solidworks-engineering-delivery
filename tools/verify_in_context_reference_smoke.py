@@ -27,7 +27,8 @@ scratch 存到 `output/` 的**每轮子目录**（上一轮的文件被 SW 占�
 # 仓库:   本项目自身（真机验收）
 # 文件:   tools/verify_in_context_reference_smoke.py
 # 定位:   给 Spec Kit `080` 取「在上下文编辑 + 外部参考」的证据。
-# 官方依据: `IAssemblyDoc.EditPart2` / `EditAssembly` · `IComponent2.ListExternalFileReferencesCount` ·
+# 官方依据: `IAssemblyDoc.EditPart2` / `EditAssembly` · `IComponent2.ListExternalFileRef
+#           erencesCount` ·
 #          `ISketchRelationManager.AddRelation` · `swConstraintType_e.swConstraintType_COLINEAR = 27` ·
 #          `swSketchRelationFilterType_e.swExternal = 3`
 # 许可:   本仓库 MIT。无第三方代码引入。

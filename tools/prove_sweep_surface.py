@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/prove_sweep_surface.py
-# 定位:   ★ 2026-10-03（轮 486）★ 给 `scripts/sw_sweep.create_sweep_surface_report` 留真机证据。
+# 定位:   ★ 2026-10-03（轮 486）★ 给 `scripts/sw_sweep.create_sweep_surface_report` 留
+#           真机证据。
 #
 #   ★★ **为什么这条路**（★ 一轮前已核过两源）：
 #     · 台账给的是 `InsertProtrusionSwept4(Surface)` —— ★ 而
@@ -17,7 +18,8 @@
 #     **轮廓 mark = 1** · **路径 mark = 4**
 #
 #   ⚠ 全程走 `tools/sw_guard.py`（★ 超时 + 弹窗处置 + `sw_alive` 复查）。
-# 官方依据: `C:\swapi\types\IFeatureManager\CreateDefinition.md`（★ `swFmRefSurface` (surface sweep)）·
+# 官方依据: `C:\swapi\types\IFeatureManager\CreateDefinition.md`（★ `swFmRefSurface` (su
+#           rface sweep)）·
 #   `D:\AI\SW\_raw\enum_values_sldworks.txt`（`swFmRefSurface = 62`）·
 #   `C:\swapi\types\IModelDoc2\InsertSweepRefSurface{,2}.md`（★ 两条 Obsolete 行）
 # 许可:   本仓库 MIT。无第三方代码引入。

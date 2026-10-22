@@ -3,16 +3,15 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/gate_inventory.py
-# 定位:   规格 `specs/324-gate-inventory-and-meta-coverage` 的 P1（四类枚举）/
-#           P2（类别+理由+环境+责任人）/ P4（真机单独编排 · NOT_RUN）/
-#           P6（retired 带 replaced_by）。
-#           ★★ 实测（2026-10-12）起点：`docs/gate-classification.json` 有 **50 条**，
-#           而 `kind` 只有 `{'hard': 47, 'diagnostic': 3}`、字段只有
-#           `['gate','kind','reason','runner']` ⇒ ★ **缺三类**、★ **缺环境与责任人**。
-# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q16（L329-347）逐字：
-#           「类别只能是：`release_static / release_hardware / diagnostic /
-#             retired`。每个文件必须有**类别、理由、环境与责任人**。」
-#           + 「真机门禁**单独编排并明确 `NOT_RUN`**，不能跳过仍报全部通过」
+# 定位:   规格 `specs/324-gate-inventory-and-meta-coverage` 的 P1（四类枚举）/P2（类别
+#           +理由+环境+责任人）/ P4（真机单独编排 · NOT_RUN）/P6（retired 带 replaced_by
+#           ）。★★ 实测（2026-10-12）起点：`docs/gate-classification.json` 有 **50 条**
+#           ，而 `kind` 只有 `{'hard': 47, 'diagnostic': 3}`、字段只有`['gate','kind','r
+#           eason','runner']` ⇒ ★ **缺三类**、★ **缺环境与责任人**。
+# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q16（L329-347）逐字：「类别只
+#           能是：`release_static / release_hardware / diagnostic /  retired`。每个文件
+#           必须有**类别、理由、环境与责任人**。」+ 「真机门禁**单独编排并明确 `NOT_RUN`
+#           **，不能跳过仍报全部通过」
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收入口 `tools/run_s324_gates.py`）。

@@ -2,9 +2,9 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/list_gap_capabilities.py
-# 定位:   ★ 回答「还有没有没实现的功能」时，**必须以 `capabilities.yaml` 的 `level` 为准**：
-#           `verified` = 有我们自己的运行证据 · `stitched` = 代码写好但**没真机跑过** ·
-#           `not_implemented` = 没做 ✓（五级枚举见 `docs/union-conventions.md`）
+# 定位:   ★ 回答「还有没有没实现的功能」时，**必须以 `capabilities.yaml` 的 `level` 为
+#           准**：`verified` = 有我们自己的运行证据 · `stitched` = 代码写好但**没真机跑
+#           过** ·`not_implemented` = 没做 ✓（五级枚举见 `docs/union-conventions.md`）
 #         ★★ 教训：本文件第一版我用 `Select-String` 按 `level:\s*X` 找 —— **一条也没找到**，
 #           因为该文件是 **JSON**（`"level": "verified"`，**带引号**）⇒ 按 YAML 形态写判据 = 空转 ✓✗
 # 官方依据: 不适用（本仓声明层）

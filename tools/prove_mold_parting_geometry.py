@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_mold_parting_geometry.py
-# 定位:   ★ 2026-10-02（轮 384）objective③：`mold_parting_geometry` 是 12 条 stitched 里**唯一可挖的**
+# 定位:   ★ 2026-10-02（轮 384）objective③：`mold_parting_geometry` 是 12 条 stitched 
+#           里**唯一可挖的**
 #   （★ 其余 10 条在 `docs/dead-ends.md` 上、`weldment_cut_list` 是环境缺件）。
 #   ★ 而既有探针 `verify_mold_evidence_smoke.py` **只覆盖只读那一半**，
 #   ★★ 且它自己明写「**未验**：`InsertMold*` —— 在未准备的分型件上会弹框」。

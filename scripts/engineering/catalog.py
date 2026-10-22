@@ -3,22 +3,20 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/catalog.py
-# 定位:   规格 `specs/323-task-domains-and-faceted-retrieval` 的 N1（任务域）/
-#           N2（受控多标签）/ N3（模块仅定位）/ N4（分面检索）/ N5（n-gram）/
-#           N6（4096 预算）/ N7（recall 指标）/ N8（阈值冻结）/ N9（暴露面）/
-#           N10（按需加载契约）。
-#           ★★ 实测（2026-10-12）起点：`capabilities.yaml`（576KB）与
-#           `docs/effect-declarations.json`（111KB）已存在；`registry.py` 已有
-#           `ToolDescriptor`（★ Q12 要的「注册时合成」已有一半）。
-#           ★ 而**没有任何元数据目录、`ToolSpec` 没有域字段、没有中文 n-gram、
-#             没有分面检索** ⇒ 补这 4 个缺口。
-# 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q4（L36-57）逐字：
-#             八个一级任务域 + 七个受控多标签 + recall/chain_hit 门槛 + 阈值冻结
-#           ② 同文件 Q6（L96-112）逐字：4096 token · 分面过滤 · 本地词法 +
-#             中文 n-gram + 受控同义词 · 少量方法卡 · 按需加载 · MCP 暴露面
-#           ③ 同文件 Q12（L214-231）逐字：外挂单一源 · 注册时合成 ·
-#             「效应按文档几何、文档属性、选择状态、界面状态、文件系统、网络分别描述」
-#           ④ `metadata/domains.yaml` · `metadata/facets.yaml` · `metadata/thresholds.json`
+# 定位:   规格 `specs/323-task-domains-and-faceted-retrieval` 的 N1（任务域）/N2（受控
+#           多标签）/ N3（模块仅定位）/ N4（分面检索）/ N5（n-gram）/N6（4096 预算）/ N7
+#           （recall 指标）/ N8（阈值冻结）/ N9（暴露面）/N10（按需加载契约）。★★ 实测（
+#           2026-10-12）起点：`capabilities.yaml`（576KB）与`docs/effect-declarations.js
+#           on`（111KB）已存在；`registry.py` 已有`ToolDescriptor`（★ Q12 要的「注册时合
+#           成」已有一半）。★ 而**没有任何元数据目录、`ToolSpec` 没有域字段、没有中文 n-
+#           gram、  没有分面检索** ⇒ 补这 4 个缺口。
+# 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q4（L36-57）逐字：  八个一
+#           级任务域 + 七个受控多标签 + recall/chain_hit 门槛 + 阈值冻结② 同文件 Q6（L96
+#           -112）逐字：4096 token · 分面过滤 · 本地词法 +  中文 n-gram + 受控同义词 · 
+#           少量方法卡 · 按需加载 · MCP 暴露面③ 同文件 Q12（L214-231）逐字：外挂单一源 ·
+#            注册时合成 ·  「效应按文档几何、文档属性、选择状态、界面状态、文件系统、网
+#           络分别描述」④ `metadata/domains.yaml` · `metadata/facets.yaml` · `metadata/t
+#           hresholds.json`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收入口 `tools/run_s323_catalog.py`）。

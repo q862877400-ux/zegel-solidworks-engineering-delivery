@@ -3,7 +3,8 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/audit_length_units.py
-# 定位:   ★ 目标 goal-d2098c24 第 1 轮（★ Spec Kit · specs/221-tool-unit-and-constraint-fix）
+# 定位:   ★ 目标 goal-d2098c24 第 1 轮（★ Spec Kit · specs/221-tool-unit-and-constrain
+#           t-fix）
 #         ★★ 用户令：★「**要把设计这两个问题的所有工具都修好**」✓ ⇒ ★ **先界定范围** ✓
 # 官方依据: ★ 本仓单位纪律（★ 事实 2）：★ **入参毫米 · COM 侧米** ✓ ⇒ ★ 每个吃长度的函数
 #   **必须**在进 COM 前除以 1000 ✓；★ 现场反例：★ `sketch_circle` **零换算** ✗ ⇒ 传 10.5 建出 10.5 米 ✓

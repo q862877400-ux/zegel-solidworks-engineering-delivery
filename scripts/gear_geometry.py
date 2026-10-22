@@ -37,7 +37,8 @@
 # 文件:   scripts/gear_geometry.py
 # 定位:   ★ 业主 2026-10-10 指令：★ 「方法要按机械工程的**规范做法**」——
 #         ★ 把「12 段直线逼近渐开线」改成**真渐开线 + 真摆线齿根**。
-# 官方依据: `C:\swapi\types\ISketchManager\CreateEquationSpline2.md`（★ 11 参 · ★ 方程式曲线）
+# 官方依据: `C:\swapi\types\ISketchManager\CreateEquationSpline2.md`（★ 11 参 · ★ 方程式
+#           曲线）
 #         `C:\swapi\examples\Create_Equation-driven_Curve_Example_VB.md`（★ 调用序）
 #         ★ 渐开线定义：★ GB/T 1356 · ★ ISO 53 · ★ ANSI B6.1（★ 全齿高制）
 #         ★ 摆线齿根：★ 齿条刀具顶圆角包络（★ GB/T 1356 附录 / ★ ISO 53）

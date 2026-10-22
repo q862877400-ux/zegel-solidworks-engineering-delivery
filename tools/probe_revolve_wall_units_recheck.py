@@ -4,7 +4,8 @@
 #         `C:\\swapi\\types\\IFeatureManager\\FeatureRevolve2.md` +
 #         `C:\\swapi\\enums\\swThinWallType_e.md`
 # 文件:   tools/probe_revolve_wall_units_recheck.py（★ 只报不动 —— 证据脚本 · 新）
-# 定位:   ★ 轮 130 把旋转族 `GetWallThickness` 标成 `unknown` ⇒ ★★ **而真因是**那时建的是
+# 定位:   ★ 轮 130 把旋转族 `GetWallThickness` 标成 `unknown` ⇒ ★★ **而真因是**那时建
+#           的是
 #     **非薄壁****（★ 旧实参第 3 位 `IsThin = False`）⇒ ★★★ **⇒ 轮 138 给
 #     `revolve_boss` 加了**可选薄壁**（★ 默认 `None` ⇒ 行为逐字不变）✓
 #   **官方逐字（★ 三处）**：

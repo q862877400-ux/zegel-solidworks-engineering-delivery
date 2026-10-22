@@ -6,7 +6,8 @@
 # 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\`）
 # 文件:   `scripts/sw_sheet_metal.py`（`create_base_flange` + `BaseFlangeSpec` ·
 #         `create_swept_flange` + `SweptFlangeSpec`）· `scripts/sw_part.py`（`sketch` / `extrude_boss`）
-# 定位:   ★ SPEC 的 **SC-004** 逐字：「`docs/user-feature-coverage.md` §五 那批 `stitched`
+# 定位:   ★ SPEC 的 **SC-004** 逐字：「`docs/user-feature-coverage.md` §五 那批 `stitc
+#           hed`
 #   **至少转 `verified` 3 条**」⇒ ★ **本探针供第 3 条用** ✓
 #   ★★ **为什么是这一项**：`capabilities.yaml` 的 `sheet_metal_creation.limitations[5]` **逐字**：
 #     「⚠ **未真机验证**：`create_swept_flange`（★ 需要 sweep 路径 + profile 两个选择，尚未试）」✓

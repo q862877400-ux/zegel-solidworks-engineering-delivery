@@ -3,7 +3,8 @@
 # 仓库:   本项目自身。
 # 文件:   `scripts/sw_document_data.py::set_custom_properties` / `read_custom_property` ·
 #         `scripts/sw_connect.py`（`new_document`）
-# 定位:   ★ **为什么另写一个**：★ 轮 55 那个 `tools/probe_a4_runtime_evidence.py` **读错了键** ——
+# 定位:   ★ **为什么另写一个**：★ 轮 55 那个 `tools/probe_a4_runtime_evidence.py` **读
+#           错了键** ——
 #   ★★ 它取 `readback.get("value")`、★ 而 `read_custom_property` 回的是 **`raw`** ✓
 #   ★★★ **而纪律是「`tools/` 只报不动」**（★ 改了会破坏"证据不可变"）⇒
 #     ★★ **旧探针原样保留**（★ 它那次 `readback_value: None` 是**真的历史读数**）、

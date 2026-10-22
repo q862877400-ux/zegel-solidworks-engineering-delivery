@@ -22,8 +22,10 @@ r"""@brief 探针：`ISketchManager.CreateChamfer` 的**可行参数组合** —
 # ── 来源 ──
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_chamfer_forms.py
-# 定位:   给 Spec Kit `084` 判定 `create_sketch_chamfer` 是**架构性不可用**还是**参数没给对**。
-# 官方依据: `SketchSegment CreateChamfer(Int32 Type, Double Distance, Double AngleORdist)`；
+# 定位:   给 Spec Kit `084` 判定 `create_sketch_chamfer` 是**架构性不可用**还是**参数
+#           没给对**。
+# 官方依据: `SketchSegment CreateChamfer(Int32 Type, Double Distance, Double AngleORdist
+#           )`；
 #          `swSketchChamferType_e` = DistanceAngle 0 / DistanceDistance 1 / DistanceEqual 2（**三源一致**）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

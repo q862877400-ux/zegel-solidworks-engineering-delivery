@@ -15,7 +15,8 @@ r"""@brief 真机冒烟：`sw_part.insert_composite_curve` —— ★★ **定�
 # ── 来源 ──
 # 仓库:   本项目自身（真机验收）
 # 文件:   tools/verify_composite_curve_smoke.py
-# 定位:   给 `scripts/sw_part.insert_composite_curve`（轮 151 补的 `composite_curve`）取真机证据。
+# 定位:   给 `scripts/sw_part.insert_composite_curve`（轮 151 补的 `composite_curve`）
+#           取真机证据。
 # 官方依据: `C:\swapi\types\IModelDoc2\InsertCompositeCurve.md`；
 #          `examples\Insert_a_Composite_Curve_Example_CSharp.md`
 # 许可:   本仓库 MIT。无第三方代码引入。

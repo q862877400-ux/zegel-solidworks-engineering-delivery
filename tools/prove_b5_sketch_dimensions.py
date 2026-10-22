@@ -15,7 +15,8 @@
 #   ⚠ 每个操作**单独开一张新草图**（★ 免副作用污染）✓
 #   ⚠ `FullyDefineSketch` 的**枚举取值表两套源都没查到** ⇒ 只如实记录它**回了什么数**，
 #     ★ 不拿"回了 0"当"全定义成功"（★ 那正是"看到数字就定性"的坑）。
-# 官方依据: `C:\swapi\types\` 的 `IModelDoc2` / `IModelDocExtension` / `ISketchManager` /
+# 官方依据: `C:\swapi\types\` 的 `IModelDoc2` / `IModelDocExtension` / `ISketchManager` 
+#           /
 #   `ISketchRelationManager` / `IFeature` / `IAnnotation`（见 `sw_sketch_dimensions.py` 来源块）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

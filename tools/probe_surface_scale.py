@@ -4,7 +4,8 @@
 # 文件:   `scripts/sw_surface_features.py::create_extruded_surface_report`（★ L87 `d * 0.001`）
 #         `scripts/sw_surface_features.py::thicken_surface_report`（★ L318 `th * 0.001`）
 #         `scripts/sw_part.py::get_bounding_box`（★ **量实体** —— 曲面量不了）
-# 定位:   ★ `docs/known-facts.md` **事实 517** §三 的**待核项** —— ★ 该模块有 **5 处 `* 0.001`**
+# 定位:   ★ `docs/known-facts.md` **事实 517** §三 的**待核项** —— ★ 该模块有 **5 处 `
+#           * 0.001`**
 #   （★ 都注明「★ 毫米 ⇒ 米」），★ 而**轮 56 的真机定案**说：
 #     ★★ `FeatureExtrusion3` 的 `D1` 传 `20.0` ⇒ 实体得到 **20 mm** ⇒ ★ **按**文档单位**解释** ✓
 #   ★★★ **本探针的判据（★ 一个数就能定案）**：★ 在**毫米文档**里

@@ -800,7 +800,8 @@ def list_setter_summary() -> dict[str, Any]:
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_simulation_study_options.py —— 本段
 # 定位:   段 1 续：让"求解器设置"能被工具层表达（★ 不要注入键）。
-# 官方依据: `ICWStaticStudyOptions` / `ICWFrequencyStudyOptions` / `ICWBucklingStudyOptions`
+# 官方依据: `ICWStaticStudyOptions` / `ICWFrequencyStudyOptions` / `ICWBucklingStudyOpti
+#           ons`
 #          （★ 见 `STUDY_OPTIONS_ACCESSORS` 的反射清单）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖: 后续同级定义

@@ -6,13 +6,14 @@
 #         `specs/221-sketch-relation-dispatch-safety/`（★ 离线安全切片 · ★ runtime/product=not_run）
 #         `specs/302-ec00-trustworthy-tool-base/research/T006-official-signature.md`（★ 官方签名核验）
 #         `C:\swapi\types\ISketchRelationManager\AddRelation.md`（★ 官方逐字 · 2 参）
-# 定位:   ★★ **EC00 T017**（★ 逐字：「完成草图关系正式注册、参数注入/包装和类型/数量/上下文预检」）。
+# 定位:   ★★ **EC00 T017**（★ 逐字：「完成草图关系正式注册、参数注入/包装和类型/数量/
+#           上下文预检」）。
 #         ★★★ **实测缺口**（2026-10-10）：★ `sw_sketch_relations.py` **有实现但 0 个 ToolSpec**
 #         ⇒ ★★ 它**不可被 MCP 调用**（★ 从「用户可发现、可调用」口径看**等于不存在**）。
 #         ★ 本批**只做注册**（★ 不改业务逻辑 —— ★ 实现已由 spec 221 验过 12 例）。
-# 官方依据: `AddRelation( System.object Entities, System.int RelationType )`（★ 2 参 · ★ 已核）
-#           + `## Remarks`「A sketch must be active for this method to have any effect.」
-#           + `ISketchSegment::GetRelationsCount`（★ 回读判据）
+# 官方依据: `AddRelation( System.object Entities, System.int RelationType )`（★ 2 参 · ★
+#            已核）+ `## Remarks`「A sketch must be active for this method to have any e
+#           ffect.」+ `ISketchSegment::GetRelationsCount`（★ 回读判据）
 # 许可:   本仓库 MIT。★ 无第三方代码引入（★ 引用的四家仅作对照）。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

@@ -3,18 +3,16 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/selection_calc.py
-# 定位:   规格 `specs/336-selection-calc` ——
-#           ★★ 把 `mech-design/知识库/*/校核脚本/*.ps1` 的 **24 个可跑算例**
-#             里**最常用的 4 类**接成 Python（★ 本仓此前**没有**这些计算）。
-#           ★★★ 触发它的是 2026-10-14 全自动挖掘的**收口盘点**：
-#             `tools/closure_inventory.py` 判「**24 个 .ps1 校核脚本**」
-#             是唯一还剩的**值得做**项。
-# 官方依据: ① `~/.agents/skills/mech-design/知识库/70-标准件与选型计算/校核脚本/
-#              直齿圆柱齿轮选型.ps1`（★ 自述来源 **EngineersEdge《Spur Gear Design
-#              Equations and Formula》ANSI B6.1**）
-#           ② 同目录 `V带与链传动选型.ps1`（★ 自述来源 **EngineersEdge Belt Design**）
-#           ③ `螺旋弹簧设计.ps1`（★ 自述 **Wahl 系数已与原表逐点核对**）
-#           ④ `轴承数据怎么读.md` / `轴承选型实测.md`（★ `L10 = (C/P)^ε × 10⁶ 转`）
+# 定位:   规格 `specs/336-selection-calc` ——★★ 把 `mech-design/知识库/*/校核脚本/*.ps1
+#           ` 的 **24 个可跑算例**  里**最常用的 4 类**接成 Python（★ 本仓此前**没有**这
+#           些计算）。★★★ 触发它的是 2026-10-14 全自动挖掘的**收口盘点**：  `tools/closu
+#           re_inventory.py` 判「**24 个 .ps1 校核脚本**」  是唯一还剩的**值得做**项。
+# 官方依据: ① `~/.agents/skills/mech-design/知识库/70-标准件与选型计算/校核脚本/   直齿
+#           圆柱齿轮选型.ps1`（★ 自述来源 **EngineersEdge《Spur Gear Design   Equations 
+#           and Formula》ANSI B6.1**）② 同目录 `V带与链传动选型.ps1`（★ 自述来源 **Engin
+#           eersEdge Belt Design**）③ `螺旋弹簧设计.ps1`（★ 自述 **Wahl 系数已与原表逐点
+#           核对**）④ `轴承数据怎么读.md` / `轴承选型实测.md`（★ `L10 = (C/P)^ε × 10⁶ 转
+#           `）
 # 许可:   本仓库 MIT。★ 公式是**公开标准公式**（★ ANSI B6.1 / ISO 281）⇒
 #           ★ 按公式**自建实现**，★ 未抄任何第三方代码。
 # 覆盖:   全文件

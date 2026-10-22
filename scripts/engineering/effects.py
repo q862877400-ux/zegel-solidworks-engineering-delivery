@@ -3,17 +3,16 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/effects.py
-# 定位:   规格 `specs/316-stage1-parameter-plate` 的 C1（统一目录）的**效应解析**部分。
-#           ★★ 为什么必须做：实测（2026-10-11）`docs/effect-declarations.json` 里
-#           **278 个工具 `writes=null`**（占 476 的 58%），而该表自己的 `_limitations` 逐字写：
-#             「★ 只用动词这一路；★ 官方类型库的读写标记**未参与**」
-#             「★ 只跟**同模块**助手 2 层；★ 跨模块调用的成员**扫不到**」
-#             「★ writes:null 的工具，★ 注册层按「未知」保守处理」
-#           ⇒ ★ 而按「未知 ⇒ 不得自动执行」的纪律（I5），那 278 个**全都进不了执行集**
-#             ⇒ ★★ **方法库要用的 11 个工具里，8 个卡在这里**。
+# 定位:   规格 `specs/316-stage1-parameter-plate` 的 C1（统一目录）的**效应解析**部分
+#           。★★ 为什么必须做：实测（2026-10-11）`docs/effect-declarations.json` 里**278
+#            个工具 `writes=null`**（占 476 的 58%），而该表自己的 `_limitations` 逐字写
+#           ：  「★ 只用动词这一路；★ 官方类型库的读写标记**未参与**」  「★ 只跟**同模块
+#           **助手 2 层；★ 跨模块调用的成员**扫不到**」  「★ writes:null 的工具，★ 注册
+#           层按「未知」保守处理」⇒ ★ 而按「未知 ⇒ 不得自动执行」的纪律（I5），那 278 个
+#           **全都进不了执行集**  ⇒ ★★ **方法库要用的 11 个工具里，8 个卡在这里**。
 # 官方依据: ① `docs/effect-declarations.json` 的 `_` / `_judge` / `_limitations`（逐字）
-#           ② `C:\\swapi\\types\\<接口>\\<成员>.md` 的 `## Returns` / 动词
-#           ③ 本仓 `tools/gen_effect_declarations.py`（既有生成器）
+#           ② `C:\\swapi\\types\\<接口>\\<成员>.md` 的 `## Returns` / 动词③ 本仓 `tools/
+#           gen_effect_declarations.py`（既有生成器）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 效应解析的判据是**静态**的（AST + 成员动词），

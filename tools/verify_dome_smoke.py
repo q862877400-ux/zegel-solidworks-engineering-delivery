@@ -19,7 +19,8 @@ r"""@brief 真机冒烟：`sw_part.insert_dome` —— ★★ **定量**验证 +
 # 仓库:   本项目自身（真机验收）
 # 文件:   tools/verify_dome_smoke.py
 # 定位:   给 `scripts/sw_part.insert_dome`（轮 143 补的 `dome`）取真机证据。
-# 官方依据: `C:\swapi\types\IModelDoc2\InsertDome.md`；`IBody2\GetBodyBox.md`（事实 71：毫米）
+# 官方依据: `C:\swapi\types\IModelDoc2\InsertDome.md`；`IBody2\GetBodyBox.md`（事实 71：
+#           毫米）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

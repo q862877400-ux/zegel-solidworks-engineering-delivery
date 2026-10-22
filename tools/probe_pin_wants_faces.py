@@ -19,7 +19,8 @@
 #     · 若**成** ⇒ ★ 候选①成立（★ 而"装配体"**根本不是前提**）✓
 #     · 若**不成** ⇒ ★ 候选②（★ 装配体才是前提）
 #   ★★ 而它**便宜**：★ 复用 rigid 那条已验证的造法（双体零件 + `entities_as_array`）✓
-# 官方依据: 出厂类型库反射（`AddPinConnector(DispArrayComp1, DispArrayComp2, ErrorCode&)`）·
+# 官方依据: 出厂类型库反射（`AddPinConnector(DispArrayComp1, DispArrayComp2, ErrorCode&)
+#           `）·
 #   `IBody2.GetFaces` · `swsAnalysisStudyTypeStatic = 0`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

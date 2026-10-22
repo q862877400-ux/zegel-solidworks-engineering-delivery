@@ -22,7 +22,8 @@ r"""@brief 扫「**数组实参没包 VARIANT**」的调用点（事实 167/183 
 # ── 来源 ──
 # 仓库:   本项目自身
 # 文件:   tools/scan_bare_array_args.py
-# 定位:   给 Spec Kit `105` 把「数组实参没包 VARIANT」这一类**扫出来**（事实 167/183 的推广）。
+# 定位:   给 Spec Kit `105` 把「数组实参没包 VARIANT」这一类**扫出来**（事实 167/183 
+#           的推广）。
 # 官方依据: 事实 167（`AddRelation` 要 `VARIANT(VT_ARRAY|VT_DISPATCH)`）·
 #          事实 123（`CreateSpline2` 要 `VARIANT(VT_ARRAY|VT_R8)`）
 # 许可:   本仓库 MIT。无第三方代码引入。

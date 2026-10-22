@@ -10,7 +10,8 @@
 #   `swDisplayStateOpts_e`（★ 官方枚举页给了值：`swThisDisplayState = 1` · `swAllDisplayState = 2` ·
 #   `swSpecifyDisplayState = 3`）⇒ ★ 三种都试一遍，★ 只列实测 ✓
 #   ★ 选择工具**自带回读**（★ 它的 doc 说判据是 `count`）⇒ ★ **读它的返回体**，★ 不猜 ✓
-# 官方依据: `C:\swapi\types\IModelDocExtension\GetDisplayStateSetting.md` · `enums\swDisplayStateOpts_e.md`
+# 官方依据: `C:\swapi\types\IModelDocExtension\GetDisplayStateSetting.md` · `enums\swDis
+#           playStateOpts_e.md`
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

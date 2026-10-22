@@ -12,7 +12,8 @@
 #     计数 0→1→2→3 连成一串假不了）—— ⚠ 而**事实 324/325** 记着这种设计的代价：
 #     ★ 一次**失败**的调用会污染下一格（★ 所以本批三条**若有一条失败**，
 #       后面的结果就**只当参考**，★ 且我会在结论里注明）。
-# 官方依据: CHM `ICWLoadsAndRestraintsManager~Add{DistributedMass,Force,RemoteLoad}.html` ·
+# 官方依据: CHM `ICWLoadsAndRestraintsManager~Add{DistributedMass,Force,RemoteLoad}.html
+#           ` ·
 #   `swsAnalysisStudyTypeStatic = 0`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

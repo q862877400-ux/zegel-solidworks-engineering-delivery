@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B3-1 的第二步探针）
 # 文件:   tools/probe_spec211_weldtrim_pre.py
-# 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B3-1**。★ 第一步（上一轮）**只到"查行为"**：
+# 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B3-1**。★ 第一步（上一轮）**只到"
+#           查行为"**：
 #   ★ 两种数组形参形态**都调通**、★ 而**特征树没变** ⇒ ★★ **因为前置没上**（★ 官方 `## Remarks`
 #   明写 mark **1 = Body to trim** · **2 = Trimming boundaries** 都要选 ✓）
 #   ⇒ ★★★ **本探针把前置完全对上** —— ★★ 与「扫描曲面」那条**成功案例同型** ✓
@@ -17,7 +18,8 @@
 #        死路的一部分）⇒ ★★ 正解是 **`SelectByID2(<特征名>, "BODYFEATURE", …, mark, …)`** ✓
 #        （★ 事实 32：★ **特征有名字**、★ 实体没有 ⇒ ★ 按"生成体的**特征名**"选 ✓）
 #     ★ ④ `SelectByID2` 的 Callout **必须传** `VARIANT(VT_DISPATCH, None)`（**事实 33**）✓
-# 官方依据: `C:\swapi\types\IFeatureManager\InsertWeldmentTrimFeature2.md`（签名 + Remarks 的 mark 表）
+# 官方依据: `C:\swapi\types\IFeatureManager\InsertWeldmentTrimFeature2.md`（签名 + Remar
+#           ks 的 mark 表）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

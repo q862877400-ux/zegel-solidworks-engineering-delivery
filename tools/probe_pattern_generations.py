@@ -18,7 +18,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机验证）。
 # 文件:   tools/probe_pattern_generations.py
-# 定位:   ★ 阶段 2：`scripts/sw_part.py` 的 `FeatureLinearPattern3` 与 `FeatureCircularPattern4`。
+# 定位:   ★ 阶段 2：`scripts/sw_part.py` 的 `FeatureLinearPattern3` 与 `FeatureCircula
+#           rPattern4`。
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

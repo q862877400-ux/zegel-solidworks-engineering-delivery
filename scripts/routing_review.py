@@ -4,6 +4,16 @@
 它先校验可跨后端复用的端点、分段、长度和弯曲半径证据，再由前置报告决定
 是否允许进入原生 `IRouteManager` / `IAutoRoute` 写入阶段。
 """
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   scripts/routing_review.py
+# 定位:   brief Routing 中性路线校验与 SolidWorks 2026 前置探测。
+# 官方依据: 经由本仓 COM 封装（`sw_connect` / `sw_preflight` / win32com / comtypes）；★ 
+#           各成员签名见被调模块的来源块，本文件为上层封装
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
 from __future__ import annotations
 
 import argparse

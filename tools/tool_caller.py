@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具层）
 # 文件:   tools/tool_caller.py
-# 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B2（写操作那一格）/ B3**。★ 本仓纪律原话：
+# 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B2（写操作那一格）/ B3**。★ 本仓
+#           纪律原话：
 #   ★「写探针验能力时：**按 `ToolSpec` 的契约调，别手调内部实现**」——
 #   ★★ 而我在 B2 第一版**正是手调的**（直接调 `sw_part` 的公开函数）⇒ ★ 形状不对、抛 `TypeError` ✗
 #   ★ 契约（读 `mcp-server/tool_registry.py` 的 `make_tool_function` 得知）：

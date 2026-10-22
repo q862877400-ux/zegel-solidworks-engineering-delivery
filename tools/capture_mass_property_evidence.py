@@ -27,8 +27,10 @@ r"""@brief 真机证据：**读质量属性 1 个工具**（砌墙 W5 / Spec Kit
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机证据脚本，**不是**从四家外部 MCP 项目移植）
 # 文件:   tools/capture_mass_property_evidence.py
-# 定位:   砌墙 W5（Spec Kit `138`）的**验收②**：产出 `output/mass-property-evidence.json`。
-# 官方依据: `IModelDocExtension.CreateMassProperty` · `IMassProperty2` 的 Mass/Volume/SurfaceArea/
+# 定位:   砌墙 W5（Spec Kit `138`）的**验收②**：产出 `output/mass-property-evidence.js
+#           on`。
+# 官方依据: `IModelDocExtension.CreateMassProperty` · `IMassProperty2` 的 Mass/Volume/Su
+#           rfaceArea/
 #          CenterOfMass/Density
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。

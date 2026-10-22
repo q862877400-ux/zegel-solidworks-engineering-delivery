@@ -14,7 +14,8 @@
 #     ③ ★ 原始返回值（★ None / Feature —— ★ 最直接的一条线索）
 #     ```
 #   ⚠ **前置**：★ 先建一个**有实体**的零件（★ 拉伸一个方块）⇒ 再选一条边 ⇒ 再倒角 ✓
-# 官方依据: `IFeatureManager.InsertFeatureChamfer`（★ 8 参）· 本仓 `scripts/sw_part.py` 的 `chamfer`
+# 官方依据: `IFeatureManager.InsertFeatureChamfer`（★ 8 参）· 本仓 `scripts/sw_part.py` 
+#           的 `chamfer`
 #   （★ 实参 `4, 1, distance, angle_rad, 0, 0, 0, 0`）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

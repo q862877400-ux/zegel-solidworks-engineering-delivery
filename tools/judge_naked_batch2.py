@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/judge_naked_batch2.py
-# 定位:   ★ 2026-10-03（轮 393）objective②：把 `balloon`/`gdt`/`datum`/`hem`/`jog`/`unfold`/
+# 定位:   ★ 2026-10-03（轮 393）objective②：把 `balloon`/`gdt`/`datum`/`hem`/`jog`/`un
+#           fold`/
 #   `units`/`undo`/`wrap`/`sensor`/`vertices`/`referenced_documents` 12 条**批量判**。
 #   ★★ **方法（照事实 302）**：**两层证据** ——
 #     ① 按**功能词**在 `scripts/*.py` 收函数名（★ 不只看一个名字）；

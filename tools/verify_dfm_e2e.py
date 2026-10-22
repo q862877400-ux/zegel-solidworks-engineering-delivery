@@ -24,7 +24,8 @@ dependencies: ["python"]     ← 只有 python
 # ── 来源 ──
 # 仓库:   本项目自身（离线验收）
 # 文件:   tools/verify_dfm_e2e.py
-# 定位:   给 `capabilities.yaml` 的 `dfm_checks` 条目提供 `evidence`（Spec Kit `004-dfm-verified`）。
+# 定位:   给 `capabilities.yaml` 的 `dfm_checks` 条目提供 `evidence`（Spec Kit `004-df
+#           m-verified`）。
 # 官方依据: 不适用（本项目内部工具，只读 JSON、不调 SolidWorks API）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

@@ -3,7 +3,8 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身（取面沿用 sw_selection_spec；选实体沿用 IEntity.Select4 的既有定案）
 # 文件:   scripts/sw_cosmetic_weld_bead.py
-# 定位:   ★ 规格 220（续）第 55 轮 —— ★ **焊件/圆角焊缝的换路实现**（★ 事实 53：≥3 次同处 ⇒ 换做法 ✓）
+# 定位:   ★ 规格 220（续）第 55 轮 —— ★ **焊件/圆角焊缝的换路实现**（★ 事实 53：≥3 次
+#           同处 ⇒ 换做法 ✓）
 # 官方依据: ★★ **三样都读过**（★ 铁律 4）：
 #   · 签名 `C:\swapi\types\IFeatureManager\InsertCosmeticWeldBead.md`：★ `Feature
 #     InsertCosmeticWeldBead( System.double WeldSize )` —— ★★ **只有一个参数** ✓

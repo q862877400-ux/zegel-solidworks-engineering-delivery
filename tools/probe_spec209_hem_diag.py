@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_spec209_hem_diag.py
-# 定位:   ★ 承 `tools/probe_spec209_b2.py`：那一轮 **T2 hem 回 `None`**（★ T1 前置建成、T4 负例正常）。
+# 定位:   ★ 承 `tools/probe_spec209_b2.py`：那一轮 **T2 hem 回 `None`**（★ T1 前置建成
+#           、T4 负例正常）。
 #   ★★ 本探针**同时判三个假设**（★ 每个假设都有一条可回读的判据，不是"再试一次"）：
 #     ```
 #     H1 选错了边   —— 60×40×2 的板有 12 条边：4 长(60) + 4 宽(40) + 4 **短(2，厚度棱)**
@@ -13,7 +14,8 @@
 #     H3 卸料槽挡路 —— 用默认卸料槽（`UseDefaultRelief=True`）重试
 #     ```
 #   ★ 每个变体**各开一张新零件**（★ 免副作用污染 —— 本仓栽过这个跟头）✓
-# 官方依据: `C:\swapi\types\IFeatureManager\InsertSheetMetalHem2.md`（16 参 + 四步前置）·
+# 官方依据: `C:\swapi\types\IFeatureManager\InsertSheetMetalHem2.md`（16 参 + 四步前置）
+#           ·
 #   `C:\swapi\examples\Insert_Sheet_Metal_Hem_Example_VB.md`（调用序）·
 #   `C:\swapi\enums\swHemTypes_e.md`（Open=0 · Closed=1 · Double=4）。
 # 许可:   本仓库 MIT。无第三方代码引入。

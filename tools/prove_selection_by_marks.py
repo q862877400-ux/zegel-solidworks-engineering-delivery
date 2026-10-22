@@ -16,7 +16,8 @@
 #      ★ 依据：上一轮五次事故全是"没验就改"（★ 事实 320/323/329/330/332/335）。
 #   ⚠ **改它影响面大**（★ 所有多实体载荷都过 `_selected_dispatch_array`）
 #     ⇒ ★ 故本探针**只验**、**不改**；改了要跑全量 pytest。
-# 官方依据: `C:\swapi\types\ISelectionMgr\GetSelectedObject6.md`（★ `Mark` 的三种取值语义）·
+# 官方依据: `C:\swapi\types\ISelectionMgr\GetSelectedObject6.md`（★ `Mark` 的三种取值语
+#           义）·
 #   `SolidWorks.Interop.sldworks.dll` 的元数据反射 · 事实 8（以计数为准）· 事实 336
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

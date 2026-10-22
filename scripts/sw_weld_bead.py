@@ -3,7 +3,8 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身（选实体沿用 scripts/sw_selection_spec.py；特征计数沿用 sw_net_blend 的助手）
 # 文件:   scripts/sw_weld_bead.py
-# 定位:   ★ 规格 220（续）第 46 轮 —— 补 **焊件/圆角焊缝**（生成器关键词 `("fillet_bead","weld_bead")`）✓
+# 定位:   ★ 规格 220（续）第 46 轮 —— 补 **焊件/圆角焊缝**（生成器关键词 `("fillet_bea
+#           d","weld_bead")`）✓
 # 官方依据: ★★ **三样都读过**（★ 铁律 4）：
 #   · 签名 `C:\swapi\types\IFeatureManager\InsertFilletBeadFeature2.md` 第 14 行**逐字 16 参** ✓
 #   · 第 12 行**逐字**：★「…also fills the gap between the **pre-selected part bodies**, if any.」

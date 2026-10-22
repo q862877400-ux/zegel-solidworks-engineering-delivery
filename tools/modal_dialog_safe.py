@@ -4,7 +4,8 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/modal_dialog_safe.py
 # 定位:   ★ 2026-10-02（轮 375）**用户当场撞见弹窗而自动化没发现** —— 先修这个。
-# 官方依据: 不适用（★ 用 Win32 `EnumWindows` / `EnumChildWindows` / GDI `BitBlt` 与子进程超时）。
+# 官方依据: 不适用（★ 用 Win32 `EnumWindows` / `EnumChildWindows` / GDI `BitBlt` 与子进
+#           程超时）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

@@ -27,7 +27,8 @@ r"""@brief 探针：换 **comtypes 早绑定**后端，`ISafeArrayUtility` 能�
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_safearray_comtypes.py
 # 定位:   给 Spec Kit `108` 闭合轮 186 的限度：「换后端能不能驱动那些 `out` 形参」。
-# 官方依据: `C:/swapi/types/ISafeArrayUtility/*.md` · `D:/Program Files/SOLIDWORKS Corp/SOLIDWORKS/sldworks.tlb`
+# 官方依据: `C:/swapi/types/ISafeArrayUtility/*.md` · `D:/Program Files/SOLIDWORKS Corp/
+#           SOLIDWORKS/sldworks.tlb`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

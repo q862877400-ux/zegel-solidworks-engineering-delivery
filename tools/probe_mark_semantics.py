@@ -22,7 +22,8 @@ r"""@brief 探针：**mark 到底落没落？** —— 用「已知能选中」�
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_mark_semantics.py
 # 定位:   给 Spec Kit `073` 判别「mark 设不上」与「mark 读法错」这两个候选。
-# 官方依据: `IModelDocExtension.SelectByID2` 的 mark 参数 · `ISelectionMgr.GetSelectedObjectCount2`
+# 官方依据: `IModelDocExtension.SelectByID2` 的 mark 参数 · `ISelectionMgr.GetSelectedOb
+#           jectCount2`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

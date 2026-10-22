@@ -10,9 +10,9 @@
 # 仓库:   本项目自身
 # 文件:   tools/run_stage5_vise.py
 # 定位:   规格 `specs/320-stage5-bench-vise` 的**验收入口**（S5）
-# 官方依据: ① 外部方案阶段 5 的验收 S5（逐字）
-#           ② `scripts/engineering/vise.py`（H1~H4）
-#           ③ `scripts/engineering/assembly.py`（既有 `ConstraintGraph` / `InterferenceScan`）
+# 官方依据: ① 外部方案阶段 5 的验收 S5（逐字）② `scripts/engineering/vise.py`（H1~H4）③ 
+#           `scripts/engineering/assembly.py`（既有 `ConstraintGraph` / `InterferenceSca
+#           n`）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # -----------------------------------------------------------------------------

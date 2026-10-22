@@ -26,7 +26,8 @@ r"""@brief 探针：**文档的单位设置** —— 它是不是"两次 `units=
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_document_units.py
-# 定位:   查"文档单位"是否决定 `GetDefaultElementSizeAndTolerance` 的量纲（根因链的最后一环）。
+# 定位:   查"文档单位"是否决定 `GetDefaultElementSizeAndTolerance` 的量纲（根因链的最
+#           后一环）。
 # 官方依据: `ISldWorks.GetUserPreferenceIntegerValue` / `SetUserPreferenceIntegerValue`
 #          （`swUserPreferenceIntegerValue_e.swUnitsLinear`）
 # 许可:   本仓库 MIT。无第三方代码引入。

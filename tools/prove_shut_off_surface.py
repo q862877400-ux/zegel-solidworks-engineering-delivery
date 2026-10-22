@@ -3,11 +3,13 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_shut_off_surface.py
-# 定位:   ★ 2026-10-03（轮 391）**线索① 的真机验证**：轮 390 发现 `insert_shut_off_surface` 回
+# 定位:   ★ 2026-10-03（轮 391）**线索① 的真机验证**：轮 390 发现 `insert_shut_off_sur
+#           face` 回
 #   `Feature` 非 None 而**特征树不变**，★ 当时的推测是「模型上**没有通孔**可关」
 #   （★ 关断面的作用是**盖住通孔**）。⇒ 本探针先打一个**通孔**，再调它。
 #   ⚠ 官方那一页 **Remarks 为空**（★ 查过 CHM）⇒ 只能真机试。
-# 官方依据: `C:\swapi\types\IFeatureManager\InsertMoldShutOffSurface.md`（★ 签名 `Feature
+# 官方依据: `C:\swapi\types\IFeatureManager\InsertMoldShutOffSurface.md`（★ 签名 `Featur
+#           e
 #   InsertMoldShutOffSurface()` —— **零参**）· CHM 解包里该页**无 Remarks**。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

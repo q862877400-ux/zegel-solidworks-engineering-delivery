@@ -11,7 +11,8 @@
 #   ★★ **`inject="model"` 一律显式写**（★ 轮 461 修过的坑，门禁 `check_inject_binding` 会拦）✓
 #   ★ **选择走声明式下标**：`selection="index:0"` / `"index:0,index:1"` / `"__current_selection__"`
 #     —— ★ 不收坐标（规则 3）✓
-# 官方依据: `C:\swapi\types\ISketchManager\` 的 `SketchTrim` / `SketchExtend` / `SketchOffset2` /
+# 官方依据: `C:\swapi\types\ISketchManager\` 的 `SketchTrim` / `SketchExtend` / `SketchO
+#           ffset2` /
 #   `CreateFillet` / `CreateLinearSketchStepAndRepeat` / `CreateCircularSketchStepAndRepeat`；
 #   枚举 `swSketchTrimChoice_e` / `swSkOffsetCapEndType_e` / `swSkOffsetMakeConstructionType_e`。
 # 许可:   本仓库 MIT。无第三方代码引入。

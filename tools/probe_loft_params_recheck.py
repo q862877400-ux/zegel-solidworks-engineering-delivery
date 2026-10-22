@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + 官方 `C:\\swapi\\types\\ILoftFeatureData\\*.md`
 # 文件:   tools/probe_loft_params_recheck.py（★ 只报不动 —— 证据脚本 · 新）
-# 定位:   ★ 阶段 5 同族第 5 个：★ `查 × 特征` 官方 **451**、★ 我们 **13** ⇒ ★ **本族做 `loft`** ✓
+# 定位:   ★ 阶段 5 同族第 5 个：★ `查 × 特征` 官方 **451**、★ 我们 **13** ⇒ ★ **本族做
+#            `loft`** ✓
 #   **官方依据（★ 逐字）**：★ `StartConstraintDraftAngle`/`EndConstraintDraftAngle`
 #     ⇒「Draft angle」· ★ `StartTangentLength`/`EndTangentLength` ⇒「(Start/End) tangent length」·
 #     ★ `GetWallThickness` ⇒「Wall thickness」· ★ `NumberOfSections` ⇒「Number of sections」

@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/prove_thicken_surface.py
-# 定位:   ★ 2026-10-03（轮 502）★ 给 `sw_surface_features.thicken_surface_report` 留真机证据。
+# 定位:   ★ 2026-10-03（轮 502）★ 给 `sw_surface_features.thicken_surface_report` 留真
+#           机证据。
 #   ★ 对应 `specs/201-toolbar-gaps` 的 **T610**（★ 而 T605-T610 这六条一直空着）。
 #
 # 官方三源（★ 铁律 4）：

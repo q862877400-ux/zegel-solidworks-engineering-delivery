@@ -20,7 +20,8 @@
 #         ★ 按**事实 12 / 33**：★ **空数组不能传 Python `None`** ✗ ⇒
 #         ★★ 故本探针**两种形态都试**：★ ① 传 `None` · ② 传**空 `VARIANT(VT_DISPATCH, None)`** ✓
 #         ★ 并**分开记**（★ 哪个形态不报"类型不匹配"⇒ 那就是对的形态 ✓）
-# 官方依据: `C:\swapi\types\IFeatureManager\InsertWeldmentTrimFeature2.md`（签名 + Parameters + Remarks）
+# 官方依据: `C:\swapi\types\IFeatureManager\InsertWeldmentTrimFeature2.md`（签名 + Param
+#           eters + Remarks）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

@@ -83,7 +83,8 @@ __all__ = [
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   Eduardof0nt/Solidworks-MCP-Server (MIT) + SolidWorks 官方 API 签名（纯元数据反射）
 # 文件:   scripts/sw_mold.py 的 insert_parting_line
-# 定位:   IFeatureManager.InsertMoldPartingLine(Boolean)。来源写的是 `InsertPartingLines`
+# 定位:   IFeatureManager.InsertMoldPartingLine(Boolean)。来源写的是 `InsertPartingLin
+#           es`
 #         —— **查不到**（见模块头与来源缺陷记录）。官方另有只读的 `IGetPartingLines`
 #         与属性 `PartingLines`，但**创建**入口只有这一个。
 # 官方签名依据: Feature InsertMoldPartingLine(Boolean)
@@ -114,7 +115,8 @@ def insert_parting_line(model, *, draft_analysis: bool = True):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（纯元数据反射）；来源未覆盖此项
 # 文件:   scripts/sw_mold.py 的 insert_parting_surface 等
-# 定位:   IFeatureManager 的模具族其余入口。**署名归本项目自身**（照反射补，来源未覆盖）。
+# 定位:   IFeatureManager 的模具族其余入口。**署名归本项目自身**（照反射补，来源未覆盖
+#           ）。
 # 官方签名依据: 见模块头「官方签名依据」段逐条
 # 许可:   本仓库 MIT。
 # 覆盖:   本函数整体（自本行至函数结束）

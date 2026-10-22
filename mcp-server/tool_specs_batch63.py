@@ -22,7 +22,8 @@
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch63.py —— 本文件
 # 定位:   把 `select_face_by_selector_report` 挂成 MCP 工具（★ 段 5 该挂清理的一件）。
-# 官方依据: `IModelDocExtension.SelectByID2("", "FACE", x, y, z, …)`（★ 按**面上的点**定位 —— 事实 32）·
+# 官方依据: `IModelDocExtension.SelectByID2("", "FACE", x, y, z, …)`（★ 按**面上的点**定
+#           位 —— 事实 32）·
 #   本仓 `scripts/sw_simulation.py` 的 `select_face_by_selector` / `resolve_face_selector` / `select_face_at` ·
 #   `FACE_SELECTORS = ('+x', '-x', '+y', '-y', '+z', '-z')`
 # 许可:   本仓库 MIT。无第三方代码引入。

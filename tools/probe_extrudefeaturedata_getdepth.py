@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IExtrudeFeatureData2\`）
 # 文件:   `scripts/sw_feature_readback.py`（★ 候选落点）
-# 定位:   ★ 缺口地图（`output/density-gap-map.json`）算出 **查 × 特征 = 官方 451 · 我们 0**
+# 定位:   ★ 缺口地图（`output/density-gap-map.json`）算出 **查 × 特征 = 官方 451 · 我
+#           们 0**
 #     ⇒ ★★ 而那一格实际有 **1008 个成员 / 174 个族**（★ 本会话现算）⇒
 #     ★★★ 挑 **`IExtrudeFeatureData2`**（★ 68 个成员）作第一个 ——
 #       ★ **它与本仓已有的 `extrude_boss` 相邻** ⇒ **判据的锚点是现成的** ✓

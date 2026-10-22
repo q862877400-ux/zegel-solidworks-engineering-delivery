@@ -7,7 +7,8 @@
 #   `mcp-server/tool_specs_batch59.py`）。
 #   ★★ 判据**复用本模块既有的 `_export_report`** —— 它回读文件（存在且 size > 0）
 #   ★ 并记 `size_before` / `grew_or_created`（★ 能区分"这次真导出了"与"旧文件本来就在"）。
-# 官方依据: `IModelDocExtension.SaveAs3` · `IModelDoc2.ExportToDWG2(..., swExportToDWG_e)`
+# 官方依据: `IModelDocExtension.SaveAs3` · `IModelDoc2.ExportToDWG2(..., swExportToDWG_e
+#           )`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

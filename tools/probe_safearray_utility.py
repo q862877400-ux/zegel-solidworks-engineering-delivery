@@ -31,8 +31,10 @@ r"""@brief 探针：`ISldWorks.GetSafeArrayUtility()` 在 pywin32 上**可达吗
 # ── 来源 ──
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_safearray_utility.py
-# 定位:   给 Spec Kit `106` 判定 `ISafeArrayUtility` 是**可用工具**还是**又一条到不了的路**。
-# 官方依据: `C:/swapi/types/ISafeArrayUtility/{_overview,PackVariant,PutDouble,GetDouble}.md` ·
+# 定位:   给 Spec Kit `106` 判定 `ISafeArrayUtility` 是**可用工具**还是**又一条到不了
+#           的路**。
+# 官方依据: `C:/swapi/types/ISafeArrayUtility/{_overview,PackVariant,PutDouble,GetDouble
+#           }.md` ·
 #          反射 `ISldWorks.GetSafeArrayUtility() -> Object` · 出厂类型库
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

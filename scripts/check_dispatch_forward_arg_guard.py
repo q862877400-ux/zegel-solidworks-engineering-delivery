@@ -11,10 +11,10 @@
 #         `check_dispatch_byref_guard` 判**一级转发入口**的 327 个可解析调用点；
 #         `check_dispatch_arg_guard`（234）判**包装器调用点**的 `local` 桶（46 个，与本门禁
 #         的 8 个**零重叠**，已实测）。
-# 官方依据: ① `_raw/**/iface_*.txt`（出厂程序集纯元数据反射；★ 属性编码成 `get_X()`/`set_X()`，
-#             接口名另有 `## <接口>` 头行）
-#           ② `C:\\swapi\\types\\<接口>\\<成员>.md`（官方 API 文档镜像）
-#           ★ 两源读取器**从 `check_dispatch_arg_guard.official_members` import，不重写**。
+# 官方依据: ① `_raw/**/iface_*.txt`（出厂程序集纯元数据反射；★ 属性编码成 `get_X()`/`set
+#           _X()`，  接口名另有 `## <接口>` 头行）② `C:\\swapi\\types\\<接口>\\<成员>.md
+#           `（官方 API 文档镜像）★ 两源读取器**从 `check_dispatch_arg_guard.official_me
+#           mbers` import，不重写**。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────

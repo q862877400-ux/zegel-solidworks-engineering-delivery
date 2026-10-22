@@ -2,9 +2,9 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把 `GATE-FINAL` 的 C8 落地）。
 # 文件:   scripts/check_refuted_patterns.py
-# 定位:   ★ **C8 的判据逐字**（`specs/202-user-coverage-gaps/recon/gate-cand/GATE-FINAL.md`）：
-#           「`docs/refuted-patterns.json` 里每条的 `anchor_quote` **必须逐字出现在
-#            `docs/known-facts.md` 中**。★ 有一个不命中 ⇒ 失败」
+# 定位:   ★ **C8 的判据逐字**（`specs/202-user-coverage-gaps/recon/gate-cand/GATE-FINA
+#           L.md`）：「`docs/refuted-patterns.json` 里每条的 `anchor_quote` **必须逐字出
+#           现在 `docs/known-facts.md` 中**。★ 有一个不命中 ⇒ 失败」
 #         ★★ **它自称「唯一常驻硬门禁」** —— 而 2026-10-04（接手轮）的 A-3 查出：
 #           ★ **它唯一依据的那个 JSON 当时在仓里不存在** ⇒ ★ 那条闸**没有可读对象、永远"通过"**
 #           （★ 与**事实 40**「存在但没人用的守卫与没有守卫等价」同族）✓

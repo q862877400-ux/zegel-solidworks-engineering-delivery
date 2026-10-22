@@ -3,17 +3,15 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/check_assumption_ledger.py
-# 定位:   `docs/text-to-cad-lessons-verdict.md` §6.3 的落地 ——
-#           ★ 经验⑤「不追问但记录」的**改造后采纳**形态。
-#           ★ 判据三条：
-#             ① 每条假设必须有 `id / 档位 / 状态`，状态只能取 open|confirmed|refuted；
-#             ② `confirmed` / `refuted` **必须带证据**（★ 否则「已验证」是空话）；
-#             ③ `open` 的假设 **不得** 出现在 `capabilities.yaml` 里 `verified`
-#                条目的 `evidence` 字段中（★ 未验证的假设不能当证据 —— 这是本条的
-#                真正价值：把「假设」与「证据」在机器层面隔开）。
-# 官方依据: 上游 `skills/sdf/references/llm-guardrails.md:26-35` 的五档来源枚举
-#           （user-provided / upstream / target docs / measured / explicit assumption）
-#           + 本仓 `AGENTS.md` 验收 A4「verified 必须有我们自己的运行证据」
+# 定位:   `docs/text-to-cad-lessons-verdict.md` §6.3 的落地 ——★ 经验⑤「不追问但记录」
+#           的**改造后采纳**形态。★ 判据三条：  ① 每条假设必须有 `id / 档位 / 状态`，状
+#           态只能取 open|confirmed|refuted；  ② `confirmed` / `refuted` **必须带证据**
+#           （★ 否则「已验证」是空话）；  ③ `open` 的假设 **不得** 出现在 `capabilities.
+#           yaml` 里 `verified`     条目的 `evidence` 字段中（★ 未验证的假设不能当证据 —
+#           — 这是本条的     真正价值：把「假设」与「证据」在机器层面隔开）。
+# 官方依据: 上游 `skills/sdf/references/llm-guardrails.md:26-35` 的五档来源枚举（user-pr
+#           ovided / upstream / target docs / measured / explicit assumption）+ 本仓 `AG
+#           ENTS.md` 验收 A4「verified 必须有我们自己的运行证据」
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   `docs/assumption-ledger.md` 全文 + `capabilities.yaml` 的 verified 条目
 # ⚠ 等级 `stitched`（未真机跑过整条链）：★ 但本门禁**自带负例自证**

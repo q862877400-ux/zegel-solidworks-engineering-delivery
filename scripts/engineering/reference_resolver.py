@@ -3,10 +3,9 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/reference_resolver.py
-# 定位:   规格 `specs/334-reference-resolver` —— **本仓缺的那一层**。
-#           ★★★★★ 触发它的是 2026-10-14 全自动挖掘，`mech-design` 的一篇
-#             自述「**我 30+ 轮踩坑的总答案**」：
-#             `知识库/10-零件建模/ReferenceResolver语义引用与稳定选择器.md`
+# 定位:   规格 `specs/334-reference-resolver` —— **本仓缺的那一层**。★★★★★ 触发它的是 
+#           2026-10-14 全自动挖掘，`mech-design` 的一篇  自述「**我 30+ 轮踩坑的总答案**
+#           」：  `知识库/10-零件建模/ReferenceResolver语义引用与稳定选择器.md`
 #
 #           ★★★ 它点破的结构性缺口（★ 逐字）：
 #           > 「它的工具接口设计**与我一致**（`face_index` / `up_to_face_index` /
@@ -18,12 +17,11 @@
 #             ★ 而那**正是这一层的雏形** —— ★ 但**只有 6 个固定方向**；
 #             ★ 本模块把它扩到**任意语义 + 几何锚点**。
 #
-# 官方依据: ① `~/.agents/skills/mech-design/知识库/10-零件建模/
-#              ReferenceResolver语义引用与稳定选择器.md`（★ 只读借鉴**思想**）
-#           ② ★ **借鉴来源**：`github.com/eyfel/mcp-server-solidworks`
-#              （355★ · **AGPL-3.0**）⇒ ★★ **只读思想、绝不抄代码**
-#              （★ 本仓铁律 6：AGPL 只读思想，不抄代码、不抄文本）
-#           ③ `scripts/sw_selection_spec.py`（★ 本仓既有的声明式选择）
+# 官方依据: ① `~/.agents/skills/mech-design/知识库/10-零件建模/   ReferenceResolver语义
+#           引用与稳定选择器.md`（★ 只读借鉴**思想**）② ★ **借鉴来源**：`github.com/eyfe
+#           l/mcp-server-solidworks`   （355★ · **AGPL-3.0**）⇒ ★★ **只读思想、绝不抄代
+#           码**   （★ 本仓铁律 6：AGPL 只读思想，不抄代码、不抄文本）③ `scripts/sw_sele
+#           ction_spec.py`（★ 本仓既有的声明式选择）
 # 许可:   本仓库 MIT。★ **无第三方代码引入**（★ 本模块按**思想**自建，
 #           ★ 代码一行未抄；★ 来源块已注明借鉴出处与其 AGPL 许可）。
 # 覆盖:   全文件

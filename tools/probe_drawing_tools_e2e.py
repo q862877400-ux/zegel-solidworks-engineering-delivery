@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）。规格 `specs/202-user-coverage-gaps` 的 **R1 收口**。
 # 文件:   tools/probe_drawing_tools_e2e.py
-# 定位:   ★★ **为什么要这一层**：R1 把 8 条工程图工具注册进了 `register_capabilities.BATCH_MODULES`，
+# 定位:   ★★ **为什么要这一层**：R1 把 8 条工程图工具注册进了 `register_capabilities.B
+#           ATCH_MODULES`，
 #   机器核验只到「`all_specs()` 里有它们 + `check_specs` 无问题」这一步 ——
 #   ★ **那不等于"经工具层能跑"**。本探针补的就是这一段：
 #   ★ **复刻注册器真实做的三步**（★ 逐字依据 `mcp-server/tool_registry.py`）：

@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/prove_composite_curve_per_example.py
-# 定位:   ★ 2026-10-03（轮 573）★ 执行**事实 450 留的下一步**（★ 照**官方例子**的形态）。
+# 定位:   ★ 2026-10-03（轮 573）★ 执行**事实 450 留的下一步**（★ 照**官方例子**的形态
+#           ）。
 #
 #   ★★★★★ **官方例子（CHM）逐字**（`Insert_a_Composite_Curve_Example_VBNET.htm`）：
 #     > "This example shows how to insert a composite curve **using two sketches of splines**."

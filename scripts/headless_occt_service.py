@@ -4,6 +4,15 @@
 STEP/IGES/BREP/STL/OBJ/GLB。调用方通过 result JSON 读取结构化结果，
 避免 OCCT 原生输出污染 stdio 协议。
 """
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   scripts/headless_occt_service.py
+# 定位:   OCCT/OCP 无头几何隔离服务。
+# 官方依据: 不适用（本仓工具，不调 COM）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
 from __future__ import annotations
 
 import argparse

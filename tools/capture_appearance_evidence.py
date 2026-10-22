@@ -26,7 +26,8 @@ r"""@brief 真机证据：**渲染材质与外观域**（24h 段 5 的「方程 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机证据脚本）
 # 文件:   tools/capture_appearance_evidence.py
-# 定位:   给「渲染材质与外观」能力条目取真机证据；产物 `output/appearance-evidence.json`。
+# 定位:   给「渲染材质与外观」能力条目取真机证据；产物 `output/appearance-evidence.jso
+#           n`。
 # 官方依据: `IModelDocExtension.SetMaterialPropertyValues2` 族 / `IRenderMaterial`
 #          （见 `scripts/sw_appearance.py` 与 `scripts/sw_render_material.py` 的来源块）
 # 许可:   本仓库 MIT。无第三方代码引入。

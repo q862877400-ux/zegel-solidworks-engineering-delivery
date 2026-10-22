@@ -31,7 +31,8 @@ r"""@brief **D3 对照实验**：`IMassProperty2.Mass` 的物理单位 —— �
 # 仓库:   本项目自身（真机对照实验）
 # 文件:   tools/probe_mass_units_controlled.py
 # 定位:   24h 计划 段 5「修地基 **D3**」；产物 `output/mass-units-controlled.json`。
-# 官方依据: `C:\swapi\types\IMassProperty2\Density.md`（★ `Density = Mass / Volume` 那条 Remarks）·
+# 官方依据: `C:\swapi\types\IMassProperty2\Density.md`（★ `Density = Mass / Volume` 那条
+#            Remarks）·
 #          `IMassProperty2\Mass.md` / `Volume.md` / `CenterOfMass.md`（★ 都在，但**都没写单位**）·
 #          `IPartDoc\SetMaterialPropertyName2`（★ 赋材料）
 # 许可:   本仓库 MIT。无第三方代码引入。

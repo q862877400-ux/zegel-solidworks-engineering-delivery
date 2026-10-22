@@ -3,15 +3,14 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/authorization.py
-# 定位:   规格 `specs/316-stage1-parameter-plate` 的 C5（公共授权）。
-#           ★★ 实测（2026-10-11）**全仓没有授权器** —— grep `TOOL_NOT_ADMITTED` /
-#           `PATH_OUTSIDE_WORKSPACE` / `DOCUMENT_NOT_OWNED` 均 0 命中。
-#           ★ 而外部方案的阶段 1 验收要求：
-#             「未准入返回 TOOL_NOT_ADMITTED · 路径和文档越权分别返回
-#               PATH_OUTSIDE_WORKSPACE、DOCUMENT_NOT_OWNED · **这些负例的 COM 写调用数全部为 0**」
-# 官方依据: 不适用（本仓自研治理层）。
-#           ★ 路径纪律依据：本仓 AGENTS.md 铁律 3（结构白名单）+ 「只写 output」
-#           ★ 文档身份纪律依据：AGENTS.md §十九（回收自己开的资源 · 不删用户数据）
+# 定位:   规格 `specs/316-stage1-parameter-plate` 的 C5（公共授权）。★★ 实测（2026-10-
+#           11）**全仓没有授权器** —— grep `TOOL_NOT_ADMITTED` /`PATH_OUTSIDE_WORKSPACE`
+#            / `DOCUMENT_NOT_OWNED` 均 0 命中。★ 而外部方案的阶段 1 验收要求：  「未准入
+#           返回 TOOL_NOT_ADMITTED · 路径和文档越权分别返回    PATH_OUTSIDE_WORKSPACE、D
+#           OCUMENT_NOT_OWNED · **这些负例的 COM 写调用数全部为 0**」
+# 官方依据: 不适用（本仓自研治理层）。★ 路径纪律依据：本仓 AGENTS.md 铁律 3（结构白名单
+#           ）+ 「只写 output」★ 文档身份纪律依据：AGENTS.md §十九（回收自己开的资源 · 
+#           不删用户数据）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收见 `tools/run_stage1_plate.py`）。

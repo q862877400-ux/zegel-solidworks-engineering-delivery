@@ -11,7 +11,8 @@
 #     · 格 A：★ 只给路径（★ 不预先打开模型）—— ★ 复现上一版；
 #     · 格 B：★ **先用 `open_document` 打开该零件**，再 `add_view`。
 #     ★ 两格**各自新建一张工程图**（★ 这样一格不会污染另一格）。
-# 官方依据: `IDrawingDoc.CreateDrawViewFromModelView3(ModelName, ViewName, LocX, LocY, Z)`
+# 官方依据: `IDrawingDoc.CreateDrawViewFromModelView3(ModelName, ViewName, LocX, LocY, Z
+#           )`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

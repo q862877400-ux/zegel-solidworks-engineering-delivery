@@ -7,7 +7,8 @@
 # 文件:   `scripts/sw_sheet_metal.py`（`create_base_flange` + `BaseFlangeSpec`）·
 #         `scripts/sw_weldment.py`（`create_structural_member`）·
 #         `scripts/sw_connect.py`（`get_com_member` / `create_empty_dispatch_variant`）
-# 定位:   ★ SPEC 的 **T302** 逐字：「**有 `AccessSelections` 的**先判指针族**再决定做不做**（事实 47/474）」⇒
+# 定位:   ★ SPEC 的 **T302** 逐字：「**有 `AccessSelections` 的**先判指针族**再决定做
+#           不做**（事实 47/474）」⇒
 #   ★★ `output/t400-t302-official-entries.md` 已用**静态判据**把 12 族分了档 ⇒
 #     · **8 个有 `IAccessSelections`**（★ 指针变体）⇒ 预判指针族
 #     · ★★ **4 个没有** ⇒ ★ **本探针来试这 4 个** ✓

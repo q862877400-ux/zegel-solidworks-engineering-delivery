@@ -24,7 +24,8 @@ scratch 文档存到 `output/`（gitignored）；收尾**关件不保存** + **�
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_pdf_on_drawing.py
 # 定位:   给 Spec Kit `077` 补上轮矩阵里 `pdf` 那一格。
-# 官方依据: `IModelDoc2`（工程图类型 = 3）· `IModelDocExtension.SaveAs3` · PDF 规范（`%PDF-` / `/Type /Page`）
+# 官方依据: `IModelDoc2`（工程图类型 = 3）· `IModelDocExtension.SaveAs3` · PDF 规范（`%P
+#           DF-` / `/Type /Page`）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

@@ -21,9 +21,9 @@
 #   ★★ 另一个（`..._solver_type`）解决一条**容易被过度外推**的事：★ 那条内存换算
 #     「每 2e6 自由度 1 GB」**出自 FFEPlus**，而真机跑的是 **Intel Direct Sparse**
 #     ⇒ ★ 先让调用方**看得见本研究用的是哪个求解器**（★ 事实 529）✓
-# 官方依据: `ICWMesh` 的 `Quality`/`MesherType`（`swsMeshQuality_e` / `swsMesherType_e`）·
-#           `ICWStaticStudyOptions.SolverType`（`swsSolverType_e`）·
-#           `c_meshing_options.htm` / `c_Element_Size_in_Curvature_Based_Mesher.htm`（本机官方手册）
+# 官方依据: `ICWMesh` 的 `Quality`/`MesherType`（`swsMeshQuality_e` / `swsMesherType_e`
+#           ）·`ICWStaticStudyOptions.SolverType`（`swsSolverType_e`）·`c_meshing_option
+#           s.htm` / `c_Element_Size_in_Curvature_Based_Mesher.htm`（本机官方手册）
 # 许可:   本仓库 MIT。★ 无第三方代码引入（`THIRD-PARTY-NOTICES.md` 不因本批变动）。
 # ⚠ 未验证项：★ `memory_budget_gb` 的取值只影响**拒绝阈值**、不影响几何；
 #   ★ 本批两个工具都在真机上跑过（证据见 `output/mesh-profile-matrix-evidence.json`

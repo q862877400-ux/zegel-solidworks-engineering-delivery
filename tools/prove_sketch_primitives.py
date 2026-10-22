@@ -8,7 +8,8 @@
 #   `sketch_slot` · `sketch_centerline`（★ `sketch_spline` 按计划**标不做** —— 事实 47/68 架构限制）。
 #   ★★ **按 ToolSpec 的契约调**：★ 回读段数走工具层同一个解析器
 #   （`sw_sketch.resolve_sketch(model, "")` ⇒ 与 `_sketch_args` 一致）。
-# 官方依据: `C:\swapi\types\ISketchManager\` 的 `CreateArc` / `CreateEllipse` / `CreatePolygon` /
+# 官方依据: `C:\swapi\types\ISketchManager\` 的 `CreateArc` / `CreateEllipse` / `CreateP
+#           olygon` /
 #   `CreateSketchSlot` / `CreateCenterLine`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

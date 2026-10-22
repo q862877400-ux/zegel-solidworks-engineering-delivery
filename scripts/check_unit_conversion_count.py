@@ -16,11 +16,10 @@
 # 仓库:   本项目自身
 # 文件:   scripts/check_unit_conversion_count.py
 # 定位:   单位纪律门禁（★ 补 `check_length_units_guard.py` 的盲区：只看工具层）
-# 官方依据: ① 本仓事实 2「入参毫米 · COM 侧米」⇒ 换算必须恰好一次
-#           ② `scripts/sw_part.py` 模块头契约「长度单位：毫米」
-#           ③ 真机证据 `output/probe-unit-suspects/probe.json`
-#              （dome(height=5) ⇒ 包围盒 +5000mm = 5 米；fillet(radius=5) ⇒ 盒子被吃光）
-#           ④ `docs/union-conventions.md` 规则 2（单位）
+# 官方依据: ① 本仓事实 2「入参毫米 · COM 侧米」⇒ 换算必须恰好一次② `scripts/sw_part.py` 
+#           模块头契约「长度单位：毫米」③ 真机证据 `output/probe-unit-suspects/probe.jso
+#           n`   （dome(height=5) ⇒ 包围盒 +5000mm = 5 米；fillet(radius=5) ⇒ 盒子被吃光
+#           ）④ `docs/union-conventions.md` 规则 2（单位）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # -----------------------------------------------------------------------------

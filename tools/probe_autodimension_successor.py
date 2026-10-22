@@ -28,7 +28,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机验证）。
 # 文件:   tools/probe_autodimension_successor.py
-# 定位:   ★ 阶段 2：`scripts/sw_part.py::sketch_auto_dimension` 的 `ISketch.AutoDimension2`。
+# 定位:   ★ 阶段 2：`scripts/sw_part.py::sketch_auto_dimension` 的 `ISketch.AutoDimens
+#           ion2`。
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

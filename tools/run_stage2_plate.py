@@ -13,9 +13,9 @@
 # 仓库:   本项目自身
 # 文件:   tools/run_stage2_plate.py
 # 定位:   规格 `specs/317-stage2-real-holes` 的**生产入口**（真机验收）
-# 官方依据: ① 本仓 `tools/sw_guard.py`（真机一律走弹窗护栏 —— AGENTS.md §十五）
-#           ② 本仓**事实 71**（`GetPartBox` 回毫米）
-#           ③ 阶段 1 的 `tools/run_stage1_plate.py`（★ 同一套授权/解析/计数）
+# 官方依据: ① 本仓 `tools/sw_guard.py`（真机一律走弹窗护栏 —— AGENTS.md §十五）② 本仓**
+#           事实 71**（`GetPartBox` 回毫米）③ 阶段 1 的 `tools/run_stage1_plate.py`（★ 
+#           同一套授权/解析/计数）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────

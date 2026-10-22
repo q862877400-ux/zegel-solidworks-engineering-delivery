@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）。规格 `specs/202-user-coverage-gaps` 的 **R6+**。
 # 文件:   tools/probe_spline_fix.py
-# 定位:   ★ `scripts/sw_part.sketch_spline` 本轮被修（数组包装 `VARIANT(VT_ARRAY|VT_R8)`）⇒
+# 定位:   ★ `scripts/sw_part.sketch_spline` 本轮被修（数组包装 `VARIANT(VT_ARRAY|VT_R8
+#           )`）⇒
 #   ★ **不能只靠旧探针的读数就宣布修好** —— 本探针**按工具层的契约**调一次修好后的实现，
 #   并把判据（草图段数增量）与返回对象的类型如实记下来。
 #   官方依据: `C:\swapi\types\ISketchManager\CreateSpline.md`（`PointData` = **扁平 X,Y,Z 序列**，

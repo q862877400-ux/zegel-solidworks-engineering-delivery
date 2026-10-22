@@ -3,6 +3,15 @@
 工程图实现已归档到 ``subskills/solidworks-engineering-drawing``。该桥接文件保留
 历史 ``scripts.sw_drawing`` 导入路径，避免已有 Skill、测试和第三方调用失效。
 """
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   scripts/sw_drawing.py
+# 定位:   SolidWorks 工程图兼容入口。
+# 官方依据: 不适用（兼容转发壳：真源见文件内 `_IMPLEMENTATION` 指向的模块）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
 from __future__ import annotations
 
 import importlib.util

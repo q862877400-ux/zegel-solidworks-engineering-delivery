@@ -17,7 +17,8 @@ sourceArtifact:  必须存在；**sourceSha256 必须等于它的真实 sha256**
 # ── 来源 ──
 # 仓库:   本项目自身（只读探针，非第三方移植）
 # 文件:   tools/probe_brep_evidence_contract.py
-# 定位:   把 `specs/004-dfm-verified/converge.md §2.1` 记的欠账（SC-004）**先探清再改**。
+# 定位:   把 `specs/004-dfm-verified/converge.md §2.1` 记的欠账（SC-004）**先探清再改*
+#           *。
 #         **本文件的价值**：把 `dfm_review._load_brep_evidence` 的**真实契约**做成可复跑的对照实验
 #         （合法证据被接受 / 篡改哈希被拒 / 篡改产物被拒），供下一个人**不必再猜形态**。
 # ⚠ 依据 `AGENTS.md` 铁律 2（可实测）与 §一 A5（行为要与承诺对齐）。

@@ -23,7 +23,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch64.py —— 本文件
-# 定位:   把 `add_link_connector_report` 挂成 MCP 工具（★ 段 1「救回 B 组两条连接件」的收口）。
+# 定位:   把 `add_link_connector_report` 挂成 MCP 工具（★ 段 1「救回 B 组两条连接件」
+#           的收口）。
 # 官方依据: `SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager.AddLinkConnector`
 #   （★ arity 3 · 形参名 `VertexPointforFirstLocation` / `VertexPointforSecondLocation` / `ByRef ErrorCode`）·
 #   本仓 `scripts/sw_simulation_loads.py` 的 `add_link_connector_report` / `add_link_connector` / `_check` ·

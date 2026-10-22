@@ -34,7 +34,8 @@ r"""@brief 真机证据：**装配只读 3 个工具**（砌墙 W6 / Spec Kit `1
 # 仓库:   本项目自身（真机证据脚本，**不是**从四家外部 MCP 项目移植）
 # 文件:   tools/capture_assembly_evidence.py
 # 定位:   砌墙 W6（Spec Kit `139`）的**验收②**：产出 `output/assembly-evidence.json`。
-# 官方依据: `IAssemblyDoc.GetComponents` · `IInterferenceDetectionMgr`（Done/GetInterferenceCount/
+# 官方依据: `IAssemblyDoc.GetComponents` · `IInterferenceDetectionMgr`（Done/GetInterfer
+#           enceCount/
 #          GetInterferences）· `IInterference`（Volume/GetComponentCount）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。

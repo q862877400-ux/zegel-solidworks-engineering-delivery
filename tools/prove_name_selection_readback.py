@@ -19,7 +19,8 @@
 # ★ 判据（★ 两条都要）：
 #     ① `GetSelectedObjectCount2(-1)` == 2（★ 命中几条）
 #     ② `GetSelectedObject6(2, 0)` **非 None**（★ 而那就是"读得到多实体"）
-# 官方依据: `IModelDocExtension.SelectByID2`（★ 9 参）· `ISelectionMgr.GetSelectedObject6`
+# 官方依据: `IModelDocExtension.SelectByID2`（★ 9 参）· `ISelectionMgr.GetSelectedObject
+#           6`
 #   （★ 官方示例用法见事实 358）· 事实 8（bool 不可信，要回读计数）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

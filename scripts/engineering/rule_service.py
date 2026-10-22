@@ -3,24 +3,20 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/rule_service.py
-# 定位:   规格 `specs/327-release-manifest-rules-and-runs` 的 T5（`RuleRequest`）/
-#           T6（`RuleResult`）/ T7（公式与依据分开）/ T8（效力来源不可只引摘要）/
-#           T9（30 天新鲜度）。
-#           ★★ 实测（2026-10-12）起点：四档 verdict（含 `NOT_APPLICABLE`）、
-#           `citations`、`authority_status`、30 天新鲜度、`INDETERMINATE`
-#           **都已具备**（`compliance.py` / `rules.py` / `rule_verdicts.py`）；
-#           ★ 而**没有 `RuleRequest` / `RuleResult` / `rule_code_digest`**。
-# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q13（L233-259）逐字：
-#           L235「规则由规划器和方法共同使用，**不复制进每种方法**。
-#             **规则实现与依据必须分开**：**一个公式能运行，不表示它对当前材料、
-#             工况和标准版本适用**」
-#           L237-251 逐字给的 `RuleRequest` 与 `RuleResult` 两个结构
-#           L255「**效力来源不可只引用检索引擎生成的摘要**」
-#           L257「本期效力核查采用**交付日前 30 天内**的官方状态记录作为项目
-#             新鲜度政策；……**离线缓存可按其快照日期使用，但不能宣称已经
-#             核对到今天**」
-#           L259「不能计算或缺证据就返回 `INDETERMINATE`。……**保留几何方案或
-#             计算草稿，但不授予合规通过**」
+# 定位:   规格 `specs/327-release-manifest-rules-and-runs` 的 T5（`RuleRequest`）/T6（
+#           `RuleResult`）/ T7（公式与依据分开）/ T8（效力来源不可只引摘要）/T9（30 天新
+#           鲜度）。★★ 实测（2026-10-12）起点：四档 verdict（含 `NOT_APPLICABLE`）、`cit
+#           ations`、`authority_status`、30 天新鲜度、`INDETERMINATE`**都已具备**（`comp
+#           liance.py` / `rules.py` / `rule_verdicts.py`）；★ 而**没有 `RuleRequest` / `
+#           RuleResult` / `rule_code_digest`**。
+# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q13（L233-259）逐字：L235「规
+#           则由规划器和方法共同使用，**不复制进每种方法**。  **规则实现与依据必须分开**
+#           ：**一个公式能运行，不表示它对当前材料、  工况和标准版本适用**」L237-251 逐
+#           字给的 `RuleRequest` 与 `RuleResult` 两个结构L255「**效力来源不可只引用检索
+#           引擎生成的摘要**」L257「本期效力核查采用**交付日前 30 天内**的官方状态记录作
+#           为项目  新鲜度政策；……**离线缓存可按其快照日期使用，但不能宣称已经  核对到今
+#           天**」L259「不能计算或缺证据就返回 `INDETERMINATE`。……**保留几何方案或  计算
+#           草稿，但不授予合规通过**」
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证。

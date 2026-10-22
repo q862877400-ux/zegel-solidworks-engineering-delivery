@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（ToolSpec 声明层）· 规格 `specs/202-user-coverage-gaps`
 # 文件:   mcp-server/tool_specs_batch73.py
-# 定位:   ★ 2026-10-03（接手轮）★ 规格 `202-user-coverage-gaps` 的**工程图 5 项真缺口**。
+# 定位:   ★ 2026-10-03（接手轮）★ 规格 `202-user-coverage-gaps` 的**工程图 5 项真缺口*
+#           *。
 #   ★★ 承 `mcp-server/tool_specs_batch72.py`（第一批）：★ 那一批接的是"AST 量出**已有实现**"
 #     的几个（`tools/audit_gap_implementations.py`），★ **这一批不一样** ——
 #     ★ 这 5 项**本仓一个都没有**，⇒ ★ 先写能力层 `scripts/sw_drawing_create_missing.py`，

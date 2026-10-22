@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机验证）。规格 `specs/202-user-coverage-gaps`。
 # 文件:   tools/probe_surface_fill_fallback.py
-# 定位:   ★★★ 事实 503 说「调用方预选」经工具层不可能成立；★ 而 `surface_fill` 的**声明式分支**
+# 定位:   ★★★ 事实 503 说「调用方预选」经工具层不可能成立；★ 而 `surface_fill` 的**声
+#           明式分支**
 #   恰恰只回读选区 ⇒ ★ 上一版**只要传 `selection` 就必失败**。
 #   ★ 本轮把它改成「拿不到就**回退**到自动路」，★ 本探针验的就是这条回退。
 #   官方依据: `C:\\swapi\\types\\IFeatureManager\\InsertFillSurface2.md`（边界边用 **mark 1**）

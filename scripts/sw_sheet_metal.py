@@ -844,15 +844,13 @@ SWS_SWEPT_FLANGE_POSITIONS = {
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 使用示例（非开源项目，无第三方许可）
 # 文件:   C:\swapi\examples\Create_Swept_Flange_Example_VBNET.md 第 74-87 行
-# 定位:   SweptFlangeSpec 的字段集与默认值，**逐条对应官方示例所设的 14 个属性**：
-#           EndOffset=0 / StartOffset=0 / FlangePosition=MaterialInside /
-#           FlattenAlongPath=False / TrimSideBends=False / ReverseDirection=False /
-#           UseDefaultBendAllowance=True / UseDefaultBendRelief=True /
-#           UseGaugeTable=False / UseMaterialSheetMetalParameters=False /
-#           OverrideDefaultSheetMetalParameters=False
-#           以及官方**不设**的两项：
-#           · Thickness      → 厚度从基体法兰继承，故本类 thickness 默认 None
-#           · ReliefRatio    → 官方走 UseDefaultBendRelief=True，不设此属性
+# 定位:   SweptFlangeSpec 的字段集与默认值，**逐条对应官方示例所设的 14 个属性**：EndO
+#           ffset=0 / StartOffset=0 / FlangePosition=MaterialInside /FlattenAlongPath=Fa
+#           lse / TrimSideBends=False / ReverseDirection=False /UseDefaultBendAllowance=
+#           True / UseDefaultBendRelief=True /UseGaugeTable=False / UseMaterialSheetMeta
+#           lParameters=False /OverrideDefaultSheetMetalParameters=False以及官方**不设**
+#           的两项：· Thickness      → 厚度从基体法兰继承，故本类 thickness 默认 None· R
+#           eliefRatio    → 官方走 UseDefaultBendRelief=True，不设此属性
 #         另加 BendRadius / UseDefaultRadius（官方示例设 UseDefaultRadius=False
 #         但未设 BendRadius，靠 SolidWorks 自身默认值兜底；本类默认 True 更稳，
 #         这属于本仓库的工程判断，已在 examples/09_sheet_metal.py 末尾标注）。

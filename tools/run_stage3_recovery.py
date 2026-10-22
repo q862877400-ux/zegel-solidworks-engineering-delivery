@@ -15,8 +15,8 @@
 # 文件:   tools/run_stage3_recovery.py
 # 定位:   规格 `specs/318-stage3-crash-recovery` 的**验收入口**（S3-A / S3-B）
 # 官方依据: ① 外部方案阶段 3 的验收 S3-A（三类窗口 × 3 次 = 9/9）与 S3-B（过期不可复用）
-#           ② 本仓 `scripts/engineering/recovery.py`（E1~E3）
-#           ③ 本仓 `scripts/engineering/jobs.py`（E4 `UNKNOWN_EFFECT`）
+#           ② 本仓 `scripts/engineering/recovery.py`（E1~E3）③ 本仓 `scripts/engineering
+#           /jobs.py`（E4 `UNKNOWN_EFFECT`）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # -----------------------------------------------------------------------------

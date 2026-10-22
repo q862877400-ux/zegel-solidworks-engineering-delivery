@@ -9,10 +9,11 @@
 #         「装配**爆炸视图**与**宏/VBA 执行** MUST 可用」⇒ ★ 本批就是它的落地。
 #         ★ 实测（2026-10-04）：`capabilities.yaml` 里搜 `Explode` / `RunMacro` = **0 命中**
 #         ⇒ 两块此前**完全空白** ✓
-# 官方依据: `C:\\swapi\\types\\IAssemblyDoc\\{CreateExplodedView,AutoExplode,ViewExplodeAssembly,
-#           ViewCollapseAssembly,ShowExploded2,GetExplodedViewNames2,GetExplodedViewCount2,
-#           GetExplodedViewConfigurationName,EditExplodeParameters}.md`（★ 逐页读过）
-#           · `C:\\swapi\\types\\ISldWorks\\RunMacro2.md` · `C:\\swapi\\enums\\swRunMacro{Option,Error}_e.md`
+# 官方依据: `C:\\swapi\\types\\IAssemblyDoc\\{CreateExplodedView,AutoExplode,ViewExplode
+#           Assembly,ViewCollapseAssembly,ShowExploded2,GetExplodedViewNames2,GetExplode
+#           dViewCount2,GetExplodedViewConfigurationName,EditExplodeParameters}.md`（★ 
+#           逐页读过）· `C:\\swapi\\types\\ISldWorks\\RunMacro2.md` · `C:\\swapi\\enums\
+#           \swRunMacro{Option,Error}_e.md`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 规模:   **17 个工具**（★ 9 + 8）—— 起点 296 ⇒ 本批后 313（SC-001 的第一段）
 # ★ 本批与既有工具**不重叠**（SC-004）：既有 296 个里没有一个爆炸视图或宏**执行**工具；

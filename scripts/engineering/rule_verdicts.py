@@ -3,15 +3,15 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/rule_verdicts.py
-# 定位:   规格 `specs/317-stage2-real-holes` 的 D3（规则评价七档）。
-#           ★★ 实测（2026-10-12）缺口：`scripts/engineering/rules.py` 的 `Verdict`
-#           只有 **4 档**（PASS/FAIL/UNKNOWN/NEEDS_CLARIFICATION），而阶段 2 要求
-#           **七种固定结果**（含 `RuleError(MISSING_INPUT)` / `RuleError(UNIT_MISMATCH)` /
-#           `NOT_APPLICABLE` / `INDETERMINATE(SOURCE_MISSING)` / `INDETERMINATE(STATUS_UNKNOWN)`）。
-#           ★ 本模块**扩展**它（★ 不推倒 —— 既有 4 档继续有效）。
-# 官方依据: ① 外部方案阶段 2 的七档（逐字）
-#           ② 本仓 `scripts/engineering/rules.py` 的既有 4 档与 `StandardRef`
-#           ③ 涉法规/标准结论**必须先用 `ks` 工具核验**（业主常驻纪律）
+# 定位:   规格 `specs/317-stage2-real-holes` 的 D3（规则评价七档）。★★ 实测（2026-10-1
+#           2）缺口：`scripts/engineering/rules.py` 的 `Verdict`只有 **4 档**（PASS/FAIL
+#           /UNKNOWN/NEEDS_CLARIFICATION），而阶段 2 要求**七种固定结果**（含 `RuleError
+#           (MISSING_INPUT)` / `RuleError(UNIT_MISMATCH)` /`NOT_APPLICABLE` / `INDETERMI
+#           NATE(SOURCE_MISSING)` / `INDETERMINATE(STATUS_UNKNOWN)`）。★ 本模块**扩展**
+#           它（★ 不推倒 —— 既有 4 档继续有效）。
+# 官方依据: ① 外部方案阶段 2 的七档（逐字）② 本仓 `scripts/engineering/rules.py` 的既有 
+#           4 档与 `StandardRef`③ 涉法规/标准结论**必须先用 `ks` 工具核验**（业主常驻纪
+#           律）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（★ 规则层是纯计算，无真机依赖）。

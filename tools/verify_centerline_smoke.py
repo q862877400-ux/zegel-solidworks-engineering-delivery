@@ -15,8 +15,8 @@ r"""@brief 真机冒烟：`sw_part.sketch_centerline` + **再测一次长度单�
 # 文件:   tools/verify_centerline_smoke.py
 # 定位:   给 `scripts/sw_part.sketch_centerline`（轮 140 补的 `centerline`）取真机证据；
 #         并**再测**官方文档那句「in meters」。
-# 官方依据: `C:\swapi\types\ISketchManager\CreateCenterLine.md`；
-#           `C:\swapi\types\IBody2\GetBodyBox.md`（已知事实 71：返回**毫米**）
+# 官方依据: `C:\swapi\types\ISketchManager\CreateCenterLine.md`；`C:\swapi\types\IBody2\
+#           GetBodyBox.md`（已知事实 71：返回**毫米**）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

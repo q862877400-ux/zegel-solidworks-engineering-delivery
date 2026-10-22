@@ -593,7 +593,8 @@ def activate_model_for_preview(model):
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_review.py —— `set_standard_view`（本函数整体）。
-# 定位:   摆标准视图（供人看 / 出预览）。★ 2026-10-01（轮 340）**补返回值 + 如实报回读限制**。
+# 定位:   摆标准视图（供人看 / 出预览）。★ 2026-10-01（轮 340）**补返回值 + 如实报回读
+#           限制**。
 # 官方签名依据: `IModelDoc2.ShowNamedView2(Name, ViewId)`（`-1` = 不按名字、用 id）·
 #   `IModelDoc2.ActiveView`（★ 官方原文 "Gets the current active model view in read-only mode"）·
 #   `IModelDoc2.ViewZoomtofit2`（`zoom_to_fit` 走的那条）。

@@ -16,7 +16,8 @@
 #     ④ ★ **老入口 `GetSectionProperties`** 同不同命？（★ 新入口不行、老入口行 ⇒ 就有兜底路）✓
 #     ⑤ ★ **`I` 前缀的指针变体 `IGetSectionProperties2`** 呢？（★ 事实 47 说那族不可用）✓
 #   ★★ 结论只能落在**这五问的读数**上 —— ★ **不许**用"它跟 386 长得像"当结论 ✓
-# 官方依据: `C:\swapi\types\IModelDocExtension\GetSectionProperties2.md`（签名 + Remarks + 24 元）
+# 官方依据: `C:\swapi\types\IModelDocExtension\GetSectionProperties2.md`（签名 + Remarks
+#            + 24 元）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

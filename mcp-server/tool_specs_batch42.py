@@ -20,7 +20,8 @@
 # 仓库:   本项目自身（不是第三方移植；被包装的函数各自的来源块在其源码里）
 # 文件:   mcp-server/tool_specs_batch42.py
 # 定位:   24h 计划 段 6 续（Spec Kit `159`）—— 工程图读数 2 个（补上漂在外面的函数）。
-# 官方依据: `IDrawingDoc` 的 GetViews / GetSheetNames / IView 族（★ 见 `scripts/sw_drawing_query.py`）
+# 官方依据: `IDrawingDoc` 的 GetViews / GetSheetNames / IView 族（★ 见 `scripts/sw_drawi
+#           ng_query.py`）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 本批**只读、不保存文档**（红线）。
 # 覆盖:   全文件

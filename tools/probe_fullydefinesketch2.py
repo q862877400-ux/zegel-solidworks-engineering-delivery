@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\`）
 # 文件:   `tools/probe_fullydefinesketch2.py`
-# 定位:   ★ **官方示例逐字**（★ `C:\swapi\examples\Fully_Define_Underdefined_Sketch_Example_VB.md`）：
+# 定位:   ★ **官方示例逐字**（★ `C:\swapi\examples\Fully_Define_Underdefined_Sketch_Ex
+#           ample_VB.md`）：
 #     ```
 #     swModel.ClearSelection2 True
 #     lMarkHorizontal = 2      ' These are the marks expected for the dimension datums

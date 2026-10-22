@@ -264,7 +264,8 @@ DEPRECATED_SAVEAS = {
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把已核过的"废弃入口 → 该用哪个"集中成表）
 # 文件:   scripts/sw_com_traps.py —— 本定义与其后同级定义
-# 定位:   ★★ **objective⑤「互锁推广」的靶子表** —— 供 `tests/test_save_routing_interlock.py`
+# 定位:   ★★ **objective⑤「互锁推广」的靶子表** —— 供 `tests/test_save_routing_interlo
+#           ck.py`
 #         与同族互锁测试**逐条上锁**（★ 错误的路在假对象上**直接 raise**）。
 # 官方依据: ★ **每条都从官方类型表读到 `Obsolete. Superseded by [[<iface>::<member>]]`**
 #   （★ 文本形态见 `C:\swapi\types\IModelDocExtension\SaveAs.md` 第一行正文 ——

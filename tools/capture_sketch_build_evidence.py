@@ -24,8 +24,10 @@ r"""@brief 真机证据：**建草图 + 画几何 5 个工具**（砌墙 W4 / Sp
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机证据脚本，**不是**从四家外部 MCP 项目移植）
 # 文件:   tools/capture_sketch_build_evidence.py
-# 定位:   砌墙 W4（Spec Kit `135`）的**验收②**：产出 `output/sketch-build-evidence.json`。
-# 官方依据: `ISketchManager.CreateLine` / `CreateCircleByRadius` / `CreateCornerRectangle`
+# 定位:   砌墙 W4（Spec Kit `135`）的**验收②**：产出 `output/sketch-build-evidence.jso
+#           n`。
+# 官方依据: `ISketchManager.CreateLine` / `CreateCircleByRadius` / `CreateCornerRectangl
+#           e`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。
 # 覆盖:   全文件

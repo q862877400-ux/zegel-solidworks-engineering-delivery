@@ -25,8 +25,10 @@ python tools/prove_render_material_sequence.py --keep # 不关文档（调试）
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（探针）
 # 文件:   tools/prove_render_material_sequence.py
-# 定位:   objective③ 挖 `render_material_library`：把官方示例的七步序列落成**可复跑**的探针。
-# 官方依据: `D:\AI\SW\AI Solidworks\官方文档\SWhelp\sldworksapi\Add_and_Delete_Materials_from_
+# 定位:   objective③ 挖 `render_material_library`：把官方示例的七步序列落成**可复跑**
+#           的探针。
+# 官方依据: `D:\AI\SW\AI Solidworks\官方文档\SWhelp\sldworksapi\Add_and_Delete_Materials
+#           _from_
 #   Specific_Display_States_Example_VBNET.htm`（★ 七步序列：CreateDisplayState · 选面 ·
 #   GetSelectedObject6 · **AddEntity** · GetDisplayStates · AddDisplayStateSpecificRenderMaterial ·
 #   GetRenderMaterialsCount2）· `C:\swapi\types\IConfiguration\CreateDisplayState.md` ·

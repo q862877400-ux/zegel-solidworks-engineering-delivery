@@ -20,7 +20,8 @@ scratch 存到 `output/` 的每轮子目录；收尾**关件不保存** + **查�
 # 仓库:   本项目自身（真机诊断）
 # 文件:   tools/diag_in_context_sketch.py
 # 定位:   给 Spec Kit `082` 定位「投影后实体数为 0」是**投影没成**还是**读数对象错**。
-# 官方依据: `ISketchManager.SketchUseEdge3` · `ISketch.GetSketchSegments` · `IModelDoc2.GetActiveSketch2`
+# 官方依据: `ISketchManager.SketchUseEdge3` · `ISketch.GetSketchSegments` · `IModelDoc2.
+#           GetActiveSketch2`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

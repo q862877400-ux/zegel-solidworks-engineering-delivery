@@ -17,7 +17,8 @@
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_equation_expression_power.py
 # 定位:   ★ 业主 2026-10-10 指令「方法要规范」—— ★ 判方程式曲线的**表达力边界**。
-# 官方依据: `C:\swapi\types\ISketchManager\CreateEquationSpline2.md`（★ 11 参 + Remarks）
+# 官方依据: `C:\swapi\types\ISketchManager\CreateEquationSpline2.md`（★ 11 参 + Remarks
+#           ）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

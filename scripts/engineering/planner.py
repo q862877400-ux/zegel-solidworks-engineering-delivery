@@ -3,14 +3,13 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/planner.py
-# 定位:   规格 `specs/319-stage4-constrained-planning` 的 G5（规划出口）。
-#           ★★ 外部方案阶段 4 的目标逐字：「**人工不直接编写工具序列**」——
-#           ⇒ 本模块是**由需求生成计划**的那一步。
-# 官方依据: ① 外部方案阶段 4 的验收 S4-A（关键误放为零 · 可解盲题 ≥90%）
-#           ② `scripts/engineering/compiler.py` 的 `METHOD_LIBRARY`（4 方法）
-#           ③ `scripts/engineering/design_ir.py` 的 `DesignIR`（G1）
-#           ④ `scripts/engineering/registry.py` 的名字解析与参数绑定（阶段 1）
-#           ⑤ `scripts/engineering/expand.py` 的子方法展开（阶段 2）
+# 定位:   规格 `specs/319-stage4-constrained-planning` 的 G5（规划出口）。★★ 外部方案
+#           阶段 4 的目标逐字：「**人工不直接编写工具序列**」——⇒ 本模块是**由需求生成计
+#           划**的那一步。
+# 官方依据: ① 外部方案阶段 4 的验收 S4-A（关键误放为零 · 可解盲题 ≥90%）② `scripts/engin
+#           eering/compiler.py` 的 `METHOD_LIBRARY`（4 方法）③ `scripts/engineering/desi
+#           gn_ir.py` 的 `DesignIR`（G1）④ `scripts/engineering/registry.py` 的名字解析
+#           与参数绑定（阶段 1）⑤ `scripts/engineering/expand.py` 的子方法展开（阶段 2）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收入口 `tools/run_stage4_corpus.py`）。

@@ -28,7 +28,8 @@
 # 仓库:   本项目自身（不是第三方移植；被包装的函数各自的来源块在其源码里）
 # 文件:   mcp-server/tool_specs_batch37.py
 # 定位:   24h 计划 段 1 续（Spec Kit `154`）—— 求解器设置 5 个。
-# 官方依据: `ICWStaticStudyOptions` / `ICWFrequencyStudyOptions` / `ICWBucklingStudyOptions`
+# 官方依据: `ICWStaticStudyOptions` / `ICWFrequencyStudyOptions` / `ICWBucklingStudyOpti
+#           ons`
 #          （★ 见 `scripts/sw_simulation_study_options.py` 的 `STUDY_OPTIONS_ACCESSORS`）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 本批**不保存文档**（红线）。

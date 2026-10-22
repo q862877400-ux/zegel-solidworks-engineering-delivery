@@ -27,7 +27,8 @@ r"""@brief 真机证据：**仿真载荷 2 个工具**（砌墙 W7 / Spec Kit `1
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机证据脚本）
 # 文件:   tools/capture_simulation_loads_evidence.py
-# 定位:   砌墙 W7（Spec Kit `140`）的**验收②**：产出 `output/simulation-loads-evidence.json`。
+# 定位:   砌墙 W7（Spec Kit `140`）的**验收②**：产出 `output/simulation-loads-evidence
+#           .json`。
 # 官方依据: `ICWLoadsAndRestraintsManager.AddRestraint` / `AddForce`；
 #          判据三条**沿用** `tools/capture_simulation_evidence.py`（本项目既有，不新造）。
 # 许可:   本仓库 MIT。无第三方代码引入（★ 四家**没有**这一域 ⇒ 护城河）。

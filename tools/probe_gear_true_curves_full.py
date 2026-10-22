@@ -12,7 +12,8 @@
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_gear_true_curves_full.py
 # 定位:   ★ 业主 2026-10-10「方法要规范」—— ★ 真曲线齿轮的**完整交付判据**。
-# 官方依据: `ISketchManager::CreateEquationSpline2` · `IFeatureManager::FeatureExtrusion3`
+# 官方依据: `ISketchManager::CreateEquationSpline2` · `IFeatureManager::FeatureExtrusion
+#           3`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

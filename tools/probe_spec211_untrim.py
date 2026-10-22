@@ -15,7 +15,8 @@
 #     ★ ③ ★★★ **普通零件上"能选到面"却调** ⇒ ★ 官方 `## Remarks` 逐字「**is valid only for
 #       surface parts**」⇒ ★★ **特征树不该有新特征** ✓ —— ★ 这是**官方那条前置的实证** ✓
 #   ★ 另记：★ `BTrimOppositeSide` **只在 `BMerge=False` 时有意义**（★ 官方逐字）⇒ ★ 报告里如实标 ✓
-# 官方依据: `C:\swapi\types\IFeatureManager\InsertUntrimSurface2.md`（签名 + Parameters + Remarks 两条）
+# 官方依据: `C:\swapi\types\IFeatureManager\InsertUntrimSurface2.md`（签名 + Parameters 
+#           + Remarks 两条）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

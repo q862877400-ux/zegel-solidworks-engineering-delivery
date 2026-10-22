@@ -3,16 +3,15 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/drawing_run.py
-# 定位:   规格 `specs/317-stage2-real-holes` 的 D4（图纸义务）的**真机链**。
-#           ★★ 上一轮（2026-10-12 第 1 轮）D4/D5 只做了机制与测试，
-#           **没跑真机图纸** ⇒ 本模块补那一段。
-# 官方依据: ① `subskills/solidworks-engineering-drawing/schemas/drawing_spec.schema.json`
-#              （★ DrawingSpec v1 的 `required` 九项：schemaVersion / sourceModel /
-#               documentType / standard / projection / paperSize / modelSizeMm /
-#               views / outputs）
-#           ② 工具真源 `solidworks_generate_drawing`（`mcp-server/server.py`）
-#              —— 它**一条链**出「工程图 + PDF + 预览 + 机器审视报告」
-#           ③ 本仓**事实 71**（`GetPartBox` 回毫米）
+# 定位:   规格 `specs/317-stage2-real-holes` 的 D4（图纸义务）的**真机链**。★★ 上一轮
+#           （2026-10-12 第 1 轮）D4/D5 只做了机制与测试，**没跑真机图纸** ⇒ 本模块补那
+#           一段。
+# 官方依据: ① `subskills/solidworks-engineering-drawing/schemas/drawing_spec.schema.json
+#           `   （★ DrawingSpec v1 的 `required` 九项：schemaVersion / sourceModel /    
+#           documentType / standard / projection / paperSize / modelSizeMm /    views / 
+#           outputs）② 工具真源 `solidworks_generate_drawing`（`mcp-server/server.py`） 
+#             —— 它**一条链**出「工程图 + PDF + 预览 + 机器审视报告」③ 本仓**事实 71**（
+#           `GetPartBox` 回毫米）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收见 `tools/run_stage2_plate.py --drawing`）。

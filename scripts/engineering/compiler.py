@@ -6,9 +6,9 @@
 #         `golden-workflows.yaml`（★ **复用** —— 10 个 workflow）
 #         `apps/desktop/cad_workbench/engineering_orchestrator.py`（★ **复用** —— 八阶段 DAG）
 #         `scripts/engineering_contract.py`（★ EC01 的 `EngineeringContract` —— ★ **只吃它**）
-# 定位:   ★ **EC03** 的编译器。★★★ 计划 §5 EC03 验收逐字：
-#           「★ 两模型生成的合法意图都通过**同一编译器**；★ 编译器能拒绝**越权/欠约束/循环依赖**；
-#            ★ **不需要 COM 即可检验计划正确性**；★ **冻结计划不能被执行器静默改写**」
+# 定位:   ★ **EC03** 的编译器。★★★ 计划 §5 EC03 验收逐字：「★ 两模型生成的合法意图都通
+#           过**同一编译器**；★ 编译器能拒绝**越权/欠约束/循环依赖**； ★ **不需要 COM 即
+#           可检验计划正确性**；★ **冻结计划不能被执行器静默改写**」
 #         ★★★ **⇒ 四条不变量**：① 只吃 `EngineeringContract`（模型无关）
 #           ② 全部检查在编译期 ③ **不 import COM** ④ 冻结计划带哈希 + 执行前校验
 # 官方依据: 不适用（本仓的规划编译层 —— ★ 不调 SolidWorks API）

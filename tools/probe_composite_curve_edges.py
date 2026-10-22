@@ -26,7 +26,8 @@ r"""@brief 探针：`InsertCompositeCurve` 换**边**（而不是整个草图）
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_composite_curve_edges.py
 # 定位:   给 Spec Kit `072` 取「选边能不能让 `InsertCompositeCurve` 成功」的证据。
-# 官方依据: `C:\swapi\types\IModelDoc2\InsertCompositeCurve.md`（Remarks：`SelectByID2` + mark 1）
+# 官方依据: `C:\swapi\types\IModelDoc2\InsertCompositeCurve.md`（Remarks：`SelectByID2` 
+#           + mark 1）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

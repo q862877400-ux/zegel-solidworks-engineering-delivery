@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力实现，铁律 3 的 `scripts/`）
 # 文件:   scripts/sw_sandbox.py
-# 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B5-3**（`copy-in / run / copy-out`）。
+# 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B5-3**（`copy-in / run / copy-ou
+#           t`）。
 #   ★★ 外部评审的判决：★ 要守的规则**不是**「输出不落在输入旁边」，而是
 #     「**SolidWorks 打开的永远不是原件**」⇒ ★ 出事的根因是「对**原件路径**直接开了分析」 ✓
 #   ⇒ ★ 所以做法是 **copy-in / run / copy-out**，而不是去拦 SolidWorks 的内部写 ✓

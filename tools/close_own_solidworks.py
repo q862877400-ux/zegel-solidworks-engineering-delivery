@@ -7,7 +7,8 @@
 # 文件:   `tools/reclaim_solidworks.py`（★ **卡死**那条路；★ 本脚本补的是**健康但该关**那条）·
 #         `scripts/sw_connect.py`（`connect_solidworks` / `get_com_member`）·
 #         官方 `ISldWorks.ExitApp`（★ **0 参** —— `C:\swapi\types\ISldWorks\ExitApp.md`）
-# 定位:   ★ **为什么要有它**：纪律那条要求「**用完你自己的就关掉你自己开的那个 SolidWorks**」+
+# 定位:   ★ **为什么要有它**：纪律那条要求「**用完你自己的就关掉你自己开的那个 SolidWo
+#           rks**」+
 #   「**只关你自己开的**、★ 不许误杀别的会话的」⇒ ★★ **而现有工具做不到这件事** ——
 #     `tools/reclaim_solidworks.py` 的判据是「**探得通**就算健康、★ 不需要处置」⇒
 #     ★★★ **实测（2026-10-04）**：一个 `responding=False`（半卡）的进程**探得通** ⇒

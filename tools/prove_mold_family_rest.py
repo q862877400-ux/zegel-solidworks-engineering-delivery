@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_mold_family_rest.py
-# 定位:   ★ 2026-10-03（轮 390）`insert_parting_line` 已真机 PASS（事实 306）⇒ 一次验**另三个**：
+# 定位:   ★ 2026-10-03（轮 390）`insert_parting_line` 已真机 PASS（事实 306）⇒ 一次验*
+#           *另三个**：
 #   `insert_parting_surface` / `insert_shut_off_surface` / `insert_core_cavity_solids`。
 # 官方依据: `C:\swapi\types\IFeatureManager\` 的三份 md ——
 #   · `InsertMoldPartingSurface(int Radiate, bool ReverseAlignment, bool ReverseOffset,

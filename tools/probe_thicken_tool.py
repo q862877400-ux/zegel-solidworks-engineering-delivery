@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）。规格 `specs/202-user-coverage-gaps` 的 **R6+**。
 # 文件:   tools/probe_thicken_tool.py
-# 定位:   ★ 本工具是 **R4「E 类换名重查」** 的产出落地（`recon/r4-e-class-rename-lookup.md`）：
+# 定位:   ★ 本工具是 **R4「E 类换名重查」** 的产出落地（`recon/r4-e-class-rename-looku
+#           p.md`）：
 #   `IFeatureManager.FeatureBossThicken`（**7 参·未废弃**）/ `FeatureCutThicken`（**6 参·未废弃**）。
 #   ★★ **必须真机验**：这两个成员**此前从没在本仓跑过**。
 #   官方依据: `C:\swapi\types\IFeatureManager\FeatureBossThicken.md` · `FeatureCutThicken.md`

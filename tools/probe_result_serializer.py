@@ -1,4 +1,14 @@
 """★ 真机取证：`sw_part.fillet` 的返回**过不了 `_result` 的 `json.dumps`**（MCP 层会误报 error）。"""
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身
+# 文件:   tools/probe_result_serializer.py
+# 定位:   真机取证：`sw_part.fillet` 的返回**过不了 `_result` 的 `json.dumps`**（MCP 
+#           层会误报 error）。
+# 官方依据: ★ 判的是**本仓** `_result` 的 `json.dumps` 兼容性，★ 不涉官方签名
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
 import json
 import sys
 from pathlib import Path

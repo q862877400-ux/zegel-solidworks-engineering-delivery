@@ -23,7 +23,8 @@ r"""@brief 真机证据：**草图只读族 4 个工具**（砌墙 W1 / Spec Kit
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机证据脚本，**不是**从四家外部 MCP 项目移植）
 # 文件:   tools/capture_sketch_evidence.py
-# 定位:   砌墙 W1（Spec Kit `131`）的**验收②**：产出 `output/sketch-evidence.json`（`verdict`）。
+# 定位:   砌墙 W1（Spec Kit `131`）的**验收②**：产出 `output/sketch-evidence.json`（`v
+#           erdict`）。
 # 官方依据: `ISketch.GetSketchSegments` / `GetLines2` / `GetArcs2` / `Is3D`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。

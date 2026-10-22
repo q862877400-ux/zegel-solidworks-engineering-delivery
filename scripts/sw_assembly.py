@@ -851,13 +851,10 @@ def get_interference_detection(asm_model):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（SolidWorks.Interop.sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IMateEntity2 段
-# 定位:   配合实体（mate entity）的只读属性。官方签名（**全部是属性 / 只读查询**）：
-#             Component2 get_ReferenceComponent()
-#             Int32     get_ReferenceType() / get_ReferenceType2()
-#             Int32     GetEntityParamsSize()
-#             Object    get_EntityParams()
-#             Object    get_Reference()
-#             Double    IGetEntityParams(Int32)
+# 定位:   配合实体（mate entity）的只读属性。官方签名（**全部是属性 / 只读查询**）：  
+#           Component2 get_ReferenceComponent()  Int32     get_ReferenceType() / get_Ref
+#           erenceType2()  Int32     GetEntityParamsSize()  Object    get_EntityParams()
+#             Object    get_Reference()  Double    IGetEntityParams(Int32)
 # ⚠ 该接口无 setter —— 配合实体的引用**建好后不可改**，要改只能删了重建。
 # ⚠ ReferenceType / ReferenceType2 两个属性的取值含义在两套官方源里
 #   都未逐项说明，故本函数原样透出数字，不翻译成名字。

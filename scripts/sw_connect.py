@@ -1212,7 +1212,8 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
 #         `Obsolete. Superseded by SaveAs3`（★ 链终点）⇒ ★ 官方**确实要我们换**；
 #         ★★ **而本机不能换** ⇒ ★★★ **处置：★ 保持 `SaveAs` + 把这条实测登记在此**（★ 不照链硬换）。
 #         ★ 读数：`output/_probe284_saveas3.txt` · `output/_probe284_saveas3_opt.txt`。
-# 官方依据: `C:/swapi/types/IModelDocExtension/{SaveAs,SaveAs2,SaveAs3}.md` · `…/GetAdvancedSaveAsOptions.md`
+# 官方依据: `C:/swapi/types/IModelDocExtension/{SaveAs,SaveAs2,SaveAs3}.md` · `…/GetAdva
+#           ncedSaveAsOptions.md`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数
 # ────────────────────────────────────────────────────────────────────

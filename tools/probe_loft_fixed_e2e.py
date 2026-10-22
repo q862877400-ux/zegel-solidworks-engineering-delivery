@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机验证）。规格 `specs/202-user-coverage-gaps` 的质量线。
 # 文件:   tools/probe_loft_fixed_e2e.py
-# 定位:   ★★★ 上一轮真机证出「显式拒」四件套**经工具层必然失败**；★ 本轮给 `part_loft` 加了
+# 定位:   ★★★ 上一轮真机证出「显式拒」四件套**经工具层必然失败**；★ 本轮给 `part_loft`
+#            加了
 #   `profile_sketches`（mark=1、**按顺序**）+ `pre_call=_pre_loft_profiles`。
 #   ★ 本探针**按工具层契约**调（`param_alias` → 注入 → `pre_call` → 目标函数）。
 #   官方依据: `scripts/sw_loft.py` 的 docstring（轮廓 mark=1 · 顺序即语义）·

@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机验证）。规格 `specs/202-user-coverage-gaps` 的 **R3 收口**。
 # 文件:   tools/probe_endcap_feature2.py
-# 定位:   ★★★ 事实 504 记着：`InsertEndCapFeature3`（**预选**那条）在本仓 setup 上静默回 `None`，
+# 定位:   ★★★ 事实 504 记着：`InsertEndCapFeature3`（**预选**那条）在本仓 setup 上静默
+#           回 `None`，
 #   ★ 四类原因已排除 ⇒ ★ **换一条路**（这正是事实 53 说的"回退换做法"）。
 #   ★ 官方 `InsertEndCapFeature2` 的 Remarks 逐字：
 #     「Call `InsertEndCapFeature3` if you want to **pre-select** the faces to end-cap in the

@@ -46,7 +46,8 @@
 # 仓库:   本项目自身（不是第三方移植）
 # 文件:   scripts/sw_custom_property.py
 # 定位:   砌墙 W3（Spec Kit `133`）的能力层：读文件自定义属性（**不需要 PDM**）。
-# 官方依据: `IModelDocExtension.CustomPropertyManager` · `ICustomPropertyManager.Get` / `GetNames` /
+# 官方依据: `IModelDocExtension.CustomPropertyManager` · `ICustomPropertyManager.Get` / 
+#           `GetNames` /
 #          `Count` / `GetType2`；官方示例 `C:\\swapi\\examples\\Add_and_Get_Custom_Properties_Example_VB.md`
 #          （那里 `swCustPropMgr.Get(vName)` 被当**单返回值**用，与实测一致）
 # 许可:   本仓库 MIT。无第三方代码引入。

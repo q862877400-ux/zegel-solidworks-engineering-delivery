@@ -31,7 +31,8 @@
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch61.py —— 本文件
 # 定位:   把 `apply_rigid_connector_by_objects_report` 挂成 MCP 工具。
-# 官方依据: 出厂类型库（`SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）反射出的形参名
+# 官方依据: 出厂类型库（`SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）反射出的形参
+#           名
 #   `AddRigidConnector(PersistIDFaceArray, PersistIDTargetArray, ByRef ErrorCode)` ·
 #   `IBody2.GetFaces` · `swsAnalysisStudyTypeStatic = 0`
 # 许可:   本仓库 MIT。无第三方代码引入。

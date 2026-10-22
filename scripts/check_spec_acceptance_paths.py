@@ -33,7 +33,8 @@ ROADMAP §〇 的三条纪律之三写着「**验收必须是可跑的命令** �
 # 仓库:   本项目自身（门禁实现）
 # 文件:   scripts/check_spec_acceptance_paths.py —— 本文件自身
 #         tests/test_spec_acceptance_paths_gate.py（契约测试 + 负例）
-# 定位:   把「验收必须是可跑的命令」（ROADMAP §〇 纪律三）从「人记得」升级为「门禁守着」；
+# 定位:   把「验收必须是可跑的命令」（ROADMAP §〇 纪律三）从「人记得」升级为「门禁守着
+#           」；
 #         依据是 2026-10-01 实测到的 **2 例仓库外验收脚本**。
 # 官方签名依据: 不适用（纯静态：读 markdown + 查仓库文件，**不连 SolidWorks**）
 # 许可:   本仓库 MIT。无第三方代码引入。

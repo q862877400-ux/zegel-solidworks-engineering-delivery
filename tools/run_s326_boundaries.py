@@ -4,9 +4,9 @@
 # 仓库:   本项目自身
 # 文件:   tools/run_s326_boundaries.py
 # 定位:   规格 `specs/326-question-persistence-and-boundaries` 的**验收入口**
-# 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q8（L163-174）逐字
-#           ② 同文件 Q9（L176-199）· Q11（L201-212）· Q15（L299-327）逐字
-#           ③ `metadata/scope-v1.json`
+# 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q8（L163-174）逐字② 同文件 
+#           Q9（L176-199）· Q11（L201-212）· Q15（L299-327）逐字③ `metadata/scope-v1.jso
+#           n`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # -----------------------------------------------------------------------------

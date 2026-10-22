@@ -16,7 +16,8 @@ r"""@brief 真机冒烟：`sw_export.export_to_image`（png/jpg）—— 读**�
 # ── 来源 ──
 # 仓库:   本项目自身（真机验收）
 # 文件:   tools/verify_png_smoke.py
-# 定位:   给 `scripts/sw_export.export_to_image`（轮 147 收掉 png/jpg 那条边界）取真机证据。
+# 定位:   给 `scripts/sw_export.export_to_image`（轮 147 收掉 png/jpg 那条边界）取真机
+#           证据。
 # 官方依据: `C:\swapi\types\IModelDocExtension\SaveAs3.md`；PNG/JPEG 魔数见各自规范
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

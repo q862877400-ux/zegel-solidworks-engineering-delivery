@@ -30,7 +30,8 @@
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_feature_readback.py
 # 定位:   通用"特征建成回读"判据（落实 `docs/union-conventions.md` 规则 6）。
-# 官方依据: `IModelDoc2.EditRebuild3`（bool）· `IModelDoc2.GetWhatsWrong2`（按 by-ref 数组出参）
+# 官方依据: `IModelDoc2.EditRebuild3`（bool）· `IModelDoc2.GetWhatsWrong2`（按 by-ref 数
+#           组出参）
 #          · `IModelDoc2.FirstFeature` / `IFeature.GetNextFeature`（遍历特征树按名找）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 只做**读取与重建**，不做保存。

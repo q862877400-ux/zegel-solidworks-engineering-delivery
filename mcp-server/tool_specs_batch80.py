@@ -7,13 +7,14 @@
 #         `scripts/sw_busy.py`（★ 本会话 2026-10-04 新建：SolidWorks 忙闲 / 卡死 / 求解器进程 / 等空闲）
 # 定位:   ★ 规格 `specs/205-tool-ramp/` §8.3 的**批 80**（v3 批序第一坡）✓
 #         ★ 选域依据：机械预筛 `output/prescreen-deduped.json`（本批候选 16 ⇒ 预估可挂 ~14，实得 12）✓
-# 官方依据: ★ **本批多数是本仓自研**（`source_kind: repo_original`）——
-#           · `explain_hresult` / `explain` 的释义表出自本仓（★ 不是官方枚举页）；
-#             ★ 而 `sw_com_traps` 的来源块另记了第三方调研（andrewbartels1 / Millwright / chatsw，均 MIT）
-#           · `sw_busy` 是本仓新建（事实 526：忙碌判定要**归属 SolidWorks 家族进程**，否则假阳性）
-#           · `set_flag` / `get_flag` 的 `pref` 优先用本仓 `DIALOG_SUPPRESSORS` 里的名字
-#           ⚠ 故本批**不声明** `official_file`（★ 那些函数没有官方 md 页），
-#             ★ 而由本文件头 + 各 `doc` 指明**真源是本仓代码**（铁律 1 的"本项目自身既有模式"那一栏）✓
+# 官方依据: ★ **本批多数是本仓自研**（`source_kind: repo_original`）——· `explain_hresult
+#           ` / `explain` 的释义表出自本仓（★ 不是官方枚举页）；  ★ 而 `sw_com_traps` 的
+#           来源块另记了第三方调研（andrewbartels1 / Millwright / chatsw，均 MIT）· `sw_
+#           busy` 是本仓新建（事实 526：忙碌判定要**归属 SolidWorks 家族进程**，否则假阳
+#           性）· `set_flag` / `get_flag` 的 `pref` 优先用本仓 `DIALOG_SUPPRESSORS` 里的
+#           名字⚠ 故本批**不声明** `official_file`（★ 那些函数没有官方 md 页），  ★ 而由
+#           本文件头 + 各 `doc` 指明**真源是本仓代码**（铁律 1 的"本项目自身既有模式"那
+#           一栏）✓
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 规模:   **12 个工具**（automation 6 · com_traps 2 · busy 4）⇒ 工具数 313 → **325**
 # ★★ 本批**不做**的（FR-002/D-5 要求记"不做 + 原因"）：

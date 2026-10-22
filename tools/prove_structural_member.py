@@ -21,7 +21,8 @@
 #   ★★ **判据**：★ 这条用的是**特征树**（★ 与段 1 的 `Count` 完全不同的一条判据家族）——
 #     ★ 收集前后**特征类型名集合**，★ 判「多了 `WeldmentFeature` 与结构构件」✓
 #   ⚠ 只新建、**不保存**（★ 硬约束⑦；★ 轮廓是**已在盘上的**外部文件，★ 零件在内存里）。
-# 官方依据: `IFeatureManager.InsertStructuralWeldment5`（★ `sw_weldment.create_structural_member` 已在用）·
+# 官方依据: `IFeatureManager.InsertStructuralWeldment5`（★ `sw_weldment.create_structura
+#           l_member` 已在用）·
 #   `ISketch.GetSketchSegments()`（★ 出厂类型库反射：**0 参** → Object）· `IFeature.GetSpecificFeature2`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

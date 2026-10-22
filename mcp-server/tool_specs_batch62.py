@@ -28,7 +28,8 @@
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch62.py —— 本文件（新）
 # 定位:   把 `create_structural_member_from_sketch` 挂成 MCP 工具。
-# 官方依据: `IFeatureManager.InsertStructuralWeldment5` · `ISketch.GetSketchSegments()`（★ 0 参）·
+# 官方依据: `IFeatureManager.InsertStructuralWeldment5` · `ISketch.GetSketchSegments()`
+#           （★ 0 参）·
 #   `IFeature.GetSpecificFeature2`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

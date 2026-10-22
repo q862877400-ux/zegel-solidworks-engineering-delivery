@@ -4,9 +4,8 @@
 # 仓库:   本项目自身
 # 文件:   tools/run_s325_protocols.py
 # 定位:   规格 `specs/325-declarative-protocols-and-decisions` 的**验收入口**
-# 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q1（L10-34）逐字
-#           ② 同文件 Q5（L59-94）逐字
-#           ③ `metadata/protocols/*.yaml`
+# 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q1（L10-34）逐字② 同文件 Q5
+#           （L59-94）逐字③ `metadata/protocols/*.yaml`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # -----------------------------------------------------------------------------

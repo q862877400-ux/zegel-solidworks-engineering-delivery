@@ -25,7 +25,8 @@ r"""@brief 真机证据：**仿真研究族 3 个工具**（24h 计划 段 1.1 /
 # 仓库:   本项目自身（真机证据脚本）
 # 文件:   tools/capture_simulation_study_evidence.py
 # 定位:   Spec Kit `141` 的**验收②**：产出 `output/simulation-study-evidence.json`。
-# 官方依据: `ICWStudyManager.CreateNewStudy3/2/1`（★ 形状由 `probe_simulation_study_shapes.py` 定死）
+# 官方依据: `ICWStudyManager.CreateNewStudy3/2/1`（★ 形状由 `probe_simulation_study_shap
+#           es.py` 定死）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。
 # 覆盖:   全文件

@@ -3,13 +3,12 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/expand.py
-# 定位:   规格 `specs/317-stage2-real-holes` 的 D1（子方法展开）/ D2（共享基准）。
-#           ★★ 实测（2026-10-12）缺口：阶段 1 的 `resolve_step_name` 对
-#           `hole_group`（那是**另一个方法 id**）给的是 `sub-method-not-expanded`
-#           ⇒ ★ 而外部方案阶段 2 要求「**子方法展开**」把它变成具体工具序列。
-# 官方依据: 不适用（本仓自研编排层）。
-#           方法真源：`scripts/engineering/compiler.METHOD_LIBRARY`
-#           名字真源：`scripts/engineering/registry.resolve_step_name`
+# 定位:   规格 `specs/317-stage2-real-holes` 的 D1（子方法展开）/ D2（共享基准）。★★ 
+#           实测（2026-10-12）缺口：阶段 1 的 `resolve_step_name` 对`hole_group`（那是**
+#           另一个方法 id**）给的是 `sub-method-not-expanded`⇒ ★ 而外部方案阶段 2 要求「
+#           **子方法展开**」把它变成具体工具序列。
+# 官方依据: 不适用（本仓自研编排层）。方法真源：`scripts/engineering/compiler.METHOD_LIB
+#           RARY`名字真源：`scripts/engineering/registry.resolve_step_name`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收见 `tools/run_stage2_plate.py`）。

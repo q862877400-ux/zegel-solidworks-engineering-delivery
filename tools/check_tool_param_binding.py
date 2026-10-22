@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（静态核对脚本）。规格 `specs/202-user-coverage-gaps` 的 **R3 收口**。
 # 文件:   tools/check_tool_param_binding.py
-# 定位:   ★★ **为什么要有它**：真机探针发现 `solidworks_weldment_insert_end_cap` 的 ToolSpec 声明
+# 定位:   ★★ **为什么要有它**：真机探针发现 `solidworks_weldment_insert_end_cap` 的 To
+#           olSpec 声明
 #   了 `wall_ratio`，★ 而能力层形参是 `wall_thickness_ratio` ⇒ ★ **经工具层调必 `TypeError`**。
 #   ★ 这类错**完全可以静态抓**（不需要真机）⇒ ★ 本脚本把全批过一遍。
 #   ⚠ 口径：只判「**声明的参数名在目标函数形参里存不存在**」；★ **不判类型、不判语义**

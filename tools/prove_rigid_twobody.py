@@ -14,7 +14,8 @@
 #     · ★ **不用保存、不用装配**（★ 硬约束⑦ 禁保存 ⇒ 这条路绕开它）✓
 #   ★ 造法：★ 两个矩形 + 两次拉伸，★ 第二次 **`merge=False`**（★ 即留成**新体**）——
 #     ★ 两次的矩形**在 x 方向错开**，★ 于是是两个**分开的**实体。
-# 官方依据: `ICWLoadsAndRestraintsManager.AddRigidConnector(PersistIDFaceArray, PersistIDTargetArray)`
+# 官方依据: `ICWLoadsAndRestraintsManager.AddRigidConnector(PersistIDFaceArray, PersistI
+#           DTargetArray)`
 #   （★ 出厂类型库反射）· `IBody2.GetFaces` · `swsAnalysisStudyTypeStatic = 0`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

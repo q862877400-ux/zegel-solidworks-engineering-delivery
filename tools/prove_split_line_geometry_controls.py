@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/prove_split_line_geometry_controls.py
-# 定位:   ★ 承接 `tools/prove_split_line_geometry_per_example.py`（★ 它已把投影型分割线**建成了**）。
+# 定位:   ★ 承接 `tools/prove_split_line_geometry_per_example.py`（★ 它已把投影型分割
+#           线**建成了**）。
 #     ★★ **为什么还要跑这一轮**：★ 单次"成了"**不是结论** ——
 #       ★ 必须证明**是哪一处几何使之成立**（★ 否则下次换个零件又不知道怎么办）。
 #

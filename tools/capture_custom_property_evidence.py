@@ -18,8 +18,10 @@ r"""@brief 真机证据：**读文件自定义属性 2 个工具**（砌墙 W3 /
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机证据脚本，**不是**从四家外部 MCP 项目移植）
 # 文件:   tools/capture_custom_property_evidence.py
-# 定位:   砌墙 W3（Spec Kit `133`）的**验收②**：产出 `output/custom-property-evidence.json`。
-# 官方依据: `IModelDocExtension.CustomPropertyManager` · `ICustomPropertyManager.Add3/Get/GetNames/Count/GetType2`
+# 定位:   砌墙 W3（Spec Kit `133`）的**验收②**：产出 `output/custom-property-evidence.
+#           json`。
+# 官方依据: `IModelDocExtension.CustomPropertyManager` · `ICustomPropertyManager.Add3/Ge
+#           t/GetNames/Count/GetType2`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）。
 # 覆盖:   全文件

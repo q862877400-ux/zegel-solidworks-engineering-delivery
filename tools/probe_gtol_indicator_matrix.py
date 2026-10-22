@@ -28,7 +28,8 @@ Datum      : "" 与 "A" 两种（官方：Datum 是"指向 BorderType 的基准�
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_gtol_indicator_matrix.py
 # 定位:   给 Spec Kit `086` 判定 `AddIndicator` 是**参数组合没找对**还是**真到不了**。
-# 官方依据: `C:/swapi/types/IGtolFrame/AddIndicator.md`（Remarks 列出允许的 5 个 TolType）·
+# 官方依据: `C:/swapi/types/IGtolFrame/AddIndicator.md`（Remarks 列出允许的 5 个 TolType
+#           ）·
 #          `swGtolIndicatorBorderType_e` = 0..3 · `swGtolGeomCharSymbol_e`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

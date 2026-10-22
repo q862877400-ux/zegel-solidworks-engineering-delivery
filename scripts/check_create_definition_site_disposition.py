@@ -9,10 +9,10 @@
 #         `empty-members`（数据源缺）/ `no-members-used`（确实无事可查）。
 #         ⇒ 合成之后，**一次把 `checked` 退化成 `unmapped` 的回归完全不可见**
 #         （读数仍是「跳过 5→6」）。本门禁把每个站点**摊开并要求表态**。
-# 官方依据: ① `C:\\swapi\\types\\<接口>\\<成员>.md`（官方文档镜像 · 成员集）
-#           ② `C:\\swapi\\types\\IFeatureManager\\CreateDefinition.md`（`CONST → 接口` 映射表）
-#           ③ `_raw/**/enum_values_sldworks.txt`（模块常量 → `swFm*` 名反查）
-#           ★ 读取器**全部 import** `check_interface_member_ownership`，不重写。
+# 官方依据: ① `C:\\swapi\\types\\<接口>\\<成员>.md`（官方文档镜像 · 成员集）② `C:\\swapi
+#           \\types\\IFeatureManager\\CreateDefinition.md`（`CONST → 接口` 映射表）③ `_r
+#           aw/**/enum_values_sldworks.txt`（模块常量 → `swFm*` 名反查）★ 读取器**全部 i
+#           mport** `check_interface_member_ownership`，不重写。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────

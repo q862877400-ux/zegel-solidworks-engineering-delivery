@@ -20,7 +20,8 @@
 #   ★★ **判据**：★ ① `evidence` 里**真有**切割清单文件夹 ★ ② CSV **文件存在且非空**
 #     （★ 后者是硬约束③的原话：★ "判据是 FILE"）。
 #   ⚠ 只新建、**不保存** SW 文档（★ 硬约束⑦）；★ CSV 写到 `output/`（★ 那是产物目录，★ 不算保存文档）。
-# 官方依据: `IFeatureManager.InsertStructuralWeldment5` · `IWeldmentCutListFeature` 那族（★ 仓内已有）
+# 官方依据: `IFeatureManager.InsertStructuralWeldment5` · `IWeldmentCutListFeature` 那族
+#           （★ 仓内已有）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

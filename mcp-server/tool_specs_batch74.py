@@ -3,7 +3,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（ToolSpec 声明层）· 规格 `specs/202-user-coverage-gaps`
 # 文件:   mcp-server/tool_specs_batch74.py
-# 定位:   ★ 2026-10-03（接手轮）★ 规格 `202-user-coverage-gaps` 的 **T-C2**：钣金/焊件 5 项
+# 定位:   ★ 2026-10-03（接手轮）★ 规格 `202-user-coverage-gaps` 的 **T-C2**：钣金/焊件
+#            5 项
 #   **「直入法」**（★ 即"直接调一个方法把特征建出来"，★ 不是 `CreateDefinition`+`CreateFeature`）。
 #   ★★ 承 `tool_specs_batch72.py`（第一批：接已有实现）与 `batch73.py`（第二批：工程图五项缺口）。
 #

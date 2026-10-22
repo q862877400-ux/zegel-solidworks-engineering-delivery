@@ -31,7 +31,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装的函数各自的来源块在其源码里）
 # 文件:   mcp-server/tool_specs_batch39.py
-# 定位:   24h 计划 段 5 续（Spec Kit `156`）—— 填 `equations` / `helix_and_spiral` / `gtol_insert` 三条空条目。
+# 定位:   24h 计划 段 5 续（Spec Kit `156`）—— 填 `equations` / `helix_and_spiral` / `
+#           gtol_insert` 三条空条目。
 # 官方依据: `IModelDoc2.AddEquation` / `IEquationMgr`（★ 见 `scripts/sw_equation.py`）·
 #          `IFeatureManager.InsertHelix`（★ 见 `scripts/sw_helix.py`）·
 #          `IModelDoc2.InsertGtol`（★ 见 `scripts/sw_gtol.py`）

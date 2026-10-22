@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B2-2 的第二步探针）
 # 文件:   tools/probe_spec211_sweep_pre.py
-# 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B2-2**。★ 上一轮（`probe_spec211_sweep.py`）
+# 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B2-2**。★ 上一轮（`probe_spec211_s
+#           weep.py`）
 #   **只到「查了行为」**：★ 空零件、**无选择**下直接调 ⇒ **静默回 `None`** ✗ ——
 #   ★★ 而官方 `## Remarks` 明写**必须先按 mark 选**（1=Profile · 4=Sweep path）⇒
 #     ★ 那个"静默"**很可能只是因为"前置没上"** ✗
@@ -17,7 +18,8 @@
 #     ★（★ 扫描的路径与轮廓**不能共面** —— 共面时那条路本身不成立 ✓）
 #     ★ ④ ★ `SelectByID2` 的 Callout **必须传** `VARIANT(VT_DISPATCH, None)`（**事实 33**；
 #       ★ 本探针复用 `sw_part._select_by_id` —— ★ 它内部已有 `_empty_callout()` ✓）
-# 官方依据: `C:\swapi\types\IFeatureManager\InsertSweepSurface2.md`（签名 + Remarks 的 mark 表）
+# 官方依据: `C:\swapi\types\IFeatureManager\InsertSweepSurface2.md`（签名 + Remarks 的 m
+#           ark 表）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

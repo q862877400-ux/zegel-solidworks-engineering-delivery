@@ -22,7 +22,8 @@
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_gear_tooth_pattern2.py
 # 定位:   ★ 业主 2026-10-10「方法要规范」—— ★ 真曲线的**规范建模链**。
-# 官方依据: `ISketchManager::CreateEquationSpline2`（★ 11 参 · ★ RangeStart/End 是字符串）
+# 官方依据: `ISketchManager::CreateEquationSpline2`（★ 11 参 · ★ RangeStart/End 是字符串
+#           ）
 #         `IFeatureManager::FeatureExtrusion3`（★ D1 = meters）
 #         `IFeatureManager::FeatureCircularPattern4`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。

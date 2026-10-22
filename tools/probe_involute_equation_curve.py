@@ -21,7 +21,8 @@
 # 文件:   tools/probe_involute_equation_curve.py
 # 定位:   ★ 业主 2026-10-10 指令「方法要按机械工程的规范做法」——
 #         ★ 渐开线**必须是真曲线**，★ 不是 12 段折线。
-# 官方依据: `C:\swapi\types\ISketchManager\CreateEquationSpline2.md`（★ 11 参签名 + Remarks）
+# 官方依据: `C:\swapi\types\ISketchManager\CreateEquationSpline2.md`（★ 11 参签名 + Rema
+#           rks）
 #         `C:\swapi\examples\Create_Equation-driven_Curve_Example_VB.md`（★ 调用序）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件

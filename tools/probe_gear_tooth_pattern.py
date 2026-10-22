@@ -23,7 +23,8 @@
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_gear_tooth_pattern.py
 # 定位:   ★ 业主 2026-10-10「方法要规范」—— ★ 一个齿 + 圆周阵列（★ 不是整圈 120 条线）。
-# 官方依据: `ISketchManager::CreateEquationSpline2` · `IFeatureManager::FeatureCircularPattern4`
+# 官方依据: `ISketchManager::CreateEquationSpline2` · `IFeatureManager::FeatureCircularP
+#           attern4`
 #         `IFeatureManager::FeatureExtrusion3`（★ D1 = meters）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件

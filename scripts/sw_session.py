@@ -258,7 +258,8 @@ def undo_report(model, steps: int = 1) -> dict:
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_session.py —— 追加 `rebuild_report`
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **235 `rebuild_document`**
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **235 `rebuil
+#           d_document`**
 #   + idx **236 `rebuild_model`**。★★ 裁决书（`docs/recon-207/adjudication.md` §一）逐字要求：
 #   「与 236 **合并成一条工具**（三档 mode），**不建两条**」—— 理由是「两条工具做同一件事会在
 #   能力清单里留下两条永远同进同退的条目」✓

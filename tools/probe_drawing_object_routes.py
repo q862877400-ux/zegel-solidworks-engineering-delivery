@@ -21,7 +21,8 @@ W2 要挂「**当前活动工程图的轻量只读读数**」。挂之前必须�
 # 仓库:   本项目自身（真机探针，**不是**从四家外部 MCP 项目移植）
 # 文件:   tools/probe_drawing_object_routes.py
 # 定位:   给砌墙 W2 定包装层；产出 `output/drawing-object-routes.json`。
-# 官方依据: `IDrawingDoc.GetCurrentSheet` / `GetFirstView` / `GetSheetCount` / `GetSheetNames` ·
+# 官方依据: `IDrawingDoc.GetCurrentSheet` / `GetFirstView` / `GetSheetCount` / `GetSheet
+#           Names` ·
 #          `ISheet.GetName` / `GetProperties2` · `IView.GetName2` / `Type` / `GetNextView`;
 #          官方示例 `Get_Drawing_View_Names_and_Types_Example_CSharp`（`C:\swapi\examples\`）
 # 许可:   本仓库 MIT。无第三方代码引入。

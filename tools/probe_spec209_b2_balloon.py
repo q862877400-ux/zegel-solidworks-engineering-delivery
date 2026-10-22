@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_spec209_b2_balloon.py
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-2** · 外部项目 idx **34 `balloon`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-2** · 外部项目 idx **34 `balloon`
+#           **。
 #   ★★★ 裁决书的硬约束（§一）逐字：「★★ 两家结论**互相矛盾**（Slacker-LLC 说静默无效、
 #     Eduardof0nt 直接调并回 `bool(result)`）⇒ **不许照抄任何一家**，必须真机定案」✓
 #   ★★ 而**定案的钥匙在官方示例的 Preconditions 里**（逐字）：
@@ -17,7 +18,8 @@
 #     ```
 #   ★★ 判据（规则 6，纯回读）：**`sum(IView::GetNoteCount)` 的增量** ——
 #     ★ **不拿 `AutoBalloon5` 返回的数组当判据**（那正是别家错的地方）✓
-# 官方依据: `C:\\swapi\\types\\IDrawingDoc\\AutoBalloon5.md`（Returns = **Array of INotes**；
+# 官方依据: `C:\\swapi\\types\\IDrawingDoc\\AutoBalloon5.md`（Returns = **Array of INote
+#           s**；
 #   `## Remarks` 给**四步前置**）· `C:\\swapi\\types\\IModelDocExtension\\InsertBOMBalloon2.md`
 #   （单发气泡：`Note InsertBOMBalloon2(BalloonOptions)`，四步前置）·
 #   `C:\\swapi\\types\\IView\\GetNoteCount.md`（**判据来源**）·

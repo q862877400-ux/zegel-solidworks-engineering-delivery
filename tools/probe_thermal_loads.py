@@ -17,7 +17,8 @@
 #   ★★ 而更强的线索：★ **这四条（对流/热流/热功率/温度/辐射）是**热载荷****
 #     ⇒ ★ **而我一直在 `static` 算例上试它们** ⚠
 #   ⇒ ★ 本探针把**算例类型**变成变量：★ 建 **thermal**（`study_type=3`）算例再试。
-# 官方依据: CHM `ICWLoadsAndRestraintsManager~Add{Convection,HeatFlux,HeatPower,Temperature,
+# 官方依据: CHM `ICWLoadsAndRestraintsManager~Add{Convection,HeatFlux,HeatPower,Temperat
+#           ure,
 #   Radiation,ElasticConnector}.html` 的 VB 声明（**逐字抄自**）·
 #   `swsAnalysisStudyTypeThermal = 3`（`scripts/sw_simulation.SWS_ANALYSIS_STUDY_TYPES`）
 # 许可:   本仓库 MIT。无第三方代码引入。

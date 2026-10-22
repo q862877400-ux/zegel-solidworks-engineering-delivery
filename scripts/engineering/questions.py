@@ -3,22 +3,19 @@
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/questions.py
-# 定位:   规格 `specs/326-question-persistence-and-boundaries` 的 S1（12 字段）/
-#           S2（落盘读回）/ S3（`source=human` 必须可核）/ S4（补答拒旧版本）/
-#           S5（等待时释放执行锁）。
-#           ★★ 实测（2026-10-12）起点：**没有 `question_id` / `requirement_revision` /
-#           `answer_source` / `allowed_default_ref`，**没有问题落盘**；
-#           ★ 而「LLM 自报 source=human 不算人工确认」与「释放执行锁」**有表述无判据**。
-# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q8（L163-174）逐字：
-#           L165 逐字给的 12 字段：「`question_id / run_id / requirement_revision /
-#             field / value_schema / unit / reason / blocking / allowed_default_ref /
-#             answer_source / status`」
-#           L167「先保存问题，再请求输入。**等待用户时释放执行锁**，
-#             **不保持 COM 调用或选区**」
-#           L170「补答必须**携带问题 ID 与期望版本，拒绝旧版本覆盖**」
-#           L171「关键工程批准必须来自**可信的人机确认通道**。
-#             **LLM 自己提交 `source=human` 不算人工确认**。无法证明来源时，
-#             由最小本地确认界面承接，任务保持等待」
+# 定位:   规格 `specs/326-question-persistence-and-boundaries` 的 S1（12 字段）/S2（落
+#           盘读回）/ S3（`source=human` 必须可核）/ S4（补答拒旧版本）/S5（等待时释放执
+#           行锁）。★★ 实测（2026-10-12）起点：**没有 `question_id` / `requirement_revis
+#           ion` /`answer_source` / `allowed_default_ref`，**没有问题落盘**；★ 而「LLM 
+#           自报 source=human 不算人工确认」与「释放执行锁」**有表述无判据**。
+# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q8（L163-174）逐字：L165 逐字
+#           给的 12 字段：「`question_id / run_id / requirement_revision /  field / valu
+#           e_schema / unit / reason / blocking / allowed_default_ref /  answer_source /
+#            status`」L167「先保存问题，再请求输入。**等待用户时释放执行锁**，  **不保持
+#            COM 调用或选区**」L170「补答必须**携带问题 ID 与期望版本，拒绝旧版本覆盖**
+#           」L171「关键工程批准必须来自**可信的人机确认通道**。  **LLM 自己提交 `source
+#           =human` 不算人工确认**。无法证明来源时，  由最小本地确认界面承接，任务保持等
+#           待」
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收入口 `tools/run_s326_boundaries.py`）。

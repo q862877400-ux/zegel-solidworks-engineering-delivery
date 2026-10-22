@@ -850,7 +850,8 @@ def auto_insert_balloons(model, *,
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力实现）· ★ 铁律 1「只缝合不发明」
 # 文件:   scripts/sw_drawing_create_missing.py —— 追加 `insert_model_annotations`
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-5** · 外部项目 idx **205 `model_annotations`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-5** · 外部项目 idx **205 `model_a
+#           nnotations`**。
 #   ★★ 裁决书的**建议落点**是 `scripts/sw_drawing.py`，★ 而**我改成落这里** ——
 #     理由**可核**：`scripts/sw_drawing.py` 只有 **29 行**、是**桥接壳**
 #     （它 `exec_module` 加载 `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py`
@@ -1088,7 +1089,8 @@ def insert_model_annotations(model, view_name: str = "", *, source: str = "entir
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力实现）· ★ 铁律 1「只缝合不发明」
 # 文件:   scripts/sw_drawing_create_missing.py —— 追加 `insert_center_lines`
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-3** · 外部项目 idx **52 `centerline`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-3** · 外部项目 idx **52 `centerli
+#           ne`**。
 #   ★★ 裁决书（§一）：采纳，且「**须真机定案**」—— 理由：**两家外部项目结论互相矛盾**
 #     （一家说零件视图上 `InsertCenterLine2` **静默无效**，另一家直接调并回 `bool(result)`）✓
 #   ★★★ **关于裁决书那条「与 idx 30 `auto_center_marks` 合并成一条工具两种模式」的建议 ——

@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_spec209_b4_model_annotations.py
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-5** · 外部项目 idx **205 `model_annotations`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-5** · 外部项目 idx **205 `model_a
+#           nnotations`**。
 #   ★★ 判据（规则 6，全回读）：
 #     ```
 #     ① 视图标注数        ★ IView::GetAnnotationCount() 的**前后读数**（本模块既有 _sum_over_views）
@@ -11,7 +12,8 @@
 #     ④ Types 语义        ★ 两个 insert_all_* 都为 False 且 types 空 ⇒ **官方说 Types 只在那时有效**
 #                         ⇒ 本函数**拒绝**（★ 不猜）
 #     ```
-# 官方依据: `C:\\swapi\\types\\IDrawingDoc\\InsertModelAnnotations4.md`（8 参 + Parameters + Returns）·
+# 官方依据: `C:\\swapi\\types\\IDrawingDoc\\InsertModelAnnotations4.md`（8 参 + Paramete
+#           rs + Returns）·
 #   `C:\\swapi\\enums\\{swImportModelItemsSource_e,swInsertAnnotation_e}.md` ·
 #   `C:\\swapi\\types\\IView\\GetAnnotationCount.md` ·
 #   ★★ `C:\\swapi\\examples\\Insert_Model_Annotations_Example_VB.md`（**调用序**）

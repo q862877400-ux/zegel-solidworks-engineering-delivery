@@ -2,7 +2,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力实现）
 # 文件:   scripts/sw_body_ops.py（★ 本仓**没有**多体/布尔这一族 ⇒ 按铁律 3 在 `scripts/` 下新建）
-# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **209 `move_body`**。
+# 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **209 `move_b
+#           ody`**。
 #   ★★ 裁决书（`docs/recon-207/adjudication.md` §九）称它是「**本批最干净的一条**」：
 #   「官方页 **signature + 逐字 mark 表(1/2/4/8) + 官方示例调用序 + 读侧 `IMoveCopyBodyFeatureData`
 #    全齐**；pywin32 **可达**」✓
