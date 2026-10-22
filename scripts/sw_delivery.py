@@ -48,12 +48,13 @@ def _file_signature(path: Path):
     return stat.st_size, stat.st_mtime_ns
 
 
-def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+#: ★ 2026-10-22（仓库统一化）：`_sha256` 原在本文件与 `delivery_compare.py` 各有一份（逐
+#: 字相同）
+#:   ⇒ 收敛到单一实现 `scripts/sw_file_digest.py` ✓
+try:
+    from .sw_file_digest import sha256_file as _sha256
+except ImportError:
+    from sw_file_digest import sha256_file as _sha256
 
 
 def _property_value(model, configuration_name: str, names: tuple[str, ...]) -> str:
@@ -70,7 +71,8 @@ def _property_value(model, configuration_name: str, names: tuple[str, ...]) -> s
     return ""
 
 
-#: ★ 官方枚举 swInConfigurationOpts_e 的「所有配置」（src: C:\\swapi\\enums\\swInConfigurationOpts_e.md）
+#: ★ 官方枚举 swInConfigurationOpts_e 的「所有配置」（src: C:\\swapi\\enums\\swInConfigu
+#: rationOpts_e.md）
 SW_ALL_CONFIG = 2
 
 
@@ -87,12 +89,15 @@ def collect_assembly_bom(model, *, include_excluded: bool = False) -> list[dict[
         #:     「**Obsolete. Superseded by [[IComponent2::GetExcludeFromBOM2]] and [[…**」
         #:     ★ 旧的是**属性**（`System.bool ExcludeFromBOM {get; set;}`）
         #:     ★★ 后继 `GetExcludeFromBOM2(Config_opt, Config_names)` 是**方法**（2 参）
-        #:        —— ★ `## Parameters` 逐字：「**Config_opt**: Configuration option as defined in
+        #: —— ★ `## Parameters` 逐字：「**Config_opt**: Configuration option as defined 
+        #: in
         #:        [[swInConfigurationOpts_e]]」
-        #:   ⇒ ★ 传 `swAllConfiguration = 2`（★ 枚举值本会话已核）· `Config_names` 传 `None`
+        #: ⇒ ★ 传 `swAllConfiguration = 2`（★ 枚举值本会话已核）· `Config_names` 传 `Non
+        #: e`
         #:   ★★★ 真机证据（`tools/probe_deps_bom_undercut.py` ·
         #:     `output/deps-bom-undercut-evidence.json`）：
-        #:     ★ 旧 `ExcludeFromBOM` ⇒ **False** · ★ 新 `GetExcludeFromBOM2(2, None)` ⇒ **`(False,)`**
+        #: ★ 旧 `ExcludeFromBOM` ⇒ **False** · ★ 新 `GetExcludeFromBOM2(2, None)` ⇒ **`(
+        #: False,)`**
         #:     ⇒ ★★ **语义一致（新的是单元素元组）⇒ 可换** ✓
         _excluded = get_com_member(component, "GetExcludeFromBOM2", SW_ALL_CONFIG, None)
         if isinstance(_excluded, (list, tuple)):
@@ -226,18 +231,23 @@ def _document_dependency_paths(model, source_path: str) -> list[str]:
     """@brief 读取当前文档引用路径，用于校验 Pack and Go 是否漏包。"""
     try:
         #: ★★★★ 2026-10-04（接手轮）**换掉一个官方废弃成员** ——
-        #:   处置阶段 2 · T1（★ `tools/scan_obsolete_safe.py` 的真命中）★ 逐条流程第 ① 步 ✓
+        #: 处置阶段 2 · T1（★ `tools/scan_obsolete_safe.py` 的真命中）★ 逐条流程第 ① 步 
+        #: ✓
         #:   ★ **官方逐字**（★ `C:\swapi\types\IModelDoc2\GetDependencies2.md`）：
         #:     「**Obsolete. Superseded by `IModelDocExtension::GetDependencies`**.」✓
-        #:     旧签名：★ `GetDependencies2(bool Traverseflag, bool Searchflag, bool AddReadOnlyInfo)` ⇒ **3 参** ✓
+        #: 旧签名：★ `GetDependencies2(bool Traverseflag, bool Searchflag, bool AddReadO
+        #: nlyInfo)` ⇒ **3 参** ✓
         #:   ★★ **后继逐字**（★ `IModelDocExtension/GetDependencies.md`）：
         #:     `GetDependencies(bool Traverseflag, bool Searchflag, bool AddReadOnlyInfo,
         #:       bool ListBrokenRefs, bool AppendImportedPaths)` ⇒ **5 参** ✓
         #:     `## Parameters` 逐字：★ `ListBrokenRefs` = get broken references ·
         #:       ★ `AppendImportedPaths` = append imported path names ✓
-        #:   ★★★ **修法**：★ **接口从 `model` 换到 `model.Extension`**（★ 那是后继的归属）·
-        #:     ★★ **原三个实参原样保留**（★ `False, True, False`）· ★★★ **两个新参都给 `False`**
-        #:     （★ 不要 broken refs、★ 不要 imported paths —— ★ 与原来那三个的语义**同一口径**）✓
+        #: ★★★ **修法**：★ **接口从 `model` 换到 `model.Extension`**（★ 那是后继的归属）
+        #: ·
+        #: ★★ **原三个实参原样保留**（★ `False, True, False`）· ★★★ **两个新参都给 `Fals
+        #: e`**
+        #: （★ 不要 broken refs、★ 不要 imported paths —— ★ 与原来那三个的语义**同一口径
+        #: **）✓
         ext = get_com_member(model, "Extension")
         dependencies = get_com_member(
             ext, "GetDependencies", False, True, False, False, False) or []
@@ -739,7 +749,8 @@ def _coerce_dispatch(value):
     """@brief 将原始 IDispatch 包装为 pywin32 对象，普通假对象原样返回。"""
     if value is None:
         return None
-    #: ★★★★ 2026-10-04（接手轮）**同一个废弃成员名的**第二类用法**：★ 把它当**指纹**探测** ——
+    #: ★★★★ 2026-10-04（接手轮）**同一个废弃成员名的**第二类用法**：★ 把它当**指纹**探测
+    #: ** ——
     #:   ★ 本行原来写 `hasattr(value, "SetSaveToName")` ⇒ ★★ 那是**拿一个已废弃的成员名
     #:   当"这个对象是不是 `IPackAndGo`"的判据** ✓
     #:   ★★★ **官方逐字**：★ `IPackAndGo/SetSaveToName.md` ⇒
@@ -778,9 +789,11 @@ def _get_pack_and_go(extension):
         package = get_com_member(extension, "GetPackAndGo")
         #: ★★★ **必须验证它真的是 COM dispatch 对象** —— 见上面那段说明。
         #: ★★ **不能用 `_coerce_dispatch` 来验**：★ 实测它**除 `None` 外什么都放行**
-        #:   （★ 对 bound method 会走 `Dispatch(value)` → 失败 → **`return value` 原样返回**）
+        #: （★ 对 bound method 会走 `Dispatch(value)` → 失败 → **`return value` 原样返回
+        #: **）
         #:   ⇒ ★★ 与**事实 40**那句同族：★「**一个存在但没人用的守卫与没有守卫等价**」✓
-        #: ★ 真判据：★ **COM 对象有 `_oleobj_`**（★ 本文件 `_coerce_dispatch` 自己也用了这一条）✓
+        #: ★ 真判据：★ **COM 对象有 `_oleobj_`**（★ 本文件 `_coerce_dispatch` 自己也用了
+        #: 这一条）✓
         if package is not None and hasattr(package, "_oleobj_"):
             return package
         errors.append(
@@ -848,10 +861,14 @@ def _pywin32_pack_and_go(
     #:     「**Obsolete. Superseded by `IPackAndGo::SetSaveToName2`**.」✓
     #:     旧签名：★ `SetSaveToName(bool Override, string SaveToName)` ⇒ **2 参** ✓
     #:   ★★ **后继逐字**（★ `IPackAndGo/SetSaveToName2.md`）：
-    #:     ★ 签名 `SetSaveToName2(bool Override, string SaveToName)` ⇒ ★★ **同样 2 参、★ 同名同型** ✓
-    #:     ★★★ 而它的 `## Remarks` 逐字：★ 「The difference between this method and the now obsolete
-    #:       `IPackAndGo::SetSaveToName` is that this method **supports saving to minimal folders**.
-    #:       It saves to any folder structure as defined by `IPackAndGo::FolderStructureOption`.」✓
+    #: ★ 签名 `SetSaveToName2(bool Override, string SaveToName)` ⇒ ★★ **同样 2 参、★ 同
+    #: 名同型** ✓
+    #: ★★★ 而它的 `## Remarks` 逐字：★ 「The difference between this method and the now 
+    #: obsolete
+    #: `IPackAndGo::SetSaveToName` is that this method **supports saving to minimal fold
+    #: ers**.
+    #: It saves to any folder structure as defined by `IPackAndGo::FolderStructureOption
+    #: `.」✓
     #:   ★★★ **⇒ 所以本处**只需换名字****（★ 实参不用动、★ 接口也不用换）——
     #:     ★★ 而新成员**多了**「支持最小文件夹」的能力 ⇒ ★ **对我们只有好处、★ 不改行为** ✓
     if not package.SetSaveToName2(True, str(target) + os.sep):
@@ -1000,7 +1017,8 @@ def _comtypes_pack_and_go(
         ]
         # AddExternalDocuments 用于附加非模型依赖文件，不保证接受装配体的原生零件引用。
         # 即使枚举不完整也执行原生保存，随后以实际落盘文件审计是否缺失依赖。
-        #: ★★ 同上（★ 第二处）：★ `SetSaveToName` 官方已废弃 ⇒ 换 `SetSaveToName2`（★ 同 2 参）✓
+        #: ★★ 同上（★ 第二处）：★ `SetSaveToName` 官方已废弃 ⇒ 换 `SetSaveToName2`（★ 同
+        #:  2 参）✓
         if not package.SetSaveToName2(True, str(target) + os.sep):
             raise RuntimeError("IPackAndGo.SetSaveToName2 拒绝目标目录")
 

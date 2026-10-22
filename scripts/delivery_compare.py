@@ -11,17 +11,16 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-import hashlib
 from pathlib import Path
 from typing import Any, Iterable
 
-
-def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+#: ★ 2026-10-22（仓库统一化）：`_sha256` 原在本文件与 `sw_delivery.py` 各有一份（逐字相
+#: 同）
+#:   ⇒ 收敛到单一实现 `scripts/sw_file_digest.py` ✓
+try:
+    from .sw_file_digest import sha256_file as _sha256
+except ImportError:
+    from sw_file_digest import sha256_file as _sha256
 
 
 def snapshot_files(paths: Iterable[str | Path]) -> dict[str, dict[str, Any]]:

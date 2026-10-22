@@ -7,8 +7,8 @@
   "dup_filename": "AGENTS.md 铁律 3（结构按顶层白名单）引申：跨目录同名 .py 视为重复实现嫌疑"
  },
  "measured_at": "2026-10-21",
- "ruff_total_ceiling": 25876,
- "clone_groups_ceiling": 2498,
+ "ruff_total_ceiling": 25859,
+ "clone_groups_ceiling": 2497,
  "no_source_block_ceiling": 0,
  "dup_filename_allow": [],
  "_★待裁决": {
@@ -65,9 +65,23 @@
     25876
    ],
    "why": "两个 dispatch 门禁里本人新增注释按显示宽度折行（顺带修好既有超宽注释）"
+  },
+  {
+   "at": "2026-10-22c",
+   "from": [
+    25876,
+    2498,
+    113
+   ],
+   "to": [
+    25859,
+    2497,
+    112
+   ],
+   "why": "收敛 _sha256（delivery_compare + sw_delivery 逐字相同）到 scripts/sw_file_digest.py"
   }
  ],
- "dup_function_groups_ceiling": 113,
+ "dup_function_groups_ceiling": 112,
  "dup_function_allow": [],
  "_★新增判据": "⑤ 跨文件同函数体组 = 122 —— 判据：函数体归一化哈希（去 docstring、Name/形参换占位符），跨文件同哈希即同一函数多份实现。出处：Type-2 克隆定义（pyscn）"
 }
