@@ -20,6 +20,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+
+try:
+    from ._applicability import ApplicabilityMixin
+except ImportError:
+    from _applicability import ApplicabilityMixin
+
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -105,7 +111,7 @@ class Complexity:
 
 
 @dataclass
-class MethodSpec:
+class MethodSpec(ApplicabilityMixin):
     """★★ `MethodSpec`（★ 逐字承计划 §5 EC03-T01）：
 
     「★ 目标、适用域、前后置、步骤、**禁止条件**、复杂度、**修改域**、验证义务和**失败域**」
@@ -125,14 +131,6 @@ class MethodSpec:
     #: ★★ **选法原因与替代方案**（★ EC03-T02 逐字）
     rationale: str = ""
     alternatives: tuple = ()
-
-    def applies_to(self, device_class: str) -> bool:
-        """★ 适用性（★ **空适用域 ⇒ 不适用任何类别** —— ★ 不默认「通用」）。"""
-        return device_class in (self.applicable_devices or ())
-
-    def allows(self, target: str) -> bool:
-        """★★ **越权检查**：★ `target` 是否在**修改域**内。"""
-        return target in (self.modification_domain or ())
 
 
 #: ★★★ **受控方法库**（★ EC03-T02 逐字：★「板/孔组/阶梯轴/安装支架四个受控方法」）

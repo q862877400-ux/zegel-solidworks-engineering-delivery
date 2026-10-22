@@ -29,16 +29,17 @@ RULES_FILE = (
 )
 
 
-class RuleError(Exception):
+try:
+    from ._coded_error import CodedError
+except ImportError:
+    from _coded_error import CodedError
+
+
+class RuleError(CodedError):
     """★ 制造规则失败（★ 带封闭码）。"""
 
     CODES = ("no-rules", "unknown-size", "not-in-table", "out-of-range")
-
-    def __init__(self, code: str, detail: str = "") -> None:
-        assert code in self.CODES, "★ 非法规则拒绝码：%r" % code
-        self.code = code
-        self.detail = detail
-        super().__init__("%s: %s" % (code, detail))
+    ASSERT_LABEL = "★ 非法规则拒绝码"
 
 
 def load_rules() -> dict:

@@ -45,6 +45,17 @@
 
 ## 一 · 游标（**唯一必须维护的字段**）
 
+2026-10-22 ★★★ **仓库统一化 · 第 28 轮：CodedError 模式的漏网者收齐**
+  ★★ **同一个模式应用不彻底 = 精神分裂**：第 14 轮收了 4 个 `*Error` 进 `CodedError`，
+  但**同族还有 4 个漏网**（catalog.CatalogError · registry.RegistryError ·
+  manufacturing_rules.RuleError · rule_service.RuleError）各自还写着一份逐字相同的 `__init__` ⇒ 本轮全部改为继承。
+  另两组：`load_baseline` → `gate_decl.load_baseline(path)`（参数化）· `applies_to` →
+  `engineering/_applicability.ApplicabilityMixin`（两个 dataclass 继承，★ 空适用域=不适用任何写进 mixin docstring）。
+  ★ 行为逐个实跑核对：4 个 Error 的合法码/非法码/str() 全对 · load_baseline 三种行为全对 · applies_to 三种输入全对。
+  **读数**：⑤ 跨文件同函数体 **84 → 80**（基线收到 80、无余量）· ① ruff 439 · ②(信息项) 2,315。
+  **下一 WIP**：⑤ 剩 **80 组**；待裁决 3 组已写清理由（click/capture_front/add —— 涉一次性 GUI 脚本，
+  动前得先查谁 import）。
+
 2026-10-22 ★★★ **仓库统一化 · 第 27 轮：⑤ 判据改成 α-等价**
   ★★ **旧口径致命缺陷**：它把**引用的全局常量也抹平**，于是「同一段结构、引用不同常量」也算重复
   ⇒ 把 `official_members` **参数化统一**之后，两个薄调用**仍被报重复** ⇒ 它会给**每一个正确的修复打回票** ✗

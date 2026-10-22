@@ -36,7 +36,6 @@ from __future__ import annotations
 
 import argparse
 import ast
-import json
 import re
 import sys
 import warnings
@@ -260,13 +259,12 @@ def scan() -> list:
     return sorted(hits, key=lambda h: (h["module"], h["tool"]))
 
 
-def load_baseline() -> dict:
-    if not BASELINE.is_file():
-        return {"entries": []}
-    try:
-        return json.loads(BASELINE.read_text(encoding="utf-8"))
-    except Exception as exc:  # noqa: BLE001
-        raise SystemExit("★ 基线 %s 解析失败：%s" % (BASELINE, exc))
+#: ★★ 2026-10-22（仓库统一化）这 9 行原与另一个门禁逐字相同，
+#:   已收敛到 gate_decl.load_baseline（路径由调用方传）。
+try:
+    from .gate_decl import load_baseline as _load_baseline
+except ImportError:
+    from gate_decl import load_baseline as _load_baseline
 
 
 def main(argv: list) -> int:
@@ -292,7 +290,7 @@ def main(argv: list) -> int:
                 print("   %-52s %s" % (h["tool"], h["snippet"][:96]))
         return 0
 
-    base = load_baseline()
+    base = _load_baseline(BASELINE)
     entries = base.get("entries") or []
     for e in entries:
         for f in ("tool", "reason"):

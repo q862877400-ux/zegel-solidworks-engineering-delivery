@@ -64,3 +64,25 @@ def decl_parts_above(lines: list[str], lineno: int, decl: Any):
     if not m:
         return None
     return m.group("head"), (m.group("rest") or "").strip()
+
+def load_baseline(path: Any) -> dict:
+    """⇒ 读一份门禁基线 JSON（★ **路径由调用方传**）。
+
+    行为（与两个原实现逐字一致）：
+      · 文件不存在 ⇒ 回 `{"entries": []}`（★ 不报错：新机器上基线尚未生成是正常的）
+      · 文件在但解析不了 ⇒ `SystemExit`（★ **坏了就是坏了**，不能当成「没有基线」放行）
+
+    ★★ 2026-10-22（仓库统一化）：这 9 行原在 `check_preselect_family.py` 与
+      `check_probe_reuse.py` **各有一份、逐字相同**（两处都读各自的模块级 `BASELINE`
+      常量）⇒ 参数化收教到这里，两处改为传自己的 `BASELINE`。
+    """
+    import json
+    import pathlib
+
+    p = pathlib.Path(path)
+    if not p.is_file():
+        return {"entries": []}
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception as exc:  # noqa: BLE001
+        raise SystemExit("★ 基线 %s 解析失败：%s" % (p, exc)) from exc

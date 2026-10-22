@@ -37,7 +37,13 @@ METADATA = ROOT / "metadata"
 TOKEN_BUDGET = 4096
 
 
-class CatalogError(Exception):
+try:
+    from ._coded_error import CodedError
+except ImportError:
+    from _coded_error import CodedError
+
+
+class CatalogError(CodedError):
     """★ 目录层失败（★ 带封闭码）。"""
 
     CODES = (
@@ -48,12 +54,7 @@ class CatalogError(Exception):
         "budget-exceeded",
         "thresholds-missing",
     )
-
-    def __init__(self, code: str, detail: str = "") -> None:
-        assert code in self.CODES, "★ 非法目录拒绝码：%r" % code
-        self.code = code
-        self.detail = detail
-        super().__init__("%s: %s" % (code, detail))
+    ASSERT_LABEL = "★ 非法目录拒绝码"
 
 
 #: ══════════════════════════════════════════════════════════════════════

@@ -267,9 +267,19 @@
     85
    ],
    "why": "⑤ 判据改成 **alpha-等价**（只抹平局部绑定名、保留全局引用），并收敛 _sketch / official_members 两组；豁免 _require（机械生成的 sw_api_* 抄录）"
+  },
+  {
+   "at": "2026-10-22u",
+   "from": [
+    84
+   ],
+   "to": [
+    80
+   ],
+   "why": "四组收敛：① catalog/registry/manufacturing_rules/rule_service 的 *Error 继承 CodedError（第 14 轮同模式的漏网者，2 组）② load_baseline → gate_decl（参数化）③ applies_to → engineering/_applicability.ApplicabilityMixin"
   }
  ],
- "dup_function_groups_ceiling": 84,
+ "dup_function_groups_ceiling": 80,
  "dup_function_allow": [
   {
    "functions": "_optional_com_member/_safe_com_member",

@@ -18,6 +18,12 @@
 from __future__ import annotations
 
 import math
+
+try:
+    from ._applicability import ApplicabilityMixin
+except ImportError:
+    from _applicability import ApplicabilityMixin
+
 from dataclasses import dataclass, field
 
 __all__ = [
@@ -139,7 +145,7 @@ class StandardRef:
 
 
 @dataclass
-class Rule:
+class Rule(ApplicabilityMixin):
     """★ 规则（★ 逐字承 EC02-T01：「★ 输入单位、适用域、来源、版本、阈值、输出和 `unknown`」）。"""
 
     id: str
@@ -155,10 +161,6 @@ class Rule:
     priority: int = 0
     #: ★★ **统计假设**（★ 需要它而没给 ⇒ `unknown` —— ★ V5）
     statistical_basis: str = ""
-
-    def applies_to(self, device_class: str) -> bool:
-        """★ 适用性（★ **空适用域 = 不适用任何类别** —— ★ 不默认「通用」）。"""
-        return device_class in (self.applicable_devices or ())
 
 
 @dataclass

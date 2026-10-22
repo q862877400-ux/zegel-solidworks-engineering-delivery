@@ -393,3 +393,53 @@ python scripts/release_check.py           ⇒ exit 0 · status pass · 57 道 ·
 | ⑤ 跨文件同函数体组 | 99 | **84**（口径换成 α-等价 + 两组收敛 + 1 条豁免） |
 | ① ruff | 439 | 439 |
 | ②(信息项) / ③ / ④ | 2,319 / 0 / 0 | 2,318 / 0 / 0 |
+
+## 十六、第 28 轮：把 `CodedError` 模式的**漏网者**收齐（④ 组收敛）
+
+### 16.1 同一个模式应用不彻底 —— 这正是「精神分裂」的样子
+
+第 14 轮我把 `RuleError` / `CalcError` / `TableError` / `LinkageError` 收进 `CodedError` 基类。
+★ 但**同一族还有 4 个漏网**（本轮 ⑤ 把它们报出来了）：
+`catalog.CatalogError` · `registry.RegistryError` · `manufacturing_rules.RuleError` · `rule_service.RuleError`
+—— 它们**各自还写着一份逐字相同的 `__init__`**（`assert code in self.CODES` → 存 code/detail → `super().__init__("%s: %s")`）。
+
+★★ 这就是业主说的那种状态：**同一个家族，有的继承基类、有的还自己手写** ⇒ 从局部看都"整洁"，
+从整体看是**两套写法并存**。⇒ 本轮 4 个全部改为 `class Xxx(CodedError)`，只留 `CODES`（+ 需要时 `ASSERT_LABEL`）。
+
+★ 行为逐个实跑核对（不是只看能 import）：
+
+| 类 | 合法码 → code/detail 正确 | 非法码 → 被 assert 拒 | `str()` |
+|---|---|---|---|
+| `CatalogError` | ✓ | ✓ | `no-domain: 明细` |
+| `RegistryError` | ✓ | ✓ | `unresolved-step-name: 明细` |
+| `manufacturing_rules.RuleError` | ✓ | ✓ | `no-rules: 明细` |
+| `rule_service.RuleError` | ✓ | ✓ | `missing-field: 明细` |
+
+### 16.2 `load_baseline` ⇒ `gate_decl.load_baseline(path)`
+
+`check_preselect_family.py` 与 `check_probe_reuse.py` 各有一份**逐字相同**的 9 行
+（都读各自的模块级 `BASELINE`）⇒ 参数化收进 `gate_decl.py`（门禁共享工具的家），两处传自己的 `BASELINE`。
+★ 三种行为实测：文件不存在 ⇒ `{"entries": []}` · 正常 ⇒ 解析 · **坏文件 ⇒ `SystemExit`**（★ 坏了就是坏了，
+不能当成「没有基线」放行）✓
+
+### 16.3 `applies_to` ⇒ `engineering/_applicability.ApplicabilityMixin`
+
+`compiler.MethodSpec` 与 `rules.Rule` 两个 dataclass 各有一份逐字相同的 `applies_to`
+（`device_class in (self.applicable_devices or ())`）⇒ 抽成 mixin，两个类继承。
+★ 行为实测：`MethodSpec.applies_to("part")=True` / `("drawing")=False`；`Rule` 同；
+★ **空适用域 ⇒ 不适用任何**（★ 不默认「通用」—— 这条语义写在 mixin 的 docstring 里）✓
+
+### 16.4 读数
+
+| 指标 | 前 | 后 |
+|---|---|---|
+| ⑤ 跨文件同函数体组 | 84 | **80**（基线收到 80、无余量） |
+| ① ruff | 439 | 439 |
+| ②(信息项) / ③ / ④ | 2,318 / 0 / 0 | 2,315 / 0 / 0 |
+
+### 16.5 待裁决的 3 组（本轮没动，说明理由）
+
+`click/click_point`（`sw_jlcfa_*`）· `capture_front/screen_png`（`sw_gui_modal` / `sw_jlcfa_locate`）·
+`add/add_case`（`engineering/evaluation` / `housing`）—— ★ 前两组是**一次性 GUI 自动化脚本**里的截图/点击助手，
+要动它们得先确认没有别处 import；★ 第三组要看清两个 dataclass 的字段关系。**本轮不做，留作下一轮**，
+不硬凑（判错代价见 §二 的「删了转发壳 ⇒ 运行期 ImportError」）。

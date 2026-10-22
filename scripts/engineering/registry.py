@@ -36,7 +36,13 @@ for _p in (
 PREFIX = "solidworks_"
 
 
-class RegistryError(Exception):
+try:
+    from ._coded_error import CodedError
+except ImportError:
+    from _coded_error import CodedError
+
+
+class RegistryError(CodedError):
     """★ 目录/解析失败（★ 带**封闭码** —— 与 `RejectCode` 同族）。"""
 
     CODES = (
@@ -49,12 +55,7 @@ class RegistryError(Exception):
         "empty-registry",  #: ★ 目录为空（★ 防「静默通过」）
         "sub-method-not-expanded",  #: ★★ 步骤是**另一个方法 id** ⇒ 属阶段 2「子方法展开」
     )
-
-    def __init__(self, code: str, detail: str = "") -> None:
-        assert code in self.CODES, "★ 非法目录拒绝码：%r" % code
-        self.code = code
-        self.detail = detail
-        super().__init__("%s: %s" % (code, detail))
+    ASSERT_LABEL = "★ 非法目录拒绝码"
 
 
 #: ══════════════════════════════════════════════════════════════════════
